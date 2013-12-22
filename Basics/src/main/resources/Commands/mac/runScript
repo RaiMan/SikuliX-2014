@@ -1,0 +1,42 @@
+#!/bin/sh
+JAVA=X
+PROPS='-Xmx512M -Dfile.encoding=UTF-8 -Dsikuli.FromCommandLine'
+
+if [ "$1" == "-j" ]; then
+  shift
+  JAVA=$2
+  shift
+fi
+
+if [ "$JAVA" != "X" ]; then
+  echo "being asked to switch to Java "$JAVA
+  if [ "$JAVA" = "6" ]; then
+    echo trying Java 6
+    export JAVA_HOME=`/usr/libexec/java_home -v 1.6`
+  elif [ "$JAVA" = "o" ]; then
+    if [ -e /Library/Java/JavaVirtualMachines/1.7.0u.jdk/Contents/Home ]; then
+      echo trying OpenJDK 7
+      export JAVA_HOME=/Library/Java/JavaVirtualMachines/1.7.0u.jdk/Contents/Home
+    fi
+  elif [ "$JAVA" = "7" ]; then
+    echo trying Java 7
+    export JAVA_HOME=`/usr/libexec/java_home -v 1.7`
+  fi
+fi
+
+if [ "$SIKULIX_HOME" != "" ]; then
+  echo "SIKULIX_HOME in environment specified as "$SIKULIX_HOME
+  shome=$SIKULIX_HOME
+else
+  shome=`dirname $0`
+fi
+
+if [ -e "$shome/sikuli-ide.jar" ]; then
+  export SIKULI_COMMAND=$*
+  echo "running SikuliX-Script: $PROPS $CONSOLE"
+  echo "-jar $shome/sikuli-script.jar $SIKULI_COMMAND"
+  java $PROPS -jar "$shome/sikuli-script.jar" $SIKULI_COMMAND
+else
+  echo "Error: terminating: sikuli-script.jar not found at: "$shome
+fi
+

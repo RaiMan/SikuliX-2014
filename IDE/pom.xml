@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <!--
+  * Copyright 2010-2013, Sikuli.org
+  * Released under the MIT License.
+  *
+  * RaiMan 2013
+  -->
+
+	<parent>
+		<groupId>org.sikuli</groupId>
+		<artifactId>SikuliX-POM</artifactId>
+		<version>1.1.0</version>
+		<relativePath>../SikuliX</relativePath>
+	</parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.sikuli</groupId>
+  <artifactId>SikuliX-IDE</artifactId>
+  <version>1.1.0</version>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.sikuli</groupId>
+      <artifactId>SikuliX-API</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sikuli</groupId>
+      <artifactId>SikuliX-Jython</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.json-simple</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.swinglabs.swingx</groupId>
+      <artifactId>swingx-core</artifactId>
+      <version>1.6.5-1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jgoodies</groupId>
+      <artifactId>forms</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.explodingpixels</groupId>
+      <artifactId>mac_widgets</artifactId>
+      <version>0.9.5</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <excludes>
+            <exclude>**/${exclude.nativelayer}</exclude>
+          </excludes>
+        </configuration>
+      </plugin>
+      <plugin>
+        <artifactId>maven-jar-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.sikuli.IDE.SikuliIDE</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>   
+    </plugins>
+  </build>
+</project>

@@ -1,0 +1,9 @@
+#!/bin/sh
+#################################
+# DO NOT EDIT THIS COMMAND SCRIPT
+#################################
+
+shome=`dirname $0`
+
+java -jar "$shome/sikuli-setup-1.1.jar" $*
+

@@ -1,0 +1,47 @@
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <!--
+  * Copyright 2010-2013, Sikuli.org
+  * Released under the MIT License.
+  *
+  * kelthuzad, RaiMan 2013
+  -->
+
+	<parent>
+		<groupId>org.sikuli</groupId>
+		<artifactId>SikuliX-POM</artifactId>
+		<version>1.1.0</version>
+		<relativePath>../SikuliX</relativePath>
+	</parent>
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>org.sikuli</groupId>
+  <artifactId>SikuliX-Jython</artifactId>
+  <name>SikuliX-Jython</name>
+  <version>1.1.0</version>
+
+  <developers>
+    <developer>
+      <id>kelthuzad</id>
+      <name>kelthuzad</name>
+      <email>j_the_k@web.de</email>
+    </developer>
+  </developers>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.sikuli</groupId>
+      <artifactId>SikuliX-Basics</artifactId>
+      <version>1.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.python</groupId>
+      <artifactId>jython-standalone</artifactId>
+      <version>2.7-b1</version>
+    </dependency>
+  </dependencies>
+
+</project>
