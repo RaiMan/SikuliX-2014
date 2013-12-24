@@ -13,12 +13,18 @@ Even if you want to develop in Java or any Java aware scripting language (Jython
 
 **To get the ready-to-use packages (IDE, Script, Java/Jython support) it is still recommended [to start here](http://www.sikuli.org/download.html).**
 
-The structure and usage of this repo
+The structure of this repo
 ------------------------
 
-Each folder in this repo is a Maven project by itself with its own POM, but it needs to be in this folder and POM structure, since there is a super POM, that installs all modules into your local Maven repo and needs the parent POM in SikuliX, to run its own POM successfully.
+Each folder in this repo is a Maven project by itself with its own POM, but it needs to be in this folder and POM structure, since there is a super POM on the first level, that is the parent POM for all the other child POMs and installs all modules into your local Maven repo. For detailed usage information look further below.
 
-So if you want to contribute, you should fork and 
+<hr/>
+
+**--- The top level modules ---**
+
+**Module API**
+
+**Module IDE**
 
 
 
