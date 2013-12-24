@@ -8,7 +8,6 @@
 	*
 	* RaiMan 2013
 	-->
-
 	<parent>
 		<groupId>org.sikuli</groupId>
 		<artifactId>SikuliX-POM</artifactId>
@@ -43,10 +42,10 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<finalName>${project.version}-3</finalName>
+					<descriptors>
+						<descriptor>../SikuliX/${sikuli.jartype}</descriptor>
+					</descriptors>
+					<finalName>${sikuli.jarname}-java</finalName>
 				</configuration>
 				<executions>
 					<execution>

@@ -15,7 +15,7 @@
   <artifactId>SikuliX-POM</artifactId>
   <version>1.1.0</version>
 
-	<packaging>pom</packaging>
+  <packaging>pom</packaging>
 
   <url>http://www.sikuli.org</url>
 
@@ -39,6 +39,8 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <exclude.nativelayer.mac>NativeLayerForMac.java</exclude.nativelayer.mac>
     <exclude.nativelayer.null>NativeLayerForNothing</exclude.nativelayer.null>
+    <sikuli.jartype>plain.xml</sikuli.jartype>
+    <sikuli.jarname>${project.version}</sikuli.jarname>
   </properties>
   
   <repositories>
@@ -69,13 +71,13 @@
       <artifactId>logback-classic</artifactId>
       <version>1.0.13</version>
     </dependency>
-		<dependency>
-			<groupId>org.testng</groupId>
-			<artifactId>testng</artifactId>
-			<version>6.8.7</version>
-			<scope>test</scope>
-		</dependency>
-	</dependencies>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>6.8.7</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
 
   <profiles>
     <profile>
@@ -86,11 +88,9 @@
         </os>
       </activation>
       <properties>
-        <sikuli.uselibs>libs/windows</sikuli.uselibs>
-        <sikuli.excludelibs1>**/libs/linux/*</sikuli.excludelibs1>
-        <sikuli.excludelibs2>**/libs/mac/*</sikuli.excludelibs2>
+        <sikuli.uselibs>META-INF/libs/windows/**/*</sikuli.uselibs>
         <exclude.nativelayer>${exclude.nativelayer.mac}</exclude.nativelayer>
-     </properties>
+      </properties>
     </profile>
     <profile>
       <id>Unix</id>
@@ -100,9 +100,7 @@
         </os>        
       </activation>
       <properties>
-        <sikuli.uselibs>libs/linux</sikuli.uselibs>
-        <sikuli.excludelibs1>**/libs/windows/*</sikuli.excludelibs1>
-        <sikuli.excludelibs2>**/libs/mac/*</sikuli.excludelibs2>
+        <sikuli.uselibs>META-INF/libs/linux/**/*</sikuli.uselibs>
         <exclude.nativelayer>${exclude.nativelayer.mac}</exclude.nativelayer>
       </properties>
     </profile>
@@ -114,14 +112,54 @@
         </os>
       </activation>
       <properties>
-        <sikuli.uselibs>libs/mac</sikuli.uselibs>
-        <sikuli.excludelibs1>**/libs/windows/*</sikuli.excludelibs1>
-        <sikuli.excludelibs2>**/libs/linux/*</sikuli.excludelibs2>
+        <sikuli.uselibs>META-INF/libs/mac/**/*</sikuli.uselibs>
         <exclude.nativelayer>${exclude.nativelayer.null}</exclude.nativelayer>
       </properties>
     </profile>
+    <profile>
+      <id>withLibs</id>
+      <activation>
+        <activeByDefault>no</activeByDefault>
+      </activation>
+      <properties>
+        <sikuli.jartype>complete.xml</sikuli.jartype>
+        <sikuli.jarname>sikuli</sikuli.jarname>
+      </properties>
+    </profile>
+    <profile>
+      <id>withAllLibs</id>
+      <activation>
+        <activeByDefault>no</activeByDefault>
+      </activation>
+      <properties>
+        <sikuli.jarname>sikuli</sikuli.jarname>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.sikuli</groupId>
+          <artifactId>SikuliX-Libs</artifactId>
+          <version>1.1.0</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>withOCR</id>
+      <activation>
+        <activeByDefault>no</activeByDefault>
+      </activation>
+      <properties>
+        <sikuli.jarname>sikuli</sikuli.jarname>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.sikuli</groupId>
+          <artifactId>SikuliX-Tesseract</artifactId>
+          <version>1.1.0</version>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
-
+  
   <build>
     <plugins>
       <plugin>

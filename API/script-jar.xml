@@ -53,10 +53,10 @@
 							<mainClass>org.sikuli.basics.SikuliScript</mainClass>
 						</manifest>
 					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<finalName>${project.version}-2</finalName>
+					<descriptors>
+						<descriptor>../SikuliX/${sikuli.jartype}</descriptor>
+					</descriptors>
+					<finalName>${sikuli.jarname}-script</finalName>
 				</configuration>
 				<executions>
 					<execution>

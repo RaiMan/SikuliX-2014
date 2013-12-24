@@ -77,10 +77,10 @@
               <mainClass>org.sikuli.ide.SikuliIDE</mainClass>
             </manifest>
           </archive> 
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
-					<finalName>${project.version}-1</finalName>
+					<descriptors>
+						<descriptor>../SikuliX/${sikuli.jartype}</descriptor>
+					</descriptors>
+					<finalName>${sikuli.jarname}-ide</finalName>
         </configuration>
         <executions>
           <execution>
