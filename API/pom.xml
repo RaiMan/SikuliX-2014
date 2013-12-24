@@ -11,9 +11,9 @@
 
 	<parent>
 		<groupId>org.sikuli</groupId>
-		<artifactId>SikuliX-POM</artifactId>
+		<artifactId>SikuliX</artifactId>
 		<version>1.1.0</version>
-		<relativePath>../SikuliX</relativePath>
+		<relativePath>../</relativePath>
 	</parent>
 
   <modelVersion>4.0.0</modelVersion>

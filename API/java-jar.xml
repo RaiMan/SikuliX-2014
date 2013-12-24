@@ -10,9 +10,9 @@
 	-->
 	<parent>
 		<groupId>org.sikuli</groupId>
-		<artifactId>SikuliX-POM</artifactId>
+		<artifactId>SikuliX</artifactId>
 		<version>1.1.0</version>
-		<relativePath>../SikuliX</relativePath>
+		<relativePath>../</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
@@ -43,7 +43,7 @@
 				<version>2.4</version>
 				<configuration>
 					<descriptors>
-						<descriptor>../SikuliX/${sikuli.jartype}</descriptor>
+						<descriptor>../${sikuli.jartype}</descriptor>
 					</descriptors>
 					<finalName>${sikuli.jarname}-java</finalName>
 				</configuration>

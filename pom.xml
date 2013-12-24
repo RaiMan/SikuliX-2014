@@ -15,7 +15,7 @@
   <artifactId>SikuliX</artifactId>
   <version>1.1.0</version>
 
-	<packaging>pom</packaging>
+  <packaging>pom</packaging>
 
   <url>http://www.sikuli.org</url>
 
@@ -37,10 +37,130 @@
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <exclude.nativelayer.mac>NativeLayerForMac.java</exclude.nativelayer.mac>
+    <exclude.nativelayer.null>NativeLayerForNothing</exclude.nativelayer.null>
+    <sikuli.jartype>plain.xml</sikuli.jartype>
+    <sikuli.jarname>${project.version}</sikuli.jarname>
   </properties>
   
+  <repositories>
+    <repository> <!-- needed for jxgrabkey -->
+      <id>uni-due.de</id>
+      <name>uni-due.de</name>
+      <url>http://mvn.is.inf.uni-due.de:8081/nexus/content/repositories/atunes-dependencies/</url>
+      <layout>default</layout>
+      <releases>
+        <enabled>true</enabled>
+        <updatePolicy>never</updatePolicy>
+      </releases>
+      <snapshots>
+        <enabled>false</enabled>
+        <updatePolicy>never</updatePolicy>
+      </snapshots>
+    </repository>
+  </repositories>
+  
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.5</version>
+    </dependency>    
+    <dependency>
+      <groupId>ch.qos.logback</groupId>
+      <artifactId>logback-classic</artifactId>
+      <version>1.0.13</version>
+    </dependency>
+    <dependency>
+      <groupId>org.testng</groupId>
+      <artifactId>testng</artifactId>
+      <version>6.8.7</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <profiles>
+    <profile>
+      <id>Windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <sikuli.uselibs>META-INF/libs/windows/**/*</sikuli.uselibs>
+        <exclude.nativelayer>${exclude.nativelayer.mac}</exclude.nativelayer>
+      </properties>
+    </profile>
+    <profile>
+      <id>Unix</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>        
+      </activation>
+      <properties>
+        <sikuli.uselibs>META-INF/libs/linux/**/*</sikuli.uselibs>
+        <exclude.nativelayer>${exclude.nativelayer.mac}</exclude.nativelayer>
+      </properties>
+    </profile>
+    <profile>
+      <id>Mac</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <sikuli.uselibs>META-INF/libs/mac/**/*</sikuli.uselibs>
+        <exclude.nativelayer>${exclude.nativelayer.null}</exclude.nativelayer>
+      </properties>
+    </profile>
+    <profile>
+      <id>withLibs</id>
+      <activation>
+        <activeByDefault>no</activeByDefault>
+      </activation>
+      <properties>
+        <sikuli.jartype>complete.xml</sikuli.jartype>
+        <sikuli.jarname>sikuli</sikuli.jarname>
+      </properties>
+    </profile>
+    <profile>
+      <id>withAllLibs</id>
+      <activation>
+        <activeByDefault>no</activeByDefault>
+      </activation>
+      <properties>
+        <sikuli.jarname>sikuli</sikuli.jarname>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.sikuli</groupId>
+          <artifactId>SikuliX-Libs</artifactId>
+          <version>1.1.0</version>
+        </dependency>
+      </dependencies>
+    </profile>
+    <profile>
+      <id>withOCR</id>
+      <activation>
+        <activeByDefault>no</activeByDefault>
+      </activation>
+      <properties>
+        <sikuli.jarname>sikuli</sikuli.jarname>
+      </properties>
+      <dependencies>
+        <dependency>
+          <groupId>org.sikuli</groupId>
+          <artifactId>SikuliX-Tesseract</artifactId>
+          <version>1.1.0</version>
+        </dependency>
+      </dependencies>
+    </profile>
+  </profiles>
+  
   <modules>
-    <module>SikuliX</module>
     <module>OpenCV</module>
     <module>Libs</module>
     <module>Natives</module>
@@ -53,35 +173,44 @@
     <module>Remote</module>
     <module>Guide</module>
   </modules>
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-source-plugin</artifactId>
-                <version>2.2.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-sources</id>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>jar-no-fork</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-javadoc-plugin</artifactId>
-                <version>2.9.1</version>
-                <executions>
-                    <execution>
-                        <id>attach-javadocs</id>
-                        <goals>
-                            <goal>jar</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>3.1</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase>verify</phase>
+            <goals>
+              <goal>jar-no-fork</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <goals>
+              <goal>jar</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
