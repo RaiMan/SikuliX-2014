@@ -8,12 +8,12 @@
   * RaiMan 2013
   -->
 
-	<parent>
-		<groupId>org.sikuli</groupId>
-		<artifactId>SikuliX</artifactId>
-		<version>1.1.0</version>
-		<relativePath>../</relativePath>
-	</parent>
+  <parent>
+    <groupId>org.sikuli</groupId>
+    <artifactId>SikuliX</artifactId>
+    <version>1.1.0</version>
+    <relativePath>../</relativePath>
+  </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -23,5 +23,27 @@
 
   <build>
     <defaultGoal>clean install</defaultGoal>
+    <plugins>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase/>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <phase/>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>  
 </project>

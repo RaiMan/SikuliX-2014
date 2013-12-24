@@ -30,5 +30,27 @@
         <targetPath>META-INF/libs</targetPath>
       </resource>
     </resources>
+    <plugins>
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase/>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <phase/>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
   </build>
 </project>
