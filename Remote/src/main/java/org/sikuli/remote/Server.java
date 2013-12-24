@@ -17,7 +17,7 @@ import java.util.Scanner;
 import javax.swing.ImageIcon;
 
 
-class Server {
+public class Server {
   public static int logLevel = 0;
   private static final String key = "KEY";
   private static final String kType = "TYPE";
