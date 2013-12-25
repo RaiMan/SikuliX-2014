@@ -16,15 +16,49 @@ Even if you want to develop in Java or any Java aware scripting language (Jython
 The structure of this repo
 ------------------------
 
-Each folder in this repo is a Maven project by itself with its own POM, but it needs to be in this folder and POM structure, since there is a super POM on the first level, that is the parent POM for all the other child POMs and installs all modules into your local Maven repo. For detailed usage information look further below.
+Each folder (module) in this repo is a Maven project by itself with its own POM, but it needs to be in this folder and POM structure, since there is a super POM on the first level, that is the parent POM for all the other child POMs and installs all modules into your local Maven repo. For detailed usage information look further below.
 
 <hr/>
 
-**--- The top level modules ---**
+**--- The top level modules (representing the Sikuli features) ---**
 
 **Module API**
 
 **Module IDE**
 
+<hr/>
 
+**--- The helper/utility modules (intended for internal use only) ---**
 
+**Module Jython**
+
+**Module Basics**
+
+**Module OpenCV**
+
+**Module Natives**
+
+<hr/>
+
+**--- The modules used to support package production ---**
+
+**Module Libs**
+
+**Module Tesseract**
+
+**Module MacApp**
+
+<hr/>
+
+**--- Modules being AddOns or Extensions --**
+
+**Module Guide**
+
+**Module Remote**
+
+<hr/>
+
+Usage - basic information
+-------------------------
+
+If you intend to compile and build the modules after having downloaded this repo, you need a valid Maven 3 installation and some IDE, that is enabled for working with Maven projects <br />(I myself use NetBeans 7.4, which supports Maven by default)
