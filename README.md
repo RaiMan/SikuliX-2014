@@ -74,8 +74,9 @@ If you want jars containing the sources of the respective modules and or contain
 
 **Basic compile/package/install for each module**
 you have 2 options, to selectively run the POM of a specific module alone:
- 1. in the root folder run<br />`mvn -plModuleName [clean] [compile|package|install]
- 2. in the modules folder run <br />mvn [clean] [compile|package|install]
+ 1. in the root folder run<br />`mvn -plModuleName [clean] [compile|package|install]`
+ 2. in the modules folder run <br />`mvn [clean] [compile|package|install]`
+
 where you might additionally use the above mentioned profile switches
 
 
