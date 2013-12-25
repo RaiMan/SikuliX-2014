@@ -63,7 +63,8 @@ Usage - basic information
 
 If you intend to compile and build the modules after having downloaded this repo, you need a valid Maven 3 installation and some IDE, that is enabled for working with Maven projects. <br />(I myself use NetBeans 7.4, which supports Maven by default)
 
-**Mandatory first step**<br />
+**--- Mandatory first step**
+
 In the root directory of the repo run <br />
 `mvn clean install`<br />
 which builds all modules and installs the artifacts into your local Maven repository.
@@ -74,11 +75,16 @@ If you want jars containing the sources of the respective modules and/or contain
 
 **Be aware** This mandatory first step will add "tons" of additional stuff from Maven Central repository to your local Maven repository, especially when you are a first time Maven user.
 
-**Basic compile/package/install for each module**<br />
-you have 2 options, to selectively run the POM of a specific module alone:
+**--- Basic compile/package/install for each module**
+
+You have 2 options, to selectively run the POM of a specific module alone:
  1. in the root folder run<br />`mvn -pl<ModuleName> [clean] [compile|package|install]` <br />where `<ModuleName>` is the respective folder name
  2. in the module's folder run <br />`mvn [clean] [compile|package|install]`
 
 where you might additionally use the above mentioned profile switches
 
+**--- How to produce the ready to use jars ...**
 
+... `sikuli-ide.jar`, `sikuli-script.jar` and `sikuli-java.jar`
+
+[please look here](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-produce-the-ready_to_use-jar-packages)
