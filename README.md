@@ -72,10 +72,12 @@ If you want jars containing the sources of the respective modules and or contain
 `mvn clean install -PwithSource,withDocs`<br />
 (but for local usages, there might not be any sense in that ;-)
 
-**Basic compile/package/install for each module**
+**Be aware** This will add "tons" of additional stuff from Maven Central repository to your local Maven repository, especially when you are a first time Maven user.
+
+**Basic compile/package/install for each module**<br />
 you have 2 options, to selectively run the POM of a specific module alone:
- 1. in the root folder run<br />`mvn -plModuleName [clean] [compile|package|install]`
- 2. in the modules folder run <br />`mvn [clean] [compile|package|install]`
+ 1. in the root folder run<br />`mvn -pl<ModuleName> [clean] [compile|package|install]` <br />where `<ModuleName>` is the respective folder name
+ 2. in the module's folder run <br />`mvn [clean] [compile|package|install]`
 
 where you might additionally use the above mentioned profile switches
 
