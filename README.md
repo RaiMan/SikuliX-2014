@@ -68,11 +68,11 @@ In the root directory of the repo run <br />
 `mvn clean install`<br />
 which builds all modules and installs the artifacts into your local Maven repository.
 
-If you want jars containing the sources of the respective modules and or containing the javadocs you can use the following profile switches:<br />
+If you want jars containing the sources of the respective modules and/or containing the javadocs you can use the following profile switches:<br />
 `mvn clean install -PwithSource,withDocs`<br />
 (but for local usages, there might not be any sense in that ;-)
 
-**Be aware** This will add "tons" of additional stuff from Maven Central repository to your local Maven repository, especially when you are a first time Maven user.
+**Be aware** This mandatory first step will add "tons" of additional stuff from Maven Central repository to your local Maven repository, especially when you are a first time Maven user.
 
 **Basic compile/package/install for each module**<br />
 you have 2 options, to selectively run the POM of a specific module alone:
