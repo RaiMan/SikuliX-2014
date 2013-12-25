@@ -40,13 +40,15 @@ Each folder (module) in this repo is a Maven project by itself with its own POM,
 
 <hr/>
 
-**--- The modules used to support package production ---**
+**--- The modules used to support package production (container jars) ---**
 
 **Module Libs**
 
 **Module Tesseract**
 
 **Module MacApp**
+
+**Module Docs**
 
 <hr/>
 
@@ -62,6 +64,8 @@ Usage - basic information
 -------------------------
 
 If you intend to compile and build the modules after having downloaded this repo, you need a valid Maven 3 installation and some IDE, that is enabled for working with Maven projects. <br />(I myself use NetBeans 7.4, which supports Maven by default)
+
+**Take care** Even if you only want to work on one of the modules (e.g. API), the modules should not be moved around, but stay in the structure of the downloaded repo. Each module depends on the parent POM in the root and the ready-to-use-jar-production POMs additionally on the assembly descriptors plain.xml and complete.xml.
 
 **--- Mandatory first step**
 
