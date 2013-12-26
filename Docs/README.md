@@ -6,7 +6,7 @@ The official documentation for SikuliX-1.1+
 <hr />
 
 **To get the documentation package without a setup <br />
-just doubleclick SikuliX-Docs.zip and use "View raw" to download, <br />then unzip and double-click the contained `index.html`** 
+just doubleclick SikuliX-Docs.zip and use "View Raw" to download, <br />then unzip and double-click the contained `index.html`** 
 
 <hr />
 
