@@ -56,13 +56,17 @@ As a special feature it comprises the `sikuli-setup.jar`, which is run after dow
 
 Sikuli's image search is based on respective features of [OpenCV](http://opencv.org). Starting with version 2.4.6 OpenCV provides a self-contained JNI interface to the OpenCV native libraries, allowing to use OpenCV features directly in Java (and hence making C++ programming obsolete for this).
 
-This module contains the specially configured Java/JNI OpenCV package for the OpenCV features currently needed by Sikuli (core, imgproc, highgui, feature2d). The corresponding native library package is contained in the module Libs.
+This module contains a specially configured Java/JNI OpenCV package (built using the standard OpenCV configure/make workflow) for use with the OpenCV features currently needed by Sikuli (core, imgproc, feature2d and highgui). The corresponding native library pack (currently Mac only) is contained in the module Libs.
 
-With the final availability of version 1.1.0 the implementation of the OpenCV usage will be moved completely to the Java level.
+With the final availability of version 1.1.0 the implementation of the OpenCV usage will be moved completely to the Java level. Until then the histrical implementation in C++ is activated in the standard. The usage of the new implementation (in the new classes ImageFinder and ImageFind) can be switched on optinally for testing and developement.
 
 For Windows and Mac the native packages will again be pre-built and ready-to-use. For Linux there will be advices and scripts available to get the needed features.
 
 **Module Natives**
+
+Contains the Java sources interface classes (JNI based, mainly SWIG generated) and the C++ sources providing the implementation of the OpenCV and Tesseract usage and the implementation of some system specific features (HotKeyHandling, App class support,...).
+
+A maven based build workflow for the native libraries (libVisionProxy, lib...Util and hotky support on Mac) is available in the module Libs, which is also the target module for the prebuilt libraries finally bundled with the top level packages.
 
 <hr/>
 
@@ -70,11 +74,22 @@ For Windows and Mac the native packages will again be pre-built and ready-to-use
 
 **Module Libs**
 
+The prebuilt native libraries for Windows, Mac and Linux (partially).<br />
+(contained in `sikuli-setup.jar`)
+
 **Module Tesseract**
+
+Currently as a convenience the standard tessdata folder needed for using Tesseract 3.0.<br />
+(will be downloaded on request during a Sikuli setup)
 
 **Module MacApp**
 
+A template Sikuli-IDE.app, that is downloaded on request and made ready-to-use during Sikuli setup.
+
 **Module Docs**
+
+The source files for the textual documentation (built with PythonSphinx based on .rst files) and a ready-to-use HTML version as well as a HTML version of the JavaDocs of the main public Java API.<br />
+(is downloaded and made ready-to-use-locally during Sikuli setup)
 
 <hr/>
 
