@@ -54,6 +54,14 @@ As a special feature it comprises the `sikuli-setup.jar`, which is run after dow
 
 **Module OpenCV**
 
+Sikuli's image search is based on respective features of [OpenCV](). Starting with version 2.4.6 OpenCV provides a self-contained JNI interface to the OpenCV native libraries, allowing to use OpenCV features directly in Java (and hence making C++ programming obsolete for this).
+
+This module contains the specially configured Java/JNI OpenCV package for the OpenCV features currently needed by Sikuli (core, imgproc, highgui, feature2d). The corresponding native library package is contained in the module Libs.
+
+With the final availability of version 1.1.0 the implementation of the OpenCV usage will be moved completely to the Java level.
+
+For Windows and Mac the native packages will again be pre-built and ready-to-use. For Linux there will be advices and scripts available to get the needed features.
+
 **Module Natives**
 
 <hr/>
