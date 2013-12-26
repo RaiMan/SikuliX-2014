@@ -24,7 +24,17 @@ Each folder (module) in this repo is a Maven project by itself with its own POM,
 
 **Module API**
 
+The Java implementation comprising the API to access the top elements (Screen, Region, Pattern, Match, Image, ...) and their methods allowing to search for images and to act on points and matches simulating mouse and keyboard.
+
+The base package `sikuli-java.jar` provides this API for Java programming and any Java aware scripting languages (currently with some special support for Jython).
+
+The convenience package `sikuli-script.jar` comes with the bundled Jython interpreter, thus allowing to run Sikuli scripts out of the box from the commandline and providing an interactive Sikuli aware Jython shell.
+
 **Module IDE**
+
+Implements a GUI using Java, that allows to edit and run Sikuli scripts (currently only Jython is supported). It is an easy to use IDE focusing on the handling of the screenshots and images used in the typical Sikuli workflows.
+
+The package `sikuli-ide.jar` is the top level package containing all other options and can be used in the same way.
 
 <hr/>
 
