@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Can I do X or Y or Z in Sikuli? &mdash; SikuliX 1.1+ documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sikulidoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SikuliX 1.1+ documentation" href="../index.html" />
+    <link rel="next" title="How to run Sikuli from Command Line" href="010-command-line.html" />
+    <link rel="prev" title="Resizing a Window" href="../tutorials/resize/resize.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="010-command-line.html" title="How to run Sikuli from Command Line"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../tutorials/resize/resize.html" title="Resizing a Window"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../index.html">SikuliX 1.1+</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/ide-icon-64.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Can I do X or Y or Z in Sikuli?</a><ul>
+<li><a class="reference internal" href="#can-i-write-a-loop-in-sikuli">Can I write a loop in Sikuli?</a></li>
+<li><a class="reference internal" href="#can-i-create-a-gui-in-sikuli">Can I create a GUI in Sikuli?</a></li>
+<li><a class="reference internal" href="#can-i-connect-to-mysql-ms-sql-postgresql-or-any-database-systems-in-sikuli">Can I connect to MySQL/MS SQL/PostgreSQL or any database systems in Sikuli?</a></li>
+<li><a class="reference internal" href="#can-i-read-write-files-in-sikuli">Can I read/write files in Sikuli?</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../tutorials/resize/resize.html"
+                        title="previous chapter">Resizing a Window</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="010-command-line.html"
+                        title="next chapter">How to run Sikuli from Command Line</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/faq/000-can-i-do-xxx.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="can-i-do-x-or-y-or-z-in-sikuli">
+<h1>Can I do X or Y or Z in Sikuli?<a class="headerlink" href="#can-i-do-x-or-y-or-z-in-sikuli" title="Permalink to this headline">¶</a></h1>
+<p>If you are wondering if Sikuli can do X or Y, these two rules apply:</p>
+<ul class="simple">
+<li>If you can do X with Java, you can also do it in Sikuli by simply adding the respective Java resources to the classpath (the standard Java classes are already there). For example, you can create a GUI with Java Swing, so you can do it in the same way in Sikuli.</li>
+<li>If you can do X with Python, you probably can do it in Sikuli as well. This actually depends on what Python modules you use. Sikuli is with the contained Jython on language level 2.5 and language level 2.7 will be useable soon. So everything available in the respective Python base package is available in Sikuli too. If modules are written in pure Python, you can use them in Sikuli as well. A typical example are the Excel access modules xlrd and xlwt. If they are written in C or depend on C-based modules, unfortunately, you can&#8217;t (e.g. the support for Win32API calls).</li>
+</ul>
+<div class="section" id="can-i-write-a-loop-in-sikuli">
+<h2>Can I write a loop in Sikuli?<a class="headerlink" href="#can-i-write-a-loop-in-sikuli" title="Permalink to this headline">¶</a></h2>
+<p>Yes. Sikuli uses Jython (Python).
+You can use all constructs that are available in standard Python. See Jython&#8217;s <a class="reference external" href="http://www.jython.org/jythonbook/en/1.0/LangSyntax.html#while-loop">While loop</a> and <a class="reference external" href="http://www.jython.org/jythonbook/en/1.0/LangSyntax.html#for-loop">For loop</a>.</p>
+</div>
+<div class="section" id="can-i-create-a-gui-in-sikuli">
+<h2>Can I create a GUI in Sikuli?<a class="headerlink" href="#can-i-create-a-gui-in-sikuli" title="Permalink to this headline">¶</a></h2>
+<p>Yes, you can create GUIs with Java Swing or any other Java/Jython GUI toolkits.
+See <a class="reference external" href="http://wiki.python.org/jython/SwingExamples">Jython&#8217;s Swing examples</a> for examples.</p>
+</div>
+<div class="section" id="can-i-connect-to-mysql-ms-sql-postgresql-or-any-database-systems-in-sikuli">
+<h2>Can I connect to MySQL/MS SQL/PostgreSQL or any database systems in Sikuli?<a class="headerlink" href="#can-i-connect-to-mysql-ms-sql-postgresql-or-any-database-systems-in-sikuli" title="Permalink to this headline">¶</a></h2>
+<p>You can use <a class="reference external" href="http://www.oracle.com/technetwork/java/javase/jdbc/index.html">JDBC</a> or <a class="reference external" href="http://www.jython.org/jythonbook/en/1.0/DatabasesAndJython.html">zxJDBC</a>.</p>
+</div>
+<div class="section" id="can-i-read-write-files-in-sikuli">
+<h2>Can I read/write files in Sikuli?<a class="headerlink" href="#can-i-read-write-files-in-sikuli" title="Permalink to this headline">¶</a></h2>
+<p>Yes. See Jython&#8217;s <a class="reference external" href="http://www.jython.org/jythonbook/en/1.0/InputOutput.html#file-i-o">File I/O</a>.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="010-command-line.html" title="How to run Sikuli from Command Line"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../tutorials/resize/resize.html" title="Resizing a Window"
+             >previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../index.html">SikuliX 1.1+</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Sikuli Doc Team.
+      Last updated on Nov 28, 2013.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

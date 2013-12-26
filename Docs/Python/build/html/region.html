@@ -1,0 +1,1976 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Region &mdash; SikuliX 1.1+ documentation</title>
+    
+    <link rel="stylesheet" href="_static/sikulidoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SikuliX 1.1+ documentation" href="index.html" />
+    <link rel="up" title="Everything about Sikuli Script" href="sikuli-script-index.html" />
+    <link rel="next" title="Screen" href="screen.html" />
+    <link rel="prev" title="Global Functions and Features" href="globals.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="screen.html" title="Screen"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="globals.html" title="Global Functions and Features"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="sikuli-script-index.html" accesskey="U">Everything about Sikuli Script</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/ide-icon-64.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Region</a><ul>
+<li><a class="reference internal" href="#creating-a-region-setting-and-getting-attributes">Creating a Region, Setting and Getting Attributes</a></li>
+<li><a class="reference internal" href="#extending-a-region">Extending a Region</a></li>
+<li><a class="reference internal" href="#finding-inside-a-region-and-waiting-for-a-visual-event">Finding inside a Region and Waiting for a Visual Event</a></li>
+<li><a class="reference internal" href="#observing-visual-events-in-a-region">Observing Visual Events in a Region</a></li>
+<li><a class="reference internal" href="#acting-on-a-region">Acting on a Region</a></li>
+<li><a class="reference internal" href="#extracting-text-from-a-region">Extracting Text from a Region</a></li>
+<li><a class="reference internal" href="#low-level-mouse-and-keyboard-actions">Low-level Mouse and Keyboard Actions</a></li>
+<li><a class="reference internal" href="#exception-findfailed">Exception FindFailed</a></li>
+<li><a class="reference internal" href="#grouping-method-calls-with-region">Grouping Method Calls ( with Region: )</a></li>
+<li><a class="reference internal" href="#special-methods-for-developers">Special Methods for Developers</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="globals.html"
+                        title="previous chapter">Global Functions and Features</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="screen.html"
+                        title="next chapter">Screen</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/region.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="region">
+<h1>Region<a class="headerlink" href="#region" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Region">
+<em class="property">class </em><tt class="descname">Region</tt><a class="headerlink" href="#Region" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="docutils">
+<dt>Region is a rectangular area on a screen, which is defined by</dt>
+<dd><ol class="first last arabic simple">
+<li>its upper left corner (x, y) as a distance relative to the
+upper left corner of the screen (0, 0) and</li>
+<li>its dimension (w, h) as its width and height.</li>
+</ol>
+</dd>
+</dl>
+<p>x, y, w, h are integer numbers counting a distance in pixels.</p>
+<p>A region knows nothing about its visual content (windows, pictures, graphics,
+text, ...). It only knows <a class="reference internal" href="#creatingaregionsettingandgettingattributes"><em>the position on the screen and its dimension</em></a>.</p>
+<p>New regions can be created, based on an existing region: you can <a class="reference internal" href="#extendingaregion"><em>extend a
+region in all directions or get the adjacent rectangle</em></a> up
+to the bounds of the screen horizontally or vertically.</p>
+<p>The visual content of a region is evaluated by using methods like
+<a class="reference internal" href="#Region.find" title="Region.find"><tt class="xref py py-meth docutils literal"><span class="pre">Region.find()</span></tt></a>, which looks for a given rectangular pixel pattern
+(defined by a <a class="reference internal" href="pattern.html#Pattern" title="Pattern"><tt class="xref py py-class docutils literal"><span class="pre">Pattern</span></tt></a> object) within the region.  The matching
+content in the region has a similarity between 0 (not found) and 1 (found and
+it is per pixel exactly matches to the pattern). The find can be advised, to
+search with a minimum similarity, so that some minor variations in shape and
+color can be ignored. If nothing else is specified, Sikuli searches with a
+minimum similarity of 0.7, which does what is expected in general cases.
+(This default value can be changed in <a class="reference internal" href="globals.html#Settings.MinSimilarity" title="Settings.MinSimilarity"><tt class="xref py py-attr docutils literal"><span class="pre">Settings.MinSimilarity</span></tt></a>.)</p>
+<p><a class="reference internal" href="#findinginsidearegionandwaitingforavisualevent"><em>Find operations</em></a> return a
+<a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">Match</span></tt></a> object, which has all the attributes and methods of a region
+and can be used in exactly the same way (e.g. to find or click another
+target within it). A <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">Match</span></tt></a> has the dimension of the pattern used
+for searching and also knows the position where it was found and its similarity
+score. A region preserves the best match of the last successful find operation
+and all matches of the last successful <a class="reference internal" href="#Region.findAll" title="Region.findAll"><tt class="xref py py-meth docutils literal"><span class="pre">Region.findAll()</span></tt></a> (accessible
+with <a class="reference internal" href="#Region.getLastMatches" title="Region.getLastMatches"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatches()</span></tt></a>. You can wait for patterns to show up
+using <a class="reference internal" href="#Region.wait" title="Region.wait"><tt class="xref py py-meth docutils literal"><span class="pre">Region.wait()</span></tt></a>, to vanish using <a class="reference internal" href="#Region.waitVanish" title="Region.waitVanish"><tt class="xref py py-meth docutils literal"><span class="pre">Region.waitVanish()</span></tt></a> or
+just check whether a pattern <a class="reference internal" href="#Region.exists" title="Region.exists"><tt class="xref py py-meth docutils literal"><span class="pre">exists</span></tt></a> without the need to handle
+<a class="reference internal" href="#exceptionfindfailed"><em>exceptions</em></a>.</p>
+<p>Sikuli supports visual event driven programming. You can tell a region
+<a class="reference internal" href="#observingvisualeventsinaregion"><em>to observe that something appears, vanishes or changes</em></a>.
+It is possible to wait for the completion of an
+observation or let it run in the background while your following script
+continues running.
+When one of the visual events happens, a handler in your script is called. Each
+region has one observer and each observer can handle multiple visual events.
+It&#8217;s your responsibility to stop an observation.</p>
+<div class="section" id="creating-a-region-setting-and-getting-attributes">
+<span id="creatingaregionsettingandgettingattributes"></span><h2>Creating a Region, Setting and Getting Attributes<a class="headerlink" href="#creating-a-region-setting-and-getting-attributes" title="Permalink to this headline">¶</a></h2>
+<p>In this chapter, you can find information on how to create a new region object.
+The attributes of a region object can be accessed directly or via
+method calls, e.g. to change their position and/or dimension. Here you will find the HowTo&#8217;s.</p>
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descname">Region</tt></dt>
+<dd><dl class="method">
+<dt id="Region.Region">
+<tt class="descname">Region</tt><big>(</big><em>x</em>, <em>y</em>, <em>w</em>, <em>h</em><big>)</big><a class="headerlink" href="#Region.Region" title="Permalink to this definition">¶</a></dt>
+<dt>
+<tt class="descname">Region</tt><big>(</big><em>region</em><big>)</big></dt>
+<dt>
+<tt class="descname">Region</tt><big>(</big><em>Rectangle</em><big>)</big></dt>
+<dd><p>Create a region object</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> &#8211; x position of a rectangle.</li>
+<li><strong>y</strong> &#8211; y position of a rectangle.</li>
+<li><strong>w</strong> &#8211; height of a rectangle.</li>
+<li><strong>h</strong> &#8211; width of a rectangle.</li>
+<li><strong>region</strong> &#8211; an existing region object.</li>
+<li><strong>rectangle</strong> &#8211; an existing object of Java class Rectangle</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a new region object.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>In addition to creating a region by using the tool provided
+by the IDE, a region can be created by specifying a rectangle. This is how
+the visual representation in the IDE of such a region is internally set up in
+the script.  A region can also be created by users in run-time using
+<tt class="xref py py-meth docutils literal"><span class="pre">Region.selectRegion()</span></tt>.</p>
+<p>You can create a region based on another region. This just
+duplicates the region (new object). This can be useful, if
+you need the same region with different attributes, such as another
+<a class="reference internal" href="#observingvisualeventsinaregion"><em>observation loop</em></a>
+or use <a class="reference internal" href="#Region.setThrowException" title="Region.setThrowException"><tt class="xref py py-meth docutils literal"><span class="pre">Region.setThrowException()</span></tt></a> to control
+whether throwing an exception when finding fails. Another way to create a
+region is to specify a rectangle object or to
+<a class="reference internal" href="#extendingaregion"><em>extend an existing region</em></a>.</p>
+<p><em>Note:</em> The position and dimension attributes are named x, y
+(values representing the top left corner) and w, h (width and height).
+You might use these or the get/set methods.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">topLeft</span> <span class="o">=</span> <span class="n">Location</span><span class="p">(</span><span class="n">reg</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">reg</span><span class="o">.</span><span class="n">y</span><span class="p">)</span> <span class="c"># equivalent to</span>
+<span class="n">topLeft</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">getTopLeft</span><span class="p">()</span>
+
+<span class="n">theWidth</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">w</span> <span class="c"># equivalent to</span>
+<span class="n">theWidth</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">getW</span><span class="p">()</span>
+
+<span class="n">reg</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">theWidth</span> <span class="c"># equivalent to</span>
+<span class="n">reg</span><span class="o">.</span><span class="n">setH</span><span class="p">(</span><span class="n">theWidth</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Note:</strong> Additionally you might use <a class="reference internal" href="screen.html#Screen.selectRegion" title="Screen.selectRegion"><tt class="xref py py-meth docutils literal"><span class="pre">selectRegion()</span></tt></a> to interactively create a new region.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.setX">
+<tt class="descname">setX</tt><big>(</big><em>number</em><big>)</big><a class="headerlink" href="#Region.setX" title="Permalink to this definition">¶</a></dt>
+<dt id="Region.setY">
+<tt class="descname">setY</tt><big>(</big><em>number</em><big>)</big><a class="headerlink" href="#Region.setY" title="Permalink to this definition">¶</a></dt>
+<dt id="Region.setW">
+<tt class="descname">setW</tt><big>(</big><em>number</em><big>)</big><a class="headerlink" href="#Region.setW" title="Permalink to this definition">¶</a></dt>
+<dt id="Region.setH">
+<tt class="descname">setH</tt><big>(</big><em>number</em><big>)</big><a class="headerlink" href="#Region.setH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the respective attribute of the region to the new value. This
+effectively moves the region around and/or changes its dimension.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>number</strong> &#8211; the new value</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="versionadded">
+<p><span>New in version X1.0-rc2.</span></p>
+</div>
+<dl class="method">
+<dt id="Region.moveTo">
+<tt class="descname">moveTo</tt><big>(</big><em>location</em><big>)</big><a class="headerlink" href="#Region.moveTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the position of this region regarding it&#8217;s top left corner
+to the given location (the x and y values are modified).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>location</strong> &#8211; location object becomes the new top left corner</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the modified region object</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">reg</span><span class="o">.</span><span class="n">moveTo</span><span class="p">(</span><span class="n">anotherLocation</span><span class="p">)</span> <span class="c"># equivalent to</span>
+<span class="n">reg</span><span class="o">.</span><span class="n">setX</span><span class="p">(</span><span class="n">anotherLocation</span><span class="o">.</span><span class="n">x</span><span class="p">);</span> <span class="n">reg</span><span class="o">.</span><span class="n">setY</span><span class="p">(</span><span class="n">anotherLocation</span><span class="o">.</span><span class="n">y</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.setROI">
+<tt class="descname">setROI</tt><big>(</big><em>x</em>, <em>y</em>, <em>w</em>, <em>h</em><big>)</big><a class="headerlink" href="#Region.setROI" title="Permalink to this definition">¶</a></dt>
+<dt>
+<tt class="descname">setROI</tt><big>(</big><em>rectangle</em><big>)</big></dt>
+<dt id="Region.setRect">
+<tt class="descname">setRect</tt><big>(</big><em>x</em>, <em>y</em>, <em>w</em>, <em>h</em><big>)</big><a class="headerlink" href="#Region.setRect" title="Permalink to this definition">¶</a></dt>
+<dt>
+<tt class="descname">setRect</tt><big>(</big><em>rectangle</em><big>)</big></dt>
+<dd><p>Both methods are doing exactly the same: setting position and dimension to
+new values. The motivation for two names is to make scripts more readable:
+<tt class="docutils literal"><span class="pre">setROI()</span></tt> is intended to restrict the search to a smaller area to speed up
+processing searches (region of interest), whereas <tt class="docutils literal"><span class="pre">setRect()</span></tt> should be
+used to redefine a region (which could be enlarging it).</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x, y, w, h</strong> (<em>all</em>) &#8211; the attributes of a rectangle</li>
+<li><strong>rectangle</strong> &#8211; a rectangle object</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">None</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="versionadded">
+<p><span>New in version X1.0-rc2.</span></p>
+</div>
+<dl class="method">
+<dt id="Region.morphTo">
+<tt class="descname">morphTo</tt><big>(</big><em>region</em><big>)</big><a class="headerlink" href="#Region.morphTo" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the position and dimension of this region to the corresponding values
+of the region given as parameter. (see: <a class="reference internal" href="#Region.setRect" title="Region.setRect"><tt class="xref py py-meth docutils literal"><span class="pre">setRect()</span></tt></a>)</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>region</strong> &#8211; a region object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the modified region object</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">reg</span><span class="o">.</span><span class="n">morphTo</span><span class="p">(</span><span class="n">anotherRegion</span><span class="p">)</span> <span class="c"># equivalent to</span>
+<span class="n">r</span> <span class="o">=</span> <span class="n">anotherRegion</span><span class="p">;</span> <span class="n">reg</span><span class="o">.</span><span class="n">setX</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">x</span><span class="p">);</span> <span class="n">reg</span><span class="o">.</span><span class="n">setY</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">y</span><span class="p">);</span> <span class="n">reg</span><span class="o">.</span><span class="n">setW</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">w</span><span class="p">);</span> <span class="n">reg</span><span class="o">.</span><span class="n">setH</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.getX">
+<tt class="descname">getX</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getX" title="Permalink to this definition">¶</a></dt>
+<dt id="Region.getY">
+<tt class="descname">getY</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getY" title="Permalink to this definition">¶</a></dt>
+<dt id="Region.getW">
+<tt class="descname">getW</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getW" title="Permalink to this definition">¶</a></dt>
+<dt id="Region.getH">
+<tt class="descname">getH</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the respective attribute of the region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">integer value</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.getCenter">
+<tt class="descname">getCenter</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getCenter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the center of the region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">an object of <a class="reference internal" href="location.html#Location" title="Location"><tt class="xref py py-class docutils literal"><span class="pre">Location</span></tt></a></td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="versionadded">
+<p><span>New in version X1.0-rc2.</span></p>
+</div>
+<dl class="method">
+<dt id="Region.getTopLeft">
+<tt class="descname">getTopLeft</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getTopLeft" title="Permalink to this definition">¶</a></dt>
+<dt id="Region.getTopRight">
+<tt class="descname">getTopRight</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getTopRight" title="Permalink to this definition">¶</a></dt>
+<dt id="Region.getBottomLeft">
+<tt class="descname">getBottomLeft</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getBottomLeft" title="Permalink to this definition">¶</a></dt>
+<dt id="Region.getBottomRight">
+<tt class="descname">getBottomRight</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getBottomRight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the location of the region&#8217;s respective corner</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">Location object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.getScreen">
+<tt class="descname">getScreen</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getScreen" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the screen object that contains this region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a new <a class="reference internal" href="screen.html#Screen" title="Screen"><tt class="xref py py-class docutils literal"><span class="pre">Screen</span></tt></a> object</td>
+</tr>
+</tbody>
+</table>
+<p>This method only makes sense in
+<a class="reference internal" href="screen.html#multimonitorenvironments"><em>Multi Monitor Environments</em></a>,
+since it always returns the default screen in a single monitor environment.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.getLastMatch">
+<tt class="descname">getLastMatch</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getLastMatch" title="Permalink to this definition">¶</a></dt>
+<dt id="Region.getLastMatches">
+<tt class="descname">getLastMatches</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getLastMatches" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the best match as a <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">Match</span></tt></a> object or one or more
+match objects as an <tt class="xref py py-class docutils literal"><span class="pre">Iterator</span></tt> object respectively</td>
+</tr>
+</tbody>
+</table>
+<p>All successful find operations (explicit like <tt class="docutils literal"><span class="pre">find()</span></tt> or
+implicit like <tt class="docutils literal"><span class="pre">click()</span></tt>), store the best match in the <cite>lastMatch</cite> attribute
+of the region that was searched. <tt class="docutils literal"><span class="pre">findAll()</span></tt> stores all found matches into
+<cite>lastMatches</cite> atribute of the region that was searched as an iterator.</p>
+<p>To access these attributes use <tt class="docutils literal"><span class="pre">region.getLastMatch()</span></tt> or
+<tt class="docutils literal"><span class="pre">region.getLastMatches()</span></tt> respectively.</p>
+<p>How to use the iterator object returned by getLastMatches()
+<a class="reference internal" href="match.html#iteratingmatches"><em>is documented here</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.setAutoWaitTimeout">
+<tt class="descname">setAutoWaitTimeout</tt><big>(</big><em>seconds</em><big>)</big><a class="headerlink" href="#Region.setAutoWaitTimeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the maximum waiting time for all subsequent find operations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seconds</strong> &#8211; a number, which can have a fraction. The internal
+granularity is milliseconds.</td>
+</tr>
+</tbody>
+</table>
+<p>This method enables all find operations to wait for the given
+pattern to appear until the specified amount of time has elapsed. The
+default is 3.0 seconds. This method is intended for users to override
+this default setting. As such it lets <a class="reference internal" href="#Region.find" title="Region.find"><tt class="xref py py-meth docutils literal"><span class="pre">Region.find()</span></tt></a> work like
+<a class="reference internal" href="#Region.wait" title="Region.wait"><tt class="xref py py-meth docutils literal"><span class="pre">Region.wait()</span></tt></a>, without being able to set an individual timeout value
+for a specific find operation.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.getAutoWaitTimeout">
+<tt class="descname">getAutoWaitTimeout</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getAutoWaitTimeout" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current value of the maximum waiting time for   find operations.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">timeout in seconds</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="extending-a-region">
+<span id="extendingaregion"></span><h2>Extending a Region<a class="headerlink" href="#extending-a-region" title="Permalink to this headline">¶</a></h2>
+<p>These methods (exception <tt class="docutils literal"><span class="pre">inside()</span></tt>) return a new region object, that is
+based on the specified region (sometimes called spatial operators).
+The range parameter, if given as positive integer number, restricts the
+dimension of the new region (width and/or height respectively) to that
+value. If range is not specified, the new region extends to the respective
+boundary of the screen the given region belongs to. An exception is <tt class="docutils literal"><span class="pre">nearby()</span></tt>,
+which uses 50 as its default range.</p>
+<p><strong>Note</strong>: In all cases the current region remains unchanged.</p>
+<p><strong>Note</strong>: In all cases the new region does not extend beyond any boundary of the
+screen that contains the given region.</p>
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descname">Region</tt></dt>
+<dd><dl class="method">
+<dt id="Region.offset">
+<tt class="descname">offset</tt><big>(</big><em>location</em><big>)</big><a class="headerlink" href="#Region.offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new Region object, whose upper left corner is relocated
+adding the location&#8217;s x and y value to the respective values of the given region.
+Width and height are the same. So this clones a region at a different place.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>location</strong> &#8211; a <a class="reference internal" href="location.html#Location" title="Location"><tt class="xref py py-class docutils literal"><span class="pre">Location</span></tt></a> object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a new <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> object</td>
+</tr>
+</tbody>
+</table>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">new_reg</span> <span class="o">=</span> <span class="n">reg</span><span class="o">.</span><span class="n">offset</span><span class="p">(</span><span class="n">Location</span><span class="p">(</span><span class="n">xoff</span><span class="p">,</span> <span class="n">yoff</span><span class="p">))</span> <span class="c"># same as</span>
+<span class="n">new_reg</span> <span class="o">=</span> <span class="n">Region</span><span class="p">(</span><span class="n">reg</span><span class="o">.</span><span class="n">x</span> <span class="o">+</span> <span class="n">xoff</span><span class="p">,</span> <span class="n">reg</span><span class="o">.</span><span class="n">y</span> <span class="o">+</span> <span class="n">yoff</span><span class="p">,</span> <span class="n">reg</span><span class="o">.</span><span class="n">w</span><span class="p">,</span> <span class="n">reg</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.inside">
+<tt class="descname">inside</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.inside" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the same object. Retained for upward compatibility.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> object</td>
+</tr>
+</tbody>
+</table>
+<p>This method can be used to make scripts more readable.
+<tt class="docutils literal"><span class="pre">region.inside().find()</span></tt> is totally equivalent to <tt class="docutils literal"><span class="pre">region.find()</span></tt>.</p>
+</dd></dl>
+
+<img alt="_images/spatial.jpg" src="_images/spatial.jpg" />
+<dl class="method">
+<dt id="Region.nearby">
+<tt class="descname">nearby</tt><big>(</big><span class="optional">[</span><em>range</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.nearby" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> that includes the nearby neighbourhood
+of the the current region. The new region is defined by extending the
+current region&#8217;s dimensions in all directions by <em>range</em> number of pixels. The
+center of the new region remains the same.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>range</strong> &#8211; a positive integer indicating the number of pixels (default = 50).</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.above">
+<tt class="descname">above</tt><big>(</big><span class="optional">[</span><em>range</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.above" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> that is defined above the current region&#8217;s
+top border with a height of <em>range</em> number of pixels.
+So it does not include the current      region.
+If <em>range</em> is omitted, it reaches to the top
+of the screen. The new region has the same width and x-position as the
+current region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>range</strong> &#8211; a positive integer defining the new height</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.below">
+<tt class="descname">below</tt><big>(</big><span class="optional">[</span><em>range</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.below" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> that is defined below the current region&#8217;s
+bottom border with a height of <em>range</em> number of pixels.
+So it does not include the current      region.
+If <em>range</em> is omitted, it reaches to the bottom
+of the screen. The new region has the same width and x-position as the
+current region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>range</strong> &#8211; a positive integer defining the new height</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.left">
+<tt class="descname">left</tt><big>(</big><span class="optional">[</span><em>range</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.left" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> that is defined left of the current region&#8217;s
+left border with a width of <em>range</em> number of pixels.
+So it does not include the current      region.
+If <em>range</em> is omitted, it reaches to the left border
+of the screen. The new region has the same height and y-position as the
+current region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>range</strong> &#8211; a positive integer defining the new width</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.right">
+<tt class="descname">right</tt><big>(</big><span class="optional">[</span><em>range</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.right" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> that is defined right of the current region&#8217;s
+right border with a width of <em>range</em> number of pixels.
+So it does not include the current      region.
+If <em>range</em> is omitted, it reaches to the right border
+of the screen. The new region has the same height and y-position as the
+current region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>range</strong> &#8211; a positive integer defining the new width</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="finding-inside-a-region-and-waiting-for-a-visual-event">
+<span id="findinginsidearegionandwaitingforavisualevent"></span><h2>Finding inside a Region and Waiting for a Visual Event<a class="headerlink" href="#finding-inside-a-region-and-waiting-for-a-visual-event" title="Permalink to this headline">¶</a></h2>
+<p>Besides <a class="reference internal" href="#actingonaregion"><em>acting on visual objects</em></a>, finding them is one of the core
+functions of Sikuli.</p>
+<p><strong>PS</strong>: means, that either a <a class="reference internal" href="pattern.html#Pattern" title="Pattern"><tt class="xref py py-class docutils literal"><span class="pre">Pattern</span></tt></a> or a string (path to an image
+file or just plain text) can be used as parameter. A find operation is
+successful, if the given image is found with the given minimum similarity or
+the given text is found exactly. Similarity is a value between 0 and 1 to
+specify how likely the given image looks like the target. By default, the
+similarity is 0.7 if an image rather than a pattern object with a specific
+similarity is given to <a class="reference internal" href="#Region.find" title="Region.find"><tt class="xref py py-meth docutils literal"><span class="pre">Region.find()</span></tt></a>.</p>
+<p>Normally all these region methods are used as <tt class="docutils literal"><span class="pre">reg.find(PS)</span></tt>, where reg is a
+region object. If written as <tt class="docutils literal"><span class="pre">find(PS)</span></tt> it acts on the default screen, which is
+an implicit region in this case (see: <a class="reference internal" href="screen.html#defaultscreen"><em>SCREEN as Default Region</em></a>).
+But in most cases it is a good idea to use
+<tt class="docutils literal"><span class="pre">region.find()</span></tt> to restrict the search to a smaller region in order to speed up
+processing.</p>
+<p>If a find operation is successful, the returned match is additionally stored
+internally with the region that was used for the search. So instead of using a
+variable to store the match ( <tt class="docutils literal"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">reg.find()</span></tt> ), you can use <tt class="docutils literal"><span class="pre">reg.getLastMatch()</span></tt> to access
+it afterwards. Unsuccessful find operations will leave these values unchanged.</p>
+<p id="patternnotfound">By default, if the <strong>visual object (image or text) cannot be found</strong>, Sikuli
+will stop the script by raising an <a class="reference internal" href="#exceptionfindfailed"><em>Exception FindFailed</em></a>.
+This follows the standards of the Python language, so that you could handle such exceptions using
+<tt class="docutils literal"><span class="pre">try:</span> <span class="pre">...</span> <span class="pre">except:</span> <span class="pre">...</span></tt>.</p>
+<p>If you are not used to programming using the Python language or because of other reasons, you might just want to bypass the
+exception handling, which means just ignoring it (None is returned in that case).
+Or you might interactively react on a FindFailed situation (e.g. optionally repeat the find).
+Read more about concepts and options at: <a class="reference internal" href="#exceptionfindfailed"><em>Exception FindFailed</em></a>.</p>
+<p>If you have <strong>multiple monitors</strong>, please read
+<a class="reference internal" href="screen.html#multimonitorenvironments"><em>Multi Monitor Environments</em></a>.</p>
+<p><strong>Note on IDE</strong>: Capturing is a tool in the IDE, to quickly set up images to search
+for. These images are named automatically by the IDE and stored together with
+the script, at the time it is saved (we call the location in the file system
+bundle-path). Behind the curtain, the images itself are specified simply by
+using a string containing the file name (path to an image file).</p>
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descname">Region</tt></dt>
+<dd><dl class="method">
+<dt id="Region.find">
+<tt class="descname">find</tt><big>(</big><em>PS</em><big>)</big><a class="headerlink" href="#Region.find" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>PS</strong> &#8211; a <a class="reference internal" href="pattern.html#Pattern" title="Pattern"><tt class="xref py py-class docutils literal"><span class="pre">Pattern</span></tt></a> object or a string (path to an image file or just plain text)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">Match</span></tt></a> object that contains the best match or fails if <a class="reference internal" href="#patternnotfound"><em>not found</em></a></td>
+</tr>
+</tbody>
+</table>
+<p>Find a particular GUI element, which is seen as the given image or
+just plain text. The given file name of an image specifies the element&#8217;s
+appearance. It searches within the region and returns the best match,
+which shows a similarity greater than the minimum similarity given by
+the pattern. If no similarity was set for the pattern by
+<a class="reference internal" href="pattern.html#Pattern.similar" title="Pattern.similar"><tt class="xref py py-meth docutils literal"><span class="pre">Pattern.similar()</span></tt></a> before, a default minimum similarity of 0.7
+is set automatically.</p>
+<p>If autoWaitTimeout is set to a non-zero value, find() just acts as a wait().</p>
+<p><strong>Side Effect</strong> <em>lastMatch</em>: the best match can be accessed using <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.findAll">
+<tt class="descname">findAll</tt><big>(</big><em>PS</em><big>)</big><a class="headerlink" href="#Region.findAll" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>PS</strong> &#8211; a <a class="reference internal" href="pattern.html#Pattern" title="Pattern"><tt class="xref py py-class docutils literal"><span class="pre">Pattern</span></tt></a> object or a string (path to an image
+file or just plain text)</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">one or more <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">Match</span></tt></a> objects as an iterator object or fails if <a class="reference internal" href="#patternnotfound"><em>not found</em></a></td>
+</tr>
+</tbody>
+</table>
+<p>How to iterate through is <a class="reference internal" href="match.html#iteratingmatches"><em>documented here</em></a>.</p>
+<p>Repeatedly find ALL instances of a pattern, until no match can be
+found anymore, that meets the requirements for a single
+<a class="reference internal" href="#Region.find" title="Region.find"><tt class="xref py py-meth docutils literal"><span class="pre">Region.find()</span></tt></a> with the specified pattern.</p>
+<p>By default, the returned matches are sorted by the similiarty.
+If you need them ordered by their positions, say the Y coordinates,
+you have to use Python&#8217;s <a class="reference external" href="http://wiki.python.org/moin/HowTo/Sorting/">sorted</a> function. Here is a example of sorting the matches from top to bottom.</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="kw">def</span> by_y(match):
+<span class='lineno'>2</span>   <span class="kw">return</span> match.y
+<span class='lineno'>3</span>
+<span class='lineno'>4</span>icons = findAll(<img src="png_icon.png"/>)
+<span class='lineno'>5</span><span class="cmt"># sort the icons by their y coordinates and put them into a new variable sorted_icons</span>
+<span class='lineno'>6</span>sorted_icons = sorted(icons, key=by_y)
+<span class='lineno'>7</span><span class="cmt"># another shorter version is using lambda.</span>
+<span class='lineno'>8</span>sorted_icons = sorted(icons, key=<span class="kw">lambda</span> m:m.y)
+<span class='lineno'>9</span><span class="kw">for</span> icon <span class="kw">in</span> sorted_icons:
+<span class='lineno'>10</span>   <span class="kw">pass</span> <span class="cmt"># do whatever you want to do with the sorted icons</span>
+</pre>
+<p><strong>Side Effect</strong> <em>lastMatches</em>: a reference to the returned iterator object containing the
+found matches is stored with the region that was searched. It can be
+accessed using getLastMatches() afterwards. How to iterate through an
+iterator of matches is <a class="reference internal" href="match.html#iteratingmatches"><em>documented here</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.wait">
+<tt class="descname">wait</tt><big>(</big><span class="optional">[</span><em>PS</em><span class="optional">]</span><span class="optional">[</span>, <em>seconds</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.wait" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>PS</strong> &#8211; a <a class="reference internal" href="pattern.html#Pattern" title="Pattern"><tt class="xref py py-class docutils literal"><span class="pre">Pattern</span></tt></a> object or a string (path to an image
+file or just plain text)</li>
+<li><strong>seconds</strong> &#8211; a number, which can have a fraction, as maximum waiting
+time in seconds. The internal granularity is milliseconds. If not
+specified, the auto wait timeout value set by
+<a class="reference internal" href="#Region.setAutoWaitTimeout" title="Region.setAutoWaitTimeout"><tt class="xref py py-meth docutils literal"><span class="pre">Region.setAutoWaitTimeout()</span></tt></a> is used. Use the constant
+<em>FOREVER</em> to wait for an infinite time.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">Match</span></tt></a> object that contains the best match or fails if <a class="reference internal" href="#patternnotfound"><em>not found</em></a></p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>If <em>PS</em> is not specified, the script just pauses for the specified
+amount of time. It is still possible to use <tt class="docutils literal"><span class="pre">sleep(seconds)</span></tt> instead,
+but this is deprecated.</p>
+<p>If <em>PS</em> is specified, it keeps searching the given pattern in the
+region until the image appears ( would have been found with
+<a class="reference internal" href="#Region.find" title="Region.find"><tt class="xref py py-meth docutils literal"><span class="pre">Region.find()</span></tt></a>) or the specified amount of time has elapsed. At
+least one find operation is performed, even if 0 seconds is specified.)</p>
+<p><strong>Side Effect</strong> <em>lastMatch</em>: the best match can be accessed using <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards.</p>
+<p>Note: You may adjust the scan rate (how often a search during the wait
+takes place) by setting <a class="reference internal" href="globals.html#Settings.WaitScanRate" title="Settings.WaitScanRate"><tt class="xref py py-attr docutils literal"><span class="pre">Settings.WaitScanRate</span></tt></a> appropriately.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.waitVanish">
+<tt class="descname">waitVanish</tt><big>(</big><em>PS</em><span class="optional">[</span>, <em>seconds</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.waitVanish" title="Permalink to this definition">¶</a></dt>
+<dd><p>Wait until the give pattern <em>PS</em> in the region vanishes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>PS</strong> &#8211; a <a class="reference internal" href="pattern.html#Pattern" title="Pattern"><tt class="xref py py-class docutils literal"><span class="pre">Pattern</span></tt></a> object or a string (path to an image
+file or just plain text)</li>
+<li><strong>seconds</strong> &#8211; a number, which can have a fraction, as maximum waiting
+time in seconds. The internal granularity is milliseconds. If not
+specified, the auto wait timeout value set by
+<a class="reference internal" href="#Region.setAutoWaitTimeout" title="Region.setAutoWaitTimeout"><tt class="xref py py-meth docutils literal"><span class="pre">Region.setAutoWaitTimeout()</span></tt></a> is used. Use the constant
+<em>FOREVER</em> to wait for an infinite time.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><em>True</em> if the pattern vanishes within the specified waiting
+time, or <em>False</em> if the pattern stays visible after the waiting time
+has elapsed.</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This method keeps searching the given pattern in the region until the
+image vanishes (can not be found with <a class="reference internal" href="#Region.find" title="Region.find"><tt class="xref py py-meth docutils literal"><span class="pre">Region.find()</span></tt></a> any
+longer) or the specified amount of time has elapsed. At least one find
+operation is performed, even if 0 seconds is specified.</p>
+<p><strong>Note</strong>: You may adjust the scan rate (how often a search during the wait
+takes place) by setting <a class="reference internal" href="globals.html#Settings.WaitScanRate" title="Settings.WaitScanRate"><tt class="xref py py-attr docutils literal"><span class="pre">Settings.WaitScanRate</span></tt></a> appropriately.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.exists">
+<tt class="descname">exists</tt><big>(</big><em>PS</em><span class="optional">[</span>, <em>seconds</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.exists" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether the give pattern is visible on the screen.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>PS</strong> &#8211; a <a class="reference internal" href="pattern.html#Pattern" title="Pattern"><tt class="xref py py-class docutils literal"><span class="pre">Pattern</span></tt></a> object or a string (path to an image
+file or just plain text)</li>
+<li><strong>seconds</strong> &#8211; a number, which can have a fraction, as maximum waiting
+time in seconds. The internal granularity is milliseconds. If not
+specified, the auto wait timeout value set by
+<a class="reference internal" href="#Region.setAutoWaitTimeout" title="Region.setAutoWaitTimeout"><tt class="xref py py-meth docutils literal"><span class="pre">Region.setAutoWaitTimeout()</span></tt></a> is used. Use the constant
+<em>FOREVER</em> to wait for an infinite time.</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">Match</span></tt></a> object that contains the best match. None
+is returned, if nothing is found within the specified waiting time</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Does exactly the same as <a class="reference internal" href="#Region.wait" title="Region.wait"><tt class="xref py py-meth docutils literal"><span class="pre">Region.wait()</span></tt></a>, but no exception is
+raised in case of FindFailed. So it can be used to symplify scripting
+in case that you only want to know wether something is there or not to
+decide how to proceed in your workflow. So it is typically used with an
+if statement.  At least one find operation is performed, even if 0
+seconds is specified. So specifying 0 seconds saves some time, in case
+there is no need to wait, since its your intention to get the
+information &#8220;not found&#8221; directly.</p>
+<p><strong>Side Effect</strong> <em>lastMatch</em>: the best match can be accessed using <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards.</p>
+<p><strong>Note</strong>: You may adjust the scan rate (how often a search during the wait
+takes place) by setting <a class="reference internal" href="globals.html#Settings.WaitScanRate" title="Settings.WaitScanRate"><tt class="xref py py-attr docutils literal"><span class="pre">Settings.WaitScanRate</span></tt></a> appropriately.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="observing-visual-events-in-a-region">
+<span id="observingvisualeventsinaregion"></span><h2>Observing Visual Events in a Region<a class="headerlink" href="#observing-visual-events-in-a-region" title="Permalink to this headline">¶</a></h2>
+<p>You can tell a region to observe that something appears or vanishes,
+or something changes in that region. Using the methods
+<a class="reference internal" href="#Region.onAppear" title="Region.onAppear"><tt class="xref py py-meth docutils literal"><span class="pre">Region.onAppear()</span></tt></a>, <a class="reference internal" href="#Region.onVanish" title="Region.onVanish"><tt class="xref py py-meth docutils literal"><span class="pre">Region.onVanish()</span></tt></a> and <a class="reference internal" href="#Region.onChange" title="Region.onChange"><tt class="xref py py-meth docutils literal"><span class="pre">Region.onChange()</span></tt></a>,
+you register an event observer that starts its observation when you
+call <a class="reference internal" href="#Region.observe" title="Region.observe"><tt class="xref py py-meth docutils literal"><span class="pre">Region.observe()</span></tt></a>. Each region object can have exactly one observation active and
+running. For each observation, you can register as many event observers as
+needed. So you can think of it as grouping some <tt class="docutils literal"><span class="pre">wait()</span></tt> and <tt class="docutils literal"><span class="pre">waitVanish()</span></tt>
+together and have them processed simultanouesly, while you are waiting for one
+of these events to happen.</p>
+<p>It is possible to let the script wait for the completion of an observation or
+let it run in the background, while your script is continuing. With a timing
+parameter you can tell <a class="reference internal" href="#Region.observe" title="Region.observe"><tt class="xref py py-meth docutils literal"><span class="pre">Region.observe()</span></tt></a>
+to stop observation anyway after the given time.</p>
+<p>When one of the visual events happens, an event handler written by you is
+called. An event handler is a function contained in your script and expects a
+<a class="reference internal" href="#SikuliEvent" title="SikuliEvent"><tt class="xref py py-class docutils literal"><span class="pre">SikuliEvent</span></tt></a> object as a parameter.
+During the processing in your handler, the
+observation is paused until your handler has ended. Information between the
+main script and your handlers can be given forward and backward using global
+variables.</p>
+<p>It&#8217;s your responsibility to stop an observation. This can either be done by
+calling <a class="reference internal" href="#Region.stopObserver" title="Region.stopObserver"><tt class="xref py py-meth docutils literal"><span class="pre">Region.stopObserver()</span></tt></a>
+or by starting the observation with a timing parameter.</p>
+<p>Since you can have as many region objects as needed and each region can have
+one observation active and running. So theoretically it&#8217;s possible to have as
+many visual events being observered at the same time as needed. But in reality,
+the number of observation is still limited by the system resources available to
+Sikuli at that time.</p>
+<p>Be aware, that every observation is a number of different find operations that
+are processed repeatedly. So to speed up processing and keep your script
+acting, you may want to define a region for observation as small as possible.
+You may adjust the scan rate (how often a search during the observation takes
+place) by setting
+<a class="reference internal" href="globals.html#Settings.ObserveScanRate" title="Settings.ObserveScanRate"><tt class="xref py py-attr docutils literal"><span class="pre">Settings.ObserveScanRate</span></tt></a> appropriately.</p>
+<p><strong>PS</strong>: means, that either a Pattern or a String (path to an image file or just
+plain text) can be used as parameter.</p>
+<p id="observehandler"><strong>handler</strong>: as a parameter in the following methods, you have to specify the <em>name</em>
+of a function, which will be called by the observer, in case the observed event
+happens. The function itself has to be defined in your script before using the
+method that references the function. The existance of the function will be
+checked before starting the script. So to get your script running, you have to
+have at least the following statements in your script:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">myHandler</span><span class="p">(</span><span class="n">event</span><span class="p">):</span> <span class="c"># you can choose any valid function name</span>
+        <span class="c"># event: can be any variable name, it references the SikuliEvent object</span>
+        <span class="k">pass</span> <span class="c"># add your statements here</span>
+
+<span class="n">onAppear</span><span class="p">(</span><span class="s">&quot;path-to-an-image-file&quot;</span><span class="p">,</span> <span class="n">myHandler</span><span class="p">)</span> <span class="c"># or any other onEvent()</span>
+<span class="n">observe</span><span class="p">(</span><span class="mi">10</span><span class="p">)</span> <span class="c"># observes for 10 seconds</span>
+</pre></div>
+</div>
+<p>Read <a class="reference internal" href="#SikuliEvent" title="SikuliEvent"><tt class="xref py py-class docutils literal"><span class="pre">SikuliEvent</span></tt></a> to know what is contained in a SikuliEvent object</p>
+<p><strong>Note on performance</strong>: Normally all the region methods are used as <tt class="docutils literal"><span class="pre">reg.onAppear(PS)</span></tt>, where <tt class="docutils literal"><span class="pre">reg</span></tt> is a
+region object. If written as <tt class="docutils literal"><span class="pre">onAppear(PS)</span></tt> it operates on the default screen being the implicit
+region in this case. Using <tt class="docutils literal"><span class="pre">region.onEvent()</span></tt> instead will restrict the search to the
+region&#8217;s rectangle and speed up processing, if region is significantly smaller
+than the whole screen.</p>
+<p><strong>Note</strong>: In case of having more than one Monitor active, read
+<a class="reference internal" href="screen.html#multimonitorenvironments"><em>Multi Monitor Environments</em></a> before.</p>
+<p><strong>Note on IDE</strong>: Capturing is a tool in the IDE, to quickly set up images to search
+for. These images are named automatically by the IDE and stored together with
+the script, at the time it is saved (we call the location in the file system
+bundle-path). Behind the curtain the images itself are specified by using a
+string containing the file name (path to an image file).</p>
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descname">Region</tt></dt>
+<dd><dl class="method">
+<dt id="Region.onAppear">
+<tt class="descname">onAppear</tt><big>(</big><em>PS</em>, <em>handler</em><big>)</big><a class="headerlink" href="#Region.onAppear" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>PS</strong> &#8211; a <a class="reference internal" href="pattern.html#Pattern" title="Pattern"><tt class="xref py py-class docutils literal"><span class="pre">Pattern</span></tt></a> object or a string (path to an image
+file or just plain text.</li>
+<li><strong>handler</strong> &#8211; the name of a handler function in the script</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>With the given region you register an observer, that should wait for
+the pattern to be there or to appaear and is activated with the next
+call of <tt class="docutils literal"><span class="pre">observe()</span></tt>. In the moment the internal find operation on the
+given pattern is successful during observation, your handler is called
+and the observation is paused until you return from your handler.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.onVanish">
+<tt class="descname">onVanish</tt><big>(</big><em>PS</em>, <em>handler</em><big>)</big><a class="headerlink" href="#Region.onVanish" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>PS</strong> &#8211; a <a class="reference internal" href="pattern.html#Pattern" title="Pattern"><tt class="xref py py-class docutils literal"><span class="pre">Pattern</span></tt></a> object or a string (path to an image
+file or just plain text.</li>
+<li><strong>handler</strong> &#8211; the name of a handler function in the script</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>With the given region you register an observer, that should wait for
+the pattern to be not there or to vanish and is activated with the next
+call of <tt class="docutils literal"><span class="pre">observe()</span></tt>. In the moment the internal find operation on the
+given pattern fails during observation, your handler is called and the
+observation is paused until you return from your handler.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.onChange">
+<tt class="descname">onChange</tt><big>(</big><span class="optional">[</span><em>minChangedSize</em><span class="optional">]</span>, <em>handler</em><big>)</big><a class="headerlink" href="#Region.onChange" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>minChangedSize</strong> &#8211; the minimum size in pixels of a change to trigger a change event.
+If omitted: 50 is used (see <a class="reference internal" href="globals.html#Settings.ObserveMinChangedPixels" title="Settings.ObserveMinChangedPixels"><tt class="xref py py-attr docutils literal"><span class="pre">Settings.ObserveMinChangedPixels</span></tt></a>).</li>
+<li><strong>handler</strong> &#8211; the name of a handler function in the script</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="versionadded">
+<p><span>New in version X1.0-rc2: </span><strong>minChangedSize</strong></p>
+</div>
+<p>With the given region you register an observer, that should wait for
+the visual content of the given region to change and is activated with
+the next call of <tt class="docutils literal"><span class="pre">observe()</span></tt>. In the moment the visual content changes
+during observation, your handler is called and the observation is
+paused until you return from your handler.</p>
+<p>Here is a example that highlights all changes in an observed region.</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">changed</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="k">print</span> <span class="s">&quot;something changed in &quot;</span><span class="p">,</span> <span class="n">event</span><span class="o">.</span><span class="n">region</span>
+        <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">changes</span><span class="p">:</span>
+                <span class="n">ch</span><span class="o">.</span><span class="n">highlight</span><span class="p">()</span> <span class="c"># highlight all changes</span>
+        <span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ch</span> <span class="ow">in</span> <span class="n">event</span><span class="o">.</span><span class="n">changes</span><span class="p">:</span>
+                <span class="n">ch</span><span class="o">.</span><span class="n">highlight</span><span class="p">()</span> <span class="c"># turn off the highlights</span>
+<span class="k">with</span> <span class="n">selectRegion</span><span class="p">(</span><span class="s">&quot;select a region to observe&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
+    <span class="c"># any change in r larger than 50 pixels would trigger the changed function</span>
+    <span class="n">onChange</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">changed</span><span class="p">)</span>
+    <span class="n">observe</span><span class="p">(</span><span class="n">background</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<span class="n">wait</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span> <span class="c"># another way to observe for 30 seconds</span>
+<span class="n">r</span><span class="o">.</span><span class="n">stopObserver</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.observe">
+<tt class="descname">observe</tt><big>(</big><span class="optional">[</span><em>seconds</em><span class="optional">]</span><span class="optional">[</span>, <em>background = False | True</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.observe" title="Permalink to this definition">¶</a></dt>
+<dd><p>Begin observation within the region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>seconds</strong> &#8211; a number, which can have a fraction, as maximum
+observation time in seconds. Omit it or use the constant FOREVER to
+tell the observation to run for an infinite time (or until stopped
+by a call of <tt class="docutils literal"><span class="pre">stopObserve()</span></tt>).</li>
+<li><strong>background</strong> &#8211; a flag indicating whether observation is run in the
+background. when set to <em>True</em>, the observation will be run in the
+background and processing of your script is continued immediately.
+Otherwise the script is paused until the completion of the
+observation.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>For each region object, only one observation can be running at a given time.</p>
+<p><strong>Note</strong>: You may adjust the scan rate (how often a search during the
+observation takes place) by setting <a class="reference internal" href="globals.html#Settings.ObserveScanRate" title="Settings.ObserveScanRate"><tt class="xref py py-attr docutils literal"><span class="pre">Settings.ObserveScanRate</span></tt></a>
+appropriately.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.stopObserver">
+<tt class="descname">stopObserver</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.stopObserver" title="Permalink to this definition">¶</a></dt>
+<dd><p>Stop observation within the region.</p>
+<p>This must be called on a valid region object. The source region of an
+observed visual event is available as one of the attributes of the <em>event</em>
+parameter that is passed to the handler function when the function is
+invoked.</p>
+<p>For example, to stop observation within a handler function, simply
+call <tt class="docutils literal"><span class="pre">event.region.stopObserver()</span></tt> inside the handler function.:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="k">def</span> <span class="nf">myHandler</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+        <span class="n">event</span><span class="o">.</span><span class="n">region</span><span class="o">.</span><span class="n">stopObserver</span><span class="p">()</span> <span class="c"># stops the observation</span>
+
+<span class="n">onAppear</span><span class="p">(</span><span class="s">&quot;path-to-an-image-file&quot;</span><span class="p">,</span> <span class="n">myHandler</span><span class="p">)</span>
+<span class="n">observe</span><span class="p">(</span><span class="n">FOREVER</span><span class="p">)</span> <span class="c"># observes until stopped in handler</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<div class="versionadded">
+<p><span>New in version X1.0-rc2.</span></p>
+</div>
+<dl class="class">
+<dt id="SikuliEvent">
+<em class="property">class </em><tt class="descname">SikuliEvent</tt><a class="headerlink" href="#SikuliEvent" title="Permalink to this definition">¶</a></dt>
+<dd><p>When processing an <a class="reference internal" href="#observingvisualeventsinaregion"><em>observation in a region</em></a>,
+a <a class="reference internal" href="#observehandler"><em>handler function is called</em></a>, when one of your
+registered events <a class="reference internal" href="#Region.onAppear" title="Region.onAppear"><tt class="xref py py-meth docutils literal"><span class="pre">Region.onAppear()</span></tt></a>, <a class="reference internal" href="#Region.onVanish" title="Region.onVanish"><tt class="xref py py-meth docutils literal"><span class="pre">Region.onVanish()</span></tt></a> or <a class="reference internal" href="#Region.onChange" title="Region.onChange"><tt class="xref py py-meth docutils literal"><span class="pre">Region.onChange()</span></tt></a> happen.</p>
+<p>The one parameter, you have access to in your handler function is an instance
+of <em>Class SikuliEvent</em>. You have access to the following attributes of the event,
+that might help to identify the cause of the event and act on the resulting matches.</p>
+<dl class="docutils">
+<dt><em>Usage:</em> <tt class="docutils literal"><span class="pre">event.attribute</span></tt></dt>
+<dd>where <tt class="docutils literal"><span class="pre">event</span></tt> is the parameter from the definition of your handler function: <tt class="docutils literal"><span class="pre">def</span> <span class="pre">myHandler(event):</span></tt></dd>
+</dl>
+<dl class="attribute">
+<dt id="SikuliEvent.type">
+<tt class="descname">type</tt><a class="headerlink" href="#SikuliEvent.type" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The <a class="reference internal" href="#SikuliEvent.type" title="SikuliEvent.type"><tt class="xref py py-attr docutils literal"><span class="pre">type</span></tt></a> of this event can be
+<tt class="xref py py-const docutils literal"><span class="pre">SikuliEvent.Type.APPEAR</span></tt>, <tt class="xref py py-const docutils literal"><span class="pre">SikuliEvent.Type.VANISH</span></tt>,
+or <tt class="xref py py-const docutils literal"><span class="pre">SikuliEvent.Type.CHANGE</span></tt>.</p>
+<dl class="attribute">
+<dt id="SikuliEvent.pattern">
+<tt class="descname">pattern</tt><a class="headerlink" href="#SikuliEvent.pattern" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The source pattern that triggered this event. This is only valid
+in APPEAR and VANISH events.</p>
+<dl class="attribute">
+<dt id="SikuliEvent.region">
+<tt class="descname">region</tt><a class="headerlink" href="#SikuliEvent.region" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>The source region of this event.</p>
+<dl class="attribute">
+<dt id="SikuliEvent.match">
+<tt class="descname">match</tt><a class="headerlink" href="#SikuliEvent.match" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>In an APPEAR event, <em>match</em> saves the top <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">Match</span></tt></a> object
+that appeared in the observed region.</p>
+<p>In a VANISH event, <em>match</em> saves the <em>last</em> <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">Match</span></tt></a> object
+that was in the observed region but vanished.</p>
+<p>This attribute is not valid in a CHANGE event.</p>
+<dl class="attribute">
+<dt id="SikuliEvent.changes">
+<tt class="descname">changes</tt><a class="headerlink" href="#SikuliEvent.changes" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>This attribute is valid only in a CHANGE event.</p>
+<p>This <em>changes</em> attribute is a list of <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">Match</span></tt></a> objects that
+changed and their sizes are at least <a class="reference internal" href="#Region.onChange" title="Region.onChange"><tt class="xref py py-meth docutils literal"><span class="pre">minChangedSize</span></tt></a> pixels.</p>
+</dd></dl>
+
+</div>
+<div class="section" id="acting-on-a-region">
+<span id="actingonaregion"></span><h2>Acting on a Region<a class="headerlink" href="#acting-on-a-region" title="Permalink to this headline">¶</a></h2>
+<p>Besides <a class="reference internal" href="#findinginsidearegionandwaitingforavisualevent"><em>finding visual objects</em></a>
+on the screen, acting on these elements is one of the
+kernel operations of Sikuli. Mouse actions can be simulated as well as pressing keys
+on a keyboard.</p>
+<p>The place on the screen, that should be acted on (in the end just one specific
+pixel, the click point), can be given either as a <a class="reference internal" href="pattern.html#Pattern" title="Pattern"><tt class="xref py py-class docutils literal"><span class="pre">pattern</span></tt></a> like with the find
+operations or by directly referencing a pixel <a class="reference internal" href="location.html#Location" title="Location"><tt class="xref py py-class docutils literal"><span class="pre">location</span></tt></a>
+or as center of a <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">region</span></tt></a> object (<a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">match</span></tt></a> or
+<a class="reference internal" href="screen.html#Screen" title="Screen"><tt class="xref py py-class docutils literal"><span class="pre">screen</span></tt></a> also) or the target offset location connected with a <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">match</span></tt></a>. Since all
+these choices can be used with all action methods as needed, they are abbreviated
+and called like this:</p>
+<p><strong>PSMRL:</strong> which means, that either a <a class="reference internal" href="pattern.html#Pattern" title="Pattern"><tt class="xref py py-class docutils literal"><span class="pre">Pattern</span></tt></a> object or a string (path to an image file or just
+plain text) or a <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">Match</span></tt></a> or a <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">Region</span></tt></a> or a <a class="reference internal" href="location.html#Location" title="Location"><tt class="xref py py-class docutils literal"><span class="pre">Location</span></tt></a> can be used as parameter, in
+detail:</p>
+<ul class="simple">
+<li><strong>P</strong>: <em>pattern</em>: a <a class="reference internal" href="pattern.html#Pattern" title="Pattern"><tt class="xref py py-class docutils literal"><span class="pre">Pattern</span></tt></a> object. An implicit find operation is
+processed first. If successful, the center of the resulting matches rectangle is
+the click point. If the pattern object has a target offset specified, this is
+used as click point instead.</li>
+<li><strong>S</strong>: <em>string</em>: a path to an image file or just plain text. An implicit find
+operation with the default minimum similarity 0.7 is processed first. If
+successful, the center of the resulting match object is the click point.</li>
+<li><strong>M</strong>: <em>match:</em> a <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">match</span></tt></a> object from a previous find operation. If the match has a target
+specified it is used as the click point, otherwise the center of the matches
+rectangle.</li>
+<li><strong>R</strong>: <em>region:</em> a <a class="reference internal" href="#Region" title="Region"><tt class="xref py py-class docutils literal"><span class="pre">region</span></tt></a> object whose center is used as click point.</li>
+<li><strong>L</strong>: <em>location:</em> a <a class="reference internal" href="location.html#Location" title="Location"><tt class="xref py py-class docutils literal"><span class="pre">location</span></tt></a> object which by definition represents a point on the
+screen that is used as click point.</li>
+</ul>
+<p>It is possible to simulate pressing the so called <a class="reference internal" href="keys.html"><em>key modifiers</em></a> together with the mouse
+operation or when simulating keyboard typing. The respective parameter is given by
+one or more predefined constants. If more than one modifier is necessary, they are
+combined by using &#8220;+&#8221; or &#8220;|&#8221;.</p>
+<p>Normally all these region methods are used as <tt class="docutils literal"><span class="pre">reg.click(PS)</span></tt>, where reg is a
+region object. If written as <tt class="docutils literal"><span class="pre">click(PS)</span></tt> the implicit find is done on the default
+screen being the implicit region in this case (see: <a class="reference internal" href="screen.html#defaultscreen"><em>SCREEN as Default Region</em></a>).
+But using <tt class="docutils literal"><span class="pre">reg.click(PS)</span></tt> will
+restrict the search to the region&#8217;s rectangle and speed up processing, if region is
+significantly smaller than the whole screen.</p>
+<p>Generally all aspects of <a class="reference internal" href="#findinginsidearegionandwaitingforavisualevent"><em>find operations</em></a> and of <a class="reference internal" href="#Region.find" title="Region.find"><tt class="xref py py-meth docutils literal"><span class="pre">Region.find()</span></tt></a>
+apply.</p>
+<p>If the find operation was successful, the match that was acted on, can be
+recalled using <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a>.</p>
+<p>As a default, if the <strong>visual object (image or text) cannot be found</strong>, Sikuli
+will stop the script by raising an <a class="reference internal" href="#exceptionfindfailed"><em>Exception FindFailed</em></a>
+(details see: <a class="reference internal" href="#patternnotfound"><em>not found</em></a>).</p>
+<p><strong>Note on IDE</strong>: Capturing is a tool in the IDE, to quickly set up images to search for.
+These images are named automatically by the IDE and stored together with the script,
+at the time it is saved (we call the location in the file system bundle-path).
+Behind the curtain the images itself are specified by using a string containing the
+file name (path to an image file).</p>
+<p><strong>Note</strong>: If you need to implement more sophisticated mouse and keyboard actions look at
+<a class="reference internal" href="#lowlevelmouseandkeyboardactions"><em>Low Level Mouse and Keyboard Actions</em></a>.</p>
+<p><strong>Note</strong>: In case of having more than one Monitor active, refer to <a class="reference internal" href="screen.html#multimonitorenvironments"><em>Multi Monitor
+Environments</em></a> for more details.</p>
+<p><strong>Note on Mac</strong>: it might be necessary, to use <a class="reference internal" href="globals.html#switchApp" title="switchApp"><tt class="xref py py-func docutils literal"><span class="pre">switchApp()</span></tt></a> before, to prepare the
+application for accepting the action.</p>
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descname">Region</tt></dt>
+<dd><dl class="method">
+<dt id="Region.click">
+<tt class="descname">click</tt><big>(</big><em>PSMRL</em><span class="optional">[</span>, <em>modifiers</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.click" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a mouse click on the click point using the left button.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>PSMRL</strong> &#8211; a pattern, a string, a match, a region or a location that
+evaluates to a click point.</li>
+<li><strong>modifiers</strong> &#8211; one or more key modifiers</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the number of performed clicks (actually 1). A 0 (integer null)
+means that because of some reason, no click could be performed (in case of <em>PS</em> may be <a class="reference internal" href="#patternnotfound"><em>not Found</em></a>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Side Effect</strong> if <em>PS</em> was used, the match can be accessed using <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards.</p>
+<p><strong>Example:</strong></p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="cmt"># Windows XP</span>
+<span class='lineno'>2</span><span class="skw">click</span>(<img src="xpstart.png"/>)
+<span class='lineno'>3</span>
+<span class='lineno'>4</span><span class="cmt"># Windows Vista</span>
+<span class='lineno'>5</span><span class="skw">click</span>(<img src="vistastart.png"/>)
+<span class='lineno'>6</span>
+<span class='lineno'>7</span><span class="cmt"># Windows 7</span>
+<span class='lineno'>8</span><span class="skw">click</span>(<img src="w7start.png"/>)
+<span class='lineno'>9</span>
+<span class='lineno'>10</span><span class="cmt"># Mac</span>
+<span class='lineno'>11</span><span class="skw">click</span>(<img src="apple.png"/>)
+</pre>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.doubleClick">
+<tt class="descname">doubleClick</tt><big>(</big><em>PSMRL</em><span class="optional">[</span>, <em>modifiers</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.doubleClick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a mouse double-click on the click point using the left button.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>PSMRL</strong> &#8211; a pattern, a string, a match, a region or a location that
+evaluates to a click point.</li>
+<li><strong>modifiers</strong> &#8211; one or more key modifiers</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the number of performed double-clicks (actually 1). A 0 (integer null)
+means that because of some reason, no click could be performed (in case of <em>PS</em> may be <a class="reference internal" href="#patternnotfound"><em>not Found</em></a>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Side Effect</strong> if <em>PS</em> was used, the match can be accessed using <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.rightClick">
+<tt class="descname">rightClick</tt><big>(</big><em>PSMRL</em><span class="optional">[</span>, <em>modifiers</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.rightClick" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a mouse click on the click point using the right button.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>PSMRL</strong> &#8211; a pattern, a string, a match, a region or a location that
+evaluates to a click point.</li>
+<li><strong>modifiers</strong> &#8211; one or more key modifiers</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the number of performed right cilicks (actually 1). A 0 (integer null)
+means that because of some reason, no click could be performed (in case of <em>PS</em> may be <a class="reference internal" href="#patternnotfound"><em>not Found</em></a>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Side Effect</strong> if <em>PS</em> was used, the match can be accessed using <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.highlight">
+<tt class="descname">highlight</tt><big>(</big><span class="optional">[</span><em>seconds</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.highlight" title="Permalink to this definition">¶</a></dt>
+<dd><p>Highlight the region for some period of time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seconds</strong> &#8211; a decimal number taken as duration in seconds</td>
+</tr>
+</tbody>
+</table>
+<p>The region is highlighted showing a red colored frame around it. If the
+parameter seconds  is given, the script is suspended for the specified time.
+If no time is given, the highlighting is started and the script continues.
+When later on the same highlight call without a parameter is made, the
+highlighting is stopped (behaves like a toggling switch).</p>
+<p>Example:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">m</span> <span class="o">=</span> <span class="n">find</span><span class="p">(</span><span class="n">some_image</span><span class="p">)</span>
+
+<span class="c"># the red frame will blink for about 7 - 8 seconds</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">wait</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+
+<span class="c"># a second red frame will blink as an overlay to the first one</span>
+<span class="n">m</span><span class="o">.</span><span class="n">highlight</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">wait</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">m</span><span class="o">.</span><span class="n">highlight</span><span class="p">()</span>
+
+<span class="c"># the red frame will grow 5 times</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">highlight</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">nearby</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+</pre></div>
+</div>
+<p><strong>Note</strong>: The red frame is just an overlay in front of all other screen content and
+stays in its place, independently from the behavior of this other content,
+which means it is not &#8220;connected&#8221; to the <em>content</em> of the defining region.
+But it will be adjusted automatically, if you change position and/or dimension
+of this region in your script, while it is highlighted.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.hover">
+<tt class="descname">hover</tt><big>(</big><em>PSMRL</em><big>)</big><a class="headerlink" href="#Region.hover" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the mouse cursor to hover above a click point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>PSMRL</strong> &#8211; a pattern, a string, a match, a region or a location that
+evaluates to a click point.</li>
+<li><strong>modifiers</strong> &#8211; one or more key modifiers</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the number 1 if the mousepointer could be moved to the click point.
+A 0 (integer null) returned
+means that because of some reason, no move could be performed (in case of <em>PS</em> may be <a class="reference internal" href="#patternnotfound"><em>not Found</em></a>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Side Effect</strong> if <em>PS</em> was used, the match can be accessed using <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.dragDrop">
+<tt class="descname">dragDrop</tt><big>(</big><em>PSMRL</em>, <em>PSMRL</em><span class="optional">[</span>, <em>modifiers</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.dragDrop" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform a drag-and-drop operation from a starting click point to the target
+click point indicated by the two PSMRLs respectively.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>PSMRL</strong> &#8211; a pattern, a string, a match, a region or a location that
+evaluates to a click point.</li>
+<li><strong>modifiers</strong> &#8211; one or more key modifiers</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p>If one of the parameters is <em>PS</em>, the operation might fail due to <a class="reference internal" href="#patternnotfound"><em>not Found</em></a>.</p>
+<p><strong>Sideeffect</strong>: when using <em>PS</em>, the match of the target can be accessed using
+<a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards. If only the first parameter is
+given as <em>PS</em>, this match is returned by <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a>.</p>
+<p><strong>When the operation does not perform as expected</strong> (usually caused by timing
+problems due to delayed reactions of applications), you may adjust the
+internal timing parameters <a class="reference internal" href="globals.html#Settings.DelayAfterDrag" title="Settings.DelayAfterDrag"><tt class="xref py py-attr docutils literal"><span class="pre">Settings.DelayAfterDrag</span></tt></a> and
+<a class="reference internal" href="globals.html#Settings.DelayBeforeDrop" title="Settings.DelayBeforeDrop"><tt class="xref py py-attr docutils literal"><span class="pre">Settings.DelayBeforeDrop</span></tt></a> eventually combined with the internal
+timing parameter <a class="reference internal" href="globals.html#Settings.MoveMouseDelay" title="Settings.MoveMouseDelay"><tt class="xref py py-attr docutils literal"><span class="pre">Settings.MoveMouseDelay</span></tt></a>.</p>
+<p>Another solution might be, to use a combination of <a class="reference internal" href="#Region.drag" title="Region.drag"><tt class="xref py py-meth docutils literal"><span class="pre">Region.drag()</span></tt></a>
+and <a class="reference internal" href="#Region.dropAt" title="Region.dropAt"><tt class="xref py py-meth docutils literal"><span class="pre">Region.dropAt()</span></tt></a> combined with your own <tt class="docutils literal"><span class="pre">wait()</span></tt> usages.  If the mouse
+movement from source to target is the problem, you might break up the move
+path into short steps using <a class="reference internal" href="#Region.mouseMove" title="Region.mouseMove"><tt class="xref py py-meth docutils literal"><span class="pre">Region.mouseMove()</span></tt></a>.</p>
+<p><strong>Note</strong>: If you need to implement more sophisticated mouse and keyboard actions
+look at <a class="reference internal" href="#lowlevelmouseandkeyboardactions"><em>Low Level Mouse and Keyboard Actions</em></a>.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.drag">
+<tt class="descname">drag</tt><big>(</big><em>PSMRL</em><big>)</big><a class="headerlink" href="#Region.drag" title="Permalink to this definition">¶</a></dt>
+<dd><p>Start a drag-and-drop operation by dragging at the given click point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>PSMRL</strong> &#8211; a pattern, a string, a match, a region or a location that
+evaluates to a click point.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the number 1 if the operation could be performed. A 0 (integer null) returned
+means that because of some reason, no move could be performed (in case of <em>PS</em> may be <a class="reference internal" href="#patternnotfound"><em>not Found</em></a>).</td>
+</tr>
+</tbody>
+</table>
+<p>The mousepointer is moved to the click point and the left mouse button is
+pressed and held, until another mouse action is performed (e.g. a
+<a class="reference internal" href="#Region.dropAt" title="Region.dropAt"><tt class="xref py py-meth docutils literal"><span class="pre">Region.dropAt()</span></tt></a>      afterwards). This is nomally used to start a
+drag-and-drop operation.</p>
+<p><strong>Side Effect</strong> if <em>PS</em> was used, the match can be accessed using <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.dropAt">
+<tt class="descname">dropAt</tt><big>(</big><em>PSMRL</em><span class="optional">[</span>, <em>delay</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.dropAt" title="Permalink to this definition">¶</a></dt>
+<dd><p>Complete a drag-and-drop operation by dropping a previously dragged item at
+the given target click point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>PSMRL</strong> &#8211; a pattern, a string, a match, a region or a location that
+evaluates to a click point.</li>
+<li><strong>delay</strong> &#8211; time to wait after in seconds as decimal value</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the number 1 if the operation could be performed. A 0 (integer null) returned
+means that because of some reason, no move could be performed (in case of <em>PS</em> may be <a class="reference internal" href="#patternnotfound"><em>not Found</em></a>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>The mousepointer is moved to the click point. After waiting for delay
+seconds the left mouse button is released. This is normally used to finalize
+a drag-and-drop operation. If it is necessary to visit one ore more click
+points after dragging and before dropping, you can use
+<a class="reference internal" href="#Region.mouseMove" title="Region.mouseMove"><tt class="xref py py-meth docutils literal"><span class="pre">Region.mouseMove()</span></tt></a> inbetween.</p>
+<p><strong>Side Effect</strong> if <em>PS</em> was used, the match can be accessed using <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.type">
+<tt class="descname">type</tt><big>(</big><span class="optional">[</span><em>PSMRL</em><span class="optional">]</span>, <em>text</em><span class="optional">[</span>, <em>modifiers</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.type" title="Permalink to this definition">¶</a></dt>
+<dd><p>Type the text at the current focused input field or at a click point
+specified by <em>PSMRL</em>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>PSMRL</strong> &#8211; a pattern, a string, a match, a region or a location that
+evaluates to a click point.</li>
+<li><strong>modifiers</strong> &#8211; one or more key modifiers</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the number 1 if the operation could be
+performed, otherwise 0 (integer null), which means,
+that because of some reason, it was not possible or the click
+could be performed (in case of <em>PS</em> may be <a class="reference internal" href="#patternnotfound"><em>not Found</em></a>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>This method simulates keyboard typing interpreting the characters of text
+based on the layout/keymap of the <strong>standard US keyboard (QWERTY)</strong>. Special
+keys (ENTER, TAB, BACKSPACE, ...) can be incorporated into text by using the
+constants defined in <a class="reference internal" href="keys.html"><em>Class Key</em></a> using the standard string concatenation (+).</p>
+<p>If <em>PSMRL</em> is given, a click on the clickpoint is performed before typing, to
+gain the focus. (Mac: it might be necessary, to use <a class="reference internal" href="globals.html#switchApp" title="switchApp"><tt class="xref py py-func docutils literal"><span class="pre">switchApp()</span></tt></a>
+to give focus to a target application before, to accept typed/pasted characters.)</p>
+<p>If <em>PSMRL</em> is omitted, it performs the typing on the current focused visual
+component (normally an input field or an menu entry that can be selected by
+typing something).</p>
+<p><strong>Side Effect</strong> if <em>PS</em> was used, the match can be accessed using <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards.</p>
+<p><strong>Note</strong>: If you need to type international characters or you are using
+layouts/keymaps other than US-QWERTY, you should use <a class="reference internal" href="#Region.paste" title="Region.paste"><tt class="xref py py-meth docutils literal"><span class="pre">Region.paste()</span></tt></a>
+instead. Since type() is rather slow because it simulates each key press,
+for longer text it is preferrable to use <a class="reference internal" href="#Region.paste" title="Region.paste"><tt class="xref py py-meth docutils literal"><span class="pre">Region.paste()</span></tt></a>.</p>
+<p><strong>Best Practice</strong>: As a general guideline, the best choice is to use <tt class="docutils literal"><span class="pre">paste()</span></tt>
+for readable text and <tt class="docutils literal"><span class="pre">type()</span></tt> for action keys like TAB, ENTER, ESC, ....
+Use one <tt class="docutils literal"><span class="pre">type()</span></tt> for each key or key combination and be aware, that in some cases
+a short <tt class="docutils literal"><span class="pre">wait()</span></tt> after a <tt class="docutils literal"><span class="pre">type()</span></tt> might be necessary
+to give the target application some time to react and be prepared
+for the next Sikuli action.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.paste">
+<tt class="descname">paste</tt><big>(</big><span class="optional">[</span><em>PSMRL</em><span class="optional">]</span>, <em>text</em><big>)</big><a class="headerlink" href="#Region.paste" title="Permalink to this definition">¶</a></dt>
+<dd><p>Paste the text at a click point.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>PSMRL</strong> &#8211; a pattern, a string, a match, a region or a location that
+evaluates to a click point.</li>
+<li><strong>modifiers</strong> &#8211; one or more key modifiers</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">the number 1 if the operation could be performed, otherwise 0
+(integer null), which means,
+that because of some reason, it was not possible or the click
+could be performed (in case of <em>PS</em> may be <a class="reference internal" href="#patternnotfound"><em>not Found</em></a>).</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p>Pastes <em>text</em> using the clipboard (OS-level shortcut (Ctrl-V or Cmd-V)). So
+afterwards your clipboard contains <em>text</em>. <tt class="docutils literal"><span class="pre">paste()</span></tt> is a temporary solution for
+typing international characters or typing on keyboard layouts other than
+US-QWERTY.</p>
+<p>If <em>PSMRL</em> is given, a click on the clickpoint is performed before typing, to
+gain the focus. (Mac: it might be necessary, to use <a class="reference internal" href="globals.html#switchApp" title="switchApp"><tt class="xref py py-func docutils literal"><span class="pre">switchApp()</span></tt></a>
+to give focus to a target application before, to accept typed/pasted characters.)</p>
+<p>If <em>PSMRL</em> is omitted, it performs the paste on the current focused component
+(normally an input field).</p>
+<p><strong>Side Effect</strong> if <em>PS</em> was used, the match can be accessed using <a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards.</p>
+<p><strong>Note</strong>: Special keys (ENTER, TAB, BACKSPACE, ...) cannot be used with <tt class="docutils literal"><span class="pre">paste()</span></tt>.
+If needed, you have to split your complete text into two or more <tt class="docutils literal"><span class="pre">paste()</span></tt>
+and use <tt class="docutils literal"><span class="pre">type()</span></tt> for typing the special keys inbetween.
+Characters like \n     (enter/new line) and \t (tab) should work as expected with <tt class="docutils literal"><span class="pre">paste()</span></tt>,
+but be aware of timing problems, when using e.g. intervening \t to jump
+to the next input field of a form.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="extracting-text-from-a-region">
+<span id="regionextractingtext"></span><h2>Extracting Text from a Region<a class="headerlink" href="#extracting-text-from-a-region" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descname">Region</tt></dt>
+<dd><dl class="method">
+<dt id="Region.text">
+<tt class="descname">text</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Extract the text contained in the region using OCR.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">the text as a string. Multiple lines of text are separated by intervening &#8216;n&#8217;.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Note</strong>: Since this feature is still in an <strong>experimental state</strong>, be aware,
+that in some cases it might not work as expected. If you face any problems
+look at the <a class="reference external" href="https://answers.launchpad.net/sikuli">Questions &amp; Answers / FAQ&#8217;s</a>
+and the <a class="reference external" href="https://answers.launchpad.net/sikuli">Bugs</a>.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="low-level-mouse-and-keyboard-actions">
+<span id="lowlevelmouseandkeyboardactions"></span><h2>Low-level Mouse and Keyboard Actions<a class="headerlink" href="#low-level-mouse-and-keyboard-actions" title="Permalink to this headline">¶</a></h2>
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descname">Region</tt></dt>
+<dd><dl class="method">
+<dt id="Region.mouseDown">
+<tt class="descname">mouseDown</tt><big>(</big><em>button</em><big>)</big><a class="headerlink" href="#Region.mouseDown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Press the mouse <em>button</em> down.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>button</strong> &#8211; one or a combination of the button constants <tt class="docutils literal"><span class="pre">Button.LEFT</span></tt>,
+<tt class="docutils literal"><span class="pre">Button.MIDDLE</span></tt>, <tt class="docutils literal"><span class="pre">Button.RIGHT</span></tt>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the number 1 if the operation is performed successfully, and zero if
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+<p>The mouse button or buttons specified by <em>button</em> are pressed until another
+mouse action is performed.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.mouseUp">
+<tt class="descname">mouseUp</tt><big>(</big><span class="optional">[</span><em>button</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.mouseUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Release the mouse button previously pressed.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>button</strong> &#8211; one or a combination of the button constants <tt class="docutils literal"><span class="pre">Button.LEFT</span></tt>,
+<tt class="docutils literal"><span class="pre">Button.MIDDLE</span></tt>, <tt class="docutils literal"><span class="pre">Button.RIGHT</span></tt>.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the number 1 if the operation is performed successfully, and zero if
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+<p>The button specified by <em>button</em> is released. If <em>button</em> is omitted, all
+currently pressed buttons are released.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.mouseMove">
+<tt class="descname">mouseMove</tt><big>(</big><em>PSRML</em><big>)</big><a class="headerlink" href="#Region.mouseMove" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the mouse pointer to a location indicated by PSRML.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>PSMRL</strong> &#8211; a pattern, a string, a match, a region or a location that
+evaluates to a click point.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the number 1 if the operation could be performed. If using <em>PS</em>
+(which invokes an implicity find operation), find fails and you have
+switched off FindFailed exception, a 0 (integer null) is returned.
+Otherwise, the script is stopped with a FindFailed exception.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sideeffects</strong>: when using <em>PS</em>, the match can be accessed using
+<a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.wheel">
+<tt class="descname">wheel</tt><big>(</big><em>PSRML</em>, <em>WHEEL_DOWN | WHEEL_UP</em>, <em>steps</em><big>)</big><a class="headerlink" href="#Region.wheel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Move the mouse pointer to a location indicated by PSRML and turn the mouse
+wheel in the specified direction by the specified number of steps.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>PSMRL</strong> &#8211; a pattern, a string, a match, a region or a location that
+evaluates to a click point.</li>
+<li><strong>WHEEL_DOWN|WHEEL_UP</strong> &#8211; one of the two constants denoting the wheeling
+direction.</li>
+<li><strong>steps</strong> &#8211; an integer indicating the amoung of wheeling.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Sideeffects</strong>: when using <em>PS</em>, the match can be accessed using
+<a class="reference internal" href="#Region.getLastMatch" title="Region.getLastMatch"><tt class="xref py py-meth docutils literal"><span class="pre">Region.getLastMatch()</span></tt></a> afterwards</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.keyDown">
+<tt class="descname">keyDown</tt><big>(</big><em>key | list-of-keys</em><big>)</big><a class="headerlink" href="#Region.keyDown" title="Permalink to this definition">¶</a></dt>
+<dd><p>Press and hold the specified key(s) until released by a later call to
+<a class="reference internal" href="#Region.keyUp" title="Region.keyUp"><tt class="xref py py-meth docutils literal"><span class="pre">Region.keyUp()</span></tt></a>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key|list-of-keys</strong> &#8211; one or more keys (use the consts of class Key). A
+list of keys is a concatenation of several key constants using &#8220;+&#8221;.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the number 1 if the operation could be performed and 0 if
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.keyUp">
+<tt class="descname">keyUp</tt><big>(</big><span class="optional">[</span><em>key | list-of-keys</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Region.keyUp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Release given keys. If no key is given, all currently pressed keys are
+released.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>key|list-of-keys</strong> &#8211; one or more keys (use the consts of class Key). A
+list of keys is a concatenation of several key constants using &#8220;+&#8221;.</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">the number 1 if the operation could be performed and 0 if
+otherwise.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="exception-findfailed">
+<span id="exceptionfindfailed"></span><h2>Exception FindFailed<a class="headerlink" href="#exception-findfailed" title="Permalink to this headline">¶</a></h2>
+<p>As a default, find operations (<a class="reference internal" href="#findinginsidearegionandwaitingforavisualevent"><em>explicit</em></a>
+and <a class="reference internal" href="#actingonaregion"><em>implicit</em></a>) when not successful
+raise an <tt class="docutils literal"><span class="pre">Exception</span> <span class="pre">FindFailed</span></tt>, that will
+stop the script immediately. This is of great help, when developing a script, to
+step by step adjust timing and similarity. When the script runs perfectly, then an
+exception FindFailed signals, that something is not as it should be.</p>
+<p>To implement some checkpoints, where you want to asure your workflow, use
+<a class="reference internal" href="#Region.exists" title="Region.exists"><tt class="xref py py-meth docutils literal"><span class="pre">Region.exists()</span></tt></a>, that reports a not found situation without raising
+FindFailed (returns False instead).</p>
+<p>To run all or only parts of your script without FindFailed exceptions to be raised,
+use <a class="reference internal" href="#Region.setThrowException" title="Region.setThrowException"><tt class="xref py py-meth docutils literal"><span class="pre">Region.setThrowException()</span></tt></a> or <a class="reference internal" href="#Region.setFindFailedResponse" title="Region.setFindFailedResponse"><tt class="xref py py-meth docutils literal"><span class="pre">Region.setFindFailedResponse()</span></tt></a>
+to switch it on and off as needed.</p>
+<p>For more sophisticated concepts, you can implement your own exception handling using
+the standard Python construct <tt class="docutils literal"><span class="pre">try:</span> <span class="pre">...</span> <span class="pre">except:</span> <span class="pre">...</span></tt> .</p>
+<div class="versionadded">
+<p><span>New in version X1.0-rc2.</span></p>
+</div>
+<dl class="docutils">
+<dt>These are the possibilities to handle &#8220;not found&#8221; situations:</dt>
+<dd><ul class="first last">
+<li><dl class="first docutils">
+<dt>generally abort a script, if not handled with <tt class="docutils literal"><span class="pre">try:</span> <span class="pre">...</span> <span class="pre">except:</span> <span class="pre">...</span></tt></dt>
+<dd><p class="first last">(the default setting or using <a class="reference internal" href="#Region.setThrowException" title="Region.setThrowException"><tt class="xref py py-meth docutils literal"><span class="pre">setThrowException(True)</span></tt></a>
+or <a class="reference internal" href="#Region.setFindFailedResponse" title="Region.setFindFailedResponse"><tt class="xref py py-meth docutils literal"><span class="pre">setFindFailedResponse(ABORT)</span></tt></a>)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>generally ignore all &#8220;not found&#8221; situations</dt>
+<dd><p class="first last">(using <a class="reference internal" href="#Region.setThrowException" title="Region.setThrowException"><tt class="xref py py-meth docutils literal"><span class="pre">setThrowException(False)</span></tt></a>
+or <a class="reference internal" href="#Region.setFindFailedResponse" title="Region.setFindFailedResponse"><tt class="xref py py-meth docutils literal"><span class="pre">setFindFailedResponse(SKIP)</span></tt></a>),</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>want to be prompted in such a case</dt>
+<dd><p class="first last">(using <a class="reference internal" href="#Region.setFindFailedResponse" title="Region.setFindFailedResponse"><tt class="xref py py-meth docutils literal"><span class="pre">setFindFailedResponse(PROMPT)</span></tt></a>)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>advise Sikuli to wait forever (be careful with that!)</dt>
+<dd><p class="first last">(using <a class="reference internal" href="#Region.setFindFailedResponse" title="Region.setFindFailedResponse"><tt class="xref py py-meth docutils literal"><span class="pre">setFindFailedResponse(RETRY)</span></tt></a>)</p>
+</dd>
+</dl>
+</li>
+</ul>
+</dd>
+</dl>
+<p id="findfailedprompt"><strong>Comment on using PROMPT</strong>:</p>
+<p>This feature is helpful in following situations:</p>
+<ul class="simple">
+<li>you are developing something, that needs an application with it&#8217;s windows to be in place, but this workflow you want to script later. If it comes to that point, you get the prompt, arrange the app and click <em>Retry</em>. Your workflow should continue.</li>
+<li>you have a workflow, where the user might do some corrective actions, if you get a FindFailed</li>
+<li>guess you find more ;-)</li>
+</ul>
+<p>In case of a FindFailed, you get the following prompt:</p>
+<img alt="_images/findfailed-prompt.png" src="_images/findfailed-prompt.png" />
+<p>Clicking <em>Retry</em> would again try to find the image. <em>Skip</em> would continue the script and <em>Abort</em> would end the script.</p>
+<p><strong>Examples</strong>: 4 solutions for a case, where you want to decide how to proceed in a
+workflow based on the fact that a specific image can be found. (pass is the python
+statement, that does nothing, but maintains indentation to form the blocks):</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># --- nice and easy</span>
+<span class="k">if</span> <span class="n">exists</span><span class="p">(</span><span class="s">&quot;path-to-image&quot;</span><span class="p">):</span> <span class="c"># no exception, returns None when not found</span>
+        <span class="k">pass</span> <span class="c"># it is there</span>
+<span class="k">else</span><span class="p">:</span>
+        <span class="k">pass</span> <span class="c"># we miss it</span>
+
+<span class="c"># --- using exception handling</span>
+<span class="c"># every not found in the try block will switch to the except block</span>
+<span class="k">try</span><span class="p">:</span>
+        <span class="n">find</span><span class="p">(</span><span class="s">&quot;path-to-image&quot;</span><span class="p">)</span>
+        <span class="k">pass</span> <span class="c"># it is there</span>
+<span class="k">except</span> <span class="n">FindFailed</span><span class="p">:</span>
+        <span class="k">pass</span> <span class="c"># we miss it</span>
+
+<span class="c"># --- using setFindFailedResponse</span>
+<span class="n">setFindFailedResponse</span><span class="p">(</span><span class="n">SKIP</span><span class="p">)</span> <span class="c"># no exception raised, not found returns None</span>
+<span class="k">if</span> <span class="n">find</span><span class="p">(</span><span class="s">&quot;path-to-image&quot;</span><span class="p">):</span>
+        <span class="n">setFindFailedResponse</span><span class="p">(</span><span class="n">ABORT</span><span class="p">)</span> <span class="c"># reset to default</span>
+        <span class="k">pass</span> <span class="c"># it is there</span>
+<span class="k">else</span><span class="p">:</span>
+        <span class="n">setFindFailedResponse</span><span class="p">(</span><span class="n">ABORT</span><span class="p">)</span> <span class="c"># reset to default</span>
+        <span class="k">pass</span> <span class="c"># we miss it</span>
+
+<span class="c"># --- using setThrowException</span>
+<span class="n">setThrowException</span><span class="p">(</span><span class="bp">False</span><span class="p">)</span> <span class="c"># no exception raised, not found returns None</span>
+<span class="k">if</span> <span class="n">find</span><span class="p">(</span><span class="s">&quot;path-to-image&quot;</span><span class="p">):</span>
+        <span class="n">setThrowException</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span> <span class="c"># reset to default</span>
+        <span class="k">pass</span> <span class="c"># it is there</span>
+<span class="k">else</span><span class="p">:</span>
+        <span class="n">setThrowException</span><span class="p">(</span><span class="bp">True</span><span class="p">)</span> <span class="c"># reset to default</span>
+        <span class="k">pass</span> <span class="c"># we miss it</span>
+</pre></div>
+</div>
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descname">Region</tt></dt>
+<dd><p><strong>Reminder</strong> If used without specifying a region, the default/primary screen
+(default region SCREEN) is used.</p>
+<div class="versionadded">
+<p><span>New in version X1.0-rc2.</span></p>
+</div>
+<dl class="method">
+<dt id="Region.setFindFailedResponse">
+<tt class="descname">setFindFailedResponse</tt><big>(</big><em>ABORT | SKIP |&nbsp;PROMPT | RETRY</em><big>)</big><a class="headerlink" href="#Region.setFindFailedResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>For the specified region set the option, how Sikuli should handle
+&#8220;not found&#8221; situations. The option stays in effect until changed
+by another <tt class="docutils literal"><span class="pre">setFindFailedResponse()</span></tt>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>ABORT</strong> &#8211; all subsequent find failed operations (explicit or
+implicit) will raise exception FindFailed (which is the default when a
+script is started).</li>
+<li><strong>SKIP</strong> &#8211; all subsequent find operations will not raise
+exception FindFailed. Instead, explicit find operations such as
+<a class="reference internal" href="#Region.find" title="Region.find"><tt class="xref py py-meth docutils literal"><span class="pre">Region.find()</span></tt></a> will return <em>None</em>. Implicit find operations
+(action functions) such as <a class="reference internal" href="#Region.click" title="Region.click"><tt class="xref py py-meth docutils literal"><span class="pre">Region.click()</span></tt></a> will do
+nothing and return 0.</li>
+<li><strong>PROMPT</strong> &#8211; all subsequent find operations will not raise
+exception FindFailed. Instead you will be prompted for the way
+to handle the situation (see <a class="reference internal" href="#findfailedprompt"><em>using PROMPT</em></a>). Only the current
+find operation is affected by your response to the prompt.</li>
+<li><strong>RETRY</strong> &#8211; all subsequent find operations will not raise
+exception FindFailed. Instead, Sikuli will try to find the target
+until it gets visible. This is equivalent to using <tt class="docutils literal"><span class="pre">wait(</span> <span class="pre">...</span> <span class="pre">,</span> <span class="pre">FOREVER)</span></tt>
+instead of <tt class="docutils literal"><span class="pre">find()</span></tt> or using setAutoWaitTimeout(FOREVER).</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.getFindFailedResponse">
+<tt class="descname">getFindFailedResponse</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getFindFailedResponse" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the current setting in this region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">ABORT or SKIP or&nbsp;PROMPT or RETRY</td>
+</tr>
+</tbody>
+</table>
+<p>Usage:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="n">val</span> <span class="o">=</span> <span class="n">getFindFailedResponse</span><span class="p">()</span>
+<span class="k">if</span> <span class="n">val</span> <span class="o">==</span> <span class="n">ABORT</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;not found will stop script with Exception FindFailed&quot;</span>
+<span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">SKIP</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;not found will be ignored&quot;</span>
+<span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">PROMPT</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;when not found you will be prompted&quot;</span>
+<span class="k">elif</span> <span class="n">val</span> <span class="o">==</span> <span class="n">RETRY</span><span class="p">:</span>
+        <span class="k">print</span> <span class="s">&quot;we will always wait forever&quot;</span>
+<span class="k">else</span><span class="p">:</span>
+        <span class="k">print</span> <span class="n">val</span><span class="p">,</span> <span class="s">&quot;: this is a bug :-(&quot;</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<p><strong>Note</strong>: It is recommended to use <tt class="docutils literal"><span class="pre">set/getFindFailedResponse()</span></tt> instead of
+<tt class="docutils literal"><span class="pre">set/getThrowException()</span></tt> since the latter ones might be deprecated in the future.</p>
+<dl class="method">
+<dt id="Region.setThrowException">
+<tt class="descname">setThrowException</tt><big>(</big><em>False | True</em><big>)</big><a class="headerlink" href="#Region.setThrowException" title="Permalink to this definition">¶</a></dt>
+<dd><p>By using this method you control, how Sikuli should handle not found
+situations in this region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>True</strong> &#8211; all subsequent find operations (explicit or
+implicit) will raise exception FindFailed (which is the default when a
+script is started) in case of not found.</li>
+<li><strong>False</strong> &#8211; all subsequent find operations will not raise
+exception FindFailed. Instead, explicit find operations such as
+<a class="reference internal" href="#Region.find" title="Region.find"><tt class="xref py py-meth docutils literal"><span class="pre">Region.find()</span></tt></a> will return <em>None</em>. Implicit find operations
+(action functions) such as <a class="reference internal" href="#Region.click" title="Region.click"><tt class="xref py py-meth docutils literal"><span class="pre">Region.click()</span></tt></a> will do
+nothing and return 0.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Region.getThrowException">
+<tt class="descname">getThrowException</tt><big>(</big><big>)</big><a class="headerlink" href="#Region.getThrowException" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><tt class="docutils literal"><span class="pre">True</span></tt> or <tt class="docutils literal"><span class="pre">False</span></tt></td>
+</tr>
+</tbody>
+</table>
+<p>Get the current setting as True or False (after start of script, this is True by
+default) in this region.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+<div class="section" id="grouping-method-calls-with-region">
+<span id="groupingmethodcallswithregion"></span><h2>Grouping Method Calls ( with Region: )<a class="headerlink" href="#grouping-method-calls-with-region" title="Permalink to this headline">¶</a></h2>
+<p>Instead of:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># reg is a region object</span>
+<span class="k">if</span> <span class="ow">not</span> <span class="n">reg</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">image1</span><span class="p">):</span>
+        <span class="n">reg</span><span class="o">.</span><span class="n">click</span><span class="p">(</span><span class="n">image2</span><span class="p">)</span>
+        <span class="n">reg</span><span class="o">.</span><span class="n">wait</span><span class="p">(</span><span class="n">image3</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">reg</span><span class="o">.</span><span class="n">doubleClick</span><span class="p">(</span><span class="n">image4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>you can group methods applied to the same region using Python&#8217;s <tt class="docutils literal"><span class="pre">with</span></tt> syntax:</p>
+<div class="highlight-python"><div class="highlight"><pre><span class="c"># reg is a region object</span>
+<span class="k">with</span> <span class="n">reg</span><span class="p">:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">exists</span><span class="p">(</span><span class="n">image1</span><span class="p">):</span>
+                <span class="n">click</span><span class="p">(</span><span class="n">image2</span><span class="p">)</span>
+        <span class="n">wait</span><span class="p">(</span><span class="n">image3</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+        <span class="n">doubleClick</span><span class="p">(</span><span class="n">image4</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>All methods inside the <tt class="docutils literal"><span class="pre">with</span></tt> block that have the region omitted are redirected to the
+region object specified at the <tt class="docutils literal"><span class="pre">with</span></tt> statement.</p>
+<p><strong>Note for Sikuli X versions up to rc3</strong></p>
+<p>This should work for Regions and Region-like objects (Region, Screen, App.window()).
+Match objects have to be made a Region explicitly using <tt class="docutils literal"><span class="pre">Region(some_match)</span></tt>.</p>
+<p>This is a general workaround when facing any problems using <tt class="docutils literal"><span class="pre">with</span> <span class="pre">some_region:</span></tt>.</p>
+</div>
+<div class="section" id="special-methods-for-developers">
+<h2>Special Methods for Developers<a class="headerlink" href="#special-methods-for-developers" title="Permalink to this headline">¶</a></h2>
+<p>Here we document Region methods, that might be helpful, when developing complex scripts
+with its own API, as it is the fact, when developing an <a class="reference internal" href="extensions/extensions_info.html#sikuliextensions"><em>Extension</em></a>.</p>
+<p>Be aware, that these might change without notice (should not be, but might be ;-).</p>
+<p>These two methods might help to implement more generic functions than just find() and click().</p>
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descname">Region</tt></dt>
+<dd><div class="versionadded">
+<p><span>New in version X1.0-rc2.</span></p>
+</div>
+<dl class="method">
+<dt id="Region.getRegionFromPSRM">
+<tt class="descname">getRegionFromPSRM</tt><big>(</big><em>PSRM</em><big>)</big><a class="headerlink" href="#Region.getRegionFromPSRM" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new Region object derived from the given parameter. In case of PS, internally a find() is done inside this region. If found, the match is returned. In case RM, just a copy of the given region is returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Params PSRM:</th><td class="field-body">a Pattern, String, Region or Match object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a new Region object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<div class="versionadded">
+<p><span>New in version X1.0-rc2.</span></p>
+</div>
+<dl class="method">
+<dt id="Region.getLocationFromPSRML">
+<tt class="descname">getLocationFromPSRML</tt><big>(</big><em>PSRML</em><big>)</big><a class="headerlink" href="#Region.getLocationFromPSRML" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns a new Location object derived from the given parameter. In case of PS, internally a find() is done inside this region. If found, the match&#8217;s target offset position is returned. In case RM, just a copy of the given region&#8217;s respective location (center or target offset) is returned.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Params PSRML:</th><td class="field-body">a Pattern, String, Region, Match or Location object</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body">a new Location object</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="screen.html" title="Screen"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="globals.html" title="Global Functions and Features"
+             >previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="sikuli-script-index.html" >Everything about Sikuli Script</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Sikuli Doc Team.
+      Last updated on Nov 28, 2013.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

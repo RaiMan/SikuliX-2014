@@ -1,0 +1,265 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Finder &mdash; SikuliX 1.1+ documentation</title>
+    
+    <link rel="stylesheet" href="_static/sikulidoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SikuliX 1.1+ documentation" href="index.html" />
+    <link rel="up" title="Everything about Sikuli Script" href="sikuli-script-index.html" />
+    <link rel="next" title="Key Constants" href="keys.html" />
+    <link rel="prev" title="Pattern" href="pattern.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="keys.html" title="Key Constants"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="pattern.html" title="Pattern"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="sikuli-script-index.html" accesskey="U">Everything about Sikuli Script</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/ide-icon-64.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="pattern.html"
+                        title="previous chapter">Pattern</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="keys.html"
+                        title="next chapter">Key Constants</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/finder.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="finder">
+<h1>Finder<a class="headerlink" href="#finder" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="Finder">
+<em class="property">class </em><tt class="descname">Finder</tt><a class="headerlink" href="#Finder" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<p>A Finder object implements an iterator of matches and allows to search for a visual
+object in an image file that you provide (e.g. a screenshot taken and saved in a
+file before). After setting up the finder object and doing a find operation, you can
+iterate through the found matches if any.</p>
+<p>Important to know:</p>
+<ul class="simple">
+<li>per definition, an iterator can be stepped through only once - it is empty
+afterwards</li>
+<li>it has to be destroyed using <tt class="docutils literal"><span class="pre">finder.destroy()</span></tt>, especially when
+used with <tt class="docutils literal"><span class="pre">for:</span></tt> or <tt class="docutils literal"><span class="pre">while:</span></tt></li>
+<li>when used in a <tt class="docutils literal"><span class="pre">with:</span></tt> construct, it is destroyed automatically</li>
+</ul>
+<p>Compared with the region based find operation, no exception FindFailed is
+raised in case nothing is found at all (use <tt class="docutils literal"><span class="pre">hasNext()</span></tt> to check). The finder object
+can be compared to what you get with <tt class="docutils literal"><span class="pre">region.getLastMatches()</span></tt> when using <a class="reference internal" href="region.html#Region.findAll" title="Region.findAll"><tt class="xref py py-meth docutils literal"><span class="pre">findAll()</span></tt></a>.</p>
+<p><strong>Note</strong>: With this version, there is no chance, to get the number of matches in
+advance. If you would iterate through to count, afterwards your finder would be
+empty. So in this case, you have to save your matches somehow (one possible solution
+see example below).</p>
+<p>The workflow always is, that you first do a find operation and afterwards go through the
+matches found. After a complete iteration, the finder object is empty. So you
+could start a new find operation again.</p>
+<dl class="class">
+<dt>
+<em class="property">class </em><tt class="descname">Finder</tt></dt>
+<dd><dl class="method">
+<dt id="Finder.Finder">
+<tt class="descname">Finder</tt><big>(</big><em>path-to-imagefile</em><big>)</big><a class="headerlink" href="#Finder.Finder" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a new finder object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>path-to-imagefile</strong> &#8211; filename to a source image to search within</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Finder.find">
+<tt class="descname">find</tt><big>(</big><em>path-to-imagefile</em><span class="optional">[</span>, <em>similarity</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#Finder.find" title="Permalink to this definition">¶</a></dt>
+<dd><p>Find a given image within a source image previously specified in the
+constructor of the finder object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>path-to-imagefile</strong> &#8211; the target image to search for</li>
+<li><strong>similarity</strong> &#8211; the minimum similarity a match should have. If omitted,
+the default is used.</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Finder.hasNext">
+<tt class="descname">hasNext</tt><big>(</big><big>)</big><a class="headerlink" href="#Finder.hasNext" title="Permalink to this definition">¶</a></dt>
+<dd><p>Check whether there are more matches available that satisfy the minimum
+similarity requirement.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><em>True</em> if more matches exist.</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Finder.next">
+<tt class="descname">next</tt><big>(</big><big>)</big><a class="headerlink" href="#Finder.next" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the next match.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body">a <a class="reference internal" href="match.html#Match" title="Match"><tt class="xref py py-class docutils literal"><span class="pre">Match</span></tt></a> object.</td>
+</tr>
+</tbody>
+</table>
+<p>The returnd reference to a match object is no longer available in the finder
+object afterwards. So if it is needed later on, it has to be saved to
+another variable.</p>
+</dd></dl>
+
+</dd></dl>
+
+<p>Example 1: basic operations using a Finder</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="cmt"># create a Finder with your saved screenshot</span>
+<span class='lineno'>2</span>f = Finder(<img src="stars.png"/>)
+<span class='lineno'>3</span>img= <img src="star.png"/> <span class="cmt"># the image you are searching</span>
+<span class='lineno'>4</span>
+<span class='lineno'>5</span>f.<span class="skw">find</span>(img) <span class="cmt"># find all matches</span>
+<span class='lineno'>6</span>
+<span class='lineno'>7</span><span class="kw">while</span> f.hasNext(): <span class="cmt"># loop as long there is a first and more matches</span>
+<span class='lineno'>8</span>        <span class="kw">print</span> <span class="str">"found: "</span>, f.next() <span class="cmt"># access the next match in the row</span>
+<span class='lineno'>9</span>
+<span class='lineno'>10</span><span class="kw">print</span> f.hasNext() <span class="cmt"># is False, because f is empty now</span>
+<span class='lineno'>11</span>f.destroy() <span class="cmt"># release the memory used by finder</span>
+</pre>
+<p>Example 2: we want to know how many matches (based on the previous example).</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="cmt"># create a Finder with your saved screenshot</span>
+<span class='lineno'>2</span>f = Finder(<img src="stars.png"/>)
+<span class='lineno'>3</span>img= <img src="star.png"/> <span class="cmt"># the image you are searching</span>
+<span class='lineno'>4</span>
+<span class='lineno'>5</span>f.<span class="skw">find</span>(img) <span class="cmt"># find all matches</span>
+<span class='lineno'>6</span>mm = [] <span class="cmt"># an empty list</span>
+<span class='lineno'>7</span>
+<span class='lineno'>8</span><span class="kw">while</span> f.hasNext(): <span class="cmt"># loop as long there is a first and more matches</span>
+<span class='lineno'>9</span>        mm.append(f.next())     <span class="cmt"># access next match and add to mm</span>
+<span class='lineno'>10</span>
+<span class='lineno'>11</span><span class="kw">print</span> f.hasNext() <span class="cmt"># is False, because f is empty now</span>
+<span class='lineno'>12</span>f.destroy() <span class="cmt"># release the memory used by finder</span>
+<span class='lineno'>13</span>
+<span class='lineno'>14</span><span class="cmt"># now we have our matches saved in the list mm</span>
+<span class='lineno'>15</span><span class="kw">print</span> len(mm) <span class="cmt"># the number of matches</span>
+<span class='lineno'>16</span>
+<span class='lineno'>17</span><span class="cmt"># we want to use our matches</span>
+<span class='lineno'>18</span><span class="kw">for</span> m <span class="kw">in</span> mm:
+<span class='lineno'>19</span>        <span class="kw">print</span> m
+</pre>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="keys.html" title="Key Constants"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="pattern.html" title="Pattern"
+             >previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="sikuli-script-index.html" >Everything about Sikuli Script</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Sikuli Doc Team.
+      Last updated on Nov 28, 2013.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

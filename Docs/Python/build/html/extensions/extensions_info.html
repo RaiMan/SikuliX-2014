@@ -1,0 +1,237 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>General Information About Sikuli Extensions &mdash; SikuliX 1.1+ documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sikulidoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SikuliX 1.1+ documentation" href="../index.html" />
+    <link rel="up" title="Extensions" href="index.html" />
+    <link rel="next" title="Sikuli Guide" href="sikuli-guide/index.html" />
+    <link rel="prev" title="Extensions" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sikuli-guide/index.html" title="Sikuli Guide"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Extensions"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="index.html" accesskey="U">Extensions</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/ide-icon-64.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">General Information About Sikuli Extensions</a><ul>
+<li><a class="reference internal" href="#how-to-download-and-use-an-extension">How to Download and use an Extension</a></li>
+<li><a class="reference internal" href="#technical-details">Technical Details</a></li>
+<li><a class="reference internal" href="#how-to-develop-an-extension">How to develop an extension</a></li>
+<li><a class="reference internal" href="#name-your-extensions-properly">Name your extensions properly</a></li>
+<li><a class="reference internal" href="#how-to-test-your-extension">How to test your extension</a></li>
+<li><a class="reference internal" href="#how-to-contribute-your-extension">How to contribute your extension</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Extensions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="sikuli-guide/index.html"
+                        title="next chapter">Sikuli Guide</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/extensions/extensions_info.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="general-information-about-sikuli-extensions">
+<h1>General Information About Sikuli Extensions<a class="headerlink" href="#general-information-about-sikuli-extensions" title="Permalink to this headline">¶</a></h1>
+<p id="sikuliextensions"><strong>This feature is currently under developement and might only be available on request.</strong></p>
+<p>Extensions allow to implement new Sikuli features by adding packages to your current Sikuli installation.</p>
+<p>They are maintained by the developers (see <strong>Technical Details</strong> below).</p>
+<p>If you want to contribute a new extension or a modified exisiting one, please look at <strong>How to contribute an extension</strong> below.</p>
+<div class="section" id="how-to-download-and-use-an-extension">
+<h2>How to Download and use an Extension<a class="headerlink" href="#how-to-download-and-use-an-extension" title="Permalink to this headline">¶</a></h2>
+<p>The download of an extension is supported by the IDE through the menu
+<em class="menuselection">Tools -&gt; Extensions</em>.
+You get a popup, that lists the available and already installed extensions and allows to download new packages or updates for installed ones.</p>
+<p>This popup shows a new <strong>package not yet installed</strong>:</p>
+<img alt="../_images/extension-new.png" src="../_images/extension-new.png" />
+<p>If you need more information about the features of the extension, just click <em class="guilabel">More Info</em> - this will open the related documentation from the web in a browser window.</p>
+<p>If you want to install the extension, just click the <em class="guilabel">Install...</em> button. The package will be downloaded and added to your extensions repository.</p>
+<p>This popup shows an <strong>installed package</strong>:</p>
+<img alt="../_images/extension-installed.png" src="../_images/extension-installed.png" />
+<p>If a new version would be available at that time, the <em class="guilabel">Install...</em> button would be active again, showing the new version number. Now you could click and download the new version.</p>
+<p><strong>How to Use an Extension</strong></p>
+<p>To use the features of an installed extension in one of your scripts, just say <tt class="docutils literal"><span class="pre">from</span> <span class="pre">extension-name</span> <span class="pre">import</span> <span class="pre">*</span></tt>. For an usage example read <a class="reference internal" href="sikuli-guide/index.html#sikuliguide"><em>Sikuli Guide</em></a>.</p>
+<p>For information about features, usage and API use menu <em class="menuselection">Tools -&gt; Extensions -&gt; More Info</em> in the IDE.</p>
+</div>
+<div class="section" id="technical-details">
+<h2>Technical Details<a class="headerlink" href="#technical-details" title="Permalink to this headline">¶</a></h2>
+<p>Extensions are Java JAR files containing some Java classes (usually the core functions) and/or Python modules, which define the API to be used in a script.</p>
+<p>Sikuli maintains a local extensions directory, where downloaded extensions are stored together with a hidden list of the installed extensions (Windows: <tt class="docutils literal"><span class="pre">%APPDATA%\Sikuli\extensions</span></tt>, Mac: <tt class="docutils literal"><span class="pre">~/Library/Application</span> <span class="pre">Support/Sikuli/extensions</span></tt>, Linux: <tt class="docutils literal"><span class="pre">~/.sikuli/extensions</span></tt>).</p>
+<p>Once an extension is imported using <tt class="docutils literal"><span class="pre">import</span> <span class="pre">extension-name</span></tt>,
+Sikuli automatically searches and loads the JAR file of that extension
+into the current context with <a class="reference internal" href="../globals.html#load" title="load"><tt class="xref py py-func docutils literal"><span class="pre">load(path-to-jar-file)</span></tt></a>.</p>
+</div>
+<div class="section" id="how-to-develop-an-extension">
+<h2>How to develop an extension<a class="headerlink" href="#how-to-develop-an-extension" title="Permalink to this headline">¶</a></h2>
+<p>The <strong>source structure</strong> of an extension named <tt class="docutils literal"><span class="pre">extension-name</span></tt> looks like this:</p>
+<div class="highlight-python"><pre>Java
+- org/com
+-- your-organization-or-company
+--- extension-name
+---- yourClass1.java
+---- yourClass2.java
+---- .... more classes
+python
+- extension-name
+-- __init__.py
+-- extension-name.py</pre>
+</div>
+<p>The <strong>final structure of a JAR</strong> (filename <tt class="docutils literal"><span class="pre">extension-name-X.Y</span></tt> where X.Y is the version string) looks like this:</p>
+<div class="highlight-python"><pre>org/com
+- your-organization-or-company
+-- extension-name
+--- yourClass1.class
+--- yourClass2.class
+--- .... more classes
+extension-name
+- __init__.py
+- extension-name.py
+META-INF
+- MANIFEST.MF</pre>
+</div>
+<p>The file <tt class="docutils literal"><span class="pre">__init__.py</span></tt> contains at least <tt class="docutils literal"><span class="pre">from</span> <span class="pre">extension-name</span> <span class="pre">import</span> <span class="pre">*</span></tt> to avoid one qualification level. So in a script you might either use:</p>
+<div class="highlight-python"><pre>import extension-name
+extension-name.functionXYZ()</pre>
+</div>
+<p>or:</p>
+<div class="highlight-python"><pre>from extension-name import *
+functionXYZ()</pre>
+</div>
+<p>The second case requires more investement in a naming convention, that avoids naming conflicts.</p>
+<p>The file <tt class="docutils literal"><span class="pre">extension-name.py</span></tt> contains the classes and methods, that represent the API, that one might use in a Sikuli script.</p>
+<p>As an example you may take the source of the extension Sikuli Guide.</p>
+</div>
+<div class="section" id="name-your-extensions-properly">
+<h2>Name your extensions properly<a class="headerlink" href="#name-your-extensions-properly" title="Permalink to this headline">¶</a></h2>
+<p>Sikuli extensions can be Python/Jython modules or Java classes.</p>
+<p>For Java classes, following the reverse URL convention of Java is a good idea (for example, org.foo.your-extension). However, <strong>DO NOT use Java&#8217;s convention for Python/Jython modules</strong>. You need to come up with a unique extension name that does not conflict with existing Python modules and other Sikuli extensions.</p>
+<p>Please read <a class="reference external" href="http://jythonpodcast.hostjava.net/jythonbook/en/1.0/ModulesPackages.html#naming-python-modules-and-packages">Naming Python Modules and Packages</a> to learn the details for naming a Python module.</p>
+</div>
+<div class="section" id="how-to-test-your-extension">
+<h2>How to test your extension<a class="headerlink" href="#how-to-test-your-extension" title="Permalink to this headline">¶</a></h2>
+<p>While developing your extensions, you can put the JAR file in Sikuli&#8217;s
+extension directory or in the same .sikuli folder as your test script.
+The JAR file should not have a version number in its file name,
+e.g. <tt class="docutils literal"><span class="pre">extension-name.jar</span></tt>.
+Because Sikuli starts to search extensions in the .sikuli folder of the running script and then
+in the Sikuli extensions folder, it is usually a good idea to put your
+developing extensions in the .sikuli folder of your test script.</p>
+<p>Another option is to use the <a class="reference internal" href="../globals.html#load" title="load"><tt class="xref py py-func docutils literal"><span class="pre">load()</span></tt></a> function with
+an absolute path to your <tt class="docutils literal"><span class="pre">extension-name.jar</span></tt>. If this fails, Sikuli
+goes on searching in the current .sikuli folder and then in the Sikuli extensions folder.
+If load() succeeds, it returns <tt class="docutils literal"><span class="pre">True</span></tt> and puts
+<tt class="docutils literal"><span class="pre">absolute-path-to-your-extension-name.jar</span></tt> into <tt class="docutils literal"><span class="pre">sys.path</span></tt>,
+so you can use <tt class="docutils literal"><span class="pre">import</span> <span class="pre">extension-name</span></tt> afterwards.</p>
+</div>
+<div class="section" id="how-to-contribute-your-extension">
+<h2>How to contribute your extension<a class="headerlink" href="#how-to-contribute-your-extension" title="Permalink to this headline">¶</a></h2>
+<p>Currently you have to contact the developers of Sikuli
+and agree on how to proceed.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="sikuli-guide/index.html" title="Sikuli Guide"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Extensions"
+             >previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="index.html" >Extensions</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Sikuli Doc Team.
+      Last updated on Nov 28, 2013.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

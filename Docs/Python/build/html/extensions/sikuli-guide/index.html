@@ -1,0 +1,405 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Sikuli Guide &mdash; SikuliX 1.1+ documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sikulidoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="SikuliX 1.1+ documentation" href="../../index.html" />
+    <link rel="up" title="Extensions" href="../index.html" />
+    <link rel="next" title="How Sikuli Works" href="../../devs/system-design.html" />
+    <link rel="prev" title="General Information About Sikuli Extensions" href="../extensions_info.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../devs/system-design.html" title="How Sikuli Works"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../extensions_info.html" title="General Information About Sikuli Extensions"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../../index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Extensions</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/ide-icon-64.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Sikuli Guide</a><ul>
+<li><a class="reference internal" href="#quick-start">Quick Start</a><ul>
+<li><a class="reference internal" href="#first-example">First Example</a></li>
+<li><a class="reference internal" href="#adding-multiple-annotations">Adding Multiple Annotations</a></li>
+<li><a class="reference internal" href="#adding-interaction">Adding Interaction</a></li>
+<li><a class="reference internal" href="#making-a-region-clickable">Making a Region clickable</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#function-references">Function References</a><ul>
+<li><a class="reference internal" href="#static-annotations">Static Annotations</a></li>
+<li><a class="reference internal" href="#interactive-elements">Interactive Elements</a></li>
+<li><a class="reference internal" href="#control">Control</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../extensions_info.html"
+                        title="previous chapter">General Information About Sikuli Extensions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../../devs/system-design.html"
+                        title="next chapter">How Sikuli Works</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/extensions/sikuli-guide/index.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="sikuli-guide">
+<h1>Sikuli Guide<a class="headerlink" href="#sikuli-guide" title="Permalink to this headline">¶</a></h1>
+<div class="versionadded" id="sikuliguide">
+<p><span>New in version X1.0-rc2.</span></p>
+</div>
+<p>Sikuli Guide is an extension to Sikuli that provides a revolutionary way to
+create guided tours or tutorials for GUI applications. The revolutionary aspect
+is that the content of the tours or tutorials can be displayed right on the
+<strong>actual interface</strong>, rather than in a video or a series of screenshots on a
+web page. All this can be combined with guided user activities directly in the
+respective GUI applications using all the other Sikuli features.</p>
+<div class="section" id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="first-example">
+<h3>First Example<a class="headerlink" href="#first-example" title="Permalink to this headline">¶</a></h3>
+<p>In our first example, suppose we want to create a guided tour of this very documentation
+page you are currently reading. We want to bring your attention to the logo
+picture to the right. Using the functions provided by Sikuli Guide, we can
+write the following script to accomplish this:</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="kw">from</span> guide <span class="kw">import</span> *
+<span class='lineno'>2</span>text(<img src="sikuli-logo.png"/>, <span class="str">"This is Sikuli's logo"</span>)
+<span class='lineno'>3</span>show(<span class="dig">5</span>)
+</pre>
+<p>When you run this script, Sikuli Guide will search for the logo&#8217;s image on the
+screen, highlight it, and display the text &#8216;&#8217;This is Sikuli&#8217;s logo&#8217;&#8217; below the
+image, like the figure below:</p>
+<img alt="../../_images/sikuli-logo-highlight.png" src="../../_images/sikuli-logo-highlight.png" />
+<p>Again, this happens in the <strong>actual interface</strong>, rather than in a video or a
+screenshot. The logo image that is highlighted is the actual interface element
+users can click on.</p>
+<p>Let&#8217;s explain the script line by line. The first line is an <tt class="docutils literal"><span class="pre">import</span></tt>
+statement that tells Sikuli to load the Sikuli Guide extension. The secod line
+uses the <a class="reference internal" href="#guide.text" title="guide.text"><tt class="xref py py-func docutils literal"><span class="pre">text(pattern,</span> <span class="pre">text)</span></tt></a> function to add <tt class="docutils literal"><span class="pre">text</span></tt>
+next to a given <tt class="docutils literal"><span class="pre">pattern</span></tt>, in this case, the logo image. Note that by default
+the text added is not displayed immediately, it is only internally added
+to the visual element. In the third line, we call
+<a class="reference internal" href="#guide.show" title="guide.show"><tt class="xref py py-func docutils literal"><span class="pre">show(secs)</span></tt></a> to explicitly tell Sikuli Guide to now display
+all registerd annotation elements (in this case only the
+text) for the duration specified by <tt class="docutils literal"><span class="pre">secs</span></tt>.</p>
+<p>Below is a YouTube video of this example.</p>
+<object type="application/x-shockwave-flash"
+        width="640"
+        height="385"
+        class="youtube-embed"
+        data="http://www.youtube.com/v/ELNWxVjVb7Y?hd=1">
+    <param name="movie" value="http://www.youtube.com/v/ELNWxVjVb7Y?hd=1"></param>
+    <param name="wmode" value="transparent"></param>
+</object>
+</div>
+<div class="section" id="adding-multiple-annotations">
+<h3>Adding Multiple Annotations<a class="headerlink" href="#adding-multiple-annotations" title="Permalink to this headline">¶</a></h3>
+<p>It is possible to add text or other annotations to multiple visual elements before
+calling <a class="reference internal" href="#guide.show" title="guide.show"><tt class="xref py py-func docutils literal"><span class="pre">show(secs)</span></tt></a> in order to show them on the screen at the same time.</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="kw">from</span> guide <span class="kw">import</span> *
+<span class='lineno'>2</span>text(<img src="sikuli-logo.png"/>, <span class="str">"This is Sikuli's logo"</span>)
+<span class='lineno'>3</span>tooltip(<img src="previous.png"/>,<span class="str">"Previous"</span>)
+<span class='lineno'>4</span>tooltip(<img src="next.png"/>,<span class="str">"Next"</span>)
+<span class='lineno'>5</span>tooltip(<img src="index.png"/>,<span class="str">"Index"</span>)
+<span class='lineno'>6</span>show(<span class="dig">5</span>)
+</pre>
+<p>The script above uses the function <a class="reference internal" href="#guide.tooltip" title="guide.tooltip"><tt class="xref py py-func docutils literal"><span class="pre">tooltip(text)</span></tt></a> to add tooltips to
+three links in addition to the text annotation. The result of running this
+script is shown below:</p>
+<img alt="../../_images/multiple-annotations.png" src="../../_images/multiple-annotations.png" />
+<p>Rather than showing the annotations all at once, we can also show them one by
+one using separate <tt class="docutils literal"><span class="pre">show()</span></tt> statements. Below is an example where we cycle
+through the three links and show the tooltip of each link one at a time.</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="kw">from</span> guide <span class="kw">import</span> *
+<span class='lineno'>2</span><span class="kw">while</span> True:
+<span class='lineno'>3</span>        tooltip(<img src="previous.png"/>,<span class="str">"Previous"</span>)
+<span class='lineno'>4</span>        show(<span class="dig">3</span>)
+<span class='lineno'>5</span>        tooltip(<img src="next.png"/>,<span class="str">"Next"</span>)
+<span class='lineno'>6</span>        show(<span class="dig">3</span>)
+<span class='lineno'>7</span>        tooltip(<img src="index.png"/>,<span class="str">"Index"</span>)
+<span class='lineno'>8</span>        show(<span class="dig">3</span>)
+</pre>
+<p>The result of running this script is shown below (3x speed-up):</p>
+<img alt="../../_images/animated-tooltips.gif" src="../../_images/animated-tooltips.gif" />
+</div>
+<div class="section" id="adding-interaction">
+<h3>Adding Interaction<a class="headerlink" href="#adding-interaction" title="Permalink to this headline">¶</a></h3>
+<p>Another way to control the flow of a guided tour is to display a dialog box
+and let users click on a button to continue to the next part of the tour.
+Sikuli Guide provides a function <a class="reference internal" href="#guide.dialog" title="guide.dialog"><tt class="xref py py-func docutils literal"><span class="pre">dialog(message)</span></tt></a>
+to accomplish this easily. Below is an example using this function to create a
+two-part guided tour.</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="kw">from</span> guide <span class="kw">import</span> *
+<span class='lineno'>2</span>text(<img src="links.png"/>,<span class="str">"Use these to jump to other parts"</span>)
+<span class='lineno'>3</span>dialog(<span class="str">"Part 1: Navigation Links"</span>)
+<span class='lineno'>4</span>show()
+<span class='lineno'>5</span>text(<img src="sikuli-logo.png"/>,<span class="str">"Use this to go back to Home"</span>)
+<span class='lineno'>6</span>dialog(<span class="str">"Part 2: Logo"</span>)
+<span class='lineno'>7</span>show()
+</pre>
+<p>The tour presented by the script above introduces the navigation links above
+and the Sikuli&#8217;s logo as a shortcut to go back to the documentation&#8217;s HOME
+page. The function call <tt class="docutils literal"><span class="pre">dialog(&quot;Part</span> <span class="pre">1&quot;)</span></tt> indicates the tour will show
+a dialog that displays the message specified by the string argument
+(i.e., Part 1: Navigation Links). The following call to <tt class="docutils literal"><span class="pre">show()</span></tt> will
+actually display the dialog along with the text elements spcified earlier.</p>
+<p>The figure below shows what happens after Line 3:</p>
+<img alt="../../_images/step1.png" src="../../_images/step1.png" />
+<p>After users click on the <strong>Next</strong> button, the tour moves to the next part. The
+screen will look like below:</p>
+<img alt="../../_images/step2.png" src="../../_images/step2.png" />
+</div>
+<div class="section" id="making-a-region-clickable">
+<h3>Making a Region clickable<a class="headerlink" href="#making-a-region-clickable" title="Permalink to this headline">¶</a></h3>
+<p>You might use the feature <a class="reference internal" href="#guide.clickable" title="guide.clickable"><tt class="xref py py-func docutils literal"><span class="pre">clickable(PSRM)</span></tt></a>, to make a region sensitive for clicks.</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="kw">from</span> guide <span class="kw">import</span> *
+<span class='lineno'>2</span>logo = <span class="skw">find</span>(<img src="sikuli-logo.png"/>)
+<span class='lineno'>3</span>text(logo, <span class="str">"To proceed click this red ..."</span>)
+<span class='lineno'>4</span>clickable(logo)
+<span class='lineno'>5</span>index = logo.above().right().<span class="skw">find</span>(<img src="index.png"/>)
+<span class='lineno'>6</span>text(index, <span class="str">"... or click this red"</span>)
+<span class='lineno'>7</span>clickable(index)
+<span class='lineno'>8</span>show()
+</pre>
+<p>The script waits until the user clicks one of the two highlighted areas.</p>
+<img alt="../../_images/annotation-clickable.png" src="../../_images/annotation-clickable.png" />
+<span class="target" id="module-guide"></span></div>
+</div>
+<div class="section" id="function-references">
+<h2>Function References<a class="headerlink" href="#function-references" title="Permalink to this headline">¶</a></h2>
+<p><strong>PSRM</strong>: when used as a parameter, it can be either <strong>P</strong> a Pattern,
+<strong>S</strong> a string (image file name or just plain text), a <strong>R</strong> Region object
+or <strong>M</strong> a Match object. With <strong>PS</strong> an implicit find operation takes place.
+(More information: <a class="reference internal" href="../../region.html#findinginsidearegionandwaitingforavisualevent"><em>Finding inside a Region ...</em></a>)</p>
+<div class="section" id="static-annotations">
+<h3>Static Annotations<a class="headerlink" href="#static-annotations" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="guide.rectangle">
+<tt class="descclassname">guide.</tt><tt class="descname">rectangle</tt><big>(</big><em>PSRM</em><big>)</big><a class="headerlink" href="#guide.rectangle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a rectangular overlay in red on the specified target&#8217;s region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>PSRM</strong> &#8211; a pattern, string, region or match</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="guide.circle">
+<tt class="descclassname">guide.</tt><tt class="descname">circle</tt><big>(</big><em>PSRM</em><big>)</big><a class="headerlink" href="#guide.circle" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a red circle around the specified target&#8217;s region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>PSRM</strong> &#8211; a pattern, string, region or match</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="guide.text">
+<tt class="descclassname">guide.</tt><tt class="descname">text</tt><big>(</big><em>PSRM</em>, <em>text</em><big>)</big><a class="headerlink" href="#guide.text" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add some text (white large letters on dark grey background) left justified below the specified target&#8217;s region, which is additionally highlighted.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>PSRM</strong> &#8211; a pattern, string, region or match</li>
+<li><strong>text</strong> &#8211; a string as text to display</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="guide.tooltip">
+<tt class="descclassname">guide.</tt><tt class="descname">tooltip</tt><big>(</big><em>PSRM</em>, <em>text</em><big>)</big><a class="headerlink" href="#guide.tooltip" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a tooltip (small text in a light yellow box) left justified below the specified target&#8217;s region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first last simple">
+<li><strong>PSRM</strong> &#8211; a pattern, string, region or match</li>
+<li><strong>text</strong> &#8211; a string as text to display</li>
+</ul>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="interactive-elements">
+<h3>Interactive Elements<a class="headerlink" href="#interactive-elements" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="guide.dialog">
+<tt class="descclassname">guide.</tt><tt class="descname">dialog</tt><big>(</big><em>text</em><big>)</big><a class="headerlink" href="#guide.dialog" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a dialog box displaying the given text in the middle of the screen above all othe windows.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>text</strong> &#8211; a string as text to display</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="function">
+<dt id="guide.clickable">
+<tt class="descclassname">guide.</tt><tt class="descname">clickable</tt><big>(</big><em>PSRM</em><big>)</big><a class="headerlink" href="#guide.clickable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add a clickable element corresponding to the specified target&#8217;s region.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>PSRM</strong> &#8211; a pattern, string, region or match</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+<div class="section" id="control">
+<h3>Control<a class="headerlink" href="#control" title="Permalink to this headline">¶</a></h3>
+<dl class="function">
+<dt id="guide.show">
+<tt class="descclassname">guide.</tt><tt class="descname">show</tt><big>(</big><span class="optional">[</span><em>seconds</em><span class="optional">]</span><big>)</big><a class="headerlink" href="#guide.show" title="Permalink to this definition">¶</a></dt>
+<dd><p>Show static and interactive components added so far for the specified amount of time.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><strong>seconds</strong> &#8211; a decimal number as display duration in seconds</td>
+</tr>
+</tbody>
+</table>
+<p>The default duration is 10 seconds. If interactive elements (either one or more clickable elements or
+a dialog box) were previously added, it waits until the user interacts with one of these elements.
+At this time all elements vanish and are discarded.</p>
+<p><strong>Note:</strong> If a <a class="reference internal" href="#guide.dialog" title="guide.dialog"><tt class="xref py py-func docutils literal"><span class="pre">dialog()</span></tt></a> element is present, other interactive elements are visible, but not clickable. If the dialog element is clicked, all elements vanish and are discarded.</p>
+</dd></dl>
+
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../../devs/system-design.html" title="How Sikuli Works"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../extensions_info.html" title="General Information About Sikuli Extensions"
+             >previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../../index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="../index.html" >Extensions</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Sikuli Doc Team.
+      Last updated on Nov 28, 2013.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

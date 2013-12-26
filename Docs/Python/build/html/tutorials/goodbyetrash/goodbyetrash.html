@@ -1,0 +1,152 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Goodbye Trash (Mac) &mdash; SikuliX 1.1+ documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sikulidoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="SikuliX 1.1+ documentation" href="../../index.html" />
+    <link rel="up" title="Tutorials" href="../index.html" />
+    <link rel="next" title="Uncheck All Checkboxes" href="../uncheckall/uncheckall.html" />
+    <link rel="prev" title="Hello World (Windows)" href="../helloworld/helloworld-win.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../uncheckall/uncheckall.html" title="Uncheck All Checkboxes"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../helloworld/helloworld-win.html" title="Hello World (Windows)"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../../index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Tutorials</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/ide-icon-64.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../helloworld/helloworld-win.html"
+                        title="previous chapter">Hello World (Windows)</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../uncheckall/uncheckall.html"
+                        title="next chapter">Uncheck All Checkboxes</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/tutorials/goodbyetrash/goodbyetrash.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="goodbye-trash-mac">
+<h1>Goodbye Trash (Mac)<a class="headerlink" href="#goodbye-trash-mac" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial, we will write a Sikuli Script to automate the operation of
+clearing the content of the trash bin. On Mac OS X, this operation takes three
+steps:</p>
+<ol class="arabic simple">
+<li>Click on the Trash icon in the dock</li>
+<li>Click on the Empty button in the container window</li>
+<li>Click on the Empty Trash button to confirm</li>
+</ol>
+<p>To automate this operation, first we need to capture the images of the GUI elements
+that need to be clicked.</p>
+<img alt="../../_images/trash_capture1.png" src="../../_images/trash_capture1.png" />
+<img alt="../../_images/trash_capture2.png" src="../../_images/trash_capture2.png" />
+<img alt="../../_images/trash_capture3.png" src="../../_images/trash_capture3.png" />
+<p>These captured images will be inserted into the Script editor.</p>
+<img alt="../../_images/trash_editor.png" src="../../_images/trash_editor.png" />
+<p>Then, we can write a sequence of three <a class="reference internal" href="../../region.html#Region.click" title="Region.click"><tt class="xref py py-meth docutils literal"><span class="pre">click()</span></tt></a> statements
+to click on the three elements that need to be clicked in order.</p>
+<img alt="../../_images/trash_code.png" src="../../_images/trash_code.png" />
+<p>Notice how closely these three lines of code are mapped to the text description of
+the three-step operation earlier. We simply replace the description of each GUI
+element (e.g., Trash bin) by its image directly. How intuitive it is!</p>
+<p>Before running the script, make sure the Trash icon is visible on the screen,
+otherwise Sikuli Script can not find it.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../uncheckall/uncheckall.html" title="Uncheck All Checkboxes"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../helloworld/helloworld-win.html" title="Hello World (Windows)"
+             >previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../../index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="../index.html" >Tutorials</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Sikuli Doc Team.
+      Last updated on Nov 28, 2013.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

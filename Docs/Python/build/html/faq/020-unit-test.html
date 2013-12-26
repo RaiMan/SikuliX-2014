@@ -1,0 +1,163 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>How to create Unit Testing Scripts for GUI &mdash; SikuliX 1.1+ documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sikulidoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SikuliX 1.1+ documentation" href="../index.html" />
+    <link rel="next" title="How to use Sikuli Script in your JAVA programs" href="030-java-dev.html" />
+    <link rel="prev" title="How to run Sikuli from Command Line" href="010-command-line.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="030-java-dev.html" title="How to use Sikuli Script in your JAVA programs"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="010-command-line.html" title="How to run Sikuli from Command Line"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../index.html">SikuliX 1.1+</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/ide-icon-64.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="010-command-line.html"
+                        title="previous chapter">How to run Sikuli from Command Line</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="030-java-dev.html"
+                        title="next chapter">How to use Sikuli Script in your JAVA programs</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/faq/020-unit-test.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="how-to-create-unit-testing-scripts-for-gui">
+<h1>How to create Unit Testing Scripts for GUI<a class="headerlink" href="#how-to-create-unit-testing-scripts-for-gui" title="Permalink to this headline">¶</a></h1>
+<p>Sikuli integrates with jUnit and supports unit testing for Graphical User Interfaces (GUI).
+The unit testing panel can be opened by clicking the menu
+<em class="menuselection"><span class="accelerator">V</span>iew ‣ Unit Test</em> or by
+the hot key <tt class="kbd docutils literal"><span class="pre">⌘-U</span></tt> on Mac or <tt class="kbd docutils literal"><span class="pre">Ctrl-U</span></tt> on Windows/Linux.</p>
+<p>Sikuli IDE aims to minimize the effort of writing code.
+With Sikuli IDE, a Python class inherited from
+<a class="reference external" href="http://junit.sourceforge.net/junit3.8.1/javadoc/junit/framework/TestCase.html">junit.framework.TestCase</a>
+is automatically generated to wrap your unit testing script.</p>
+<p>A typical unit testing script consists of two constructing and
+destructing methods,
+<a class="reference external" href="http://junit.sourceforge.net/junit3.8.1/javadoc/junit/framework/TestCase.html#setUp()">setUp()</a> and <a class="reference external" href="http://junit.sourceforge.net/junit3.8.1/javadoc/junit/framework/TestCase.html#tearDown()">tearDown()</a>,
+and a bunch of methods named with a prefix <tt class="xref std std-token docutils literal"><span class="pre">test</span></tt>.</p>
+<p>The basic structure of a script is given as following:</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="kw">def</span> setUp(self):
+<span class='lineno'>2</span>  openApp(<span class="str">"AnyRandom.app"</span>)
+<span class='lineno'>3</span>  <span class="skw">wait</span>(SCREENSHOT_OF_THE_APP) <span class="cmt"># wait until the app appears</span>
+<span class='lineno'>4</span>
+<span class='lineno'>5</span><span class="kw">def</span> tearDown(self):
+<span class='lineno'>6</span>  closeApp(<span class="str">"AnyRandom.app"</span>)
+<span class='lineno'>7</span>  untilNotExist(SCREENSHOT_OF_THE_APP) <span class="cmt"># wait until the app disappears</span>
+<span class='lineno'>8</span>
+<span class='lineno'>9</span><span class="kw">def</span> testA(self):
+<span class='lineno'>10</span>  ....
+<span class='lineno'>11</span>  <span class="kw">assert</span> exists(PICTURE_THAT_SHOULD_BE_THERE)
+<span class='lineno'>12</span>
+<span class='lineno'>13</span><span class="kw">def</span> testB(self):
+<span class='lineno'>14</span>  ....
+<span class='lineno'>15</span>  <span class="kw">assert</span> <span class="kw">not</span> exists(PICTURE_THAT_SHOULD_NOT_BE_THERE)
+</pre>
+<p>Here is <a class="reference external" href="http://sikuli.org/examples/TestJEdit.sikuli/TestJEdit.html">a complete example</a>.</p>
+<p>To run a unit testing script, you need to click on the <em class="guilabel">Run</em>
+button in the unit testing panel instead of the ordinary button.</p>
+<p><strong>IMPORTANT:</strong> Before you try to run your script in this test mode the first time, it has to be saved. Everytime you change something, you have to save it again, before the next test run.</p>
+<p>Alternatively, you also can run unit testing scripts from command line
+using the option <em class="xref std std-option">-t test-script</em>.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="030-java-dev.html" title="How to use Sikuli Script in your JAVA programs"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="010-command-line.html" title="How to run Sikuli from Command Line"
+             >previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../index.html">SikuliX 1.1+</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Sikuli Doc Team.
+      Last updated on Nov 28, 2013.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

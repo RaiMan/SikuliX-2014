@@ -1,0 +1,268 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>How to use Sikuli together with other IDE’s &mdash; SikuliX 1.1+ documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sikulidoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SikuliX 1.1+ documentation" href="../index.html" />
+    <link rel="next" title="Everything about Sikuli Script" href="../sikuli-script-index.html" />
+    <link rel="prev" title="How to use Sikuli Script in your JAVA programs" href="030-java-dev.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../sikuli-script-index.html" title="Everything about Sikuli Script"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="030-java-dev.html" title="How to use Sikuli Script in your JAVA programs"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../index.html">SikuliX 1.1+</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/ide-icon-64.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">How to use Sikuli together with other IDE&#8217;s</a><ul>
+<li><a class="reference internal" href="#general-requirements-and-comments">General Requirements and Comments</a></li>
+<li><a class="reference internal" href="#netbeans">Netbeans</a></li>
+<li><a class="reference internal" href="#eclipse">Eclipse</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="030-java-dev.html"
+                        title="previous chapter">How to use Sikuli Script in your JAVA programs</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../sikuli-script-index.html"
+                        title="next chapter">Everything about Sikuli Script</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/faq/040-other-ide.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="how-to-use-sikuli-together-with-other-ide-s">
+<h1>How to use Sikuli together with other IDE&#8217;s<a class="headerlink" href="#how-to-use-sikuli-together-with-other-ide-s" title="Permalink to this headline">¶</a></h1>
+<div class="versionadded">
+<p><span>New in version X1.0-rc2.</span></p>
+</div>
+<p>currently available for <a class="reference internal" href="#netbeanssikuli"><em>Netbeans</em></a> and <a class="reference internal" href="#eclipsesikuli"><em>Eclipse</em></a>.</p>
+<p>In this section we want to talk about requirements and todos, when you want to develop Sikuli scripts in other IDE&#8217;s than the one that comes with the distribution. You should read further, if you want to develop at least a part of your package using <strong>Python language</strong>. If you &#8220;only&#8221; want to develop in Java using the Java level API of Sikuli, then you should look here: <a class="reference internal" href="030-java-dev.html#howtojava"><em>How to use Sikuli Script in your JAVA programs</em></a>.</p>
+<p>Very detailed background information and helpful examples can be found in the <strong>Jython e-book</strong> <a class="reference external" href="http://jythonpodcast.hostjava.net/jythonbook/en/1.0/JythonIDE.html#chapter-11-using-jython-in-an-ide">Chapter 11: Using Jython in a IDE</a>. So we will concentrate on the key points here.</p>
+<p>The following approaches are evaluated and tested on Mac OS X 10.6 and Windows 7 32Bit. Linux users have to find the appropriate setups themselves - but they should be similar or even identical.</p>
+<p>These and more might be your reasons:</p>
+<ul class="simple">
+<li>you want to stick with your favorite IDE</li>
+<li>you want more features, than Sikuli-IDE currently has</li>
+<li>you want to develop packages/applications combining Sikuli script and Java or even other languages</li>
+<li>you want to develop a <a class="reference internal" href="../extensions/extensions_info.html#sikuliextensions"><em>Sikuli Extension</em></a></li>
+<li>you need a debugger for your script/package/application</li>
+<li>you want to integrate with a versioning system</li>
+<li>you want to do professional unittesting</li>
+</ul>
+<div class="section" id="general-requirements-and-comments">
+<h2>General Requirements and Comments<a class="headerlink" href="#general-requirements-and-comments" title="Permalink to this headline">¶</a></h2>
+<p><strong>Install Sikuli</strong></p>
+<ul>
+<li><dl class="first docutils">
+<dt><strong>Windows:</strong> install Sikuli X using the installer (the system %PATH% will be set as needed)</dt>
+<dd><p class="first">There is a new environment variable <strong>%SIKULI_HOME%</strong> that is expected to contain the directory, where Sikuli X is installed. You have to set it, if you have Sikuli X in a different place.</p>
+<p class="last"><strong>Be aware:</strong> using the zipped version, you have to take care for %PATH% and %SIKULI_HOME% yourself.</p>
+</dd>
+</dl>
+</li>
+<li><p class="first"><strong>Mac:</strong> have Sikuli-IDE.app in its standard place /Applications. There is generally no need to put it elsewhere.</p>
+</li>
+<li><p class="first"><strong>Linux:</strong> you generally have to take care for the environment yourself.</p>
+</li>
+</ul>
+<p><strong>Meanings of shortcuts used</strong>:</p>
+<ul class="simple">
+<li><strong>path-to/sikuli-script.jar</strong> if we use this, it should be replaced by the absolute path to the file sikuli-script.jar, where you installed Sikuli.</li>
+</ul>
+<p><strong>Images and importing other Sikuli scripts</strong></p>
+<p>It is recommended to carefully read through <a class="reference internal" href="../globals.html#importingsikuliscripts"><em>Importing other Sikuli Scripts (reuse code and images)</em></a>, since you need to have a concept how to capture, how to name and where to store your images. As a first start, just decide to use Sikuli IDE in parallel to capture and store your images and use the import feature or the image path to make them available in your script.</p>
+</div>
+<div class="section" id="netbeans">
+<h2>Netbeans<a class="headerlink" href="#netbeans" title="Permalink to this headline">¶</a></h2>
+<p id="netbeanssikuli">This is based on <strong>Netbeans 6.9</strong>. We suppose you have it running in a setup that allows to at least develop Java applications.</p>
+<p>Since this is not a tutorial how to use NetBeans in general, you should be familiar with the basic concepts.</p>
+<p><strong>Install Python plugin</strong></p>
+<p>Since the top level language used by Sikuli script is Python, you need the Python plugin that comes bundled with Jython 2.5.1.</p>
+<p>In the Python plugin NetBeans is not strict in naming: though they mainly talk about Python, Jython is meant as well. The Python interpreter to use is selected on the project level.</p>
+<p>Go to menu <strong>Tools</strong> -&gt; <strong>Plugins</strong> -&gt; <strong>Available Plugins</strong></p>
+<p>In the list select everything that is in the category Python and install. If suggested by the install process always restart Netbeans.</p>
+<p><strong>Configure for using Sikuli script features at runtime</strong></p>
+<p>The plugin itself has nothing to configure, that is of value for the Sikuli usage. Everything is done on the project level, though some basic preferences act like plugin globals - we just have to know and accept this ;-)</p>
+<p>These are the setup steps:</p>
+<ul class="simple">
+<li>Start a new project: <strong>File</strong> -&gt; <strong>New Project</strong> -&gt; <strong>Categories: Python</strong> -&gt; <strong>Python Project</strong> -&gt; click <strong>Next</strong></li>
+<li>In the second step <strong>Name and Location</strong> (last line), select as Python Platform: <strong>Jython 2.5.1</strong>.</li>
+<li>you might want to click <strong>Make Default</strong>, if you have real Python also available (Remember: Sikuli scripts cannot be run with real Python!)</li>
+<li>To integrate Sikuli: click the button <strong>Manage</strong> (only needed with the first project - it is remembered)</li>
+<li>on the tab <strong>Python Path</strong> we need an additional entry, that points to <strong>path-to/sikuli-script.jar/Lib</strong>.<ul>
+<li>Windows: click the button <strong>Add</strong> and click through to <em>path-to/sikuli-script.jar</em>. Before clicking <strong>Open</strong>, edit the filename so that it shows sikuli-script.jar\Lib.</li>
+<li>Mac: since the Netbeans file dialog does not allow to dive into a bundle like Sikuli-IDE.app, we have to edit the preference file directly. Since it is the same with the Java path, we have documented it seperatly below <a class="reference internal" href="#nbmacselectlibpath"><em>Mac/Netbeans: select library path</em></a>.</li>
+</ul>
+</li>
+<li>on the tab <strong>Java Path</strong> we need an additional entry, that points to <strong>path-to/sikuli-script.jar</strong>. If you have other Java libraries, that you need in your project, add them here too.<ul>
+<li>Windows: click the button <strong>Add</strong> and click through to <em>path-to/sikuli-script.jar</em>. Clicking <strong>Open</strong>.</li>
+<li>Mac: same again, see below <a class="reference internal" href="#nbmacselectlibpath"><em>Mac/Netbeans: Select library path</em></a>.</li>
+</ul>
+</li>
+</ul>
+<p>Now you are able to run your first script. Remember, that in every script including the main script, that you are editing now, as the first line you need <em>from sikuli.Sikuli import *</em>, to have access to the Sikuli features at runtime.</p>
+<p>Everytime later on you might come back to the project&#8217;s preferences with <strong>File</strong> -&gt; <strong>Project Properties (your-project&#8217;s-name)</strong> . You will find the above information in the categorie Python.</p>
+<p><strong>Prepare to use Code Completion for the Sikuli methods</strong></p>
+<p>The NetBeans editor in the Python plugin editor is not able to recognize Python classes and methods, as long as the respective source code is embedded inside a jar-file as it is the fact with Sikuli. If you want <em>Code Completion</em> to work, you have to extract the folder <strong>Lib/sikuli</strong> from <em>sikuli-script.jar</em>, place it  somewhere and add the reference to this folder to the Python Path in the project&#8217;s preferences (see above: Configure Python Path).</p>
+<p id="extractlibsikuli">To extract the folder <strong>Lib/sikuli</strong> from <em>sikuli-script.jar</em> you might use the jar utility, that comes with the Java JDK or any other utility, that allows to unjar a jar-file.</p>
+<p>This is a Mac example how to use the jar uility, supposing it can be found on the system path:</p>
+<ul class="simple">
+<li>in a Terminal window go to an appropriate folder, that should contain Lib/sikuli afterwards</li>
+<li>run: jar -xf /Applications/Sikuli-IDE.app/Contents/Resources/Java/sikuli-script.jar Lib/sikuli</li>
+</ul>
+<p>You might decide, to use a folder, that is already on the Python path. One folder that is designated by Jython to contain complementary sources, that needs to be imported, is the folder <em>Lib/site-packages</em> in the Jython installation directory. If you copy the folder <strong>sikuli</strong> here, you do not need an additional Python path entry.</p>
+<p id="nbmacselectlibpath"><strong>Mac/NetBeans: Select library path</strong></p>
+<p>To perpare the preference file modification we first add the path to <em>Sikuli-IDE.app</em> on both tabs: click the button <strong>Add</strong> and click through to <em>/Applications/Sikuli-IDE.app</em>. Depending on your selected language, the folder Applications is named like you see it in the Finder. Save the preferences by clicking close and/or ok.</p>
+<p>The preference file is located at /Users/your-name/.netbeans/6.9/build.properties. Since it is hidden, you might have to use the Finder option &#8220;Go to Folder&#8221; (Shift-Command-G), to open the folder /Users/your-name/.netbeans/.</p>
+<p>Open the file build.properties in your favorite editor and search for the text <em>/Applications/Sikuli-IDE.app</em>. It should be at the end of 2 lines beginning with <em>pythonplatform.</em>.</p>
+<p>On the line beginning <em>pythonplatform. ... .javalib=</em> extend <em>/Applications/Sikuli-IDE.app</em> so that it reads: /Applications/Sikuli-IDE.app/Contents/Resources/Java/sikuli-script.jar.</p>
+<p>On the line beginning <em>pythonplatform. ... .pythonlib=</em> extend <em>/Applications/Sikuli-IDE.app</em> so that it reads: /Applications/Sikuli-IDE.app/Contents/Resources/Java/sikuli-script.jar/Lib.</p>
+<p>Save the file and restart Netbeans. It is a good idea to check, that the correct entries are found on the 2 tabs now.</p>
+</div>
+<div class="section" id="eclipse">
+<h2>Eclipse<a class="headerlink" href="#eclipse" title="Permalink to this headline">¶</a></h2>
+<p id="eclipsesikuli">This is based on <strong>Eclipse Helios 3.6</strong>. We suppose you have it running in a setup that allows to at least develop Java applications.</p>
+<p>Since this is not a tutorial how to use Eclipse in general, you should be familiar with the basic concepts.</p>
+<p><strong>Install Python plugin (PyDev) and Jython</strong></p>
+<p>Since the top level language used by Sikuli script is Python, you need the Python plugin PyDev. Different from NetBeans, though PyDev is prepared to use Jython as interpreter, you have to install Jython on your own seperately.</p>
+<p>So <strong>first install Jython</strong>, by downloading the version you want to use from the <a class="reference external" href="http://www.jython.org/downloads.html">Jython download page</a>. Sikuli currently is based on Jython 2.5.1, but you may choose Jython 2.5.2 as well. Install it according to Jythons installation HowTo.</p>
+<p>After installation, make a test from a commandline by typing jython.bat (Windows) or jython (Mac/Linux) to open an interactive Jython session.</p>
+<p>You might type the following (&lt;enter&gt; means pressing the enter/return key)</p>
+<ul class="simple">
+<li>import os &lt;enter&gt;</li>
+<li>import sys &lt;enter&gt;</li>
+<li>for e in sys.path: print e &lt;enter&gt; &lt;enter&gt;</li>
+<li>type exit() &lt;enter&gt; (to leave interactive Jython)</li>
+</ul>
+<p>This shows the current Jython configuration of the Python path. Remember the place where Jython is installed.</p>
+<p>Now we <strong>install the PyDev plugin</strong> from inside Eclipse: Menu <strong>Help</strong> -&gt; <strong>Eclipse Marketplace</strong>. Either search it or find it on the Popular tab&#8217;s lower part. Simply click the Install button and do what you are asked to do ;-)</p>
+<p>The next step is to tell Eclipse PyDev, where it can find the Jython interpreter. Navigate to the <em>Eclipse Preferences</em> pane and open the category <em>PyDev</em> and inside the subcategory <em>Interpreter-Jython</em>. First try to <em>Auto Config</em> by clicking the appropriate button. If this does not work, click the button <em>New</em>, name the entry and navigate to the folder, where Jython was installed and select <em>jython.jar</em>. After clicking ok, a window <em>Selection needed</em> might come up: click <em>Select all</em> and <em>ok</em> to finalize this step.</p>
+<p>Other options with PyDev are available, but not relevant for our actual matter (<a class="reference external" href="http://pydev.org/manual_101_root.html">see documentation</a>).</p>
+<p><strong>Configure for using Sikuli script features at runtime</strong></p>
+<p>Again we have a difference to Netbeans: The PyDev plugin does not allow library references to folders inside of jar-files in the respective configuration dialog (it does not insert them to the Python path), though Jython itself accepts them, when specified on the Python path. So if you want to run and debug your script in Eclipse, you have to extract the folder <strong>Lib/sikuli</strong> from sikuli-script.jar (<a class="reference internal" href="#extractlibsikuli"><em>find one HowTo here</em></a>).</p>
+<p>As with Netbeans, the library configuration is done in the project itself. So we open a new project:</p>
+<ul class="simple">
+<li>Menu <strong>File</strong> -&gt; <strong>New</strong> -&gt; <strong>Project</strong> -&gt; <strong>PyDev</strong> -&gt; (open sublist) -&gt; <strong>PyDev Project</strong> -&gt; click <strong>Next</strong> button.</li>
+</ul>
+<p>On the configuration pane name your project, select Jython as Project type, grammar version 2.5 (higher Python language versions are not supported by Jython 2.5.x) and click
+the <strong>Finish</strong> button. Your project is created. Add at least one <em>you-name-it.py</em> file to the source folder and put <em>from sikuli.Sikuli import *</em> as the first line.</p>
+<p>In the last step, we tell PyDev, where to find the Sikuli libraries.</p>
+<p>Goto Menu <strong>Project</strong> -&gt; <strong>Properties</strong> -&gt; select category <strong>PyDev - PYTHONPATH</strong> and go to the tab <strong>External Libraries</strong>. We need a reference to <em>path-to/sikuli-script.jar</em> and another one to the extracted folder <em>Lib</em> containing the folder <em>sikuli</em>.</p>
+<ul class="simple">
+<li>reference to <em>path-to/sikuli-script.jar</em><ul>
+<li>Windows: click button <strong>Add zip/jar/egg</strong> and select <em>sikuli-script.jar</em> from the Sikuli installation.</li>
+<li>Mac: As with NetBeans, the file dialog does not allow to step inside Sikuli-IDE.app. So we use the trick, to define a <em>String Substitution Variable</em>: on the respective tab click <strong>Add variable</strong>, name it e.g. <em>sikuli-script</em> and enter as value: /Applications/Sikuli-IDE.app/Contents/Resources/Java/sikuli-script.jar. Go back to the tab <strong>External Libraries</strong> and click <strong>Add based on variable</strong>. In the entry field enter: ${sikuli-script} and click <strong>OK</strong>.</li>
+</ul>
+</li>
+<li>reference to the extracted folder <em>Lib</em> containing the folder <em>sikuli</em><ul>
+<li>click <strong>Add source folder</strong> and select the folder <em>Lib</em> in the place you had it extracted.</li>
+<li>this is not needed, if you have moved the extracted folder <em>sikuli</em> to a folder, that is already on the Python path (e.g. jython-intallation/Lib/site-packages).</li>
+</ul>
+</li>
+</ul>
+<p>Now you are able to run your first script. Remember, that in every script including the main script, that you are editing now, as the first line you need <em>from sikuli.Sikuli import *</em>, to have access to the Sikuli features at runtime.</p>
+<p>Everytime later on you might come back to the project&#8217;s preferences with <strong>Project</strong> -&gt; <strong>Properties</strong>.</p>
+<p><strong>Code Completion</strong> works from the start without any further configuration and even steps into the Java classes where appropriate.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../sikuli-script-index.html" title="Everything about Sikuli Script"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="030-java-dev.html" title="How to use Sikuli Script in your JAVA programs"
+             >previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../index.html">SikuliX 1.1+</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Sikuli Doc Team.
+      Last updated on Nov 28, 2013.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

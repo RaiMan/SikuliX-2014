@@ -1,0 +1,177 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Working with Sliders &mdash; SikuliX 1.1+ documentation</title>
+    
+    <link rel="stylesheet" href="../../_static/sikulidoc.css" type="text/css" />
+    <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../../',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../_static/doctools.js"></script>
+    <link rel="top" title="SikuliX 1.1+ documentation" href="../../index.html" />
+    <link rel="up" title="Tutorials" href="../index.html" />
+    <link rel="next" title="Desktop Surveillance" href="../surveillance/surveillance.html" />
+    <link rel="prev" title="Check the Right Checkbox" href="../checkone/checkone.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../surveillance/surveillance.html" title="Desktop Surveillance"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../checkone/checkone.html" title="Check the Right Checkbox"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../../index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="../index.html" accesskey="U">Tutorials</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/ide-icon-64.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../checkone/checkone.html"
+                        title="previous chapter">Check the Right Checkbox</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../surveillance/surveillance.html"
+                        title="next chapter">Desktop Surveillance</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../../_sources/tutorials/sliders/sliders.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="working-with-sliders">
+<h1>Working with Sliders<a class="headerlink" href="#working-with-sliders" title="Permalink to this headline">¶</a></h1>
+<p>In this tutorial, we will learn how to use <a class="reference internal" href="../../region.html#Region.dragDrop" title="Region.dragDrop"><tt class="xref py py-meth docutils literal"><span class="pre">dragDrop()</span></tt></a>
+and <a class="reference internal" href="../../region.html#extendingaregion"><em>spatial operators</em></a> by writing a number of scripts to
+manipulate sliders.</p>
+<p>Suppose we wish to lower the speaking rate of the Text to Speech function. We want
+to drag the slider to the slow side in the Speech preferences window shown below.</p>
+<img alt="../../_images/speech.png" src="../../_images/speech.png" />
+<p>The function that can perform the dragging is <a class="reference internal" href="../../region.html#Region.dragDrop" title="Region.dragDrop"><tt class="xref py py-meth docutils literal"><span class="pre">dragDrop()</span></tt></a>. This function takes two images as arguments. The first image
+describes the source GUI object to drag and the second image describes the
+appearance of the destination location where the GUI object should be dragged to and
+dropped.</p>
+<p>Let us capture the source and destination images respectively.</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="skw">dragDrop</span>(<img src="thumb.png"/>, <img src="slow.png"/>)
+</pre>
+<p>What happen if there are more than two sliders. How can we make sure the right
+slider is dragged? The above example works because the particular window only has
+one slider. How can we deal with cases when there are several instances of similar
+looking GUI components? Let us consider the Sound preferences window shown below.</p>
+<img alt="../../_images/sound.png" src="../../_images/sound.png" />
+<p>Suppose we wish to lower the Alert volume. To make sure Sikuli Script drags the
+right slider, we need a way to tell Sikuli Script to look for the one that is to the
+right of the Alert volume label, not the one next to the Output volume label. Sikuli
+Script provides a set of spatial operators to do exactly this. Here we will apply
+the <a class="reference internal" href="../../region.html#Region.right" title="Region.right"><tt class="xref py py-meth docutils literal"><span class="pre">right()</span></tt></a> operator as follows.</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span>t = <span class="skw">find</span>(<img src="alert.png"/>).right().<span class="skw">find</span>(<img src="thumb.png"/>)
+</pre>
+<p>This statement tells Sikuli Script to first find the Alert volume label and then
+find the slider thumb only within the region strictly to the right of the result of
+the first find. The slider thumb found is then stored in the variable t. Now that we
+have identified the desired slider thumb, we can call <a class="reference internal" href="../../region.html#Region.dragDrop" title="Region.dragDrop"><tt class="xref py py-meth docutils literal"><span class="pre">dragDrop()</span></tt></a> to drag it to the left by giving the image of the Alter volume as
+the target.</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="skw">dragDrop</span>(t, <img src="alert.png"/>)
+</pre>
+<p>In the above example, we use the image of the Alert volume label to implicitly guide
+the direction of dragging to the left. It is also possible to use relative
+coordinates to explicitly drag to the left, as shown below.</p>
+
+<pre class="sikuli-code">
+<span class='lineno'>1</span><span class="skw">dragDrop</span>(t, [t.x - <span class="dig">200</span>, t.y])
+</pre>
+<p>Here, the (x,y) coordinates of the slider thumb are accessible as the attributes of
+t. We can thus calculate the position 200 pixels to the left of t and ask Sikuli
+Script to drag the thumb to that position.</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../surveillance/surveillance.html" title="Desktop Surveillance"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../checkone/checkone.html" title="Check the Right Checkbox"
+             >previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../../index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="../index.html" >Tutorials</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Sikuli Doc Team.
+      Last updated on Nov 28, 2013.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>What is new in Sikuli X &mdash; SikuliX 1.1+ documentation</title>
+    
+    <link rel="stylesheet" href="_static/sikulidoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SikuliX 1.1+ documentation" href="index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="index.html">SikuliX 1.1+</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/ide-icon-64.png" alt="Logo"/>
+            </a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/new-in-sikulix.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="what-is-new-in-sikuli-x">
+<h1>What is new in Sikuli X<a class="headerlink" href="#what-is-new-in-sikuli-x" title="Permalink to this headline">¶</a></h1>
+<p>Sikuli X is a new experimental branch of Sikuli. (X stands for eXperimental.)
+For all current users of Sikuli 0.9 or 0.10 we recommend to upgrade to X.</p>
+<p>However, please keep in mind some new features are still experimental, e.g. text
+recognition and the new API to get the bound of any windows, which means they may
+not work well or not support all platforms yet.</p>
+<div class="versionadded">
+<p><span>New in version X1.0-rc2.</span></p>
+</div>
+<p>Features marked with RC2 in the following list are only available beginning with Sikuli X-1.0rc2.
+In the documentation sections you might look for the above marker to identify new features.</p>
+<ul>
+<li><p class="first">RC2: the IDE outfit is revised. Find and Undo/Redo is added. Console messages are colored now. The font is now monospaced and smaller.</p>
+</li>
+<li><dl class="first docutils">
+<dt>RC2: The message concept is completely revised. Verbosity can be adjusted now</dt>
+<dd><p class="first last">(see <a class="reference internal" href="globals.html#Settings.ActionLogs" title="Settings.ActionLogs"><tt class="xref py py-attr docutils literal"><span class="pre">Sikuli</span> <span class="pre">Messages</span></tt></a>).</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>RC2: Extensions (jar-files containing complementary Sikuli features) can be downloaded from a repository managed by the Sikuli developers. As the first extension <strong>Sikuli Guide</strong> (an annotation tool - Windows and Mac only) is available. You may contribute your own extensions.</dt>
+<dd><p class="first last">(see: <a class="reference internal" href="extensions/extensions_info.html#sikuliextensions"><em>Extensions</em></a>).</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">RC2: sikuli-script.jar together with the native libraries can now be used really standalone (only a few standards have to be followed), so it is easier now to integrate Sikuli with other IDE&#8217;s, frameworks or applications and <em class="xref std std-ref">run scripts from commandline</em>.</p>
+</li>
+<li><p class="first">RC2: sikuli-script.jar on commandline now accepts a <em class="xref std std-ref">new option -i</em>, that starts up the interactive Jython with the Sikuli environment already initialized (for tests on the fly from commandline without the IDE).</p>
+</li>
+<li><p class="first">RC2: <a class="reference internal" href="globals.html#Env.getSikuliVersion" title="Env.getSikuliVersion"><tt class="xref py py-meth docutils literal"><span class="pre">Env.getSikuliVersion()</span></tt></a> returns the Sikuli version string.</p>
+</li>
+<li><p class="first">New computer vision engine - faster and more reliable</p>
+</li>
+<li><p class="first">Better capture mode on Mac (supports multi-screens, no flicker anymore)</p>
+</li>
+<li><p class="first">Text recognition and matching</p>
+<ul class="simple">
+<li><tt class="docutils literal"><span class="pre">find(&quot;OK&quot;)</span></tt> returns all regions with a &#8220;OK&#8221; label
+(see <a class="reference internal" href="region.html#findinginsidearegionandwaitingforavisualevent"><em>Finding a Pattern (Image or Text)</em></a>)</li>
+<li>new <a class="reference internal" href="region.html#Region.text" title="Region.text"><tt class="xref py py-meth docutils literal"><span class="pre">Region.text()</span></tt></a> returns the text in the region</li>
+<li></li>
+</ul>
+</li>
+<li><p class="first">Screenshot Naming in the IDE:</p>
+<ul class="simple">
+<li>screenshots can be automatically named<ul>
+<li>with timestamps</li>
+<li>with part of the text found in them</li>
+<li>manually at time of capture</li>
+</ul>
+</li>
+<li>and renamed every time using the preview pane</li>
+<li></li>
+</ul>
+</li>
+<li><dl class="first docutils">
+<dt>Remote Images are supported</dt>
+<dd><p class="first last">e.g. <tt class="docutils literal"><span class="pre">click(&quot;http://sikuli.org/example/ok_button.png&quot;)</span></tt></p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>There is an Image Search Path - images can be stored wherever you like, even in the web</dt>
+<dd><p class="first last">(see <a class="reference internal" href="globals.html#imagesearchpath"><em>Image Search Path</em></a>)</p>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Scripts can be imported from .sikuli sources as a module (Python style).</dt>
+<dd><dl class="first last docutils">
+<dt>RC2: jar-files containing java classes and/or Python modules can be loaded at runtime.</dt>
+<dd><p class="first last">(see <a class="reference internal" href="globals.html#importingsikuliscripts"><em>Importing Sikuli Scripts</em></a>)</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><p class="first">New App Class replaces the old openApp, switchApp, closeApp functions
+(see Class <a class="reference internal" href="globals.html#App" title="App"><tt class="xref py py-class docutils literal"><span class="pre">App</span></tt></a>)</p>
+<ul class="simple">
+<li><a class="reference internal" href="globals.html#App.open" title="App.open"><tt class="xref py py-meth docutils literal"><span class="pre">App.open()</span></tt></a>, <a class="reference internal" href="globals.html#App.close" title="App.close"><tt class="xref py py-meth docutils literal"><span class="pre">App.close()</span></tt></a>, <a class="reference internal" href="globals.html#App.focus" title="App.focus"><tt class="xref py py-meth docutils literal"><span class="pre">App.focus()</span></tt></a></li>
+<li><a class="reference internal" href="globals.html#App.window" title="App.window"><tt class="xref py py-meth docutils literal"><span class="pre">App.window()</span></tt></a> returns the bound of the app window as a Region, so
+you can restrict following actions within that region. (Windows and Mac only)</li>
+<li></li>
+</ul>
+</li>
+<li><dl class="first docutils">
+<dt>Beautified Run in Slow Motion mode together with some additional options available now through class <a class="reference internal" href="globals.html#Settings" title="Settings"><tt class="xref py py-class docutils literal"><span class="pre">Settings</span></tt></a></dt>
+<dd><p class="first last">(see <a class="reference internal" href="globals.html#controllingsikuliscriptsandtheirbehavior"><em>Controlling Sikuli Scripts</em></a>).</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Smooth mouse movement
+(see <a class="reference internal" href="globals.html#controllingsikuliscriptsandtheirbehavior"><em>Controlling Sikuli Scripts</em></a>)</p>
+</li>
+<li><dl class="first docutils">
+<dt>More Special Keys are supported (PrintScreen, NumPad, CapsLock...) (see Class <a class="reference internal" href="keys.html#Key" title="Key"><tt class="xref py py-class docutils literal"><span class="pre">Key</span></tt></a>)</dt>
+<dd><dl class="first last docutils">
+<dt>RC2: The status of NumLock, CapsLock and ScrollLock can be requested</dt>
+<dd><p class="first last">(see <a class="reference internal" href="globals.html#Env.isLockOn" title="Env.isLockOn"><tt class="xref py py-meth docutils literal"><span class="pre">Env.isLockOn()</span></tt></a>).</p>
+</dd>
+</dl>
+</dd>
+</dl>
+</li>
+<li><p class="first">New Region Highlighting: <a class="reference internal" href="region.html#Region.highlight" title="Region.highlight"><tt class="xref py py-meth docutils literal"><span class="pre">Region.highlight()</span></tt></a> (Windows   and Mac only)</p>
+</li>
+<li><p class="first">RC2: Additional helper methods to relocate or change region objects and to get their corners (e.g. <a class="reference internal" href="region.html#Region.moveTo" title="Region.moveTo"><tt class="xref py py-meth docutils literal"><span class="pre">reg.moveTo()</span></tt></a> or <a class="reference internal" href="region.html#Region.getTopLeft" title="Region.getTopLeft"><tt class="xref py py-meth docutils literal"><span class="pre">reg.getTopLeft()</span></tt></a>). Other new API&#8217;s like <tt class="xref py py-meth docutils literal"><span class="pre">reg.getRegionFromPSRM()</span></tt> might be helpful when developing complex scripts and packages like <a class="reference internal" href="extensions/extensions_info.html#sikuliextensions"><em>Extensions</em></a>.</p>
+</li>
+<li><p class="first">RC2: The <a class="reference internal" href="region.html#observingvisualeventsinaregion"><em>observer feature</em></a> is completely revised. A class <a class="reference internal" href="region.html#SikuliEvent" title="SikuliEvent"><tt class="xref py py-class docutils literal"><span class="pre">SikuliEvent</span></tt></a> is added, containing environmental information about the observed event.</p>
+</li>
+<li><dl class="first docutils">
+<dt>RC2: A new FindFailed handling option is added, that might come up with a prompt at runtime</dt>
+<dd><p class="first last">(see <a class="reference internal" href="region.html#exceptionfindfailed"><em>Exception FindFailed</em></a>)</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">Mouse Wheel supported: <a class="reference internal" href="region.html#Region.wheel" title="Region.wheel"><tt class="xref py py-meth docutils literal"><span class="pre">wheel(target,</span> <span class="pre">WHEEL_UP</span> <span class="pre">|</span> <span class="pre">WHEEL_DOWN,</span> <span class="pre">steps)</span></tt></a> for scrolling the mouse wheel</p>
+</li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="index.html">SikuliX 1.1+</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Sikuli Doc Team.
+      Last updated on Nov 28, 2013.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,211 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Location &mdash; SikuliX 1.1+ documentation</title>
+    
+    <link rel="stylesheet" href="_static/sikulidoc.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="top" title="SikuliX 1.1+ documentation" href="index.html" />
+    <link rel="up" title="Everything about Sikuli Script" href="sikuli-script-index.html" />
+    <link rel="next" title="Match" href="match.html" />
+    <link rel="prev" title="Screen" href="screen.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="match.html" title="Match"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="screen.html" title="Screen"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="sikuli-script-index.html" accesskey="U">Everything about Sikuli Script</a> &raquo;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/ide-icon-64.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="screen.html"
+                        title="previous chapter">Screen</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="match.html"
+                        title="next chapter">Match</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="_sources/location.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="location">
+<h1>Location<a class="headerlink" href="#location" title="Permalink to this headline">¶</a></h1>
+<p>This class is there as a convenience, to handle single points on the screen directly
+by its position (x, y). It is mainly used in the actions on a region, to directly
+denote the click point. It contains methods, to <em>move</em> a point around on the screen.</p>
+<dl class="class">
+<dt id="Location">
+<em class="property">class </em><tt class="descname">Location</tt><a class="headerlink" href="#Location" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="method">
+<dt id="Location.Location">
+<tt class="descname">Location</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#Location.Location" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><ul class="first simple">
+<li><strong>x</strong> &#8211; x position</li>
+<li><strong>y</strong> &#8211; y position</li>
+</ul>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last">a new location object representing the position (x,y) on the screen</p>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+<dl class="method">
+<dt id="Location.getX">
+<tt class="descname">getX</tt><big>(</big><big>)</big><a class="headerlink" href="#Location.getX" title="Permalink to this definition">¶</a></dt>
+<dt id="Location.getY">
+<tt class="descname">getY</tt><big>(</big><big>)</big><a class="headerlink" href="#Location.getY" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get the x or y value of a location object</p>
+<p>It is possible to get the values directly by <tt class="docutils literal"><span class="pre">location.x</span></tt> or <tt class="docutils literal"><span class="pre">location.y</span></tt>.
+It is also possible to set these values directly by <tt class="docutils literal"><span class="pre">location.x</span> <span class="pre">=</span> <span class="pre">value</span></tt>
+or <tt class="docutils literal"><span class="pre">location.y</span> <span class="pre">=</span> <span class="pre">value</span></tt>.</p>
+<p><strong>Note:</strong> <tt class="docutils literal"><span class="pre">getX()``and</span> <span class="pre">``getY()</span></tt> currently (versions 0.10.2 and X 1.0rc2) return float
+values (Java: double), whereas <tt class="docutils literal"><span class="pre">location.x</span></tt> and <tt class="docutils literal"><span class="pre">location.y</span></tt> return integer values.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Location.setLocation">
+<tt class="descname">setLocation</tt><big>(</big><em>x</em>, <em>y</em><big>)</big><a class="headerlink" href="#Location.setLocation" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the location of this object to the specified coordinates.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Location.offset">
+<tt class="descname">offset</tt><big>(</big><em>dx</em>, <em>dy</em><big>)</big><a class="headerlink" href="#Location.offset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a new location which is <em>dx</em> and <em>dy</em> pixels away horizontally and
+vertically from the current location.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Location.above">
+<tt class="descname">above</tt><big>(</big><em>dy</em><big>)</big><a class="headerlink" href="#Location.above" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a new location which is <em>dy</em> pixels vertically above the current
+location.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Location.below">
+<tt class="descname">below</tt><big>(</big><em>dy</em><big>)</big><a class="headerlink" href="#Location.below" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a new location which is <em>dy</em> pixels vertically below the current
+location.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Location.left">
+<tt class="descname">left</tt><big>(</big><em>dx</em><big>)</big><a class="headerlink" href="#Location.left" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a new location which is <em>dx</em> pixels horizontally to the left of the
+current location.</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="Location.right">
+<tt class="descname">right</tt><big>(</big><em>dx</em><big>)</big><a class="headerlink" href="#Location.right" title="Permalink to this definition">¶</a></dt>
+<dd><p>Get a new location which is <em>dx</em> pixels horizontally to the right of the
+current location.</p>
+</dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="match.html" title="Match"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="screen.html" title="Screen"
+             >previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="index.html">SikuliX 1.1+</a> &raquo;</li>
+
+          <li><a href="sikuli-script-index.html" >Everything about Sikuli Script</a> &raquo;</li> 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Sikuli Doc Team.
+      Last updated on Nov 28, 2013.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>

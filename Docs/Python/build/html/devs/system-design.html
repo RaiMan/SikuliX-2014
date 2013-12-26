@@ -1,0 +1,148 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>How Sikuli Works &mdash; SikuliX 1.1+ documentation</title>
+    
+    <link rel="stylesheet" href="../_static/sikulidoc.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="top" title="SikuliX 1.1+ documentation" href="../index.html" />
+    <link rel="next" title="How to get involved" href="../contributing.html" />
+    <link rel="prev" title="Sikuli Guide" href="../extensions/sikuli-guide/index.html" /> 
+  </head>
+  <body>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../contributing.html" title="How to get involved"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="../extensions/sikuli-guide/index.html" title="Sikuli Guide"
+             accesskey="P">previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../index.html">SikuliX 1.1+</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+      <div class="sphinxsidebar">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/ide-icon-64.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">How Sikuli Works</a><ul>
+<li><a class="reference internal" href="#sikuli-script">Sikuli Script</a></li>
+<li><a class="reference internal" href="#the-structure-of-a-sikuli-source-folder-or-zipped-file-sikuli-skl">The Structure of a Sikuli source folder or zipped file (.sikuli, .skl)</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="../extensions/sikuli-guide/index.html"
+                        title="previous chapter">Sikuli Guide</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../contributing.html"
+                        title="next chapter">How to get involved</a></p>
+  <h3>This Page</h3>
+  <ul class="this-page-menu">
+    <li><a href="../_sources/devs/system-design.txt"
+           rel="nofollow">Show Source</a></li>
+  </ul>
+<div id="searchbox" style="display: none">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    <p class="searchtip" style="font-size: 90%">
+    Enter search terms or a module, class or function name.
+    </p>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body">
+            
+  <div class="section" id="how-sikuli-works">
+<h1>How Sikuli Works<a class="headerlink" href="#how-sikuli-works" title="Permalink to this headline">¶</a></h1>
+<img alt="../_images/SystemDesign.png" src="../_images/SystemDesign.png" />
+<div class="section" id="sikuli-script">
+<h2>Sikuli Script<a class="headerlink" href="#sikuli-script" title="Permalink to this headline">¶</a></h2>
+<p>Sikuli Script is a Jython and Java library that automates GUI interaction using image patterns to direct keyboard/mouse events.
+The core of Sikuli Script is a Java library that consists of two parts: java.awt.Robot, which delivers keyboard and mouse events to appropriate locations, and a C++ engine based on OpenCV, which searches given image patterns on the screen. The C++ engine is connected to Java via JNI and needs to be compiled for each platform.
+On top of the Java library, a thin Jython layer is provided for end-users as a set of simple and clear commands. Therefore, it should be easy to add more thin layers for other languages running on JVM, e.g. JRuby, Scala, Javascript, etc.</p>
+</div>
+<div class="section" id="the-structure-of-a-sikuli-source-folder-or-zipped-file-sikuli-skl">
+<h2>The Structure of a Sikuli source folder or zipped file (.sikuli, .skl)<a class="headerlink" href="#the-structure-of-a-sikuli-source-folder-or-zipped-file-sikuli-skl" title="Permalink to this headline">¶</a></h2>
+<p>A Sikuli script (.sikuli) is a directory that contains a Python source file (.py) representing the automation workflow or the test cases and all the image files (.png) used by the source file. All images used in a Sikuli script are simply a path to the .png file in the .sikuli bundle. Therefore, the Python source file can also be edited by any text editor.</p>
+<p>While saving a script using Sikuli IDE, an extra HTML file may optionally be created in the .sikuli directory so that users can share a visual copy of the scripts on the web easily.</p>
+<p>A Sikuli zipped script (.skl) is simply a zipped file of all files in the .sikuli folder. It is intended for distribution via mail or web upload, can also be run from command line and reopened in the Sikuli IDE. (The previous naming as &#8220;Sikuli executable&#8221; is deprecated, since this is misleading: people most often thought, it is something like a self-contained and self-running package comparable to a Windows EXE, but it is not).</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="right" >
+          <a href="../contributing.html" title="How to get involved"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="../extensions/sikuli-guide/index.html" title="Sikuli Guide"
+             >previous</a> |</li>
+    <li><a href="http://sikuli.org/"><b>PROJECT SIKULIX</b></a> | </li>
+        
+        <li><a href="../index.html">SikuliX 1.1+</a> &raquo;</li>
+ 
+      </ul>
+    </div>
+    <div class="footer">
+        &copy; Copyright 2010, Sikuli Doc Team.
+      Last updated on Nov 28, 2013.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.2b3.
+    </div>
+  </body>
+</html>
