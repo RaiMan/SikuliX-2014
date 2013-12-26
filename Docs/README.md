@@ -28,3 +28,5 @@ To run the build on Mac/Linux use `make html` (on Windows `make.bat html`) in th
 **Information for the Java API**
 
 The docs contain information about the Java API at places, where there are major differences to the scripting API.
+
+The contained HTML formatted JavaDocs are restricted to the officially supported public API. Classes and methods marked as deprecated might vanish without further notice in the future (earliest though with version 1.2).
