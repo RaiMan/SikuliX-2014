@@ -28,13 +28,14 @@ The Java implementation comprising the API to access the top elements (Screen, R
 
 The base package `sikuli-java.jar` provides this API for Java programming and any Java aware scripting languages (currently with some special support for Jython).
 
-The convenience package `sikuli-script.jar` comes with the bundled Jython interpreter, thus allowing to run Sikuli scripts out of the box from the commandline and providing an interactive Sikuli aware Jython shell.
+The convenience package `sikuli-script.jar` comes with the bundled Jython interpreter, thus allowing to run Sikuli scripts out of the box from the commandline and providing an interactive Sikuli aware Jython shell.<br />
+This package will vanish in the long range, since it is fully contained in the IDE package.
 
 **Module IDE**
 
 Implements a GUI using Java, that allows to edit and run Sikuli scripts (currently only Jython is supported). It is an easy to use IDE focusing on the handling of the screenshots and images used in the typical Sikuli workflows.
 
-The package `sikuli-ide.jar` is the top level package containing all other options and can be used in the same way.
+The package `sikuli-ide.jar` is the top level package containing all other options. It can be used from commandline in the same way as `sikuli-script.jar` and hence usually only this IDE package is needed.
 
 <hr/>
 
