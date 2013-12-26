@@ -63,7 +63,7 @@ Each folder (module) in this repo is a Maven project by itself with its own POM,
 Usage - basic information
 -------------------------
 
-If you intend to compile and build the modules after having downloaded this repo, you need a valid Maven 3 installation and some IDE, that is enabled for working with Maven projects. <br />(I myself use NetBeans 7.4, which supports Maven by default)
+If you intend to compile and build the modules after having downloaded this repo, you need a valid Maven 3 installation and for editing, testing and integration some IDE, that is enabled for working with Maven projects. <br />(I myself use NetBeans 7.4, which supports Maven by default)
 
 **Take care** Even if you only want to work on one of the modules (e.g. API), the modules should not be moved around, but stay in the structure of the downloaded repo. Each module depends on the parent POM in the root and the ready-to-use-jar-production POMs additionally on the assembly descriptors plain.xml and complete.xml.
 
@@ -81,11 +81,12 @@ If you want jars containing the sources of the respective modules and/or contain
 
 **--- Basic compile/package/install for each module**
 
-You have 2 options, to selectively run the POM of a specific module alone:
+You have 3 options, to selectively run the POM of a specific module alone:
  1. in the root folder run<br />`mvn -pl<ModuleName> [clean] [compile|package|install]` <br />where `<ModuleName>` is the respective folder name
  2. in the module's folder run <br />`mvn [clean] [compile|package|install]`
+ 3. use the respective build steps in your IDE being in one of the module projects
 
-where you might additionally use the above mentioned profile switches
+You might additionally use the above mentioned profile switches.
 
 **--- How to produce the ready to use jars ...**
 
