@@ -163,7 +163,7 @@ public class ResourceLoader implements IResourceLoader {
         RunSetup.popError("Terminating: The jar in use was not built with setup!\n" + jarPath);
         System.exit(1);
       } else {
-        jarPath = jarPath.replace("Natives", "Libs");
+//        jarPath = jarPath.replace("Natives", "Libs");
         log(-1, "The jar in use was not built with setup!\nRunning in Netbeans? trying:\n" + jarPath);
 //        System.exit(1);
       }

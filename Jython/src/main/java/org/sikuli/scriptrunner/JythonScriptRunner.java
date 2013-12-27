@@ -60,7 +60,7 @@ public class JythonScriptRunner implements IScriptRunner {
     "import sys",
     "print '[debug] Running Jython:', sys.version.split('\\n')[0]",
     "from __future__ import with_statement",
-    "from sikuli import *",
+    "from Sikuli import *",
     "use() #resetROI()",
     "setShowActions(False)"
   };
@@ -379,7 +379,7 @@ public class JythonScriptRunner implements IScriptRunner {
 
     String[] jy_args = null;
     String[] iargs = {"-i", "-c",
-      "from sikuli import *; SikuliScript.runningInteractive(); "
+      "from Sikuli import *; SikuliScript.runningInteractive(); "
       + "print \"Hello, this is your interactive Sikuli (rules for interactive Python apply)\\n"
       + "use the UP/DOWN arrow keys to walk through the input history\\n"
       + "help()<enter> will output some basic Python information\\n"

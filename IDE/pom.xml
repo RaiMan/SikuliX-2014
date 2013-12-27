@@ -72,7 +72,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.sikuli.IDE.SikuliIDE</mainClass>
+              <mainClass>org.sikuli.ide.SikuliIDE</mainClass>
             </manifest>
           </archive>
         </configuration>
