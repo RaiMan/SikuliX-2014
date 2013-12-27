@@ -60,7 +60,7 @@ public class JythonScriptRunner implements IScriptRunner {
     "import sys",
     "print '[debug] Running Jython:', sys.version.split('\\n')[0]",
     "from __future__ import with_statement",
-    "from Sikuli import *",
+    "from sikuli import *",
     "use() #resetROI()",
     "setShowActions(False)"
   };
