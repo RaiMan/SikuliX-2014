@@ -145,10 +145,10 @@ The following Java settings are relevant for running Sikuli IDE from an IDE or u
 
 Debugging should work without problems, when starting the module IDE in debug mode.
 
-The mudule IDE POM contains the exec-maven-plugin, so to run the Sikuli IDE you can use being the IDE folder<br />
+The mudule IDE POM contains the exec-maven-plugin, so to run the Sikuli IDE you can use being in the IDE folder<br />
 `mvn exec:java -Dsikuli.FromCommandLine -Dexec.args="args for Sikuli"`
 
-or this being on the root folder level <br />
+or this being in the root folder <br />
 `mvn -pl IDE exec:java -Dsikuli.FromCommandLine -Dexec.args="args for Sikuli"`
 
 As it is standard with Maven, all -D parameters go to Java system properties, wheras the content of -Dexec.args string will be given to the args array for the main method of the startup class.
