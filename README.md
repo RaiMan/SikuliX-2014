@@ -1,6 +1,9 @@
 SikuliX-2014 (current version 1.1.0)
 ============
 
+NOT stable yet <br /> do not fork yet nor download for testing
+============
+
 This Maven multi-module setup contains everything to <br />
 **build the ready-to-use packages [available on Launchpad](https://launchpad.net/sikuli)** <br />(this is at least the intention at time of final release end January 2014).
 
