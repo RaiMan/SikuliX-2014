@@ -1,7 +1,7 @@
 SikuliX-2014 (current version 1.1.0)
 ============
 
-NOT stable yet <br /> do not fork yet nor download for testing
+NOT stable currently <br /> do not fork yet nor download for testing
 ============
 
 This Maven multi-module setup contains everything to <br />
