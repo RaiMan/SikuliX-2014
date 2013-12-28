@@ -126,7 +126,7 @@ If you want jars containing the sources of the respective modules and/or contain
 **--- Basic compile/package/install for each module**
 
 You have 3 options, to selectively run the POM of a specific module alone:
- 1. in the root folder run<br />`mvn -pl<ModuleName> [clean] [compile|package|install]` <br />where `<ModuleName>` is the respective folder name
+ 1. in the root folder run<br />`mvn -pl <ModuleName> [clean] [compile|package|install]` <br />where `<ModuleName>` is the respective folder name
  2. in the module's folder run <br />`mvn [clean] [compile|package|install]`
  3. use the respective build steps in your IDE being in one of the module projects
 
@@ -149,7 +149,7 @@ The mudule IDE POM contains the exec-maven-plugin, so to run the Sikuli IDE you 
 `mvn exec:java -Dsikuli.FromCommandLine -Dexec.args="args for Sikuli"`
 
 or this being on the root folder level <br />
-`mvn -f IDE/p* exec:java -Dsikuli.FromCommandLine -Dexec.args="args for Sikuli"`
+`mvn -pl IDE exec:java -Dsikuli.FromCommandLine -Dexec.args="args for Sikuli"`
 
 As it is standard with Maven, all -D parameters go to Java system properties, wheras the content of -Dexec.args string will be given to the args array for the main method of the startup class.
 
