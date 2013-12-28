@@ -132,6 +132,27 @@ You have 3 options, to selectively run the POM of a specific module alone:
 
 You might additionally use the above mentioned profile switches.
 
+**--- Running the IDE or running scripts ---**
+
+The only runnable module is IDE (besides Basics with RunSetup), but this is sufficient, to get access to and test every aspect of Sikuli, since you can start the IDE, run scripts directly as well and start an interactive Jython session.
+
+Being in module IDE firing the RUN button in an IDE should start the Sikuli IDE showing the splash screen, that allows to enter parameters (and thus allowing to run scripts using option -r).
+
+The following Java settings are relevant for running Sikuli IDE from an IDE or using Maven:
+ - -Dsikuli.Debug=3 sets a higher debug level from beginning (to debug startup problems)
+ - -Dsikuli.console=false the equivalent of the option -c (script output goes to console)
+ - -Dsikuli.FromCommandLine suppresses the startup splash screen (set parameters in IDE project run setup instead)
+
+Debugging should work without problems, when starting the module IDE in debug mode.
+
+The mudule IDE POM contains the exec-maven-plugin, so to run the Sikuli IDE you can use being the IDE folder<br />
+`mvn exec:java -Dsikuli.FromCommandLine -Dexec.args="args for Sikuli"`
+
+or this being on the root folder level <br />
+`mvn -f IDE/p* exec:java -Dsikuli.FromCommandLine -Dexec.args="args for Sikuli"`
+
+As it is standard with Maven, all -D parameters go to Java system properties, wheras the content of -Dexec.args string will be given to the args array for the main method of the startup class.
+
 **--- How to produce the ready to use jars ...**
 
 ... `sikuli-ide.jar`, `sikuli-script.jar` and `sikuli-java.jar`
