@@ -19,9 +19,10 @@ ijava=/System/Library/Frameworks/JavaVM.framework/Headers
 
 # modules the linker should know (have to be checked/adapted on your system)
 lnkTess=$DEVLIBS/libtesseract.3.dylib 
-lnkCVcore=$DEVLIBS/libopencv_core.2.4.dylib 
-lnkCVhighgui=$DEVLIBS/libopencv_highgui.2.4.dylib 
-lnkCVimgproc=$DEVLIBS/libopencv_imgproc.2.4.dylib 
+#lnkCVcore=$DEVLIBS/libopencv_core.2.4.dylib 
+#lnkCVhighgui=$DEVLIBS/libopencv_highgui.2.4.dylib 
+#lnkCVimgproc=$DEVLIBS/libopencv_imgproc.2.4.dylib
+lnkCVall=$DEVLIBS/libopencv_java247.dylib
 
 # the compile steps
 echo -- cvgui
@@ -46,4 +47,5 @@ echo -- visionJAVA_wrap
 g++ -c -O3 -I$iany -I$icv -I$itess -I$ijava -fPIC  -MMD -MP -MF $externals/visionJAVA_wrap.o.d -o $externals/visionJAVA_wrap.o $src/Vision/visionJAVA_wrap.cxx
 
 echo -- finally linking
-g++ -o $DEVLIBS/$mod $externals/cvgui.o $externals/finder.o $externals/pyramid-template-matcher.o $externals/sikuli-debug.o $externals/tessocr.o $externals/vision.o $externals/visionJAVA_wrap.o $lnkTess $lnkCVcore $lnkCVhighgui $lnkCVimgproc -dynamic -dynamiclib -install_name $mod -Wl,-S -fPIC 
+#g++ -o $DEVLIBS/$mod $externals/cvgui.o $externals/finder.o $externals/pyramid-template-matcher.o $externals/sikuli-debug.o $externals/tessocr.o $externals/vision.o $externals/visionJAVA_wrap.o $lnkTess $lnkCVcore $lnkCVhighgui $lnkCVimgproc -dynamic -dynamiclib -install_name $mod -Wl,-S -fPIC 
+g++ -o $DEVLIBS/$mod $externals/cvgui.o $externals/finder.o $externals/pyramid-template-matcher.o $externals/sikuli-debug.o $externals/tessocr.o $externals/vision.o $externals/visionJAVA_wrap.o $lnkTess $lnkCVall -dynamic -dynamiclib -install_name $mod -Wl,-S -fPIC 
