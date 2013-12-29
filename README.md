@@ -89,7 +89,7 @@ Currently as a convenience the standard tessdata folder needed for using Tessera
 
 A template Sikuli-IDE.app, that is downloaded on request and made ready-to-use during Sikuli setup.
 
-**Module Docs**
+**Module Docs** (not Maven-ized yet)
 
 The source files for the textual documentation (built with PythonSphinx based on .rst files) and a ready-to-use HTML version as well as a HTML version of the JavaDocs of the main public Java API.<br />
 (is downloaded and made ready-to-use-locally during Sikuli setup)
