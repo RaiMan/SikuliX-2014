@@ -1,6 +1,9 @@
 SikuliX-2014 (current version 1.1.0)
 ============
 
+NOT stable currently <br /> do not fork yet nor download for testing
+============
+
 This Maven multi-module setup contains everything to <br />
 **build the ready-to-use packages [available on Launchpad](https://launchpad.net/sikuli)** <br />(this is at least the intention at time of final release end January 2014).
 
@@ -123,11 +126,32 @@ If you want jars containing the sources of the respective modules and/or contain
 **--- Basic compile/package/install for each module**
 
 You have 3 options, to selectively run the POM of a specific module alone:
- 1. in the root folder run<br />`mvn -pl<ModuleName> [clean] [compile|package|install]` <br />where `<ModuleName>` is the respective folder name
+ 1. in the root folder run<br />`mvn -pl <ModuleName> [clean] [compile|package|install]` <br />where `<ModuleName>` is the respective folder name
  2. in the module's folder run <br />`mvn [clean] [compile|package|install]`
  3. use the respective build steps in your IDE being in one of the module projects
 
 You might additionally use the above mentioned profile switches.
+
+**--- Running the IDE or running scripts ---**
+
+The only runnable module is IDE (besides Basics with RunSetup), but this is sufficient, to get access to and test every aspect of Sikuli, since you can start the IDE, run scripts directly as well and start an interactive Jython session.
+
+Being in module IDE firing the RUN button in an IDE should start the Sikuli IDE showing the splash screen, that allows to enter parameters (and thus allowing to run scripts using option -r).
+
+The following Java settings are relevant for running Sikuli IDE from an IDE or using Maven:
+ - -Dsikuli.Debug=3 sets a higher debug level from beginning (to debug startup problems)
+ - -Dsikuli.console=false the equivalent of the option -c (script output goes to console)
+ - -Dsikuli.FromCommandLine suppresses the startup splash screen (set parameters in IDE project run setup instead)
+
+Debugging should work without problems, when starting the module IDE in debug mode.
+
+The mudule IDE POM contains the exec-maven-plugin, so to run the Sikuli IDE you can use being in the IDE folder<br />
+`mvn exec:java -Dsikuli.FromCommandLine -Dexec.args="args for Sikuli"`
+
+or this being in the root folder <br />
+`mvn -pl IDE exec:java -Dsikuli.FromCommandLine -Dexec.args="args for Sikuli"`
+
+As it is standard with Maven, all -D parameters go to Java system properties, wheras the content of -Dexec.args string will be given to the args array for the main method of the startup class.
 
 **--- How to produce the ready to use jars ...**
 
