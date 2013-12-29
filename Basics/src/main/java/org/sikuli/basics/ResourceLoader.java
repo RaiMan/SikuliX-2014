@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.sikuli.natives.RunNatives;
+import org.sikuli.libs.RunLibs;
 
 public class ResourceLoader implements IResourceLoader {
 
@@ -52,6 +53,7 @@ public class ResourceLoader implements IResourceLoader {
   private String jarParentPath = null;
   private String jarPath = null;
   private URL jarURL = null;
+  private URL libsURL = null;
   private String fileList = "/filelist.txt";
   private static final String sikhomeEnv = System.getenv("SIKULIX_HOME");
   private static final String sikhomeProp = System.getProperty("sikuli.Home");
@@ -124,6 +126,11 @@ public class ResourceLoader implements IResourceLoader {
       log(-1, "Fatal Error 101: Not possible to access the jar files!");
       SikuliX.terminate(101);
     }
+    
+    CodeSource cs = RunLibs.class.getProtectionDomain().getCodeSource();
+    if (codeSrc != null && codeSrc.getLocation() != null) {
+      libsURL = cs.getLocation();
+    }
     regMap.put("EnvPath", new String[]{"HKEY_CURRENT_USER\\Environment", "PATH", "REG_EXPAND_SZ"});
   }
 
@@ -158,18 +165,19 @@ public class ResourceLoader implements IResourceLoader {
    */
   @Override
   public void check(String what) {
+    mem = "check";
+
     if (System.getProperty("sikuli.DoNotExport") == null && !isFatJar()) {
       if (!jarPath.contains("Natives") && !Settings.isMac()) {
         RunSetup.popError("Terminating: The jar in use was not built with setup!\n" + jarPath);
         System.exit(1);
       } else {
-//        jarPath = jarPath.replace("Natives", "Libs");
-        log(-1, "The jar in use was not built with setup!\nRunning in Netbeans? trying:\n" + jarPath);
-//        System.exit(1);
+        jarURL = libsURL;
+        jarPath = jarPath.replace("Natives", "Libs");
+        log(-1, "The jar in use was not built with setup!\nAre we running in some IDE or from local Maven repository? trying:\n" + jarPath);
       }
     }
 
-    mem = "check";
     if (!what.equals(Settings.SIKULI_LIB)) {
       log(-1, "Currently only Sikuli libs supported!");
       return;
