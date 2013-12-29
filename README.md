@@ -9,7 +9,7 @@ This Maven multi-module setup contains everything to <br />
  - if you want to create your own packages containing Sikuli features 
  - if you want to contribute.
 
-Even if you want to develop in Java or any Java aware scripting language (Jython, JRuby, Scala. Closure, ...) it is strongly recommended to start with sikuli-java.jar (run Sikuli setup with option 4).
+If you "only" want to use the SikuliX features developing in Java or any Java aware scripting language (Jython, JRuby, Scala. Closure, ...) it is strongly recommended to start with sikuli-java.jar (run Sikuli setup with option 4).
 
 **To get the ready-to-use packages (IDE, Script, Java/Jython support) <br />it is still recommended [to start here](http://www.sikuli.org/download.html).**
 
