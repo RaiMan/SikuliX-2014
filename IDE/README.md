@@ -1,8 +1,7 @@
-Sikuli IDE 1.1.0 developement branch
+Sikuli IDE 2014 (version 1.1.x)
 ===
 
-**DO NOT USE ANY LONGER ------------------------- 2014 December 22nd**
+Implements a GUI using Java, that allows to edit and run Sikuli scripts (currently only Jython is supported). It is an easy to use IDE focusing on the handling of the screenshots and images used in the typical Sikuli workflows.
 
-**This branch is now contained in the new repo SiluliX-2014**
+The package `sikuli-ide.jar` is the top level package containing all other options. It can be used from commandline in the same way as `sikuli-script.jar` and hence usually only this IDE package is needed.
 
-**Only here for hitorical reasons to see the commits**
