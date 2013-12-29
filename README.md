@@ -1,9 +1,6 @@
 SikuliX-2014 (current version 1.1.0)
 ============
 
-NOT stable currently <br /> do not fork yet nor download for testing
-============
-
 This Maven multi-module setup contains everything to <br />
 **build the ready-to-use packages [available on Launchpad](https://launchpad.net/sikuli)** <br />(this is at least the intention at time of final release end January 2014).
 
@@ -64,6 +61,8 @@ This module contains a specially configured Java/JNI OpenCV package (built using
 With the final availability of version 1.1.0 the implementation of the OpenCV usage will be moved completely to the Java level. Until then the historical implementation in C++ is activated in the standard. The usage of the new implementation (in the new classes ImageFinder and ImageFind) can be switched on optinally for testing and developement.
 
 For Windows and Mac the native packages will again be pre-built and ready-to-use. For Linux there will be advices and scripts available to get the needed features.
+
+For more information on preparation and usage of the new OpenCV Java API [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-and-use-the-new-OpenCV-Java-API)
 
 **Module Natives**
 
