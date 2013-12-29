@@ -1,4 +1,4 @@
-SikuliX-Remote 1.1.0
+Sikuli Remote 2014 (version 1.1.x)
 ==============
 
 **Lightweight remote server for local Sikuli scripts or Sikuli Java programs**
@@ -24,8 +24,6 @@ Feature ideas:
 - run command files and start applications
 - access the remote clipboard (implement the paste feature)
 
-Since it is a Maven project: use *mvn clean install* to create the jar.
-
-**Usage Information** [... look here](https://github.com/RaiMan/SikuliX-Remote/wiki/Sikuli-Remote:-how-to-use-it)
+**Usage Information** [... look here](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-use-the-experimental-feature-Sikuli-Remote)
 
 **BE AWARE: this is very experimental, not yet complete and not fully tested nor documented.**
