@@ -1,5 +1,5 @@
 #!/bin/bash
-echo -----  Linux build workflow for native modules on a 32-Bit system
+echo -----  Linux build workflow for native modules on $1-bit systems
 # details see inside the respective scripts
 
 # trying to find the active JDK
@@ -78,9 +78,9 @@ export SWIGEXEC=__NOT_SET__
 
 # set some common folders in the SikuliX package structure
 # no need to change normally
-export DEVJAVA=../../src/main/java
-export DEVNATIVE=../../src/main/native
-export DEVLIBS=../../dist/sikulix-native-libs/linux/libs32
+export DEVJAVA=../../../Natives/src/main/java
+export DEVNATIVE=../../../Natives/src/main/native
+export DEVLIBS=../../src/main/resources/META-INF/libs/linux/libs$1
 
 # ------------------------- do what is needed
 if [ "$SWIGEXEC" == "__NOT_SET__" ]; then
