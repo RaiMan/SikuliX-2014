@@ -134,7 +134,7 @@ You might additionally use the above mentioned profile switches.
 
 **--- Running the IDE or running scripts ---**
 
-The only runnable module is IDE (besides Basics with RunSetup), but this is sufficient, to get access to and test every aspect of Sikuli, since you can start the IDE, run scripts directly as well and start an interactive Jython session.
+In this Maven context the only runnable (means: should be run or makes sense to run) module is IDE (besides Basics with RunSetup), but this is sufficient, to get access to and test every aspect of Sikuli, since you can start the IDE, run scripts directly as well and start an interactive Jython session.
 
 Being in module IDE firing the RUN button in an IDE should start the Sikuli IDE showing the splash screen, that allows to enter parameters (and thus allowing to run scripts using option -r).
 
