@@ -27,7 +27,7 @@ public class Settings {
   public static int breakPoint = 0;
   public static boolean handlesMacBundles = true;
   public static boolean runningSetup = false;
-  public static String libSourcebase = "META-INF/sikulix-native-libs/";  
+  public static String libSourcebase = "META-INF/libs/";  
   private static final PreferencesUser prefs = PreferencesUser.getInstance();
   
   /**
