@@ -11,6 +11,7 @@ import java.util.List;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
+import org.sikuli.basics.SikuliScript;
 
 public class ImagePath {
   
@@ -248,7 +249,11 @@ public class ImagePath {
         }
       }
     }
-    log(-1, "setBundlePath: Settings not changed: invalid BundlePath: " + bundlePath);
+    if (SikuliScript.getRunningInteractive()) {
+      log(lvl, "setBundlePath: running interactive: no default bundle path!");      
+    } else {
+      log(-1, "setBundlePath: Settings not changed: invalid BundlePath: " + bundlePath);
+    }
     return false;
   }
 
