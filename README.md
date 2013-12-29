@@ -80,11 +80,11 @@ The prebuilt native libraries for Windows, Mac and Linux (partially).<br />
 (contained in `sikuli-setup.jar`)
 
 It contains a Maven workflow to execute build scripts for the native libraries on the system running on:
-Windows (not yet ready): WinUtil.dll, VisionProxy.dll
-Mac: libMacHotkeyManager.dylib, libMacUtil.dylib, libVisionProxy.dylib
-Linux: libVisionProxy.so
+ - Windows (not yet ready): WinUtil.dll, VisionProxy.dll
+ - Mac: libMacHotkeyManager.dylib, libMacUtil.dylib, libVisionProxy.dylib
+ - Linux: libVisionProxy.so
 
-To run it from the project root folder:
+To run it from the project root folder:<br />
 `mvn -f Libs/x*`
 
 The build scripts are in the respective system folder in folder `build` <br />
