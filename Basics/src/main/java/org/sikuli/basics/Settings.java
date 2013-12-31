@@ -12,7 +12,6 @@ import java.net.Proxy;
 import java.util.Date;
 import java.util.Properties;
 import java.util.prefs.Preferences;
-import org.sikuli.natives.Vision;
 
 public class Settings {
 
@@ -171,15 +170,6 @@ public class Settings {
   public static float SlowMotionDelay = 2.0f; // in seconds
   public static float MoveMouseDelay = 0.5f; // in seconds
   private static float MoveMouseDelaySaved = MoveMouseDelay;
-  
-  public static void setVisionParameter(String param, float val) {
-    Vision.setParameter(param, val);
-    log(3, "Vision: %s set to %s", param, val);
-  }
-
-  public static float getVisionParameter(String param) {
-    return Vision.getParameter(param);
-  }
   
   /**
    * true = highlight every match (default: false) (show red rectangle around) for

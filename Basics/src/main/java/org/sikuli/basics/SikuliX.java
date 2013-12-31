@@ -38,7 +38,7 @@ public class SikuliX {
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static String me = "SikuliX";
   private static String mem = "...";
-  private static int lvl = 2;
+  private static int lvl = 3;
   private static String msg;
 
   private static void log(int level, String message, Object... args) {
@@ -51,6 +51,7 @@ public class SikuliX {
             me + ": " + message, args);
   }
   //</editor-fold>
+  
   private static IScriptRunner runner;
   private static final String ScriptSikuliXCL = "org.sikuli.script.SikuliX";
   private static final String ScriptKeyCL = "org.sikuli.script.Key";
@@ -252,9 +253,9 @@ public class SikuliX {
     Method method;
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     URL[] urls = sysLoader.getURLs();
-    log0(lvl, "before adding to classpath: " + jar);
+    log0(lvl, "adding to classpath: " + jar);
     for (int i = 0; i < urls.length; i++) {
-      log0(lvl, "%d: %s", i, urls[i]);
+      log0(lvl + 1, "%d: %s", i, urls[i]);
     }
     Class sysclass = URLClassLoader.class;
     try {
@@ -271,9 +272,9 @@ public class SikuliX {
       return false;
     }
     urls = sysLoader.getURLs();
-    log0(lvl, "after adding to classpath");
+    log0(lvl + 1, "after adding to classpath");
     for (int i = 0; i < urls.length; i++) {
-      log0(lvl, "%d: %s", i, urls[i]);
+      log0(lvl + 1, "%d: %s", i, urls[i]);
     }
     return true;
   }

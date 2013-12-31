@@ -42,7 +42,6 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
-import org.sikuli.natives.RunNatives;
 
 public class FileManager {
 
