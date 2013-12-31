@@ -21,8 +21,12 @@ public class Settings {
   public static final int SikuliVersionBetaN = 1;
 
   private static String me = "Settings";
-  private static String mem = "...";
-  private static int lvl = 2;
+  private static int lvl = 3;
+  private static void log(int level, String message, Object... args) {
+    Debug.logx(level, level < 0 ? "error" : "debug",
+            me + ": " + message, args);
+  }
+  
   public static int breakPoint = 0;
   public static boolean handlesMacBundles = true;
   public static boolean runningSetup = false;
@@ -90,8 +94,6 @@ public class Settings {
   private static Preferences options = Preferences.userNodeForPackage(SikuliX.class);
 
   static {
-    mem = "clinit";
-
     Properties props = System.getProperties(); //for debugging
 
     if (System.getProperty("user.name") != null && !"".equals(System.getProperty("user.name"))) {
@@ -304,27 +306,22 @@ public class Settings {
     return (new Date()).getTime() + "";
   }
 
-  private static void log(int level, String message, Object... args) {
-    Debug.logx(level, level < 0 ? "error" : "debug",
-            me + ": " + message, args);
-  }
-
   public static void printArgs() {
-    if (Debug.getDebugLevel() < 3) {
+    if (Debug.getDebugLevel() < lvl) {
       return;
     }
     String[] args = Settings.getSikuliArgs();
     if (args.length > 0) {
-      Debug.log(3, "--- Sikuli parameters ---");
+      Debug.log(lvl, "--- Sikuli parameters ---");
       for (int i = 0; i < args.length; i++) {
-        Debug.log(3, "%d: %s", i + 1, args[i]);
+        Debug.log(lvl, "%d: %s", i + 1, args[i]);
       }
     }
     args = Settings.getArgs();
     if (args.length > 0) {
-      Debug.log(3, "--- User parameters ---");
+      Debug.log(lvl, "--- User parameters ---");
       for (int i = 0; i < args.length; i++) {
-        Debug.log(3, "%d: %s", i + 1, args[i]);
+        Debug.log(lvl, "%d: %s", i + 1, args[i]);
       }
     }
   }
