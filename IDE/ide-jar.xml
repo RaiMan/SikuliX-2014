@@ -9,28 +9,23 @@
   * RaiMan 2013
   -->
 
-	<parent>
-		<groupId>org.sikuli</groupId>
-		<artifactId>SikuliX</artifactId>
-		<version>1.1.0</version>
-		<relativePath>../</relativePath>
-	</parent>
+  <parent>
+    <groupId>org.sikuli</groupId>
+    <artifactId>SikuliX</artifactId>
+    <version>1.1.0</version>
+    <relativePath>../</relativePath>
+  </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.sikuli</groupId>
-	<artifactId>SikuliX-IDE</artifactId>
-	<version>1.1.0-Beta1</version>
+  <groupId>org.sikuli</groupId>
+  <artifactId>SikuliX-IDE</artifactId>
+  <version>1.1.0-Beta1</version>
   
   <dependencies>
     <dependency>
       <groupId>org.sikuli</groupId>
       <artifactId>SikuliX-API</artifactId>
-      <version>1.1.0</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sikuli</groupId>
-      <artifactId>SikuliX-Jython</artifactId>
       <version>1.1.0</version>
     </dependency>
     <dependency>
@@ -77,10 +72,10 @@
               <mainClass>org.sikuli.ide.SikuliIDE</mainClass>
             </manifest>
           </archive> 
-					<descriptors>
-						<descriptor>../${sikuli.jartype}</descriptor>
-					</descriptors>
-					<finalName>${sikuli.jarname}-ide</finalName>
+          <descriptors>
+            <descriptor>../${sikuli.jartype}</descriptor>
+          </descriptors>
+          <finalName>${sikuli.jarname}-ide</finalName>
         </configuration>
         <executions>
           <execution>
@@ -89,6 +84,28 @@
             <goals>
               <goal>single</goal>
             </goals>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- to suppress sources in any case -->
+      <plugin>
+        <artifactId>maven-source-plugin</artifactId>
+        <version>2.2.1</version>
+        <executions>
+          <execution>
+            <id>attach-sources</id>
+            <phase/>
+          </execution>
+        </executions>
+      </plugin>
+      <!-- to suppress javadocs in any case -->
+      <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
+        <executions>
+          <execution>
+            <id>attach-javadocs</id>
+            <phase/>
           </execution>
         </executions>
       </plugin>
