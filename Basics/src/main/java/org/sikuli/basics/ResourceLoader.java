@@ -39,6 +39,7 @@ public class ResourceLoader implements IResourceLoader {
     Debug.logx(level, "", me + ": " + message, args);
   }
   //</editor-fold>
+  
   private String loaderName = "basic";
   private static final String NL = String.format("%n");
   private static final String cmdRegCheck = "reg QUERY HKCU";
@@ -80,21 +81,17 @@ public class ResourceLoader implements IResourceLoader {
    */
   private static String libPathMac = Settings.appPathMac + "/libs";
   /**
-   * Win: standard place for native libs
-   */
-  private static final String libPathWin = FileManager.slashify(System.getenv("ProgramFiles"), true) + libSub;
-  private static final String libPathWin32 = FileManager.slashify(System.getenv("ProgramFiles(x86)"), true) + libSub;
-  /**
    * in-jar folder to load other ressources from
    */
   private static String jarResources = "META-INF/res/";
   /**
    * in-jar folder to load native libs from
    */
-  private static String libSourcebase = Settings.libSourcebase;
+  private static final String libSourcebase = "META-INF/libs/";
   private static String libSource32 = libSourcebase + "%s/libs32/";
   private static String libSource64 = libSourcebase + "%s/libs64/";
   private String libSource;
+  
   private String osarch;
   private String javahome;
 
@@ -139,7 +136,7 @@ public class ResourceLoader implements IResourceLoader {
         ZipEntry ze;
         while ((ze = zip.getNextEntry()) != null) {
           String entryName = ze.getName();
-          if (entryName.startsWith(Settings.libSourcebase)) {
+          if (entryName.startsWith(libSourcebase)) {
             return true;
           }
         }
