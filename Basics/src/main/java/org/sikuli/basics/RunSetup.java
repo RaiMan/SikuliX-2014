@@ -80,6 +80,7 @@ public class RunSetup {
   private static boolean shouldPackLibs = true;
   private static long start;
   private static boolean runningSetup = false;
+  private static boolean generallyDoUpdate = false;
 
   static {
     timestampBuilt = tsb.substring(6, tsb.length() - 6);
@@ -172,6 +173,10 @@ public class RunSetup {
     }
 
     runningJar = FileManager.getJarName();
+    if (runningJar.isEmpty()) {
+      popError("error accessing jar - terminating");
+      System.exit(1);
+    }
     if (runningJar.startsWith("sikuli-update")) {
       runningUpdate = true;
     }
@@ -262,7 +267,7 @@ public class RunSetup {
     if (runningfromJar) {
       logfile = (new File(workDir, localLogfile)).getAbsolutePath();
     } else {
-      workDir = (new File(uhome, "SikuliX/ZRun")).getAbsolutePath();
+      workDir = (new File(uhome, "SikuliX/Setup")).getAbsolutePath();
       (new File(workDir)).mkdirs();
       logfile = (new File(workDir, localLogfile)).getAbsolutePath();
       popInfo("\n... not running from sikuli-setup.jar - using as download folder\n" + workDir);
@@ -307,13 +312,18 @@ public class RunSetup {
               || localJarJava.exists() || localMacFolder.exists()) {
         int avail = -1;
         boolean someUpdate = false;
-        if (!popAsk("You have " + Settings.getVersion()
+        String ask1 = "You have " + Settings.getVersion()
                 + "\nClick YES if you want to run setup again\n"
                 + "This will download fresh versions of the selected stuff.\n"
                 + "Your current stuff will be saved to folder BackUp.\n\n"
-                + "If you cancel the setup or it is not successful\n"
-                + "the saved stuff will be restored from folder BackUp\n\n"
-                + "or click NO to get info on updates or betas.")) {
+                + "If you cancel the setup later or it is not successful\n"
+                + "the saved stuff will be restored from folder BackUp\n\n";
+        if (!popAsk(ask1)) {
+          userTerminated("Do not run setup again");
+        }
+        String ask2 = "Click YES to get info on updates or betas.\n"
+                + "or click NO to terminate setup now.";
+        if (generallyDoUpdate && popAsk(ask2)) {
           splash = showSplash("Checking for update or beta versions! (you have " + version + ")",
                   "please wait - may take some seconds ...");
           AutoUpdater au = new AutoUpdater();
@@ -374,6 +384,9 @@ public class RunSetup {
       }
     } else {
       log0(lvl, "Update started");
+      if (!generallyDoUpdate) {
+        terminate("Switched Off: Run update!");
+      }
       if (!popAsk("You requested to run an Update now"
               + "\nYES to continue\nNO to terminate")) {
         userTerminated("");
@@ -730,7 +743,7 @@ public class RunSetup {
     if (!test && !downloadOK) {
       popError("Some of the downloads did not complete successfully.\n"
               + "Check the logfile for possible error causes.\n\n"
-              + "If you think, setup's inline download from Dropbox is blocked somehow on,\n"
+              + "If you think, setup's inline download is blocked somehow on,\n"
               + "your system, you might download the appropriate raw packages manually and \n"
               + "unzip them into a folder Downloads in the setup folder and run setup again.\n"
               + "Be aware: The raw packages are not useable without being processed by setup!\n\n"
@@ -884,9 +897,8 @@ public class RunSetup {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="option setup: environment setup and test">
-    log1(lvl,
-            "trying to set up the environment");
-    splash = showSplash("Now I will try to set up the environment!", "please wait - may take some seconds ...");
+    log1(lvl, "trying to set up the environment");
+    splash = showSplash("Now trying to set up Sikuli environment!", "please wait - may take some seconds ...");
     File folderLibs = new File(workDir, "libs");
 
     if (folderLibs.exists()) {
@@ -897,8 +909,7 @@ public class RunSetup {
 
     loader.check(Settings.SIKULI_LIB);
 
-    if (loader.doSomethingSpecial(
-            "checkLibsDir", null)) {
+    if (loader.doSomethingSpecial("checkLibsDir", null)) {
       closeSplash(splash);
       splash = showSplash(" ", "Environment seems to be ready!");
       closeSplash(splash);
@@ -920,6 +931,10 @@ public class RunSetup {
       }
       try {
         log0(lvl, "trying to run org.sikuli.script.SikuliX.testSetup()");
+        loader.doSomethingSpecial("itIsJython", null); // export Lib folder
+        if (getTess) {
+          loader.doSomethingSpecial("exportTessdata", null); // export tessdata folder
+        }
         Class sysclass = URLClassLoader.class;
         Class SikuliCL = sysclass.forName("org.sikuli.script.SikuliX");
         log0(lvl, "class found: " + SikuliCL.toString());
@@ -949,6 +964,9 @@ public class RunSetup {
                 + "Check the error log at " + logfile);
         terminate("Functional test Jython did not work");
       }
+      if (getTess) {
+        loader.doSomethingSpecial("exportTessdata", null); // export tessdata folder
+      }
       String testSetupSuccess = "Setup: Sikuli seems to work! Have fun!";
       log0(lvl, "trying to run testSetup.sikuli using SikuliScript");
       try {
@@ -975,8 +993,7 @@ public class RunSetup {
             "... SikuliX Setup seems to have ended successfully ;-)");
     //</editor-fold>
 
-    System.exit(
-            0);
+    System.exit(0);
   }
 
   public static boolean isRunningUpdate() {

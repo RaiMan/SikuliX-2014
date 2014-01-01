@@ -563,7 +563,7 @@ public class ResourceLoader implements IResourceLoader {
   public boolean export(String res, String target) {
     String memx = mem;
     mem = "export";
-    log(lvl, "Trying to access package");
+    log(lvl, "Trying to access package for exporting: %s\nto: %s", res, target);
     String resOrg = res;
     boolean fastReturn = false;
     int prefix = 1 + resOrg.indexOf("#");
