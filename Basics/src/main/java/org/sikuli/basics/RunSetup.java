@@ -705,6 +705,7 @@ public class RunSetup {
         if (dlOK) {
           FileManager.deleteFileOrFolder((new File(workDir, folderMacApp)).getAbsolutePath());
           FileManager.unpackJar(targetJar, workDir, false);
+          FileManager.deleteFileOrFolder(new File(workDir, "META-INF").getAbsolutePath());
         }
         downloadOK &= dlOK;
       }
@@ -837,8 +838,7 @@ public class RunSetup {
       success &= (new File(workDir, localTemp)).renameTo(new File(localJar));
     }
 
-    if (Settings.isMac()
-            && getIDE) {
+    if (Settings.isMac() && getIDE) {
       closeSplash(splash);
       log1(lvl, "preparing Mac app as SikuliX-IDE.app");
       splash = showSplash("Now preparing Mac app SikuliX-IDE.app.", "please wait - may take some seconds ...");
@@ -865,8 +865,12 @@ public class RunSetup {
           String fmac = new File(workDir, folderMacAppContent).getAbsolutePath();
           loader.export("Commands/mac#runIDE", fmac);
           loader.export("Commands/mac#runIDE", workDir);
-          loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x", new File(fmac, "runIDE").getAbsolutePath()});
-          loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x", new File(workDir, "runIDE").getAbsolutePath()});
+          loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x", 
+                  new File(fmac, "runIDE").getAbsolutePath()});
+          loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x", 
+                  new File(fmac, "MacOS/droplet").getAbsolutePath()});
+          loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x", 
+                  new File(workDir, "runIDE").getAbsolutePath()});
 //          FileManager.deleteFileOrFolder(new File(workDir, localIDE).getAbsolutePath());
           FileManager.deleteFileOrFolder(new File(workDir, localMacApp).getAbsolutePath());
           localTestJar = new File(fmac, localIDE).getAbsolutePath();
