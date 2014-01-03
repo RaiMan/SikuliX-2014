@@ -73,9 +73,10 @@
               <mainClass>org.sikuli.basics.RunSetup</mainClass>
             </manifest>
           </archive> 
-          <descriptorRefs>
-            <descriptorRef>jar-with-dependencies</descriptorRef>
-          </descriptorRefs>
+					<descriptors>
+						<descriptor>../${sikuli.jartype}</descriptor>
+					</descriptors>
+					<finalName>${sikuli.jarname}-java</finalName>
           <finalName>sikuli-setup-${project.version}</finalName>
         </configuration>
         <executions>
