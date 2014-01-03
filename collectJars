@@ -1,0 +1,96 @@
+#!/bin/sh
+base=`pwd`
+echo SourceBase $base
+
+mrepo=~/.m2/repository/org/sikuli
+
+setup=Basics
+jython=Jython
+api=API
+ide=IDE
+
+dist=$base/../Build
+if [ -e $dist ]; then
+  rm -f -R $dist
+fi
+mkdir $dist 
+
+log=$dist/log.txt
+
+echo "--- creating version info"
+echo "--- creating version info" >$log
+cd $base/$setup
+mvn clean compile >>$log
+version=`java -cp $base/$setup/target/classes org.sikuli.basics.RunSetup version`
+mversion=`java -cp $base/$setup/target/classes org.sikuli.basics.RunSetup majorversion`
+uversion=`java -cp $base/$setup/target/classes org.sikuli.basics.RunSetup updateversion`
+
+echo --- version --- $version
+echo --- major version --- $mversion
+echo --- update version --- $uversion
+echo --- version --- $version >>$log
+echo --- major version --- $mversion >>$log
+echo --- update version --- $uversion >>$log
+
+# ----------- Basics
+echo --- Basics timestamp
+echo --- BUILD Basics timestamp >>$log
+cd $base/$setup
+src=$base/$setup/src/main/java/org/sikuli/basics/RunSetup.java
+out=$base/$setup/src/main/java/org/sikuli/basics/RunSetupX.java
+xdd=`date`
+sed "s/##--##.*##--##/##--##$xdd##--##/" $src >$out
+mv -f $out $src
+mvn install >>$log
+# ----------- Setup
+echo --- make Setup
+cd $base
+mvn -f Basics/setup* >>$log
+cp Basics/target-setup/sikuli-setup*.jar $dist/sikuli-setup-$mversion.jar
+
+if [ "$1" != "setup" ]; then
+  # ---------- Jython
+  echo --- Jython timestamp
+  echo --- BUILD Jython timestamp >>$log
+  cd $base/$jython
+  src=$base/$jython/src/main/java/org/sikuli/scriptrunner/JythonScriptRunner.java
+  out=$base/$jython/src/main/java/org/sikuli/scriptrunner/JythonScriptRunnerX.java
+  xdd=`date`
+  sed "s/##--##.*##--##/##--##$xdd##--##/" $src >$out
+  mv -f $out $src
+  mvn clean install >>$log
+  
+  # ----------- Java
+  echo --- make Java
+  cd $base
+  mvn -f API/java* >>$log
+  cp API/target-java/*java-plain.jar $dist/$version-3.jar
+  
+  # ----------- Script
+  echo --- make Script
+  cd $base
+  mvn -f API/script* >>$log
+  cp API/target-script/*script-plain.jar $dist/$version-2.jar
+  
+  # ----------- IDE
+  echo --- make IDE
+  cd $base
+  mvn -f IDE/ide* >>$log
+  cp IDE/target-ide/*ide-plain.jar $dist/$version-1.jar
+  
+  # ----------- MacApp
+  echo --- make MacApp
+  cd $base
+  cp MacApp/target/*.jar $dist
+  
+  # ----------- Tesseract
+  echo --- make Tesseract
+  cd $base
+  cp Tesseract/target/*.jar $dist  
+  
+  # ----------- Remote
+  echo --- make Remote
+  cd $base
+  cp Remote/target/*.jar $dist/$version-7.jar  
+fi
+grep -i BUILD $log
