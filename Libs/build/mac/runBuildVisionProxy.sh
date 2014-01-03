@@ -19,7 +19,7 @@ ijava=/System/Library/Frameworks/JavaVM.framework/Headers
 
 # modules the linker should know (have to be checked/adapted on your system)
 lnkTess=$DEVLIBS/libtesseract.3.dylib 
-lnkCVall=$DEVLIBS/libopencv_java247.dylib
+lnkCVall=$DEVLIBS/libopencv_java248.dylib
 
 # the compile steps
 echo -- cvgui

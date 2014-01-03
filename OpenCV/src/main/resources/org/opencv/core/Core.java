@@ -12,11 +12,11 @@ import org.opencv.utils.Converters;
 public class Core {
 
     // these constants are wrapped inside functions to prevent inlining
-    private static String getVersion() { return "2.4.7.0"; }
-    private static String getNativeLibraryName() { return "opencv_java247"; }
+    private static String getVersion() { return "2.4.8.0"; }
+    private static String getNativeLibraryName() { return "opencv_java248"; }
     private static int getVersionEpoch() { return 2; }
     private static int getVersionMajor() { return 4; }
-    private static int getVersionMinor() { return 7; }
+    private static int getVersionMinor() { return 8; }
     private static int getVersionRevision() { return 0; }
 
     public static final String VERSION = getVersion();
@@ -2372,7 +2372,7 @@ public class Core {
  * matrix of the same size as input. In case of 2D transform, it uses the packed
  * format as shown above. In case of a single 1D transform, it looks like the
  * first row of the matrix above. In case of multiple 1D transforms (when using
- * the <code>DCT_ROWS</code> flag), each row of the output matrix looks like the
+ * the <code>DFT_ROWS</code> flag), each row of the output matrix looks like the
  * first row of the matrix above.
  *   <li> If the input array is complex and either <code>DFT_INVERSE</code> or
  * <code>DFT_REAL_OUTPUT</code> are not set, the output is a complex array of
@@ -2635,7 +2635,7 @@ public class Core {
  * matrix of the same size as input. In case of 2D transform, it uses the packed
  * format as shown above. In case of a single 1D transform, it looks like the
  * first row of the matrix above. In case of multiple 1D transforms (when using
- * the <code>DCT_ROWS</code> flag), each row of the output matrix looks like the
+ * the <code>DFT_ROWS</code> flag), each row of the output matrix looks like the
  * first row of the matrix above.
  *   <li> If the input array is complex and either <code>DFT_INVERSE</code> or
  * <code>DFT_REAL_OUTPUT</code> are not set, the output is a complex array of

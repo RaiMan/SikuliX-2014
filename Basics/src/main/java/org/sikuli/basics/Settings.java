@@ -26,12 +26,12 @@ public class Settings {
     Debug.logx(level, level < 0 ? "error" : "debug",
             me + ": " + message, args);
   }
-  
+
   public static int breakPoint = 0;
   public static boolean handlesMacBundles = true;
   public static boolean runningSetup = false;
   private static final PreferencesUser prefs = PreferencesUser.getInstance();
-  
+
   /**
    * location of folder Tessdata
    */
@@ -75,22 +75,23 @@ public class Settings {
   public static String SikuliVersionIDE;
   public static String SikuliVersionScript;
   public static final String versionMonth = "January 2014";
-  
-  
+	public static final String libOpenCV = "libopencv_java248";
+
+
   /**
    * Resource types to be used with IResourceLoader implementations
    */
   public static final String SIKULI_LIB = "*sikuli_lib";
   public static String BaseTempPath;
   public static String UserName = "UnKnown";
-  
+
   public static String proxyName = prefs.get("ProxyName", null);
   public static String proxyIP = prefs.get("ProxyIP", null);
   public static InetAddress proxyAddress = null;
   public static String proxyPort = prefs.get("ProxyPort", null);
   public static boolean proxyChecked = false;
   public static Proxy proxy = null;
-  
+
   private static Preferences options = Preferences.userNodeForPackage(SikuliX.class);
 
   static {
@@ -116,7 +117,7 @@ public class Settings {
       SikuliVersionScript = SikuliVersionDefaultScript;
     }
   }
-  
+
   public static final int ISWINDOWS = 0;
   public static final int ISMAC = 1;
   public static final int ISLINUX = 2;
@@ -171,7 +172,7 @@ public class Settings {
   public static float SlowMotionDelay = 2.0f; // in seconds
   public static float MoveMouseDelay = 0.5f; // in seconds
   private static float MoveMouseDelaySaved = MoveMouseDelay;
-  
+
   /**
    * true = highlight every match (default: false) (show red rectangle around) for
    * DefaultHighlightTime seconds (default: 2)
@@ -263,7 +264,7 @@ public class Settings {
   public static boolean isLinux() {
     return getOS() == ISLINUX;
   }
-  
+
   public static boolean isMac() {
     return getOS() == ISMAC;
   }

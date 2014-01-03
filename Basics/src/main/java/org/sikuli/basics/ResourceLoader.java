@@ -39,7 +39,7 @@ public class ResourceLoader implements IResourceLoader {
     Debug.logx(level, "", me + ": " + message, args);
   }
   //</editor-fold>
-  
+
   private String loaderName = "basic";
   private static final String NL = String.format("%n");
   private static final String cmdRegCheck = "reg QUERY HKCU";
@@ -91,7 +91,7 @@ public class ResourceLoader implements IResourceLoader {
   private static String libSource32 = libSourcebase + "%s/libs32/";
   private static String libSource64 = libSourcebase + "%s/libs64/";
   private String libSource;
-  
+
   private String osarch;
   private String javahome;
 
@@ -200,7 +200,7 @@ public class ResourceLoader implements IResourceLoader {
         }
       }
 
-      //  Mac specific 
+      //  Mac specific
       if (Settings.isMac()) {
         if (!osarch.contains("64")) {
           log(-1, "Mac: only 64-Bit supported");
@@ -215,7 +215,7 @@ public class ResourceLoader implements IResourceLoader {
 //        }
       }
 
-      // Windows specific 
+      // Windows specific
       if (Settings.isWindows()) {
         if (osarch.contains("64")) {
           libSource = String.format(libSource64, "windows");
@@ -882,7 +882,7 @@ public class ResourceLoader implements IResourceLoader {
       }
     } else {
       String p = FileManager.slashify(jar.getPath(), false);
-      //TODO hack: to get folder Commands and Lib from Basics 
+      //TODO hack: to get folder Commands and Lib from Basics
       if (path.startsWith("Commands/") || path.startsWith("Lib/")) {
         p = p.replace("Natives", "Basics");
       }

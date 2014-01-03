@@ -392,7 +392,7 @@ public class Imgproc {
  *   <li> An example on using the canny edge detector can be found at
  * opencv_source_code/samples/cpp/edge.cpp
  *   <li> (Python) An example on using the canny edge detector can be found at
- * opencv_source_code/samples/cpp/edge.py
+ * opencv_source_code/samples/python/edge.py
  * </ul>
  *
  * @param image single-channel 8-bit input image.
@@ -431,7 +431,7 @@ public class Imgproc {
  *   <li> An example on using the canny edge detector can be found at
  * opencv_source_code/samples/cpp/edge.cpp
  *   <li> (Python) An example on using the canny edge detector can be found at
- * opencv_source_code/samples/cpp/edge.py
+ * opencv_source_code/samples/python/edge.py
  * </ul>
  *
  * @param image single-channel 8-bit input image.

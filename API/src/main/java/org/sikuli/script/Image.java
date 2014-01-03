@@ -54,9 +54,9 @@ import org.sikuli.natives.Vision;
  *
  */
 public class Image {
-  
+
   static {
-//    FileManager.loadLibrary("opencv_java247");
+//    FileManager.loadLibrary(Settings.libOpenCV);
   }
 
   private static String me = "Image";
@@ -100,13 +100,13 @@ public class Image {
   private int rowHd = 0;
   private int colWd = 0;
 
-  
+
 
   @Override
   public String toString() {
     return String.format(
             (imageName != null ? imageName : "__UNKNOWN__") + ": (%dx%d)", bwidth, bheight)
-            + (lastSeen == null ? "" : 
+            + (lastSeen == null ? "" :
             String.format(" seen at (%d, %d) with %.2f", lastSeen.x, lastSeen.y, lastScore));
   }
 
@@ -131,7 +131,7 @@ public class Image {
    * file ending .png is added if missing <br />
    * filename: ...url-path.../name[.png] is loaded from the url and and cached <br />
    * already loaded image with same url is reused (reference) and taken from cache
-   * 
+   *
    * @param imgName
    * @return the image
    */
@@ -146,8 +146,8 @@ public class Image {
   /**
    * create a new image from a buffered image<br />
    * can only be reused with the object reference
-   * 
-   * @param img 
+   *
+   * @param img
    */
   public Image(BufferedImage img) {
     this(img, null);
@@ -157,7 +157,7 @@ public class Image {
    * create a new image from a buffered image<br />
    * giving it a descriptive name for printout and logging <br />
    * can only be reused with the object reference
-   * 
+   *
    * @param img
    * @param name descriptive name
    */
@@ -176,8 +176,8 @@ public class Image {
   /**
    * create a new image from a Sikuli ScreenImage (captured)<br />
    * can only be reused with the object reference
-   * 
-   * @param img 
+   *
+   * @param img
    */
   public Image(ScreenImage img) {
     this(img.getImage(), null);
@@ -187,7 +187,7 @@ public class Image {
    * create a new image from a Sikuli ScreenImage (captured)<br />
    * giving it a descriptive name for printout and logging <br />
    * can only be reused with the object reference
-   * 
+   *
    * @param img
    * @param name descriptive name
    */
@@ -339,7 +339,7 @@ public class Image {
 
   /**
    * Internal Use: IDE: to get rid of cache entries at script close or save as
-   * 
+   *
    * @param bundlePath
    */
   public static void purge(String bundlePath) {
@@ -445,7 +445,7 @@ public class Image {
   }
 
   /**
-   * Get the image's descriptive name 
+   * Get the image's descriptive name
    *
    */
   public String getName() {
@@ -487,12 +487,12 @@ public class Image {
 
   /**
    * if the image was already found before
-   * @return the similarity score 
+   * @return the similarity score
    */
   public double getLastSeenScore() {
     return lastScore;
   }
-  
+
   /**
    * Internal Use: set the last seen info after a find
    * @param lastSeen
@@ -505,7 +505,7 @@ public class Image {
       group.addImageFacts(this, lastSeen, sim);
     }
   }
-  
+
   /**
    * create a sub image from this image
    * @param x
@@ -521,7 +521,7 @@ public class Image {
     g.dispose();
     return new Image(bi);
   }
-  
+
   /**
    * create a sub image from this image
    * @param part (the constants Region.XXX as used with region.get())
@@ -531,7 +531,7 @@ public class Image {
     Rectangle r = Region.getRectangle(0, 0, getSize().width, getSize().height, part);
     return getSub(r.x, r.y, r.width, r.height);
   }
-  
+
   /**
    * store info: this image is divided vertically into n even rows <br />
    * a preparation for using getRow()
@@ -541,7 +541,7 @@ public class Image {
   public Image setRows(int n) {
     return setRaster(n, 0);
   }
-  
+
   /**
    * store info: this image is divided horizontally into n even columns <br />
    * a preparation for using getCol()
@@ -549,9 +549,9 @@ public class Image {
    * @return the leftmost column
    */
   public Image setCols(int n) {
-    return setRaster(0, n);    
+    return setRaster(0, n);
   }
-  
+
   /**
    *
    * @return number of eventually defined rows in this image or 0
@@ -559,7 +559,7 @@ public class Image {
   public int getRows() {
     return rows;
   }
-  
+
   /**
    *
    * @return height of eventually defined rows in this image or 0
@@ -567,7 +567,7 @@ public class Image {
   public int getRowH() {
     return rowH;
   }
-  
+
   /**
    *
    * @return number of eventually defined columns in this image or 0
@@ -575,7 +575,7 @@ public class Image {
   public int getCols() {
     return cols;
   }
-  
+
   /**
    *
    * @return width of eventually defined columns in this image or 0
@@ -583,11 +583,11 @@ public class Image {
   public int getColW() {
     return colW;
   }
-  
+
   /**
    * store info: this image is divided into a raster of even cells <br />
    * a preparation for using getCell()
-   * @param r 
+   * @param r
    * @param c
    * @return the top left cell
    */
@@ -604,7 +604,7 @@ public class Image {
     }
     return getCell(0, 0);
   }
-  
+
   /**
    * get the specified row counting from 0, if rows or raster are setup
    * negative counts reverse from the end (last = -1)
@@ -623,7 +623,7 @@ public class Image {
     r = Math.min(r, rows-1);
     return getSub(0, r * rowH, getSize().width, rowH);
   }
-  
+
   /**
    * get the specified column counting from 0, if columns or raster are setup
    * negative counts reverse from the end (last = -1)
@@ -640,9 +640,9 @@ public class Image {
     }
     c = Math.max(0, c);
     c = Math.min(c, cols-1);
-    return getSub(c * colW, 0, colW, getSize().height);    
+    return getSub(c * colW, 0, colW, getSize().height);
   }
-  
+
   /**
    * get the specified cell counting from (0, 0), if a raster is setup <br />
    * negative counts reverse from the end (last = -1)
@@ -666,18 +666,18 @@ public class Image {
     r = Math.min(r, rows-1);
     c = Math.max(0, c);
     c = Math.min(c, cols-1);
-    return getSub(c * colW, r * rowH, colW, rowH);    
+    return getSub(c * colW, r * rowH, colW, rowH);
   }
-  
+
   /**
    * get the OpenCV Mat version of the image's BufferedImage
-   * 
+   *
    * @return OpenCV Mat
    */
   public Mat getMat() {
     return createMat(get());
   }
-  
+
   protected static Mat createMat(BufferedImage img) {
     if (img != null) {
       Debug timer = Debug.startTimer("Mat create\t (%d x %d) from \n%s", img.getWidth(), img.getHeight(), img);
@@ -711,7 +711,7 @@ public class Image {
 
   /**
    * to get old style OpenCV Mat for FindInput
-   * 
+   *
    * @return SWIG interfaced OpenCV Mat
    * @deprecated
    */
@@ -728,7 +728,7 @@ public class Image {
       return null;
     }
   }
-  
+
   protected static byte[] convertBufferedImageToByteArray(BufferedImage img) {
     if (img != null) {
       BufferedImage cvImg = createBufferedImage(img.getWidth(), img.getHeight());
