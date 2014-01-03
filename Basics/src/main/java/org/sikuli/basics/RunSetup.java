@@ -81,7 +81,7 @@ public class RunSetup {
   private static boolean generallyDoUpdate = false;
 
   public static String timestampBuilt;
-  private static final String tsb = "##--##Fri Jan  3 13:44:43 CET 2014##--##";
+  private static final String tsb = "##--##Fri Jan  3 18:54:28 CET 2014##--##";
   static {
     timestampBuilt = SikuliX.makeTimestamp(tsb);
   }
