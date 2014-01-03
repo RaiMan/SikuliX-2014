@@ -1116,20 +1116,8 @@ public class FileManager {
     out.flush();
   }
   
-  public static boolean pathEquals(String path1, String path2, boolean isFolder) {
-    String p1 = new File(slashify(path1, isFolder)).getAbsolutePath();
-    String p2 = new File(slashify(path2, isFolder)).getAbsolutePath();
-    if (Settings.isWindows()) {
-      if (p1.startsWith("/")) {
-        p1 = p1.substring(1);
-      }
-      if (p2.startsWith("/")) {
-        p2 = p2.substring(1);
-      }
-      p1 = p1.toUpperCase();
-      p2 = p2.toUpperCase();
-    }
-    return p1.equals(p2);
+  public static boolean pathEquals(String path1, String path2) {
+    return (new File(path1)).equals(new File(path2));
   }
 }
 

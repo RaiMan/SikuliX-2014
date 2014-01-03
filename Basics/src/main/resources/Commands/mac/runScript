@@ -31,7 +31,7 @@ else
   shome=`dirname $0`
 fi
 
-if [ -e "$shome/sikuli-ide.jar" ]; then
+if [ -e "$shome/sikuli-script.jar" ]; then
   export SIKULI_COMMAND=$*
   echo "running SikuliX-Script: $PROPS $CONSOLE"
   echo "-jar $shome/sikuli-script.jar $SIKULI_COMMAND"

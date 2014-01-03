@@ -76,7 +76,7 @@ import SikuliImporter
 
 Debug.log(3, "Jython: sikuli: Sikuli: import SikuliX")
 from org.sikuli.basics import SikuliScript
-from org.sikuli.script import SikuliX
+from org.sikuli.basics import SikuliX
 
 ##
 # some support for handling unicode and strings
@@ -350,7 +350,7 @@ def run(cmd):
 ##
 # display some help in interactive mode
 def shelp():
-    SikuliX.shelp()
+    SikuliScript.shelp()
     
 ##
 # helper functions, that can be used when sorting lists of regions

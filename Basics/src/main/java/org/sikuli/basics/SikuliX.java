@@ -105,7 +105,7 @@ public class SikuliX {
       }
       return;
     }
-    if (args[0].contains("-testSetup") || args[0].startsWith("-i")) {
+    if (args.length > 0 && (args[0].contains("-testSetup") || args[0].startsWith("-i"))) {
       start = (new Date()).getTime();
       String[] splashArgs = new String[]{
         "splash", "#", "#" + Settings.SikuliVersionScript, "", "#", "#... starting - please wait ..."};
@@ -470,5 +470,23 @@ public class SikuliX {
     String[] args = new String[]{cmdline};
     loader.doSomethingSpecial("runcmd", args);
     return args[0];
+  }
+  
+  
+  /**
+   * INTERNAL USE: convert ##--##Fri Jan  3 10:53:05 CET 2014##--## <br />
+   * to: 2014-JAN-03-10:53:05 (timestamp of build)
+   * @param tsb
+   * @return
+   */
+  public static String makeTimestamp(String tsb) {
+    String timestamp = tsb.substring(6, tsb.length() - 6);
+    timestamp = timestamp.substring(timestamp.indexOf(" ") + 1);
+    timestamp = timestamp.substring(timestamp.length()-4) + "-" +
+                     timestamp.substring(0, timestamp.length()-5);
+    timestamp = timestamp.substring(0, timestamp.lastIndexOf(" "));
+    timestamp = timestamp.replaceAll(" ", "-").toUpperCase();
+    timestamp = timestamp.replaceAll("--", "-0").toUpperCase();
+    return timestamp;
   }
 }

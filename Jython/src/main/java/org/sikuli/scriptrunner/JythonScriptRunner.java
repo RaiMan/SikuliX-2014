@@ -40,8 +40,6 @@ public class JythonScriptRunner implements IScriptRunner {
   }
   //</editor-fold>
 
-  private static String timestampBuilt;
-  private static final String tsb = "##--##Sa  2 Nov 2013 14:49:40 CET##--##";
   /**
    * The PythonInterpreter instance
    */
@@ -95,12 +93,11 @@ public class JythonScriptRunner implements IScriptRunner {
           = FileManager.convertStreamToString(SikuliBundleCleaner);
   private static String sikuliLibPath;
 
+  private static String timestampBuilt;
+  private static final String tsb = "##--##Fri Jan  3 13:45:00 CET 2014##--##";
   static {
-    timestampBuilt = tsb.substring(6, tsb.length() - 6);
-    timestampBuilt = timestampBuilt.substring(
-            timestampBuilt.indexOf(" ") + 1, timestampBuilt.lastIndexOf(" "));
-    timestampBuilt = timestampBuilt.replaceAll(" ", "").replaceAll(":", "").toUpperCase();
-    Debug.log(3, "SikuliX Jython Support Build: %s %s", Settings.getVersionShort(), timestampBuilt);
+    Debug.log(3, "SikuliX Jython Support Build: %s %s", Settings.getVersionShort(), 
+            SikuliX.makeTimestamp(tsb));
   }
 
   /**
@@ -118,7 +115,7 @@ public class JythonScriptRunner implements IScriptRunner {
         log(lvl, "init: python.path hack: \n" + System.getProperty("python.path"));
       } else {
         String currentPath = System.getProperty("python.path");
-        if (!FileManager.pathEquals(currentPath, sikuliLibPath, true)) {
+        if (!FileManager.pathEquals(currentPath, sikuliLibPath)) {
           log(-1, "init: Not running from jar and Python path not empty: Sikuli might not work!\n"
                   + "Current python.path: " + currentPath);
         }
@@ -568,11 +565,11 @@ public class JythonScriptRunner implements IScriptRunner {
    */
   private void executeScriptHeader(String[] syspaths) {
 // TODO implement compile only
-    if (syspaths[0].toUpperCase().equals(COMPILE_ONLY)) {
+    if (syspaths.length > 0 && syspaths[0].toUpperCase().equals(COMPILE_ONLY)) {
       return;
     }
     PyList jypath = interpreter.getSystemState().path;
-    if (!FileManager.pathEquals((String) jypath.get(0), sikuliLibPath, true)) {
+    if (!FileManager.pathEquals((String) jypath.get(0), sikuliLibPath)) {
       log(lvl, "executeScriptHeader: adding SikuliX Lib path to sys.path\n" + sikuliLibPath);
       int jypathLength = jypath.__len__();
       String[] jypathNew = new String[jypathLength + 1];

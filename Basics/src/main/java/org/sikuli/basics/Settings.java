@@ -63,8 +63,8 @@ public class Settings {
   public static String[] ServerList = {"http://dl.dropboxusercontent.com/u/42895525/SikuliX"};
   private static final String sversion = String.format("%d.%d.%d",
           SikuliVersionMajor, SikuliVersionMinor, SikuliVersionSub);
-  private static final String bversion = String.format("%d.%d-Beta%d",
-          SikuliVersionMajor, SikuliVersionMinor, SikuliVersionBetaN);
+  private static final String bversion = String.format("%d.%d.%d-Beta%d",
+          SikuliVersionMajor, SikuliVersionMinor, SikuliVersionSub, SikuliVersionBetaN);
   public static final String SikuliVersionDefault = "Sikuli " + sversion;
   public static final String SikuliVersionBeta = "Sikuli " + bversion;
   public static final String SikuliVersionDefaultIDE = "Sikuli IDE " + sversion;
@@ -74,7 +74,7 @@ public class Settings {
   public static String SikuliVersion;
   public static String SikuliVersionIDE;
   public static String SikuliVersionScript;
-  public static final String versionMonth = "November 2013";
+  public static final String versionMonth = "January 2014";
   
   
   /**
@@ -106,7 +106,7 @@ public class Settings {
     SikuliRepo = null;
 
     // set the version strings
-    if (SikuliVersionSub == 0 && SikuliVersionBetaN > 0) {
+    if (SikuliVersionBetaN > 0) {
       SikuliVersion = SikuliVersionBeta;
       SikuliVersionIDE = SikuliVersionBetaIDE;
       SikuliVersionScript = SikuliVersionBetaScript;
@@ -277,7 +277,7 @@ public class Settings {
   }
 
   public static String getVersionShort() {
-    if (SikuliVersionBetaN > 0) {
+    if (SikuliVersionBetaN > 0 && SikuliVersionBetaN < 99) {
       return bversion;
     }
     else {

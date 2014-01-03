@@ -6,8 +6,6 @@
  */
 package org.sikuli.script;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
 import org.sikuli.basics.CommandArgs;
@@ -21,7 +19,7 @@ import org.sikuli.basics.SikuliScript;
  */
 public class SikuliX {
 
-  private static final String me = "SikuliXFinal: ";
+  private static final String me = "SikuliX: ";
   private static List<Region> runningObservers = new ArrayList<Region>();
 
   public static void addRunningObserver(Region r) {

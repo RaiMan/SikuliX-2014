@@ -32,8 +32,6 @@ public class RunSetup {
 
   private static boolean runningUpdate = false;
   private static boolean isUpdateSetup = false;
-  public static String timestampBuilt;
-  private static final String tsb = "##--##Mi 27 Nov 2013 15:29:45 CET##--##";
   private static boolean runningfromJar = true;
   private static String workDir;
   private static String uhome;
@@ -42,13 +40,13 @@ public class RunSetup {
   private static String majorversion = Settings.getVersionShortBasic();
   private static String updateVersion;
   private static String downloadBaseDirBase = "https://launchpad.net/raiman/sikulix2013+/";
-  private static String downloadBaseDir = downloadBaseDirBase + majorversion + ".0/";
+  private static String downloadBaseDir = downloadBaseDirBase + majorversion + ".0/+download/";
   private static String downloadSetup;
   private static String downloadIDE = version + "-1.jar";
-  private static String downloadMacApp = version + "-9.jar";
+  private static String downloadMacApp = version.substring(0, 5) + "-9.jar";
   private static String downloadScript = version + "-2.jar";
   private static String downloadJava = version + "-3.jar";
-  private static String downloadTess = version + "-5.jar";
+  private static String downloadTess = version.substring(0, 5) + "-5.jar";
   private static String downloadRServer = version + "-7.jar";
   private static String localJava = "sikuli-java.jar";
   private static String localScript = "sikuli-script.jar";
@@ -60,7 +58,7 @@ public class RunSetup {
   private static String localSetup = "sikuli-setup-" + majorversion + ".jar";
   private static String localUpdate = "sikuli-update";
   private static String localTess = "sikuli-tessdata.jar";
-  private static String localRServer = "sikulix-remoteserver.jar";
+  private static String localRServer = "sikuli-remoteserver.jar";
   private static String localLogfile;
   private static SetUpSelect winSU;
   private static JFrame winSetup;
@@ -82,11 +80,10 @@ public class RunSetup {
   private static boolean runningSetup = false;
   private static boolean generallyDoUpdate = false;
 
+  public static String timestampBuilt;
+  private static final String tsb = "##--##Fri Jan  3 13:44:43 CET 2014##--##";
   static {
-    timestampBuilt = tsb.substring(6, tsb.length() - 6);
-    timestampBuilt = timestampBuilt.substring(
-            timestampBuilt.indexOf(" ") + 1, timestampBuilt.lastIndexOf(" "));
-    timestampBuilt = timestampBuilt.replaceAll(" ", "").replaceAll(":", "").toUpperCase();
+    timestampBuilt = SikuliX.makeTimestamp(tsb);
   }
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
@@ -120,17 +117,17 @@ public class RunSetup {
     PreferencesUser prefs = PreferencesUser.getInstance();
     boolean prefsHaveProxy = false;
 
-    if (Settings.SikuliVersionBetaN > 0 && Settings.SikuliVersionBetaN < 999) {
-      updateVersion = String.format("%d.%d-Beta%d",
-              Settings.SikuliVersionMajor, Settings.SikuliVersionMinor,
+    if (Settings.SikuliVersionBetaN > 0 && Settings.SikuliVersionBetaN < 99) {
+      updateVersion = String.format("%d.%d.%d-Beta%d",
+              Settings.SikuliVersionMajor, Settings.SikuliVersionMinor, Settings.SikuliVersionSub,
               1 + Settings.SikuliVersionBetaN);
-    } else if (Settings.SikuliVersionSub > 0) {
+    } else if (Settings.SikuliVersionBetaN < 1) {
       updateVersion = String.format("%d.%d.%d",
               Settings.SikuliVersionMajor, Settings.SikuliVersionMinor,
               1 + Settings.SikuliVersionSub);
     } else {
       updateVersion = String.format("%d.%d.%d",
-              Settings.SikuliVersionMajor, Settings.SikuliVersionMinor, 0);
+              Settings.SikuliVersionMajor, 1 + Settings.SikuliVersionMinor, 0);
     }
 
     options.addAll(Arrays.asList(args));
@@ -905,7 +902,9 @@ public class RunSetup {
       FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
     }
 
-    folderLibs.mkdirs();
+    if (runningfromJar) {
+      folderLibs.mkdirs();
+    }
 
     loader.check(Settings.SIKULI_LIB);
 
@@ -919,6 +918,7 @@ public class RunSetup {
               + "Check the error log at " + logfile);
       terminate("Setting up environment did not work");
     }
+    
     if (getJava) {
       log1(lvl, "Trying to run functional test: JAVA-API");
       splash = showSplash("Trying to run functional test(s)", "Java-API: org.sikuli.script.SikuliX.testSetup()");
@@ -984,6 +984,14 @@ public class RunSetup {
         terminate("Functional test Jython did not work");
       }
     }
+
+    if (!runningfromJar) {
+      (new File(uhome, "SikuliX/libs")).renameTo(folderLibs);
+      if ((new File(uhome, "SikuliX/Lib")).exists()) {
+        (new File(uhome, "SikuliX/Lib")).renameTo(new File(workDir, "Lib"));
+      }
+    }
+    
     splash = showSplash("Setup seems to have ended successfully!", "Detailed information see: " + logfile);
     start += 2000;
 
@@ -1048,6 +1056,16 @@ public class RunSetup {
     if (new File(backup, localRServer).exists() && !new File(workDir, localRServer).exists()) {
       log1(lvl, "restoring " + localRServer);
       new File(backup, localRServer).renameTo(new File(workDir, localRServer));
+    }
+    String folder = "Lib";
+    if (new File(backup, folder).exists() && !new File(workDir, folder).exists()) {
+      log1(lvl, "restoring " + "folder " + folder);
+      new File(backup, folder).renameTo(new File(workDir, folder));
+    }
+    folder = "libs";
+    if (new File(backup, folder).exists() && !new File(workDir, folder).exists()) {
+      log1(lvl, "restoring " + "folder " + folder);
+      new File(backup, folder).renameTo(new File(workDir, folder));
     }
   }
 
