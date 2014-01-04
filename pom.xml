@@ -231,4 +231,27 @@
       </plugin>
     </plugins>
   </build>
+
+    <distributionManagement>
+        <!-- for now I use the repositories below.
+         Instructions: https://github.com/iirekm/maven-repo
+        -->
+        <repository>
+            <id>iirekm.releases</id>
+            <url>https://github.com/iirekm/maven-repo/raw/master/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>iirekm.shapshots</id>
+            <url>https://github.com/iirekm/maven-repo/raw/master/snapshots</url>
+        </snapshotRepository>
+
+        <!-- after getting access to https://oss.sonatype.org/ as described in
+            https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
+            use this: -->
+        <!--
+        <repository>
+            <id>sonatype.releases</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository> -->
+    </distributionManagement>
 </project>
