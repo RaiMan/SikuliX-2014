@@ -12,9 +12,9 @@ import org.sikuli.natives.FindResult;
 
 /**
  * holds the result of a findX operation, is itself the region on the screen,
- * where the image was found and hence inherits all methods from Region<br />
- * attributes:<br /> the match score (0 ... 1.0)<br /> the click target (e.g.
- * from Pattern)<br /> the filename of the used image<br />or the text used for
+ * where the image was found and hence inherits all methods from Region<br>
+ * attributes:<br> the match score (0 ... 1.0)<br> the click target (e.g.
+ * from Pattern)<br> the filename of the used image<br>or the text used for
  * findX text
  */
 public class Match extends Region implements Comparable {
@@ -32,7 +32,7 @@ public class Match extends Region implements Comparable {
   }
 
   /**
-   * create a copy of Match object<br />
+   * create a copy of Match object<br>
    * to e.g. set another TargetOffset for same match
    *
    * @param m

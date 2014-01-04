@@ -587,9 +587,8 @@ public class PythonState {
     * contents of any strings or parenthesised expression, and any comment (i.e.
     * any input text with a nesting level greater than 0), and the trailing
     * end-of-line character, are deleted.
-    * <p>
-    * Examples:
     * <table border="1">
+    * <caption>Examples:</caption>
     * <tr>
     * <th>Input</th>
     * <th>Structure</th>
@@ -616,7 +615,6 @@ public class PythonState {
     * </tr>
     * </table>
     *
-    * @return
     */
    public String getLastLogicalLineStructure(){
       return logicalLineStructure.toString();

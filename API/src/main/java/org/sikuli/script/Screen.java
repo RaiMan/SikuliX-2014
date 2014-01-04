@@ -20,9 +20,9 @@ import java.awt.Rectangle;
  * top left corner and the points contained in the screen area might have negative x and/or y values)
  * <br >The screens are arranged in an array (index = id) and each screen is always the same object
  * (not possible to create new objects).
- * <br />A screen inherits from class Region, so it can be used as such in all aspects. If you need
+ * <br>A screen inherits from class Region, so it can be used as such in all aspects. If you need
  * the region of the screen more than once, you have to create new ones based on the screen.
- * <br />The so called primary screen is the one with top left (0,0) and has id 0.
+ * <br>The so called primary screen is the one with top left (0,0) and has id 0.
  */
 public class Screen extends Region implements EventObserver, IScreen {
 
@@ -265,7 +265,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   /**
    *
    * @param id
-   * @return the physical coordinate/size <br />as AWT.Rectangle to avoid mix up with getROI
+   * @return the physical coordinate/size <br>as AWT.Rectangle to avoid mix up with getROI
    */
   public static Rectangle getBounds(int id) {
     return gdevs[getValidID(id)].getDefaultConfiguration().getBounds();
@@ -273,7 +273,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 
   /**
    * each screen has exactly one robot (internally used for screen capturing)
-   * <br />available as a convenience for those who know what they are doing. Should not be needed
+   * <br>available as a convenience for those who know what they are doing. Should not be needed
    * normally.
    *
    * @param id

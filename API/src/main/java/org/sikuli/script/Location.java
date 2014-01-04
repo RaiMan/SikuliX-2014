@@ -105,10 +105,10 @@ public class Location {
   }
 
   /**
-    * Returns null, if outside of any screen<br />
+    * Returns null, if outside of any screen<br>
     * subsequent actions might crash
     *
-    * @return the screen, that contains the given point.<br />
+    * @return the screen, that contains the given point.<br>
     */
   public Screen getScreen() {
     Rectangle r;
@@ -186,8 +186,8 @@ public class Location {
   }
 
   /**
-   * create a region with a corner at this point<br />as specified with x y<br /> 0 0 top left<br />
-   * 0 1 bottom left<br /> 1 0 top right<br /> 1 1 bottom right<br />
+   * create a region with a corner at this point<br>as specified with x y<br> 0 0 top left<br>
+   * 0 1 bottom left<br> 1 0 top right<br> 1 1 bottom right<br>
    *
    * @param CREATE_X_DIRECTION == 0 is left side !=0 is right side, see {@link Region#CREATE_X_DIRECTION_LEFT}, {@link Region#CREATE_X_DIRECTION_RIGHT}
    * @param CREATE_Y_DIRECTION == 0 is top side !=0 is bottom side, see {@link Region#CREATE_Y_DIRECTION_TOP}, {@link Region#CREATE_Y_DIRECTION_BOTTOM}
@@ -200,7 +200,7 @@ public class Location {
   }
 
   /**
-   * moves the point the given amounts in the x and y direction, might be negative <br />might move
+   * moves the point the given amounts in the x and y direction, might be negative <br>might move
    * point outside of any screen, not checked
    *
    * @param dx
@@ -224,7 +224,7 @@ public class Location {
   }
 
   /**
-   * changes the locations x and y value to the given values (moves it) <br />might move point
+   * changes the locations x and y value to the given values (moves it) <br>might move point
    * outside of any screen, not checked
    *
    * @param X
@@ -248,7 +248,7 @@ public class Location {
   }
 
   /**
-   * creates a point at the given offset, might be negative <br />might create a point outside of
+   * creates a point at the given offset, might be negative <br>might create a point outside of
    * any screen, not checked
    *
    * @param dx
@@ -260,7 +260,7 @@ public class Location {
   }
 
   /**
-   * creates a point at the given offset, might be negative <br />might create a point outside of
+   * creates a point at the given offset, might be negative <br>might create a point outside of
    * any screen, not checked
    *
    * @param loc
@@ -271,7 +271,7 @@ public class Location {
   }
 
 /**
-   * creates a point at the given offset to the left, might be negative <br />might create a point
+   * creates a point at the given offset to the left, might be negative <br>might create a point
    * outside of any screen, not checked
    *
    * @param dx
@@ -282,7 +282,7 @@ public class Location {
   }
 
   /**
-   * creates a point at the given offset to the right, might be negative <br />might create a point
+   * creates a point at the given offset to the right, might be negative <br>might create a point
    * outside of any screen, not checked
    *
    * @param dx
@@ -293,7 +293,7 @@ public class Location {
   }
 
   /**
-   * creates a point at the given offset above, might be negative <br />might create a point outside
+   * creates a point at the given offset above, might be negative <br>might create a point outside
    * of any screen, not checked
    *
    * @param dy
@@ -304,7 +304,7 @@ public class Location {
   }
 
   /**
-   * creates a point at the given offset below, might be negative <br />might create a point outside
+   * creates a point at the given offset below, might be negative <br>might create a point outside
    * of any screen, not checked
    *
    * @param dy

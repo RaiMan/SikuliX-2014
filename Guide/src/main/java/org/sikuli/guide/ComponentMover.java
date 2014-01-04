@@ -82,7 +82,7 @@ public class ComponentMover extends MouseAdapter{
 
     *  @param destinationClass  the Class of the ancestor component
 
-    *  @param component         the Components to be registered for forwarding
+    *  @param components         the Components to be registered for forwarding
 
     *                           drag events to the ancestor Component.
 
@@ -222,7 +222,7 @@ public class ComponentMover extends MouseAdapter{
 
     *
 
-    *  @param component  the component the listeners are removed from
+    *  @param components  components the listeners are removed from
 
     */
 
@@ -244,7 +244,7 @@ public class ComponentMover extends MouseAdapter{
 
     *
 
-    *  @param component  the component the listeners are added to
+    *  @param components  components the listeners are added to
 
     */
 

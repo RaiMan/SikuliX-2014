@@ -22,8 +22,8 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
 
 /**
- * This class is currently used to locate image files in the filesystem <br />
- * and in the internet (the files are cached locally) <br />
+ * This class is currently used to locate image files in the filesystem <br>
+ * and in the internet (the files are cached locally) <br>
  * 
  * @deprecated will completely replaced by the classes Image and ImagePath
  */
@@ -100,10 +100,10 @@ public class ImageLocator {
     }
 
     /**
-     * list entries might be a file path or an url (http/https) <br />list[0]
-     * current bundlepath (Settings.BundlePath) (might be null) <br />list[1:n]
-     * path's from -DSIKULI_IMAGE_PATH=... <br />list[n+1:] path's added later
-     * <br />each path is contained only once <br />each contained file path
+     * list entries might be a file path or an url (http/https) <br>list[0]
+     * current bundlepath (Settings.BundlePath) (might be null) <br>list[1:n]
+     * path's from -DSIKULI_IMAGE_PATH=... <br>list[n+1:] path's added later
+     * <br>each path is contained only once <br>each contained file path
      * existed at the time it was added
      *
      * @return list of absolute path strings (a path might not exist any more)
@@ -149,12 +149,12 @@ public class ImageLocator {
     }
 
     /**
-     * the given path(s) <br />- might be a file path or an url (http/https) <br
-     * />- if file path relative: make absolute path based on current working
-     * directory <br />- is(are) first removed from the list <br />- and then
+     * the given path(s) <br>- might be a file path or an url (http/https) <br>
+     * - if file path relative: make absolute path based on current working
+     * directory <br>- is(are) first removed from the list <br>- and then
      * added to the end of the list (file path: if it exists)
      *
-     * @param path absolute or relative path or url <br />might be a path list
+     * @param path absolute or relative path or url <br>might be a path list
      * string with seperator : (or ; Windows)
      */
     public static String addImagePath(String path) {
@@ -162,13 +162,13 @@ public class ImageLocator {
     }
 
     /**
-     * the given path(s) <br />- might be a file path or an url (http/https) <br
-     * />- if file path relative: make absolute path based on current working
-     * directory <br />- is(are) first removed from the list <br />- and then
-     * added to the beginning of the list (file path: if it exists) <br />as
+     * the given path(s) <br>- might be a file path or an url (http/https) <br>
+     * - if file path relative: make absolute path based on current working
+     * directory <br>- is(are) first removed from the list <br>- and then
+     * added to the beginning of the list (file path: if it exists) <br>as
      * entry 1 after the current bundlepath (entry 0)
      *
-     * @param path absolute or relative path or url <br />might be a path list
+     * @param path absolute or relative path or url <br>might be a path list
      * string with seperator : (or ; Windows)
      */
     public static String addImagePathFirst(String path) {
@@ -176,9 +176,9 @@ public class ImageLocator {
     }
 
     /**
-     * the given paths <br />- might be a file path or an url (http/https) <br
-     * />- if file path relative: make absolute path based on current working
-     * directory <br />- are removed from the list <br />- and then added to the
+     * the given paths <br>- might be a file path or an url (http/https) <br>
+     * - if file path relative: make absolute path based on current working
+     * directory <br>- are removed from the list <br>- and then added to the
      * end of the list (file path: if it exists)
      *
      * @param pl absolute or relative paths or urls as string array
@@ -188,10 +188,10 @@ public class ImageLocator {
     }
 
     /**
-     * the given paths <br />- might be a file path or an url (http/https) <br
-     * />- if file path relative: make absolute path based on current working
-     * directory <br />- are removed from the list <br />- and then added to the
-     * beginning of the list (file path: if it exists) <br />as entry 1 after
+     * the given paths <br>- might be a file path or an url (http/https) <br>
+     * - if file path relative: make absolute path based on current working
+     * directory <br>- are removed from the list <br>- and then added to the
+     * beginning of the list (file path: if it exists) <br>as entry 1 after
      * the current bundlepath (entry 0)
      *
      * @param pl absolute or relative paths or urls as string array
@@ -201,9 +201,9 @@ public class ImageLocator {
     }
 
     /**
-     * the given path(s) <br />- might be a file path or an url (http/https) <br
-     * />- if file path relative: make absolute path based on current working
-     * directory <br />- is/are removed from the list
+     * the given path(s) <br>- might be a file path or an url (http/https) <br>
+     * - if file path relative: make absolute path based on current working
+     * directory <br>- is/are removed from the list
      *
      * @param path absolute or relative path(s) or url(s) might be a path list
      * string with seperator : (or ; Windows)
@@ -216,9 +216,9 @@ public class ImageLocator {
     }
 
     /**
-     * the given path(s) <br />- might be a file path or an url (http/https) <br
-     * />- if file path relative: make absolute path based on current working
-     * directory <br />- is/are removed from the list
+     * the given path(s) <br>- might be a file path or an url (http/https) <br>
+     * - if file path relative: make absolute path based on current working
+     * directory <br>- is/are removed from the list
      *
      * @param pl absolute or relative path(s) or url(s) as string array
      */
@@ -249,9 +249,9 @@ public class ImageLocator {
     }
 
     /**
-     * the current list is emptied <br />then add -DSIKULI_IMAGE_PATH=... and
+     * the current list is emptied <br>then add -DSIKULI_IMAGE_PATH=... and
      * Env(SIKULI_IMAGE_PATH)
-     * <br /> then the given path(s) are added using addImagePath()
+     * <br> then the given path(s) are added using addImagePath()
      *
      * @param path absolute or relative path(s) or url(s) might be a path list
      * string with seperator : (or ; Windows)
@@ -268,9 +268,9 @@ public class ImageLocator {
     }
 
     /**
-     * the current list is emptied <br />then add -DSIKULI_IMAGE_PATH=... and
+     * the current list is emptied <br>then add -DSIKULI_IMAGE_PATH=... and
      * Env(SIKULI_IMAGE_PATH)
-     * <br /> then the given path(s) are added using addImagePath()
+     * <br> then the given path(s) are added using addImagePath()
      *
      * @param pl absolute or relative path(s) or url(s) as string array
      */
@@ -349,14 +349,14 @@ public class ImageLocator {
     }
 
     /**
-     * findX the file in the following order: <br />1. absolute path or url x)
-     * <br />2. bundle path <br />3. ENV[SIKULI_IMAGE_PATH] <br />4. Java
-     * -DSIKULI_IMAGE_PATH <br />5. paths added later using addImagePath or via
+     * findX the file in the following order: <br>1. absolute path or url x)
+     * <br>2. bundle path <br>3. ENV[SIKULI_IMAGE_PATH] <br>4. Java
+     * -DSIKULI_IMAGE_PATH <br>5. paths added later using addImagePath or via
      * import ... .sikuli
      *
      * @param filename relative, absolute or url
      * @return absolute path string
-     * @throws IOException if filename cannot be located <br />x) files behind
+     * @throws IOException if filename cannot be located <br>x) files behind
      * urls are loaded to local cash
      */
     private static String locate(String filename) throws IOException {

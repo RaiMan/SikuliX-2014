@@ -19,7 +19,7 @@ import java.util.*;
  *    GifDecoder d = new GifDecoder();
  *    d.read("sample.gif");
  *    int n = d.getFrameCount();
- *    for (int i = 0; i < n; i++) {
+ *    for (int i = 0; i &lt; n; i++) {
  *       BufferedImage frame = d.getFrame(i);  // frame i
  *       int t = d.getDelay(i);  // display duration of frame in milliseconds
  *       // do something with frame
@@ -268,7 +268,7 @@ public class GifDecoder {
   /**
    * Reads GIF image from stream
    *
-   * @param BufferedInputStream containing GIF file.
+   * @param is BufferedInputStream containing GIF file.
    * @return read status code (0 = no errors)
    */
   public int read(BufferedInputStream is) {
@@ -295,7 +295,7 @@ public class GifDecoder {
   /**
    * Reads GIF image from stream
    *
-   * @param InputStream containing GIF file.
+   * @param is InputStream containing GIF file.
    * @return read status code (0 = no errors)
    */
   public int read(InputStream is) {

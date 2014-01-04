@@ -40,7 +40,7 @@ public class Finder implements Iterator<Match> {
 
   /**
    * Finder constructor (finding within an image).
-   * <br />internally used with a screen snapshot
+   * <br>internally used with a screen snapshot
    *
    * @param imageFilename a string (name, path, url)
    */
@@ -50,7 +50,7 @@ public class Finder implements Iterator<Match> {
 
   /**
    * Finder constructor (finding within an image within the given region).
-   * <br />internally used with a screen snapshot
+   * <br>internally used with a screen snapshot
    *
    * @param imageFilename a string (name, path, url)
    * @param region search Region within image - topleft = (0,0)

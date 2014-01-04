@@ -65,17 +65,14 @@ public class FileManager {
   private static final String EXECUTABLE = "#executable";
   
   /**
-   * System.load() the given library module <br />
-   * from standard places (folder libs or SikuliX/libs) in the following order<br />
-   * 1. -Dsikuli.Home=<br /> 2. Environement SIKULIX_HOME<br />
-   * 3. parent folder of sikuli-script.jar (or main jar)<br />
-   * 4. folder user's home (user.home)<br/>
-   * 5. current working dir or parent of current working dir<br />
+   * System.load() the given library module <br>
+   * from standard places (folder libs or SikuliX/libs) in the following order<br>
+   * 1. -Dsikuli.Home=<br> 2. Environement SIKULIX_HOME<br>
+   * 3. parent folder of sikuli-script.jar (or main jar)<br>
+   * 4. folder user's home (user.home)<br>
+   * 5. current working dir or parent of current working dir<br>
    * 6. standard installation places of Sikuli
    *
-   * @param libname
-   * @param doLoad = true: load it here
-   * @throws IOException
    */
   public static void loadLibrary(String libname) {
     if (nativeLoader == null) {
@@ -625,10 +622,10 @@ public class FileManager {
   }
 
   /**
-   * Retrieves the actual script file<br /> - from a folder script.sikuli<br />
-   * - from a folder script (no extension) (script.sikuli is used, if exists)<br /> - from a file
-   * script.skl or script.zip (after unzipping to temp)<br /> - from a jar script.jar (after
-   * preparing as extension)<br />
+   * Retrieves the actual script file<br> - from a folder script.sikuli<br>
+   * - from a folder script (no extension) (script.sikuli is used, if exists)<br> - from a file
+   * script.skl or script.zip (after unzipping to temp)<br> - from a jar script.jar (after
+   * preparing as extension)<br>
    *
    * @param scriptName one of the above.
    * @return The File containing the actual script.
