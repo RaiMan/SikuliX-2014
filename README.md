@@ -173,6 +173,7 @@ As it is standard with Maven, all -D parameters go to Java system properties, wh
 [please look here](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-produce-the-ready_to_use-jar-packages)
 
 **--- How to deploy to a Maven repository ---**
+
 Edit/configure the repository - see `distributionManagement` in `pom.xml`.
 Then run `mvn deploy -PwithDocs,withSource`. Maybe `-DaltDeploymentRepository=...` will also
 be needed - see `pom.xml`.
