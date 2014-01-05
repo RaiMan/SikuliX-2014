@@ -88,7 +88,7 @@ public class SikuliGuideComponent extends JComponent
   Color colorText;
 
   /**
-   * set a Java Color for the component<br />
+   * set a Java Color for the component<br>
    * not all components have all color options
    * @param all sets the color for all options (which have to be null in this case)
    * @param front sets the foreground color
@@ -161,7 +161,6 @@ public class SikuliGuideComponent extends JComponent
 
   /**
    * set the front and back color as (r, g, b) integer array
-   * @param color
    */
   public SikuliGuideComponent setColor(int r, int g, int b) {
     setColor(new Color(r, g, b));
@@ -179,7 +178,6 @@ public class SikuliGuideComponent extends JComponent
 
   /**
    * set text color as (r, g, b) integer array
-   * @param color
    */
   public SikuliGuideComponent setTextColor(int r, int g, int b) {
     setTextColor(new Color(r, g, b));

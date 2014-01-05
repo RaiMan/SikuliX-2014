@@ -142,7 +142,7 @@ public class ImagePath {
    * Set the primary image path to the top folder level of a jar based on the given class name (must
    * be found on class path). When not running from a jar (e.g. running in some IDE) the path will be the
    * path to the compiled classes (for Maven based projects this is target/classes that contains all
-   * stuff copied from src/main/resources automatically)<br />
+   * stuff copied from src/main/resources automatically)<br>
    *
    * @param mainPath a valid classname optionally followed by /subfolder...
    * @param altPath alternative image folder, when not running from jar (absolute path) 

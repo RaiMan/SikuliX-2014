@@ -344,9 +344,9 @@ public class SikuliX {
   }
 
   /**
-   * request user's input as one line of text <br />
-   * with hidden = true: <br /> 
-   * the dialog works as password input (input text hidden a s bullets) <br />
+   * request user's input as one line of text <br>
+   * with hidden = true: <br>
+   * the dialog works as password input (input text hidden a s bullets) <br>
    * take care to destroy the return value as soon as possible (internally security is granted)
    * @param msg
    * @param preset
@@ -412,9 +412,9 @@ public class SikuliX {
   }
 
   /**
-  * Shows a dialog request to enter text in a multiline text field <br />
-  * Though not all text might be visible, everything entered is delivered with the returned text <br />
-  * The main purpose for this feature is to allow pasting text from somewhere preserving line breaks <br /> 
+  * Shows a dialog request to enter text in a multiline text field <br>
+  * Though not all text might be visible, everything entered is delivered with the returned text <br>
+  * The main purpose for this feature is to allow pasting text from somewhere preserving line breaks <br>
   * @param msg the message to display.
   * @param title the title for the dialog (default: Sikuli input request)
   * @param lines the maximum number of lines visible in the text field (default 9)
@@ -474,7 +474,7 @@ public class SikuliX {
   
   
   /**
-   * INTERNAL USE: convert ##--##Fri Jan  3 10:53:05 CET 2014##--## <br />
+   * INTERNAL USE: convert ##--##Fri Jan  3 10:53:05 CET 2014##--## <br>
    * to: 2014-JAN-03-10:53:05 (timestamp of build)
    * @param tsb
    * @return

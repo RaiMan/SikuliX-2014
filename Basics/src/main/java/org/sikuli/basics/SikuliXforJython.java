@@ -13,9 +13,9 @@ import java.security.CodeSource;
 
 /**
  *
- * Can be used in pure Jython environments to add the Sikuli Python API to sys.path<br />
- * Usage: (before any Sikuli features are used)<br />
- * import org.sikuli.basics.SikuliXforJython<br />
+ * Can be used in pure Jython environments to add the Sikuli Python API to sys.path<br>
+ * Usage: (before any Sikuli features are used)<br>
+ * import org.sikuli.basics.SikuliXforJython<br>
  * from sikuli import *
  */
 public class SikuliXforJython {

@@ -37,25 +37,25 @@ public class Settings {
    */
   public static String OcrDataPath;
   /**
-   * standard place in the net to get information about extensions<br />
-   * needs a file extensions.json with content<br />
-   * {"extension-list":<br />
-   * &nbsp;{"extensions":<br />
-   * &nbsp;&nbsp;[<br />
-   * &nbsp;&nbsp;&nbsp;{<br />
-   * &nbsp;&nbsp;&nbsp;&nbsp;"name":"SikuliGuide",<br />
-   * &nbsp;&nbsp;&nbsp;&nbsp;"version":"0.3",<br />
-   * &nbsp;&nbsp;&nbsp;&nbsp;"description":"visual annotations",<br />
-   * &nbsp;&nbsp;&nbsp;&nbsp;"imgurl":"somewhere in the net",<br />
-   * &nbsp;&nbsp;&nbsp;&nbsp;"infourl":"http://doc.sikuli.org",<br />
-   * &nbsp;&nbsp;&nbsp;&nbsp;"jarurl":"---extensions---"<br />
-   * &nbsp;&nbsp;&nbsp;},<br />
-   * &nbsp;&nbsp;]<br />
-   * &nbsp;}<br />
-   * }<br />
-   * imgurl: to get an icon from<br />
-   * infourl: where to get more information<br />
-   * jarurl: where to download the jar from (no url: this standard place)<br />
+   * standard place in the net to get information about extensions<br>
+   * needs a file extensions.json with content<br>
+   * {"extension-list":<br>
+   * &nbsp;{"extensions":<br>
+   * &nbsp;&nbsp;[<br>
+   * &nbsp;&nbsp;&nbsp;{<br>
+   * &nbsp;&nbsp;&nbsp;&nbsp;"name":"SikuliGuide",<br>
+   * &nbsp;&nbsp;&nbsp;&nbsp;"version":"0.3",<br>
+   * &nbsp;&nbsp;&nbsp;&nbsp;"description":"visual annotations",<br>
+   * &nbsp;&nbsp;&nbsp;&nbsp;"imgurl":"somewhere in the net",<br>
+   * &nbsp;&nbsp;&nbsp;&nbsp;"infourl":"http://doc.sikuli.org",<br>
+   * &nbsp;&nbsp;&nbsp;&nbsp;"jarurl":"---extensions---"<br>
+   * &nbsp;&nbsp;&nbsp;},<br>
+   * &nbsp;&nbsp;]<br>
+   * &nbsp;}<br>
+   * }<br>
+   * imgurl: to get an icon from<br>
+   * infourl: where to get more information<br>
+   * jarurl: where to download the jar from (no url: this standard place)<br>
    */
   public static String SikuliRepo;
   private static String[] args = new String[0];

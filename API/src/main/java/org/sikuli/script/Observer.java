@@ -112,7 +112,7 @@ public class Observer {
   }
   
   /**
-   * remove the observer from the list, a region observer will be stopped <br />
+   * remove the observer from the list, a region observer will be stopped <br>
    * registered events for that observer are removed as well
    * 
    * @param name name of observer
@@ -123,10 +123,9 @@ public class Observer {
   }
   
   /**
-   * stop and remove all observers registered for this region from the list <br />
+   * stop and remove all observers registered for this region from the list <br>
    * registered events for those observers are removed as well
-   * 
-   * @param name name of observer
+   *
    * @return success
    */
   public static boolean remove(Region reg) {
@@ -134,7 +133,7 @@ public class Observer {
   }
   
   /**
-   * stop and remove the observer registered for this region from the list <br />
+   * stop and remove the observer registered for this region from the list <br>
    * registered events for that observer are removed as well
    * 
    * @param reg the observed region
@@ -244,7 +243,7 @@ public class Observer {
    * add a new event to the list 
    * 
    * @param name name of event
-   * @param ev the event object (SikuliEvent is copied)
+   * @param pev the event object (SikuliEvent is copied)
    * @return
    */
   public static synchronized long addEvent(String name, Object pev) {
@@ -268,7 +267,7 @@ public class Observer {
   }
 
   /**
-   * remove and return the latest event for the named observer <br />
+   * remove and return the latest event for the named observer <br>
    * earlier events are removed
    * 
    * @param name
@@ -302,10 +301,9 @@ public class Observer {
   }
   
   /**
-   * remove and return the latest events for that region <br />
+   * remove and return the latest events for that region <br>
    * earlier events are removed
-   * 
-   * @param name
+   *
    * @return the array of events or size 0 array if none
    */
   public static synchronized Event[] getEvents(Region reg) {
@@ -317,7 +315,7 @@ public class Observer {
   }
 
   /**
-   * return the latest events (these are preserved) <br />
+   * return the latest events (these are preserved) <br>
    * earlier events for the same observer are removed
    * 
    * @return the array of events or size 0 array if none
