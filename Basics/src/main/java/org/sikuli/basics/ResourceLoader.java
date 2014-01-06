@@ -752,8 +752,6 @@ public class ResourceLoader implements IResourceLoader {
    * make sure, a native library is available and loaded
    *
    * @param libname System.loadLibrary() compatible library name
-   * @return the extracted File object
-   * @throws IOException
    */
   public void loadLib(String libname) {
     String memx = mem;

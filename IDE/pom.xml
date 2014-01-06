@@ -67,6 +67,13 @@
         </configuration>
       </plugin>
       <plugin>
+        <artifactId>maven-javadoc-plugin</artifactId>
+        <configuration>
+            <!-- has problems with excluded files; excluding doesn't work for me -->
+            <skip>true</skip>
+        </configuration>
+      </plugin>
+      <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.4</version>
         <configuration>

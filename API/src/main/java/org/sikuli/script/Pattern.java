@@ -11,9 +11,9 @@ import java.awt.image.BufferedImage;
 import java.net.URL;
 
 /**
- * to define a more complex search target<br />
- * - non-standard minimum similarity <br />
- * - click target other than center <br />
+ * to define a more complex search target<br>
+ * - non-standard minimum similarity <br>
+ * - click target other than center <br>
  * - image as in-memory image
  */
 public class Pattern {
@@ -43,7 +43,7 @@ public class Pattern {
   }
 
   /**
-   * create a Pattern with given image<br />
+   * create a Pattern with given image<br>
    *
    * @param img
    */
@@ -52,7 +52,7 @@ public class Pattern {
   }
 
   /**
-   * create a Pattern based on an image file name<br />
+   * create a Pattern based on an image file name<br>
    *
    * @param imgpath
    */
@@ -130,8 +130,8 @@ public class Pattern {
 
   /**
    * the current image's absolute filepath
-   * <br />will return null, if image is in jar or in web
-   * <br />use getFileURL in this case
+   * <br>will return null, if image is in jar or in web
+   * <br>use getFileURL in this case
    *
    * @return might be null
    */

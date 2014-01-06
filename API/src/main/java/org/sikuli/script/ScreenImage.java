@@ -66,7 +66,6 @@ public class ScreenImage {
 	 * if not yet stored before
 	 *
 	 * @return absolute path to stored file
-	 * @throws IOException
 	 */
 	public String getFile() {
     if (_filename == null) {
@@ -81,7 +80,6 @@ public class ScreenImage {
 	 *
 	 * @param path valid path string
 	 * @return absolute path to stored file
-	 * @throws IOException
 	 */
   public String getFile(String path) {
     try {
@@ -101,7 +99,6 @@ public class ScreenImage {
 	 * @param path valid path string
 	 * @param name filename (.png is added if not present)
 	 * @return absolute path to stored file
-	 * @throws IOException
 	 */
 	public String getFile(String path, String name) {
     if (name == null) {

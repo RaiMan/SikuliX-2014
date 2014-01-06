@@ -37,20 +37,20 @@ import org.sikuli.basics.Settings;
 import org.sikuli.natives.Vision;
 
 /**
- * This class hides the complexity behind image names given as string.<br />
- * Its companion is ImagePath that maintains a list of places, where images are stored.<br />
- * Another companion is ImageGroup allowing to to look at images in a folder as a group.<br />
- * An Image object:<br />
- * - has a name, either given or taken from the basename without ending.<br />
- * - keeps its in memory buffered image in a configurable cache avoiding reload from source<br />
- * - remembers, where it was found the last time searched<br />
- * - can be sourced from the filesystem, from jars, from the web and from other in memory images <br />
- * - it will have features for basic image manipulation <br />
- * - it contains the stuff to communicate with the underlying OpenCV based search engine <br />
+ * This class hides the complexity behind image names given as string.<br>
+ * Its companion is ImagePath that maintains a list of places, where images are stored.<br>
+ * Another companion is ImageGroup allowing to to look at images in a folder as a group.<br>
+ * An Image object:<br>
+ * - has a name, either given or taken from the basename without ending.<br>
+ * - keeps its in memory buffered image in a configurable cache avoiding reload from source<br>
+ * - remembers, where it was found the last time searched<br>
+ * - can be sourced from the filesystem, from jars, from the web and from other in memory images <br>
+ * - it will have features for basic image manipulation <br>
+ * - it contains the stuff to communicate with the underlying OpenCV based search engine <br>
  *
- * This class maintains<br />
- * - a list of all images loaded with there source reference and a ref to the image object<br />
- * - a list of all images currently storing their in memory buffered image (managed as a cache)<br />
+ * This class maintains<br>
+ * - a list of all images loaded with there source reference and a ref to the image object<br>
+ * - a list of all images currently storing their in memory buffered image (managed as a cache)<br>
  *
  */
 public class Image {
@@ -111,9 +111,9 @@ public class Image {
   }
 
   /**
-   * create a new image from a filename <br />
-   * file ending .png is added if missing <br />
-   * filename: [...path.../]name[.png] is searched on current image path and loaded to cache <br />
+   * create a new image from a filename <br>
+   * file ending .png is added if missing <br>
+   * filename: [...path.../]name[.png] is searched on current image path and loaded to cache <br>
    * already loaded image with same name is reused (reference) and taken from cache
    * @param imgName
    * @return the image
@@ -127,12 +127,11 @@ public class Image {
   }
 
   /**
-   * create a new image from the given url <br />
-   * file ending .png is added if missing <br />
-   * filename: ...url-path.../name[.png] is loaded from the url and and cached <br />
+   * create a new image from the given url <br>
+   * file ending .png is added if missing <br>
+   * filename: ...url-path.../name[.png] is loaded from the url and and cached <br>
    * already loaded image with same url is reused (reference) and taken from cache
    *
-   * @param imgName
    * @return the image
    */
   public static Image create(URL url) {
@@ -144,7 +143,7 @@ public class Image {
   }
 
   /**
-   * create a new image from a buffered image<br />
+   * create a new image from a buffered image<br>
    * can only be reused with the object reference
    *
    * @param img
@@ -154,8 +153,8 @@ public class Image {
   }
 
   /**
-   * create a new image from a buffered image<br />
-   * giving it a descriptive name for printout and logging <br />
+   * create a new image from a buffered image<br>
+   * giving it a descriptive name for printout and logging <br>
    * can only be reused with the object reference
    *
    * @param img
@@ -174,7 +173,7 @@ public class Image {
   }
 
   /**
-   * create a new image from a Sikuli ScreenImage (captured)<br />
+   * create a new image from a Sikuli ScreenImage (captured)<br>
    * can only be reused with the object reference
    *
    * @param img
@@ -184,8 +183,8 @@ public class Image {
   }
 
   /**
-   * create a new image from a Sikuli ScreenImage (captured)<br />
-   * giving it a descriptive name for printout and logging <br />
+   * create a new image from a Sikuli ScreenImage (captured)<br>
+   * giving it a descriptive name for printout and logging <br>
    * can only be reused with the object reference
    *
    * @param img
@@ -533,7 +532,7 @@ public class Image {
   }
 
   /**
-   * store info: this image is divided vertically into n even rows <br />
+   * store info: this image is divided vertically into n even rows <br>
    * a preparation for using getRow()
    * @param n
    * @return the top row
@@ -543,7 +542,7 @@ public class Image {
   }
 
   /**
-   * store info: this image is divided horizontally into n even columns <br />
+   * store info: this image is divided horizontally into n even columns <br>
    * a preparation for using getCol()
    * @param n
    * @return the leftmost column
@@ -585,7 +584,7 @@ public class Image {
   }
 
   /**
-   * store info: this image is divided into a raster of even cells <br />
+   * store info: this image is divided into a raster of even cells <br>
    * a preparation for using getCell()
    * @param r
    * @param c
@@ -644,7 +643,7 @@ public class Image {
   }
 
   /**
-   * get the specified cell counting from (0, 0), if a raster is setup <br />
+   * get the specified cell counting from (0, 0), if a raster is setup <br>
    * negative counts reverse from the end (last = -1)
    * values outside range are 0 or last respectively
    * @param c

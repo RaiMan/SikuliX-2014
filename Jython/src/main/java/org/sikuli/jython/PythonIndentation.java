@@ -214,7 +214,7 @@ public class PythonIndentation {
     * Sets the number of whitespace columns that equals a single tab used by
     * this object to calculate the indentation of lines.
     *
-    * @param tabWidth
+    * @param tabwidth
     *           the number of whitespace columns that equals a single tab
     */
    public void setTabWidth(int tabwidth){
