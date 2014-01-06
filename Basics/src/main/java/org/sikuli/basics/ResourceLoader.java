@@ -27,7 +27,7 @@ import java.util.zip.ZipInputStream;
 public class ResourceLoader implements IResourceLoader {
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
-  private String me = "ResourceLoaderBasic";
+  private String me = "ResourceLoader";
   private String mem = "...";
   private int lvl = 3;
 
@@ -159,29 +159,29 @@ public class ResourceLoader implements IResourceLoader {
       return;
     }
 
-    if (System.getProperty("sikuli.DoNotExport") == null && !isFatJar()) {
-      libsURL = null;
-      if (jarPath.contains("Basics")) {
-        try {
-          SikuliX.addToClasspath(jarPath.replace("Basics", "Libs"));
-          libsURL = new URL(jarURL.toString().replace("Basics", "Libs"));
-          tessURL = new URL(jarURL.toString().replace("Basics", "Tesseract"));
-          log(-1, "The jar in use was not built with setup!\n"
-                  + "We might be running from local Maven repository?\n" + jarPath);
-        } catch (Exception ex) {
-        }
-      }
-      if (libsURL == null) {
-        RunSetup.popError("Terminating: The jar in use was not built with setup!\n" + jarPath);
-        System.exit(1);
-      }
-    }
-
     if (libPath == null || libsDir == null) {
       libPath = null;
       libsDir = null;
       File libsfolder;
       String libspath;
+
+      if (System.getProperty("sikuli.DoNotExport") == null && !isFatJar()) {
+        libsURL = null;
+        if (jarPath.contains("Basics")) {
+          try {
+            log(-1, "The jar in use was not built with setup!\n"
+                    + "We might be running from local Maven repository?\n" + jarPath);
+            SikuliX.addToClasspath(jarPath.replace("Basics", "Libs"));
+            libsURL = new URL(jarURL.toString().replace("Basics", "Libs"));
+            tessURL = new URL(jarURL.toString().replace("Basics", "Tesseract"));
+          } catch (Exception ex) {
+          }
+        }
+        if (libsURL == null) {
+          RunSetup.popError("Terminating: The jar in use was not built with setup!\n" + jarPath);
+          System.exit(1);
+        }
+      }
 
       // check the bit-arch
       osarch = System.getProperty("os.arch");
@@ -331,7 +331,7 @@ public class ResourceLoader implements IResourceLoader {
 
     if (libsDir == null && libPath != null) {
       log(-1, "libs dir is empty, has wrong content or is outdated");
-      log(-2, "Please wait! Trying to extract libs to: " + libPath);
+      log(-2, "Trying to extract libs to: " + libPath);
       if (!FileManager.deleteFileOrFolder(libPath,
               new FileManager.fileFilter() {
         @Override
@@ -862,7 +862,7 @@ public class ResourceLoader implements IResourceLoader {
       try {
         ZipInputStream zip = new ZipInputStream(jar.openStream());
         ZipEntry ze;
-        log(lvl, "Accessing jar: " + jar.toString());
+        log(lvl, "from:\n" + jar.toString());
         while ((ze = zip.getNextEntry()) != null) {
           String entryName = ze.getName();
           if (entryName.startsWith(path)
@@ -880,7 +880,7 @@ public class ResourceLoader implements IResourceLoader {
       }
     } else {
       String p = FileManager.slashify(jar.getPath(), false);
-      //TODO hack: to get folder Commands and Lib from Basics
+//TODO hack: to get folder Commands and Lib from Basics
       if (path.startsWith("Commands/") || path.startsWith("Lib/")) {
         p = p.replace("Natives", "Basics");
       }
@@ -890,7 +890,7 @@ public class ResourceLoader implements IResourceLoader {
           String.format("%d", folder.lastModified())});
         log(lvl, "Found 1 file in %s", path);
       } else {
-        log(lvl, "accessing folder: " + folder.getAbsolutePath());
+        log(lvl, "from:\n" + folder.getAbsolutePath());
         for (File f : getDeepFileList(folder, deep)) {
           log(lvl + 2, "file: " + f.getAbsolutePath());
           fList.add(new String[]{FileManager.slashify(f.getAbsolutePath(), false),

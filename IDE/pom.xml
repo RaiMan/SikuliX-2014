@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>org.sikuli</groupId>
 		<artifactId>SikuliX</artifactId>
-		<version>1.1.0-SNAPSHOT</version>
+		<version>1.1.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -20,18 +20,18 @@
 
   <groupId>org.sikuli</groupId>
   <artifactId>SikuliX-IDE</artifactId>
-  <version>1.1.0-SNAPSHOT</version>
+  <version>1.1.0</version>
   
   <dependencies>
     <dependency>
       <groupId>org.sikuli</groupId>
       <artifactId>SikuliX-API</artifactId>
-      <version>1.1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.sikuli</groupId>
       <artifactId>SikuliX-Jython</artifactId>
-      <version>1.1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.googlecode.json-simple</groupId>
@@ -66,13 +66,14 @@
           </excludes>
         </configuration>
       </plugin>
-      <plugin>
+<!--      <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>2.9.1</version>
         <configuration>
-            <!-- has problems with excluded files; excluding doesn't work for me -->
+             has problems with excluded files; excluding doesn't work for me 
             <skip>true</skip>
         </configuration>
-      </plugin>
+      </plugin>-->
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.4</version>
