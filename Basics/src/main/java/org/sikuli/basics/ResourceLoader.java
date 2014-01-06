@@ -6,6 +6,10 @@
  */
 package org.sikuli.basics;
 
+import org.bridj.BridJ;
+import org.bridj.Pointer;
+import org.bridj.ann.Library;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -431,6 +435,49 @@ public class ResourceLoader implements IResourceLoader {
     }
   }
 
+  /**
+   * Environment variable access to load native libraries.
+   * We can't put it into WinUtil.dll as it's not loaded yet, so we use BridJ.
+   */
+  @Library("kernel32")
+  public static class Kernel32 {
+      static {
+          BridJ.register();
+      }
+
+      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms683188(v=vs.85).aspx
+      public static native int GetEnvironmentVariableW(
+              Pointer<Character> lpName,
+              Pointer<Character> lpBuffer,
+              int nSize
+      );
+
+      /**
+       *
+       * @return specified environment variable; unlike {@link System#getenv(String)} it's the real WinAPI environment,
+       *    not a JVM-local copy
+       */
+      public static String getEnvironmentVariable(String name) {
+          final int BUFFER_SIZE = 16384;
+          Pointer<Character> buffer = Pointer.allocateArray(Character.class, BUFFER_SIZE);
+          int result = GetEnvironmentVariableW(Pointer.pointerToWideCString(name), buffer, BUFFER_SIZE);
+          if(result == 0)
+              throw new RuntimeException("Unable to get environment variable " + name);
+          return buffer.getWideCString();
+      }
+
+      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms686206(v=vs.85).aspx
+      public static native boolean SetEnvironmentVariableW(
+              Pointer<Character> lpName,
+              Pointer<Character> lpValue
+      );
+
+      public static void setEnvironmentVariable(String name, String value) {
+          if(!SetEnvironmentVariableW(Pointer.pointerToWideCString(name), Pointer.pointerToWideCString(value)))
+              throw new RuntimeException("Unable to set environment variable " + name);
+      }
+  }
+
   private File checkLibsDir(String path) {
     String memx = mem;
     mem = "checkLibsDir";
@@ -439,91 +486,11 @@ public class ResourceLoader implements IResourceLoader {
       log(lvl, path);
       if (!Settings.runningSetup && Settings.isWindows()) {
         // is on system path?
-        String syspath = System.getenv("PATH");
+        String syspath = Kernel32.getEnvironmentVariable("PATH");
         path = (new File(path).getAbsolutePath()).replaceAll("/", "\\");
         if (!syspath.toUpperCase().contains(path.toUpperCase())) {
-          String error = "*** error ***";
-          log(-1, "libs dir is not on system path: " + path);
-          if (Debug.getDebugLevel() >= lvl) {
-            for (String e : syspath.split(";")) {
-              System.out.println(e);
-            }
-          }
-          log(-2, "Please wait! Trying to add it to user's path");
-          if (runcmd(cmdRegCheck).startsWith(error)) {
-            log(-1, "Fatal Error 104: Not possible to access registry!");
-            RunSetup.popError("Trying to add SikuliX libs to user path\n"
-                    + "But registry not accessible - see error log");
-            SikuliX.terminate(104);
-          }
-          String[] val = regMap.get("EnvPath");
-          String envPath = "";
-          String newPath;
-          int step = 0;
-          String cmdQ = String.format(cmdRegQuery, val[0], val[1]);
-          String regResult = runcmd(cmdQ);
-          if (regResult.startsWith(error)) {
-            log(lvl, "users PATH seems to be empty: " + regResult);
-            step = 1;
-          } else {
-            String[] regResultLines = regResult.split(NL);
-            for (String line : regResultLines) {
-              line = line.trim();
-              if (step == 0 && line.startsWith(val[0])) {
-                step = 1;
-                continue;
-              }
-              if (step == 1 && line.startsWith(val[1]) && line.contains(val[2])) {
-                step = 1;
-                envPath = line;
-                continue;
-              }
-              if (!line.isEmpty()) {
-                log(lvl, line);
-              }
-            }
-          }
-          if (step == 0) {
-            log(-1, "Fatal Error 105: Not possible to get user's PATH from registry");
-            RunSetup.popError("Trying to add SikuliX libs to user path\n"
-                    + "But registry not accessible - see error log");
-            SikuliX.terminate(105);
-          } else {
-            if (!envPath.isEmpty()) {
-              envPath = envPath.substring(envPath.indexOf(val[2]) + val[2].length()).trim();
-              log(lvl, "current:(%s %s): %s", val[0], val[1], envPath);
-              if (envPath.toUpperCase().contains(path.toUpperCase())) {
-                log(-1, "Logout and Login again! (Since libs folder is in user's path, but not activated)");
-                RunSetup.popInfo("Please Logout and Login again!\n\n"
-                        + "SikuliX libs path: " + path + "\n"
-                        + "is in System Path environment settings, \n"
-                        + "but not seen in current runtime environment.\n"
-                        + "Logout/Login should fix this problem.");
-                SikuliX.terminate(0);
-              }
-            }
-            newPath = path.trim() + (envPath.isEmpty() ? "" : ";" + envPath);
-            String finalPath = newPath.replaceAll(" ", "%20;");
-            String cmdA = String.format(cmdRegAdd, val[0], val[1], val[2], finalPath);
-            regResult = runcmd(cmdA);
-            log(lvl, regResult);
-            regResult = runcmd(cmdQ);
-            log(lvl, "Changed to: " + regResult);
-            if (!regResult.contains(path)) {
-              RunSetup.popError("Trying to add SikuliX libs to user path\n"
-                      + "But registry not accessible - see error log");
-              log(-1, "Fatal error 106: libs folder could not be added to PATH - giving up!");
-              SikuliX.terminate(106);
-            }
-          }
-          log(-1, "Successfully added the libs folder to users PATH!\n" + ""
-                  + "RESTART all processes/IDE's using Sikuli for new PATH to be used!/n"
-                  + "For usages from command line logout/login might be necessary!");
-          RunSetup.popInfo("Please Logout and Login again!\n\n"
-                  + "SikuliX libs path: " + path + "\n"
-                  + "was added to user path. \n"
-                  + "Logout/Login should activate this setting.");
-          SikuliX.terminate(0);
+          log(-1, "libs dir is not on system path: " + path + "; Adding it to path");
+          Kernel32.setEnvironmentVariable("PATH", syspath + ";" + path);
         }
       }
       if (System.getProperty("sikuli.DoNotExport") != null) {

@@ -42,7 +42,14 @@
 			<artifactId>swing-layout</artifactId>
 			<version>1.0.3</version>
 		</dependency>
-	</dependencies>
+
+        <!-- for changing PATH -->
+        <dependency>
+            <groupId>com.nativelibs4java</groupId>
+            <artifactId>bridj</artifactId>
+            <version>0.6.2</version>
+        </dependency>
+    </dependencies>
 
   <build>
     <plugins>
