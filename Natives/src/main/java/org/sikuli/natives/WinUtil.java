@@ -6,10 +6,17 @@
  */
 package org.sikuli.natives;
 
+import org.sikuli.basics.FileManager;
+
 import java.awt.Rectangle;
 import java.awt.Window;
 
 public class WinUtil implements OSUtil {
+  static {
+      // load native library on 1st use
+      // (it's a standard Java pattern to load it once class is loaded)
+      FileManager.loadLibrary("WinUtil");
+  }
 
   @Override
   public int switchApp(String appName) {
