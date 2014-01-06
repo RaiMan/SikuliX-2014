@@ -122,7 +122,7 @@ Usage - basic information
 
 If you intend to compile and build the modules after having downloaded this repo, you need a valid Maven 3 installation and for editing, testing and integration some IDE, that is enabled for working with Maven projects. <br />(I myself use NetBeans 7.4, which supports Maven by default)
 
-**Take care** Even if you only want to work on one of the modules (e.g. API), the modules should not be moved around, but stay in the structure of the downloaded repo. Each module depends on the parent POM in the root and the ready-to-use-jar-production POMs and additionally on the assembly descriptors plain.xml and complete.xml.
+**Take care** Even if you only want to work on one of the modules (e.g. API), the modules should not be moved around, but stay in the structure of the downloaded repo. Each module depends on the parent POM in the root as well as the ready-to-use-jar-production POMs, that additionally depend on the assembly descriptors plain.xml and complete.xml.
 
 **--- Mandatory first step**
 
