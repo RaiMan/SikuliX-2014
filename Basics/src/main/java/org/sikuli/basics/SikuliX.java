@@ -253,7 +253,7 @@ public class SikuliX {
     Method method;
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     URL[] urls = sysLoader.getURLs();
-    log0(lvl, "adding to classpath: " + jar);
+    log0(lvl, "add to classpath: " + jar);
     for (int i = 0; i < urls.length; i++) {
       log0(lvl + 1, "%d: %s", i, urls[i]);
     }
