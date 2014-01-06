@@ -431,6 +431,7 @@ public class ResourceLoader implements IResourceLoader {
       } else {
         Settings.OcrDataPath = "/usr/local/share";
       }
+//TODO check wether needed here (plain Maven usage)
       doSomethingSpecial("exportTessdata", new String[]{});
       log(lvl, "If OCR/Text activated: Using as OCR directory (tessdata): " + Settings.OcrDataPath);
     }
