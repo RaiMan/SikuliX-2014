@@ -233,16 +233,18 @@
   </build>
 
   <distributionManagement>
-    <!-- for now I use the repositories below.
-     Instructions: https://github.com/iirekm/maven-repo
+    <!-- for now use this repositories below.
+     Must be a git repository, that you have access to!
     -->
     <repository>
-      <id>iirekm.releases</id>
-      <url>https://github.com/iirekm/maven-repo/raw/master/releases</url>
+      <id>sikulix.releases</id>
+      <!--      <url>https://github.com/RaiMan/SikuliX-Maven-Repo/raw/master/releases</url>-->
+      <url>file:/Users/rhocke/SikuliX/SikuliX-Maven-Repo/raw/master/releases</url>
     </repository>
     <snapshotRepository>
-      <id>iirekm.shapshots</id>
-      <url>https://github.com/iirekm/maven-repo/raw/master/snapshots</url>
+      <id>sikulix.shapshots</id>
+      <!--      <url>https://github.com/RaiMan/SikuliX-Maven-Repo/raw/master/snapshots</url>-->
+      <url>file:/Users/rhocke/SikuliX/SikuliX-Maven-Repo/raw/master/snapshots</url>
     </snapshotRepository>
 
     <!-- after getting access to https://oss.sonatype.org/ as described in
