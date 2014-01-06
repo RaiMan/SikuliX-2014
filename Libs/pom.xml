@@ -24,6 +24,7 @@
   <build>
     <defaultGoal>clean install</defaultGoal>
     <plugins>
+      <!-- to suppress sources in any case -->
       <plugin>
         <artifactId>maven-source-plugin</artifactId>
         <version>2.2.1</version>

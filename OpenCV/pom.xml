@@ -20,7 +20,7 @@
 
   <groupId>org.sikuli</groupId>
   <artifactId>SikuliX-OpenCV</artifactId>
-  <version>2.4.7-SNAPSHOT</version>
+  <version>2.4.7</version>
 
   <build>
     <defaultGoal>clean install</defaultGoal>  
