@@ -175,7 +175,7 @@ As it is standard with Maven, all -D parameters go to Java system properties, wh
 **--- How to deploy to a private Maven repository ---**
 
 Edit/configure the repository in section `distributionManagement` in root `pom.xml`.<br />
-The current setting is to the local copy of the peer Git Repo SikuliX-Maven-Repo here (after deployment you have to run a commit and trigger a push, to get it on GitHub).<br />
+The current setting is to the local copy of the peer Git Repo [SikuliX-Maven-Repo](https://github.com/RaiMan/SikuliX-Maven-Repo) here (after deployment you have to run a commit and trigger a push, to get it on GitHub).<br />
 This approch [comes from here ...](http://cemerick.com/2010/08/24/hosting-maven-repos-on-github/).
 
 
@@ -183,3 +183,5 @@ To make a deploy run <br />
 `mvn deploy -PwithDocs,withSource`
 
 With Maven < 3.0 you might need `-DaltDeploymentRepository=...` additionally.
+
+For usage hints look at the [README of SikuliX-Maven-Repo](https://github.com/RaiMan/SikuliX-Maven-Repo)
