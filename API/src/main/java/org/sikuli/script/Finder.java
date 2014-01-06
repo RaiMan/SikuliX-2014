@@ -31,6 +31,7 @@ public class Finder implements Iterator<Match> {
 //TODO Vision.setParameter("GPU", 1);
   static {
     FileManager.loadLibrary("VisionProxy");
+    new TextRecognizer(){}.init();
   }
     
   /**

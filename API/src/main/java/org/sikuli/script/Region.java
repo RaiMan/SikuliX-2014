@@ -2015,7 +2015,8 @@ public class Region {
       }
       if (lastMatch != null) {
         lastMatch.setImage(rf._image);
-        rf._image.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
+        if(rf._image != null)
+            rf._image.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         log(lvl, "find: %s has appeared \nat %s", target, lastMatch);
         break;
       }
