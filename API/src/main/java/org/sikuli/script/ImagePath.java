@@ -264,8 +264,11 @@ public class ImagePath {
    * @return true on success, false otherwise
    */
   public static boolean resetBundlePath(String bundlePath) {
-    reset();
-    return setBundlePath(bundlePath);
+    if (!FileManager.pathEquals(imagePaths.get(0).pathGiven, bundlePath)) {
+      reset();
+      return setBundlePath(bundlePath);
+    }
+    return true;
   }
 
 	/**

@@ -135,25 +135,25 @@ def addImportPath(path):
 # append the given path image path list if not yet contained
 #
 def addImagePath(path):
-    ImagePath.addImagePath(path)
+    ImagePath.add(path)
 
 ##
 # return the current image path list
 #
 def getImagePath():
-    return [e for e in ImagePath.getImagePath() if e]
+    return [e.pathGiven for e in ImagePath.getPaths() if e]
 
 ##
 # remove the given path from the image path
 #
 def removeImagePath(path):
-    ImagePath.removeImagePath(path)
+    ImagePath.remove(path)
    
 ##
 # reset the image path, so it only contains the bundlepath
 #
 def resetImagePath(path):
-    ImagePath.resetImagePath(path)
+    ImagePath.reset(path)
 
 ##
 # Sets the path for searching images in all Sikuli Script methods. <br/>
