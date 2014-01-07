@@ -6,10 +6,10 @@
  */
 package org.sikuli.script;
 
+import java.awt.image.BufferedImage;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Debug;
-import java.awt.image.*;
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -21,45 +21,51 @@ import org.sikuli.natives.Vision;
 // Singleton
 public class TextRecognizer {
 
-  protected static TextRecognizer _instance = null;
+  private static TextRecognizer _instance = null;
+  private static boolean _init_succeeded = false;
 
   static {
     FileManager.loadLibrary("VisionProxy");
   }
 
-  protected TextRecognizer() {
+  private TextRecognizer() {
     init();
   }
-  boolean _init_succeeded = false;
 
   public void init() {
     String path;
-    File fpath;
-    path = FileManager.slashify(Settings.OcrDataPath, true);
-    fpath = new File(path, "tessdata");
-    if (!fpath.exists()) {
-      Settings.OcrDataPath = null;
-      Debug.error("TextRecognizer: init: tessdata folder not found at %s", path);
-      Settings.OcrTextRead = false;
-      Settings.OcrTextSearch = false;
-    } else {
-      Debug.log(2, "OCR data path: " + path);
+    File fpath = null;
+    if (Settings.OcrDataPath != null) {
+      path = FileManager.slashify(Settings.OcrDataPath, true);
+      fpath = new File(path, "tessdata");
+      if (!fpath.exists()) {
+        FileManager.getNativeLoader("basic", null).doSomethingSpecial("exportTessdata", new String[]{});
+      }
+      if (!fpath.exists()) {
+        Debug.error("TextRecognizer not working: tessdata folder not found at %s", path);
+        Settings.OcrTextRead = false;
+        Settings.OcrTextSearch = false;
+        fpath = null;
+      }
+    }
+    if (fpath != null) {
       Vision.initOCR(FileManager.slashify(Settings.OcrDataPath, true));
       _init_succeeded = true;
-      Debug.log(2, "TextRecognizer: inited.");
+      Debug.log(3, "TextRecognizer: init OK: using as data folder: " + fpath.getAbsolutePath());
     }
   }
 
   public static TextRecognizer getInstance() {
     if (_instance == null) {
       _instance = new TextRecognizer();
-      if (!_instance._init_succeeded ) _instance = null;
+    }
+    if (!_init_succeeded) {
+      return null;
     }
     return _instance;
   }
 
   public enum ListTextMode {
-
     WORD, LINE, PARAGRAPH
   };
 
