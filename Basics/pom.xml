@@ -46,6 +46,13 @@
       <groupId>com.nativelibs4java</groupId>
       <artifactId>bridj</artifactId>
       <version>0.6.2</version>
+      <exclusions>
+        <!-- exclude this artifact - it includes old junit, which causes problems in classpath -->
+        <exclusion>
+          <groupId>com.google.android.tools</groupId>
+          <artifactId>dx</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
   </dependencies>
 
