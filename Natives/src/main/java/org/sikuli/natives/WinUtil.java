@@ -12,10 +12,11 @@ import java.awt.Rectangle;
 import java.awt.Window;
 
 public class WinUtil implements OSUtil {
+
   static {
-      // load native library on 1st use
-      // (it's a standard Java pattern to load it once class is loaded)
-      FileManager.loadLibrary("WinUtil");
+    // might already be loaded by Sikuli startup procedures
+    // leave it here for the cases where startup is not yet done
+    FileManager.loadLibrary("WinUtil");
   }
 
   @Override
