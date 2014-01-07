@@ -1,0 +1,66 @@
+package org.sikuli.basics;
+
+import org.bridj.BridJ;
+import org.bridj.Pointer;
+import org.bridj.ann.Library;
+
+/**
+ * Direct access to system functions via JNI, JNA, BridJ, ...
+ */
+public class SysUtil {
+  /**
+   * Direct access to Windows API kernel32.dll via BridJ
+   */
+  @Library("kernel32")
+  public static class WinKernel32 {
+
+    static {
+      BridJ.register();
+    }
+
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/ms683188(v=vs.85).aspx
+    private static native int GetEnvironmentVariableW(
+            Pointer<Character> lpName,
+            Pointer<Character> lpBuffer,
+            int nSize
+    );
+
+    // http://msdn.microsoft.com/en-us/library/windows/desktop/ms686206(v=vs.85).aspx
+    private static native boolean SetEnvironmentVariableW(
+            Pointer<Character> lpName,
+            Pointer<Character> lpValue
+    );
+
+    /**
+     * get the current value of a variable from real Windows environment
+     *
+     * @param name of the environment variable
+     * @return current content
+     */
+    public static String getEnvironmentVariable(String name) {
+      final int BUFFER_SIZE = 16384;
+      Pointer<Character> buffer = Pointer.allocateArray(Character.class, BUFFER_SIZE);
+      int result = GetEnvironmentVariableW(Pointer.pointerToWideCString(name), buffer, BUFFER_SIZE);
+      if (result == 0) {
+        Debug.error("WinKernel32: getEnvironmentVariable: does not work for: %s", name);
+        return null;
+      }
+      return buffer.getWideCString();
+    }
+
+    /**
+     * set the value of a variable in real Windows environment
+     *
+     * @param name of the environment variable
+     * @param value of the environment variable
+     */
+    public static boolean setEnvironmentVariable(String name, String value) {
+      if (!SetEnvironmentVariableW(Pointer.pointerToWideCString(name), Pointer.pointerToWideCString(value))) {
+        Debug.error("WinKernel32: setEnvironmentVariable: does not work for: %s = %s", name, value);
+        return false;
+      }
+      return true;
+    }
+  }
+
+}

@@ -6,10 +6,6 @@
  */
 package org.sikuli.basics;
 
-import org.bridj.BridJ;
-import org.bridj.Pointer;
-import org.bridj.ann.Library;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -338,15 +334,15 @@ public class ResourceLoader implements IResourceLoader {
       log(-2, "Trying to extract libs to: " + libPath);
       if (!FileManager.deleteFileOrFolder(libPath,
               new FileManager.fileFilter() {
-        @Override
-        public boolean accept(File entry) {
-          if (entry.getPath().contains("tessdata")
+                @Override
+                public boolean accept(File entry) {
+                  if (entry.getPath().contains("tessdata")
                   || entry.getPath().contains("Lib")) {
-            return false;
-          }
-          return true;
-        }
-      })) {
+                    return false;
+                  }
+                  return true;
+                }
+              })) {
         log(-1, "Fatal Error 102: not possible to empty libs dir");
         RunSetup.popError("Problem with SikuliX libs folder - see error log");
         SikuliX.terminate(102);
@@ -433,51 +429,9 @@ public class ResourceLoader implements IResourceLoader {
       }
 //TODO check wether needed here (plain Maven usage)
       doSomethingSpecial("exportTessdata", new String[]{});
-      log(lvl, "If OCR/Text activated: Using as OCR directory (tessdata): " + Settings.OcrDataPath);
+      log(lvl, "Using as Tesseract data folder: " 
+              + new File(Settings.OcrDataPath, "tessdata").getAbsolutePath());
     }
-  }
-
-  /**
-   * Environment variable access to load native libraries.
-   * We can't put it into WinUtil.dll as it's not loaded yet, so we use BridJ.
-   */
-  @Library("kernel32")
-  public static class Kernel32 {
-      static {
-          BridJ.register();
-      }
-
-      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms683188(v=vs.85).aspx
-      public static native int GetEnvironmentVariableW(
-              Pointer<Character> lpName,
-              Pointer<Character> lpBuffer,
-              int nSize
-      );
-
-      /**
-       *
-       * @return specified environment variable; unlike {@link System#getenv(String)} it's the real WinAPI environment,
-       *    not a JVM-local copy
-       */
-      public static String getEnvironmentVariable(String name) {
-          final int BUFFER_SIZE = 16384;
-          Pointer<Character> buffer = Pointer.allocateArray(Character.class, BUFFER_SIZE);
-          int result = GetEnvironmentVariableW(Pointer.pointerToWideCString(name), buffer, BUFFER_SIZE);
-          if(result == 0)
-              throw new RuntimeException("Unable to get environment variable " + name);
-          return buffer.getWideCString();
-      }
-
-      // http://msdn.microsoft.com/en-us/library/windows/desktop/ms686206(v=vs.85).aspx
-      public static native boolean SetEnvironmentVariableW(
-              Pointer<Character> lpName,
-              Pointer<Character> lpValue
-      );
-
-      public static void setEnvironmentVariable(String name, String value) {
-          if(!SetEnvironmentVariableW(Pointer.pointerToWideCString(name), Pointer.pointerToWideCString(value)))
-              throw new RuntimeException("Unable to set environment variable " + name);
-      }
   }
 
   private File checkLibsDir(String path) {
@@ -488,11 +442,17 @@ public class ResourceLoader implements IResourceLoader {
       log(lvl, path);
       if (!Settings.runningSetup && Settings.isWindows()) {
         // is on system path?
-        String syspath = Kernel32.getEnvironmentVariable("PATH");
-        path = (new File(path).getAbsolutePath()).replaceAll("/", "\\");
-        if (!syspath.toUpperCase().contains(path.toUpperCase())) {
-          log(-1, "libs dir is not on system path: " + path + "; Adding it to path");
-          Kernel32.setEnvironmentVariable("PATH", syspath + ";" + path);
+        String syspath = SysUtil.WinKernel32.getEnvironmentVariable("PATH");
+        if (syspath == null) {
+          SikuliX.terminate(1);
+        } else {
+          path = (new File(path).getAbsolutePath()).replaceAll("/", "\\");
+          if (!syspath.toUpperCase().contains(path.toUpperCase())) {
+            log(lvl, "Adding libs dir to path: " + path);
+            if (!SysUtil.WinKernel32.setEnvironmentVariable("PATH", syspath + ";" + path)) {
+              SikuliX.terminate(1);
+            }
+          }
         }
       }
       if (System.getProperty("sikuli.DoNotExport") != null) {
@@ -933,7 +893,8 @@ public class ResourceLoader implements IResourceLoader {
   }
 
   /**
-   * Extract files from a jar using a list of files in a file (def. filelist.txt)
+   * Extract files from a jar using a list of files in a file (def.
+   * filelist.txt)
    *
    * @param srcPath from here
    * @param localPath to there (if null, create a default in temp folder)
