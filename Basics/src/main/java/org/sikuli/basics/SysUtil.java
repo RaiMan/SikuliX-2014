@@ -19,6 +19,11 @@ public class SysUtil {
     }
 
     // http://msdn.microsoft.com/en-us/library/windows/desktop/ms683188(v=vs.85).aspx
+    //DWORD WINAPI GetEnvironmentVariable(
+    //  _In_opt_   LPCTSTR lpName,
+    //  _Out_opt_  LPTSTR lpBuffer,
+    //  _In_       DWORD nSize
+    //);
     private static native int GetEnvironmentVariableW(
             Pointer<Character> lpName,
             Pointer<Character> lpBuffer,
@@ -26,6 +31,10 @@ public class SysUtil {
     );
 
     // http://msdn.microsoft.com/en-us/library/windows/desktop/ms686206(v=vs.85).aspx
+    //BOOL WINAPI SetEnvironmentVariable(
+    //  _In_      LPCTSTR lpName,
+    //  _In_opt_  LPCTSTR lpValue
+    //);
     private static native boolean SetEnvironmentVariableW(
             Pointer<Character> lpName,
             Pointer<Character> lpValue
@@ -38,7 +47,7 @@ public class SysUtil {
      * @return current content
      */
     public static String getEnvironmentVariable(String name) {
-      final int BUFFER_SIZE = 16384;
+      final int BUFFER_SIZE =  32767;
       Pointer<Character> buffer = Pointer.allocateArray(Character.class, BUFFER_SIZE);
       int result = GetEnvironmentVariableW(Pointer.pointerToWideCString(name), buffer, BUFFER_SIZE);
       if (result == 0) {
