@@ -547,9 +547,11 @@ public class ResourceLoader implements IResourceLoader {
       }
     }
     URL currentURL = jarURL;
+    int lenOriginalURL = currentURL.toString().length();
 //TODO special export cases from jars not on class path
     if (res.contains("tessdata")) {
       currentURL = tessURL;
+      prefix += currentURL.toString().length() - lenOriginalURL;
     }
     List<String[]> entries = makePackageFileList(currentURL, res, true);
     if (entries == null || entries.isEmpty()) {
