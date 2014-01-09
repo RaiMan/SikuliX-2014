@@ -40,24 +40,26 @@ import org.sikuli.natives.Vision;
  * This class hides the complexity behind image names given as string.<br>
  * Its companion is ImagePath that maintains a list of places, where images are
  * stored.<br>
- * Another companion is ImageGroup allowing to to look at images in a folder as
- * a group.<br>
+ * Another companion (ImageGroup) will allow to look at images in a folder as a
+ * group.<br>
  * An Image object:<br>
- * - has a name, either given or taken from the basename without ending.<br>
- * - keeps its in memory buffered image in a configurable cache avoiding reload
+ * - has a name, either given or taken from the basename<br>
+ * - keeps it's in memory buffered image in a configurable cache avoiding reload
  * from source<br>
- * - remembers, where it was found the last time searched<br>
+ * - remembers, where it was found when searched the last time<br>
  * - can be sourced from the filesystem, from jars, from the web and from other
  * in memory images <br>
- * - it will have features for basic image manipulation <br>
- * - it contains the stuff to communicate with the underlying OpenCV based
- * search engine <br>
+ * - will have features for basic image manipulation and presentation<br>
+ * - contains the stuff to communicate with the underlying OpenCV based search
+ * engine <br>
  *
  * This class maintains<br>
- * - a list of all images loaded with there source reference and a ref to the
- * image object<br>
- * - a list of all images currently storing their in memory buffered image
- * (managed as a cache)<br>
+ * - a list of all images ever loaded in this session with there source
+ * reference and a ref to the image object<br>
+ * - a list of all images currently having their content in memory (buffered
+ * image) (managed as a configurable cache)<br>
+ *
+ * Image does not have public nor protected constructors: use create()
  *
  */
 public class Image {
@@ -122,42 +124,62 @@ public class Image {
 
   /**
    * create a new image from a filename <br>
-   * file ending .png is added if missing <br>
+   * file ending .png is added if missing (currently valid: png, jpg, jpeg)<br>
    * filename: [...path.../]name[.png] is searched on current image path and
    * loaded to cache <br>
    * already loaded image with same name is reused (reference) and taken from
    * cache <br>
    * if image not found, it might be a text to be searched (imageIsText = true)
    *
-   * @param fN
-   * @return the image
+   * @param fName
+   * @return an Image object (might not be valid - check with isValid())
    */
   public static Image create(String fName) {
     Image img = get(fName, false);
     return createImageValidate(img);
   }
 
+  /**
+   * FOR INTERNAL USE: from IDE - suppresses load error message
+   *
+   * @param fName
+   * @return
+   */
   public static Image createThumbNail(String fName) {
     Image img = get(fName, true);
     return createImageValidate(img);
   }
 
+  /**
+   * FOR INTERNAL USE: see get(String, boolean)
+   *
+   * @param fName
+   * @return
+   */
   protected static Image get(String fname) {
     return get(fname, false);
   }
 
-  protected static Image get(String fname, boolean silent) {
-    if (fname == null || fname.isEmpty()) {
+  /**
+   * FOR INTERNAL USE: tries to get the image from the cache, if not cached yet:
+   * create and load a new image
+   *
+   * @param fName
+   * @param silent true: suppress some error messages
+   * @return
+   */
+  protected static Image get(String fName, boolean silent) {
+    if (fName == null || fName.isEmpty()) {
       return null;
     }
     boolean absoluteFileName = false;
     boolean existsFileName = true;
     Image img = null;
     URL fURL = null;
-    String fileName = getImageFilename(fname);
+    String fileName = getImageFilename(fName);
     if (fileName == null) {
-      log(-1, "not a valid image type: " + fname);
-      fileName = fname;
+      log(-1, "not a valid image type: " + fName);
+      fileName = fName;
     } else {
       fileName = FileManager.slashify(fileName, false);
       File imgFile = new File(fileName);
@@ -220,7 +242,7 @@ public class Image {
     }
     fileURL = fURL;
     if ("file".equals(fileURL.getProtocol())) {
-      filepath = fileURL.getPath();      
+      filepath = fileURL.getPath();
     } else if ("jar".equals(fileURL.getProtocol())) {
       filepath = imageFromJar;
     } else {
@@ -313,7 +335,7 @@ public class Image {
   }
 
   private static String getNameFromURL(URL fURL) {
-  //TODO add handling for http
+    //TODO add handling for http
     if ("jar".equals(fURL.getProtocol())) {
       int n = fURL.getPath().lastIndexOf(".jar!/");
       int k = fURL.getPath().substring(0, n).lastIndexOf("/");
@@ -321,7 +343,7 @@ public class Image {
         return "JAR:" + fURL.getPath().substring(k + 1, n) + fURL.getPath().substring(n + 5);
       }
     }
-    return "???:"  + fURL.getPath();
+    return "???:" + fURL.getPath();
   }
 
   /**
@@ -377,12 +399,13 @@ public class Image {
   }
 
   /**
-   * Internal Use: IDE: to get rid of cache entries at script close or save as
+   * Internal Use: IDE: to get rid of cache entries at script save, close or
+   * save as
    *
    * @param bundlePath
    */
   public static void purge(String bundlePath) {
-    if (imageFiles.size() == 0) {
+    if (imageFiles.isEmpty()) {
       return;
     }
     URL pathURL = FileManager.makeURL(bundlePath);
@@ -392,8 +415,8 @@ public class Image {
     }
     purge(pathURL);
   }
-  
-  public static synchronized void purge(URL pathURL) {
+
+  protected static synchronized void purge(URL pathURL) {
     String pathStr = pathURL.toExternalForm();
     URL imgURL;
     Image img;
@@ -427,20 +450,23 @@ public class Image {
     if (!imageNamePurgeList.isEmpty()) {
       Iterator<Map.Entry<String, URL>> nit = imageNames.entrySet().iterator();
       Map.Entry<String, URL> name;
-      while(nit.hasNext()) {
+      while (nit.hasNext()) {
         name = nit.next();
-        if(imageNamePurgeList.remove(name.getValue().toExternalForm())) {
+        if (imageNamePurgeList.remove(name.getValue().toExternalForm())) {
           nit.remove();
         }
-      }      
+      }
     }
-    log(lvl, "After Purge (%d): Max %d MB (%d / %d %%) (%d))", 
+    log(lvl, "After Purge (%d): Max %d MB (%d / %d %%) (%d))",
             imagePurgeList.size(), (int) (maxMemory / MB), images.size(),
             (int) (100 * currentMemory / maxMemory), (int) (currentMemory / KB));
     imagePurgeList.clear();
-    imageNamePurgeList.clear();    
+    imageNamePurgeList.clear();
   }
-  
+
+  /**
+   * Print the current state of the cache, verbosity depends on debug level
+   */
   public static void dump() {
     log(0, "--- start of Image dump ---");
     ImagePath.printPaths();
@@ -458,21 +484,34 @@ public class Image {
       name = nit.next();
       log(lvl, "%s (%s)", name.getKey(), name.getValue());
     }
+    log(0, "Cache state: Max %d MB (entries: %d  used: %d %% %d KB)",
+            (int) (maxMemory / MB), images.size(),
+            (int) (100 * currentMemory / maxMemory), (int) (currentMemory / KB));
     log(0, "--- end of Image dump ---");
   }
 
   /**
    * Get the image's descriptive name
    *
+   * @return
    */
   public String getName() {
     return imageName;
   }
 
+  /**
+   *
+   * @return the current ImageGroup
+   */
   public ImageGroup getGroup() {
     return group;
   }
 
+  /**
+   * set the ImageGroup this image should belong to
+   *
+   * @param group
+   */
   public void setGroup(ImageGroup group) {
     this.group = group;
   }
@@ -480,7 +519,7 @@ public class Image {
   /**
    * check whether image is available
    *
-   * @return true if located or is an in memory image
+   * @return true if lodable or is an in memory image
    */
   public boolean isValid() {
     return filepath != null;
@@ -500,19 +539,24 @@ public class Image {
 
   /**
    *
-   * @return true
+   * @return true if the given image name did not give a valid image so it might
+   * be text to search
    */
   protected boolean isText() {
     return imageIsText;
   }
 
+  /**
+   * wether this image's name should be taken as text
+   * @param val
+   */
   protected void setIsText(boolean val) {
     imageIsText = val;
   }
 
   /**
    *
-   * @return the valid url for this image (might be null)
+   * @return the evaluated url for this image (might be null)
    */
   public URL getURL() {
     return fileURL;
@@ -578,27 +622,36 @@ public class Image {
    * @param lastSeen
    * @param sim
    */
-  public void setLastSeen(Rectangle lastSeen, double sim) {
+  protected void setLastSeen(Rectangle lastSeen, double sim) {
     this.lastSeen = lastSeen;
     this.lastScore = sim;
     if (group != null) {
       group.addImageFacts(this, lastSeen, sim);
     }
   }
-  
+
+  /**
+   * INTERNAL USE from IDE
+   * @param val
+   */
   public void setBeSilent(boolean val) {
     beSilent = val;
   }
 
+  /**
+   * 
+   * @param factor
+   * @return a new BufferedImage resized (width*factor, height*factor)
+   */
   public BufferedImage resize(float factor) {
-    int type = 0;
-    BufferedImage bimg = get();
-    type = bimg.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : bimg.getType();
+    int type;
+    BufferedImage bufimg = get();
+    type = bufimg.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : bufimg.getType();
     int width = (int) (getSize().getWidth() * factor);
     int height = (int) (getSize().getHeight() * factor);
     BufferedImage resizedImage = new BufferedImage(width, height, type);
     Graphics2D g = resizedImage.createGraphics();
-    g.drawImage(bimg, 0, 0, width, height, null);
+    g.drawImage(bufimg, 0, 0, width, height, null);
     g.dispose();
     return resizedImage;
   }
@@ -708,8 +761,8 @@ public class Image {
   }
 
   /**
-   * get the specified row counting from 0, if rows or raster are setup negative
-   * counts reverse from the end (last = -1) values outside range are 0 or last
+   * get the specified row counting from 0, if rows or raster are setup <br>negative
+   * counts reverse from the end (last = -1) <br>values outside range are 0 or last
    * respectively
    *
    * @param r
@@ -728,8 +781,8 @@ public class Image {
   }
 
   /**
-   * get the specified column counting from 0, if columns or raster are setup
-   * negative counts reverse from the end (last = -1) values outside range are 0
+   * get the specified column counting from 0, if columns or raster are setup<br>
+   * negative counts reverse from the end (last = -1) <br>values outside range are 0
    * or last respectively
    *
    * @param c
@@ -750,7 +803,7 @@ public class Image {
 
   /**
    * get the specified cell counting from (0, 0), if a raster is setup <br>
-   * negative counts reverse from the end (last = -1) values outside range are 0
+   * negative counts reverse from the end (last = -1) <br>values outside range are 0
    * or last respectively
    *
    * @param c
