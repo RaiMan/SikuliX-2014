@@ -15,8 +15,8 @@ import org.sikuli.basics.SikuliScript;
 
 public class ImagePath {
   
-  private static String me = "ImagePath";
-  private static int lvl = 3;
+  private static final String me = "ImagePath";
+  private static final int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "", me + ": " + message, args);
@@ -32,7 +32,7 @@ public class ImagePath {
     }
   } 
   
-  private static List<PathEntry> imagePaths = Collections.synchronizedList(new ArrayList<PathEntry>());
+  private static final List<PathEntry> imagePaths = Collections.synchronizedList(new ArrayList<PathEntry>());
   private static String BundlePath = null;
 
   static {
@@ -42,9 +42,32 @@ public class ImagePath {
 
   /**
    * get the list of path entries
+   * @return 
    */
   public static List<PathEntry> getPaths() {
     return imagePaths;
+  }
+  
+  private static int getPathCount() {
+    int count = imagePaths.size();
+    for (PathEntry path : imagePaths) {
+      if (path == null) {
+        count--;
+      }
+    }
+    return count;
+  }
+  
+  public static String[] getImagePath() {
+    String[] paths = new String[getPathCount()];
+    int i = 0;
+    for (PathEntry path : imagePaths) {
+      if (path == null) {
+        continue;
+      }
+      paths[i++] = path.pathGiven;
+    }
+    return paths;
   }
   
   /**
@@ -87,6 +110,9 @@ public class ImagePath {
           if (fURL != null) {
             break;
           }
+        } else {
+          //TODO support for http image path
+          log(-1, "URL not supported: " + path.pathURL);
         }
       }
       if (fURL == null) {
@@ -133,6 +159,7 @@ public class ImagePath {
    * see; {@link #add(String, String)} 
    * 
    * @param mainPath a valid classname optionally followed by /subfolder...
+   * @return 
    */
   public static boolean add(String mainPath) {
     return add(mainPath, null);
@@ -146,17 +173,38 @@ public class ImagePath {
    *
    * @param mainPath a valid classname optionally followed by /subfolder...
    * @param altPath alternative image folder, when not running from jar (absolute path) 
+   * @return 
    */
   public static boolean add(String mainPath, String altPath) {
     PathEntry path = makePathURL(mainPath, altPath);
     if (path != null) {
-      log(lvl, "addImagePath: %s", path.pathURL);
-      imagePaths.add(path);
+      if (hasPath(path.pathURL) < 0) {
+        log(lvl, "add: %s", path.pathURL);
+        imagePaths.add(path);
+      } else {
+        log(lvl, "duplicate not added: %s", path.pathURL);
+      }
       return true;
     } else {
       log(-1, "addImagePath: not valid: %s", mainPath);      
       return false;
     }
+  }
+  
+  private static int hasPath(URL pURL) {
+    PathEntry path = imagePaths.get(0);
+    if (path == null) {
+      return -1;
+    }
+    if (path.pathURL.toExternalForm().equals(pURL.toExternalForm())) {
+      return 0;
+    }
+    for (PathEntry p : imagePaths.subList(1, imagePaths.size())) {
+      if (p!= null && p.pathURL.toExternalForm().equals(pURL.toExternalForm())) {
+        return 1;
+      }      
+    }
+    return -1;
   }
 
   /**

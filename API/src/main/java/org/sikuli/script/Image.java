@@ -38,19 +38,26 @@ import org.sikuli.natives.Vision;
 
 /**
  * This class hides the complexity behind image names given as string.<br>
- * Its companion is ImagePath that maintains a list of places, where images are stored.<br>
- * Another companion is ImageGroup allowing to to look at images in a folder as a group.<br>
+ * Its companion is ImagePath that maintains a list of places, where images are
+ * stored.<br>
+ * Another companion is ImageGroup allowing to to look at images in a folder as
+ * a group.<br>
  * An Image object:<br>
  * - has a name, either given or taken from the basename without ending.<br>
- * - keeps its in memory buffered image in a configurable cache avoiding reload from source<br>
+ * - keeps its in memory buffered image in a configurable cache avoiding reload
+ * from source<br>
  * - remembers, where it was found the last time searched<br>
- * - can be sourced from the filesystem, from jars, from the web and from other in memory images <br>
+ * - can be sourced from the filesystem, from jars, from the web and from other
+ * in memory images <br>
  * - it will have features for basic image manipulation <br>
- * - it contains the stuff to communicate with the underlying OpenCV based search engine <br>
+ * - it contains the stuff to communicate with the underlying OpenCV based
+ * search engine <br>
  *
  * This class maintains<br>
- * - a list of all images loaded with there source reference and a ref to the image object<br>
- * - a list of all images currently storing their in memory buffered image (managed as a cache)<br>
+ * - a list of all images loaded with there source reference and a ref to the
+ * image object<br>
+ * - a list of all images currently storing their in memory buffered image
+ * (managed as a cache)<br>
  *
  */
 public class Image {
@@ -60,7 +67,6 @@ public class Image {
   }
 
   private static String me = "Image";
-  private static String mem = "";
   private static int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
@@ -70,6 +76,7 @@ public class Image {
   private static List<Image> images = Collections.synchronizedList(new ArrayList<Image>());
   private static List<Image> purgeList = Collections.synchronizedList(new ArrayList<Image>());
   private static Map<URL, Image> imageFiles = Collections.synchronizedMap(new HashMap<URL, Image>());
+  private static Map<String, URL> imageNames = Collections.synchronizedMap(new HashMap<String, URL>());
   private static int KB = 1024;
   private static int MB = KB * KB;
   private static int maxMemory = 64 * MB;
@@ -77,7 +84,7 @@ public class Image {
   private static String imageFromJar = "__FROM_JAR__";
   private final static String isBImg = "__BufferedImage__";
 
-  private String imageName = null;;
+  private String imageName = null;
   private boolean imageIsText = false;
   private boolean imageIsAbsolute = false;
   private String filepath = null;
@@ -100,37 +107,173 @@ public class Image {
   private int rowHd = 0;
   private int colWd = 0;
 
-
-
   @Override
   public String toString() {
     return String.format(
             (imageName != null ? imageName : "__UNKNOWN__") + ": (%dx%d)", bwidth, bheight)
-            + (lastSeen == null ? "" :
-            String.format(" seen at (%d, %d) with %.2f", lastSeen.x, lastSeen.y, lastScore));
+            + (lastSeen == null ? ""
+            : String.format(" seen at (%d, %d) with %.2f", lastSeen.x, lastSeen.y, lastScore));
+  }
+
+  private Image() {
   }
 
   /**
    * create a new image from a filename <br>
    * file ending .png is added if missing <br>
-   * filename: [...path.../]name[.png] is searched on current image path and loaded to cache <br>
-   * already loaded image with same name is reused (reference) and taken from cache
-   * @param imgName
+   * filename: [...path.../]name[.png] is searched on current image path and
+   * loaded to cache <br>
+   * already loaded image with same name is reused (reference) and taken from
+   * cache <br>
+   * if image not found, it might be a text to be searched (imageIsText = true)
+   *
+   * @param fN
    * @return the image
    */
-  public static Image create(String imgName) {
-    Image img = get(imgName);
-    if (img == null) {
-      img = new Image(imgName);
-    }
+  public static Image create(String fName) {
+    Image img = get(fName);
     return createImageValidate(img);
+  }
+
+  protected static Image get(String fname) {
+    if (fname == null || fname.isEmpty()) {
+      return null;
+    }
+    boolean absoluteFileName = false;
+    boolean existsFileName = true;
+    Image img = null;
+    URL fURL = null;
+    String fileName = getImageFilename(fname);
+    if (fileName == null) {
+      log(-1, "not a valid image type: " + fname);
+      fileName = fname;
+    } else {
+      fileName = FileManager.slashify(fileName, false);
+      File imgFile = new File(fileName);
+      String fn = fileName;
+      if (imgFile.isAbsolute()) {
+        if (imgFile.exists()) {
+          String bundlePath = ImagePath.getBundlePath();
+          if (bundlePath != null && fileName.startsWith(bundlePath)) {
+            fileName = new File(fileName).getName();
+          } else {
+            absoluteFileName = true;
+          }
+          fURL = FileManager.makeURL(fn);
+          imageNames.put(fileName, fURL);
+        } else {
+          existsFileName = false;
+        }
+      }
+      if (existsFileName) {
+        fURL = imageNames.get(fileName);
+        if (fURL == null) {
+          fURL = ImagePath.find(fileName);
+        }
+        if (fURL != null) {
+          img = imageFiles.get(fURL);
+        }
+      }
+    }
+    if (img == null) {
+      img = new Image(fileName, fURL);
+      img.setIsAbsolute(absoluteFileName);
+    }
+    return img;
+  }
+
+  private static String getImageFilename(String fname) {
+    //TODO valid imagefile endings - where to store?
+    int dot = fname.lastIndexOf(".");
+    String ending;
+    if (dot > 0) {
+      ending = fname.substring(dot).toLowerCase();
+      if (!ending.equals(".png") && !ending.equals(".jpg") && !ending.equals(".jepg")) {
+        return null;
+      }
+    } else {
+      fname += ".png";
+    }
+    return fname;
+  }
+
+  private Image(String fname, URL fURL) {
+    init(fname, fURL);
+  }
+
+  private void init(String fileName, URL fURL) {
+    imageName = fileName;
+    if (imageName.isEmpty() || fURL == null) {
+      return;
+    }
+    fileURL = fURL;
+    if ("file".equals(fileURL.getProtocol())) {
+      filepath = fileURL.getPath();      
+    } else if ("jar".equals(fileURL.getProtocol())) {
+      filepath = imageFromJar;
+    } else {
+      //TODO support for http image urls
+      log(-1, "URL not supported: " + fileURL);
+      return;
+    }
+    loadImage();
+  }
+
+  private BufferedImage loadImage() {
+    if (filepath != null) {
+      try {
+        bimg = ImageIO.read(fileURL);
+      } catch (Exception e) {
+        log(-1, "FatalError: image could not be loaded from " + filepath);
+        return null;
+      }
+      if (imageName != null) {
+        imageFiles.put(fileURL, this);
+        imageNames.put(imageName, fileURL);
+        log(lvl, "added to image list: %s \nwith URL: %s",
+                imageName, fileURL);
+        bwidth = bimg.getWidth();
+        bheight = bimg.getHeight();
+        bsize = bimg.getData().getDataBuffer().getSize();
+        currentMemory += bsize;
+        Image first;
+        while (images.size() > 0 && currentMemory > maxMemory) {
+          first = images.remove(0);
+          currentMemory -= first.bsize;
+        }
+        images.add(this);
+        log(lvl, "loaded %s (%d KB of %d MB (%d / %d %%) (%d))", imageName, (int) (bsize / KB),
+                (int) (maxMemory / MB), images.size(), (int) (100 * currentMemory / maxMemory),
+                (int) (currentMemory / KB));
+      } else {
+        log(-1, "ImageName invalid! not cached!");
+      }
+    }
+    return bimg;
+  }
+
+  private static Image createImageValidate(Image img) {
+    if (img == null) {
+      log(-1, "Image not valid, creating empty Image");
+      return new Image("", null);
+    }
+    if (!img.isValid()) {
+      if (Settings.OcrTextSearch) {
+        img.setIsText(true);
+      } else {
+        log(-1, "Image not valid, but TextSearch is switched off!");
+      }
+    }
+    return img;
   }
 
   /**
    * create a new image from the given url <br>
    * file ending .png is added if missing <br>
-   * filename: ...url-path.../name[.png] is loaded from the url and and cached <br>
-   * already loaded image with same url is reused (reference) and taken from cache
+   * filename: ...url-path.../name[.png] is loaded from the url and and cached
+   * <br>
+   * already loaded image with same url is reused (reference) and taken from
+   * cache
    *
    * @return the image
    */
@@ -140,6 +283,30 @@ public class Image {
       img = new Image(url);
     }
     return createImageValidate(img);
+  }
+
+  protected static Image get(URL imgURL) {
+    return imageFiles.get(imgURL);
+  }
+
+  private Image(URL fURL) {
+    if ("file".equals(fURL.getProtocol())) {
+      init(fURL.getPath(), fURL);
+    } else {
+      init(getNameFromURL(fURL), fURL);
+    }
+  }
+
+  private static String getNameFromURL(URL fURL) {
+  //TODO add handling for http
+    if ("jar".equals(fURL.getProtocol())) {
+      int n = fURL.getPath().lastIndexOf(".jar!/");
+      int k = fURL.getPath().substring(0, n).lastIndexOf("/");
+      if (n > -1) {
+        return "JAR:" + fURL.getPath().substring(k + 1, n) + fURL.getPath().substring(n + 5);
+      }
+    }
+    return "???:"  + fURL.getPath();
   }
 
   /**
@@ -194,173 +361,23 @@ public class Image {
     this(img.getImage(), name);
   }
 
-  private static Image createImageValidate(Image img) {
-    if (!img.isValid()) {
-      if (Settings.OcrTextSearch) {
-        img.setIsText(true);
-      } else {
-        log(-1, "Image not valid, but TextSearch is switched off!");
-      }
-    }
-    return img;
-  }
-
-  protected static Image get(URL imgURL) {
-    return imageFiles.get(imgURL);
-  }
-
-  protected static Image get(String fname) {
-    if (!fname.endsWith(".png")) {
-      fname += ".png";
-    }
-    URL fURL = ImagePath.find(fname);
-    if (fURL != null) {
-      return imageFiles.get(fURL);
-    } else {
-      return null;
-    }
-  }
-
-  private Image() {
-  }
-
-  private Image(String fname) {
-    init(fname);
-  }
-
-  private void init(String fname) {
-    imageName = fname;
-    if (!fname.endsWith(".png")) {
-      fname += ".png";
-    }
-    fname = FileManager.slashify(fname, false);
-    if (new File(fname).isAbsolute()) {
-      if (new File(fname).exists()) {
-        String bundlePath = ImagePath.getBundlePath();
-        if (bundlePath != null && fname.startsWith(bundlePath)) {
-          imageName = new File(fname).getName();
-        } else {
-          imageIsAbsolute = true;
-        }
-        filepath = fname;
-        fileURL = FileManager.makeURL(fname);
-       } else {
-        log(-1, "FatalError: not locatable: " + fname);
-      }
-    } else {
-      for (ImagePath.PathEntry path : ImagePath.getPaths()) {
-        if (path == null) {
-          continue;
-        }
-        if ("jar".equals(path.pathURL.getProtocol())) {
-          fileURL = FileManager.getURLForContentFromURL(path.pathURL, fname);
-          if (fileURL != null) {
-            filepath = imageFromJar;
-            imageName = getNameFromURL(fileURL);
-            break;
-          }
-        } else if ("file".equals(path.pathURL.getProtocol())) {
-          fileURL = FileManager.makeURL(path.pathURL, fname);
-          if (new File(fileURL.getPath()).exists()) {
-            filepath = fileURL.getPath();
-            break;
-          }
-        }
-      }
-      if (filepath == null) {
-        log(-1, "not found on image path: " + fname);
-        ImagePath.printPaths();
-      }
-    }
-    loadImage();
-  }
-
-  private Image(URL fURL) {
-    if ("file".equals(fURL.getProtocol())) {
-      init(fURL.getPath());
-    } else if ("jar".equals(fURL.getProtocol())) {
-      imageName = getNameFromURL(fURL);
-      fileURL = fURL;
-      filepath = imageFromJar;
-      loadImage();
-    } else if (fURL.getProtocol().startsWith("http")) {
-      log(-1, "FatalError: Image from http(s) not supported: " + fURL);
-
-    } else {
-      log(-1, "FatalError: ImageURL not supported: " + fURL);
-    }
-    fileURL = fURL;
-  }
-
-  private static String getNameFromURL(URL fURL) {
-//TODO add handling for http
-    if ("jar".equals(fURL.getProtocol())) {
-      int n = fURL.getPath().lastIndexOf(".jar!/");
-      int k = fURL.getPath().substring(0, n).lastIndexOf("/");
-      if (n > -1) {
-        return "JAR:" + fURL.getPath().substring(k+1, n) + fURL.getPath().substring(n+5);
-      }
-    }
-    return null;
-  }
-
-  private BufferedImage loadImage() {
-    if (filepath != null) {
-      try {
-        bimg = ImageIO.read(this.fileURL);
-      } catch (Exception e) {
-        log(-1, "FatalError: image could not be loaded from " + filepath);
-        return null;
-      }
-      if (imageName != null) {
-        imageFiles.put(fileURL, this);
-        log(lvl, "added to image list: %s \nwith URL: %s",
-                imageName, fileURL);
-        bwidth = bimg.getWidth();
-        bheight = bimg.getHeight();
-        bsize = bimg.getData().getDataBuffer().getSize();
-        currentMemory += bsize;
-        Image first;
-        while (images.size() > 0 && currentMemory > maxMemory) {
-          first = images.remove(0);
-          currentMemory -= first.bsize;
-        }
-        images.add(this);
-        log(lvl, "loaded %s (%d KB of %d MB (%d / %d %%) (%d))", imageName, (int) (bsize / KB),
-                (int) (maxMemory / MB), images.size(), (int) (100 * currentMemory / maxMemory),
-                (int) (currentMemory / KB));
-      } else {
-        log(-1, "ImageName invalid! not cached!");
-      }
-    }
-    return bimg;
-  }
-
   /**
    * Internal Use: IDE: to get rid of cache entries at script close or save as
    *
    * @param bundlePath
    */
   public static void purge(String bundlePath) {
+    if (imageFiles.size() == 0) {
+      return;
+    }
     URL pathURL = FileManager.makeURL(bundlePath);
-    if (!ImagePath.getPaths().get(0).pathURL.equals(pathURL)) {
+    if (!ImagePath.getPaths().get(0).pathURL.toExternalForm().equals(pathURL.toExternalForm())) {
       log(-1, "purge: not current bundlepath: " + pathURL);
       return;
     }
-    int onPath = 0;
-    for (ImagePath.PathEntry e : ImagePath.getPaths()) {
-      if (e.pathURL.equals(pathURL)) {
-        onPath += 1;
-      }
-    }
-    if (onPath > 1 || imageFiles.size() == 0 ) {
-      // also added as path entry by import, so we do not purge
-      return;
-    }
-    String pathStr = pathURL.toString();
+    String pathStr = pathURL.toExternalForm();
     URL imgURL;
     Image img;
-    Image buf;
     log(lvl, "purge: " + pathStr);
     Iterator<Map.Entry<URL, Image>> it = imageFiles.entrySet().iterator();
     Map.Entry<URL, Image> entry;
@@ -370,26 +387,34 @@ public class Image {
     while (it.hasNext()) {
       entry = it.next();
       imgURL = entry.getKey();
-      if (imgURL.toString().startsWith(pathStr)) {
+      if (imgURL.toExternalForm().startsWith(pathStr)) {
         log(lvl, "purge: entry: " + imgURL.toString());
         purgeList.add(entry.getValue());
         it.remove();
-
       }
     }
     if (purgeList.size() > 0) {
-        bit  = images.iterator();
-        while (bit.hasNext()) {
-          buf = bit.next();
-          if (purgeList.contains(buf)) {
-            bit.remove();
-            log(lvl, "purge: bimg: " + buf);
-            currentMemory -= buf.bsize;
-          }
+      bit = images.iterator();
+      while (bit.hasNext()) {
+        img = bit.next();
+        if (purgeList.contains(img)) {
+          bit.remove();
+          log(lvl, "purge: bimg: " + img);
+          currentMemory -= img.bsize;
         }
-        log(lvl, "Max %d MB (%d / %d %%) (%d))", (int) (maxMemory / MB), images.size(),
-                (int) (100 * currentMemory / maxMemory), (int) (currentMemory / KB));
+      }
     }
+    log(lvl, "After Purge (%d): Max %d MB (%d / %d %%) (%d))", 
+            purgeList.size(), (int) (maxMemory / MB), images.size(),
+            (int) (100 * currentMemory / maxMemory), (int) (currentMemory / KB));
+  }
+
+  /**
+   * Get the image's descriptive name
+   *
+   */
+  public String getName() {
+    return imageName;
   }
 
   public ImageGroup getGroup() {
@@ -417,12 +442,20 @@ public class Image {
     return imageIsAbsolute;
   }
 
+  protected void setIsAbsolute(boolean val) {
+    imageIsAbsolute = val;
+  }
+
+  /**
+   *
+   * @return true
+   */
   protected boolean isText() {
     return imageIsText;
   }
 
-  protected void setIsText(boolean isText) {
-    imageIsText = isText;
+  protected void setIsText(boolean val) {
+    imageIsText = val;
   }
 
   /**
@@ -434,21 +467,14 @@ public class Image {
   }
 
   /**
-   * @return the image's absolute filename or null if jar, http or in memory image
+   * @return the image's absolute filename or null if jar, http or in memory
+   * image
    */
   public String getFilename() {
     if (fileURL != null && !"file".equals(fileURL.getProtocol())) {
       return null;
     }
     return filepath;
-  }
-
-  /**
-   * Get the image's descriptive name
-   *
-   */
-  public String getName() {
-    return imageName;
   }
 
   /**
@@ -478,6 +504,7 @@ public class Image {
 
   /**
    * if the image was already found before
+   *
    * @return the rectangle where it was found
    */
   public Rectangle getLastSeen() {
@@ -486,6 +513,7 @@ public class Image {
 
   /**
    * if the image was already found before
+   *
    * @return the similarity score
    */
   public double getLastSeenScore() {
@@ -494,6 +522,7 @@ public class Image {
 
   /**
    * Internal Use: set the last seen info after a find
+   *
    * @param lastSeen
    * @param sim
    */
@@ -505,8 +534,22 @@ public class Image {
     }
   }
 
+  public BufferedImage resize(float factor) {
+    int type = 0;
+    BufferedImage bimg = get();
+    type = bimg.getType() == 0 ? BufferedImage.TYPE_INT_ARGB : bimg.getType();
+    int width = (int) (getSize().getWidth() * factor);
+    int height = (int) (getSize().getHeight() * factor);
+    BufferedImage resizedImage = new BufferedImage(width, height, type);
+    Graphics2D g = resizedImage.createGraphics();
+    g.drawImage(bimg, 0, 0, width, height, null);
+    g.dispose();
+    return resizedImage;
+  }
+
   /**
    * create a sub image from this image
+   *
    * @param x
    * @param y
    * @param w
@@ -523,6 +566,7 @@ public class Image {
 
   /**
    * create a sub image from this image
+   *
    * @param part (the constants Region.XXX as used with region.get())
    * @return
    */
@@ -534,6 +578,7 @@ public class Image {
   /**
    * store info: this image is divided vertically into n even rows <br>
    * a preparation for using getRow()
+   *
    * @param n
    * @return the top row
    */
@@ -544,6 +589,7 @@ public class Image {
   /**
    * store info: this image is divided horizontally into n even columns <br>
    * a preparation for using getCol()
+   *
    * @param n
    * @return the leftmost column
    */
@@ -586,6 +632,7 @@ public class Image {
   /**
    * store info: this image is divided into a raster of even cells <br>
    * a preparation for using getCell()
+   *
    * @param r
    * @param c
    * @return the top left cell
@@ -594,20 +641,21 @@ public class Image {
     rows = r;
     cols = c;
     if (r > 0) {
-      rowH = (int) (getSize().height/r);
-      rowHd = getSize().height - r*rowH;
+      rowH = (int) (getSize().height / r);
+      rowHd = getSize().height - r * rowH;
     }
     if (c > 0) {
-      colW = (int) (getSize().width/c);
-      colWd = getSize().width - c*colW;
+      colW = (int) (getSize().width / c);
+      colWd = getSize().width - c * colW;
     }
     return getCell(0, 0);
   }
 
   /**
-   * get the specified row counting from 0, if rows or raster are setup
-   * negative counts reverse from the end (last = -1)
-   * values outside range are 0 or last respectively
+   * get the specified row counting from 0, if rows or raster are setup negative
+   * counts reverse from the end (last = -1) values outside range are 0 or last
+   * respectively
+   *
    * @param r
    * @return the row as new image or the image itself, if no rows are setup
    */
@@ -619,16 +667,18 @@ public class Image {
       r = rows + r;
     }
     r = Math.max(0, r);
-    r = Math.min(r, rows-1);
+    r = Math.min(r, rows - 1);
     return getSub(0, r * rowH, getSize().width, rowH);
   }
 
   /**
    * get the specified column counting from 0, if columns or raster are setup
-   * negative counts reverse from the end (last = -1)
-   * values outside range are 0 or last respectively
+   * negative counts reverse from the end (last = -1) values outside range are 0
+   * or last respectively
+   *
    * @param c
-   * @return the column as new image or the image itself, if no columns are setup
+   * @return the column as new image or the image itself, if no columns are
+   * setup
    */
   public Image getCol(int c) {
     if (cols == 0) {
@@ -638,20 +688,25 @@ public class Image {
       c = cols + c;
     }
     c = Math.max(0, c);
-    c = Math.min(c, cols-1);
+    c = Math.min(c, cols - 1);
     return getSub(c * colW, 0, colW, getSize().height);
   }
 
   /**
    * get the specified cell counting from (0, 0), if a raster is setup <br>
-   * negative counts reverse from the end (last = -1)
-   * values outside range are 0 or last respectively
+   * negative counts reverse from the end (last = -1) values outside range are 0
+   * or last respectively
+   *
    * @param c
    * @return the cell as new image or the image itself, if no raster is setup
    */
   public Image getCell(int r, int c) {
-    if (rows == 0) return getCol(c);
-    if (cols == 0) return getRow(r);
+    if (rows == 0) {
+      return getCol(c);
+    }
+    if (cols == 0) {
+      return getRow(r);
+    }
     if (rows == 0 && cols == 0) {
       return this;
     }
@@ -662,9 +717,9 @@ public class Image {
       c = cols - c;
     }
     r = Math.max(0, r);
-    r = Math.min(r, rows-1);
+    r = Math.min(r, rows - 1);
     c = Math.max(0, c);
-    c = Math.min(c, cols-1);
+    c = Math.min(c, cols - 1);
     return getSub(c * colW, r * rowH, colW, rowH);
   }
 
