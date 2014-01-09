@@ -74,7 +74,8 @@ public class Image {
   }
 
   private static List<Image> images = Collections.synchronizedList(new ArrayList<Image>());
-  private static List<Image> purgeList = Collections.synchronizedList(new ArrayList<Image>());
+  private static List<Image> imagePurgeList = Collections.synchronizedList(new ArrayList<Image>());
+  private static List<String> imageNamePurgeList = Collections.synchronizedList(new ArrayList<String>());
   private static Map<URL, Image> imageFiles = Collections.synchronizedMap(new HashMap<URL, Image>());
   private static Map<String, URL> imageNames = Collections.synchronizedMap(new HashMap<String, URL>());
   private static int KB = 1024;
@@ -87,6 +88,7 @@ public class Image {
   private String imageName = null;
   private boolean imageIsText = false;
   private boolean imageIsAbsolute = false;
+  private boolean beSilent = false;
   private String filepath = null;
   private URL fileURL = null;
   private BufferedImage bimg = null;
@@ -131,11 +133,20 @@ public class Image {
    * @return the image
    */
   public static Image create(String fName) {
-    Image img = get(fName);
+    Image img = get(fName, false);
+    return createImageValidate(img);
+  }
+
+  public static Image createThumbNail(String fName) {
+    Image img = get(fName, true);
     return createImageValidate(img);
   }
 
   protected static Image get(String fname) {
+    return get(fname, false);
+  }
+
+  protected static Image get(String fname, boolean silent) {
     if (fname == null || fname.isEmpty()) {
       return null;
     }
@@ -178,6 +189,7 @@ public class Image {
     if (img == null) {
       img = new Image(fileName, fURL);
       img.setIsAbsolute(absoluteFileName);
+      img.setBeSilent(silent);
     }
     return img;
   }
@@ -224,7 +236,9 @@ public class Image {
       try {
         bimg = ImageIO.read(fileURL);
       } catch (Exception e) {
-        log(-1, "FatalError: image could not be loaded from " + filepath);
+        if (!beSilent) {
+          log(-1, "could not be loaded from " + filepath);
+        }
         return null;
       }
       if (imageName != null) {
@@ -275,6 +289,7 @@ public class Image {
    * already loaded image with same url is reused (reference) and taken from
    * cache
    *
+   * @param url
    * @return the image
    */
   public static Image create(URL url) {
@@ -375,6 +390,10 @@ public class Image {
       log(-1, "purge: not current bundlepath: " + pathURL);
       return;
     }
+    purge(pathURL);
+  }
+  
+  public static synchronized void purge(URL pathURL) {
     String pathStr = pathURL.toExternalForm();
     URL imgURL;
     Image img;
@@ -382,31 +401,64 @@ public class Image {
     Iterator<Map.Entry<URL, Image>> it = imageFiles.entrySet().iterator();
     Map.Entry<URL, Image> entry;
     Iterator<Image> bit;
-    purgeList.clear();
-
+    imagePurgeList.clear();
+    imageNamePurgeList.clear();
     while (it.hasNext()) {
       entry = it.next();
       imgURL = entry.getKey();
       if (imgURL.toExternalForm().startsWith(pathStr)) {
         log(lvl, "purge: entry: " + imgURL.toString());
-        purgeList.add(entry.getValue());
+        imagePurgeList.add(entry.getValue());
+        imageNamePurgeList.add(entry.getKey().toExternalForm());
         it.remove();
       }
     }
-    if (purgeList.size() > 0) {
+    if (!imagePurgeList.isEmpty()) {
       bit = images.iterator();
       while (bit.hasNext()) {
         img = bit.next();
-        if (purgeList.contains(img)) {
+        if (imagePurgeList.contains(img)) {
           bit.remove();
           log(lvl, "purge: bimg: " + img);
           currentMemory -= img.bsize;
         }
       }
     }
+    if (!imageNamePurgeList.isEmpty()) {
+      Iterator<Map.Entry<String, URL>> nit = imageNames.entrySet().iterator();
+      Map.Entry<String, URL> name;
+      while(nit.hasNext()) {
+        name = nit.next();
+        if(imageNamePurgeList.remove(name.getValue().toExternalForm())) {
+          nit.remove();
+        }
+      }      
+    }
     log(lvl, "After Purge (%d): Max %d MB (%d / %d %%) (%d))", 
-            purgeList.size(), (int) (maxMemory / MB), images.size(),
+            imagePurgeList.size(), (int) (maxMemory / MB), images.size(),
             (int) (100 * currentMemory / maxMemory), (int) (currentMemory / KB));
+    imagePurgeList.clear();
+    imageNamePurgeList.clear();    
+  }
+  
+  public static void dump() {
+    log(0, "--- start of Image dump ---");
+    ImagePath.printPaths();
+    log(0, "ImageFiles entries: %d", imageFiles.size());
+    Iterator<Map.Entry<URL, Image>> it = imageFiles.entrySet().iterator();
+    Map.Entry<URL, Image> entry;
+    while (it.hasNext()) {
+      entry = it.next();
+      log(lvl, entry.getKey().toExternalForm());
+    }
+    log(0, "ImageNames entries: %d", imageNames.size());
+    Iterator<Map.Entry<String, URL>> nit = imageNames.entrySet().iterator();
+    Map.Entry<String, URL> name;
+    while (nit.hasNext()) {
+      name = nit.next();
+      log(lvl, "%s (%s)", name.getKey(), name.getValue());
+    }
+    log(0, "--- end of Image dump ---");
   }
 
   /**
@@ -532,6 +584,10 @@ public class Image {
     if (group != null) {
       group.addImageFacts(this, lastSeen, sim);
     }
+  }
+  
+  public void setBeSilent(boolean val) {
+    beSilent = val;
   }
 
   public BufferedImage resize(float factor) {

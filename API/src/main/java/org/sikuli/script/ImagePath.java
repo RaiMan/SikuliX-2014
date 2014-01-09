@@ -7,6 +7,7 @@ import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
@@ -223,14 +224,7 @@ public class ImagePath {
    * @return true on success, false ozherwise
    */
   public static boolean remove(String path) {
-    for (PathEntry p : imagePaths) {
-      if (!p.pathGiven.equals(path)) {
-        continue;
-      }
-      imagePaths.remove(p);
-      return true;
-    }
-    return false;
+    return remove(makePathURL(path, null).pathURL);
   }
   
   /**
@@ -240,39 +234,59 @@ public class ImagePath {
    * @return true on success, false ozherwise
    */
   public static boolean remove(URL pURL) {
-    for (PathEntry p : imagePaths) {
-      if (!p.pathGiven.equals("__PATH_URL__")) {
+    Iterator<PathEntry> it = imagePaths.iterator();
+    PathEntry p, p0;
+    p0 = imagePaths.get(0);
+    boolean success = false;
+    while (it.hasNext()) {
+      p = it.next();
+      if (!p.pathURL.toExternalForm().equals(pURL.toExternalForm())) {
         continue;
       }
-      if (!p.pathURL.toString().equals(pURL.toString())) {
-        continue;
-      }
-      imagePaths.remove(p);
-      return true;
+      it.remove();
+      Image.purge(p.pathURL);
+      success = true;
     }
-    return false;
+    if (success) {
+      if (imagePaths.isEmpty()) {
+        imagePaths.add(p0);
+      } else if (!imagePaths.get(0).equals(p0)) {
+        imagePaths.add(0, p0);
+      }
+    }
+    return success;
   }
   
   /**
-   * empty list and add given path
+   * empty path list and add given path
    * 
    * @param path
-   * @return true on success, false ozherwise
+   * @return true on success, false otherwise
    */
   public static boolean reset(String path) {
     reset();
-    return add(path);
+    return setBundlePath(path);
   }
   
   /**
-   * empty list and add given path
+   * empty path list and restore entry 0 (bundlePath) 
    * 
    * @return true
    */
   public static boolean reset() {
     log(lvl, "reset");
+    for (PathEntry p : imagePaths) {
+      if (p == null) {
+        continue;
+      }
+      Image.purge(p.pathURL);
+    }
+    PathEntry bp = null;
+    if (!imagePaths.isEmpty()) {
+      bp = imagePaths.get(0);
+    }
     imagePaths.clear();
-    imagePaths.add(null);
+    imagePaths.add(bp);
     return true;
   }
   
