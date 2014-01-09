@@ -62,7 +62,6 @@ from org.sikuli.script.KeyModifier import KEY_CTRL, KEY_SHIFT, KEY_META, KEY_CMD
 from org.sikuli.script import Mouse
 
 Debug.log(3, "Jython: sikuli: Sikuli: import from Basics")
-from org.sikuli.script import ImageLocator
 from org.sikuli.basics import Settings
 from org.sikuli.basics import ExtensionManager
 
@@ -152,7 +151,9 @@ def removeImagePath(path):
 ##
 # reset the image path, so it only contains the bundlepath
 #
-def resetImagePath(path):
+def resetImagePath(path = None):
+    if not path:
+      path = getBundlePath();
     ImagePath.reset(path)
 
 ##
