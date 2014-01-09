@@ -1201,7 +1201,7 @@ public class Region {
    * @return the absolute file name
    */
   public String getLastScreenImageFile() throws IOException {
-    return getLastScreenImageFile(ImageLocator.getBundlePath(), null);
+    return getLastScreenImageFile(ImagePath.getBundlePath(), null);
   }
 
   /**
@@ -1211,7 +1211,7 @@ public class Region {
    * @return the absolute file name
    */
   public String getLastScreenImageFile(String name) throws IOException {
-    return getScreen().getLastScreenImageFromScreen().getFile(ImageLocator.getBundlePath(), name);
+    return getScreen().getLastScreenImageFromScreen().getFile(ImagePath.getBundlePath(), name);
   }
 
   /**
@@ -1826,8 +1826,8 @@ public class Region {
   /**
    * Returns the image of the given Pattern, String or Image
    *
-   * @param target The Pattern or String
-   * @return The Name of the File
+   * @param target The Pattern, String or Image
+   * @return the Image
    */
   private <PSI> Image getImage(PSI target) {
     if (target instanceof Pattern) {
@@ -1931,8 +1931,11 @@ public class Region {
         throw new FindFailed(ex.getMessage());
       }
       if (lastMatch != null) {
-        lastMatch.setImage(getImage(target));
-        getImage(target).setLastSeen(lastMatch.getRect(), lastMatch.getScore());
+        Image img = getImage(target);
+        lastMatch.setImage(img);
+        if (img != null) {
+          img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
+        }
         return lastMatch;
       }
       if (!handleFindFailed(target)) {
@@ -2054,8 +2057,11 @@ public class Region {
         RepeatableFind rf = new RepeatableFind(target);
         if (rf.repeat(timeout)) {
           lastMatch = rf.getMatch();
-          lastMatch.setImage(getImage(target));
-          getImage(target).setLastSeen(lastMatch.getRect(), lastMatch.getScore());
+          Image img = getImage(target);
+          lastMatch.setImage(img);
+          if (img != null) {
+            img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
+          }
           log(lvl, "exists: %s has appeared \nat %s", target, lastMatch);
           return lastMatch;
         } else {
