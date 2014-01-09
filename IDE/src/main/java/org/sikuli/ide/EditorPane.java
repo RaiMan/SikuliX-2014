@@ -193,6 +193,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     if (_editingFile == null) {
       return saveAsFile(Settings.isMac());
     } else {
+      Image.purge(_srcBundlePath);
       writeSrcFile();
       return getCurrentShortFilename();
     }
