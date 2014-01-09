@@ -193,7 +193,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     if (_editingFile == null) {
       return saveAsFile(Settings.isMac());
     } else {
-      Image.purge(_srcBundlePath);
+      ImagePath.remove(_srcBundlePath);
       writeSrcFile();
       return getCurrentShortFilename();
     }
@@ -258,7 +258,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
       FileManager.deleteTempDir(_srcBundlePath);
       _srcBundleTemp = false;
     }
-    Image.purge(_srcBundlePath);
+    ImagePath.remove(_srcBundlePath);
     setSrcBundle(bundlePath);
     _editingFile = createSourceFile(bundlePath, ".py");
     Debug.log(2, "save to bundle: " + getSrcBundle());
@@ -339,7 +339,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
       setDirty(false);
     }
     if (_srcBundlePath != null) {
-      Image.purge(_srcBundlePath);
+      ImagePath.remove(_srcBundlePath);
     }
     return true;
   }
@@ -443,7 +443,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   }
   
   public Image getImageInBundle(String filename) {
-      return Image.create(filename);
+      return Image.createThumbNail(filename);
   }
 
 //</editor-fold>
