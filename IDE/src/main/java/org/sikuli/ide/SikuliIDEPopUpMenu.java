@@ -8,6 +8,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.sikuli.basics.Debug;
+import org.sikuli.script.Image;
+import org.sikuli.script.ImagePath;
 
 public class SikuliIDEPopUpMenu extends JPopupMenu {
 
@@ -165,6 +167,8 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       addSeparator();
       add(createMenuItem("Run", new PopTabAction(PopTabAction.RUN)));
       add(createMenuItem("Run Slowly", new PopTabAction(PopTabAction.RUN_SLOW)));
+      addSeparator();
+      add(createMenuItem("Reset", new PopTabAction(PopTabAction.RESET)));
       
     } catch (NoSuchMethodException ex) {
       validMenu = false;
@@ -181,7 +185,8 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
     static final String SAVE_AS = "doSaveAs";
     static final String RUN = "doRun";
     static final String RUN_SLOW = "doRunSlow";
-
+    static final String RESET = "doReset";
+    
     public PopTabAction() {
       super();
     }
@@ -260,7 +265,14 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       log(lvl, "doRunSlow: entered");
       fireIDERunMenu("RUN_SLOWLY");
     }
+
+    public void doReset(ActionEvent ae) throws NoSuchMethodException {
+      log(lvl, "Reset: entered");
+      Image.dump();
+      ImagePath.reset();
+      Image.dump();
   }
+}
 
   private void popImageMenu() {
     try {
