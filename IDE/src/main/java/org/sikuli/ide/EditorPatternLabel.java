@@ -153,7 +153,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
       if (imgpop == null) {
         BufferedImage img = image.get();
         if (img == null) {
-          Debug.error("EditorPatternLabel: mouseEntered: not found " + this.imgName);
+          Debug.log(4, "EditorPatternLabel: mouseEntered: not found " + this.imgName);
           return;
         }
         imgpop = new JFrame();
@@ -200,7 +200,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
 
   public void resetLabel(String givenFileName, float sim, Location off) {
     imgName = (new File(givenFileName)).getName();
-    image = Image.create(imgName);
+    image = Image.createThumbNail(imgName);
     imgFile = image.getFilename();
     imgNameShort = imgName.replaceFirst(".png", "").replaceFirst(".jpg", "");
     this.sim = sim;
