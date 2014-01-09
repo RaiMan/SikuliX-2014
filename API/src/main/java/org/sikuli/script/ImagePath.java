@@ -1,7 +1,14 @@
+/*
+ * Copyright 2010-2013, Sikuli.org
+ * Released under the MIT License.
+ *
+ * added RaiMan 2013
+ */
 package org.sikuli.script;
 
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.security.CodeSource;
@@ -14,25 +21,45 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.SikuliScript;
 
+/**
+ * maintain the path list of locations, where images will be searched<br>
+ * the first entry always is the bundlepath used on the scripting level<br>
+ * Python import automatically adds a sikuli bundle here<br>
+ * supported locations:<br>
+ * - absolute filesystem paths<br>
+ * - inside jars relative to root level given by a class found on classpath<br>
+ * - a location in the web given as string starting with http[s]://<br>
+ * - any location as a valid URL, from where image files can be loaded<br>
+ */
 public class ImagePath {
-  
+
   private static final String me = "ImagePath";
   private static final int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "", me + ": " + message, args);
   }
-  
+
+  /**
+   * represents an imagepath entry
+   */
   public static class PathEntry {
+
     public URL pathURL;
     public String pathGiven;
 
-    public PathEntry(String g, URL p) {
-      pathGiven = g;
-      pathURL = p;
+    /**
+     * create a new image path entry
+     *
+     * @param givenName
+     * @param eqivalentURL
+     */
+    public PathEntry(String givenName, URL eqivalentURL) {
+      pathGiven = givenName;
+      pathURL = eqivalentURL;
     }
-  } 
-  
+  }
+
   private static final List<PathEntry> imagePaths = Collections.synchronizedList(new ArrayList<PathEntry>());
   private static String BundlePath = null;
 
@@ -42,13 +69,14 @@ public class ImagePath {
   }
 
   /**
-   * get the list of path entries
-   * @return 
+   * get the list of path entries (as PathEntry)
+   *
+   * @return
    */
   public static List<PathEntry> getPaths() {
     return imagePaths;
   }
-  
+
   private static int getPathCount() {
     int count = imagePaths.size();
     for (PathEntry path : imagePaths) {
@@ -58,7 +86,12 @@ public class ImagePath {
     }
     return count;
   }
-  
+
+  /**
+   * a convenience for the scripting level
+   *
+   * @return an array of the file path's currently in the path list
+   */
   public static String[] getImagePath() {
     String[] paths = new String[getPathCount()];
     int i = 0;
@@ -70,7 +103,7 @@ public class ImagePath {
     }
     return paths;
   }
-  
+
   /**
    * print the list of path entries
    */
@@ -86,7 +119,15 @@ public class ImagePath {
     }
     log(lvl, "end of list ----------------------------");
   }
-  
+
+  /**
+   * try to find the given relative image file name on the image path<br>
+   * starting from entry 0, the first found existence is taken<br>
+   * absolute file names are checked for existence
+   *
+   * @param fname
+   * @return a valid URL or null if not found/exists
+   */
   public static URL find(String fname) {
     URL fURL = null;
     fname = FileManager.slashify(fname, false);
@@ -94,7 +135,7 @@ public class ImagePath {
       if (new File(fname).exists()) {
         fURL = FileManager.makeURL(fname);
       } else {
-        log(-1, "FatalError: not locatable: " + fname);
+        log(-1, "File does not exists: " + fname);
       }
     } else {
       for (PathEntry path : getPaths()) {
@@ -123,7 +164,15 @@ public class ImagePath {
     }
     return fURL;
   }
-  
+
+  /**
+   * given absolute or relative (searched on imaga path) file name<br>
+   * is tried to open as a BufferedReader<br>
+   * BE AWARE: use br.close() when finished
+   *
+   * @param fname
+   * @return the BufferedReader to be used or null if not possible
+   */
   public static BufferedReader open(String fname) {
     log(lvl, "open: " + fname);
     BufferedReader br = null;
@@ -131,10 +180,10 @@ public class ImagePath {
     if (furl != null) {
       try {
         br = new BufferedReader(new InputStreamReader(furl.openStream()));
-      } catch (Exception ex) {
+      } catch (IOException ex) {
         log(-1, "open: %s", ex.getMessage());
         return null;
-      } 
+      }
       try {
         br.mark(10);
         if (br.read() < 0) {
@@ -142,39 +191,45 @@ public class ImagePath {
           return null;
         }
         br.reset();
-      } catch (Exception ex) {
+      } catch (IOException ex) {
         log(-1, "open: %s", ex.getMessage());
         try {
-            br.close();
-        } catch (Exception ex1) {
+          br.close();
+        } catch (IOException ex1) {
           log(-1, "open: %s", ex1.getMessage());
           return null;
-        } 
+        }
         return null;
-      } 
+      }
     }
     return br;
   }
-  
+
   /**
-   * see; {@link #add(String, String)} 
-   * 
-   * @param mainPath a valid classname optionally followed by /subfolder...
-   * @return 
+   * create a new PathEntry from the given absolute path name and add it to the
+   * end of the current image path<br>
+   * for usage with jars see; {@link #add(String, String)}
+   *
+   * @param mainPath
+   * @return true if successful otherwise false
    */
   public static boolean add(String mainPath) {
     return add(mainPath, null);
   }
 
   /**
-   * Set the primary image path to the top folder level of a jar based on the given class name (must
-   * be found on class path). When not running from a jar (e.g. running in some IDE) the path will be the
-   * path to the compiled classes (for Maven based projects this is target/classes that contains all
+   * create a new PathEntry from the given absolute path name and add it to the
+   * end of the current image path<br>
+   * for images stored in jars:<br>
+   * Set the primary image path to the top folder level of a jar based on the
+   * given class name (must be found on class path). When not running from a jar
+   * (e.g. running in some IDE) the path will be the path to the compiled
+   * classes (for Maven based projects this is target/classes that contains all
    * stuff copied from src/main/resources automatically)<br>
    *
-   * @param mainPath a valid classname optionally followed by /subfolder...
-   * @param altPath alternative image folder, when not running from jar (absolute path) 
-   * @return 
+   * @param mainPath absolute path name or a valid classname optionally followed by /subfolder...
+   * @param altPath alternative image folder, when not running from jar
+   * @return true if successful otherwise false
    */
   public static boolean add(String mainPath, String altPath) {
     PathEntry path = makePathURL(mainPath, altPath);
@@ -187,11 +242,11 @@ public class ImagePath {
       }
       return true;
     } else {
-      log(-1, "addImagePath: not valid: %s", mainPath);      
+      log(-1, "addImagePath: not valid: %s", mainPath);
       return false;
     }
   }
-  
+
   private static int hasPath(URL pURL) {
     PathEntry path = imagePaths.get(0);
     if (path == null) {
@@ -201,35 +256,35 @@ public class ImagePath {
       return 0;
     }
     for (PathEntry p : imagePaths.subList(1, imagePaths.size())) {
-      if (p!= null && p.pathURL.toExternalForm().equals(pURL.toExternalForm())) {
+      if (p != null && p.pathURL.toExternalForm().equals(pURL.toExternalForm())) {
         return 1;
-      }      
+      }
     }
     return -1;
   }
 
   /**
-   * add entry to end of list
-   * 
+   * add entry to end of list (the given URL is not checked)
+   *
    * @param pURL
    */
   public static void add(URL pURL) {
     imagePaths.add(new PathEntry("__PATH_URL__", pURL));
   }
-  
+
   /**
-   * remove entry with given path
-   * 
+   * remove entry with given path (same as given with add)
+   *
    * @param path
    * @return true on success, false ozherwise
    */
   public static boolean remove(String path) {
     return remove(makePathURL(path, null).pathURL);
   }
-  
+
   /**
    * remove entry with given URL
-   * 
+   *
    * @param pURL
    * @return true on success, false ozherwise
    */
@@ -256,10 +311,10 @@ public class ImagePath {
     }
     return success;
   }
-  
+
   /**
-   * empty path list and add given path
-   * 
+   * empty path list and add given path as first entry
+   *
    * @param path
    * @return true on success, false otherwise
    */
@@ -267,10 +322,10 @@ public class ImagePath {
     reset();
     return setBundlePath(path);
   }
-  
+
   /**
-   * empty path list and restore entry 0 (bundlePath) 
-   * 
+   * empty path list and restore current entry 0 (bundlePath)
+   * convenience for the scripting level
    * @return true
    */
   public static boolean reset() {
@@ -289,15 +344,14 @@ public class ImagePath {
     imagePaths.add(bp);
     return true;
   }
-  
-  
-	/**
-	 * the given path is added to the list replacing the first entry and
-	 * Settings.BundlePath is replaced as well
-	 *
-	 * @param bundlePath a file path string relative or absolute
+
+  /**
+   * the given path is added to the list replacing the first entry and
+   * Settings.BundlePath is replaced as well
+   *
+   * @param bundlePath an absolute file path
    * @return true on success, false otherwise
-	 */
+   */
   public static boolean setBundlePath(String bundlePath) {
     if (bundlePath != null && !bundlePath.isEmpty()) {
       PathEntry path = makePathURL(bundlePath, null);
@@ -312,16 +366,16 @@ public class ImagePath {
       }
     }
     if (SikuliScript.getRunningInteractive()) {
-      log(lvl, "setBundlePath: running interactive: no default bundle path!");      
+      log(lvl, "setBundlePath: running interactive: no default bundle path!");
     } else {
       log(-1, "setBundlePath: Settings not changed: invalid BundlePath: " + bundlePath);
     }
     return false;
   }
 
-  
   /**
    * the resetting version of setBundlePath for IDE usage
+   *
    * @param bundlePath
    * @return true on success, false otherwise
    */
@@ -333,11 +387,11 @@ public class ImagePath {
     return true;
   }
 
-	/**
-	 *
-	 * @return the current bundle path or null if invalid
-	 */
-	public static String getBundlePath() {
+  /**
+   *
+   * @return the current bundle path or null if invalid
+   */
+  public static String getBundlePath() {
     if (imagePaths.get(0) == null) {
       setBundlePath(Settings.BundlePath);
       return BundlePath;
@@ -346,16 +400,16 @@ public class ImagePath {
     if (Settings.BundlePath != null && path.equals(Settings.BundlePath)) {
       return BundlePath;
     } else {
-      log(-1, "getBundlePath: Settings.BundlePath is invalid: returning working dir\n" +
-              "Settings.BundlePath: %s\nImagePaths[0]: %s", 
+      log(-1, "getBundlePath: Settings.BundlePath is invalid: returning working dir\n"
+              + "Settings.BundlePath: %s\nImagePaths[0]: %s",
               Settings.BundlePath, imagePaths.get(0).pathURL.getPath());
       return new File("").getAbsolutePath();
     }
-	}
-  
+  }
+
   private static PathEntry makePathURL(String mainPath, String altPath) {
     if (new File(mainPath).isAbsolute()) {
-      if(new File(mainPath).exists()) {
+      if (new File(mainPath).exists()) {
         mainPath = FileManager.slashify(mainPath, true);
         return new PathEntry(mainPath, FileManager.makeURL(mainPath));
       } else {
@@ -370,20 +424,21 @@ public class ImagePath {
     if (n > 0) {
       klassName = mainPath.substring(0, n);
       if (n < mainPath.length() - 2) {
-        subPath = mainPath.substring(n+1);
+        subPath = mainPath.substring(n + 1);
       }
     } else {
       klassName = mainPath;
     }
     try {
       cls = Class.forName(klassName);
-    } catch (ClassNotFoundException ex) { }
+    } catch (ClassNotFoundException ex) {
+    }
     if (cls != null) {
       CodeSource codeSrc = cls.getProtectionDomain().getCodeSource();
       if (codeSrc != null && codeSrc.getLocation() != null) {
         URL jarURL = codeSrc.getLocation();
         if (jarURL.getPath().endsWith(".jar")) {
-            pathURL = FileManager.makeURL(FileManager.slashify(jarURL.toString() + "!/" + subPath, true), "jar");
+          pathURL = FileManager.makeURL(FileManager.slashify(jarURL.toString() + "!/" + subPath, true), "jar");
         } else {
           if (altPath == null) {
             altPath = jarURL.getPath();
