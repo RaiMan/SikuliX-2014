@@ -6,11 +6,17 @@
  */
 package org.sikuli.natives;
 
+import org.sikuli.basics.FileManager;
+
 import java.awt.Rectangle;
 import java.awt.Window;
 import javax.swing.JOptionPane;
 
 public class MacUtil implements OSUtil {
+
+  static {
+    FileManager.loadLibrary("MacUtil");
+  }
 
   private static boolean _askedToEnableAX = false;
   private String usedFeature;
