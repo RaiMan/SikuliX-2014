@@ -15,6 +15,8 @@ import javax.swing.JOptionPane;
 public class MacUtil implements OSUtil {
 
   static {
+    // might already be loaded by Sikuli startup procedures
+    // leave it here for the cases where startup is not yet done
     FileManager.loadLibrary("MacUtil");
   }
 
