@@ -9,6 +9,7 @@ IDE with Maven support: [NetBeans 7.4](https://netbeans.org) (using Java 7 on al
 GitHub support: [SourceTree]() (Mac + Windows)<br />
 CI Service: [Travis CI](http://travis-ci.com) <br />
 Doc Service: [Read the Docs](https://readthedocs.org)
+WebSite Service: [Weebly](http://www.weebly.com)
 <hr />
 
 This Maven multi-module setup contains everything
