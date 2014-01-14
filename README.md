@@ -11,8 +11,9 @@ CI Service: [Travis CI](http://travis-ci.com) <br />
 Doc Service: [Read the Docs](https://readthedocs.org)
 <hr />
 
-This Maven multi-module setup contains everything to <br />
-**build the ready-to-use packages [available on Launchpad](https://launchpad.net/sikuli)** <br />(this is at least the intention at time of final release end January 2014).
+This Maven multi-module setup contains everything
+-------------
+**to build the ready-to-use packages [available on Launchpad](https://launchpad.net/sikuli)** <br />(this is at least the intention at time of final release end January 2014).
 
 **Forking and/or downloading this repo only makes sense:** 
  - if you want to get a knowledge about the internals of Sikuli
