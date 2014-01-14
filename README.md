@@ -4,6 +4,13 @@
 Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) <br />(work in progress)
 ------------
 
+**Tools I use for developement:** <br />
+IDE with Maven support: [NetBeans 7.4](https://netbeans.org) (using Java 7 on all systems)<br />
+GitHub support: [SourceTree]() (Mac + Windows)<br />
+CI Service: [Travis CI](http://travis-ci.com) <br />
+
+<hr />
+
 This Maven multi-module setup contains everything to <br />
 **build the ready-to-use packages [available on Launchpad](https://launchpad.net/sikuli)** <br />(this is at least the intention at time of final release end January 2014).
 
