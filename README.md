@@ -1,4 +1,4 @@
-SikuliX-2014 (current version 1.1.0)
+[![RaiMan's Stuff](https://raw.github.com/RaiMan/SikuliX-2014-Docs/master/src/main/resources/docs/source/RaiManStuff64.png)](http://www.sikuli.org) SikuliX-2014 (current version 1.1.0)
 ============
 
 This Maven multi-module setup contains everything to <br />
