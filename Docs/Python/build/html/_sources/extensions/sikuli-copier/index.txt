@@ -1,5 +1,0 @@
-Sikuli Copier
-=============
-
-(Under construction)
-

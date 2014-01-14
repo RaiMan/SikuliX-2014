@@ -1,5 +1,0 @@
-Sikuli Hotkey
-=============
-
-(Under construction)
-

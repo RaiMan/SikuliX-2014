@@ -1,8 +1,0 @@
-#!/bin/sh
-base=`pwd`
-src=../../API/src/main/java/org/sikuli/script
-cd $src
-# JavaDocsClasses contains the list of source files whose
-# public elements should be documented 
-javadoc -d $base/docs -public @$base/JavaDocsClasses
-cd $OLDPWD
