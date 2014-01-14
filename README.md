@@ -8,7 +8,7 @@ Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#)
 IDE with Maven support: [NetBeans 7.4](https://netbeans.org) (using Java 7 on all systems)<br />
 GitHub support: [SourceTree]() (Mac + Windows)<br />
 CI Service: [Travis CI](http://travis-ci.com) <br />
-Doc Service: [Read the Docs](https://readthedocs.org)
+Doc Service: [Read the Docs](https://readthedocs.org)<br />
 WebSite Service: [Weebly](http://www.weebly.com)
 <hr />
 
