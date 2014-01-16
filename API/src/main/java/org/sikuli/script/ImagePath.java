@@ -233,7 +233,7 @@ public class ImagePath {
    */
   public static boolean add(String mainPath, String altPath) {
     PathEntry path = makePathURL(mainPath, altPath);
-    if (path != null) {
+    if (path.pathGiven != null) {
       if (hasPath(path.pathURL) < 0) {
         log(lvl, "add: %s", path.pathURL);
         imagePaths.add(path);
@@ -355,7 +355,7 @@ public class ImagePath {
   public static boolean setBundlePath(String bundlePath) {
     if (bundlePath != null && !bundlePath.isEmpty()) {
       PathEntry path = makePathURL(bundlePath, null);
-      if (path != null && "file".equals(path.pathURL.getProtocol())) {
+      if (path.pathGiven != null && "file".equals(path.pathURL.getProtocol())) {
         if (new File(new File(path.pathURL.getPath()).getAbsolutePath()).exists()) {
           imagePaths.set(0, path);
           Settings.BundlePath = path.pathURL.getPath();
@@ -413,7 +413,7 @@ public class ImagePath {
         mainPath = FileManager.slashify(mainPath, true);
         return new PathEntry(mainPath, FileManager.makeURL(mainPath));
       } else {
-        return null;
+        return new PathEntry(null, FileManager.makeURL(mainPath));
       }
     }
     Class cls = null;
