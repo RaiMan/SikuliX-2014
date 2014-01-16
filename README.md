@@ -1,8 +1,20 @@
 [![RaiMan's Stuff](https://raw.github.com/RaiMan/SikuliX-2014-Docs/master/src/main/resources/docs/source/RaiManStuff64.png)](http://www.sikuli.org) SikuliX-2014 (current version 1.1.0)
 ============
 
-This Maven multi-module setup contains everything to <br />
-**build the ready-to-use packages [available on Launchpad](https://launchpad.net/sikuli)** <br />(this is at least the intention at time of final release end January 2014).
+Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) <br />(work in progress)
+------------
+
+**Tools I use for developement:** <br />
+IDE with Maven support: [NetBeans 7.4](https://netbeans.org) (using Java 7 on all systems)<br />
+GitHub support: [SourceTree]() (Mac + Windows)<br />
+CI Service: [Travis CI](http://travis-ci.com) <br />
+Doc Service: [Read the Docs](https://readthedocs.org)<br />
+WebSite Service: [Weebly](http://www.weebly.com)
+<hr />
+
+This Maven multi-module setup contains everything
+-------------
+**to build the ready-to-use packages [available on Launchpad](https://launchpad.net/sikuli)** <br />(this is at least the intention at time of final release end January 2014).
 
 **Forking and/or downloading this repo only makes sense:** 
  - if you want to get a knowledge about the internals of Sikuli
