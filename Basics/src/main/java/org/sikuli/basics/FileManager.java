@@ -1018,9 +1018,31 @@ public class FileManager {
     return true;
   }
 
+  /**
+   * unpack a jar file to a folder
+   * @param jarName absolute path to jar file
+   * @param folderName absolute path to the target folder
+   * @param del true if the folder should be deleted before unpack
+   * @return true if success,  false otherwise
+   */
   public static boolean unpackJar(String jarName, String folderName, boolean del) {
-    ZipInputStream in = null;
-    BufferedOutputStream out = null;
+    jarName = FileManager.slashify(jarName, false);
+    if (!jarName.endsWith(".jar")) {
+      jarName += ".jar";
+    }
+    if (!new File(jarName).isAbsolute()) {
+      log(-1, "unpackJar: jar path not absolute");
+      return false;
+    }
+    if (folderName == null) {
+      folderName = jarName.substring(0, jarName.length() - 4);
+    } else if (!new File(folderName).isAbsolute()) {
+      log(-1, "unpackJar: folder path not absolute");
+      return false;
+    }
+    folderName = FileManager.slashify(folderName, true);
+    ZipInputStream in;
+    BufferedOutputStream out;
     try {
       if (del) {
         FileManager.deleteFileOrFolder(folderName);

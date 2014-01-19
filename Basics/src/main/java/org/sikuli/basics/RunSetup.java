@@ -79,9 +79,9 @@ public class RunSetup {
   private static long start;
   private static boolean runningSetup = false;
   private static boolean generallyDoUpdate = false;
-
   public static String timestampBuilt;
   private static final String tsb = "##--##Fri Jan  3 18:54:28 CET 2014##--##";
+
   static {
     timestampBuilt = SikuliX.makeTimestamp(tsb);
   }
@@ -186,6 +186,12 @@ public class RunSetup {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="option makeJar">
+    if (args.length > 0) {
+      log1(lvl, "... starting with " + SikuliX.arrayToString(args));
+    } else {
+      log1(lvl, "... starting with no args given");
+    }
+    String baseDir = null;
     if (options.size() > 0 && options.get(0).equals("makeJar")) {
       options.remove(0);
       String todo, jarName, folder;
@@ -193,35 +199,59 @@ public class RunSetup {
         todo = options.get(0);
         options.remove(0);
         //***
-        // pack a jar from a folder
+        // unpack or pack a jar to/from a folder
         //***
-        if (todo.equals("packJar")) {
-          if (options.size() < 2) {
-            log1(-1, "packJar: invalid options!");
-            System.exit(1);
-          }
-          jarName = FileManager.slashify(options.get(0), false);
-          options.remove(0);
-          folder = options.get(0);
-          options.remove(0);
-          log1(3, "requested to pack %s from %s", jarName, folder);
-          FileManager.packJar(folder, jarName, null);
-          log1(3, "completed!");
-          continue;
-          //***
-          // unpack a jar to a folder
-          //***
-        } else if (todo.equals("unpackJar")) {
-          if (options.size() < 2) {
-            log1(-1, "unpackJar: invalid options!");
+        if (todo.equals("unpack") || todo.equals("pack")) {
+          if (options.size() < 1) {
+            log1(-1, todo + ": invalid options! need a jar");
             System.exit(1);
           }
           jarName = options.get(0);
           options.remove(0);
-          folder = options.get(0);
-          options.remove(0);
-          log1(3, "requested to unpack %s to %s", jarName, folder);
-          // action
+          if (jarName.endsWith(".jar")) {
+            if (options.size() < 1) {
+              log1(-1, todo + ": invalid options! need a folder");
+              System.exit(1);
+            }
+            folder = options.get(0);
+            options.remove(0);
+          } else {
+            folder = jarName;
+            jarName += ".jar";
+          }
+          if (options.size() > 0) {
+            baseDir = options.get(0);
+            options.remove(0);
+            if (!new File(baseDir).isAbsolute()) {
+              baseDir = new File(workDir, baseDir).getAbsolutePath();
+            }
+          }
+          if (!new File(folder).isAbsolute()) {
+            if (baseDir == null) {
+              baseDir = workDir;
+            }
+            folder = new File(baseDir, folder).getAbsolutePath();
+          }
+          if (!new File(jarName).isAbsolute()) {
+            if (baseDir == null) {
+              baseDir = workDir;
+            }
+            jarName = new File(baseDir, jarName).getAbsolutePath();
+          }
+          if (todo.equals("unpack")) {
+            log1(3, "requested to unpack %s \nto %s", jarName, folder);
+            FileManager.unpackJar(jarName, folder, true);
+          } else {
+            String jarBack = jarName.substring(0, jarName.length() - 4) + "-backup.jar";
+            try {
+              FileManager.xcopy(jarName, jarBack, "");
+            } catch (IOException ex) {
+              log(-1, "could not create backUp - terminating");
+              System.exit(-1);
+            }
+            log1(3, "requested to pack %s \nfrom %s\backup to: %s", jarName, folder, jarBack);
+            FileManager.packJar(folder, jarName, "");
+          }
           log1(3, "completed!");
           continue;
           //***
@@ -246,6 +276,10 @@ public class RunSetup {
           System.exit(1);
         }
       }
+      System.exit(0);
+    }
+    if (options.size() > 0) {
+      log(-1, "invalid command line options - terminating");
       System.exit(0);
     }
     //</editor-fold>
@@ -281,11 +315,6 @@ public class RunSetup {
     log0(lvl, "running from: " + runningJar);
     log1(lvl, "SikuliX Setup Build: %s %s", Settings.getVersionShort(), RunSetup.timestampBuilt);
 
-    if (args.length > 0) {
-      log1(lvl, "... starting with " + SikuliX.arrayToString(args));
-    } else {
-      log1(lvl, "... starting with no args given");
-    }
     log1(lvl, "user home: %s", uhome);
 
     File localJarSetup = new File(workDir, localSetup);
@@ -318,6 +347,7 @@ public class RunSetup {
         if (!popAsk(ask1)) {
           userTerminated("Do not run setup again");
         }
+        //<editor-fold defaultstate="collapsed" desc="update - currently deactivated">
         String ask2 = "Click YES to get info on updates or betas.\n"
                 + "or click NO to terminate setup now.";
         if (generallyDoUpdate && popAsk(ask2)) {
@@ -350,9 +380,11 @@ public class RunSetup {
             userTerminated("No suitable update or beta available");
           }
         }
+        //</editor-fold>
         if (!isBeta && !isUpdate) {
           reset(-1);
         } else {
+          //<editor-fold defaultstate="collapsed" desc="update - currently deactivated">
           log1(lvl, "%s is available", uVersion);
           if (uVersion.equals(updateVersion)) {
             reset(avail);
@@ -377,9 +409,11 @@ public class RunSetup {
                     + "\n do not match --- terminating --- pls. report");
             terminate("update versions do not match");
           }
+          //</editor-fold>
         }
       }
     } else {
+      //<editor-fold defaultstate="collapsed" desc="update - currently deactivated">
       log0(lvl, "Update started");
       if (!generallyDoUpdate) {
         terminate("Switched Off: Run update!");
@@ -388,10 +422,11 @@ public class RunSetup {
               + "\nYES to continue\nNO to terminate")) {
         userTerminated("");
       }
+      //</editor-fold>
     }
     //</editor-fold>
 
-    //<editor-fold defaultstate="collapsed" desc="dispatching external setup run">
+    //<editor-fold defaultstate="collapsed" desc="dispatching external setup run - currently not possible (update)">
     if (!isUpdateSetup && !runningSetup) {
       String[] cmd = null;
       File fCmd = null;
@@ -865,12 +900,12 @@ public class RunSetup {
           String fmac = new File(workDir, folderMacAppContent).getAbsolutePath();
           loader.export("Commands/mac#runIDE", fmac);
           loader.export("Commands/mac#runIDE", workDir);
-          loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x", 
-                  new File(fmac, "runIDE").getAbsolutePath()});
-          loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x", 
-                  new File(fmac, "MacOS/droplet").getAbsolutePath()});
-          loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x", 
-                  new File(workDir, "runIDE").getAbsolutePath()});
+          loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x",
+            new File(fmac, "runIDE").getAbsolutePath()});
+          loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x",
+            new File(fmac, "MacOS/droplet").getAbsolutePath()});
+          loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x",
+            new File(workDir, "runIDE").getAbsolutePath()});
 //          FileManager.deleteFileOrFolder(new File(workDir, localIDE).getAbsolutePath());
           FileManager.deleteFileOrFolder(new File(workDir, localMacApp).getAbsolutePath());
           localTestJar = new File(fmac, localIDE).getAbsolutePath();
@@ -922,7 +957,7 @@ public class RunSetup {
               + "Check the error log at " + logfile);
       terminate("Setting up environment did not work");
     }
-    
+
     if (getJava) {
       log1(lvl, "Trying to run functional test: JAVA-API");
       splash = showSplash("Trying to run functional test(s)", "Java-API: org.sikuli.script.SikuliX.testSetup()");
@@ -995,7 +1030,7 @@ public class RunSetup {
         (new File(uhome, "SikuliX/Lib")).renameTo(new File(workDir, "Lib"));
       }
     }
-    
+
     splash = showSplash("Setup seems to have ended successfully!", "Detailed information see: " + logfile);
     start += 2000;
 
