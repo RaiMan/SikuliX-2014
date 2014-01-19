@@ -249,7 +249,7 @@ public class RunSetup {
               log(-1, "could not create backUp - terminating");
               System.exit(-1);
             }
-            log1(3, "requested to pack %s \nfrom %s\backup to: %s", jarName, folder, jarBack);
+            log1(3, "requested to pack %s \nfrom %s\nbackup to: %s", jarName, folder, jarBack);
             FileManager.packJar(folder, jarName, "");
           }
           log1(3, "completed!");
