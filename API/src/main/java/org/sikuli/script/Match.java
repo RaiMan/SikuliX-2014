@@ -17,7 +17,7 @@ import org.sikuli.natives.FindResult;
  * from Pattern)<br> the filename of the used image<br>or the text used for
  * findX text
  */
-public class Match extends Region implements Comparable {
+public class Match extends Region implements Comparable<Match> {
 
   private double simScore;
   private Location target = null;
@@ -186,8 +186,7 @@ public class Match extends Region implements Comparable {
   }
 
   @Override
-  public int compareTo(Object o) {
-    Match m = (Match) o;
+  public int compareTo(Match m) {
     if (simScore != m.simScore) {
       return simScore < m.simScore ? -1 : 1;
     }
@@ -203,7 +202,7 @@ public class Match extends Region implements Comparable {
     if (h != m.h) {
       return h - m.h;
     }
-    if (equals(o)) {
+    if (equals(m)) {
       return 0;
     }
     return -1;

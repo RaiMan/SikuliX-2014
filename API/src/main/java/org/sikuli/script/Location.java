@@ -16,7 +16,7 @@ import java.awt.Rectangle;
  * any screen (not checked as is done with region)
  *
  */
-public class Location {
+public class Location implements Comparable<Location>{
   
   public int x;
   public int y;
@@ -376,6 +376,33 @@ public class Location {
   public Location rightClick() {
     Mouse.click(this, "R");
     return this;
+  }
+
+  @Override
+  public boolean equals(Object oThat) {
+    if (this == oThat) {
+      return true;
+    }
+    if (!(oThat instanceof Location)) {
+      return false;
+    }
+    Location that = (Location) oThat;
+    return x == that.x && y == that.y; 
+  }
+
+  @Override
+  public int compareTo(Location l) {
+    if (equals(l)) {
+      return 0;
+    }
+    if (l.x > x) {
+      return 1;
+    } else if (l.x == x) {
+      if (l.y > y) {
+        return 1;
+      }
+    }
+    return -1;        
   }
 
   /**
