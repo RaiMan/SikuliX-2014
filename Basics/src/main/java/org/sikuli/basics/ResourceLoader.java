@@ -42,10 +42,6 @@ public class ResourceLoader implements IResourceLoader {
 
   private String loaderName = "basic";
   private static final String NL = String.format("%n");
-  private static final String cmdRegCheck = "reg QUERY HKCU";
-  private static final String cmdRegQuery = "reg QUERY %s /v %s";
-  private static final String cmdRegAdd = "reg ADD %s /v %s /t %s /f /d %s ";
-  private Map<String, String[]> regMap = new HashMap<String, String[]>();
   private StringBuffer alreadyLoaded = new StringBuffer("");
   private ClassLoader cl;
   private CodeSource codeSrc;
@@ -118,7 +114,6 @@ public class ResourceLoader implements IResourceLoader {
       log(-1, "Fatal Error 101: Not possible to access the jar files!");
       SikuliX.terminate(101);
     }
-    regMap.put("EnvPath", new String[]{"HKEY_CURRENT_USER\\Environment", "PATH", "REG_EXPAND_SZ"});
   }
 
   /**
