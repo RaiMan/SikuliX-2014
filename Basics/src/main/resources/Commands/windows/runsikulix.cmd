@@ -44,9 +44,9 @@ echo +++ running this Java
 set SIKULI_COMMAND=%*
 "%JAVA_HOME%\bin\java.exe" -version
 PATH=%SIKULIX_HOME%libs;%PATH%
-echo +++ trying to start Sikuli IDE 
-echo +++ using: %PARMS% -jar %SIKULIX_HOME%sikuli-ide.jar %SIKULI_COMMAND%
-"%JAVA_HOME%\bin\java.exe" %PARMS% -jar "%SIKULIX_HOME%sikuli-ide.jar" %SIKULI_COMMAND%
+echo +++ trying to run SikuliX 
+echo +++ using: %PARMS% -jar %SIKULIX_HOME%sikulix.jar %SIKULI_COMMAND%
+"%JAVA_HOME%\bin\java.exe" %PARMS% -jar "%SIKULIX_HOME%sikulix.jar" %SIKULI_COMMAND%
 
 GOTO FINALLY
 :STOPIT

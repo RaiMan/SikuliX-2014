@@ -2,6 +2,7 @@
 JAVA=X
 PROPS='-Xmx512M -Dapple.laf.useScreenMenuBar -Dfile.encoding=UTF-8'
 shome=`dirname $0`
+sjar=sikulix
 
 if [ "$1" == "asApp" ]; then
   shift
@@ -13,12 +14,12 @@ else
     echo "SIKULIX_HOME in environment specified as "$SIKULIX_HOME
     shome=$SIKULIX_HOME
   fi
-  if [ ! -e "$shome/sikuli-ide.jar" ]; then
+  if [ ! -e "$shome/$sjar.jar" ]; then
     shome=/Applications/SikuliX-IDE.app/Contents
   fi
 fi
 
-if [ -e "$shome/sikuli-ide.jar" ]; then
+if [ -e "$shome/$sjar.jar" ]; then
   if [ "$1" == "-j" ]; then
     shift
     JAVA=$1
@@ -44,8 +45,8 @@ if [ -e "$shome/sikuli-ide.jar" ]; then
 
   export SIKULI_COMMAND=$*
   echo "running SikuliX-IDE: $PROPS"
-  echo "-jar $shome/sikuli-ide.jar $SIKULI_COMMAND"
-  java $PROPS -jar "$shome/sikuli-ide.jar" $SIKULI_COMMAND
+  echo "-jar $shome/$sjar.jar $SIKULI_COMMAND"
+  java $PROPS -jar "$shome/$sjar.jar" $SIKULI_COMMAND
 else
-  echo "Error: terminating: sikuli-ide.jar not found at: "$shome
+  echo "Error: terminating: $sjar.jar not found at: "$shome
 fi

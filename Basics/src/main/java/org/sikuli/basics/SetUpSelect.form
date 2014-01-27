@@ -30,12 +30,20 @@
                   <Component id="jSeparator2" alignment="0" max="32767" attributes="0"/>
                   <Component id="jSeparator5" alignment="0" max="32767" attributes="0"/>
                   <Component id="jSeparator6" alignment="1" max="32767" attributes="0"/>
-                  <Component id="jSeparator7" alignment="1" max="32767" attributes="0"/>
                   <Group type="102" alignment="1" attributes="0">
-                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
-                      <Component id="jButton1" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="setupNow" min="-2" max="-2" attributes="0"/>
+                      <Component id="option1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="ask1" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="option4" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="ask5" min="-2" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="0" attributes="0">
+                      <Component id="option5" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace max="32767" attributes="0"/>
+                      <Component id="ask4" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Group type="102" attributes="0">
                       <Group type="103" groupAlignment="0" attributes="0">
@@ -67,43 +75,42 @@
                           </Group>
                           <Component id="jLabel5" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
-                              <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
+                              <Component id="option6" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace max="-2" attributes="0"/>
+                              <Component id="ask6" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
+                  <Group type="102" alignment="1" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="option7" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <EmptySpace min="-2" pref="29" max="-2" attributes="0"/>
                               <Component id="jLabel6" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace type="separate" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                               <Component id="jLabel7" min="-2" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="pName" min="-2" pref="193" max="-2" attributes="0"/>
                               <EmptySpace type="separate" max="-2" attributes="0"/>
                               <Component id="jLabel8" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace max="-2" attributes="0"/>
-                              <Component id="pPort" min="-2" pref="69" max="-2" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace min="0" pref="45" max="32767" attributes="0"/>
-                  </Group>
-                  <Group type="102" alignment="1" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
                       <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="option1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="option2" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="option3" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="option4" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="option5" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="option6" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="option7" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                          <Component id="ask7" pref="50" max="32767" attributes="0"/>
-                          <Component id="ask6" max="32767" attributes="0"/>
-                          <Component id="ask4" max="32767" attributes="0"/>
-                          <Component id="ask5" max="32767" attributes="0"/>
-                          <Component id="ask3" max="32767" attributes="0"/>
-                          <Component id="ask2" max="32767" attributes="0"/>
-                          <Component id="ask1" max="32767" attributes="0"/>
+                          <Component id="pPort" min="-2" pref="69" max="-2" attributes="0"/>
+                          <Component id="ask7" min="-2" max="-2" attributes="0"/>
                       </Group>
                   </Group>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
+          </Group>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="32767" attributes="0"/>
+              <Component id="jButton1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="setupNow" min="-2" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="20" max="-2" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -145,16 +152,6 @@
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="option2" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="ask2" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="option3" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="ask3" alignment="3" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="option4" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="ask5" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
@@ -165,27 +162,25 @@
               </Group>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="ask6" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="option6" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="ask6" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="3" attributes="0">
-                  <Component id="ask7" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="option7" alignment="3" min="-2" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="1" attributes="0">
+                  <Component id="ask7" min="-2" max="-2" attributes="0"/>
+                  <Component id="option7" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jSeparator6" min="-2" pref="10" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="28" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                  <Component id="pName" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="pName" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="jLabel8" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="pPort" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace max="-2" attributes="0"/>
-              <Component id="jSeparator7" min="-2" pref="10" max="-2" attributes="0"/>
-              <EmptySpace max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <Component id="jSeparator6" min="-2" pref="10" max="-2" attributes="0"/>
+              <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="jButton1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="setupNow" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -254,40 +249,21 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="option1">
       <Properties>
-        <Property name="text" type="java.lang.String" value="1 - Pack1: I want to use all options: Sikuli IDE, running scripts from commandline (and optionally Java developement)"/>
+        <Property name="text" type="java.lang.String" value="1 - Pack1: I want SikuliX, containing the Sikuli IDE and allowing to run Sikuli scripts from commandline "/>
       </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="option1ActionPerformed"/>
+      </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
       </AuxValues>
     </Component>
     <Component class="javax.swing.JCheckBox" name="option4">
       <Properties>
-        <Property name="text" type="java.lang.String" value="4 - Pack3: I ONLY want to develop in Java or Jython using NetBeans, Eclipse or other IDE&apos;s (I do not need Pack1 nor Pack2)"/>
+        <Property name="text" type="java.lang.String" value="2 - Pack2: I want to develop in Java, Jython or other Java aware scripting language using NetBeans, Eclipse or other IDE&apos;s "/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="option4ActionPerformed"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="option3">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="3 - Pack3: Additionally I want to use Eclipse or other IDEs to develop and run scripts in Jython language"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="option3ActionPerformed"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="option2">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="2 - Pack2: I want to run Sikuli scripts from command line (same usage as Pack 1, but I do not need the Sikuli IDE)"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="option2ActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="4"/>
@@ -301,28 +277,6 @@
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ask1ActionPerformed"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JButton" name="ask2">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="H"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ask2ActionPerformed"/>
-      </Events>
-      <AuxValues>
-        <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
-      </AuxValues>
-    </Component>
-    <Component class="javax.swing.JButton" name="ask3">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="H"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="ask3ActionPerformed"/>
       </Events>
       <AuxValues>
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
@@ -349,7 +303,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="option5">
       <Properties>
-        <Property name="text" type="java.lang.String" value="5 - For Mac and Windows only: I plan to use the Tesseract based OCR features (You should know what you are doing!)"/>
+        <Property name="text" type="java.lang.String" value="3 - For Mac and Windows only: I plan to use the Tesseract based OCR features (You should know what you are doing!)"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="option5ActionPerformed"/>
@@ -371,7 +325,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="option6">
       <Properties>
-        <Property name="text" type="java.lang.String" value="6 - I want the packages to be useable on Windows, Mac and Linux (they contain the stuff for all systems - one pack for all)"/>
+        <Property name="text" type="java.lang.String" value="4 - I want the packages to be useable on Windows, Mac and Linux (they contain the stuff for all systems - one pack for all)"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="option6ActionPerformed"/>
@@ -407,8 +361,6 @@
         <AuxValue name="JavaCodeGenerator_VariableModifier" type="java.lang.Integer" value="1"/>
       </AuxValues>
     </Component>
-    <Component class="javax.swing.JSeparator" name="jSeparator7">
-    </Component>
     <Component class="javax.swing.JLabel" name="jLabel6">
       <Properties>
         <Property name="text" type="java.lang.String" value="My system uses a proxy to access the internet:"/>
@@ -436,7 +388,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="option7">
       <Properties>
-        <Property name="text" type="java.lang.String" value="7 - I want to try the experimental Sikuli Remote feature (getting sikulix-remoteserver.jar - for info click H-button)"/>
+        <Property name="text" type="java.lang.String" value="5 - I want to try the experimental Sikuli Remote feature (getting sikulixremoteserver.jar - for info click H-button)"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="option7ActionPerformed"/>

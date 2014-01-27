@@ -12,7 +12,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.sikuli</groupId>
-  <artifactId>SikuliX</artifactId>
+  <artifactId>SikuliX-Project</artifactId>
   <version>1.1.0</version>
 
   <packaging>pom</packaging>
@@ -61,6 +61,7 @@
   </repositories>
   
   <dependencies>
+<!-- not yet used
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -71,6 +72,7 @@
       <artifactId>logback-classic</artifactId>
       <version>1.0.13</version>
     </dependency>
+-->
     <dependency>
       <groupId>org.testng</groupId>
       <artifactId>testng</artifactId>
@@ -123,7 +125,7 @@
       </activation>
       <properties>
         <sikuli.jartype>complete.xml</sikuli.jartype>
-        <sikuli.jarname>sikuli</sikuli.jarname>
+        <sikuli.jarname>sikulix</sikuli.jarname>
       </properties>
     </profile>
     <profile>
@@ -132,7 +134,7 @@
         <activeByDefault>no</activeByDefault>
       </activation>
       <properties>
-        <sikuli.jarname>sikuli</sikuli.jarname>
+        <sikuli.jarname>sikulix</sikuli.jarname>
       </properties>
       <dependencies>
         <dependency>
@@ -148,7 +150,7 @@
         <activeByDefault>no</activeByDefault>
       </activation>
       <properties>
-        <sikuli.jarname>sikuli</sikuli.jarname>
+        <sikuli.jarname>sikulix</sikuli.jarname>
       </properties>
       <dependencies>
         <dependency>

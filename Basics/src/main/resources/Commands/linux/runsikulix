@@ -15,7 +15,7 @@ else
 fi
 
 export SIKULI_COMMAND=$*
-echo "running SikuliX-Script: $PROPS $CONSOLE"
-echo "-jar $shome/sikuli-script.jar $SIKULI_COMMAND"
-"$JAVABIN" $PROPS -jar "$shome/sikuli-script.jar" $SIKULI_COMMAND
+echo "running SikuliX: $PROPS"
+echo "-jar $shome/sikulix.jar $SIKULI_COMMAND"
+"$JAVABIN" $PROPS -jar "$shome/sikulix.jar" $SIKULI_COMMAND
 

@@ -10,7 +10,7 @@
 	-->
 	<parent>
 		<groupId>org.sikuli</groupId>
-		<artifactId>SikuliX</artifactId>
+		<artifactId>SikuliX-Project</artifactId>
 		<version>1.1.0</version>
 		<relativePath>../</relativePath>
 	</parent>
@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
   
 	<groupId>org.sikuli</groupId>
-	<artifactId>SikuliX-Java</artifactId>
+	<artifactId>SikuliX-API</artifactId>
 	<version>1.1.0-Beta1</version>
 
   <dependencies>
@@ -41,7 +41,7 @@
   
 	<build>
     <defaultGoal>clean package</defaultGoal>
-    <directory>target-java</directory>
+    <directory>target-api</directory>
 		<plugins>
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
@@ -50,7 +50,7 @@
 					<descriptors>
 						<descriptor>../${sikuli.jartype}</descriptor>
 					</descriptors>
-					<finalName>${sikuli.jarname}-java</finalName>
+					<finalName>${sikuli.jarname}-api</finalName>
 				</configuration>
 				<executions>
 					<execution>

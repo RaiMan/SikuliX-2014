@@ -46,7 +46,7 @@ mvn install >>$log
 echo --- make Setup
 cd $base
 mvn -f Basics/setup* >>$log
-cp Basics/target-setup/sikuli-setup*.jar $dist/sikuli-setup-$mversion.jar
+cp Basics/target-setup/sikulixsetup*.jar $dist/sikulixsetup-$mversion.jar
 
 if [ "$1" != "setup" ]; then
   # ---------- Jython
@@ -60,20 +60,14 @@ if [ "$1" != "setup" ]; then
   mv -f $out $src
   mvn clean install >>$log
   
-  # ----------- Java
-  echo --- make Java
+  # ----------- API
+  echo --- make API
   cd $base
-  mvn -f API/java* >>$log
-  cp API/target-java/*java-plain.jar $dist/$version-3.jar
+  mvn -f API/api* >>$log
+  cp API/target-api/*api-plain.jar $dist/$version-2.jar
   
-  # ----------- Script
-  echo --- make Script
-  cd $base
-  mvn -f API/script* >>$log
-  cp API/target-script/*script-plain.jar $dist/$version-2.jar
-  
-  # ----------- IDE
-  echo --- make IDE
+  # ----------- SikuliX
+  echo --- make SikuliX
   cd $base
   mvn -f IDE/ide* >>$log
   cp IDE/target-ide/*ide-plain.jar $dist/$version-1.jar
@@ -91,6 +85,6 @@ if [ "$1" != "setup" ]; then
   # ----------- Remote
   echo --- make Remote
   cd $base
-  cp Remote/target/*.jar $dist/$version-7.jar  
+  cp Remote/target/*.jar $dist/$version-3.jar  
 fi
 grep -i BUILD $log

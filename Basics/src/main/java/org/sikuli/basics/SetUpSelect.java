@@ -41,12 +41,8 @@ public class SetUpSelect extends javax.swing.JPanel {
     jSeparator5 = new javax.swing.JSeparator();
     option1 = new javax.swing.JCheckBox();
     option4 = new javax.swing.JCheckBox();
-    option3 = new javax.swing.JCheckBox();
-    option2 = new javax.swing.JCheckBox();
     jSeparator6 = new javax.swing.JSeparator();
     ask1 = new javax.swing.JButton();
-    ask2 = new javax.swing.JButton();
-    ask3 = new javax.swing.JButton();
     ask4 = new javax.swing.JButton();
     setupNow = new javax.swing.JButton();
     option5 = new javax.swing.JCheckBox();
@@ -55,7 +51,6 @@ public class SetUpSelect extends javax.swing.JPanel {
     ask6 = new javax.swing.JButton();
     jButton1 = new javax.swing.JButton();
     suVersion = new javax.swing.JLabel();
-    jSeparator7 = new javax.swing.JSeparator();
     jLabel6 = new javax.swing.JLabel();
     pName = new javax.swing.JTextField();
     jLabel7 = new javax.swing.JLabel();
@@ -83,26 +78,17 @@ public class SetUpSelect extends javax.swing.JPanel {
 
     jLabel5.setText("Please check the appropriate options below:   (click the [ H ] buttons to get more specific information about the option)");
 
-    option1.setText("1 - Pack1: I want to use all options: Sikuli IDE, running scripts from commandline (and optionally Java developement)");
+    option1.setText("1 - Pack1: I want SikuliX, containing the Sikuli IDE and allowing to run Sikuli scripts from commandline ");
+    option1.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        option1ActionPerformed(evt);
+      }
+    });
 
-    option4.setText("4 - Pack3: I ONLY want to develop in Java or Jython using NetBeans, Eclipse or other IDE's (I do not need Pack1 nor Pack2)");
+    option4.setText("2 - Pack2: I want to develop in Java, Jython or other Java aware scripting language using NetBeans, Eclipse or other IDE's ");
     option4.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         option4ActionPerformed(evt);
-      }
-    });
-
-    option3.setText("3 - Pack3: Additionally I want to use Eclipse or other IDEs to develop and run scripts in Jython language");
-    option3.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        option3ActionPerformed(evt);
-      }
-    });
-
-    option2.setText("2 - Pack2: I want to run Sikuli scripts from command line (same usage as Pack 1, but I do not need the Sikuli IDE)");
-    option2.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        option2ActionPerformed(evt);
       }
     });
 
@@ -110,20 +96,6 @@ public class SetUpSelect extends javax.swing.JPanel {
     ask1.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         ask1ActionPerformed(evt);
-      }
-    });
-
-    ask2.setText("H");
-    ask2.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        ask2ActionPerformed(evt);
-      }
-    });
-
-    ask3.setText("H");
-    ask3.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        ask3ActionPerformed(evt);
       }
     });
 
@@ -141,7 +113,7 @@ public class SetUpSelect extends javax.swing.JPanel {
       }
     });
 
-    option5.setText("5 - For Mac and Windows only: I plan to use the Tesseract based OCR features (You should know what you are doing!)");
+    option5.setText("3 - For Mac and Windows only: I plan to use the Tesseract based OCR features (You should know what you are doing!)");
     option5.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         option5ActionPerformed(evt);
@@ -155,7 +127,7 @@ public class SetUpSelect extends javax.swing.JPanel {
       }
     });
 
-    option6.setText("6 - I want the packages to be useable on Windows, Mac and Linux (they contain the stuff for all systems - one pack for all)");
+    option6.setText("4 - I want the packages to be useable on Windows, Mac and Linux (they contain the stuff for all systems - one pack for all)");
     option6.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         option6ActionPerformed(evt);
@@ -184,7 +156,7 @@ public class SetUpSelect extends javax.swing.JPanel {
 
     jLabel8.setText("Portnumber:");
 
-    option7.setText("7 - I want to try the experimental Sikuli Remote feature (getting sikulix-remoteserver.jar - for info click H-button)");
+    option7.setText("5 - I want to try the experimental Sikuli Remote feature (getting sikulixremoteserver.jar - for info click H-button)");
     option7.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         option7ActionPerformed(evt);
@@ -209,12 +181,18 @@ public class SetUpSelect extends javax.swing.JPanel {
           .add(jSeparator2)
           .add(jSeparator5)
           .add(org.jdesktop.layout.GroupLayout.TRAILING, jSeparator6)
-          .add(org.jdesktop.layout.GroupLayout.TRAILING, jSeparator7)
           .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-            .add(0, 0, Short.MAX_VALUE)
-            .add(jButton1)
-            .add(18, 18, 18)
-            .add(setupNow))
+            .add(option1)
+            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(ask1))
+          .add(layout.createSequentialGroup()
+            .add(option4)
+            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(ask5))
+          .add(layout.createSequentialGroup()
+            .add(option5)
+            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+            .add(ask4))
           .add(layout.createSequentialGroup()
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
               .add(layout.createSequentialGroup()
@@ -238,36 +216,33 @@ public class SetUpSelect extends javax.swing.JPanel {
                       .add(suJava)))))
               .add(jLabel5)
               .add(layout.createSequentialGroup()
-                .add(23, 23, 23)
+                .add(option6)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(ask6)))
+            .add(0, 0, Short.MAX_VALUE))
+          .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+              .add(option7)
+              .add(layout.createSequentialGroup()
+                .add(29, 29, 29)
                 .add(jLabel6)
-                .add(18, 18, 18)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .add(jLabel7)
                 .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
                 .add(pName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 193, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
                 .add(18, 18, 18)
-                .add(jLabel8)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(pPort, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 69, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)))
-            .add(0, 45, Short.MAX_VALUE))
-          .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .add(jLabel8)))
+            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
             .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-              .add(option1)
-              .add(option2)
-              .add(option3)
-              .add(option4)
-              .add(option5)
-              .add(option6)
-              .add(option7))
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING, false)
-              .add(ask7, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, 50, Short.MAX_VALUE)
-              .add(ask6, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .add(ask4, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .add(ask5, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .add(ask3, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .add(ask2, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-              .add(ask1, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+              .add(pPort, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 69, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+              .add(ask7))))
         .addContainerGap())
+      .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+        .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+        .add(jButton1)
+        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+        .add(setupNow)
+        .add(20, 20, 20))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -302,14 +277,6 @@ public class SetUpSelect extends javax.swing.JPanel {
           .add(ask1))
         .add(18, 18, 18)
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-          .add(option2)
-          .add(ask2))
-        .add(18, 18, 18)
-        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-          .add(option3)
-          .add(ask3))
-        .add(18, 18, 18)
-        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
           .add(option4)
           .add(ask5))
         .add(18, 18, 18)
@@ -318,24 +285,22 @@ public class SetUpSelect extends javax.swing.JPanel {
           .add(ask4))
         .add(18, 18, 18)
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
-          .add(ask6)
-          .add(option6))
-        .add(18, 18, 18)
-        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+          .add(option6)
+          .add(ask6))
+        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.TRAILING)
           .add(ask7)
           .add(option7))
-        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-        .add(jSeparator6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+        .add(28, 28, 28)
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
           .add(jLabel6)
-          .add(pName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
           .add(jLabel7)
+          .add(pName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
           .add(jLabel8)
           .add(pPort, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-        .add(jSeparator7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+        .add(jSeparator6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
           .add(jButton1)
           .add(setupNow))
@@ -347,28 +312,12 @@ public class SetUpSelect extends javax.swing.JPanel {
     // TODO add your handling code here:
   }//GEN-LAST:event_option4ActionPerformed
 
-  private void option3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_option3ActionPerformed
-    // TODO add your handling code here:
-  }//GEN-LAST:event_option3ActionPerformed
-
-  private void option2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_option2ActionPerformed
-    // TODO add your handling code here:
-  }//GEN-LAST:event_option2ActionPerformed
-
   private void ask1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ask1ActionPerformed
     RunSetup.helpOption(1);
   }//GEN-LAST:event_ask1ActionPerformed
 
-  private void ask2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ask2ActionPerformed
-    RunSetup.helpOption(2);
-  }//GEN-LAST:event_ask2ActionPerformed
-
-  private void ask3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ask3ActionPerformed
-    RunSetup.helpOption(3);
-  }//GEN-LAST:event_ask3ActionPerformed
-
   private void ask4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ask4ActionPerformed
-    RunSetup.helpOption(4);
+    RunSetup.helpOption(3);
   }//GEN-LAST:event_ask4ActionPerformed
 
   private void setupNowActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_setupNowActionPerformed
@@ -380,7 +329,7 @@ public class SetUpSelect extends javax.swing.JPanel {
   }//GEN-LAST:event_option5ActionPerformed
 
   private void ask5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ask5ActionPerformed
-    RunSetup.helpOption(5);
+    RunSetup.helpOption(2);
   }//GEN-LAST:event_ask5ActionPerformed
 
   private void option6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_option6ActionPerformed
@@ -388,7 +337,7 @@ public class SetUpSelect extends javax.swing.JPanel {
   }//GEN-LAST:event_option6ActionPerformed
 
   private void ask6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ask6ActionPerformed
-    RunSetup.helpOption(6);
+    RunSetup.helpOption(4);
   }//GEN-LAST:event_ask6ActionPerformed
 
   private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
@@ -401,13 +350,15 @@ public class SetUpSelect extends javax.swing.JPanel {
   }//GEN-LAST:event_option7ActionPerformed
 
   private void ask7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ask7ActionPerformed
-    RunSetup.helpOption(7);
+    RunSetup.helpOption(5);
   }//GEN-LAST:event_ask7ActionPerformed
+
+  private void option1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_option1ActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_option1ActionPerformed
 
   // Variables declaration - do not modify//GEN-BEGIN:variables
   public javax.swing.JButton ask1;
-  public javax.swing.JButton ask2;
-  public javax.swing.JButton ask3;
   public javax.swing.JButton ask4;
   public javax.swing.JButton ask5;
   public javax.swing.JButton ask6;
@@ -425,10 +376,7 @@ public class SetUpSelect extends javax.swing.JPanel {
   private javax.swing.JSeparator jSeparator2;
   private javax.swing.JSeparator jSeparator5;
   private javax.swing.JSeparator jSeparator6;
-  private javax.swing.JSeparator jSeparator7;
   protected javax.swing.JCheckBox option1;
-  protected javax.swing.JCheckBox option2;
-  protected javax.swing.JCheckBox option3;
   protected javax.swing.JCheckBox option4;
   protected javax.swing.JCheckBox option5;
   protected javax.swing.JCheckBox option6;

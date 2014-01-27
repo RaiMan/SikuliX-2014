@@ -94,7 +94,7 @@ public class JythonScriptRunner implements IScriptRunner {
   private static String sikuliLibPath;
 
   private static String timestampBuilt;
-  private static final String tsb = "##--##Fri Jan  3 18:54:44 CET 2014##--##";
+  private static final String tsb = "##--##Tue Jan 21 15:53:09 CET 2014##--##";
   static {
     Debug.log(3, "SikuliX Jython Support Build: %s %s", Settings.getVersionShort(), 
             SikuliX.makeTimestamp(tsb));
