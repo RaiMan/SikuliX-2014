@@ -21,6 +21,8 @@ import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
 import java.io.File;
 import java.net.URL;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -639,7 +641,7 @@ public class Image {
   }
 
   /**
-   * 
+   *
    * @param factor
    * @return a new BufferedImage resized (width*factor, height*factor)
    */
@@ -914,4 +916,42 @@ public class Image {
     BufferedImage bm = new BufferedImage(cm, r, false, null);
     return bm;
   }
+
+	// **************** for Tesseract4Java ********************
+    /**
+     * Converts <code>BufferedImage</code> to <code>ByteBuffer</code>.
+     *
+     * @param bi Input image
+     * @return pixel data
+     */
+    public static ByteBuffer convertImageData(BufferedImage bi) {
+        DataBuffer buff = bi.getRaster().getDataBuffer();
+        // ClassCastException thrown if buff not instanceof DataBufferByte because raster data is not necessarily bytes.
+        // Convert the original buffered image to grayscale.
+        if (!(buff instanceof DataBufferByte)) {
+            bi = convertImageToGrayscale(bi);
+            buff = bi.getRaster().getDataBuffer();
+        }
+        byte[] pixelData = ((DataBufferByte) buff).getData();
+        //        return ByteBuffer.wrap(pixelData);
+        ByteBuffer buf = ByteBuffer.allocateDirect(pixelData.length);
+        buf.order(ByteOrder.nativeOrder());
+        buf.put(pixelData);
+        buf.flip();
+        return buf;
+    }
+
+		/**
+     * A simple method to convert an image to gray scale.
+     *
+     * @param image input image
+     * @return a monochrome image
+     */
+    public static BufferedImage convertImageToGrayscale(BufferedImage image) {
+        BufferedImage tmp = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_BYTE_GRAY);
+        Graphics2D g2 = tmp.createGraphics();
+        g2.drawImage(image, 0, 0, null);
+        g2.dispose();
+        return tmp;
+    }
 }
