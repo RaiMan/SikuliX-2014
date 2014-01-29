@@ -1,15 +1,15 @@
 [![RaiMan's Stuff](https://raw.github.com/RaiMan/SikuliX-2014-Docs/master/src/main/resources/docs/source/RaiManStuff64.png)](http://www.sikuli.org) SikuliX-2014 (current version 1.1.0)
 ============
 
-Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) <br />(work in progress)
-------------
+**Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) (work in progress)**
 
 **Tools I use for developement:** <br />
 IDE with Maven support: [NetBeans 7.4](https://netbeans.org) (using Java 7 on all systems)<br />
 GitHub support: [SourceTree]() (Mac + Windows)<br />
 CI Service: [Travis CI](http://travis-ci.com) <br />
 Doc Service: [Read the Docs](https://readthedocs.org)<br />
-WebSite Service: [Weebly](http://www.weebly.com)
+Main WebSite Service: [Weebly](http://www.weebly.com)<br />
+Private complementing Websites: [Host Europe](https://www.hosteurope.de) 
 <hr />
 
 This Maven multi-module setup contains everything
@@ -23,7 +23,7 @@ This Maven multi-module setup contains everything
 
 If you "only" want to use the SikuliX features developing in Java or any Java aware scripting language (Jython, JRuby, Scala. Closure, ...) it is strongly recommended to start with sikuli-java.jar (run Sikuli setup with option 4).
 
-**To get the ready-to-use packages (IDE, Script, Java/Jython support) <br />it is still recommended [to start here](http://www.sikuli.org/download.html).**
+**To get the ready-to-use packages (IDE, Script, Java/Jython support) <br />it is still recommended [to start here](http://www.sikulix.com/download.html).**
 
 The structure of this repo
 ------------------------
@@ -38,17 +38,15 @@ Each folder (module) in this repo is a Maven project by itself with its own POM,
 
 The Java implementation comprising the API to access the top elements (Screen, Region, Pattern, Match, Image, ...) and their methods allowing to search for images and to act on points and matches simulating mouse and keyboard.
 
-The ready-to-use package `sikuli-java.jar` provides this API for Java programming and any Java aware scripting languages.
-
-The ready-to-use package `sikuli-script.jar` as a convenience/backward-compatibility comes with the bundled Jython interpreter, thus allowing to run Sikuli scripts out of the box from the commandline and providing an interactive Sikuli aware Jython shell.<br />
-This package will vanish in the long range, since it is fully contained in the IDE package now.
+The ready-to-use package `sikulixapi.jar` provides this API for Java programming and any Java aware scripting languages.
 
 **Module IDE**
 
 Implements a GUI using Java, that allows to edit and run Sikuli scripts (currently only Jython is supported). It is an easy to use IDE focusing on the handling of the screenshots and images used in the typical Sikuli workflows.
 
-The package `sikuli-ide.jar` is the top level package containing all other options. It can be used from commandline in the same way as `sikuli-script.jar` and hence usually only this IDE package is needed.
+The package `sikulix.jar` is the top level package containing all other options (hence the follow up of `sikuli-ide.jar` known from former releases). 
 
+This package `sikulix.jar` comes bundled with the Jython interpreter, thus allowing to run Sikuli scripts out of the box from the commandline and providing an interactive Sikuli aware Jython shell (hence it includes the functionality known from the `sikuli-script.jar` of former Sikuli(X) releases and is used the same way).
 <hr/>
 
 **--- The helper/utility modules (intended for internal use only) ---**
@@ -180,7 +178,7 @@ As it is standard with Maven, all -D parameters go to Java system properties, wh
 
 **--- How to produce the ready to use jars ---**
 
-... `sikuli-ide.jar`, `sikuli-script.jar` and `sikuli-java.jar`
+... `sikulix.jar` and `sikulixapi.jar`
 
 [please look here](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-produce-the-ready_to_use-jar-packages)
 
