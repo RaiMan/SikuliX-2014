@@ -1,8 +1,7 @@
 [![RaiMan's Stuff](https://raw.github.com/RaiMan/SikuliX-2014-Docs/master/src/main/resources/docs/source/RaiManStuff64.png)](http://www.sikuli.org) SikuliX-2014 (current version 1.1.0)
 ============
 
-Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) <br />(work in progress)
-------------
+**Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) <br />(work in progress)**
 
 **Tools I use for developement:** <br />
 IDE with Maven support: [NetBeans 7.4](https://netbeans.org) (using Java 7 on all systems)<br />
