@@ -2,6 +2,7 @@
 JAVA=X
 JAVABIN=java
 PROPS='-Xmx512M -Dfile.encoding=UTF-8 -Dsikuli.FromCommandLine'
+sjar=sikulix
 
 if [ "$JAVA_HOME" != "" ]; then
   JAVABIN=$JAVA_HOME/bin/java
@@ -14,8 +15,12 @@ else
   shome=`dirname $0`
 fi
 
-export SIKULI_COMMAND=$*
-echo "running SikuliX: $PROPS"
-echo "-jar $shome/sikulix.jar $SIKULI_COMMAND"
-"$JAVABIN" $PROPS -jar "$shome/sikulix.jar" $SIKULI_COMMAND
+if [ -e "$shome/$sjar.jar" ]; then
+	export SIKULI_COMMAND=$*
+	echo "running SikuliX: $PROPS"
+	echo "-jar $shome/$sjar.jar $SIKULI_COMMAND"
+	"$JAVABIN" $PROPS -jar "$shome/$sjar.jar" $SIKULI_COMMAND
+else
+  echo "Error: terminating: $sjar.jar not found at: "$shome
+fi
 

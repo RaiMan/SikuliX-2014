@@ -1,7 +1,19 @@
 @echo off
 SETLOCAL ENABLEEXTENSIONS
+set SJAR=sikulix
 
+if not defined SIKULIX_HOME goto NOHOME
+if EXIST "%SIKULIX_HOME%%SJAR%.jar" goto YESHOME
+if not EXIST "%SIKULIX_HOME%\%SJAR%.jar" goto BADHOME
+set SJAR=\sikulix
+
+:BADHOME
+echo +++ SIKULIX_HOME specified but not useable %SIKULIX_HOME%
+
+:NOHOME
 set SIKULIX_HOME=%~dp0
+
+:YESHOME
 set PARMS=-Xms64M -Xmx512M -Dfile.encoding=UTF-8 -Dsikuli.FromCommandLine
 
 if not defined JAVA_HOME goto CHECKJAVA
@@ -39,16 +51,16 @@ echo +++ Java not found in standard places %PROGRAMS% or %PROGRAMS32%
 echo +++ JAVA_HOME not specified
 goto STOPIT
 
-:JAVA_OK 
+:JAVA_OK
 echo +++ running this Java
 set SIKULI_COMMAND=%*
 "%JAVA_HOME%\bin\java.exe" -version
 PATH=%SIKULIX_HOME%libs;%PATH%
-echo +++ trying to run SikuliX 
-echo +++ using: %PARMS% -jar %SIKULIX_HOME%sikulix.jar %SIKULI_COMMAND%
-"%JAVA_HOME%\bin\java.exe" %PARMS% -jar "%SIKULIX_HOME%sikulix.jar" %SIKULI_COMMAND%
-
+echo +++ trying to run SikuliX
+echo +++ using: %PARMS% -jar %SIKULIX_HOME%%SJAR%.jar %SIKULI_COMMAND%
+"%JAVA_HOME%\bin\java.exe" %PARMS% -jar "%SIKULIX_HOME%%SJAR%.jar" %SIKULI_COMMAND%
 GOTO FINALLY
+
 :STOPIT
 echo.+++ ended with some errors
 :FINALLY
