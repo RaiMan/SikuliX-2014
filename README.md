@@ -9,7 +9,8 @@ IDE with Maven support: [NetBeans 7.4](https://netbeans.org) (using Java 7 on al
 GitHub support: [SourceTree]() (Mac + Windows)<br />
 CI Service: [Travis CI](http://travis-ci.com) <br />
 Doc Service: [Read the Docs](https://readthedocs.org)<br />
-WebSite Service: [Weebly](http://www.weebly.com)
+Main WebSite Service: [Weebly](http://www.weebly.com)
+Private complementing Websites: [Host Europe](https://www.hosteurope.de) 
 <hr />
 
 This Maven multi-module setup contains everything
@@ -23,7 +24,7 @@ This Maven multi-module setup contains everything
 
 If you "only" want to use the SikuliX features developing in Java or any Java aware scripting language (Jython, JRuby, Scala. Closure, ...) it is strongly recommended to start with sikuli-java.jar (run Sikuli setup with option 4).
 
-**To get the ready-to-use packages (IDE, Script, Java/Jython support) <br />it is still recommended [to start here](http://www.sikuli.org/download.html).**
+**To get the ready-to-use packages (IDE, Script, Java/Jython support) <br />it is still recommended [to start here](http://www.sikulix.com/download.html).**
 
 The structure of this repo
 ------------------------
