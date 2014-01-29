@@ -180,7 +180,7 @@ As it is standard with Maven, all -D parameters go to Java system properties, wh
 
 **--- How to produce the ready to use jars ---**
 
-... `sikuli-ide.jar`, `sikuli-script.jar` and `sikuli-java.jar`
+... `sikulix.jar` and `sikulixapi.jar`
 
 [please look here](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-produce-the-ready_to_use-jar-packages)
 
