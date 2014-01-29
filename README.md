@@ -9,7 +9,7 @@ IDE with Maven support: [NetBeans 7.4](https://netbeans.org) (using Java 7 on al
 GitHub support: [SourceTree]() (Mac + Windows)<br />
 CI Service: [Travis CI](http://travis-ci.com) <br />
 Doc Service: [Read the Docs](https://readthedocs.org)<br />
-Main WebSite Service: [Weebly](http://www.weebly.com)
+Main WebSite Service: [Weebly](http://www.weebly.com)<br />
 Private complementing Websites: [Host Europe](https://www.hosteurope.de) 
 <hr />
 
