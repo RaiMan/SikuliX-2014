@@ -13,7 +13,9 @@ public interface OSUtil {
   // Windows: returns PID, 0 if fails
   // Others: return 0 if succeeds, -1 if fails
 
-  public int openApp(String appName);
+	public String getLibName();
+	
+	public int openApp(String appName);
 
   // Windows: returns PID, 0 if fails
   // Others: return 0 if succeeds, -1 if fails

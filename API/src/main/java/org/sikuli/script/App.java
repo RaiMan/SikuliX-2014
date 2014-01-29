@@ -21,6 +21,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import org.sikuli.basics.FileManager;
 import org.sikuli.natives.OSUtil;
 import org.sikuli.natives.SysUtil;
 
@@ -33,8 +34,12 @@ public class App {
   static {
 //TODO Sikuli hangs if App is used before Screen
     new Screen();
+		String libName = _osUtil.getLibName();
+		if (!libName.isEmpty()) {
+			FileManager.loadLibrary(libName);
+		}
   }
-  
+
   private static Region asRegion(Rectangle r) {
     if (r != null) {
       return Region.create(r);

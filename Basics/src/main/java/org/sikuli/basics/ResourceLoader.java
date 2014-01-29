@@ -433,14 +433,14 @@ public class ResourceLoader implements IResourceLoader {
       log(lvl, path);
       if (!Settings.runningSetup && Settings.isWindows()) {
         // is on system path?
-        String syspath = SysUtil.WinKernel32.getEnvironmentVariable("PATH");
+        String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
         if (syspath == null) {
           SikuliX.terminate(1);
         } else {
           path = (new File(path).getAbsolutePath()).replaceAll("/", "\\");
           if (!syspath.toUpperCase().contains(path.toUpperCase())) {
             log(lvl, "Adding libs dir to path: " + path);
-            if (!SysUtil.WinKernel32.setEnvironmentVariable("PATH", syspath + ";" + path)) {
+            if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", syspath + ";" + path)) {
               SikuliX.terminate(1);
             }
           }

@@ -6,11 +6,17 @@
  */
 package org.sikuli.natives;
 
+import org.sikuli.natives.OSUtil;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.io.*;
 
 public class LinuxUtil implements OSUtil {
+
+	@Override
+	public String getLibName() {
+		return "";
+	}
 
   @Override
   public int switchApp(String appName, int winNum) {

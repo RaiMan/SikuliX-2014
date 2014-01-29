@@ -7,7 +7,7 @@ import org.bridj.ann.Library;
 /**
  * Direct access to system functions via JNI, JNA, BridJ, ...
  */
-public class SysUtil {
+public class SysJNA {
   /**
    * Direct access to Windows API kernel32.dll via BridJ
    */

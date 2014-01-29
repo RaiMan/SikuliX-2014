@@ -6,18 +6,15 @@
  */
 package org.sikuli.natives;
 
-import org.sikuli.basics.FileManager;
-
 import java.awt.Rectangle;
 import java.awt.Window;
 
 public class WinUtil implements OSUtil {
 
-  static {
-    // might already be loaded by Sikuli startup procedures
-    // leave it here for the cases where startup is not yet done
-    FileManager.loadLibrary("WinUtil");
-  }
+	@Override
+	public String getLibName() {
+		return "WinUtil";
+	}
 
   @Override
   public int switchApp(String appName) {

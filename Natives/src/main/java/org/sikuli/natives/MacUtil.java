@@ -6,22 +6,19 @@
  */
 package org.sikuli.natives;
 
-import org.sikuli.basics.FileManager;
-
 import java.awt.Rectangle;
 import java.awt.Window;
 import javax.swing.JOptionPane;
 
 public class MacUtil implements OSUtil {
 
-  static {
-    // might already be loaded by Sikuli startup procedures
-    // leave it here for the cases where startup is not yet done
-    FileManager.loadLibrary("MacUtil");
-  }
-
   private static boolean _askedToEnableAX = false;
   private String usedFeature;
+
+	@Override
+	public String getLibName() {
+		return "MacUtil";
+	}
 
   @Override
   public int switchApp(String appName) {
@@ -107,8 +104,8 @@ public class MacUtil implements OSUtil {
   }
 
 //Mac Mavericks: delete app entry from list - in terminal on one line
-//sudo sqlite3 /Library/Application\ Support/com.apple.TCC/Tcc.db 
-//'delete from access where client like "%part of app name%"'  
+//sudo sqlite3 /Library/Application\ Support/com.apple.TCC/Tcc.db
+//'delete from access where client like "%part of app name%"'
 
   @Override
   public Rectangle getWindow(String appName, int winNum) {
