@@ -11,6 +11,8 @@ Doc Service: [Read the Docs](https://readthedocs.org)<br />
 Main WebSite Service: [Weebly](http://www.weebly.com)<br />
 Private complementing Websites: [Host Europe](https://www.hosteurope.de) 
 <hr />
+**SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer) 
+<hr/>
 
 This Maven multi-module setup contains everything
 -------------
