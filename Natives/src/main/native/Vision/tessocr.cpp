@@ -405,9 +405,9 @@ OCR::init(const char* datapath){
    setenv("TESSDATA_PREFIX", datapath, 1);
 #endif
    int ret = _tessAPI.Init(datapath, _lang.c_str());
-   //cout << (ret==0?"done":"failed") << endl;
-
-//   _tessAPI.SetAccuracyVSpeed(AVS_MOST_ACCURATE); // FIXME: doesn't work?
+	 //TODO
+	 //int ret = _tessAPI.Init(datapath, _lang.c_str(), OEM_TESSERACT_ONLY);
+	 //   _tessAPI.SetAccuracyVSpeed(AVS_MOST_ACCURATE); // FIXME: doesn't work?
    isInitialized = true;
 }
 
@@ -490,6 +490,9 @@ float preprocess_for_ocr(const Mat& in_img, Mat& out_img){
    if (in_img.rows < MIN_HEIGHT){
       scale = MIN_HEIGHT / float(in_img.rows);
       resize(in_img, out_img, Size(in_img.cols*scale,in_img.rows*scale));
+			//TODO
+			//resize(in_img, out_img, Size(in_img.cols*scale,in_img.rows*scale), 0, 0, INTER_CUBIC);
+			//copyMakeBorder (in_img, out_img, 0, (scale-1)*in_img.rows, 0, (scale-1)*in_img.cols, BORDER_REPLICATE);
    }else {
       out_img = in_img;
    }
