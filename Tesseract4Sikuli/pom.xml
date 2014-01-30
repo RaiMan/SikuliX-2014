@@ -19,7 +19,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.sikuli</groupId>
-	<artifactId>Tesseract4Java</artifactId>
+	<artifactId>Tesseract4Sikuli</artifactId>
 	<version>1.1.0</version>
 
 	<dependencies>
@@ -39,4 +39,5 @@
       <version>${project.version}</version>
     </dependency>
 	</dependencies>
+    <name>Tesseract4Sikuli</name>
 </project>

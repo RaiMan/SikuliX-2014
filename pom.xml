@@ -217,7 +217,8 @@
 	</profiles>
 
 	<modules>
-		<module>OpenCV</module>
+		<module>OpenCV4Sikuli</module>
+		<module>Tesseract4Sikuli</module>
 		<module>Libs</module>
 		<module>Natives</module>
 		<module>Basics</module>

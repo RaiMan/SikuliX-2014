@@ -19,11 +19,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.sikuli</groupId>
-  <artifactId>SikuliX-OpenCV</artifactId>
+  <artifactId>OpenCV4Sikuli</artifactId>
   <version>2.4.7</version>
 
   <build>
-    <defaultGoal>clean install</defaultGoal>  
+    <defaultGoal>clean install</defaultGoal>
     <plugins>
       <!-- to suppress sources in any case -->
       <plugin>
@@ -49,4 +49,5 @@
       </plugin>
     </plugins>
   </build>
+    <name>OpenCV4Sikuli</name>
 </project>
