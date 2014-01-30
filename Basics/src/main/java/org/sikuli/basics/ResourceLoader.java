@@ -186,7 +186,7 @@ public class ResourceLoader implements IResourceLoader {
 
       if (userhome != null) {
         if (Settings.isWindows()) {
-          userSikuli = System.getenv("HOMEPATH");
+          userSikuli = System.getenv("USERPROFILE");
           if (userSikuli != null) {
             userSikuli = FileManager.slashify(userSikuli, true) + prefixSikuli;
           }
