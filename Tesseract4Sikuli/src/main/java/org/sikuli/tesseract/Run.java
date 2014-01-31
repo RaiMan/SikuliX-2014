@@ -38,7 +38,7 @@ public class Run
         int bytespp = bpp / 8;
         int bytespl = (int) Math.ceil(image.getWidth() * bpp / 8.0);
 
-        TessAPI.TessBaseAPISetPageSegMode(handle, TessAPI.TessPageSegMode.PSM_SINGLE_LINE);
+        TessAPI.TessBaseAPISetPageSegMode(handle, TessAPI.TessPageSegMode.PSM_AUTO);
         TessAPI.TessBaseAPISetImage(handle, buf, image.getWidth(), image.getHeight(), bytespp, bytespl);
 //        TessAPI.TessBaseAPISetRectangle(handle, 0, 0, 1024, 800);
         Pointer utf8Text = TessAPI.TessBaseAPIGetUTF8Text(handle);
