@@ -24,9 +24,9 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>com.sun.jna</groupId>
+			<groupId>net.java.dev.jna</groupId>
 			<artifactId>jna</artifactId>
-			<version>3.0.9</version>
+			<version>4.0.0</version>
 		</dependency>
 		<dependency>
 			<groupId>net.java.dev.jai-imageio</groupId>
