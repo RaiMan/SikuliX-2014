@@ -395,8 +395,14 @@ public class PreferencesWin extends JFrame {
           btnCancelActionPerformed(e);
         }
       });
-      paneOkCancel.add(_btnCancel);
+      
+      this.addWindowListener(new WindowAdapter() {
+        public void windowClosing(WindowEvent we) {
+          _btnCancel.doClick();
+        }
+      });
 
+      paneOkCancel.add(_btnCancel);
     }
     contentPane.add(paneOkCancel, BorderLayout.SOUTH);
     setSize(600, 475);
