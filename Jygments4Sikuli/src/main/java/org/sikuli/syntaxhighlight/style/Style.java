@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.sikuli.syntaxhighlight.Jygments;
 import org.sikuli.syntaxhighlight.NestedDef;
 import org.sikuli.syntaxhighlight.ResolutionException;
+import org.sikuli.syntaxhighlight.Util;
 import org.sikuli.syntaxhighlight.grammar.TokenType;
 import org.sikuli.syntaxhighlight.style.def.StyleElementDef;
 
@@ -51,23 +52,34 @@ public class Style extends NestedDef<Style>
 		else
 		{
 			// Try contrib package
-			String pack = Jygments.class.getPackage().getName() + ".contrib";
-			name = pack + "." + name;
-			return getByFullName( name );
+			String pack = Jygments.class.getPackage().getName();
+			return getByFullName( pack, "contrib", name );
 		}
 	}
 
+	public static Style getByFullName( String name ) throws ResolutionException {
+    return getByFullName("", "", name);
+  }
+          
 	@SuppressWarnings("unchecked")
-	public static Style getByFullName( String fullName ) throws ResolutionException
+	public static Style getByFullName( String pack, String sub, String name ) throws ResolutionException
 	{
+    String fullname = name;
+    if (!pack.isEmpty()) {
+      if (!sub.isEmpty()) {
+        fullname = pack + "." + sub + "." + fullname;
+      } else {
+        fullname = pack + "." + fullname;
+      }
+    }
 		// Try cache
-		Style style = styles.get( fullName );
+		Style style = styles.get( fullname );
 		if( style != null )
 			return style;
 
 		try
 		{
-			return (Style) Jygments.class.getClassLoader().loadClass( fullName ).newInstance();
+			return (Style) Jygments.class.getClassLoader().loadClass( fullname ).newInstance();
 		}
 		catch( InstantiationException x )
 		{
@@ -79,7 +91,7 @@ public class Style extends NestedDef<Style>
 		{
 		}
 
-		InputStream stream = Jygments.class.getClassLoader().getResourceAsStream( fullName.replace( '.', '/' ) + extJSON );
+		InputStream stream = Util.getJsonFile(pack, sub, name, fullname);
 		if( stream != null )
 		{
 			ObjectMapper objectMapper = new ObjectMapper();
@@ -92,7 +104,7 @@ public class Style extends NestedDef<Style>
 				style.resolve();
 
 				// Cache it
-				Style existing = styles.putIfAbsent( fullName, style );
+				Style existing = styles.putIfAbsent( fullname, style );
 				if( existing != null )
 					style = existing;
 

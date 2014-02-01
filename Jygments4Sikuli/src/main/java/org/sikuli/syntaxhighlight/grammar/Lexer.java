@@ -60,29 +60,41 @@ public class Lexer extends Grammar
 		else
 		{
 			// Try contrib package
-			String pack = Jygments.class.getPackage().getName() + ".contrib";
-			lexer = getByFullName( pack + "." + name );
+			String pack = Jygments.class.getPackage().getName();
+			lexer = getByFullName( pack, "contrib", name );
 			if( lexer == null )
 			{
 				// Try this package
 				pack = Lexer.class.getPackage().getName();
-				lexer = getByFullName( pack + "." + name );
+				lexer = getByFullName( pack, "", name );
 			}
 			return lexer;
 		}
 	}
 
+	public static Lexer getByFullName( String name ) throws ResolutionException {
+    return getByFullName("", "", name);
+  }
+          
 	@SuppressWarnings("unchecked")
-	public static Lexer getByFullName( String fullName ) throws ResolutionException
+	public static Lexer getByFullName( String pack, String sub, String name ) throws ResolutionException
 	{
-		// Try cache
-		Lexer lexer = lexers.get( fullName );
+    String fullname = name;
+    if (!pack.isEmpty()) {
+      if (!sub.isEmpty()) {
+        fullname = pack + "." + sub + "." + fullname;
+      } else {
+        fullname = pack + "." + fullname;
+      }
+    }
+    // Try cache
+		Lexer lexer = lexers.get( fullname );
 		if( lexer != null )
 			return lexer;
 
 		try
 		{
-			return (Lexer) Jygments.class.getClassLoader().loadClass( fullName ).newInstance();
+			return (Lexer) Jygments.class.getClassLoader().loadClass( fullname ).newInstance();
 		}
 		catch( InstantiationException x )
 		{
@@ -94,7 +106,7 @@ public class Lexer extends Grammar
 		{
 		}
 
-		InputStream stream = Util.getJsonFile(fullName);
+		InputStream stream = Util.getJsonFile(pack, sub, name, fullname);
 		if( stream != null )
 		{
 			try
@@ -114,7 +126,7 @@ public class Lexer extends Grammar
 				if( lexer != null )
 				{
 					// Cache it
-					Lexer existing = lexers.putIfAbsent( fullName, lexer );
+					Lexer existing = lexers.putIfAbsent( fullname, lexer );
 					if( existing != null )
 						lexer = existing;
 				}
