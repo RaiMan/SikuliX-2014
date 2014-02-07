@@ -55,8 +55,13 @@ This package `sikulix.jar` comes bundled with the Jython interpreter, thus allow
 
 **Module Jython**
 
-Implements the Jython support for the IDE and for running scripts using Jython as scripting language.<br />
-(contained in packages sikuli-ide.jar and sikuli-script.jar)
+Implements Jython support for the IDE and for running scripts using Jython as scripting language.<br />
+(contained in package sikulix.jar)
+
+**Module JRuby**
+
+Implements JRuby support for the IDE and for running scripts using JRuby as scripting language.<br />
+(optionally contained in package sikulix.jar)
 
 **Module Basics**
 
