@@ -1041,36 +1041,31 @@ public class RunSetup {
   }
 
   protected static void restore() {
-    log1(lvl, "restoring from backup");
     String backup = new File(workDir, "Backup").getAbsolutePath();
     if (new File(backup, localIDE).exists() && !new File(workDir, localIDE).exists()) {
-      log1(lvl, "restoring " + localIDE);
+      log1(lvl, "restoring from backup " + localIDE);
       new File(backup, localIDE).renameTo(new File(workDir, localIDE));
     }
-//    if (new File(backup, localScript).exists() && !new File(workDir, localScript).exists()) {
-//      log1(lvl, "restoring " + localScript);
-//      new File(backup, localScript).renameTo(new File(workDir, localScript));
-//    }
     if (new File(backup, localJava).exists() && !new File(workDir, localJava).exists()) {
-      log1(lvl, "restoring " + localJava);
+      log1(lvl, "restoring from backup " + localJava);
       new File(backup, localJava).renameTo(new File(workDir, localJava));
     }
     if (new File(backup, localTess).exists() && !new File(workDir, localTess).exists()) {
-      log1(lvl, "restoring " + localTess);
+      log1(lvl, "restoring from backup " + localTess);
       new File(backup, localTess).renameTo(new File(workDir, localTess));
     }
     if (new File(backup, localRServer).exists() && !new File(workDir, localRServer).exists()) {
-      log1(lvl, "restoring " + localRServer);
+      log1(lvl, "restoring from backup " + localRServer);
       new File(backup, localRServer).renameTo(new File(workDir, localRServer));
     }
     String folder = "Lib";
     if (new File(backup, folder).exists() && !new File(workDir, folder).exists()) {
-      log1(lvl, "restoring " + "folder " + folder);
+      log1(lvl, "restoring from backup " + "folder " + folder);
       new File(backup, folder).renameTo(new File(workDir, folder));
     }
     folder = "libs";
     if (new File(backup, folder).exists() && !new File(workDir, folder).exists()) {
-      log1(lvl, "restoring " + "folder " + folder);
+      log1(lvl, "restoring from backup " + "folder " + folder);
       new File(backup, folder).renameTo(new File(workDir, folder));
     }
   }
@@ -1178,7 +1173,7 @@ public class RunSetup {
         break;
       case (2):
         om = "Package 2: To support developement in Java or any Java aware scripting language. you get sikulixapi.jar."
-                + "\nYou might want Pachkage 1 (SikuliX) additionally to use the IDE for managing the images or some trials.";
+                + "\nYou might want Package 1 (SikuliX) additionally to use the IDE for managing the images or some trials.";
 //              -------------------------------------------------------------
         m += "\nThe content of this package is stripped down to what is needed to develop in Java"
                 + " or any Java aware scripting language \n(no IDE, no bundled script run support for Jython)";
