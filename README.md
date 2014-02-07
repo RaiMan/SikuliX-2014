@@ -69,7 +69,7 @@ Implements basic utility and helper features used in the top level packages (bas
 
 As a special feature it comprises the `sikuli-setup.jar`, which is run after download to build the wanted Sikuli packages and make them ready-to-use on the specific system (Windows, Mac or Linux).
 
-**Module OpenCV**
+**Module OpenCV4Sikuli**
 
 Sikuli's image search is based on respective features of [OpenCV](http://opencv.org). Starting with version 2.4.6 OpenCV provides a self-contained JNI interface to the OpenCV native libraries, allowing to use OpenCV features directly in Java (and hence making C++ programming obsolete for this).
 
@@ -77,9 +77,17 @@ This module contains a specially configured Java/JNI OpenCV package (built using
 
 With the final availability of version 1.1.0 the implementation of the OpenCV usage will be moved completely to the Java level. Until then the historical implementation in C++ is activated in the standard. The usage of the new implementation (in the new classes ImageFinder and ImageFind) can be switched on optinally for testing and developement.
 
-For Windows and Mac the native packages will again be pre-built and ready-to-use. For Linux there will be advices and scripts available to get the needed features.
+For Windows and Mac the native packages will again be pre-built and ready-to-use. For Linux there will be advices and scripts available to get the needed libraries ready.
 
 For more information on preparation and usage of the new OpenCV Java API [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-and-use-the-new-OpenCV-Java-API)
+
+**Module Tesseract4Sikuli**
+
+This is an adaption of the work [Tess4J](http://tess4j.sourceforge.net) to the needs of this project, to allow the use of relevant Tesseract features directly from the Java level. The implementation is on level Tesseract 3.02 and uses JNA direct mapping to access the native functions in the library libtesseract. 
+
+For Windows and Mac the native packages will again be pre-built and ready-to-use. For Linux there will be advices and scripts available to get the needed needed libraries ready.
+
+For more information on preparation and usage of the new Tesseract Java API [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-and-use-the-new-Tesseract-Java-API)
 
 **Module Natives**
 
