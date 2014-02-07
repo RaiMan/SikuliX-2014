@@ -1,1 +1,2 @@
 org.sikuli.scriptrunner.JythonScriptRunner
+org.sikuli.scriptrunner.JRubyScriptRunner

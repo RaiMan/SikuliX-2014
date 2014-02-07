@@ -224,6 +224,7 @@
 		<module>Natives</module>
 		<module>Basics</module>
 		<module>Jython</module>
+		<module>JRuby</module>
 		<module>API</module>
 		<module>IDE</module>
 		<module>MacApp</module>
