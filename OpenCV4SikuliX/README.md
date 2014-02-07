@@ -1,4 +1,4 @@
-Sikuli OpenCV 2014 (version 1.1.x)
+OpenCV4SikuliX 2014 (version 1.1.x)
 ===
 
 Sikuli's image search is based on respective features of [OpenCV](http://opencv.org). Starting with version 2.4.6 OpenCV provides a self-contained JNI interface to the OpenCV native libraries, allowing to use OpenCV features directly in Java (and hence making C++ programming obsolete for this).

@@ -19,7 +19,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.sikuli</groupId>
-  <artifactId>OpenCV4Sikuli</artifactId>
+  <artifactId>OpenCV4SikuliX</artifactId>
   <version>2.4.7</version>
 
   <build>
@@ -49,5 +49,5 @@
       </plugin>
     </plugins>
   </build>
-    <name>OpenCV4Sikuli</name>
+    <name>OpenCV4SikuliX</name>
 </project>

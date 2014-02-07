@@ -9,18 +9,18 @@ GitHub support: [SourceTree]() (Mac + Windows)<br />
 CI Service: [Travis CI](http://travis-ci.com) <br />
 Doc Service: [Read the Docs](https://readthedocs.org)<br />
 Main WebSite Service: [Weebly](http://www.weebly.com)<br />
-Private complementing Websites: [Host Europe](https://www.hosteurope.de) 
+Private complementing Websites: [Host Europe](https://www.hosteurope.de)
 <hr />
-**SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer) 
+**SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer)
 <hr/>
 
 This Maven multi-module setup contains everything
 -------------
 **to build the ready-to-use packages [available on Launchpad](https://launchpad.net/sikuli)** <br />(this is at least the intention at time of final release end January 2014).
 
-**Forking and/or downloading this repo only makes sense:** 
+**Forking and/or downloading this repo only makes sense:**
  - if you want to get a knowledge about the internals of Sikuli
- - if you want to create your own packages containing Sikuli features 
+ - if you want to create your own packages containing Sikuli features
  - if you want to contribute.
 
 If you "only" want to use the SikuliX features developing in Java or any Java aware scripting language (Jython, JRuby, Scala. Closure, ...) it is strongly recommended to start with sikuli-java.jar (run Sikuli setup with option 4).
@@ -46,7 +46,7 @@ The ready-to-use package `sikulixapi.jar` provides this API for Java programming
 
 Implements a GUI using Java, that allows to edit and run Sikuli scripts (currently only Jython is supported). It is an easy to use IDE focusing on the handling of the screenshots and images used in the typical Sikuli workflows.
 
-The package `sikulix.jar` is the top level package containing all other options (hence the follow up of `sikuli-ide.jar` known from former releases). 
+The package `sikulix.jar` is the top level package containing all other options (hence the follow up of `sikuli-ide.jar` known from former releases).
 
 This package `sikulix.jar` comes bundled with the Jython interpreter, thus allowing to run Sikuli scripts out of the box from the commandline and providing an interactive Sikuli aware Jython shell (hence it includes the functionality known from the `sikuli-script.jar` of former Sikuli(X) releases and is used the same way).
 <hr/>
@@ -69,7 +69,7 @@ Implements basic utility and helper features used in the top level packages (bas
 
 As a special feature it comprises the `sikuli-setup.jar`, which is run after download to build the wanted Sikuli packages and make them ready-to-use on the specific system (Windows, Mac or Linux).
 
-**Module OpenCV4Sikuli**
+**Module OpenCV4SikuliX**
 
 Sikuli's image search is based on respective features of [OpenCV](http://opencv.org). Starting with version 2.4.6 OpenCV provides a self-contained JNI interface to the OpenCV native libraries, allowing to use OpenCV features directly in Java (and hence making C++ programming obsolete for this).
 
@@ -81,9 +81,9 @@ For Windows and Mac the native packages will again be pre-built and ready-to-use
 
 For more information on preparation and usage of the new OpenCV Java API [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-and-use-the-new-OpenCV-Java-API)
 
-**Module Tesseract4Sikuli**
+**Module Tesseract4SikuliX**
 
-This is an adaption of the work [Tess4J](http://tess4j.sourceforge.net) to the needs of this project, to allow the use of relevant Tesseract features directly from the Java level. The implementation is on level Tesseract 3.02 and uses JNA direct mapping to access the native functions in the library libtesseract. 
+This is an adaption of the work [Tess4J](http://tess4j.sourceforge.net) to the needs of this project, to allow the use of relevant Tesseract features directly from the Java level. The implementation is on level Tesseract 3.02 and uses JNA direct mapping to access the native functions in the library libtesseract.
 
 For Windows and Mac the native packages will again be pre-built and ready-to-use. For Linux there will be advices and scripts available to get the needed needed libraries ready.
 

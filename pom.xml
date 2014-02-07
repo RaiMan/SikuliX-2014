@@ -217,9 +217,9 @@
 	</profiles>
 
 	<modules>
-		<module>Jygments4Sikuli</module>
-		<module>OpenCV4Sikuli</module>
-		<module>Tesseract4Sikuli</module>
+		<module>Jygments4SikuliX</module>
+		<module>OpenCV4SikuliX</module>
+		<module>Tesseract4SikuliX</module>
 		<module>Libs</module>
 		<module>Natives</module>
 		<module>Basics</module>
