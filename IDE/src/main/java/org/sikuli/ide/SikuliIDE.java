@@ -1964,6 +1964,7 @@ public class SikuliIDE extends JFrame {
     protected void runPython(File f) throws Exception {
       File path = new File(SikuliIDE.getInstance().getCurrentBundlePath());
       File parent = path.getParentFile();
+      //TODO implement alternative script types
       IScriptRunner srunner = SikuliX.getScriptRunner("jython", null, Settings.getArgs());
       if (srunner == null) {
         Debug.error("Could not load the Jython script runner");

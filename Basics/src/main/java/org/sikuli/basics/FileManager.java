@@ -672,7 +672,7 @@ public class FileManager {
           }
         }
 //TODO should be possible,to have more than one script type in one .sikuli
-        String[] supported = new String[] {"py"};
+        String[] supported = new String[] {"py", "rb"};
         String runType = "py";
         for (File f : content) {
           for (String suffix : supported) {

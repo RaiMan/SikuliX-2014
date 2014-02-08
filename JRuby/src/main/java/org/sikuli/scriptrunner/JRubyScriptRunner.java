@@ -24,13 +24,14 @@ public class JRubyScriptRunner implements IScriptRunner {
 
 	@Override
 	public void init(String[] args) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    //TODO classpath and other path handlings
 	}
 
 	@Override
 	public int runScript(File scriptfile, File imagedirectory, String[] scriptArgs, String[] forIDE) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    log(-1, "not supported yet");
+    return 1;
+  }
 
 	@Override
 	public int runTest(File scriptfile, File imagedirectory, String[] scriptArgs, String[] forIDE) {
@@ -59,18 +60,23 @@ public class JRubyScriptRunner implements IScriptRunner {
 
 	@Override
 	public String[] getFileEndings() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    return new String[]{"rb"};
 	}
 
 	@Override
 	public String hasFileEnding(String ending) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    for (String suf : getFileEndings()) {
+      if (suf.equals(ending.toLowerCase())) {
+        return suf;
+      }
+    }
+    return null;
 	}
 
 	@Override
 	public void close() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-	}
+    //TODO something todo?
+  }
 
 	@Override
 	public boolean doSomethingSpecial(String action, Object[] args) {

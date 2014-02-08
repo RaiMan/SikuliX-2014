@@ -30,6 +30,11 @@
     </dependency>
     <dependency>
       <groupId>org.sikuli</groupId>
+      <artifactId>SikuliX-JRuby</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sikuli</groupId>
       <artifactId>SikuliX-Basics</artifactId>
       <version>${project.version}</version>
     </dependency>
