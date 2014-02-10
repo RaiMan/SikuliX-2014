@@ -4,7 +4,7 @@
  *
  * added RaiMan 2013
  */
-package org.sikuli.jython;
+package org.sikuli.jruby;
 
 /**
  * all methods from/for IDE, that are Python specific
