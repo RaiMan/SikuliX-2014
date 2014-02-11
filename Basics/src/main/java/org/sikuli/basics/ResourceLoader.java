@@ -71,7 +71,7 @@ public class ResourceLoader implements IResourceLoader {
   private static final String libSub = prefixSikuli + suffixLibs;
   private String userSikuli = null;
   private boolean extractingFromJar = false;
-  private boolean itIsJython = false;
+  private static boolean itIsJython = false;
   /**
    * Mac: standard place for native libs
    */
@@ -303,12 +303,15 @@ public class ResourceLoader implements IResourceLoader {
         // check the working directory and its parent
         if (libPath == null && userdir != null) {
           File wd = new File(userdir);
+          File wdpl = null;
           File wdp = new File(userdir).getParentFile();
           File wdl = new File(FileManager.slashify(wd.getAbsolutePath(), true) + libSub);
-          File wdpl = new File(FileManager.slashify(wdp.getAbsolutePath(), true) + libSub);
+          if (wdp != null) {
+              wdpl = new File(FileManager.slashify(wdp.getAbsolutePath(), true) + libSub);
+          }
           if (wdl.exists()) {
             libPath = wdl.getAbsolutePath();
-          } else if (wdpl.exists()) {
+          } else if (wdpl != null && wdpl.exists()) {
             libPath = wdpl.getAbsolutePath();
           }
           log(lvl, "Exists libs folder in working folder or its parent? %s: %s", libPath == null ? "NO" : "YES",
@@ -400,6 +403,7 @@ public class ResourceLoader implements IResourceLoader {
 
     if (itIsJython) {
       export("Lib/sikuli", libsDir.getParent());
+      itIsJython = false;
     }
 
     if (Settings.OcrDataPath == null && System.getProperty("sikuli.DoNotExport") == null) {
@@ -500,7 +504,7 @@ public class ResourceLoader implements IResourceLoader {
     URL currentURL = jarURL;
     int lenOriginalURL = currentURL.toString().length();
 //TODO special export cases from jars not on class path
-    if (res.contains("tessdata")) {
+    if (res.contains("tessdata") && tessURL != null) {
       currentURL = tessURL;
       prefix += currentURL.toString().length() - lenOriginalURL;
     }
