@@ -427,69 +427,69 @@ public class RunSetup {
 
     //<editor-fold defaultstate="collapsed" desc="dispatching external setup run - currently not possible (update)">
     if (!isUpdateSetup && !runningSetup) {
-      String[] cmd = null;
-      File fCmd = null;
-      String runSetupOption = "";
-      if (isRunningUpdate()) {
-        runSetupOption = "updateSetup";
-      } else if (!runningSetup) {
-        runSetupOption = "runningSetup";
-      }
-      if (Settings.isWindows()) {
-        log1(lvl, "Extracting runSetup.cmd");
-        String syspath = System.getenv("PATH");
-        for (String p : syspath.split(";")) {
-          log1(lvl, "syspath: " + p);
-        }
-        loader.export("Commands/windows#runSetup.cmd", workDir);
-        fCmd = new File(workDir, "runSetup.cmd");
-        cmd = new String[]{"cmd", "/C", "start", "cmd", "/K", fCmd.getAbsolutePath(), runSetupOption};
-      } else if (runningUpdate) {
-        log1(lvl, "Extracting runSetup");
-        fCmd = new File(workDir, "runSetup");
-        loader.export("Commands/"
-                + (Settings.isMac() ? "mac#runSetup" : "linux#runSetup"), workDir);
-        loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x", fCmd.getAbsolutePath()});
-        if (Settings.isMac()) {
-          cmd = new String[]{"/bin/sh", fCmd.getAbsolutePath(), runSetupOption};
-        } else {
-          cmd = new String[]{"/bin/bash", fCmd.getAbsolutePath(), runSetupOption};
-        }
-      }
-      if ((Settings.isWindows() || runningUpdate) && (fCmd == null || !fCmd.exists())) {
-        String msg = "Fatal error 002: runSetup(.cmd) could not be exported to " + workDir;
-        log0(-1, msg);
-        popError(msg);
-        System.exit(2);
-      }
-      if (runningUpdate) {
-        localSetup = "sikuli-setup-" + updateVersion.substring(0, 3) + ".jar";
-        FileManager.deleteFileOrFolder(new File(workDir, localSetup).getAbsolutePath());
-        log1(lvl, "Update: trying to dowload the new sikuli-setup.jar version " + updateVersion.substring(0, 3));
-        downloadSetup = "sikuli-setup-" + updateVersion + ".jar";
-        downloadBaseDir = downloadBaseDirBase + updateVersion.substring(0, 3) + "/";
-        if (!download(downloadBaseDir, workDir, downloadSetup,
-                new File(workDir, localSetup).getAbsolutePath())) {
-          restore();
-          popError("Download did not complete successfully.\n"
-                  + "Check the logfile for possible error causes.\n\n"
-                  + "If you think, setup's inline download from Dropbox is blocked somehow on,\n"
-                  + "your system, you might download manually (see respective FAQ)\n"
-                  + "For other reasons, you might simply try to run setup again.");
-          terminate("download not completed successfully");
-        }
-      }
-      if (cmd != null) {
-        if (runningUpdate && !popAsk("Continue Update after download success?"
-                + "\nYES to continue\nNO to terminate")) {
-          userTerminated("after download success");
-        }
-        log1(lvl, "dispatching external setup run");
-        if (runningfromJar) {
-          loader.doSomethingSpecial("runcmd", cmd);
-          System.exit(0);
-        }
-      }
+//      String[] cmd = null;
+//      File fCmd = null;
+//      String runSetupOption = "";
+//      if (isRunningUpdate()) {
+//        runSetupOption = "updateSetup";
+//      } else if (!runningSetup) {
+//        runSetupOption = "runningSetup";
+//      }
+//      if (Settings.isWindows()) {
+//        log1(lvl, "Extracting runSetup.cmd");
+//        String syspath = System.getenv("PATH");
+//        for (String p : syspath.split(";")) {
+//          log1(lvl, "syspath: " + p);
+//        }
+//        loader.export("Commands/windows#runSetup.cmd", workDir);
+//        fCmd = new File(workDir, "runSetup.cmd");
+//        cmd = new String[]{"cmd", "/C", "start", "cmd", "/K", fCmd.getAbsolutePath(), runSetupOption};
+//      } else if (runningUpdate) {
+//        log1(lvl, "Extracting runSetup");
+//        fCmd = new File(workDir, "runSetup");
+//        loader.export("Commands/"
+//                + (Settings.isMac() ? "mac#runSetup" : "linux#runSetup"), workDir);
+//        loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x", fCmd.getAbsolutePath()});
+//        if (Settings.isMac()) {
+//          cmd = new String[]{"/bin/sh", fCmd.getAbsolutePath(), runSetupOption};
+//        } else {
+//          cmd = new String[]{"/bin/bash", fCmd.getAbsolutePath(), runSetupOption};
+//        }
+//      }
+//      if ((Settings.isWindows() || runningUpdate) && (fCmd == null || !fCmd.exists())) {
+//        String msg = "Fatal error 002: runSetup(.cmd) could not be exported to " + workDir;
+//        log0(-1, msg);
+//        popError(msg);
+//        System.exit(2);
+//      }
+//      if (runningUpdate) {
+//        localSetup = "sikuli-setup-" + updateVersion.substring(0, 3) + ".jar";
+//        FileManager.deleteFileOrFolder(new File(workDir, localSetup).getAbsolutePath());
+//        log1(lvl, "Update: trying to dowload the new sikuli-setup.jar version " + updateVersion.substring(0, 3));
+//        downloadSetup = "sikuli-setup-" + updateVersion + ".jar";
+//        downloadBaseDir = downloadBaseDirBase + updateVersion.substring(0, 3) + "/";
+//        if (!download(downloadBaseDir, workDir, downloadSetup,
+//                new File(workDir, localSetup).getAbsolutePath())) {
+//          restore();
+//          popError("Download did not complete successfully.\n"
+//                  + "Check the logfile for possible error causes.\n\n"
+//                  + "If you think, setup's inline download from Dropbox is blocked somehow on,\n"
+//                  + "your system, you might download manually (see respective FAQ)\n"
+//                  + "For other reasons, you might simply try to run setup again.");
+//          terminate("download not completed successfully");
+//        }
+//      }
+//      if (cmd != null) {
+//        if (runningUpdate && !popAsk("Continue Update after download success?"
+//                + "\nYES to continue\nNO to terminate")) {
+//          userTerminated("after download success");
+//        }
+//        log1(lvl, "dispatching external setup run");
+//        if (runningfromJar) {
+//          loader.doSomethingSpecial("runcmd", cmd);
+//          System.exit(0);
+//        }
+//      }
     }
     //</editor-fold>
 
