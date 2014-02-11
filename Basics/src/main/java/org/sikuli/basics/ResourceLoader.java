@@ -398,20 +398,6 @@ public class ResourceLoader implements IResourceLoader {
       }
     }
 
-    //convenience: jawt.dll in libsdir avoids need for java/bin in system path
-    if (Settings.isWindows()) {
-      String lib = "jawt.dll";
-      try {
-        extractResource(javahome + "bin/" + lib, new File(libPath, lib), false);
-      } catch (IOException ex) {
-        log(-1, "Fatal error 107: problem copying " + lib + "\n" + ex.getMessage());
-        RunSetup.popError("Trying to add jawt.dll from Java at\n"
-                + javahome + " to SikuliX libs folder ..."
-                + "... but did not work - see error log");
-        SikuliX.terminate(107);
-      }
-    }
-
     if (itIsJython) {
       export("Lib/sikuli", libsDir.getParent());
     }
@@ -454,6 +440,20 @@ public class ResourceLoader implements IResourceLoader {
           if ((new File(jarPath)).lastModified() > checkFile.lastModified()) {
             log(-1, "libs folder outdated!");
           } else {
+            //convenience: jawt.dll in libsdir avoids need for java/bin in system path
+            if (Settings.isWindows()) {
+              String lib = "jawt.dll";
+              try {
+                extractResource(javahome + "bin/" + lib, new File(libPath, lib), false);
+                log(lvl, "copied to libs: jawt.dll");
+              } catch (IOException ex) {
+                log(-1, "Fatal error 107: problem copying " + lib + "\n" + ex.getMessage());
+                RunSetup.popError("Trying to add jawt.dll from Java at\n"
+                        + javahome + " to SikuliX libs folder ..."
+                        + "... but did not work - see error log");
+                SikuliX.terminate(107);
+              }
+            }
             loadLib(checkLib);
             log(lvl, "Using libs at: " + path);
             dir = new File(path);
