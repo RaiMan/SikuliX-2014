@@ -2498,9 +2498,9 @@ public class Region {
     return name;
   }
 
-  public String onChange(SikuliEventObserver observer) {
+  public String onChange(Object observer) {
     String name = Observer.add(this, (ObserverCallBack) observer, SikuliEvent.Type.CHANGE);
-    getEventManager().addChangeObserver(Settings.ObserveMinChangedPixels, observer, name);
+    getEventManager().addChangeObserver(Settings.ObserveMinChangedPixels, (SikuliEventObserver) observer, name);
     return name;
   }
 

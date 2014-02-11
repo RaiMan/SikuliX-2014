@@ -4,7 +4,7 @@
 
 from org.sikuli.basics import Debug
 from org.sikuli.script import Region as JRegion
-from org.sikuli.script import SikuliEventAdapter
+from org.sikuli.script import ObserverCallBack
 from org.sikuli.script.Constants import *
 import sys
 import inspect
@@ -63,19 +63,18 @@ class Region(JRegion):
 
 # observe(): Special setup for Jython
     def onAppear(self, target, handler):
-        class AnonyObserver(SikuliEventAdapter):
+        class AnonyObserver(ObserverCallBack):
             def targetAppeared(self, event):
                 handler(event)
         return JRegion.onAppear(self, target, AnonyObserver())
     
     def onVanish(self, target, handler):
-        class AnonyObserver(SikuliEventAdapter):
+        class AnonyObserver(ObserverCallBack):
             def targetVanished(self, event):
                 handler(event)
         return JRegion.onVanish(self, target, AnonyObserver())
 
     def onChange(self, arg1, arg2=None):
-
         if isinstance(arg1, int):
             min_size = arg1
             handler = arg2
@@ -85,12 +84,13 @@ class Region(JRegion):
             min_size = None
             handler = arg1
         
-        class AnonyObserver(SikuliEventAdapter):
+        class AnonyObserver(ObserverCallBack):
             def targetChanged(self, event):
                 handler(event)
                 
         if min_size != None:
             return JRegion.onChange(self, min_size, AnonyObserver())
+        print "**** going to JRegion onChange()"
         return JRegion.onChange(self, AnonyObserver())
     
     def observe(self, time=FOREVER, background=False):
