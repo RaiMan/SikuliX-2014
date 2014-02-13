@@ -93,20 +93,13 @@ public class JythonScriptRunner implements IScriptRunner {
           = FileManager.convertStreamToString(SikuliBundleCleaner);
   private static String sikuliLibPath;
 
-  private static String timestampBuilt;
-  private static final String tsb = "##--##Tue Jan 21 15:53:09 CET 2014##--##";
-  static {
-    Debug.log(3, "SikuliX Jython Support Build: %s %s", Settings.getVersionShort(), 
-            SikuliX.makeTimestamp(tsb));
-  }
-
   /**
    * {@inheritDoc}
    */
   @Override
   public void init(String[] param) {
     sikuliLibPath = new File(SikuliX.getJarPath(), "Lib").getAbsolutePath();
-    if (!SikuliX.isRunningFromJar() 
+    if (!SikuliX.isRunningFromJar()
           || !sikuliLibPath.contains("sikuli-ide")
           || !sikuliLibPath.contains("sikuli-script")
         ) {
@@ -195,7 +188,7 @@ public class JythonScriptRunner implements IScriptRunner {
                       + scr + "\"");
             } else {
               log(lvl, "runPython: running script: \n" + scriptPaths[0]);
-              interpreter.exec("sys.argv[0] = \"" + scriptPaths[0] + "\"");              
+              interpreter.exec("sys.argv[0] = \"" + scriptPaths[0] + "\"");
             }
             interpreter.execfile(pyFile.getAbsolutePath());
           }

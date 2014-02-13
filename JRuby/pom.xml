@@ -6,7 +6,7 @@
 	* Copyright 2010-2014, Sikuli.org
 	* Released under the MIT License.
 	*
-	* xxx, RaiMan 2014
+	* Roman S Samarev, RaiMan 2014
 	-->
 
 	<parent>
@@ -25,9 +25,9 @@
 
 	<developers>
 		<developer>
-			<id>xxx</id>
-			<name>yyy</name>
-			<email>zzz@web.de</email>
+			<id>RomanSSamarev</id>
+			<name>Roman S Samarev</name>
+			<email>samarev@acm.org</email>
 		</developer>
 	</developers>
 
