@@ -81,29 +81,14 @@ class Region(JRegion):
         else:
             if (arg2 != None):
                 raise Exception("onChange: Invalid parameters set")
-            min_size = None
+            min_size = 0
             handler = arg1
         
         class AnonyObserver(ObserverCallBack):
             def targetChanged(self, event):
                 handler(event)
                 
-        if min_size != None:
-            return JRegion.onChange(self, min_size, AnonyObserver())
-        print "**** going to JRegion onChange()"
-        return JRegion.onChange(self, AnonyObserver())
+        return self.onChangeJ(min_size, AnonyObserver())
     
     def observe(self, time=FOREVER, background=False):
-        if not background:
-            return JRegion.observe(self, time)
-        else:
-            if(self.getEvtMgr()) == None:
-                Debug.error("Jython Region: observe: nothing to observe")
-                return None
-            else:
-                r = (JRegion(self))
-                e = self.getEvtMgr()
-                e.setRegion(r)
-                r.setEvtMgr(e)
-                r.setObserveScanRate(self.getObserveScanRate())
-                return r.observeInBackground(time)
+        self.observeJ(time, background)

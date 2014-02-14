@@ -23,7 +23,7 @@ public class SikuliEventManager {
   }
   private Region _region;
   private Mat _lastImgMat = null;
-  private org.opencv.core.Mat _lastImageMat = new org.opencv.core.Mat();
+  private org.opencv.core.Mat _lastImageMat = null;
   private Map<Object, State> _state;
   private Map<Object, Long> _wait;
   private Map<Object, Integer> _count;
@@ -292,6 +292,10 @@ public class SikuliEventManager {
 
   private void checkChanges(ScreenImage img) {
     if (Settings.UseImageFinder) { 
+      //TODO hack to hide the native call - should be at the top
+      if (_lastImageMat == null) {
+          _lastImageMat = new org.opencv.core.Mat();
+      }
       if (_lastImageMat.empty()) {
         _lastImageMat = Image.createMat(img.getImage());
         return;
