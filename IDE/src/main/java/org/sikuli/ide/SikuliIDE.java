@@ -880,7 +880,7 @@ public class SikuliIDE extends JFrame {
     }
 
     public EditorPane doNew(ActionEvent ae, int tabIndex) {
-      EditorPane codePane = new EditorPane();
+      EditorPane codePane = new EditorPane(SikuliIDE.getInstance());
       JScrollPane scrPane = new JScrollPane(codePane);
       lineNumberColumn = new EditorLineNumberView(codePane);
       scrPane.setRowHeaderView(lineNumberColumn);

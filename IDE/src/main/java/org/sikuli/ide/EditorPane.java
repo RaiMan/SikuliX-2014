@@ -25,14 +25,12 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
 import org.sikuli.basics.Settings;
-import org.sikuli.idesupport.PythonIndentation;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.IResourceLoader;
 import org.sikuli.basics.IndentationLogic;
 import org.sikuli.script.Location;
 import org.sikuli.basics.SikuliX;
-import org.sikuli.idesupport.JythonIDESupport;
 import org.sikuli.script.Image;
 import org.sikuli.script.ImagePath;
 
@@ -62,9 +60,12 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   private int _caret_last_x = -1;
   private boolean _can_update_caret_last_x = true;
   private SikuliIDEPopUpMenu popMenuImage;
+  private SikuliIDE theIDE;
+  
 
   //<editor-fold defaultstate="collapsed" desc="Initialization">
-  public EditorPane() {
+  public EditorPane(SikuliIDE ide) {
+    theIDE = ide;
     pref = PreferencesUser.getInstance();
     showThumbs = !pref.getPrefMorePlainText();
     initKeyMap();
@@ -96,9 +97,9 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 	public void initBeforeLoad(String scriptType) {
 		//TODO ask for scripttype on new pane
+    String scrType = null;
 		if (scriptType == null || "py".equals(scriptType)) {
-			setEditorKitForContentType("text/python", new EditorKit());
-			setContentType("text/python");
+			scrType = "text/python";
 			_indentationLogic = JythonIDESupport.getIndentationLogic();
 			_indentationLogic.setTabWidth(pref.getTabWidth());
 			pref.addPreferenceChangeListener(new PreferenceChangeListener() {
@@ -110,9 +111,12 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 				}
 			});
 		} else if ("rb".equals(scriptType)) {
-			setEditorKitForContentType("text/ruby", new EditorKit());
-			setContentType("text/ruby");
+			scrType = "text/ruby";
 		}
+    if (scrType != null) {
+      setEditorKitForContentType(scrType, new EditorKit(this));
+      setContentType(scrType);
+    }
 	}
 
   public SikuliIDEPopUpMenu getPopMenuImage() {
