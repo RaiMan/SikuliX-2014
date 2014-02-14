@@ -5,7 +5,7 @@
  * added karlmicha 2011
  * modified RaiMan 2013
  */
-package org.sikuli.jython;
+package org.sikuli.idesupport;
 
 import java.util.Stack;
 import java.util.regex.Matcher;

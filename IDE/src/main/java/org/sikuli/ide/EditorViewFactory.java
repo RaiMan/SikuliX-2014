@@ -20,6 +20,8 @@ import org.sikuli.basics.Debug;
 
 public class EditorViewFactory implements ViewFactory {
 
+	private EditorPane pane;
+
   @Override
   public View create(Element elem) {
     String kind = elem.getName();
@@ -40,6 +42,10 @@ public class EditorViewFactory implements ViewFactory {
     // default to text display
     return new LabelView(elem);
   }
+
+	public void setPane(EditorPane p) {
+		pane = p;
+	}
 }
 
 //<editor-fold defaultstate="collapsed" desc="Section">

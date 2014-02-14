@@ -5,7 +5,7 @@
  * added karlmicha 2011
  * modified RaiMan 2013
  */
-package org.sikuli.jython;
+package org.sikuli.idesupport;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,6 +15,7 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.IndentationLogic;
 
 /**
  * Implements the logic for giving hints about the (correct) indentation of new
@@ -56,7 +57,7 @@ import org.sikuli.basics.Debug;
  * <li>long strings
  * </ul>
  */
-public class PythonIndentation {
+public class PythonIndentation implements IndentationLogic {
 
    public static final int PARENTHESIS_INDENTATION_TABSTOPS = 2;
    public static final int NESTED_PARENTHESIS_INDENTATION_TABSTOPS = 1;
@@ -217,6 +218,7 @@ public class PythonIndentation {
     * @param tabwidth
     *           the number of whitespace columns that equals a single tab
     */
+	 @Override
    public void setTabWidth(int tabwidth){
       pythonState.setTabSize(tabwidth);
    }
