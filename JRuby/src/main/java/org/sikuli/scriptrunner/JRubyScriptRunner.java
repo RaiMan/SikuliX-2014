@@ -2,7 +2,7 @@
  * Copyright 2010-2014, Sikuli.org
  * Released under the MIT License.
  *
- * Roman S Samarev 2014
+ * WhoIsWho 2014
  */
 package org.sikuli.scriptrunner;
 
@@ -33,6 +33,7 @@ import org.jruby.javasupport.JavaEmbedUtils.EvalUnit;
 import org.jruby.CompatVersion;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.RubyInstanceConfig.CompileMode;
+import org.jruby.embed.PathType;
 
 public class JRubyScriptRunner implements IScriptRunner {
 
@@ -61,13 +62,10 @@ public class JRubyScriptRunner implements IScriptRunner {
 	 */
 	private final static String SCRIPT_HEADER
 					= "# coding: utf-8\n"
-					+ "require 'java'\n"
-					+ "require 'rukuli'\n"
 					+ "require 'sikulix'\n"
-					+ "Rukuli::Config.run do |config|\n"
-					+ "  config.image_path = SIKULI_IMAGE_PATH + '/'\n"
-					+ "  config.logging = true\n"
-					+ "end\n";
+					+ "include SikuliX4Ruby\n"
+					+ "SikuliX4Ruby::image_path = SIKULI_IMAGE_PATH + '/'\n"
+					+ "SikuliX4Ruby::logging = true\n";
 
 	private static ArrayList<String> codeBefore = null;
 	private static ArrayList<String> codeAfter = null;
@@ -87,6 +85,9 @@ public class JRubyScriptRunner implements IScriptRunner {
 	private static final int PY_UNKNOWN = -1;
 
 	private static String sikuliLibPath;
+
+	private static String timestampBuilt;
+	private static final String tsb = "##--##Fri Jan  28 13:06:44 MSD 2014##--##";
 
 	@Override
 	public void init(String[] args) {
@@ -320,7 +321,7 @@ public class JRubyScriptRunner implements IScriptRunner {
             //org.jruby.parser.ParserSyntaxException
 			//(SyntaxError) /tmp/sikuli-3213678404470696048.rb:2: syntax error, unexpected tRCURLY
 
-			Pattern pLineS = Pattern.compile("(?<=:)(.*):(.*)");
+			Pattern pLineS = Pattern.compile("(?<=:)(\\d+):(.*)");
 			java.util.regex.Matcher mLine = pLineS.matcher(err);
 			if (mLine.find()) {
 				log(lvl + 2, "SyntaxError error line: " + mLine.group(1));
