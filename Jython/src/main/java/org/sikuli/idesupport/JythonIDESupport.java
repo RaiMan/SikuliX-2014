@@ -14,7 +14,13 @@ import org.sikuli.basics.IndentationLogic;
  */
 public class JythonIDESupport implements IDESupport {
 
-	public static IndentationLogic getIndentationLogic() {
+	@Override
+	public String[] getEndings() {
+		return new String [] {"py"};
+	}
+
+	@Override
+	public IndentationLogic getIndentationLogic() {
 		return new PythonIndentation();
 	}
 }

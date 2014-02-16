@@ -98,6 +98,7 @@ public class PythonIndentation implements IndentationLogic {
       wasColonAdded = false;
    }
 
+	 @Override
    public void checkIndent(String leadingWhitespace, int line) {
      if(leadingWhitespace.contains("\t") && leadingWhitespace.contains(" ")) {
 
@@ -114,6 +115,7 @@ public class PythonIndentation implements IndentationLogic {
      Debug.error("PythonIndentation: indent not consistent with tab settings in line " + line);
    }
 
+	 @Override
    public int checkDedent(String leadingWhitespace, int line) {
      int lws = leadingWhitespace.length();
      int tws = PreferencesUser.getInstance().getTabWhitespace().length();
@@ -138,8 +140,9 @@ public class PythonIndentation implements IndentationLogic {
     */
    public boolean endsLastLogicalLineWithColon(){
       // not thread safe!
-      if( wasColonAdded )
-         return true;
+      if( wasColonAdded ) {
+				return true;
+			}
       return endsWithColonMatcher.reset(
             pythonState.getLastLogicalLineStructure()).matches();
    }
@@ -152,8 +155,9 @@ public class PythonIndentation implements IndentationLogic {
     * @return true if the last logical line logically contains a colon
     */
    public boolean hasLastLogicalLineColon(){
-      if( wasColonAdded )
-         return true;
+      if( wasColonAdded ) {
+				return true;
+			}
       return pythonState.getLastLogicalLineStructure().contains(":");
    }
 
@@ -237,6 +241,7 @@ public class PythonIndentation implements IndentationLogic {
     * Resets the state of this object. The new state will be as if no text had
     * been fed to this object.
     */
+	 @Override
    public void reset(){
       pythonState.reset();
    }
@@ -250,6 +255,7 @@ public class PythonIndentation implements IndentationLogic {
     * @param text
     *           a chunk of code
     */
+	 @Override
    public void addText(String text){
       wasColonAdded = false;
       pythonState.update(text);
@@ -270,6 +276,7 @@ public class PythonIndentation implements IndentationLogic {
     * fed to this object must call this method to notify this object that a
     * colon was added. This affects the hints for line indentation.
     */
+	 @Override
    public void setLastLineEndsWithColon(){
       wasColonAdded = true;
    }
@@ -281,17 +288,20 @@ public class PythonIndentation implements IndentationLogic {
     *
     * @return the number of columns by which the indentation should be changed
     */
+	 @Override
    public int shouldChangeLastLineIndentation(){
       // only change indentation of the first physical line of a logical line
       if( pythonState.getPhysicalLineNumber() > pythonState
-            .getLogicalLinePhysicalStartLineNumber() )
-         return 0;
+            .getLogicalLinePhysicalStartLineNumber() ) {
+				return 0;
+			}
       // if this is not the first logical line and the indentation level is
       // already less than the previous logical line, do not unindent further
       if( pythonState.getLogicalLineNumber() > 0
             && pythonState.getLastLogicalLineIndentation() < pythonState
-                  .getPrevLogicalLineIndentation() )
-         return 0;
+                  .getPrevLogicalLineIndentation() ) {
+				return 0;
+			}
       int change;
       if( isUnindentLastLineStatement() ){
          change = -pythonState.getTabSize();
@@ -314,9 +324,11 @@ public class PythonIndentation implements IndentationLogic {
     *
     * @return the number of columns by which the indentation should be changed
     */
+	 @Override
    public int shouldChangeNextLineIndentation(){
-      if( !pythonState.isPhysicalLineComplete() )
-         return 0;
+      if( !pythonState.isPhysicalLineComplete() ) {
+				return 0;
+			}
       int logicalIndentation = pythonState.getLastLogicalLineIndentation();
       int physicalIndentation = pythonState.getLastPhysicalLineIndentation();
       int change = logicalIndentation - physicalIndentation;
@@ -413,15 +425,18 @@ public class PythonIndentation implements IndentationLogic {
     *
     * @return true if the last logical line should end with a colon but does not
     */
+	 @Override
    public boolean shouldAddColon(){
-      if( !pythonState.isLogicalLineComplete() )
-         return false;
+      if( !pythonState.isLogicalLineComplete() ) {
+				return false;
+			}
       return isLastLogicalLineCompoundHeaderStatement()
             && !hasLastLogicalLineColon();
    }
 
    //<editor-fold defaultstate="collapsed" desc="support for detecting whitespace">
-   public static String getLeadingWhitespace(String text) {
+	 @Override
+   public String getLeadingWhitespace(String text) {
      int len = text.length();
      int count = 0;
      while (count < len && isWhitespace(text.charAt(count))) {
@@ -430,7 +445,8 @@ public class PythonIndentation implements IndentationLogic {
      return text.substring(0, count);
    }
 
-   public static String getLeadingWhitespace(StyledDocument doc, int head, int len) throws BadLocationException {
+	 @Override
+   public String getLeadingWhitespace(StyledDocument doc, int head, int len) throws BadLocationException {
      String ret = "";
      int pos = head;
      while (pos < head + len) {
@@ -450,7 +466,8 @@ public class PythonIndentation implements IndentationLogic {
      return ret;
    }
 
-   public static int atEndOfLine(StyledDocument doc, int cpos, int start, String s, int sLen) {
+	 @Override
+   public int atEndOfLine(StyledDocument doc, int cpos, int start, String s, int sLen) {
      for (int i = cpos - start; i < sLen; i++) {
        if (doc.getCharacterElement(cpos).getName().equals(StyleConstants.ComponentElementName) || !isWhitespace(s.charAt(i))) {
          return i + start;

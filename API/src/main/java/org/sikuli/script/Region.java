@@ -155,7 +155,7 @@ public class Region {
   }
 
   //<editor-fold defaultstate="collapsed" desc="OFF: Specials for scripting environment">
-  /* 
+  /*
    public Object __enter__() {
    Debug.error("Region: with(__enter__): Trying to make it a Jython Region for with: usage");
    IScriptRunner runner = Settings.getScriptRunner("jython", null, null);
@@ -2472,12 +2472,28 @@ public class Region {
   }
 
   public <PSI> String onAppear(PSI target, Object observer) {
+		return onAppearDo(target, observer);
+	}
+
+  public <PSI> String onAppearJ(PSI target, Object observer) {
+		return onAppearDo(target, observer);
+	}
+
+  public <PSI> String onAppearDo(PSI target, Object observer) {
     String name = Observer.add(this, (ObserverCallBack) observer, SikuliEvent.Type.APPEAR);
     getEventManager().addAppearObserver(target, (SikuliEventObserver) observer, name);
     return name;
   }
 
   public <PSI> String onVanish(PSI target, Object observer) {
+		return onVanishDo(target, observer);
+	}
+
+  public <PSI> String onVanishJ(PSI target, Object observer) {
+		return onVanishDo(target, observer);
+	}
+
+  public <PSI> String onVanishDo(PSI target, Object observer) {
     String name = Observer.add(this, (ObserverCallBack) observer, SikuliEvent.Type.VANISH);
     getEventManager().addVanishObserver(target, (SikuliEventObserver) observer, name);
     return name;
@@ -2491,12 +2507,6 @@ public class Region {
     return onChangeDo(rows, observer);
   }
 
-  public String onChangeDo(int threshold, Object observer) {
-    String name = Observer.add(this, (ObserverCallBack) observer, SikuliEvent.Type.CHANGE);
-    getEventManager().addChangeObserver(threshold, (SikuliEventObserver) observer, name);
-    return name;
-  }
-
   public String onChangeJ(int minSize, Object observer) {
     if (minSize == 0) {
       return onChangeDo(Settings.ObserveMinChangedPixels, observer);
@@ -2505,12 +2515,10 @@ public class Region {
     }
   }
 
-  public void observeJ(double secs, boolean bg) {
-    if (bg) {
-      observeInBackground(secs);
-    } else {
-      observeDo(secs);
-    }
+  public String onChangeDo(int threshold, Object observer) {
+    String name = Observer.add(this, (ObserverCallBack) observer, SikuliEvent.Type.CHANGE);
+    getEventManager().addChangeObserver(threshold, (SikuliEventObserver) observer, name);
+    return name;
   }
 
   public void observe() {
@@ -2519,6 +2527,14 @@ public class Region {
 
   public boolean observe(double secs) {
     return observeDo(secs);
+  }
+
+  public void observeJ(double secs, boolean bg) {
+    if (bg) {
+      observeInBackground(secs);
+    } else {
+      observeDo(secs);
+    }
   }
 
   public boolean observeDo(double secs) {

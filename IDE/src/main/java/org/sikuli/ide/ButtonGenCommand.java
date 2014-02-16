@@ -156,7 +156,7 @@ public class ButtonGenCommand extends JButton implements ActionListener,
       }
     }
     pane.insertString(")");
-    (new EditorKit.InsertBreakAction()).insertBreak(pane);
+    (new SikuliEditorKit.InsertBreakAction()).insertBreak(pane);
     if (endPos >= 0) {
       pane.requestFocus();
       pane.setCaretPosition(endPos);

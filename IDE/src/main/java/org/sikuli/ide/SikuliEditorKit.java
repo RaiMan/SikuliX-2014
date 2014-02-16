@@ -13,17 +13,16 @@ import java.io.*;
 import java.util.Map;
 import javax.swing.*;
 import javax.swing.text.*;
-import org.sikuli.idesupport.PythonIndentation;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.IndentationLogic;
 
-public class EditorKit extends StyledEditorKit {
+public class SikuliEditorKit extends StyledEditorKit {
 
 	private static final String me = "EditorKit: ";
 	private ViewFactory _viewFactory;
 	private EditorPane pane;
 
-	public EditorKit(EditorPane p) {
+	public SikuliEditorKit(EditorPane p) {
 		_viewFactory = new EditorViewFactory();
 		pane = p;
 	}
@@ -175,7 +174,7 @@ public class EditorKit extends StyledEditorKit {
 			int i = segLine.offset;
 			end = i + segLine.count;
 			if (end > i) {
-				String leadingWS = PythonIndentation.getLeadingWhitespace(doc, start, end - start);
+				String leadingWS = indentationLogic.getLeadingWhitespace(doc, start, end - start);
 				int toRemove = indentationLogic.checkDedent(leadingWS, line + 1);
 				doc.remove(start, toRemove);
 			}
@@ -229,7 +228,7 @@ public class EditorKit extends StyledEditorKit {
 				String s = doc.getText(start, len);
 				StringBuilder sb = new StringBuilder("\n");
 
-				String leadingWS = PythonIndentation.getLeadingWhitespace(doc, start, caretPos - start);
+				String leadingWS = indentationLogic.getLeadingWhitespace(doc, start, caretPos - start);
 				sb.append(leadingWS);
 //TODO better control over automatic indentation
 				indentationLogic.checkIndent(leadingWS, lineNum + 1);
@@ -237,7 +236,7 @@ public class EditorKit extends StyledEditorKit {
 				// If there is only whitespace between the caret and
 				// the EOL, pressing Enter auto-indents the new line to
 				// the same place as the previous line.
-				int nonWhitespacePos = PythonIndentation.atEndOfLine(doc, caretPos, start, s, len);
+				int nonWhitespacePos = indentationLogic.atEndOfLine(doc, caretPos, start, s, len);
 				if (nonWhitespacePos == -1) {
 					if (leadingWS.length() == len) {
 						// If the line was nothing but whitespace, select it

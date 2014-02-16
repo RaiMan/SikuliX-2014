@@ -5,6 +5,9 @@
  */
 package org.sikuli.basics;
 
+import javax.swing.text.BadLocationException;
+import javax.swing.text.StyledDocument;
+
 /**
  *
  * @author rhocke
@@ -28,4 +31,11 @@ public interface IndentationLogic {
 	public void reset();
 
 	public void addText(String text);
+
+  public String getLeadingWhitespace(String text) ;
+
+  public String getLeadingWhitespace(StyledDocument doc, int head, int len) throws BadLocationException;
+
+  public int atEndOfLine(StyledDocument doc, int cpos, int start, String s, int sLen);
+
 }

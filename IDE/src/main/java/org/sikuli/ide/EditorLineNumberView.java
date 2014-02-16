@@ -205,7 +205,7 @@ public class EditorLineNumberView extends JComponent implements MouseListener {
         r = text.modelToView(l.getEndOffset() - 1);
       }
       h = (r.y - lastPos) + r.height;
-    } catch (BadLocationException ble) {
+    } catch (Exception ex) {
     }
     return h;
   }

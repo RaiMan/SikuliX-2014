@@ -12,7 +12,7 @@ import inspect
 DEBUG=False
 
 class Region(JRegion):
-    
+
     # support for with:
     # override all global sikuli functions by this region's methods.
     def __enter__(self):
@@ -39,7 +39,7 @@ class Region(JRegion):
         dict = sys.modules['__main__'].__dict__
         for name in self._global_funcs.keys():
             dict[name] = self._global_funcs[name]
-            if DEBUG and name == 'checkWith': 
+            if DEBUG and name == 'checkWith':
                 print "with restore: %s"%(str(dict[name])[1:])
         self._global_funcs = None
 
@@ -62,17 +62,18 @@ class Region(JRegion):
         return JRegion.text(self).encode("utf8")
 
 # observe(): Special setup for Jython
+# assures, that in any case the same region object is used
     def onAppear(self, target, handler):
         class AnonyObserver(ObserverCallBack):
             def targetAppeared(self, event):
                 handler(event)
-        return JRegion.onAppear(self, target, AnonyObserver())
-    
+        return self.onAppearJ(self, target, AnonyObserver())
+
     def onVanish(self, target, handler):
         class AnonyObserver(ObserverCallBack):
             def targetVanished(self, event):
                 handler(event)
-        return JRegion.onVanish(self, target, AnonyObserver())
+        return self.onVanishJ(self, target, AnonyObserver())
 
     def onChange(self, arg1, arg2=None):
         if isinstance(arg1, int):
@@ -83,12 +84,10 @@ class Region(JRegion):
                 raise Exception("onChange: Invalid parameters set")
             min_size = 0
             handler = arg1
-        
         class AnonyObserver(ObserverCallBack):
             def targetChanged(self, event):
                 handler(event)
-                
         return self.onChangeJ(min_size, AnonyObserver())
-    
+
     def observe(self, time=FOREVER, background=False):
         self.observeJ(time, background)
