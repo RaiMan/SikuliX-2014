@@ -1955,7 +1955,7 @@ public class SikuliIDE extends JFrame {
 				public void run() {
 					EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
 					File tmpFile;
-					tmpFile = FileManager.createTempFile("py");
+					tmpFile = FileManager.createTempFile(Settings.EndingTypes.get(codePane.getSikuliContentType()));
 					if (tmpFile == null) {
 						return;
 					}
@@ -1968,7 +1968,7 @@ public class SikuliIDE extends JFrame {
 						//SikuliIDE.getInstance().setVisible(false);
 						_console.clear();
 						resetErrorMark();
-						runPython(tmpFile);
+						runScript(tmpFile, codePane);
 					} catch (Exception e) {
 					} finally {
 						SikuliIDE.getInstance().setIsRunningScript(false);
@@ -1981,19 +1981,23 @@ public class SikuliIDE extends JFrame {
 			_runningThread.start();
 		}
 
-		protected void runPython(File f) throws Exception {
+		private void runScript(File sfile, EditorPane pane) throws Exception {
 			File path = new File(SikuliIDE.getInstance().getCurrentBundlePath());
 			File parent = path.getParentFile();
 			//TODO implement alternative script types
-			IScriptRunner srunner = SikuliX.getScriptRunner("jython", null, Settings.getArgs());
+			String runnerType = null;
+			String cType = pane.getContentType();
+			runnerType = cType.equals(Settings.CPYTHON) ? Settings.RPYTHON : Settings.RRUBY;
+			IScriptRunner srunner = SikuliX.getScriptRunner(
+							runnerType, null, Settings.getArgs());
 			if (srunner == null) {
-				Debug.error("Could not load the Jython script runner");
+				Debug.error("Could not load a script runner for: %s (%s)", cType, runnerType);
 				return;
 			}
-			addPythonCode(srunner);
+			addScriptCode(srunner);
 			try {
 				ImagePath.resetBundlePath(path.getAbsolutePath());
-				int ret = srunner.runScript(f, path,
+				int ret = srunner.runScript(sfile, path,
 								Settings.getArgs(),
 								new String[]{parent.getAbsolutePath(),
 									_mainPane.getTitleAt(_mainPane.getSelectedIndex())});
@@ -2005,7 +2009,7 @@ public class SikuliIDE extends JFrame {
 			}
 		}
 
-		protected void addPythonCode(IScriptRunner srunner) {
+		protected void addScriptCode(IScriptRunner srunner) {
 		}
 
 		public void stopRunning() {
@@ -2055,7 +2059,7 @@ public class SikuliIDE extends JFrame {
 		}
 
 		@Override
-		protected void addPythonCode(IScriptRunner srunner) {
+		protected void addScriptCode(IScriptRunner srunner) {
 			srunner.execBefore(null);
 			srunner.execBefore(new String[]{"setShowActions(True)"});
 		}
