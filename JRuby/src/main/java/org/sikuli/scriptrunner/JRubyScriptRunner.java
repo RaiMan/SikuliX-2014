@@ -63,9 +63,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 	private final static String SCRIPT_HEADER
 					= "# coding: utf-8\n"
 					+ "require 'sikulix'\n"
-					+ "include SikuliX4Ruby\n"
-					+ "SikuliX4Ruby::image_path = SIKULI_IMAGE_PATH + '/'\n"
-					+ "SikuliX4Ruby::logging = true\n";
+					+ "include SikuliX4Ruby\n";
 
 	private static ArrayList<String> codeBefore = null;
 	private static ArrayList<String> codeAfter = null;
@@ -93,20 +91,6 @@ public class JRubyScriptRunner implements IScriptRunner {
 	public void init(String[] args) {
 		//TODO classpath and other path handlings
 		sikuliLibPath = new File(SikuliX.getJarPath(), "Lib").getAbsolutePath();
-		if (!SikuliX.isRunningFromJar()
-						|| !sikuliLibPath.contains("sikuli-ide")
-						|| !sikuliLibPath.contains("sikuli-script")) {
-			if (System.getProperty("ruby.path") == null) {
-				System.setProperty("ruby.path", sikuliLibPath);
-				log(lvl, "init: python.path hack: \n" + System.getProperty("ruby.path"));
-			} else {
-				String currentPath = System.getProperty("ruby.path");
-				if (!FileManager.pathEquals(currentPath, sikuliLibPath)) {
-					log(-1, "init: Not running from jar and Ruby path not empty: Sikuli might not work!\n"
-									+ "Current python.path: " + currentPath);
-				}
-			}
-		}
 	}
 
 	@Override
@@ -453,22 +437,22 @@ public class JRubyScriptRunner implements IScriptRunner {
 		if (syspaths.length > 0 && syspaths[0].toUpperCase().equals(COMPILE_ONLY)) {
 			return;
 		}
-		List<String> jypath = interpreter.getLoadPaths();
-		if (!FileManager.pathEquals((String) jypath.get(0), sikuliLibPath)) {
+		List<String> path = interpreter.getLoadPaths();
+		if (!FileManager.pathEquals((String) path.get(0), sikuliLibPath)) {
 			log(lvl, "executeScriptHeader: adding SikuliX Lib path to sys.path\n" + sikuliLibPath);
-			int jypathLength = jypath.size();
-			String[] jypathNew = new String[jypathLength + 1];
-			jypathNew[0] = sikuliLibPath;
-			for (int i = 0; i < jypathLength; i++) {
-				log(lvl + 1, "executeScriptHeader: before: %d: %s", i, jypath.get(i));
-				jypathNew[i + 1] = (String) jypath.get(i);
+			int pathLength = path.size();
+			String[] pathNew = new String[pathLength + 1];
+			pathNew[0] = sikuliLibPath;
+			for (int i = 0; i < pathLength; i++) {
+				log(lvl + 1, "executeScriptHeader: before: %d: %s", i, path.get(i));
+				pathNew[i + 1] = (String) path.get(i);
 			}
-			for (int i = 0; i < jypathLength; i++) {
-				jypath.set(i, jypathNew[i]);
+			for (int i = 0; i < pathLength; i++) {
+				path.set(i, pathNew[i]);
 			}
-			jypath.add(jypathNew[jypathNew.length - 1]);
-			for (int i = 0; i < jypathNew.length; i++) {
-				log(lvl + 1, "executeScriptHeader: after: %d: %s", i, jypath.get(i));
+			path.add(pathNew[pathNew.length - 1]);
+			for (int i = 0; i < pathNew.length; i++) {
+				log(lvl + 1, "executeScriptHeader: after: %d: %s", i, path.get(i));
 			}
 		}
 		if (savedpathlen == 0) {
@@ -479,12 +463,12 @@ public class JRubyScriptRunner implements IScriptRunner {
 			interpreter.getLoadPaths().remove(savedpathlen);
 		}
 		log(lvl + 1, "executeScriptHeader: at entry: path:");
-		for (Object p : interpreter.getLoadPaths()) {
-			log(lvl + 1, p.toString());
+		for (String p : interpreter.getLoadPaths()) {
+			log(lvl + 1, p);
 		}
 		log(lvl + 1, "executeScriptHeader: at entry: --- end ---");
 		for (String syspath : syspaths) {
-			jypath.add(FileManager.slashify(syspath, false));
+			path.add(FileManager.slashify(syspath, false));
 		}
 
 		interpreter.runScriptlet(SCRIPT_HEADER);
