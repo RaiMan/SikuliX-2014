@@ -54,7 +54,7 @@ public class NativeLayerForMac implements NativeLayer, AboutHandler, Preferences
 			t.start();
 		} else if (fname.endsWith(".sikuli")) {
 			SikuliIDE ide = SikuliIDE.getInstance(null);
-			ide.loadFile(fname);
+			ide.restoreScriptFromSession(fname);
 		}
 	}
 

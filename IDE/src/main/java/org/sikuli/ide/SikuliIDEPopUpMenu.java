@@ -224,9 +224,13 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 			}
 			if (error.isEmpty()) {
 				cp.reInit(targetEnding);
-				cp.setText(String.format(Settings.TypeCommentDefault, cp.getSikuliContentType()));
+//				cp.setText(String.format(Settings.TypeCommentDefault, cp.getSikuliContentType()));
+				cp.setText("");
 			}
-			Debug.log(3, "doSetType: completed " + error);
+			String msg = "doSetType: completed " + error + " (" + targetType + ")";
+			SikuliIDE.getStatusbar().setMessage(msg);
+			SikuliIDE.getStatusbar().setCurrentContentType(targetType);
+			Debug.log(3, msg);
 		}
 
     public void doMoveTab(ActionEvent ae) throws NoSuchMethodException {
@@ -234,16 +238,16 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       if (getMenuText(0).contains("Insert")) {
         log(lvl, "doMoveTab: insert");
         doLoad(refTab.getSelectedIndex()+1);
-        setMenuText(0, "Move Tab");
-        setMenuText(3, "Open left");
+        setMenuText(2, "Move Tab");
+        setMenuText(5, "Open left");
         return;
       }
       refTab.resetLastClosed();
       boolean success = refTab.fireCloseTab(mouseTrigger, refTab.getSelectedIndex());
       log(lvl, "doMoveTab: success = %s", success);
       if (success && refTab.getLastClosed() != null) {
-        setMenuText(0, "Insert Tab");
-        setMenuText(3, "Insert Left");
+        setMenuText(2, "Insert Tab");
+        setMenuText(5, "Insert Left");
       }
     }
 
@@ -251,7 +255,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       log(lvl, "doDuplicate: entered");
       fireIDEFileMenu("SAVE");
       fireIDEFileMenu("SAVE_AS");
-      setMenuText(3, "Insert left");
+      setMenuText(5, "Insert left");
       doOpenLeft(null);
     }
 
@@ -269,11 +273,11 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 
     public void doOpenLeft(ActionEvent ae) throws NoSuchMethodException {
       log(lvl, "doOpenLeft: entered");
-      if (getMenuText(3).contains("Insert")) {
+      if (getMenuText(5).contains("Insert")) {
         log(lvl, "doMoveTab: insert left");
         doLoad(refTab.getSelectedIndex());
-        setMenuText(0, "Move Tab");
-        setMenuText(3, "Open left");
+        setMenuText(2, "Move Tab");
+        setMenuText(5, "Open left");
         return;
       }
       refTab.resetLastClosed();

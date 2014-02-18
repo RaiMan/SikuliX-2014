@@ -17,6 +17,7 @@ class SikuliIDEStatusBar extends JPanel {
 
   private JLabel _lblMsg;
   private JLabel _lblCaretPos;
+	private String currentContentType = "???";
 
   public SikuliIDEStatusBar() {
     setLayout(new BorderLayout());
@@ -27,6 +28,7 @@ class SikuliIDEStatusBar extends JPanel {
     _lblMsg = new JLabel();
     _lblMsg.setPreferredSize(new Dimension(400, 20));
     _lblMsg.setUI(new EmphasizedLabelUI());
+		_lblMsg.setFont(new Font("Monaco", Font.TRUETYPE_FONT, 11));
     _lblCaretPos = new JLabel();
     _lblCaretPos.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 15));
     _lblCaretPos.setUI(new EmphasizedLabelUI());
@@ -38,13 +40,18 @@ class SikuliIDEStatusBar extends JPanel {
 //      add(rightPanel, BorderLayout.EAST);
   }
 
+	public void setCurrentContentType(String currentContentType) {
+		this.currentContentType = currentContentType;
+		repaint();
+	}
+
   public void setCaretPosition(int row, int col) {
-    _lblCaretPos.setText(
-            SikuliIDEI18N._I("statusLineColumn", row, col));
+    _lblCaretPos.setText(String.format("(%s) | R: %d | C: %d", currentContentType, row, col));
   }
 
   public void setMessage(String text) {
     _lblMsg.setText("   " + text);
+		repaint();
   }
 
   public void resetMessage() {

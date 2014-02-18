@@ -139,7 +139,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		}
 
 		if (paneIsEmpty || reInit) {
-			this.setText(String.format(Settings.TypeCommentDefault, getSikuliContentType()));
+//			this.setText(String.format(Settings.TypeCommentDefault, getSikuliContentType()));
+			this.setText("");
 		}
 
 		Debug.log(3, "InitTab: %s :--: %s", getContentType(), getEditorKit());
@@ -330,7 +331,9 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		if (PreferencesUser.getInstance().getAtSaveMakeHTML()) {
 			convertSrcToHtml(getSrcBundle());
 		} else {
-			(new File(_editingFile.getAbsolutePath().replaceFirst("py", "html"))).delete();
+			String snameDir = new File(_editingFile.getAbsolutePath()).getParentFile().getName();
+			String sname = snameDir.replace(".sikuli", "") + ".html";
+			(new File(snameDir, sname)).delete();
 		}
 //TODO bundle image clean in Java
 		if (Settings.CPYTHON.equals(getSikuliContentType()) && PreferencesUser.getInstance().getAtSaveCleanBundle()) {

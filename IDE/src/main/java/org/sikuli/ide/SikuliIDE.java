@@ -485,7 +485,7 @@ public class SikuliIDE extends JFrame {
 			Debug.log(3, "restore session at %d: " + filenames[i], restoredScripts + 1);
 			File f = new File(filenames[i]);
 			if (f.exists()) {
-				if (loadFile(filenames[i])) {
+				if (restoreScriptFromSession(filenames[i])) {
 					restoredScripts += 1;
 				}
 			}
@@ -500,7 +500,7 @@ public class SikuliIDE extends JFrame {
 			}
 			File f = new File(loadScript[i]);
 			if (f.exists()) {
-				if (loadFile(loadScript[i])) {
+				if (restoreScriptFromSession(loadScript[i])) {
 					ao = isAlreadyOpen(getCurrentCodePane().getCurrentSrcDir());
 					if (ao < 0) {
 						restoredScripts += 1;
@@ -514,7 +514,20 @@ public class SikuliIDE extends JFrame {
 		}
 	}
 
+	public boolean restoreScriptFromSession(String file) {
+		(new FileAction()).doNew(null);
+		getCurrentCodePane().loadFile(file);
+		if (getCurrentCodePane().hasEditingFile()) {
+			setCurrentFileTabTitle(file);
+			return true;
+		}
+		Debug.error("Can't load file " + file);
+//    (new FileAction()).doCloseTab(null);
+		return false;
+	}
+
   //</editor-fold>
+
 	//<editor-fold defaultstate="collapsed" desc="Support SikuliIDE">
 	public JMenu getFileMenu() {
 		return _fileMenu;
@@ -572,18 +585,6 @@ public class SikuliIDE extends JFrame {
 			title = "*" + title;
 			_mainPane.setTitleAt(i, title);
 		}
-	}
-
-	public boolean loadFile(String file) {
-		(new FileAction()).doNew(null);
-		getCurrentCodePane().loadFile(file);
-		if (getCurrentCodePane().hasEditingFile()) {
-			setCurrentFileTabTitle(file);
-			return true;
-		}
-		Debug.error("Can't load file " + file);
-//    (new FileAction()).doCloseTab(null);
-		return false;
 	}
 
 	public ArrayList<String> getOpenedFilenames() {
@@ -2169,7 +2170,11 @@ public class SikuliIDE extends JFrame {
 				}
 				updateUndoRedoStates();
 				if (codePane != null) {
-					Debug.log(3, "SelectTab: %s :--: %s", codePane.getContentType(), codePane.getEditorKit());
+					String msg = String.format("SelectTab: (%s)", codePane.getSikuliContentType());
+					Debug.log(3, msg);
+					SikuliIDE.getStatusbar().setMessage(msg);
+					SikuliIDE.getStatusbar().setCurrentContentType(
+						SikuliIDE.this.getCurrentCodePane().getSikuliContentType());
 				}
 			}
 		});
