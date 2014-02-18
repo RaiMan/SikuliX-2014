@@ -68,23 +68,23 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		showThumbs = !pref.getPrefMorePlainText();
 	}
 
-	private void initEditorPane() {
-		addKeyListener(this);
-		addCaretListener(this);
-		popMenuImage = new SikuliIDEPopUpMenu("POP_IMAGE", this);
-		if (!popMenuImage.isValidMenu()) {
-			popMenuImage = null;
-		}
+	public void initBeforeLoad(String scriptType) {
+		initBeforeLoad(scriptType, false);
 	}
 
-	public void initBeforeLoad(String scriptType) {
-		//TODO ask for scripttype on new pane
+	public void reInit(String scriptType) {
+		initBeforeLoad(scriptType, true);
+	}
+
+	public void initBeforeLoad(String scriptType, boolean reInit) {
 		String scrType = null;
 		boolean paneIsEmpty = false;
+
 		if (scriptType == null) {
 			scriptType = Settings.EDEFAULT;
 			paneIsEmpty = true;
 		}
+
 		if (Settings.EPYTHON.equals(scriptType)) {
 			scrType = Settings.CPYTHON;
 			_indentationLogic = SikuliIDE.getIDESupport(scriptType).getIndentationLogic();
@@ -93,40 +93,56 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			scrType = Settings.CRUBY;
 			_indentationLogic = null;
 		}
+
 		if (scrType != null) {
 			sikuliContentType = scrType;
 			SikuliEditorKit ek = new SikuliEditorKit(this);
 			setEditorKit(ek);
 			setContentType(scrType);
-			if (paneIsEmpty) {
-				this.setText("");
-			}
-			pref.addPreferenceChangeListener(new PreferenceChangeListener() {
-				@Override
-				public void preferenceChange(PreferenceChangeEvent event) {
-					if (event.getKey().equals("TAB_WIDTH")) {
-						_indentationLogic.setTabWidth(Integer.parseInt(event.getNewValue()));
+
+			if (_indentationLogic != null) {
+				pref.addPreferenceChangeListener(new PreferenceChangeListener() {
+					@Override
+					public void preferenceChange(PreferenceChangeEvent event) {
+						if (event.getKey().equals("TAB_WIDTH")) {
+							_indentationLogic.setTabWidth(Integer.parseInt(event.getNewValue()));
+						}
 					}
-				}
-			});
+				});
+			}
 		}
-		Debug.log(3, "InitTab: %s :--: %s", getContentType(), getEditorKit());
+
 		initKeyMap();
+
 		if (transferHandler == null) {
 			transferHandler = new MyTransferHandler();
 		}
 		setTransferHandler(transferHandler);
 		_highlighter = new EditorCurrentLineHighlighter(this);
+
 		addCaretListener(_highlighter);
+
 		setFont(new Font(pref.getFontName(), Font.PLAIN, pref.getFontSize()));
 		setMargin(new Insets(3, 3, 3, 3));
 		setBackground(Color.WHITE);
 		if (!Settings.isMac()) {
 			setSelectionColor(new Color(170, 200, 255));
 		}
+
 		updateDocumentListeners();
 
-		initEditorPane();
+		addKeyListener(this);
+		addCaretListener(this);
+		popMenuImage = new SikuliIDEPopUpMenu("POP_IMAGE", this);
+		if (!popMenuImage.isValidMenu()) {
+			popMenuImage = null;
+		}
+
+		if (paneIsEmpty || reInit) {
+			this.setText(String.format(Settings.TypeCommentDefault, getSikuliContentType()));
+		}
+
+		Debug.log(3, "InitTab: %s :--: %s", getContentType(), getEditorKit());
 	}
 
 	public String getSikuliContentType() {
@@ -657,15 +673,59 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 	//<editor-fold defaultstate="collapsed" desc="replace text patterns with image buttons">
 	public boolean reparse() {
-		File temp = FileManager.createTempFile("py");
+		File temp = null;
 		Element e = this.getDocument().getDefaultRootElement();
 		if (e.getEndOffset() - e.getStartOffset() == 1) {
 			return true;
 		}
+		if ((temp = reparseBefore()) != null) {
+			if (reparseAfter(temp)) {
+			updateDocumentListeners();
+			return true;
+			}
+		}
+		return false;
+	}
+
+	public File reparseBefore() {
+		Element e = this.getDocument().getDefaultRootElement();
+		if (e.getEndOffset() - e.getStartOffset() == 1) {
+			return null;
+		}
+		File temp = FileManager.createTempFile("reparse");
 		try {
 			writeFile(temp.getAbsolutePath());
+			return temp;
+		} catch (IOException ex) {
+		}
+		return null;
+	}
+
+	public boolean reparseCheckContent() {
+		Element e = this.getDocument().getDefaultRootElement();
+		String txt;
+		if (e.getElementCount() > 2) {
+			return false;
+		} else if (e.getElement(1).getEndOffset() - e.getElement(1).getStartOffset() > 1) {
+			return false;
+		} else {
+			int is = e.getElement(0).getStartOffset();
+			int ie = e.getElement(0).getEndOffset();
+			try {
+				txt = e.getElement(0).getDocument().getText(is, ie - 1);
+				if (txt.endsWith(Settings.TypeCommentToken)) {
+					return true;
+				}
+			} catch (BadLocationException ex) {
+				return false;
+			}
+		}
+		return false;
+	}
+
+	public boolean reparseAfter(File temp) {
+		try {
 			this.read(new BufferedReader(new InputStreamReader(new FileInputStream(temp), "UTF8")), null);
-			updateDocumentListeners();
 			return true;
 		} catch (IOException ex) {
 		}

@@ -8,6 +8,8 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.Settings;
+import org.sikuli.basics.SikuliX;
 import org.sikuli.script.Image;
 import org.sikuli.script.ImagePath;
 
@@ -198,8 +200,33 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       super(item);
     }
 
-    public void doSetType(ActionEvent ae) {
+		public void doSetType(ActionEvent ae) {
+			//TODO use a popUpSelect for more language options
 			Debug.log(3, "doSetType: selected");
+			String error = "";
+			EditorPane cp = SikuliIDE.getInstance().getCurrentCodePane();
+			String targetType = Settings.CRUBY;
+			String targetEnding = Settings.ERUBY;
+			if (cp.getSikuliContentType().equals(Settings.CRUBY)) {
+				targetEnding = Settings.EPYTHON;
+				targetType = Settings.CPYTHON;
+			}
+			if (cp.reparseBefore() != null) {
+				if (!cp.reparseCheckContent()) {
+					if (!SikuliX.popAsk(String.format(
+									"Switch to %s requested, but tab is not empty!\n"
+									+ "Click YES, to discard content and switch\n"
+									+ "Click NO to cancel this action and keep content.",
+									targetType))) {
+						error = "with errors";
+					}
+				}
+			}
+			if (error.isEmpty()) {
+				cp.reInit(targetEnding);
+				cp.setText(String.format(Settings.TypeCommentDefault, cp.getSikuliContentType()));
+			}
+			Debug.log(3, "doSetType: completed " + error);
 		}
 
     public void doMoveTab(ActionEvent ae) throws NoSuchMethodException {

@@ -107,6 +107,8 @@ public class Settings {
 	public static String RPYTHON = "jython";
 	public static String RRUBY = "jruby";
 	public static String EDEFAULT = EPYTHON;
+	public static String TypeCommentToken = "---SikuliX---";
+	public static String TypeCommentDefault = "# This script uses %s " + TypeCommentToken + "\n";
 
 	static {
     Properties props = System.getProperties(); //for debugging
