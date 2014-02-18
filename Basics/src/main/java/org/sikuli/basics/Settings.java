@@ -10,6 +10,8 @@ import java.io.File;
 import java.net.InetAddress;
 import java.net.Proxy;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 
@@ -94,7 +96,19 @@ public class Settings {
 
   private static Preferences options = Preferences.userNodeForPackage(SikuliX.class);
 
-  static {
+	public static Map<String, String> EndingTypes = new HashMap<String, String>();
+	public static Map<String, String> TypeEndings = new HashMap<String, String>();
+	public static String CPYTHON = "text/python";
+	public static String CRUBY = "text/ruby";
+	public static String CPLAIN = "text/plain";
+	public static String EPYTHON = "py";
+	public static String ERUBY = "rb";
+	public static String EPLAIN = "txt";
+	public static String RPYTHON = "jython";
+	public static String RRUBY = "jruby";
+	public static String EDEFAULT = EPYTHON;
+
+	static {
     Properties props = System.getProperties(); //for debugging
 
     if (System.getProperty("user.name") != null && !"".equals(System.getProperty("user.name"))) {
@@ -116,6 +130,13 @@ public class Settings {
       SikuliVersionIDE = SikuliVersionDefaultIDE;
       SikuliVersionScript = SikuliVersionDefaultScript;
     }
+
+		EndingTypes.put("py", CPYTHON );
+		EndingTypes.put("rb", CRUBY);
+		EndingTypes.put("txt", CPLAIN);
+		for (String k : EndingTypes.keySet()) {
+			TypeEndings.put(EndingTypes.get(k), k);
+		}
   }
 
   public static final int ISWINDOWS = 0;
@@ -129,6 +150,7 @@ public class Settings {
   public static final float FOREVER = Float.POSITIVE_INFINITY;
   public static final int JavaVersion = Integer.parseInt(java.lang.System.getProperty("java.version").substring(2, 3));
   public static final String JREVersion = java.lang.System.getProperty("java.runtime.version");
+
   public static boolean ThrowException = true; // throw FindFailed exception
   public static float AutoWaitTimeout = 3f; // in seconds
   public static float WaitScanRate = 3f; // frames per second
@@ -153,6 +175,9 @@ public class Settings {
    * true = start slow motion mode, false: stop it (default: false) show a visual for
    * SlowMotionDelay seconds (default: 2)
    */
+	public static boolean TRUE = true;
+	public static boolean FALSE = false;
+
   private static boolean ShowActions = false;
 
   public static boolean isShowActions() {

@@ -24,7 +24,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
   private EditorPane refEditorPane = null;
   public static final String POP_LINE = "POP_LINE";
   private EditorLineNumberView refLineNumberView = null;
-  
+
   private MouseEvent mouseTrigger;
 
   /**
@@ -62,7 +62,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       return;
     }
   }
-  
+
   public void doShow(CloseableTabbedPane comp, MouseEvent me) {
     mouseTrigger = me;
     show(comp, me.getX(), me.getY());
@@ -98,7 +98,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
     SikuliIDE.FileAction insertNewTab = SikuliIDE.getInstance().getFileAction(tabIndex);
     insertNewTab.doInsert(null);
   }
-  
+
   private JMenuItem createMenuItem(JMenuItem item, ActionListener listener) {
     item.addActionListener(listener);
     return item;
@@ -107,7 +107,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
   private JMenuItem createMenuItem(String name, ActionListener listener) {
     return createMenuItem(new JMenuItem(name), listener);
   }
-  
+
   private void setMenuText(int index, String text) {
     ((JMenuItem) getComponent(index)).setText(text);
   }
@@ -157,6 +157,8 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 
   private void popTabMenu() {
     try {
+      add(createMenuItem("Set Type", new PopTabAction(PopTabAction.SET_TYPE)));
+      addSeparator();
       add(createMenuItem("Move Tab", new PopTabAction(PopTabAction.MOVE_TAB)));
       add(createMenuItem("Duplicate", new PopTabAction(PopTabAction.DUPLICATE)));
       add(createMenuItem("Open", new PopTabAction(PopTabAction.OPEN)));
@@ -169,7 +171,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       add(createMenuItem("Run Slowly", new PopTabAction(PopTabAction.RUN_SLOW)));
       addSeparator();
       add(createMenuItem("Reset", new PopTabAction(PopTabAction.RESET)));
-      
+
     } catch (NoSuchMethodException ex) {
       validMenu = false;
     }
@@ -177,6 +179,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 
   class PopTabAction extends MenuAction {
 
+    static final String SET_TYPE = "doSetType";
     static final String MOVE_TAB = "doMoveTab";
     static final String DUPLICATE = "doDuplicate";
     static final String OPEN = "doOpen";
@@ -186,7 +189,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
     static final String RUN = "doRun";
     static final String RUN_SLOW = "doRunSlow";
     static final String RESET = "doReset";
-    
+
     public PopTabAction() {
       super();
     }
@@ -195,13 +198,17 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       super(item);
     }
 
+    public void doSetType(ActionEvent ae) {
+			Debug.log(3, "doSetType: selected");
+		}
+
     public void doMoveTab(ActionEvent ae) throws NoSuchMethodException {
       log(lvl, "doMoveTab: entered");
       if (getMenuText(0).contains("Insert")) {
         log(lvl, "doMoveTab: insert");
         doLoad(refTab.getSelectedIndex()+1);
-        setMenuText(0, "Move Tab"); 
-        setMenuText(3, "Open left"); 
+        setMenuText(0, "Move Tab");
+        setMenuText(3, "Open left");
         return;
       }
       refTab.resetLastClosed();
@@ -217,7 +224,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       log(lvl, "doDuplicate: entered");
       fireIDEFileMenu("SAVE");
       fireIDEFileMenu("SAVE_AS");
-      setMenuText(3, "Insert left"); 
+      setMenuText(3, "Insert left");
       doOpenLeft(null);
     }
 
@@ -226,26 +233,26 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       fireInsertTabAndLoad(tabIndex);
       return success;
     }
-    
+
     public void doOpen(ActionEvent ae) throws NoSuchMethodException {
       log(lvl, "doOpen: entered");
       refTab.resetLastClosed();
       doLoad(refTab.getSelectedIndex()+1);
     }
-    
+
     public void doOpenLeft(ActionEvent ae) throws NoSuchMethodException {
       log(lvl, "doOpenLeft: entered");
       if (getMenuText(3).contains("Insert")) {
         log(lvl, "doMoveTab: insert left");
         doLoad(refTab.getSelectedIndex());
-        setMenuText(0, "Move Tab"); 
-        setMenuText(3, "Open left"); 
+        setMenuText(0, "Move Tab");
+        setMenuText(3, "Open left");
         return;
       }
       refTab.resetLastClosed();
       doLoad(refTab.getSelectedIndex());
     }
-    
+
     public void doSave(ActionEvent ae) throws NoSuchMethodException {
       log(lvl, "doSave: entered");
       fireIDEFileMenu("SAVE");

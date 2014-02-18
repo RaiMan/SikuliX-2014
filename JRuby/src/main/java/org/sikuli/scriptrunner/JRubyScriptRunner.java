@@ -157,7 +157,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 
 	@Override
 	public String getName() {
-		return "jruby";
+		return Settings.RRUBY;
 	}
 
 	@Override

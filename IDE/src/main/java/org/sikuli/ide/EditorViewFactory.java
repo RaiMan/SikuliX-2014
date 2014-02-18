@@ -20,7 +20,7 @@ import org.sikuli.basics.Debug;
 
 public class EditorViewFactory implements ViewFactory {
 
-	private EditorPane pane;
+	private String sikuliContentType;
 
   @Override
   public View create(Element elem) {
@@ -28,7 +28,7 @@ public class EditorViewFactory implements ViewFactory {
     Debug.log(6, "ViewCreate: " + kind);
     if (kind != null) {
       if (kind.equals(AbstractDocument.ContentElementName)) {
-        return new HighlightLabelView(elem);
+        return new SyntaxHighlightLabelView(elem, sikuliContentType);
       } else if (kind.equals(AbstractDocument.ParagraphElementName)) {
         return new LineBoxView(elem, View.X_AXIS);
       } else if (kind.equals(AbstractDocument.SectionElementName)) {
@@ -43,8 +43,8 @@ public class EditorViewFactory implements ViewFactory {
     return new LabelView(elem);
   }
 
-	public void setPane(EditorPane p) {
-		pane = p;
+	public void setContentType(String ct) {
+		sikuliContentType = ct;
 	}
 }
 
@@ -127,16 +127,19 @@ class LineBoxView extends BoxView {
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="Highlight">
-class HighlightLabelView extends LabelView {
+class SyntaxHighlightLabelView extends LabelView {
 
   static FontMetrics _fMetrics = null;
   static String tabStr = nSpaces(PreferencesUser.getInstance().getTabWidth());
 
   private static Map<Pattern, Color> patternColors;
+  private static Map<Pattern, Color> patternColorsPython;
+  private static Map<Pattern, Color> patternColorsRuby;
+  private static Map<Pattern, Color> patternColorsSikuli;
   private static Font fontParenthesis;
 
   //<editor-fold defaultstate="collapsed" desc="keyword lists">
-  private static String[] keywords = {
+  private static String[] keywordsPython = {
     "and", "del", "for", "is", "raise",
     "assert", "elif", "from", "lambda", "return",
     "break", "else", "global", "not", "try",
@@ -144,10 +147,19 @@ class HighlightLabelView extends LabelView {
     "continue", "exec", "import", "pass", "yield",
     "def", "finally", "in", "print", "with"
   };
+  private static String[] keywordsRuby = {
+    "return", "break", "else", "class", "if", "nil", "begin", "end", "rescue",
+    "next", "def", "puts", "java_import", "eval", "then", "alias", "and",
+		"case", "defined?", "do", "elsif", "ensure", "false", "for", "in", "module",
+		"not", "or", "redo", "retry", "self", "super", "true", "undef", "unless",
+		"until", "when", "while", "yield", "BEGIN", "END", "__ENCODING__", "__END__",
+		"__FILE__", "__LINE__"
+  };
   private static String[] keywordsSikuliClass = {
     "Region", "Screen", "Match", "Pattern",
-    "Location", "VDict", "Env", "Key", "Button", "Finder",
-    "App", "KeyModifier", "Vision"
+    "Location", "Env", "Key", "Button", "Finder",
+    "App", "KeyModifier", "Mouse", "Image", "ImagePath", "ImageGroup",
+		"ImageFind", "ImageFinder"
   };
   private static String[] keywordsSikuli = {
     "find", "wait", "findAll", "waitVanish", "exists",
@@ -195,6 +207,8 @@ class HighlightLabelView extends LabelView {
     "NUM1", "NUM2", "NUM3", "NUM4", "NUM5", "NUM6", "NUM7", "NUM8", "NUM9",
     "SEPARATOR", "NUM_LOCK", "ADD", "MINUS", "MULTIPLY", "DIVIDE"
   };
+
+	private String sikuliContentType;
   //</editor-fold>
 
   static {
@@ -212,30 +226,43 @@ class HighlightLabelView extends LabelView {
 
     // NOTE: the order is important!
     patternColors = new HashMap<Pattern, Color>();
+    patternColorsPython = new HashMap<Pattern, Color>();
+    patternColorsRuby = new HashMap<Pattern, Color>();
+    patternColorsSikuli = new HashMap<Pattern, Color>();
     patternColors.put(Pattern.compile("(#:.*$)"), new Color(220, 220, 220));
     patternColors.put(Pattern.compile("(#.*$)"), new Color(138, 140, 193));
     patternColors.put(Pattern.compile("(\"[^\"]*\"?)"), new Color(128, 0, 0));
     patternColors.put(Pattern.compile("(\'[^\']*\'?)"), new Color(128, 0, 0));
     patternColors.put(Pattern.compile("\\b([0-9]+)\\b"), new Color(128, 64, 0));
-    for (int i = 0; i < keywords.length; i++) { patternColors.put(Pattern.compile(
-              "\\b(" + keywords[i] + ")\\b"), Color.blue);
+    for (int i = 0; i < keywordsPython.length; i++) { patternColorsPython.put(Pattern.compile(
+              "\\b(" + keywordsPython[i] + ")\\b"), Color.blue);
     }
-    for (int i = 0; i < keywordsSikuli.length; i++) { patternColors.put(Pattern.compile(
+    for (int i = 0; i < keywordsRuby.length; i++) { patternColorsRuby.put(Pattern.compile(
+              "\\b(" + keywordsRuby[i] + ")\\b"), Color.blue);
+    }
+    for (int i = 0; i < keywordsSikuli.length; i++) { patternColorsSikuli.put(Pattern.compile(
               "\\b(" + keywordsSikuli[i] + ")\\b"), new Color(63, 127, 127));
     }
-    for (int i = 0; i < keywordsSikuliClass.length; i++) { patternColors.put(Pattern.compile(
+    for (int i = 0; i < keywordsSikuliClass.length; i++) { patternColorsSikuli.put(Pattern.compile(
               "\\b(" + keywordsSikuliClass[i] + ")\\b"), new Color(215, 41, 56));
     }
-    for (int i = 0; i < constantsSikuli.length; i++) { patternColors.put(Pattern.compile(
+    for (int i = 0; i < constantsSikuli.length; i++) { patternColorsSikuli.put(Pattern.compile(
               "\\b(" + constantsSikuli[i] + ")\\b"), new Color(128, 64, 0));
     }
   }
 
-  public HighlightLabelView(Element elm) {
-    super(elm);
-  }
+	public SyntaxHighlightLabelView(Element elm, String contentType) {
+		super(elm);
+		sikuliContentType = contentType;
+		if (Settings.CPYTHON.equals(sikuliContentType)) {
+			patternColors.putAll(patternColorsPython);
+		} else if (Settings.CRUBY.equals(sikuliContentType)) {
+			patternColors.putAll(patternColorsRuby);
+		}
+		patternColors.putAll(patternColorsSikuli);
+	}
 
-  private static String nSpaces(int n) {
+	private static String nSpaces(int n) {
     char[] s = new char[n];
     Arrays.fill(s, ' ');
     return new String(s);

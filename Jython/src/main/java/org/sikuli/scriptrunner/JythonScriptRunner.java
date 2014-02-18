@@ -429,7 +429,7 @@ public class JythonScriptRunner implements IScriptRunner {
    */
   @Override
   public String getName() {
-    return "jython";
+    return Settings.RPYTHON;
   }
 
   /**
@@ -524,7 +524,8 @@ public class JythonScriptRunner implements IScriptRunner {
   /**
    * {@inheritDoc}
    */
-  @Override
+
+	@Override
   public void execBefore(String[] stmts) {
     if (stmts == null) {
       codeBefore = null;

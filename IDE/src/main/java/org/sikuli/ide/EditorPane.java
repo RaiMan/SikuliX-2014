@@ -60,14 +60,57 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	private int _caret_last_x = -1;
 	private boolean _can_update_caret_last_x = true;
 	private SikuliIDEPopUpMenu popMenuImage;
-	private SikuliIDE theIDE;
-	private static Map<String, SikuliEditorKit> editorKits = new HashMap<String, SikuliEditorKit>();
+	private String sikuliContentType;
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	public EditorPane(SikuliIDE ide) {
-		theIDE = ide;
 		pref = PreferencesUser.getInstance();
 		showThumbs = !pref.getPrefMorePlainText();
+	}
+
+	private void initEditorPane() {
+		addKeyListener(this);
+		addCaretListener(this);
+		popMenuImage = new SikuliIDEPopUpMenu("POP_IMAGE", this);
+		if (!popMenuImage.isValidMenu()) {
+			popMenuImage = null;
+		}
+	}
+
+	public void initBeforeLoad(String scriptType) {
+		//TODO ask for scripttype on new pane
+		String scrType = null;
+		boolean paneIsEmpty = false;
+		if (scriptType == null) {
+			scriptType = Settings.EDEFAULT;
+			paneIsEmpty = true;
+		}
+		if (Settings.EPYTHON.equals(scriptType)) {
+			scrType = Settings.CPYTHON;
+			_indentationLogic = SikuliIDE.getIDESupport(scriptType).getIndentationLogic();
+			_indentationLogic.setTabWidth(pref.getTabWidth());
+		} else if (Settings.ERUBY.equals(scriptType)) {
+			scrType = Settings.CRUBY;
+			_indentationLogic = null;
+		}
+		if (scrType != null) {
+			sikuliContentType = scrType;
+			SikuliEditorKit ek = new SikuliEditorKit(this);
+			setEditorKit(ek);
+			setContentType(scrType);
+			if (paneIsEmpty) {
+				this.setText("");
+			}
+			pref.addPreferenceChangeListener(new PreferenceChangeListener() {
+				@Override
+				public void preferenceChange(PreferenceChangeEvent event) {
+					if (event.getKey().equals("TAB_WIDTH")) {
+						_indentationLogic.setTabWidth(Integer.parseInt(event.getNewValue()));
+					}
+				}
+			});
+		}
+		Debug.log(3, "InitTab: %s :--: %s", getContentType(), getEditorKit());
 		initKeyMap();
 		if (transferHandler == null) {
 			transferHandler = new MyTransferHandler();
@@ -86,46 +129,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		initEditorPane();
 	}
 
-	private void initEditorPane() {
-		addKeyListener(this);
-		addCaretListener(this);
-		popMenuImage = new SikuliIDEPopUpMenu("POP_IMAGE", this);
-		if (!popMenuImage.isValidMenu()) {
-			popMenuImage = null;
-		}
-	}
-
-	public void initBeforeLoad(String scriptType) {
-		//TODO ask for scripttype on new pane
-		String scrType = null;
-		if (scriptType == null) {
-			scriptType = "py";
-		}
-		if ("py".equals(scriptType)) {
-			scrType = "text/python";
-			_indentationLogic = SikuliIDE.getIDESupport(scriptType).getIndentationLogic();
-			_indentationLogic.setTabWidth(pref.getTabWidth());
-		} else if ("rb".equals(scriptType)) {
-			scrType = "text/ruby";
-		}
-		if (scrType != null) {
-			if (!editorKits.containsKey(scrType)) {
-				SikuliEditorKit ek = new SikuliEditorKit(this);
-				editorKits.put(scrType, ek);
-				setEditorKitForContentType(scrType, ek);
-			}
-			setEditorKit(editorKits.get(scrType));
-			setContentType(scrType);
-		}
-		pref.addPreferenceChangeListener(new PreferenceChangeListener() {
-			@Override
-			public void preferenceChange(PreferenceChangeEvent event) {
-				if (event.getKey().equals("TAB_WIDTH")) {
-					_indentationLogic.setTabWidth(Integer.parseInt(event.getNewValue()));
-				}
-			}
-		});
-		Debug.log(3, "InitTab: %s :--: %s", getContentType(), getEditorKit());
+	public String getSikuliContentType() {
+		return sikuliContentType;
 	}
 
 	public SikuliIDEPopUpMenu getPopMenuImage() {
@@ -287,8 +292,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		}
 		ImagePath.remove(_srcBundlePath);
 		setSrcBundle(bundlePath);
-		_editingFile = createSourceFile(bundlePath, ".py");
-		Debug.log(2, "save to bundle: " + getSrcBundle());
+		_editingFile = createSourceFile(bundlePath, "." + Settings.TypeEndings.get(sikuliContentType));
+		Debug.log(3, "IDE: saveAsBundle: " + getSrcBundle());
 		writeSrcFile();
 		reparse();
 	}
@@ -304,13 +309,15 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	}
 
 	private void writeSrcFile() throws IOException {
+		Debug.log(3, "IDE: writeSrcFile: " + _editingFile.getName());
 		writeFile(_editingFile.getAbsolutePath());
 		if (PreferencesUser.getInstance().getAtSaveMakeHTML()) {
 			convertSrcToHtml(getSrcBundle());
 		} else {
 			(new File(_editingFile.getAbsolutePath().replaceFirst("py", "html"))).delete();
 		}
-		if (PreferencesUser.getInstance().getAtSaveCleanBundle()) {
+//TODO bundle image clean in Java
+		if (Settings.CPYTHON.equals(getSikuliContentType()) && PreferencesUser.getInstance().getAtSaveCleanBundle()) {
 			cleanBundle(getSrcBundle());
 		}
 		setDirty(false);

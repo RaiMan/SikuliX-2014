@@ -2010,6 +2010,8 @@ public class SikuliIDE extends JFrame {
 		}
 
 		protected void addScriptCode(IScriptRunner srunner) {
+			srunner.execBefore(null);
+			srunner.execBefore(new String[]{"Settings.setShowActions(Settings.FALSE)"});
 		}
 
 		public void stopRunning() {
@@ -2061,7 +2063,7 @@ public class SikuliIDE extends JFrame {
 		@Override
 		protected void addScriptCode(IScriptRunner srunner) {
 			srunner.execBefore(null);
-			srunner.execBefore(new String[]{"setShowActions(True)"});
+			srunner.execBefore(new String[]{"Settings.setShowActions(Settings.TRUE)"});
 		}
 	}
 

@@ -25,6 +25,7 @@ public class SikuliEditorKit extends StyledEditorKit {
 	public SikuliEditorKit(EditorPane p) {
 		_viewFactory = new EditorViewFactory();
 		pane = p;
+		((EditorViewFactory) _viewFactory).setContentType(pane.getSikuliContentType());
 	}
 	public static final String deIndentAction = "SKL.DeindentAction";
 	private static final TextAction[] defaultActions = {
@@ -61,10 +62,6 @@ public class SikuliEditorKit extends StyledEditorKit {
 		}
 
 		public void actionPerformed(JTextComponent text) {
-			indentationLogic = ((EditorPane) text).getIndentationLogic();
-			if (indentationLogic == null) {
-				return;
-			}
 			boolean indentError = false;
 			Document doc = text.getDocument();
 			Element map = doc.getDefaultRootElement();
@@ -516,8 +513,7 @@ public class SikuliEditorKit extends StyledEditorKit {
 
 	@Override
 	public String getContentType() {
-		//TODO other content type: ruby, DSL, ...
-		return "text/python";
+		return pane.getSikuliContentType();
 	}
 
 	@Override
