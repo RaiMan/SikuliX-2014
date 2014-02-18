@@ -51,7 +51,7 @@ public class SikuliX {
             me + ": " + message, args);
   }
   //</editor-fold>
-  
+
   private static IScriptRunner runner;
   private static final String ScriptSikuliXCL = "org.sikuli.script.SikuliX";
   private static final String ScriptKeyCL = "org.sikuli.script.Key";
@@ -343,6 +343,14 @@ public class SikuliX {
     return true;
   }
 
+  public static boolean popAsk(String msg) {
+    int ret = JOptionPane.showConfirmDialog(null, msg, "IDE: ... something to decide! ", JOptionPane.YES_NO_OPTION);
+    if (ret == JOptionPane.CLOSED_OPTION || ret == JOptionPane.NO_OPTION) {
+      return false;
+    }
+    return true;
+  }
+
   /**
    * request user's input as one line of text <br>
    * with hidden = true: <br>
@@ -368,9 +376,9 @@ public class SikuliX {
       tm.setWrapStyleWord(true);
       tm.setEditable(false);
       tm.setBackground(new JLabel().getBackground());
-      
+
       JPasswordField pw = new JPasswordField(preset);
-      
+
       JPanel pnl = new JPanel();
       pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
       pnl.add(pw);
@@ -423,7 +431,7 @@ public class SikuliX {
   */
   public static String inputText(String msg, String title, int lines, int width) {
     width = Math.max(20, width);
-    lines = Math.max(9, lines);    
+    lines = Math.max(9, lines);
     if ("".equals(title)) {
       title = "Sikuli input request";
     }
@@ -432,31 +440,31 @@ public class SikuliX {
     int h = (int) (lines*ta.getFontMetrics(ta.getFont()).getHeight());
     ta.setPreferredSize(new Dimension(w,h));
     ta.setMaximumSize(new Dimension(w,2*h));
-    
+
     JScrollPane sp = new JScrollPane(ta);
     sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
-    
+
     JTextArea tm = new JTextArea(msg);
     tm.setColumns(width);
     tm.setLineWrap(true);
     tm.setWrapStyleWord(true);
     tm.setEditable(false);
     tm.setBackground(new JLabel().getBackground());
-    
+
     JPanel pnl = new JPanel();
     pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
     pnl.add(sp);
     pnl.add(Box.createVerticalStrut(10));
     pnl.add(tm);
     pnl.add(Box.createVerticalStrut(10));
-    
+
     if (0 == JOptionPane.showConfirmDialog(null, pnl, title, JOptionPane.OK_CANCEL_OPTION)) {
       return ta.getText();
     } else {
       return "";
     }
   }
-  
+
   public static void popup(String message) {
     popup(message, "Sikuli");
   }
@@ -471,8 +479,8 @@ public class SikuliX {
     loader.doSomethingSpecial("runcmd", args);
     return args[0];
   }
-  
-  
+
+
   /**
    * INTERNAL USE: convert ##--##Fri Jan  3 10:53:05 CET 2014##--## <br>
    * to: 2014-JAN-03-10:53:05 (timestamp of build)
