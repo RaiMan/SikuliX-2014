@@ -21,12 +21,22 @@
   <groupId>org.sikuli</groupId>
   <artifactId>SikuliX-IDE</artifactId>
   <version>1.1.0-Beta1</version>
-  
+
   <dependencies>
     <dependency>
       <groupId>org.sikuli</groupId>
       <artifactId>SikuliX-API</artifactId>
       <version>1.1.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sikuli</groupId>
+      <artifactId>SikuliX-Jython</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sikuli</groupId>
+      <artifactId>SikuliX-JRuby</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.googlecode.json-simple</groupId>
@@ -71,7 +81,7 @@
             <manifest>
               <mainClass>org.sikuli.ide.SikuliIDE</mainClass>
             </manifest>
-          </archive> 
+          </archive>
           <descriptors>
             <descriptor>../${sikuli.jartype}</descriptor>
           </descriptors>

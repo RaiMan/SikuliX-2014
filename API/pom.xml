@@ -25,16 +25,6 @@
   <dependencies>
     <dependency>
       <groupId>org.sikuli</groupId>
-      <artifactId>SikuliX-Jython</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sikuli</groupId>
-      <artifactId>SikuliX-JRuby</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.sikuli</groupId>
       <artifactId>SikuliX-Basics</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -62,7 +52,7 @@
             </manifest>
           </archive>
         </configuration>
-      </plugin>  
+      </plugin>
       <plugin>
           <groupId>org.codehaus.mojo</groupId>
           <artifactId>exec-maven-plugin</artifactId>
@@ -70,7 +60,7 @@
           <configuration>
               <mainClass>org.sikuli.script.SikuliX</mainClass>
           </configuration>
-      </plugin>       
+      </plugin>
     </plugins>
   </build>
 </project>
