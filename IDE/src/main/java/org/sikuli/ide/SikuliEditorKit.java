@@ -22,11 +22,6 @@ public class SikuliEditorKit extends StyledEditorKit {
 	private ViewFactory _viewFactory;
 	private EditorPane pane;
 
-	public SikuliEditorKit(EditorPane p) {
-		_viewFactory = new EditorViewFactory();
-		pane = p;
-		((EditorViewFactory) _viewFactory).setContentType(pane.getSikuliContentType());
-	}
 	public static final String deIndentAction = "SKL.DeindentAction";
 	private static final TextAction[] defaultActions = {
 		new InsertTabAction(),
@@ -42,6 +37,12 @@ public class SikuliEditorKit extends StyledEditorKit {
 		new NextVisualPositionAction(selectionDownAction, true, SwingConstants.SOUTH),};
 
 
+	public SikuliEditorKit() {
+    pane = SikuliIDE.getInstance().getCurrentCodePane();
+		_viewFactory = new EditorViewFactory();
+    ((EditorViewFactory) _viewFactory).setContentType(pane.getSikuliContentType());
+	}
+  
 	public static class InsertTabAction extends TextAction {
 
 		private IndentationLogic indentationLogic;

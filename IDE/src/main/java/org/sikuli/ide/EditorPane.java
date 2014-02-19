@@ -61,6 +61,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	private boolean _can_update_caret_last_x = true;
 	private SikuliIDEPopUpMenu popMenuImage;
 	private String sikuliContentType;
+  private SikuliEditorKit editorKit;
+  private EditorViewFactory editorViewFactory;
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	public EditorPane(SikuliIDE ide) {
@@ -96,8 +98,9 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 		if (scrType != null) {
 			sikuliContentType = scrType;
-			SikuliEditorKit ek = new SikuliEditorKit(this);
-			setEditorKit(ek);
+			editorKit = new SikuliEditorKit();
+      editorViewFactory = (EditorViewFactory) editorKit.getViewFactory();
+			setEditorKit(editorKit);
 			setContentType(scrType);
 
 			if (_indentationLogic != null) {

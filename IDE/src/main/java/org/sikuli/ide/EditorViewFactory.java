@@ -525,7 +525,6 @@ class ButtonView extends ComponentView {
   public void paint(Graphics g, Shape shape) {
     JComponent comp = (JComponent) getComponent();
     Rectangle alloc = (shape instanceof Rectangle) ? (Rectangle) shape : shape.getBounds();
-    return;
   }
 }
 //</editor-fold>
