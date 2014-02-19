@@ -56,7 +56,7 @@ public class SikuliX {
   private static final String ScriptSikuliXCL = "org.sikuli.script.SikuliX";
   private static final String ScriptKeyCL = "org.sikuli.script.Key";
   private static Class ScriptCl, KeyCl;
-  private static Method endWhat, toJavaKeyCode, setBundlePath;
+  private static Method endWhat, keyBoardSetup, setBundlePath;
   private static boolean runningSetup = false;
   private static boolean runningFromJar;
   private static String jarPath;
@@ -148,15 +148,25 @@ public class SikuliX {
   public static int[] callKeyToJavaKeyCodeMethod(String key) {
     try {
       KeyCl = Class.forName(ScriptKeyCL);
-      toJavaKeyCode = KeyCl.getMethod("toJavaKeyCode", new Class[]{String.class});
-      return (int[]) toJavaKeyCode.invoke(KeyCl, new Object[]{key});
+      keyBoardSetup = KeyCl.getMethod("toJavaKeyCode", new Class[]{String.class});
+      return (int[]) keyBoardSetup.invoke(KeyCl, new Object[]{key});
     } catch (Exception ex) {
       Debug.error("Invoke KeyToJavaKeyCodeMethod: Fatal Error 999: could not be run!");
       return null;
     }
   }
 
-  public static void callImagePathSetBundlePath(String path) {
+  public static void callKeyBoardSetup() {
+    try {
+      KeyCl = Class.forName(ScriptKeyCL);
+      keyBoardSetup = KeyCl.getMethod("keyBoardSetup", new Class[]{});
+      keyBoardSetup.invoke(KeyCl, new Object[]{});
+    } catch (Exception ex) {
+      Debug.error("Invoke Key.keyBoardSetup: Fatal Error 999: could not be run!");
+    }
+  }
+
+	public static void callImagePathSetBundlePath(String path) {
     try {
       ScriptCl = Class.forName("org.sikuli.script.ImagePath");
       setBundlePath = ScriptCl.getMethod("setBundlePath", new Class[]{String.class});

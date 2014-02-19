@@ -214,11 +214,11 @@ public class Key {
     "VK_Z","90"
   //</editor-fold>
   };
-  
+
   // non function keys on US-Keyboard per line top down without modifier keys
-  public static String keyboardUS = 
+  public static String keyboardUS =
           "1234567890-=" + "qwertyuiop[]" + "asdfghjkl;'\\" + "`zxcvbnm,./";
-  
+
   //<editor-fold defaultstate="collapsed" desc="KeyNames to UniCode (used in type() with Key.XXX)">
   public static final String SPACE = " ";
   public static final String ENTER = "\n";
@@ -336,7 +336,7 @@ public class Key {
   public static final char C_CONTEXT = '\ue041'; // VK_CONTEXT_MENU
   public static final String NEXT = "\ue043";
   public static final char C_NEXT = '\ue043'; // VK_CONTEXT_MENU
-  
+
   public static final char cMax = '\ue050';
   public static final char cMin = '\ue000';
   public static int keyMaxLength;
@@ -391,12 +391,12 @@ public class Key {
     }
     //</editor-fold>
   }
-  
+
   //<editor-fold defaultstate="collapsed" desc="support functions for write()">
   public static String getTextFromKeycode(int key) {
     return keys.get(key);
   }
-  
+
   public static boolean isRepeatable(String token) {
     int key = toJavaKeyCodeFromText(token);
     switch (key) {
@@ -411,7 +411,7 @@ public class Key {
     }
     return false;
   }
-  
+
   public static boolean isModifier(String token) {
     if (toJavaKeyCodeFromText(token) == toJavaKeyCodeFromText("#S.") ||
         toJavaKeyCodeFromText(token) == toJavaKeyCodeFromText("#C.") ||
@@ -421,7 +421,7 @@ public class Key {
     }
     return false;
   }
-  
+
   public static int toJavaKeyCodeFromText(String key) {
     if (null == keyTexts.get(key)) {
       return -1;
@@ -430,7 +430,7 @@ public class Key {
     }
   }
   //</editor-fold>
-  
+
   /**
    * Convert Sikuli Key to Java virtual key code
    */
@@ -693,7 +693,7 @@ public class Key {
       case Key.C_DIVIDE: return "#NDIV.";
       case Key.C_DECIMAL: return "#NDEC.";
       case Key.C_CONTEXT: return "#NCON.";
-//KeyModifiers        
+//KeyModifiers
       case Key.C_SHIFT: return "#SHIFT.";
       case Key.C_CTRL:  return "#CTRL.";
       case Key.C_ALT:   return "#ALT.";
@@ -703,7 +703,7 @@ public class Key {
         return "" + key;
     }
   }
-    
+
   protected static int convertModifiers(String mod) {
     int modNew = 0;
     char key;
@@ -755,10 +755,10 @@ public class Key {
       return KeyEvent.VK_CONTROL;
     }
   }
-  
+
   //<editor-fold defaultstate="collapsed" desc="keyboard setup - INTERNAL USE ONLY">
   static String[] result = new String[] {""};
-  
+
   /**
    * INTERNAL USE ONLY
    * create an alternate keycode table for a non-US keyboard
@@ -769,7 +769,7 @@ public class Key {
     String keysx = Key.keyboardUS;
 
     Screen s = new Screen(0);
-    ImagePath.add("org.sikuli.script.SikuliX/images");
+    ImagePath.add("org.sikuli.basics.SikuliX/Images");
 
     ShowKeyBoardSetupWindow win = new ShowKeyBoardSetupWindow();
     win.start();
@@ -780,6 +780,7 @@ public class Key {
     s.click(txtArea);
     s.wait(1.0F);
     String[] mods = new String[]{"", "S", "A", "SA"};
+		Debug.setDebugLevel(0);
     for (String modx : mods) {
       s.paste((modx.isEmpty() ? "NO" : modx) + " modifier" + "\n");
       if (!modx.isEmpty()) {
@@ -804,9 +805,14 @@ public class Key {
       s.paste("\n");
       s.type(Key.ENTER);
     }
+		Debug.setDebugLevel(3);
     s.click(btnOK);
     while (true) {
-      s.wait(1.0F);
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException ex) {
+			}
+			Debug.log(3, "waiting for result\n" + result[0]);
       if (!result[0].isEmpty()) {
         break;
       }
@@ -815,15 +821,14 @@ public class Key {
     String keysNew;
     String mod;
     int nKDE = 0;
-    for (int n = 0; n < keyNewx.length; n++) {
+    for (int n = 0; n < keyNewx.length; n += 6) {
       mod = keyNewx[n].substring(0, 2);
       keysNew = keyNewx[n + 1] + keyNewx[n + 2] + keyNewx[n + 3] + keyNewx[n + 4];
       keyXX[nKDE] = mod + ": " + keysNew;
-      //System.out.println(keyXX[nKDE]);
-      n += 4;
+      Debug.log(3, "%s", keyXX[nKDE]);
       nKDE++;
     }
-    String kSet;
+		String kSet;
     int offset = 4;
     char keyOld, keyNew;
     int[] codeA;
@@ -841,7 +846,7 @@ public class Key {
       } else if ("SA".equals(mod)) {
         modText = "SHIFT ALT ";
       }
-      //System.out.println(mod + "\n" + kSet);
+      Debug.log(3, mod + "\n" + kSet);
       nOld = 0;
       for (int i = 0; i < kSet.length(); i++) {
         if (!" ".equals("" + kSet.charAt(i + 3))) {
@@ -881,21 +886,21 @@ public class Key {
         if (keyLocal.get(keyNew) == null) {
           keyLocal.put(keyNew, codeI);
         }
-        //System.out.println(String.format("%s %c %c %s", mod, keyOld, keyNew, codeS));
+        Debug.log(3,"%s %c %c %s", mod, keyOld, keyNew, codeS);
         i += offset - 1;
         offset = 4;
         nOld += 1;
       }
     }
-    
-    System.out.println("--------------- keyLocal");
+
+    Debug.log(3,"--------------- keyLocal");
     Integer[] codeI;
     for (Character kc : keyLocal.keySet()) {
       codeI = keyLocal.get(kc);
-      System.out.println(String.format("%c %s %s %s", kc.charValue(),
+      Debug.log(3,"%c %s %s %s", kc.charValue(),
               (codeI[0] == -1 ? "" : KeyEvent.getKeyText(codeI[0])),
               (codeI[1] == -1 ? "" : KeyEvent.getKeyText(codeI[1])),
-              (codeI[2] == -1 ? "" : KeyEvent.getKeyText(codeI[2])) ));
+              (codeI[2] == -1 ? "" : KeyEvent.getKeyText(codeI[2])) );
     }
   }
 
@@ -910,11 +915,11 @@ public class Key {
     }
     return ret;
   }
-  
+
   static class ShowKeyBoardSetupWindow extends Thread {
-    
+
     JFrame kbSetup;
-    
+
     @Override
     public void run() {
       kbSetup = new JFrame("Localized Keyboard Setup");
@@ -928,13 +933,8 @@ public class Key {
       win.setLogo(new ImageIcon(Image.create("SikuliLogo").get()));
       kbSetup.setVisible(true);
     }
-    
-    public void setResult(String text) {
-      kbSetup.setVisible(false);
-      result[0] = text;
-    }
   }
-  
+
   /**
    * INTERNAL USE ONLY
    * create a table containing all relevant key, keycode and keytext settings for VK_xxx
@@ -944,7 +944,7 @@ public class Key {
     for (int i = 0; i < keyVK.length; i += 2) {
       namesVK.put(keyVK[i+1], keyVK[i].substring(3));
     }
-    
+
     String keyText;
     int upper = 66000;
     String form = "%05d: %-25s %-20s %-15s %15s %s";
@@ -972,7 +972,7 @@ public class Key {
           if (key < 32) {
             key = ' ';
           }
-          System.out.println(String.format(form, key, keyText, "...", "...", k2, k1));
+          Debug.log(3, form, key, keyText, "...", "...", k2, k1);
         }
         continue;
       }
@@ -982,11 +982,11 @@ public class Key {
         vkey = "...";
       }
       if (null == getTextFromKeycode(key)) {
-        System.out.println(String.format(form, key, keyText.toUpperCase(), 
-                vkey, "...", k2, k1));
+        Debug.log(3, form, key, keyText.toUpperCase(),
+                vkey, "...", k2, k1);
       } else {
-        System.out.println(String.format(form, key, keyText.toUpperCase(), 
-                vkey, getTextFromKeycode(key), k2, k1));
+        Debug.log(3, form, key, keyText.toUpperCase(),
+                vkey, getTextFromKeycode(key), k2, k1);
       }
     }
   }

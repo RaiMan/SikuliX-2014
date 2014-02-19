@@ -79,7 +79,7 @@ public class RunSetup {
   private static boolean runningSetup = false;
   private static boolean generallyDoUpdate = false;
   public static String timestampBuilt;
-  private static final String tsb = "##--##Tue Jan 21 15:52:52 CET 2014##--##";
+  private static final String tsb = "##--##Mi 19 Feb 2014 16:41:13 CET##--##";
 
   static {
     timestampBuilt = SikuliX.makeTimestamp(tsb);
@@ -168,7 +168,34 @@ public class RunSetup {
       options.remove(0);
     }
 
-    runningJar = FileManager.getJarName();
+		if (args.length == 1 && "keyboardsetup".equals(args[0].toLowerCase())) {
+			String dir = System.getProperty("user.dir");
+			String jar = "sikulixapi.jar";
+			File jf = new File(dir, jar);
+			if (jf.exists()) {
+				SikuliX.addToClasspath(jf.getAbsolutePath());
+				jf = null;
+			}
+			if (jf != null) {
+				jar = "sikulix.jar";
+				jf = new File(dir, jar);
+				if (jf.exists()) {
+					SikuliX.addToClasspath(jf.getAbsolutePath());
+					jf = null;
+				}
+			}
+			if (jf != null) {
+				Debug.error("no suitable jar found");
+				System.exit(1);
+			}
+			Settings.ActionLogs = false;
+			Settings.InfoLogs = false;
+			Debug.setDebugLevel(3);
+			SikuliX.callKeyBoardSetup();
+			System.exit(0);
+		}
+
+		runningJar = FileManager.getJarName();
     if (runningJar.isEmpty()) {
       popError("error accessing jar - terminating");
       System.exit(1);
