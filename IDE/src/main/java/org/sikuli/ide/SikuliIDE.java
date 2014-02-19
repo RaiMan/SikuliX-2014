@@ -372,6 +372,9 @@ public class SikuliIDE extends JFrame {
 		} catch (Exception e) {
 		}
 		splash.dispose();
+//TODO restore selected tab
+		restoreSession();
+		makeTabNull();
 		Debug.log(3, "Sikuli-IDE startup: " + ((new Date()).getTime() - start));
 		setVisible(true);
 		_mainSplitPane.setDividerLocation(0.6);
@@ -381,10 +384,7 @@ public class SikuliIDE extends JFrame {
 	public static synchronized SikuliIDE getInstance(String args[]) {
 		if (_instance == null) {
 			_instance = new SikuliIDE();
-      _instance.initSikuliIDE(args);
-//TODO restore selected tab
-			_instance.restoreSession();
-			_instance.makeTabNull();
+			_instance.initSikuliIDE(args);
 		}
 		return _instance;
 	}
@@ -472,7 +472,7 @@ public class SikuliIDE extends JFrame {
 	}
 
 	private void restoreSession() {
-		String session_str = PreferencesUser.getInstance().getIdeSession();
+		String session_str = prefs.getIdeSession();
 		String[] filenames = null;
 		if (session_str == null && loadScript == null) {
 			return;
@@ -527,7 +527,6 @@ public class SikuliIDE extends JFrame {
 	}
 
   //</editor-fold>
-
 	//<editor-fold defaultstate="collapsed" desc="Support SikuliIDE">
 	public JMenu getFileMenu() {
 		return _fileMenu;
@@ -2153,7 +2152,7 @@ public class SikuliIDE extends JFrame {
 		_mainPane.addChangeListener(new ChangeListener() {
 			@Override
 			public void stateChanged(javax.swing.event.ChangeEvent e) {
-				EditorPane codePane = null ;
+				EditorPane codePane = null;
 				JTabbedPane tab = (JTabbedPane) e.getSource();
 				int i = tab.getSelectedIndex();
 				if (i >= 0) {
@@ -2170,11 +2169,8 @@ public class SikuliIDE extends JFrame {
 				}
 				updateUndoRedoStates();
 				if (codePane != null) {
-					String msg = String.format("SelectTab: (%s)", codePane.getSikuliContentType());
-					Debug.log(3, msg);
-					SikuliIDE.getStatusbar().setMessage(msg);
 					SikuliIDE.getStatusbar().setCurrentContentType(
-						SikuliIDE.this.getCurrentCodePane().getSikuliContentType());
+									SikuliIDE.this.getCurrentCodePane().getSikuliContentType());
 				}
 			}
 		});
@@ -2381,7 +2377,7 @@ public class SikuliIDE extends JFrame {
 	}
   //</editor-fold>
 
-  //<editor-fold defaultstate="collapsed" desc="IDE Unit Testing --- RaiMan not used">
+	//<editor-fold defaultstate="collapsed" desc="IDE Unit Testing --- RaiMan not used">
   /*
 	 private void initSidePane() {
 	 initUnitPane();
