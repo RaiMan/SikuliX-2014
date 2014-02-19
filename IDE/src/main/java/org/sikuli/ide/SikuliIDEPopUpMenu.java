@@ -4,6 +4,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.lang.reflect.Method;
+import java.util.Set;
 import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
@@ -205,12 +206,28 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 			Debug.log(3, "doSetType: selected");
 			String error = "";
 			EditorPane cp = SikuliIDE.getInstance().getCurrentCodePane();
-			String targetType = Settings.CRUBY;
-			String targetEnding = Settings.ERUBY;
-			if (cp.getSikuliContentType().equals(Settings.CRUBY)) {
-				targetEnding = Settings.EPYTHON;
-				targetType = Settings.CPYTHON;
+			Set<String> types = Settings.TypeEndings.keySet();
+			String[] selOptions = new String[types.size()];
+			int i = 0;
+			for (String e : types) {
+				if (e.contains("plain")) {
+					continue;
+				}
+				selOptions[i++] = e.replaceFirst(".*?\\/", "");
 			}
+			String currentType = cp.getSikuliContentType();
+			String targetType = SikuliX.popSelect("Select the Scripting Language ...",
+							selOptions, currentType.replaceFirst(".*?\\/", ""));
+			if (targetType == null) {
+				targetType = currentType;
+			} else {
+				targetType = "text/" + targetType;
+			}
+			if (currentType.equals(targetType)) {
+				SikuliIDE.getStatusbar().setCurrentContentType(currentType);
+				return;
+			}
+			String targetEnding = Settings.TypeEndings.get(targetType);
 			if (cp.reparseBefore() != null) {
 				if (!cp.reparseCheckContent()) {
 					if (!SikuliX.popAsk(String.format(
@@ -218,7 +235,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 									+ "Click YES, to discard content and switch\n"
 									+ "Click NO to cancel this action and keep content.",
 									targetType))) {
-						error = "with errors";
+						error = ": with errors";
 					}
 				}
 			}
@@ -226,8 +243,9 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 				cp.reInit(targetEnding);
 //				cp.setText(String.format(Settings.TypeCommentDefault, cp.getSikuliContentType()));
 				cp.setText("");
+				error = ": (" + targetType + ")";
 			}
-			String msg = "doSetType: completed " + error + " (" + targetType + ")";
+			String msg = "doSetType: completed" + error ;
 			SikuliIDE.getStatusbar().setMessage(msg);
 			SikuliIDE.getStatusbar().setCurrentContentType(targetType);
 			Debug.log(3, msg);
