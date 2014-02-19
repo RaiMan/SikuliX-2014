@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 import org.sikuli.basics.CommandArgs;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.Settings;
 import org.sikuli.basics.SikuliScript;
 
 /**
@@ -31,7 +30,7 @@ public class SikuliX {
     runningObservers.remove(r);
     Debug.log(3, me + "remove observer: now running %d observer(s)", runningObservers.size());
   }
-  
+
   public static void stopRunningObservers() {
     if (runningObservers.size() > 0) {
       Debug.log(3, me + "stopping %d running observer(s)", runningObservers.size());
@@ -39,26 +38,6 @@ public class SikuliX {
         r.stopObserver();
       }
       runningObservers.clear();
-    }
-  }
-  
-  /**
-   * can be used in IDE's to run scripts
-   *
-   * @param args
-   */
-  public static void main(String[] args) {
-    if (args.length == 1 && "KeyBoardSetup".equals(args[0])) {
-      try {
-        Settings.InfoLogs = false;
-        Settings.ActionLogs = false;
-        Key.keyBoardSetup();
-      } catch (Exception ex) {
-        Debug.error("KeyBoardSetup: " + ex.getMessage());
-      }
-      System.exit(0);
-    } else {
-      SikuliScript.main(args);
     }
   }
 
