@@ -145,7 +145,7 @@ class SyntaxHighlightLabelView extends LabelView {
     "break", "else", "global", "not", "try",
     "class", "except", "if", "or", "while",
     "continue", "exec", "import", "pass", "yield",
-    "def", "finally", "in", "print", "with"
+    "def", "finally", "in", "print", "with", "self"
   };
   private static String[] keywordsRuby = {
     "return", "break", "else", "class", "if", "nil", "begin", "end", "rescue",
@@ -153,7 +153,7 @@ class SyntaxHighlightLabelView extends LabelView {
 		"case", "defined?", "do", "elsif", "ensure", "false", "for", "in", "module",
 		"not", "or", "redo", "retry", "self", "super", "true", "undef", "unless",
 		"until", "when", "while", "yield", "BEGIN", "END", "__ENCODING__", "__END__",
-		"__FILE__", "__LINE__"
+		"__FILE__", "__LINE__", "require"
   };
   private static String[] keywordsSikuliClass = {
     "Region", "Screen", "Match", "Pattern",
@@ -225,7 +225,7 @@ class SyntaxHighlightLabelView extends LabelView {
     fontParenthesis = new Font("Osaka-Mono", Font.PLAIN, 30);
 
     // NOTE: the order is important!
-    patternColors = new HashMap<Pattern, Color>();
+		patternColors = new HashMap<Pattern, Color>();
     patternColorsPython = new HashMap<Pattern, Color>();
     patternColorsRuby = new HashMap<Pattern, Color>();
     patternColorsSikuli = new HashMap<Pattern, Color>();
@@ -234,6 +234,8 @@ class SyntaxHighlightLabelView extends LabelView {
     patternColors.put(Pattern.compile("(\"[^\"]*\"?)"), new Color(128, 0, 0));
     patternColors.put(Pattern.compile("(\'[^\']*\'?)"), new Color(128, 0, 0));
     patternColors.put(Pattern.compile("\\b([0-9]+)\\b"), new Color(128, 64, 0));
+		patternColorsPython.putAll(patternColors);
+		patternColorsRuby.putAll(patternColors);
     for (int i = 0; i < keywordsPython.length; i++) { patternColorsPython.put(Pattern.compile(
               "\\b(" + keywordsPython[i] + ")\\b"), Color.blue);
     }
@@ -249,17 +251,19 @@ class SyntaxHighlightLabelView extends LabelView {
     for (int i = 0; i < constantsSikuli.length; i++) { patternColorsSikuli.put(Pattern.compile(
               "\\b(" + constantsSikuli[i] + ")\\b"), new Color(128, 64, 0));
     }
+		patternColorsPython.putAll(patternColorsSikuli);
+		patternColorsRuby.putAll(patternColorsSikuli);
+		patternColorsSikuli = null;
   }
 
 	public SyntaxHighlightLabelView(Element elm, String contentType) {
 		super(elm);
 		sikuliContentType = contentType;
 		if (Settings.CPYTHON.equals(sikuliContentType)) {
-			patternColors.putAll(patternColorsPython);
+			patternColors = patternColorsPython;
 		} else if (Settings.CRUBY.equals(sikuliContentType)) {
-			patternColors.putAll(patternColorsRuby);
+			patternColors = patternColorsRuby;
 		}
-		patternColors.putAll(patternColorsSikuli);
 	}
 
 	private static String nSpaces(int n) {
