@@ -344,12 +344,36 @@ public class SikuliX {
   }
 
   public static boolean popAsk(String msg) {
-    int ret = JOptionPane.showConfirmDialog(null, msg, "IDE: ... something to decide! ", JOptionPane.YES_NO_OPTION);
+		return popAsk(msg, null);
+	}
+
+  public static boolean popAsk(String msg, String title) {
+		if (title == null) title = "... something to decide!";
+    int ret = JOptionPane.showConfirmDialog(null, msg, title, JOptionPane.YES_NO_OPTION);
     if (ret == JOptionPane.CLOSED_OPTION || ret == JOptionPane.NO_OPTION) {
       return false;
     }
     return true;
   }
+
+  public static String popSelect(String msg, String[] options, String preset) {
+		return popSelect(msg, null, options, preset);
+	}
+
+  public static String popSelect(String msg, String[] options) {
+		return popSelect(msg, null, options, options[0]);
+	}
+
+	public static String popSelect(String msg, String title, String[] options) {
+		return popSelect(msg, title, options, options[0]);
+	}
+
+	public static String popSelect(String msg, String title, String[] options, String preset) {
+		if (title == null) {
+			title = "... something to select!";
+		}
+		return (String) JOptionPane.showInputDialog(null, msg, title, JOptionPane.PLAIN_MESSAGE, null, options, preset);
+	}
 
   /**
    * request user's input as one line of text <br>
