@@ -145,8 +145,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 //			this.setText(String.format(Settings.TypeCommentDefault, getSikuliContentType()));
 			this.setText("");
 		}
-
-		Debug.log(3, "InitTab: %s :--: %s", getContentType(), getEditorKit());
+		SikuliIDE.getStatusbar().setCurrentContentType(getSikuliContentType());
+		Debug.log(3, "InitTab: (%s)", getSikuliContentType());
 	}
 
 	public String getSikuliContentType() {
