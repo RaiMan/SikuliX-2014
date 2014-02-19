@@ -10,6 +10,7 @@ import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.ImageIcon;
@@ -922,6 +923,9 @@ public class Key {
 
     @Override
     public void run() {
+      BufferedImage img = Image.create("SikuliLogo").get();
+      Debug.log(3, "KBSetup: %s", img);
+      Image.dump();
       kbSetup = new JFrame("Localized Keyboard Setup");
       Container mpwinCP = kbSetup.getContentPane();
       mpwinCP.setLayout(new BorderLayout());
@@ -930,7 +934,7 @@ public class Key {
       kbSetup.pack();
       kbSetup.setAlwaysOnTop(true);
       kbSetup.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-      win.setLogo(new ImageIcon(Image.create("SikuliLogo").get()));
+      win.setLogo(new ImageIcon(img));
       kbSetup.setVisible(true);
     }
   }
