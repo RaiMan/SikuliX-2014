@@ -40,11 +40,6 @@ module SikuliX4Ruby
 
   java_import org.sikuli.basics.Debug
 
-  # Debug print
-  def log str
-    puts str if (org.sikuli.basics::Settings.DebugLogs == true)
-  end
-
   #
   # This method generates a wrapper for Java Native exception processing
   # in native java methods. It allows to detect a line number in script
@@ -127,18 +122,17 @@ end
 # Region/Screen or SikuliX classes.
 def self.method_missing name, *args, &block
   begin
-    log "method not exists: #{name} - trying SikuliX\n"
+    Debug.log 3, "SikuliX4Ruby: looking for undotted method: #{name}"
     if method = SikuliX4Ruby::UNDOTTED_METHODS[name] then
-      log "SikuliX has: #{name}\n"
       ret = method.call *args, &block
       # Dynamic methods that throw a native Java-exception,
       # hide a line number in the scriptfile!
       #Object.send(:define_method, name){ |*args| method.call *args }
       return ret
     else
-      raise "Non SikuliX method: #{name} (#{args})"
+      raise "undotted method missing"
     end
   rescue Exception => e
-    raise "Problem (#{e})\nwith SikuliX.#{name} (#{args})"
+    raise "SikuliX4Ruby: Problem (#{e})\nwith undotted method: #{name} (#{args})"
   end
 end
