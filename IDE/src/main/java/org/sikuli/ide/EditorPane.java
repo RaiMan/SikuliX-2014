@@ -501,7 +501,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 				inString = false;
 				continue;
 			}
-			if (current.endsWith(".png") || current.endsWith("jpg")) {
+			if (current.endsWith(".png") || current.endsWith(".jpg")) {
 				Debug.log(3,"IDE: save: used image: %s", current);
 				usedImages.add(current);
 			}
