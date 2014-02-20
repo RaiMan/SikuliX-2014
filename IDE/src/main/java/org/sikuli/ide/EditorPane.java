@@ -343,7 +343,6 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			String sname = snameDir.replace(".sikuli", "") + ".html";
 			(new File(snameDir, sname)).delete();
 		}
-//TODO bundle image clean in Java
 		if (PreferencesUser.getInstance().getAtSaveCleanBundle()) {
 			cleanBundle(getSrcBundle());
 		}
