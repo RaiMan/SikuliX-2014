@@ -84,9 +84,6 @@ public class JRubyScriptRunner implements IScriptRunner {
 
 	private static String sikuliLibPath;
 
-	private static String timestampBuilt;
-	private static final String tsb = "##--##Fri Jan  28 13:06:44 MSD 2014##--##";
-
 	@Override
 	public void init(String[] args) {
 		//TODO classpath and other path handlings
@@ -99,8 +96,6 @@ public class JRubyScriptRunner implements IScriptRunner {
 			//run the Ruby statements from argv (special for setup functional test)
 			fillSysArgv(null, null);
 			createScriptingContainer();
-			interpreter.put("SIKULI_IMAGE_PATH",
-							imagedirectory.getAbsolutePath());
 			executeScriptHeader(new String[0]);
 			SikuliX.displaySplash(null);
 			return runRuby(null, scriptArgs, null);
@@ -108,8 +103,6 @@ public class JRubyScriptRunner implements IScriptRunner {
 		scriptfile = new File(scriptfile.getAbsolutePath());
 		fillSysArgv(scriptfile, scriptArgs);
 		createScriptingContainer();
-		interpreter.put("SIKULI_IMAGE_PATH",
-						imagedirectory.getAbsolutePath());
 		if (forIDE == null) {
 			executeScriptHeader(new String[]{
 				scriptfile.getParentFile().getAbsolutePath(),
@@ -428,7 +421,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 	}
 
 	/**
-	 * Executes the defined header for the jython script.
+	 * Executes the defined header for the jruby script.
 	 *
 	 * @param syspaths List of all syspath entries
 	 */

@@ -128,7 +128,7 @@ public class JythonScriptRunner implements IScriptRunner {
   @Override
   public int runScript(File pyFile, File imagePath, String[] argv, String[] forIDE) {
     if (null == pyFile) {
-      //run the Python statements from argv (special for setup fgunctional test)
+      //run the Python statements from argv (special for setup functional test)
       fillSysArgv(null, null);
       createPythonInterpreter();
       executeScriptHeader(new String[0]);
