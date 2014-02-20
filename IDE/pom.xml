@@ -58,6 +58,11 @@
       <artifactId>mac_widgets</artifactId>
       <version>0.9.5</version>
     </dependency>
+    <dependency>
+      <groupId>org.sikuli</groupId>
+      <artifactId>Jygments4SikuliX</artifactId>
+      <version>1.1.0</version>
+    </dependency>
   </dependencies>
 
   <build>

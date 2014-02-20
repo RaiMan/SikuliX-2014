@@ -34,6 +34,7 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Random;
 import java.util.ServiceLoader;
 import java.util.jar.JarOutputStream;
@@ -57,13 +58,13 @@ public class FileManager {
   private static void log0(int level, String message, Object... args) {
     Debug.logx(level, "", me + ": " + message, args);
   }
-  //</editor-fold>  
-  
+  //</editor-fold>
+
   static final int DOWNLOAD_BUFFER_SIZE = 153600;
   static IResourceLoader nativeLoader = null;
   private static MultiFrame _progress = null;
   private static final String EXECUTABLE = "#executable";
-  
+
   /**
    * System.load() the given library module <br>
    * from standard places (folder libs or SikuliX/libs) in the following order<br>
@@ -102,7 +103,7 @@ public class FileManager {
       conn.disconnect();
     }
   }
-  
+
   public static Proxy getProxy() {
     Proxy proxy = Settings.proxy;
     if (!Settings.proxyChecked) {
@@ -129,7 +130,7 @@ public class FileManager {
     }
     return proxy;
   }
-  
+
   public static boolean setProxy(String pName, String pPort) {
     InetAddress a = null;
     String host = null;
@@ -164,7 +165,7 @@ public class FileManager {
     }
     return false;
   }
-  
+
   /**
    * download a file at the given url to a local folder
    *
@@ -210,7 +211,7 @@ public class FileManager {
           FileOutputStream writer = new FileOutputStream(fullpath);
           InputStream reader;
           if (getProxy() != null) {
-            reader = url.openConnection(getProxy()).getInputStream();          
+            reader = url.openConnection(getProxy()).getInputStream();
           } else {
             reader = url.openConnection().getInputStream();
           }
@@ -342,7 +343,7 @@ public class FileManager {
       log0(lvl, "tempdir delete: %s", path);
     }
   }
-  
+
   public static boolean deleteFileOrFolder(String path, fileFilter filter) {
     File entry = new File(path);
     File f;
@@ -381,7 +382,7 @@ public class FileManager {
     }
     return true;
   }
-  
+
   public static boolean deleteFileOrFolder(String path) {
     return deleteFileOrFolder(path, null);
   }
@@ -868,6 +869,28 @@ public class FileManager {
     }
   }
 
+	public static void deleteNotUsedImages(String bundle, List<String> usedImages) {
+		File scriptFolder = new File(bundle);
+		if (!scriptFolder.isDirectory()) {
+			return;
+		}
+		String path;
+		for (File image : scriptFolder.listFiles(new FilenameFilter() {
+					@Override
+					public boolean accept(File dir, String name) {
+						if ((name.endsWith(".png") || name.endsWith(".jpg"))) {
+							return true;
+						}
+						return false;
+					}
+				})) {
+			if (!usedImages.contains(image.getName())) {
+				Debug.log(3, "FileManager: delete not used: %s", image);
+				image.delete();
+			}
+		}
+	}
+
   private static class FileFilterScript implements FilenameFilter {
     private String _check;
     public FileFilterScript(String check) {
@@ -902,7 +925,7 @@ public class FileManager {
     }
     return nativeLoader;
   }
-  
+
   public static String getJarParentFolder() {
     CodeSource src = FileManager.class.getProtectionDomain().getCodeSource();
     String jarParentPath = "--- not known ---";
@@ -917,7 +940,7 @@ public class FileManager {
     }
     return RunningFromJar + jarParentPath;
   }
-  
+
   public static String getJarName() {
     CodeSource src = FileManager.class.getProtectionDomain().getCodeSource();
     if (src.getLocation() != null) {
@@ -925,7 +948,7 @@ public class FileManager {
     }
     return "";
   }
-    
+
   public static boolean writeStringToFile(String text, String path) {
     PrintStream out = null;
     try {
@@ -1099,7 +1122,7 @@ public class FileManager {
       addToJarWriteFile(jar, dir, prefix);
     }
   }
-  
+
   private static void addToJarWriteFile(JarOutputStream jar, File file, String prefix) throws IOException {
     if (file.getName().startsWith(".")) {
       return;
@@ -1134,7 +1157,7 @@ public class FileManager {
     }
     out.flush();
   }
-  
+
   public static boolean pathEquals(String path1, String path2) {
     return (new File(path1)).equals(new File(path2));
   }

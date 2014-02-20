@@ -509,9 +509,6 @@ public class JythonScriptRunner implements IScriptRunner {
     } else if ("convertSrcToHtml".equals(action)) {
       convertSrcToHtml((String) args[0]);
       return true;
-    } else if ("cleanBundle".equals(action)) {
-      cleanBundle((String) args[0]);
-      return true;
     } else if ("createRegionForWith".equals(action)) {
       args[0] = createRegionForWith(args[0]);
       return true;
@@ -635,13 +632,6 @@ public class JythonScriptRunner implements IScriptRunner {
     py.set("local_convert", true);
     py.set("sikuli_src", bundle);
     py.exec(pyConverter);
-  }
-
-  private void cleanBundle(String bundle) {
-    PythonInterpreter py = new PythonInterpreter();
-    log(lvl, "Clear source bundle " + bundle);
-    py.set("bundle_path", bundle);
-    py.exec(pyBundleCleaner);
   }
 
   private Object createRegionForWith(Object reg) {

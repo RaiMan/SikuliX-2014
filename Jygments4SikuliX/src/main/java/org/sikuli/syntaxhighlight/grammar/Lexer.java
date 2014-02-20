@@ -60,12 +60,11 @@ public class Lexer extends Grammar
 		else
 		{
 			// Try contrib package
-			String pack = Jygments.class.getPackage().getName();
-			lexer = getByFullName( pack, "contrib", name );
+			lexer = getByFullName( "LexerContrib", "", name );
 			if( lexer == null )
 			{
 				// Try this package
-				pack = Lexer.class.getPackage().getName();
+				String pack = Lexer.class.getPackage().getName();
 				lexer = getByFullName( pack, "", name );
 			}
 			return lexer;
@@ -75,7 +74,7 @@ public class Lexer extends Grammar
 	public static Lexer getByFullName( String name ) throws ResolutionException {
     return getByFullName("", "", name);
   }
-          
+
 	@SuppressWarnings("unchecked")
 	public static Lexer getByFullName( String pack, String sub, String name ) throws ResolutionException
 	{

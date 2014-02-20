@@ -11,6 +11,8 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -33,6 +35,9 @@ import org.sikuli.script.Location;
 import org.sikuli.basics.SikuliX;
 import org.sikuli.script.Image;
 import org.sikuli.script.ImagePath;
+import org.sikuli.syntaxhighlight.ResolutionException;
+import org.sikuli.syntaxhighlight.grammar.Lexer;
+import org.sikuli.syntaxhighlight.grammar.Token;
 
 public class EditorPane extends JTextPane implements KeyListener, CaretListener {
 
@@ -331,7 +336,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	private void writeSrcFile() throws IOException {
 		Debug.log(3, "IDE: writeSrcFile: " + _editingFile.getName());
 		writeFile(_editingFile.getAbsolutePath());
-		if (PreferencesUser.getInstance().getAtSaveMakeHTML()) {
+    if (PreferencesUser.getInstance().getAtSaveMakeHTML()) {
 			convertSrcToHtml(getSrcBundle());
 		} else {
 			String snameDir = new File(_editingFile.getAbsolutePath()).getParentFile().getName();
@@ -339,10 +344,19 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			(new File(snameDir, sname)).delete();
 		}
 //TODO bundle image clean in Java
-		if (Settings.CPYTHON.equals(getSikuliContentType()) && PreferencesUser.getInstance().getAtSaveCleanBundle()) {
+		if (PreferencesUser.getInstance().getAtSaveCleanBundle()) {
 			cleanBundle(getSrcBundle());
 		}
 		setDirty(false);
+	}
+
+	private Lexer getLexer(File script) {
+		try {
+			return Lexer.getByName("python");
+		} catch (ResolutionException ex) {
+			return null;
+		}
+
 	}
 
 	public String exportAsZip() throws IOException, FileNotFoundException {
@@ -462,16 +476,40 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	}
 
 	private void convertSrcToHtml(String bundle) {
-		SikuliX.getScriptRunner("jython", null, null).doSomethingSpecial("convertSrcToHtml",
-						new String[]{bundle});
+		if (null != SikuliX.getScriptRunner("jython", null, null)) {
+			SikuliX.getScriptRunner("jython", null, null).doSomethingSpecial("convertSrcToHtml",
+							new String[]{bundle});
+		}
 	}
 
 	private void cleanBundle(String bundle) {
-		if (!PreferencesUser.getInstance().getAtSaveCleanBundle()) {
+		String scriptText = getText();
+		Lexer lexer = getLexer(_editingFile);
+		Iterable<Token> tokens = lexer.getTokens(scriptText);
+		List<String> usedImages = new ArrayList<String>();
+		boolean inString = false;
+		String current;
+		for (Token t : tokens) {
+			current = t.getValue();
+			if (!inString) {
+				if ("'\"".contains(current)) {
+					inString = true;
+				}
+				continue;
+			}
+			if ("'\"".contains(current)) {
+				inString = false;
+				continue;
+			}
+			if (current.endsWith(".png") || current.endsWith("jpg")) {
+				Debug.log(3,"IDE: save: used image: %s", current);
+				usedImages.add(current);
+			}
+		}
+		if (usedImages.size() == 0) {
 			return;
 		}
-		SikuliX.getScriptRunner("jython", null, null).doSomethingSpecial("cleanBundle",
-						new String[]{bundle});
+		FileManager.deleteNotUsedImages(bundle, usedImages);
 	}
 
 	public File copyFileToBundle(String filename) {

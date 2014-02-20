@@ -9,14 +9,14 @@ import org.sikuli.syntaxhighlight.grammar.Lexer;
 import org.sikuli.syntaxhighlight.grammar.Token;
 
 public class Run {
-  
+
   private static void p(String text, Object... args) {
     System.out.println(String.format(text, args));
-  } 
+  }
 
   public static void main(String[] args) throws IOException, ResolutionException {
     String file = System.getProperty("user.dir") + "/src/main/java/org/sikuli/syntaxhighlight/Util.java";
-    String aLexer = "java";
+    String aLexer = "python";
     Lexer lexer = Lexer.getByName(aLexer);
     if (lexer != null) {
       Formatter formatter = Formatter.getByName("html");
