@@ -180,15 +180,6 @@ public class JRubyScriptRunner implements IScriptRunner {
 		if ("redirect".equals(action)) {
 			doRedirect((PipedInputStream[]) args);
 			return true;
-		} else if ("convertSrcToHtml".equals(action)) {
-			//convertSrcToHtml((String) args[0]);
-			return true;
-		} else if ("cleanBundle".equals(action)) {
-			//cleanBundle((String) args[0]);
-			return true;
-		} else if ("createRegionForWith".equals(action)) {
-			//args[0] = createRegionForWith(args[0]);
-			return true;
 		} else {
 			return false;
 		}

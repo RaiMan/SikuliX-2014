@@ -86,11 +86,6 @@ public class JythonScriptRunner implements IScriptRunner {
           = JythonScriptRunner.class.getResourceAsStream("/scripts/sikuli2html.py");
   static String pyConverter
           = FileManager.convertStreamToString(SikuliToHtmlConverter);
-  //TODO SikuliBundleCleaner implement in Java
-  final static InputStream SikuliBundleCleaner
-          = JythonScriptRunner.class.getResourceAsStream("/scripts/clean-dot-sikuli.py");
-  static String pyBundleCleaner
-          = FileManager.convertStreamToString(SikuliBundleCleaner);
   private static String sikuliLibPath;
 
   /**
