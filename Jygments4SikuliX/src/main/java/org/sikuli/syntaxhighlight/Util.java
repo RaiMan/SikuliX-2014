@@ -126,7 +126,7 @@ public class Util {
     try {
       jarFileURI = Jygments.class.getProtectionDomain().getCodeSource().getLocation().toURI();
     } catch (URISyntaxException ex) {
-      //TODO error message
+      System.out.println("Util: getJsonFile: URISyntaxException: " + ex.toString());
     }
     if (jarFileURI != null) {
       String jarFilePath = jarFileURI.getPath();
