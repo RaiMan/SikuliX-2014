@@ -49,17 +49,6 @@ mvn -f Basics/setup* >>$log
 cp Basics/target-setup/sikulixsetup*.jar $dist/sikulixsetup-$mversion.jar
 
 if [ "$1" != "setup" ]; then
-  # ---------- Jython
-  echo --- Jython timestamp
-  echo --- BUILD Jython timestamp >>$log
-  cd $base/$jython
-  src=$base/$jython/src/main/java/org/sikuli/scriptrunner/JythonScriptRunner.java
-  out=$base/$jython/src/main/java/org/sikuli/scriptrunner/JythonScriptRunnerX.java
-  xdd=`date`
-  sed "s/##--##.*##--##/##--##$xdd##--##/" $src >$out
-  mv -f $out $src
-  mvn clean install >>$log
-  
   # ----------- API
   echo --- make API
   cd $base
