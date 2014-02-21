@@ -38,6 +38,7 @@ import org.sikuli.syntaxhighlight.grammar.def.ChangeStateTokenRuleDef;
 import org.sikuli.syntaxhighlight.grammar.def.IncludeDef;
 import org.sikuli.syntaxhighlight.grammar.def.TokenRuleDef;
 
+
 /**
  * @author Tal Liron
  */
@@ -46,6 +47,7 @@ public class Lexer extends Grammar
 	//
 	// Static operations
 	//
+  private static ClassLoader cl = Jygments.class.getClassLoader();
 
 	public static Lexer getByName( String name ) throws ResolutionException
 	{
@@ -93,16 +95,13 @@ public class Lexer extends Grammar
 
 		try
 		{
-			return (Lexer) Jygments.class.getClassLoader().loadClass( fullname ).newInstance();
+      Class<Lexer> cLexer = (Class<Lexer>) cl.loadClass( fullname );
+      Lexer iLexer = (Lexer) (cLexer.newInstance());
+      return iLexer;
 		}
-		catch( InstantiationException x )
+		catch( Exception x )
 		{
-		}
-		catch( IllegalAccessException x )
-		{
-		}
-		catch( ClassNotFoundException x )
-		{
+      //System.out.println("[error] Jygments: Lexer: problem loading class " + fullname);
 		}
 
 		InputStream stream = Util.getJsonFile(pack, sub, name, fullname);

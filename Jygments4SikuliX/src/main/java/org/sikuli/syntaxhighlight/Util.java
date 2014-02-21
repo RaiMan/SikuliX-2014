@@ -17,6 +17,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.security.CodeSource;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -115,6 +116,7 @@ public class Util {
   private static final Pattern DOUBLE_QUOTED_STRING = Pattern.compile("\"(?>\\\\.|.)*?\"");
   private static final Pattern SINGLE_QUOTED_STRING = Pattern.compile("'(?>\\\\.|.)*?'");
   public static String extJSON = ".jso";
+  private static CodeSource csJygments = Jygments.class.getProtectionDomain().getCodeSource();
 
   public static InputStream getJsonFile(String pack, String sub, String name, String fullname) {
     URI jarFileURI = null;
@@ -124,7 +126,7 @@ public class Util {
     fullname = fullname.replace('.', '/') + extJSON;
     String filenamePack, filenameRoot;
     try {
-      jarFileURI = Jygments.class.getProtectionDomain().getCodeSource().getLocation().toURI();
+      jarFileURI = csJygments.getLocation().toURI();
     } catch (URISyntaxException ex) {
       System.out.println("Util: getJsonFile: URISyntaxException: " + ex.toString());
     }
@@ -152,7 +154,7 @@ public class Util {
           try {
             stream = new FileInputStream(jarFile);
           } catch (FileNotFoundException ex) {
-            //TODO error message
+            System.out.println("Jygments: Util: not found:\n" + jarFile) ;
           }
         }
       } else {
