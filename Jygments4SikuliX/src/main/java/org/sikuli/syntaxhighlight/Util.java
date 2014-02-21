@@ -131,9 +131,9 @@ public class Util {
     } catch (URISyntaxException ex) {
       System.out.println("Util: getJsonFile: URISyntaxException: " + ex.toString());
     }
-    if (jarFileURI != null && !jarFileURI.getPath().contains(".jar")) {
+    if (jarFileURI != null ) {
       String jarFilePath = jarFileURI.getPath();
-      if (jarFileURI.getScheme().equals("file")) {
+      if (jarFileURI.getScheme().equals("file") && !jarFilePath.contains(".jar")) {
         if (!pack.isEmpty()) {
           pack = pack.replace(".", "/");
           if (!sub.isEmpty()) {

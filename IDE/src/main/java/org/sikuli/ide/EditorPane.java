@@ -350,8 +350,39 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		setDirty(false);
 	}
 
-	private Lexer getLexer(File script) {
-		String scriptType = "python";
+	private void cleanBundle(String bundle) {
+		String scriptText = getText();
+		Lexer lexer = getLexer();
+		Iterable<Token> tokens = lexer.getTokens(scriptText);
+		List<String> usedImages = new ArrayList<String>();
+		boolean inString = false;
+		String current;
+		for (Token t : tokens) {
+			current = t.getValue();
+			if (!inString) {
+				if ("'\"".contains(current)) {
+					inString = true;
+				}
+				continue;
+			}
+			if ("'\"".contains(current)) {
+				inString = false;
+				continue;
+			}
+			if (current.endsWith(".png") || current.endsWith(".jpg")) {
+				Debug.log(3,"IDE: save: used image: %s", current);
+				usedImages.add(current);
+			}
+		}
+		if (usedImages.size() == 0) {
+			return;
+		}
+		FileManager.deleteNotUsedImages(bundle, usedImages);
+	}
+
+	private Lexer getLexer() {
+//TODO this only works for cleanbundle to find the image strings
+    String scriptType = "python";
 		if (null != lexers.get(scriptType)) {
 			return lexers.get(scriptType);
 		}
@@ -486,36 +517,6 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			SikuliX.getScriptRunner("jython", null, null).doSomethingSpecial("convertSrcToHtml",
 							new String[]{bundle});
 		}
-	}
-
-	private void cleanBundle(String bundle) {
-		String scriptText = getText();
-		Lexer lexer = getLexer(_editingFile);
-		Iterable<Token> tokens = lexer.getTokens(scriptText);
-		List<String> usedImages = new ArrayList<String>();
-		boolean inString = false;
-		String current;
-		for (Token t : tokens) {
-			current = t.getValue();
-			if (!inString) {
-				if ("'\"".contains(current)) {
-					inString = true;
-				}
-				continue;
-			}
-			if ("'\"".contains(current)) {
-				inString = false;
-				continue;
-			}
-			if (current.endsWith(".png") || current.endsWith(".jpg")) {
-				Debug.log(3,"IDE: save: used image: %s", current);
-				usedImages.add(current);
-			}
-		}
-		if (usedImages.size() == 0) {
-			return;
-		}
-		FileManager.deleteNotUsedImages(bundle, usedImages);
 	}
 
 	public File copyFileToBundle(String filename) {
