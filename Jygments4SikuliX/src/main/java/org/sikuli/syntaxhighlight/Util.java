@@ -124,31 +124,29 @@ public class Util {
     InputStream stream = null;
     String jsonname = name.replace('.', '/') + extJSON;
     fullname = fullname.replace('.', '/') + extJSON;
-    String filenamePack, filenameRoot;
+    File fileInPack = null;
+		File fileInRoot = null;
     try {
       jarFileURI = csJygments.getLocation().toURI();
     } catch (URISyntaxException ex) {
       System.out.println("Util: getJsonFile: URISyntaxException: " + ex.toString());
     }
-    if (jarFileURI != null) {
+    if (jarFileURI != null && !jarFileURI.getPath().contains(".jar")) {
       String jarFilePath = jarFileURI.getPath();
-      filenamePack = filenameRoot = jsonname;
       if (jarFileURI.getScheme().equals("file")) {
         if (!pack.isEmpty()) {
           pack = pack.replace(".", "/");
           if (!sub.isEmpty()) {
             sub = sub.replace(".", "/");
             pack = pack + "/" + sub;
-            filenameRoot = sub + "/" + jsonname;
+            fileInRoot = new File(jarFilePath, sub + "/" + jsonname);
           }
-          filenamePack = pack + "/" + jsonname;
+          fileInPack = new File(jarFilePath, pack + "/" + jsonname);
         }
-        jarFile = new File(jarFilePath, filenamePack);
-        if (!jarFile.exists()) {
-          jarFile = new File(jarFilePath, filenameRoot);
-          if (!jarFile.exists()) {
-            jarFile = null;
-          }
+        if (fileInPack != null && fileInPack.exists()) {
+					jarFile = fileInPack;
+				} else if (fileInRoot != null && fileInRoot.exists()) {
+            jarFile = fileInRoot;
         }
         if (jarFile != null) {
           try {

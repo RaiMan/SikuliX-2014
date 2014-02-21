@@ -125,8 +125,9 @@ public class Lexer extends Grammar
 				{
 					// Cache it
 					Lexer existing = lexers.putIfAbsent( fullname, lexer );
-					if( existing != null )
+					if( existing != null ) {
 						lexer = existing;
+					}
 				}
 
 				return lexer;

@@ -43,6 +43,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 	private static final String me = "EditorPane: ";
 	private static TransferHandler transferHandler = null;
+	private static Map<String, Lexer> lexers = new HashMap<String, Lexer>();
 	private PreferencesUser pref;
 	private File _editingFile;
 	private String editingType = null;
@@ -350,8 +351,14 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	}
 
 	private Lexer getLexer(File script) {
+		String scriptType = "python";
+		if (null != lexers.get(scriptType)) {
+			return lexers.get(scriptType);
+		}
 		try {
-			return Lexer.getByName("python");
+			Lexer lexer = Lexer.getByName(scriptType);
+			lexers.put(scriptType, lexer);
+			return lexer;
 		} catch (ResolutionException ex) {
 			return null;
 		}
