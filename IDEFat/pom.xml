@@ -19,20 +19,15 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>org.sikuli</groupId>
-  <artifactId>SikuliX-JythonFat</artifactId>
-  <name>SikuliX-JythonFat</name>
+  <artifactId>SikuliX-IDEFat</artifactId>
+  <name>SikuliX-IDEFat</name>
   <version>1.1.0</version>
 
   <dependencies>
     <dependency>
       <groupId>org.sikuli</groupId>
-      <artifactId>SikuliX-Jython</artifactId>
+      <artifactId>SikuliX-IDE</artifactId>
       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.python</groupId>
-      <artifactId>jython-standalone</artifactId>
-      <version>2.7-b1</version>
     </dependency>
   </dependencies>
   
@@ -46,7 +41,7 @@
 					<descriptors>
 						<descriptor>../${sikuli.jartype}</descriptor>
 					</descriptors>
-					<finalName>${sikuli.jarname}-3</finalName>
+					<finalName>${sikuli.jarname}-1</finalName>
 				</configuration>
 				<executions>
 					<execution>
