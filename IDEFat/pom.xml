@@ -69,7 +69,7 @@
             </manifest>
           </archive> 
 					<descriptors>
-						<descriptor>../plain.xml</descriptor>
+						<descriptor>../ide-fat.xml</descriptor>
 					</descriptors>
 					<finalName>${sikuli.usedversion}-1</finalName>
 				</configuration>
