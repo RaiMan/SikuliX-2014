@@ -97,7 +97,7 @@ A maven based build workflow for the native libraries (libVisionProxy, lib...Uti
 
 **Module Jygments4SikuliX**
 
-This is an adaption of the work [Jygments]() to the needs of SikuliX: it contains lexer/parser/formatter features and is a port from Python to Java of the well known Pygments tool, that is widely used for syntax highlighting and formatting of program code. It is intended to be used for syntax highlighting and other purposes, where scripting language grammar awareness is needed.
+This is an adaption of the work [Jygments](https://code.google.com/p/jygments/) to the needs of SikuliX: it contains lexer/parser/formatter features and is a port from Python to Java of the well known Pygments tool, that is widely used for syntax highlighting and formatting of program code. In SikuliX it is intended to be used for syntax highlighting and other purposes, where scripting language grammar awareness is needed.
 
 <hr/>
 
@@ -106,7 +106,7 @@ This is an adaption of the work [Jygments]() to the needs of SikuliX: it contain
 **Module Libs**
 
 The prebuilt native libraries for Windows, Mac and Linux (partially).<br />
-(contained in `sikuli-setup.jar`)
+(contained in `sikulixsetup.jar`)
 
 It contains a Maven workflow to execute build scripts for the native libraries on the system running on:
  - Windows (not yet ready): WinUtil.dll, VisionProxy.dll
@@ -132,9 +132,11 @@ Currently as a convenience the standard tessdata folder needed for using Tessera
 A template Sikuli-IDE.app, that is downloaded on request and made ready-to-use during Sikuli setup.
 
 **Modules ...Fat**
+
 Existing for IDE, API, Jython and JRuby. These build so called fat jars, that contain all needed dependency jars and are only intended for the build/setup process.
 
 **Module Setup**
+
 It produces the fat jar `sikulixsetup.jar` being the only downloadable artefact and allows to setup the SikuliX packages to be used on the local systems.
 
 **Module Docs** (not Maven-ized yet)
