@@ -7,7 +7,7 @@
 
 This Maven multi-module setup contains everything ...
 -------------
-**... to build the ready-to-use SikuliX packages [available on Launchpad](https://launchpad.net/sikuli)**
+**... to build the ready-to-use SikuliX packages as they are [available on Launchpad](https://launchpad.net/sikuli)**
 
 `It is highly recommended to first look through this README, before clicking around`
 
