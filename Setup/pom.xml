@@ -49,9 +49,9 @@
             </manifest>
           </archive> 
 					<descriptors>
-						<descriptor>../${sikuli.jartype}</descriptor>
+						<descriptor>../plain.xml</descriptor>
 					</descriptors>
-					<finalName>sikuli-setup-${project.version}</finalName>
+					<finalName>sikulixsetup-${project.version}</finalName>
 				</configuration>
 				<executions>
 					<execution>

@@ -26,8 +26,33 @@
   <dependencies>
     <dependency>
       <groupId>org.sikuli</groupId>
-      <artifactId>SikuliX-IDE</artifactId>
+      <artifactId>SikuliX-API</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.googlecode.json-simple</groupId>
+      <artifactId>json-simple</artifactId>
+      <version>1.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.swinglabs.swingx</groupId>
+      <artifactId>swingx-core</artifactId>
+      <version>1.6.5-1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.jgoodies</groupId>
+      <artifactId>forms</artifactId>
+      <version>1.2.1</version>
+    </dependency>
+    <dependency>
+      <groupId>com.explodingpixels</groupId>
+      <artifactId>mac_widgets</artifactId>
+      <version>0.9.5</version>
+    </dependency>
+    <dependency>
+      <groupId>org.sikuli</groupId>
+      <artifactId>Jygments4SikuliX</artifactId>
+      <version>1.1.0</version>
     </dependency>
   </dependencies>
   
@@ -38,10 +63,15 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.sikuli.ide.SikuliIDE</mainClass>
+            </manifest>
+          </archive> 
 					<descriptors>
-						<descriptor>../${sikuli.jartype}</descriptor>
+						<descriptor>../plain.xml</descriptor>
 					</descriptors>
-					<finalName>${sikuli.jarname}-1</finalName>
+					<finalName>${sikuli.usedversion}-1</finalName>
 				</configuration>
 				<executions>
 					<execution>

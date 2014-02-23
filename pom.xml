@@ -41,6 +41,7 @@
 		<exclude.nativelayer.null>NativeLayerForNothing</exclude.nativelayer.null>
 		<sikuli.jartype>plain.xml</sikuli.jartype>
 		<sikuli.jarname>${project.version}</sikuli.jarname>
+    <sikuli.usedversion>1.1.0-Beta1</sikuli.usedversion>
 	</properties>
 
 	<repositories>

@@ -39,9 +39,9 @@
 				<version>2.4</version>
 				<configuration>
 					<descriptors>
-						<descriptor>../${sikuli.jartype}</descriptor>
+						<descriptor>../plain.xml</descriptor>
 					</descriptors>
-					<finalName>${sikuli.jarname}-2</finalName>
+					<finalName>${sikuli.usedversion}-2</finalName>
 				</configuration>
 				<executions>
 					<execution>
