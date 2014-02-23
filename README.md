@@ -14,9 +14,11 @@ Private complementing Websites: [Host Europe](https://www.hosteurope.de)
 **SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer)
 <hr/>
 
-This Maven multi-module setup contains everything
+This Maven multi-module setup contains everything ...
 -------------
-**to build the ready-to-use packages [available on Launchpad](https://launchpad.net/sikuli)** 
+**... to build the ready-to-use packages [available on Launchpad](https://launchpad.net/sikuli)**
+
+`It is highly recommended to first look through this README, before clicking around`
 
 **Forking and/or downloading this repo only makes sense:**
  - if you want to get a knowledge about the internals of Sikuli
