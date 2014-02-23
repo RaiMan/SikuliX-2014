@@ -1,6 +1,6 @@
 #!/bin/sh
-version=1.1.0
 mversion=1.1
+version=$mversion.0
 
 base=`pwd`
 echo ----------------- SikuliX collecting jars in $base 
