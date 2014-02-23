@@ -33,6 +33,7 @@ public class RunSetup {
   private static boolean runningUpdate = false;
   private static boolean isUpdateSetup = false;
   private static boolean runningfromJar = true;
+  private static boolean noSetup = false;
   private static String workDir;
   private static String uhome;
   private static String logfile;
@@ -163,6 +164,11 @@ public class RunSetup {
 
     if (args.length > 0 && "updateSetup".equals(args[0])) {
       isUpdateSetup = true;
+      options.remove(0);
+    }
+
+    if (args.length > 0 && "noSetup".equals(args[0])) {
+      noSetup = true;
       options.remove(0);
     }
 
@@ -325,13 +331,13 @@ public class RunSetup {
       if (runningJar.endsWith("-plain.jar")) {
         localSetup = runningJar;
         projectDir = new File(workDir).getParentFile().getParentFile().getAbsolutePath();
-        if (!popAsk("Setup seems to be running in Maven project structure\n"
+        if (!noSetup && !popAsk("Setup seems to be running in Maven project structure\n"
                 + projectDir + " --- Continue?")) {
           System.exit(0);
         }
         File fDownloads = new File(workDir, "Downloads");
         Debug.log(3, "projectDir: " + projectDir);
-        String ideFat = downloadIDE.replace(".jar", "-plain.jar");
+        String ideFat = downloadIDE.replace(".jar", "-ide-fat.jar");
         String apiFat = downloadJava.replace(".jar", "-plain.jar");
         String jythonFat = downloadJython.replace(".jar", "-plain.jar");
         String jrubyFat = downloadJRuby.replace(".jar", "-plain.jar");
@@ -398,6 +404,9 @@ public class RunSetup {
           } catch (Exception ex) {
             doit = false;
           }
+        }
+        if (noSetup) {
+          System.exit(0);
         }
         if (!doit) {
           popError("Some artifacts are missing or could not be copied.\n"

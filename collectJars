@@ -1,79 +1,50 @@
 #!/bin/sh
+version=1.1.0
+mversion=1.1
+
 base=`pwd`
-echo SourceBase $base
+echo ----------------- SikuliX collecting jars in $base 
 
-mrepo=~/.m2/repository/org/sikuli
+source=$base/Setup/target
 
-setup=Basics
-jython=Jython
-api=API
-ide=IDE
-
-dist=$base/../Build
+dist=$base/../SikuliX-Setup
 if [ -e $dist ]; then
   rm -f -R $dist
 fi
 mkdir $dist 
+mkdir $dist/Downloads 
 
-log=$dist/log.txt
-
-echo "--- creating version info"
-echo "--- creating version info" >$log
-cd $base/$setup
-mvn clean compile >>$log
-version=`java -cp $base/$setup/target/classes org.sikuli.basics.RunSetup version`
-mversion=`java -cp $base/$setup/target/classes org.sikuli.basics.RunSetup majorversion`
-uversion=`java -cp $base/$setup/target/classes org.sikuli.basics.RunSetup updateversion`
+log=$dist/collectjars-log.txt
 
 echo --- version --- $version
 echo --- major version --- $mversion
-echo --- update version --- $uversion
 echo --- version --- $version >>$log
 echo --- major version --- $mversion >>$log
-echo --- update version --- $uversion >>$log
 
-# ----------- Basics
-echo --- Basics timestamp
-echo --- BUILD Basics timestamp >>$log
-cd $base/$setup
-src=$base/$setup/src/main/java/org/sikuli/basics/RunSetup.java
-out=$base/$setup/src/main/java/org/sikuli/basics/RunSetupX.java
-xdd=`date`
-sed "s/##--##.*##--##/##--##$xdd##--##/" $src >$out
-mv -f $out $src
-mvn install >>$log
+echo ----------------- SourceBase $base >>$log
+echo ----------------- running Maven clean install --- takes some time ...
+mvn clean install >>$log
+
 # ----------- Setup
-echo --- make Setup
+echo --- collecting jars
+echo --- collecting jars >>$log
+cd $source >>$log
+java -jar sikulixsetup-$version-plain.jar noSetup >>$log
 cd $base
-mvn -f Basics/setup* >>$log
-cp Basics/target-setup/sikulixsetup*.jar $dist/sikulixsetup-$mversion.jar
+ls -l $source >>$log
 
-if [ "$1" != "setup" ]; then
-  # ----------- API
-  echo --- make API
-  cd $base
-  mvn -f API/api* >>$log
-  cp API/target-api/*api-plain.jar $dist/$version-2.jar
-  
-  # ----------- SikuliX
-  echo --- make SikuliX
-  cd $base
-  mvn -f IDE/ide* >>$log
-  cp IDE/target-ide/*ide-plain.jar $dist/$version-1.jar
-  
-  # ----------- MacApp
-  echo --- make MacApp
-  cd $base
-  cp MacApp/target/*.jar $dist
-  
-  # ----------- Tesseract
-  echo --- make Tesseract
-  cd $base
-  cp Tesseract/target/*.jar $dist  
-  
-  # ----------- Remote
-  echo --- make Remote
-  cd $base
-  cp Remote/target/*.jar $dist/$version-3.jar  
-fi
-grep -i BUILD $log
+# ----------- Setup
+echo --- copy Setup
+echo --- copy Setup >>$log
+cp $source/sikulixsetup*.jar $dist/sikulixsetup-$mversion.jar
+ls -l $dist >>$log
+
+# ----------- Jars
+echo --- copy Jars 
+echo --- copy Jars >>$log
+cp $source/Downloads/* $dist/Downloads
+ls -l $dist/Downloads >>$log
+
+echo ----------- final content of $dist
+ls -lR $dist
+echo ----------- SikuliX collectjars end -----------
