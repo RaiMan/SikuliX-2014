@@ -70,8 +70,8 @@ module SikuliX4Ruby
     class RObserverCallBack < ObserverCallBack
       def initialize(block); super(); @block=block; end;
       %w(appeared vanished changed).each do |name|
-        define_method(name) do |e|
-          (@block.arity != 0) ? @block.call(e) : @block.call
+        define_method(name) do |*args|
+          @block.call *args
         end
       end
     end
