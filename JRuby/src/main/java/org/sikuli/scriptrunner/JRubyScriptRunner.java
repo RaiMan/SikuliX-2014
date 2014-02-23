@@ -290,7 +290,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 			//(SyntaxError) /tmp/sikuli-3213678404470696048.rb:2: syntax error, unexpected tRCURLY
 
 			Pattern pLineS = Pattern.compile("(?<=:)(\\d+):(.*)");
-			java.util.regex.Matcher mLine = pLineS.matcher(err);
+			Matcher mLine = pLineS.matcher(err);
 			if (mLine.find()) {
 				log(lvl + 2, "SyntaxError error line: " + mLine.group(1));
 				errorText = mLine.group(2) == null ? errorText : mLine.group(2);
@@ -306,7 +306,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 			//(NameError) undefined local variable or method `asdf' for main:Object
 
 			Pattern type = Pattern.compile("(?<=\\()(\\w*)");
-			java.util.regex.Matcher mLine = type.matcher(err);
+			Matcher mLine = type.matcher(err);
 			if (mLine.find()) {
 				errorType = mLine.group(1);
 			}
@@ -319,13 +319,18 @@ public class JRubyScriptRunner implements IScriptRunner {
 					errorLine = line.getLineNumber();
 					errorClass = PY_RUNTIME;
 					this.errorText = thr.getMessage();
+                                        
+                                        Pattern sikType = 
+                                                Pattern.compile(
+                                                        "(?<=org.sikuli.script.)(.*)(?=:)");
+                                        Matcher mSikType = 
+                                                sikType.matcher(this.errorText);
 
-					if (errorType.equals("Rukuli::ImageNotFound")) {
-						errorType = "FindFailed";
+					if (mSikType.find()) {
+						errorType = mSikType.group(1);
 					} else if (errorType.equals("RuntimeError")) {
 						errorClass = PY_JAVA;
 					}
-					//errorType = "NameError";
 					break;
 				}
 			}
