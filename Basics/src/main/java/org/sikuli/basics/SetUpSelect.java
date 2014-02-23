@@ -58,6 +58,9 @@ public class SetUpSelect extends javax.swing.JPanel {
     pPort = new javax.swing.JTextField();
     option7 = new javax.swing.JCheckBox();
     ask7 = new javax.swing.JButton();
+    jLabel9 = new javax.swing.JLabel();
+    option2 = new javax.swing.JCheckBox();
+    option3 = new javax.swing.JCheckBox();
 
     textField1.setText("textField1");
 
@@ -170,79 +173,105 @@ public class SetUpSelect extends javax.swing.JPanel {
       }
     });
 
+    jLabel9.setText("I want to use as scripting language: ");
+
+    option2.setText("Python (Jython) (default)");
+    option2.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        option2ActionPerformed(evt);
+      }
+    });
+
+    option3.setText("Ruby (JRuby)");
+    option3.addActionListener(new java.awt.event.ActionListener() {
+      public void actionPerformed(java.awt.event.ActionEvent evt) {
+        option3ActionPerformed(evt);
+      }
+    });
+
     org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
       layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-      .add(layout.createSequentialGroup()
-        .addContainerGap()
-        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-          .add(jSeparator1)
-          .add(jSeparator2)
-          .add(jSeparator5)
-          .add(org.jdesktop.layout.GroupLayout.TRAILING, jSeparator6)
-          .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-            .add(option1)
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(ask1))
-          .add(layout.createSequentialGroup()
-            .add(option4)
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(ask5))
-          .add(layout.createSequentialGroup()
-            .add(option5)
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .add(ask4))
-          .add(layout.createSequentialGroup()
-            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-              .add(layout.createSequentialGroup()
-                .add(jLabel1)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(suVersion))
-              .add(layout.createSequentialGroup()
-                .add(6, 6, 6)
-                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                  .add(layout.createSequentialGroup()
-                    .add(jLabel2)
-                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
-                    .add(suSystem))
-                  .add(layout.createSequentialGroup()
-                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                      .add(jLabel3)
-                      .add(jLabel4))
-                    .add(18, 18, 18)
-                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-                      .add(suFolder)
-                      .add(suJava)))))
-              .add(jLabel5)
-              .add(layout.createSequentialGroup()
-                .add(option6)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(ask6)))
-            .add(0, 0, Short.MAX_VALUE))
-          .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
-            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-              .add(option7)
-              .add(layout.createSequentialGroup()
-                .add(29, 29, 29)
-                .add(jLabel6)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .add(jLabel7)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-                .add(pName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 193, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-                .add(18, 18, 18)
-                .add(jLabel8)))
-            .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
-            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-              .add(pPort, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 69, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-              .add(ask7))))
-        .addContainerGap())
       .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
         .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         .add(jButton1)
         .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
         .add(setupNow)
         .add(20, 20, 20))
+      .add(layout.createSequentialGroup()
+        .addContainerGap()
+        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+          .add(layout.createSequentialGroup()
+            .add(29, 29, 29)
+            .add(jLabel9)
+            .add(18, 18, 18)
+            .add(option2)
+            .add(18, 18, 18)
+            .add(option3)
+            .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+          .add(layout.createSequentialGroup()
+            .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+              .add(jSeparator1)
+              .add(jSeparator2)
+              .add(jSeparator5)
+              .add(org.jdesktop.layout.GroupLayout.TRAILING, jSeparator6)
+              .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .add(option1)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(ask1))
+              .add(layout.createSequentialGroup()
+                .add(option4)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(ask5))
+              .add(layout.createSequentialGroup()
+                .add(option5)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(ask4))
+              .add(layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                  .add(layout.createSequentialGroup()
+                    .add(jLabel1)
+                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                    .add(suVersion))
+                  .add(layout.createSequentialGroup()
+                    .add(6, 6, 6)
+                    .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                      .add(layout.createSequentialGroup()
+                        .add(jLabel2)
+                        .addPreferredGap(org.jdesktop.layout.LayoutStyle.UNRELATED)
+                        .add(suSystem))
+                      .add(layout.createSequentialGroup()
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                          .add(jLabel3)
+                          .add(jLabel4))
+                        .add(18, 18, 18)
+                        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                          .add(suFolder)
+                          .add(suJava)))))
+                  .add(jLabel5))
+                .add(0, 200, Short.MAX_VALUE))
+              .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                  .add(option7)
+                  .add(layout.createSequentialGroup()
+                    .add(29, 29, 29)
+                    .add(jLabel6)
+                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .add(jLabel7)
+                    .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                    .add(pName, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 193, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                    .add(18, 18, 18)
+                    .add(jLabel8)))
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+                .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
+                  .add(pPort, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 69, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+                  .add(ask7)))
+              .add(layout.createSequentialGroup()
+                .add(option6)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .add(ask6)))
+            .addContainerGap())))
     );
     layout.setVerticalGroup(
       layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
@@ -275,6 +304,11 @@ public class SetUpSelect extends javax.swing.JPanel {
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
           .add(option1)
           .add(ask1))
+        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
+        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
+          .add(jLabel9)
+          .add(option2)
+          .add(option3))
         .add(18, 18, 18)
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
           .add(option4)
@@ -357,6 +391,14 @@ public class SetUpSelect extends javax.swing.JPanel {
     // TODO add your handling code here:
   }//GEN-LAST:event_option1ActionPerformed
 
+  private void option2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_option2ActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_option2ActionPerformed
+
+  private void option3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_option3ActionPerformed
+    // TODO add your handling code here:
+  }//GEN-LAST:event_option3ActionPerformed
+
   // Variables declaration - do not modify//GEN-BEGIN:variables
   public javax.swing.JButton ask1;
   public javax.swing.JButton ask4;
@@ -372,11 +414,14 @@ public class SetUpSelect extends javax.swing.JPanel {
   private javax.swing.JLabel jLabel6;
   private javax.swing.JLabel jLabel7;
   private javax.swing.JLabel jLabel8;
+  private javax.swing.JLabel jLabel9;
   private javax.swing.JSeparator jSeparator1;
   private javax.swing.JSeparator jSeparator2;
   private javax.swing.JSeparator jSeparator5;
   private javax.swing.JSeparator jSeparator6;
   protected javax.swing.JCheckBox option1;
+  protected javax.swing.JCheckBox option2;
+  protected javax.swing.JCheckBox option3;
   protected javax.swing.JCheckBox option4;
   protected javax.swing.JCheckBox option5;
   protected javax.swing.JCheckBox option6;
