@@ -1,15 +1,6 @@
 [![RaiMan's Stuff](https://raw.github.com/RaiMan/SikuliX-2014-Docs/master/src/main/resources/docs/source/RaiManStuff64.png)](http://www.sikuli.org) SikuliX-2014 (current version 1.1.0)
 ============
 
-**Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) (work in progress)**
-
-**Tools I use for developement:** <br />
-IDE with Maven support: [NetBeans 7.4](https://netbeans.org) (using Java 7 on all systems)<br />
-GitHub support: [SourceTree]() (Mac + Windows)<br />
-CI Service: [Travis CI](http://travis-ci.com) <br />
-Doc Service: [Read the Docs](https://readthedocs.org)<br />
-Main WebSite Service: [Weebly](http://www.weebly.com)<br />
-Private complementing Websites: [Host Europe](https://www.hosteurope.de)
 <hr />
 **SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer)
 <hr/>
@@ -28,6 +19,16 @@ This Maven multi-module setup contains everything ...
 If you "only" want to use the SikuliX features developing in Java or any Java aware scripting language (Jython, JRuby, Scala. Closure, ...) it is strongly recommended to start with sikuli-java.jar (run SikuliX setup with respective option ).
 
 **To get the ready-to-use packages (IDE, Script, Java/Jython support) <br />it is still recommended [to start here](http://www.sikulix.com/download.html).**
+
+**Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) (work in progress)**
+
+**Tools I use for developement:** <br />
+IDE with Maven support: [NetBeans 7.4](https://netbeans.org) (using Java 7 on all systems)<br />
+GitHub support: [SourceTree]() (Mac + Windows)<br />
+CI Service: [Travis CI](http://travis-ci.com) <br />
+Doc Service: [Read the Docs](https://readthedocs.org)<br />
+Main WebSite Service: [Weebly](http://www.weebly.com)<br />
+Private complementing Websites: [Host Europe](https://www.hosteurope.de)
 
 The structure of this repo
 ------------------------
