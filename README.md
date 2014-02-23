@@ -16,7 +16,7 @@ Private complementing Websites: [Host Europe](https://www.hosteurope.de)
 
 This Maven multi-module setup contains everything ...
 -------------
-**... to build the ready-to-use packages [available on Launchpad](https://launchpad.net/sikuli)**
+**... to build the ready-to-use SikuliX packages [available on Launchpad](https://launchpad.net/sikuli)**
 
 `It is highly recommended to first look through this README, before clicking around`
 
