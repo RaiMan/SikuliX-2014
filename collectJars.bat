@@ -24,9 +24,13 @@ echo --- version --- %version% >%log%
 echo --- major version --- %mversion% >>%log%
 
 echo ----------------- SourceBase %base% >>%log%
+
+if "%1" == "2" goto :NOBUILD
+if "%1" == "3" goto :NOPACK
 echo ----------------- running Maven clean install --- takes some time ...
 call mvn clean install >>%log%
 
+:NOBUILD
 REM ----------- Setup
 echo --- collecting jars
 echo --- collecting jars >>%log%
@@ -35,10 +39,11 @@ java -jar sikulixsetup-%version%-plain.jar noSetup >>%log%
 cd %base%
 dir %source% >>%log%
 
+:NOPACK
 REM ----------- Setup
 echo --- copy Setup
 echo --- copy Setup >>%log%
-copy %source%\sikulixsetup*.jar %dist%\sikulixsetup-%mversion%.jar >>%log%
+copy %source%\sikulixsetup-%version%-plain.jar %dist%\sikulixsetup-%mversion%.jar >>%log%
 dir %dist% >>%log%
 
 REM ----------- Jars

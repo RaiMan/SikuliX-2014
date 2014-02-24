@@ -22,16 +22,20 @@ echo --- version --- $version >>$log
 echo --- major version --- $mversion >>$log
 
 echo ----------------- SourceBase $base >>$log
-echo ----------------- running Maven clean install --- takes some time ...
-mvn clean install >>$log
+if [ "$1" != "2" -a "$1" != "3" ]; then
+  echo ----------------- running Maven clean install --- takes some time ...
+  mvn clean install >>$log
+fi
 
-# ----------- Setup
-echo --- collecting jars
-echo --- collecting jars >>$log
-cd $source >>$log
-java -jar sikulixsetup-$version-plain.jar noSetup >>$log
-cd $base
-ls -l $source >>$log
+if [ "$1" != "3" ]; then
+  # ----------- Setup
+  echo --- collecting jars
+  echo --- collecting jars >>$log
+  cd $source >>$log
+  java -jar sikulixsetup-$version-plain.jar noSetup >>$log
+  cd $base
+  ls -l $source >>$log
+fi
 
 # ----------- Setup
 echo --- copy Setup
