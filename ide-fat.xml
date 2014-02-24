@@ -14,7 +14,23 @@
       </excludes>
       <useProjectArtifact>true</useProjectArtifact>
       <unpack>true</unpack>
+      <unpackOptions>
+        <excludes>
+          <exclude>**/idesupport/*</exclude>
+          <exclude>**/scriptrunner/*</exclude>
+        </excludes>
+      </unpackOptions>
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
+<!-- does not work on Windows
+  <fileSets>
+    <fileSet>
+      <excludes>
+        <exclude>**/idesupport/*</exclude>
+        <exclude>**/scriptrunner/*</exclude>
+      </excludes>
+    </fileSet>
+  </fileSets>
+-->
 </assembly>
