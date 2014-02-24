@@ -2,7 +2,7 @@ Sikuli Libs 2014 (version 1.1.x)
 ===
 
 The prebuilt native libraries for Windows, Mac and Linux (partially).<br />
-(contained in `sikuli-setup.jar`)
+(contained in `sikulixsetup.jar`)
 
 It contains a Maven workflow to execute build scripts for the native libraries on the system running on:
  - Windows (not yet ready): WinUtil.dll, VisionProxy.dll
