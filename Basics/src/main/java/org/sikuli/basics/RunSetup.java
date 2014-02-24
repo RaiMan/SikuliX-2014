@@ -324,9 +324,16 @@ public class RunSetup {
       runningfromJar = false;
     }
     workDir = workDir.substring(1);
-
+    Settings.LogTime = true;
+    Debug.setDebugLevel(3);
+    
     if (runningfromJar) {
       logfile = (new File(workDir, localLogfile)).getAbsolutePath();
+      if (!Debug.setLogFile(logfile)) {
+        popError(workDir + "\n... folder we are running in must be user writeable! \n"
+                + "please correct the problem and start again.");
+        System.exit(0);
+      }
       String projectDir;
       if (runningJar.endsWith("-plain.jar")) {
         localSetup = runningJar;
@@ -419,17 +426,10 @@ public class RunSetup {
       workDir = (new File(uhome, "SikuliX/Setup")).getAbsolutePath();
       (new File(workDir)).mkdirs();
       logfile = (new File(workDir, localLogfile)).getAbsolutePath();
+      Debug.setLogFile(logfile);
       popInfo("\n... not running from sikuli-setup.jar - using as download folder\n" + workDir);
     }
 
-    if (!Debug.setLogFile(logfile)) {
-      popError(workDir + "\n... folder we are running in must be user writeable! \n"
-              + "please correct the problem and start again.");
-      System.exit(0);
-    }
-
-    Settings.LogTime = true;
-    Debug.setDebugLevel(3);
     log0(lvl, "running from: " + runningJar);
     log1(lvl, "SikuliX Setup Build: %s %s", Settings.getVersionShort(), RunSetup.timestampBuilt);
 
