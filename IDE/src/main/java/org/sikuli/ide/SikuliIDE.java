@@ -121,8 +121,11 @@ public class SikuliIDE extends JFrame {
     Iterator<IDESupport> supIterator = sloader.iterator();
     while (supIterator.hasNext()) {
       IDESupport current = supIterator.next();
-      for (String ending : current.getEndings()) {
-        ideSupporter.put(ending, current);
+      try {
+        for (String ending : current.getEndings()) {
+          ideSupporter.put(ending, current);
+        }
+      } catch (Exception ex) {
       }
     }
   }
