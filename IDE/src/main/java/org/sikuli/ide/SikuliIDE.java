@@ -115,20 +115,36 @@ public class SikuliIDE extends JFrame {
   private boolean firstRun = true;
   private static long start;
   private static Map<String, IDESupport> ideSupporter = new HashMap<String, IDESupport>();
+  public static Map<String, IScriptRunner> scriptRunner = new HashMap<String, IScriptRunner>();
 
-  static {
-    ServiceLoader<IDESupport> sloader = ServiceLoader.load(IDESupport.class);
-    Iterator<IDESupport> supIterator = sloader.iterator();
-    while (supIterator.hasNext()) {
-      IDESupport current = supIterator.next();
-      try {
-        for (String ending : current.getEndings()) {
-          ideSupporter.put(ending, current);
-        }
-      } catch (Exception ex) {
-      }
-    }
-  }
+	static {
+		ServiceLoader<IDESupport> sloader = ServiceLoader.load(IDESupport.class);
+		Iterator<IDESupport> supIterator = sloader.iterator();
+		while (supIterator.hasNext()) {
+			IDESupport current = supIterator.next();
+			try {
+				for (String ending : current.getEndings()) {
+					ideSupporter.put(ending, current);
+				}
+			} catch (Exception ex) {
+			}
+		}
+		ServiceLoader<IScriptRunner> rloader = ServiceLoader.load(IScriptRunner.class);
+		Iterator<IScriptRunner> rIterator = rloader.iterator();
+		IScriptRunner current;
+		while (rIterator.hasNext()) {
+			current = rIterator.next();
+			String name = current.getName();
+			if (!name.startsWith("Not")) {
+				scriptRunner.put(name, current);
+			}
+		}
+		if (scriptRunner.size() == 0) {
+			Debug.error("SikuliIDE: No scripting support available. Rerun Setup!");
+		}
+		current = (IScriptRunner) scriptRunner.values().toArray()[0];
+		Settings.EDEFAULT = current.getFileEndings()[0];
+	}
 
   public static IDESupport getIDESupport(String ending) {
     return ideSupporter.get(ending);
@@ -1571,7 +1587,7 @@ public class SikuliIDE extends JFrame {
     }
 
     public void openQuickStart(ActionEvent ae) {
-      FileManager.openURL("https://github.com/RaiMan/SikuliX-IDE/wiki/Release-Notes-IDE");
+      FileManager.openURL("http://sikulix.com");
     }
 
     public void openDoc(ActionEvent ae) {
@@ -1599,7 +1615,7 @@ public class SikuliIDE extends JFrame {
     }
 
     public void openHomepage(ActionEvent ae) {
-      FileManager.openURL("http://sikuli.org");
+      FileManager.openURL("http://sikulix.com");
     }
 
     public void doCheckUpdate(ActionEvent ae) {
