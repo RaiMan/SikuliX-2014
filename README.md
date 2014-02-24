@@ -51,10 +51,14 @@ Implements a GUI using Java, that allows to edit and run Sikuli scripts (current
 
 The package `sikulix.jar` is the top level package containing all other options (hence the follow up of `sikuli-ide.jar` known from former releases).
 
-After setup this package `sikulix.jar` contains the selected scripting interpreter(s) (Jython and/or JRuby), thus allowing to run Sikuli scripts out of the box from the commandline and providing an interactive Sikuli aware Jython shell (hence it includes the functionality known from the `sikuli-script.jar` of former Sikuli(X) releases and is used the same way).
+After setup this package `sikulix.jar` contains the selected scripting interpreter(s) (Jython and/or JRuby), thus allowing to run Sikuli scripts out of the box from the commandline and providing interactive Sikuli aware scripting shells (hence it includes the functionality known from the `sikuli-script.jar` of former Sikuli(X) releases and is used the same way).
 <hr/>
 
 **--- The helper/utility modules (intended for internal use only) ---**
+
+**Module Setup**
+
+It produces the fat jar `sikulixsetup.jar` being the root downloadable artefact. It is needed to setup the SikuliX packages to be used on the local systems. Though the preferred setup is to let setup download the needed stuff on the fly, there is the possibility to run setup completely local/offline after having downloaded the needed stuff manually ([look here ...](http://www.sikulix.com/quickstart.html#qs2)) 
 
 **Module Jython**
 
@@ -137,10 +141,6 @@ A template Sikuli-IDE.app, that is downloaded on request and made ready-to-use d
 **Modules ...Fat**
 
 Existing for IDE, API, Jython and JRuby. These build so called fat jars, that contain all needed dependency jars and are only intended for the build/setup process.
-
-**Module Setup**
-
-It produces the fat jar `sikulixsetup.jar` being the only downloadable artefact and allows to setup the SikuliX packages to be used on the local systems.
 
 **Module Docs** (not Maven-ized yet)
 
