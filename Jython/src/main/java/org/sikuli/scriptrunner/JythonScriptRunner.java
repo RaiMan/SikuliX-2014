@@ -499,8 +499,7 @@ public class JythonScriptRunner implements IScriptRunner {
   @Override
   public boolean doSomethingSpecial(String action, Object[] args) {
     if ("redirect".equals(action)) {
-      doRedirect((PipedInputStream[]) args);
-      return true;
+      return doRedirect((PipedInputStream[]) args);
     } else if ("convertSrcToHtml".equals(action)) {
       convertSrcToHtml((String) args[0]);
       return true;
@@ -606,7 +605,7 @@ public class JythonScriptRunner implements IScriptRunner {
       System.setOut(ps);
       py.setOut(ps);
     } catch (Exception e) {
-      log(-1, "doRedirect: Couldn't redirect STDOUT\n%s", e.getMessage());
+      log(-1, "%s: redirect STDOUT: %s", getName(), e.getMessage());
       return false;
     }
     try {
@@ -615,7 +614,7 @@ public class JythonScriptRunner implements IScriptRunner {
       System.setErr(ps);
       py.setErr(ps);
     } catch (Exception e) {
-      log(-1, "doRedirect: Couldn't redirect STDERR\n%s", e.getMessage());
+      log(-1, "%s: redirect STDERR: %s", getName(), e.getMessage());
       return false;
     }
     return true;

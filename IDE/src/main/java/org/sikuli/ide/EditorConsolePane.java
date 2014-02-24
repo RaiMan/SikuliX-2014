@@ -26,6 +26,7 @@ import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.IScriptRunner;
 import org.sikuli.basics.SikuliX;
 
 public class EditorConsolePane extends JPanel implements Runnable {
@@ -39,11 +40,11 @@ public class EditorConsolePane extends JPanel implements Runnable {
       ENABLE_IO_REDIRECT = false;
     }
   }
-  final static int NUM_PIPES = 2;
+  private int NUM_PIPES;
   private JTextPane textArea;
-  private Thread[] reader = new Thread[NUM_PIPES];
+  private Thread[] reader;
   private boolean quit;
-  private final PipedInputStream[] pin = new PipedInputStream[NUM_PIPES];
+  private PipedInputStream[] pin;
   Thread errorThrower; // just for testing (Throws an Exception at this Console
 
   public EditorConsolePane() {
@@ -59,26 +60,31 @@ public class EditorConsolePane extends JPanel implements Runnable {
     add(new JScrollPane(textArea), BorderLayout.CENTER);
 
     if (ENABLE_IO_REDIRECT) {
+			int npipes = 2;
+			NUM_PIPES = npipes * SikuliIDE.scriptRunner.size();
+			pin = new PipedInputStream[NUM_PIPES];
+			reader = new Thread[NUM_PIPES];
       for (int i = 0; i < NUM_PIPES; i++) {
         pin[i] = new PipedInputStream();
       }
 
-      if (SikuliX.getScriptRunner("jython", null, null).doSomethingSpecial("redirect", pin)) {
-        Debug.log(2, "EditorConsolePane: init: stdout/stderr redirected to console");
-        quit = false; // signals the Threads that they should exit
+			int irunner = 0;
+			for (IScriptRunner srunner : SikuliIDE.scriptRunner.values()) {
+				if (srunner.doSomethingSpecial("redirect", pin)) {
+					Debug.log(2, "EditorConsolePane: stdout/stderr redirected to console"
+									+ " for " + srunner.getName());
+					quit = false; // signals the Threads that they should exit
 
-        // Starting two seperate threads to read from the PipedInputStreams
-        for (int i = 0; i < NUM_PIPES; i++) {
-          reader[i] = new Thread(this);
-          reader[i].setDaemon(true);
-          reader[i].start();
-        }
-      } else {
-        Debug.error("EditorConsolePane: init: Redirect to console not posssible");
-      }
-
+					// Starting two seperate threads to read from the PipedInputStreams
+					for (int i = irunner * npipes; i < irunner * npipes + npipes; i++) {
+						reader[i] = new Thread(this);
+						reader[i].setDaemon(true);
+						reader[i].start();
+					}
+					irunner++;
+				}
+			}
     }
-
   }
 
   private void appendMsg(String msg) {

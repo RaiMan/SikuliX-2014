@@ -178,8 +178,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 	@Override
 	public boolean doSomethingSpecial(String action, Object[] args) {
 		if ("redirect".equals(action)) {
-			doRedirect((PipedInputStream[]) args);
-			return true;
+			return doRedirect((PipedInputStream[]) args);
 		} else {
 			return false;
 		}
@@ -319,11 +318,11 @@ public class JRubyScriptRunner implements IScriptRunner {
 					errorLine = line.getLineNumber();
 					errorClass = PY_RUNTIME;
 					this.errorText = thr.getMessage();
-                                        
-                                        Pattern sikType = 
+
+                                        Pattern sikType =
                                                 Pattern.compile(
                                                         "(?<=org.sikuli.script.)(.*)(?=:)");
-                                        Matcher mSikType = 
+                                        Matcher mSikType =
                                                 sikType.matcher(this.errorText);
 
 					if (mSikType.find()) {
@@ -479,7 +478,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 			System.setOut(ps);
 			interpreter.setOutput(ps);
 		} catch (Exception e) {
-			log(-1, "doRedirect: Couldn't redirect STDOUT\n%s", e.getMessage());
+			log(-1, "%s: redirect STDOUT: %s", getName(), e.getMessage());
 			return false;
 		}
 		try {
@@ -488,7 +487,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 			System.setErr(ps);
 			interpreter.setError(ps);
 		} catch (Exception e) {
-			log(-1, "doRedirect: Couldn't redirect STDERR\n%s", e.getMessage());
+			log(-1, "%s: redirect STDERR: %s", getName(), e.getMessage());
 			return false;
 		}
 		return true;
