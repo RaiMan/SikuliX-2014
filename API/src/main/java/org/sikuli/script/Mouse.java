@@ -1,3 +1,9 @@
+/*
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
+ * Released under the MIT License.
+ *
+ * modified RaiMan
+ */
 package org.sikuli.script;
 
 import java.awt.MouseInfo;
@@ -53,7 +59,7 @@ public class Mouse {
 
   /**
    * To get the one Mouse instance used for synchronisation
-   * 
+   *
    */
   protected static Mouse get() {
     if (mouse == null) {
@@ -64,7 +70,7 @@ public class Mouse {
 
   /**
    * current setting what to do if mouse is moved outside Sikuli's mouse protection
-   * 
+   *
    */
   public static int getMouseMovedResponse() {
     return mouseMovedResponse;
@@ -76,19 +82,19 @@ public class Mouse {
    * - Mouse.MouseMovedShow (1) show and ignore it <br>
    * - Mouse.MouseMovedPause (2) show it and pause until user says continue <br>
    * - Mouse.MouseMovedAction (3) perform a user defined action <br>
-   * 2 and 3 not implemented yet, 1 is used <br> 
-   * 
+   * 2 and 3 not implemented yet, 1 is used <br>
+   *
    * @param mouseMovedResponse
    */
   public static void setMouseMovedResponse(int mouseMovedResponse) {
-//TODO implement 2 and 3 
+//TODO implement 2 and 3
     Mouse.mouseMovedResponse = Math.max(1, Math.max(0,mouseMovedResponse));
   }
 
   /**
    * to block the mouse globally <br>
    * only the contained mouse methods without owner will be granted
-   * 
+   *
    * @return success
    */
   public static boolean block() {
@@ -98,7 +104,7 @@ public class Mouse {
   /**
    * to block the mouse globally for the given owner <br>
    * only the contained mouse methods having the same owner will be granted
-   * 
+   *
    * @return success
    */
   public static boolean block(Object owner) {
@@ -112,16 +118,16 @@ public class Mouse {
 
   /**
    * free the mouse globally after a block()
-   * 
+   *
    * @return success (false means: not blocked currently)
    */
   public static boolean unblock() {
     return unblock(null);
   }
-  
+
   /**
    * free the mouse globally for this owner after a block(owner)
-   * 
+   *
    * @return success  (false means: not blocked currently for this owner)
    */
   public static boolean unblock(Object owner) {
@@ -254,7 +260,7 @@ public class Mouse {
   /**
    * to click (left, right, middle - single or double) at the given location using the given button
    * only useable for local screens
-   * 
+   *
    * timing parameters: <br>
    * - one value <br>
    * &lt; 0 wait before mouse down <br>
@@ -262,10 +268,10 @@ public class Mouse {
    * - 2 or 3 values
    * 1st wait before mouse down <br>
    * 2nd wait after mouse up <br>
-   * 3rd inner wait (milli secs, cut to 1000): pause between mouse down and up (Settings.ClickDelay) 
-   * 
+   * 3rd inner wait (milli secs, cut to 1000): pause between mouse down and up (Settings.ClickDelay)
+   *
    * wait before and after: &gt; 59 taken as milli secs - &lt; are seconds
-   * 
+   *
    * @param loc where to click
    * @param action L,R,M left, right, middle - D means double click
    * @param args timing parameters
@@ -380,7 +386,7 @@ public class Mouse {
 
   /**
    * move the mouse to the given location (local and remote)
-   * 
+   *
    * @param loc
    * @return 1 for success, 0 otherwise
    */
@@ -409,7 +415,7 @@ public class Mouse {
 
   /**
    * press and hold the given buttons
-   * 
+   *
    * @param buttons
    */
   public static void down(int buttons) {
@@ -422,16 +428,16 @@ public class Mouse {
   }
 
   /**
-   * release all buttons 
-   * 
+   * release all buttons
+   *
    */
   public static void up() {
     up(0, null);
   }
 
   /**
-   * release the given buttons 
-   * 
+   * release the given buttons
+   *
    * @param buttons (0 releases all buttons)
    */
   public static void up(int buttons) {
@@ -447,7 +453,7 @@ public class Mouse {
   /**
    * move mouse using mouse wheel in the given direction the given steps <br>
    * the result is system dependent
-   * 
+   *
    * @param direction
    * @param steps
    */

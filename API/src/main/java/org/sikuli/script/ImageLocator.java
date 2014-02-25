@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -22,10 +22,11 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
 
 /**
- * This class is currently used to locate image files in the filesystem <br>
+ * This class was used to locate image files in the filesystem <br>
  * and in the internet (the files are cached locally) <br>
  *
  * @deprecated will be completely replaced by the classes Image and ImagePath
+ * relevant functions are already redirected as needed
  */
 @Deprecated
 public class ImageLocator {

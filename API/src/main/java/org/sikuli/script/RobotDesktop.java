@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -20,6 +20,10 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+/**
+ * INTERNAL USE
+ * Implemenation of IRobot making a DeskTopRobot using java.awt.Robot
+ */
 public class RobotDesktop extends Robot implements IRobot {
 
   final static int MAX_DELAY = 60000;
@@ -32,7 +36,7 @@ public class RobotDesktop extends Robot implements IRobot {
   public boolean isRemote() {
     return false;
   }
-  
+
   @Override
   public Screen getScreen() {
     return scr;
@@ -75,7 +79,7 @@ public class RobotDesktop extends Robot implements IRobot {
 
   private void moveMouseAndCheckPos(Location p, Screen s) {
     //TODO Why? need to correct double correction of gdLoc (top left of screen grafic area) when not (0,0)
-    //Check at initScreens 
+    //Check at initScreens
     s.getRobot().mouseMove(p.x, p.y);
     PointerInfo mp = MouseInfo.getPointerInfo();
     Point pc;

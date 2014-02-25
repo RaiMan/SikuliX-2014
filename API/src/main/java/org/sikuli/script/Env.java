@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -16,7 +16,6 @@ import org.sikuli.natives.SysUtil;
 
 /**
  * features moved to other classes, details below with the methods
- * @author RaiMan
  * @deprecated
  */
 @Deprecated

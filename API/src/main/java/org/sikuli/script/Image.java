@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * added RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -145,7 +145,7 @@ public class Image {
    * FOR INTERNAL USE: from IDE - suppresses load error message
    *
    * @param fName
-   * @return
+   * @return this
    */
   public static Image createThumbNail(String fName) {
     Image img = get(fName, true);
@@ -156,10 +156,10 @@ public class Image {
    * FOR INTERNAL USE: see get(String, boolean)
    *
    * @param fName
-   * @return
+   * @return this
    */
-  protected static Image get(String fname) {
-    return get(fname, false);
+  protected static Image get(String fName) {
+    return get(fName, false);
   }
 
   /**
@@ -168,7 +168,7 @@ public class Image {
    *
    * @param fName
    * @param silent true: suppress some error messages
-   * @return
+   * @return this
    */
   protected static Image get(String fName, boolean silent) {
     if (fName == null || fName.isEmpty()) {
@@ -495,7 +495,7 @@ public class Image {
   /**
    * Get the image's descriptive name
    *
-   * @return
+   * @return the name
    */
   public String getName() {
     return imageName;
@@ -679,7 +679,7 @@ public class Image {
    * create a sub image from this image
    *
    * @param part (the constants Region.XXX as used with region.get())
-   * @return
+   * @return the sub image
    */
   public Image getSub(int part) {
     Rectangle r = Region.getRectangle(0, 0, getSize().width, getSize().height, part);

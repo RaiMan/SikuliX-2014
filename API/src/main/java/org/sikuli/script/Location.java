@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -12,12 +12,13 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 /**
- * A point like AWT.Point using global coordinates, hence modifications might move location out of
+ * A point like AWT.Point using global coordinates (x, y),
+ * hence modifications might move location out of
  * any screen (not checked as is done with region)
  *
  */
 public class Location implements Comparable<Location>{
-  
+
   public int x;
   public int y;
   private Screen otherScreen = null;
@@ -63,15 +64,23 @@ public class Location implements Comparable<Location>{
     x = (int) point.x;
     y = (int) point.y;
   }
-  
-  public int getX() {
+
+	/**
+	 *
+	 * @return x value
+	 */
+	public int getX() {
     return x;
   }
 
-  public int getY() {
+	/**
+	 *
+	 * @return y value
+	 */
+	public int getY() {
     return y;
   }
-  
+
   /**
    * get as AWT point
    * @return point
@@ -79,7 +88,7 @@ public class Location implements Comparable<Location>{
   public Point getPoint() {
     return new Point(x,y);
   }
-  
+
   /**
    * sets the coordinates to the given values (moves it)
    * @param x
@@ -94,8 +103,8 @@ public class Location implements Comparable<Location>{
 
   /**
    * sets the coordinates to the given values (moves it)
-   * @param x
-   * @param y
+   * @param x might be non-int
+   * @param y might be non-int
    * @return self/this
    */
   public Location setLocation(double x, double y) {
@@ -105,10 +114,10 @@ public class Location implements Comparable<Location>{
   }
 
   /**
-    * Returns null, if outside of any screen<br>
-    * subsequent actions might crash
+    * Returns null, if outside of any screen and not contained in a non-Desktop Screen instance (e.g. remote screen)<br>
+    * subsequent actions WILL crash if not tested for null return
     *
-    * @return the screen, that contains the given point.<br>
+    * @return the screen, that contains the given point
     */
   public Screen getScreen() {
     Rectangle r;
@@ -124,16 +133,32 @@ public class Location implements Comparable<Location>{
     Debug.error("Location: outside any screen (%s, %s) - subsequent actions might not work as expected", x, y);
     return null;
   }
-  
+
+	/**
+	 * INTERNAL USE
+	 * reveals wether the containing screen is a DeskTopScreen or not
+	 * @return null if DeskTopScreen
+	 */
+	public boolean isOtherScreen() {
+    return (otherScreen != null);
+  }
+
+	/**
+	 * INTERNAL USE
+	 * identifies the point as being on a non-desktop-screen
+	 * @return this
+	 */
   public Location setOtherScreen(Screen scr) {
     otherScreen = scr;
     return this;
   }
-  
-  public boolean isOtherScreen() {
-    return (otherScreen != null);
-  }
-  
+
+	/**
+	 * INTERNAL USE
+	 * identifies the point as being on a non-desktop-screen
+	 * if this is true for the given location
+	 * @return this
+	 */
   private Location setOtherScreen(Location loc) {
     if (loc.isOtherScreen()) {
       setOtherScreen(loc.getScreen());
@@ -155,7 +180,7 @@ public class Location implements Comparable<Location>{
   }
 
   /**
-   * the offset of given point to this Location 
+   * the offset of given point to this Location
    *
    * @param loc
    * @return relative offset
@@ -212,7 +237,7 @@ public class Location implements Comparable<Location>{
     y += dy;
     return this;
   }
-  
+
   /**
    * convenience: like awt point
    * @param dx
@@ -337,10 +362,10 @@ public class Location implements Comparable<Location>{
     Location n = new Location(screen.getBounds().getLocation());
     return new Location(n.x + x - o.x, n.y + y - o.y);
   }
-  
+
   /**
    * Move the mouse to this location point
-   * 
+   *
    * @return this
    */
   public Location hover() {
@@ -350,7 +375,7 @@ public class Location implements Comparable<Location>{
 
   /**
    * Move the mouse to this location point and click left
-   * 
+   *
    * @return this
    */
   public Location click() {
@@ -360,7 +385,7 @@ public class Location implements Comparable<Location>{
 
   /**
    * Move the mouse to this location point and double click left
-   * 
+   *
    * @return this
    */
   public Location doubleClick() {
@@ -370,7 +395,7 @@ public class Location implements Comparable<Location>{
 
   /**
    * Move the mouse to this location point and click right
-   * 
+   *
    * @return this
    */
   public Location rightClick() {
@@ -387,22 +412,27 @@ public class Location implements Comparable<Location>{
       return false;
     }
     Location that = (Location) oThat;
-    return x == that.x && y == that.y; 
+    return x == that.x && y == that.y;
   }
 
+  /**
+   * {@inheritDoc}
+	 * @param loc
+   * @return -1 if given point is more above and/or left, 1 otherwise (0 is equal)
+   */
   @Override
-  public int compareTo(Location l) {
-    if (equals(l)) {
+  public int compareTo(Location loc) {
+    if (equals(loc)) {
       return 0;
     }
-    if (l.x > x) {
+    if (loc.x > x) {
       return 1;
-    } else if (l.x == x) {
-      if (l.y > y) {
+    } else if (loc.x == x) {
+      if (loc.y > y) {
         return 1;
       }
     }
-    return -1;        
+    return -1;
   }
 
   /**
@@ -411,11 +441,11 @@ public class Location implements Comparable<Location>{
    */
   @Override
   public String toString() {
-    Screen s = getScreen();    
-    return "L(" + x + "," + y + ")" + 
+    Screen s = getScreen();
+    return "L(" + x + "," + y + ")" +
             ((s == null) ? "" : "@" + s.toStringShort());
   }
-  
+
   /**
    *
    * @return a shorter description

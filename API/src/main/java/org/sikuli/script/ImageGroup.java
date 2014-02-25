@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * added RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -12,8 +12,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-  
+
 /**
+ * UNDER DEVELOPMENT --- SURELY HAS BUGS ;-)
  * An ImageGroup object represents images, that are all in the same folder.<br>
  * the folder can contain a set of sub folders that can be switched dynamically <br>
  * The folder will be found on the image path.<br>
@@ -24,16 +25,16 @@ import java.util.Map;
  */
 public class ImageGroup {
 
-  private static Map<String, ImageGroup> imageGroups = 
+  private static Map<String, ImageGroup> imageGroups =
           Collections.synchronizedMap(new HashMap<String, ImageGroup>());
-  
+
   private String name;
   private URL url;
   private String path;
   private String subSet;
-  
+
   private Map<String, int[]> images = Collections.synchronizedMap(new HashMap<String, int[]>());
-  
+
   private boolean valid;
 
   /**
@@ -42,7 +43,7 @@ public class ImageGroup {
   public boolean isValid() {
     return valid;
   }
-  
+
   public static ImageGroup open(String name) {
     ImageGroup ig = imageGroups.get(name);
     if (ig != null && ig.isValid()) {
@@ -54,20 +55,20 @@ public class ImageGroup {
     }
     return ig;
   }
-  
+
   public static void close(ImageGroup ig) {
     ig.images.clear();
     //take from ImagePath and purge
   }
-    
+
   private ImageGroup(String name) {
     init(name, null);
   }
-  
+
   private ImageGroup(String name, String subSet) {
     init(name, subSet);
   }
-  
+
   private void init(String name, String subSet) {
     this.name = name;
     this.path = locate(name);
@@ -79,20 +80,20 @@ public class ImageGroup {
       url = checkURL(path);
       imageGroups.put(name, this);
       use(subSet);
-    }    
+    }
   }
-  
+
   private static String locate(String name) {
     // find the given folder name on current image path
     return null;
-  }  
+  }
 
   private static URL checkURL(String path) {
     // check wether path is an URL-string
     URL purl = null;
     return purl;
   }
-  
+
   public boolean use(String sub) {
     if (sub == null) {
       // either no sub folders or use groupname as default sub
@@ -101,8 +102,8 @@ public class ImageGroup {
     // save/load imagefacts?
     return true;
   }
-  
-  // triggered when lastSeen is stored 
+
+  // triggered when lastSeen is stored
   protected int[] addImageFacts(Image img, Rectangle r, double score) {
     int[] facts = new int[5];
     facts[0] = r.x;
@@ -113,7 +114,7 @@ public class ImageGroup {
     images.put(img.getName(), facts);
     return facts;
   }
-  
+
   public boolean loadImageFacts() {
     return true;
   }

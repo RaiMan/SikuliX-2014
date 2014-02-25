@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -20,6 +20,13 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.KeyBoardSetupWindow;
 import org.sikuli.basics.Settings;
 
+/**
+ * this class implements an interface to the Java key system
+ * as represented by java.awt.event.KeyEvent
+ * for the functions Region.type() and Region.write()
+ * by translating key constants for special keys and plain text per character.<br />
+ * for details consult the docs
+ */
 public class Key {
 
   static String[] keyVK = new String[] {

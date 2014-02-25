@@ -24,7 +24,7 @@ from org.sikuli.basics import OS
 Debug.log(3, "Jython: sikuli: Sikuli: import Region")
 from org.sikuli.script import Region as JRegion
 from Region import *
-from org.sikuli.script import Observer
+from org.sikuli.script import ObserveManager
 
 Debug.log(3, "Jython: sikuli: Sikuli: import Screen")
 from org.sikuli.script import Screen as JScreen
@@ -82,7 +82,7 @@ from org.sikuli.basics import SikuliX
 #
 ## use instead of print if unicode strings present
 # usage: uprint(s1, u1, u2, u3, s3, ...)
-# 
+#
 def uprint(*args):
     for e in args[:-1]:
         if isinstance(e, str): print e,
@@ -111,7 +111,7 @@ def load(jar):
                 sys.path.append(abspath)
             return True
         return False
-   
+
     if _load(jar):
         return True
     path = getBundlePath()
@@ -147,7 +147,7 @@ def getImagePath():
 #
 def removeImagePath(path):
     ImagePath.remove(path)
-   
+
 ##
 # reset the image path, so it only contains the bundlepath
 #
@@ -170,15 +170,15 @@ def setBundlePath(path):
 #
 def getBundlePath():
     return ImagePath.getBundlePath()
-  
+
 ##
-# return the parent folder of the current bundlepath 
-# (usually the folder containing the current script folder.sikuli) 
+# return the parent folder of the current bundlepath
+# (usually the folder containing the current script folder.sikuli)
 # or None if no bundlepath is defined
 #
 def getParentPath():
     return ImagePath.getBundleParentPath();
-  
+
 ##
 # make a valid path by joining the two paths (path2 might be a list)
 #
@@ -219,7 +219,7 @@ def input(msg="", default="", title="", hidden=False):
 ##
 # Shows a dialog request to enter text in a multiline text field
 # Though not all text might be visible, everything entered is delivered with the returned text
-# The main purpose for this feature is to allow pasting text from somewhere 
+# The main purpose for this feature is to allow pasting text from somewhere
 # @param msg the message to display.
 # @param title the title for the dialog (default: Sikuli input request)
 # @param lines the maximum number of lines visible in the text field (default 9)
@@ -260,7 +260,7 @@ def selectRegion(msg=None):
         return Region(r)
     else:
         return None
-      
+
 ##
 # set the default screen to given or primary screen
 #
@@ -279,7 +279,7 @@ def use(scr = None, remote = False):
   if not scr:
     SCREEN = Screen()
   else:
-    SCREEN = scr    
+    SCREEN = scr
   Debug.log(3, "Jython: requested to use as default region: " + SCREEN.toStringShort())
   globals()['SIKULISAVED'] = _exposeAllMethods(SCREEN, globals().get('SIKULISAVED'), theGlobals, None)
   theGlobals['SCREEN'] = SCREEN
@@ -347,17 +347,17 @@ def exit(code=0):
 # @return Returns the output from the executed command.
 def run(cmd):
     return SikuliX.run(cmd)
-    
+
 ##
 # display some help in interactive mode
 def shelp():
     SikuliScript.shelp()
-    
+
 ##
 # helper functions, that can be used when sorting lists of regions
 #
 def byDistanceTo(x, y=None):
-    """ Method to compare two Region objects by distance of their top left. 
+    """ Method to compare two Region objects by distance of their top left.
     or a regions top left to the given point by coordinates"""
     return DistanceComparator(x, y)
 
@@ -378,7 +378,7 @@ def horizontalComparator():
     return HorizontalComparator().compare
 
 def distanceComparator(x, y=None):
-    """ Method to compare two Region objects by distance of their top left. 
+    """ Method to compare two Region objects by distance of their top left.
     or a regions top left to the given point by coordinates"""
     if y is None:
         return DistanceComparator(x).compare # x is Region or Location
@@ -422,7 +422,7 @@ def _exposeAllMethods(anyObject, saved, theGlobals, exclude_list):
             if name == 'checkWith': Debug.log(3, "%s %s", name, str(dict[name])[1:])
     for name in saved:
         if name in theGlobals:
-          #print "removed:", name      
+          #print "removed:", name
           theGlobals.pop(name)
     return tosave
 

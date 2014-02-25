@@ -1,14 +1,17 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
 import java.util.Date;
 
-
+/**
+ * INTERNAL USE
+ * allows to implement timed animations (e.g. mouse move)
+ */
 public interface OverlayAnimator {
 
   public float step();

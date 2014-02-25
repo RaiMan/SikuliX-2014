@@ -1,21 +1,16 @@
+/*
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
+ * Released under the MIT License.
+ *
+ * modified RaiMan
+ */
 package org.sikuli.script;
 
-import java.awt.Graphics2D;
-import java.awt.Point;
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.SampleModel;
-import java.awt.image.WritableRaster;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import org.opencv.core.Core;
-import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Size;
@@ -23,6 +18,11 @@ import org.opencv.imgproc.Imgproc;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 
+/**
+ * UNDER DEVELOPMENT --- SURELY HAS BUGS ;-)
+ * Intended replacement for Finder together with ImageFind
+ * completely implementing the OpenCV usage on the Java level.
+ */
 public class ImageFinder extends Finder {
 
   private static String me = "ImageFinder";
@@ -97,7 +97,7 @@ public class ImageFinder extends Finder {
   public void destroy() {
     reset();
   }
-  
+
   public void setIsMultiFinder() {
     base = new Mat();
     isMultiFinder = true;
@@ -331,7 +331,7 @@ public class ImageFinder extends Finder {
     Imgproc.dilate(diff, diff, new Mat());
     Mat se = Imgproc.getStructuringElement(Imgproc.MORPH_ELLIPSE, new Size(5,5));
     Imgproc.morphologyEx(diff, diff, Imgproc.MORPH_CLOSE, se);
-    
+
     List<MatOfPoint> points = new ArrayList<MatOfPoint>();
     Mat contours = new Mat();
     Imgproc.findContours(diff, points, contours, Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -344,7 +344,7 @@ public class ImageFinder extends Finder {
     printMatI(contours);
     return true;
   }
-  
+
   private static void printMatI(Mat mat) {
     int[] data = new int[mat.channels()];
     for (int r = 0; r < mat.rows(); r++) {
@@ -352,7 +352,7 @@ public class ImageFinder extends Finder {
         mat.get(r, c, data);
         log(lvl, "(%d, %d) %s", r, c, Arrays.toString(data));
       }
-    }    
+    }
   }
 
   public void setMinChanges(int min) {

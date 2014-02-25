@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -17,6 +17,10 @@ import java.lang.reflect.Method;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+/**
+ * INTERNAL USE
+ * implements a transparent screen overlay for various purposes
+ */
 public class OverlayTransparentWindow extends JFrame implements EventSubject {
 
   static Method __setWindowOpacity = null;

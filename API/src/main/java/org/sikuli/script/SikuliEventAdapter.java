@@ -14,26 +14,26 @@ package org.sikuli.script;
 public class SikuliEventAdapter implements SikuliEventObserver {
 
   @Override
-  public void targetAppeared(SikuliEventAppear e) {
+  public void targetAppeared(ObserveAppear e) {
     appeared(e);
   }
 
   @Override
-  public void targetVanished(SikuliEventVanish e) {
+  public void targetVanished(ObserveVanish e) {
     vanished(e);
   }
 
   @Override
-  public void targetChanged(SikuliEventChange e) {
+  public void targetChanged(ObserveChange e) {
     changed(e);
   }
 
-  public void appeared(SikuliEvent e) {
+  public void appeared(ObserveEvent e) {
   }
 
-  public void vanished(SikuliEvent e) {
+  public void vanished(ObserveEvent e) {
   }
 
-  public void changed(SikuliEvent e) {
+  public void changed(ObserveEvent e) {
   }
 }

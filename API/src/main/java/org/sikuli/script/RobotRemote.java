@@ -1,3 +1,9 @@
+/*
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
+ * Released under the MIT License.
+ *
+ * modified RaiMan
+ */
 package org.sikuli.script;
 
 import java.awt.Color;
@@ -10,6 +16,12 @@ import javax.swing.ImageIcon;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 
+/**
+ * INTERNAL USE - UNDER DEVELOPMENT - EXPERIMENTAL
+ * Implemenation of IRobot that redirects actions targeted towards a DesktopRobot
+ * to a remote DesktopRobot that in turn is implemented in the package Sikuli-Remote.
+ * The remote communication is implemented on sockets in the driving ScreenRemote
+ */
 public class RobotRemote implements IRobot {
 
   private static int heldButtons = 0;
@@ -59,7 +71,7 @@ public class RobotRemote implements IRobot {
       try {
         numberScreens = Integer.parseInt(sys.substring(sys.indexOf(" ") + 1));
       } catch(Exception ex) {
-        log(-1, "could not get remote numberScreens - robot might not be useable: " + sys);        
+        log(-1, "could not get remote numberScreens - robot might not be useable: " + sys);
       }
     }
   }
@@ -67,7 +79,7 @@ public class RobotRemote implements IRobot {
   public boolean isValid() {
     return (scr != null);
   }
-  
+
   @Override
   public boolean isRemote() {
     return true;
@@ -80,11 +92,11 @@ public class RobotRemote implements IRobot {
   public int getNumberScreens() {
     return numberScreens;
   }
-  
+
   public Rectangle getBounds() {
     return getBounds(0);
   }
-  
+
   public Rectangle getBounds(int screenID) {
     return (Rectangle) send("BOUNDS " + screenID);
   }
@@ -192,7 +204,7 @@ public class RobotRemote implements IRobot {
             Key.toJavaKeyCode(character)[0]);
     doType(mode, Key.toJavaKeyCode(character));
   }
-  
+
   @Override
   public void typeKey(int key) {
     if ("MAC".equals(system)) {
@@ -278,7 +290,7 @@ public class RobotRemote implements IRobot {
     typeCommand = null;
     clickCommand = mClick;
   }
-  
+
   @Override
   public void clickEnds() {
     result = (String) send(clickCommand);
@@ -288,14 +300,14 @@ public class RobotRemote implements IRobot {
   public Location mousePointer() {
     return new Location((Point) send(mouse));
   }
-  
+
   @Override
   public void mouseDown(int buttons) {
     if (heldButtons != 0) {
       heldButtons |= buttons;
     } else {
       heldButtons = buttons;
-    }    
+    }
     if (clickCommand == null) {
       result = (String) send(String.format("%s D%d", mouse, heldButtons));
     } else {
@@ -367,7 +379,7 @@ public class RobotRemote implements IRobot {
 
   @Override
   public Color getColorAt(int x, int y) {
-    throw new UnsupportedOperationException("Not supported yet."); 
+    throw new UnsupportedOperationException("Not supported yet.");
   }
 
   @Override

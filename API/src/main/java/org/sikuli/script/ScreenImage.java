@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -12,15 +12,16 @@ import org.sikuli.basics.Debug;
 import java.awt.*;
 import java.awt.image.*;
 import java.io.*;
-import java.util.*;
 import javax.imageio.ImageIO;
 
 /**
+ * CANDIDATE FOR DEPRECATION
+ *
  * stores a BufferedImage usually ceated by screen capture,
  * the screen rectangle it was taken from and
  * the filename, where it is stored as PNG (only if requested)
  *
- * @author RaiMan
+ * This will be replaced by Image in the long run
  */
 public class ScreenImage {
 

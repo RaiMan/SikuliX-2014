@@ -1,55 +1,42 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
+
+import java.util.EventListener;
 
 /**
  *
  * Use this class to implement call back methods for the Region observers <br>
  * onAppear, onVanish and onChange <br>
  * by overriding the contained empty methods appeared, vanished and changed
- * 
+ *
  * example:<br>
  * aRegion.onAppear(anImage, <br>
- *   new ObserverCallBack() { <br>
+   new ObserverManagerCallBack() { <br>
  *     <br>
- *     appeared(SikuliEvent e) { <br>
- *       // do something
- *     }
- *   }
- * );
- * when the image appears, your above call back appeared() will be called
+     appeared(ObserveEvent e) { <br>
+       // do something
+     }
+   }
+ );
+ when the image appears, your above call back appeared() will be called
+ see ObserveEvent about the features available in the callback function
  */
-public class ObserverCallBack implements SikuliEventObserver {
+public class ObserverCallBack implements EventListener {
 
-  @Override
-  public void targetAppeared(SikuliEventAppear e) {
-    appeared(e);
+  public void appeared(ObserveEvent e) {
   }
 
-  @Override
-  public void targetVanished(SikuliEventVanish e) {
-    vanished(e);
+  public void vanished(ObserveEvent e) {
   }
 
-  @Override
-  public void targetChanged(SikuliEventChange e) {
-    changed(e);
+  public void changed(ObserveEvent e) {
   }
 
-  public void appeared(SikuliEvent e) {
-  }
-
-  public void vanished(SikuliEvent e) {
-  }
-
-  public void changed(SikuliEvent e) {
-  }
-  
-  public void happened(Observer.Event e) {
-    
+  public void happened(ObserverManager.Event e) {
   }
 }

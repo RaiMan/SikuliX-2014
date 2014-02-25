@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * added RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -13,8 +13,8 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.SikuliScript;
 
 /**
- *
- * @author rhocke
+ * INTERNAL USE
+ * global services for package API
  */
 public class SikuliX {
 

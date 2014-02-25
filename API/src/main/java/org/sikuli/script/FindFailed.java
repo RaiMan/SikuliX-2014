@@ -1,20 +1,48 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
+/**
+ * implements the SikuliX FindFailed exception class
+ * and defines constants and settings for the feature FindFailedResponse
+ */
 public class FindFailed extends SikuliException {
 
-  public static FindFailedResponse defaultFindFailedResponse = FindFailedResponse.ABORT;
-  public static final FindFailedResponse PROMPT = FindFailedResponse.PROMPT;
-  public static final FindFailedResponse RETRY = FindFailedResponse.RETRY;
-  public static final FindFailedResponse SKIP = FindFailedResponse.SKIP;
-  public static final FindFailedResponse ABORT = FindFailedResponse.ABORT;
+	/**
+	 * default FindFailedResponse is ABORT
+	 */
+	public static FindFailedResponse defaultFindFailedResponse = FindFailedResponse.ABORT;
 
-  public FindFailed(String msg) {
+	/**
+	 * FindFailedResponse: should display a prompt dialog with the failing image
+	 * having the options retry, skip and abort
+	 */
+	public static final FindFailedResponse PROMPT = FindFailedResponse.PROMPT;
+
+	/**
+	 * FindFailedResponse: should retry the find op on FindFailed
+	 */
+	public static final FindFailedResponse RETRY = FindFailedResponse.RETRY;
+
+	/**
+	 * FindFailedResponse: should silently continue on FindFailed
+	 */
+	public static final FindFailedResponse SKIP = FindFailedResponse.SKIP;
+
+	/**
+	 * FindFailedResponse: should abort the SikuliX application
+	 */
+	public static final FindFailedResponse ABORT = FindFailedResponse.ABORT;
+
+	/**
+	 * the exception
+	 * @param msg
+	 */
+	public FindFailed(String msg) {
     super(msg);
     _name = "FindFailed";
   }

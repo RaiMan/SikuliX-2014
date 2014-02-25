@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -18,6 +18,14 @@ import org.sikuli.natives.FindResults;
 import org.sikuli.natives.TARGET_TYPE;
 import org.sikuli.natives.Vision;
 
+/**
+ * implements the process to find one image in another image <br />
+ * this is the historical implementation
+ * based on the C++ JNI access to the native OpenCV libraries<br />
+ * It is being replaced by ImageFinder, that implements the Finder features
+ * completely in Java using the OpenCV newly provided JAVA interface<br />
+ * At time of realisation the Finder API will be redirected to ImageFinder
+ */
 public class Finder implements Iterator<Match> {
 
   private Region _region = null;
@@ -26,13 +34,11 @@ public class Finder implements Iterator<Match> {
   private FindResults _results = null;
   private int _cur_result_i;
   private boolean repeating = false;
-  private boolean isImageFinder = false;
 
-//TODO Vision.setParameter("GPU", 1);
   static {
     FileManager.loadLibrary("VisionProxy");
   }
-    
+
   /**
    * Just to force library initialization
    */
@@ -131,7 +137,7 @@ public class Finder implements Iterator<Match> {
   }
 
 	/**
-	 * internal use: repeat findX with same Finder
+	 * internal use: repeat with same Finder
 	 */
 	protected void findRepeat() {
 		_results = Vision.find(_findInput);
@@ -139,8 +145,10 @@ public class Finder implements Iterator<Match> {
 	}
 
   /**
-   *
+   * do a find op with the given image or the given text in the Finder's image
+	 * (hasNext() and next() will reveal possible match results)
    * @param imageOrText
+	 * @return null. if find setup not possible
    */
   public String find(String imageOrText) {
 		String target = setTargetSmartly(_findInput, imageOrText);
@@ -157,9 +165,10 @@ public class Finder implements Iterator<Match> {
   }
 
   /**
-   * findX given pattern within the stored image
-   *
+   * do a find op with the given pattern in the Finder's image
+	 * (hasNext() and next() will reveal possible match results)
    * @param aPtn
+	 * @return null. if find setup not possible
    */
   public String find(Pattern aPtn) {
     if (aPtn.isValid()) {
@@ -173,7 +182,13 @@ public class Finder implements Iterator<Match> {
       return null;
     }
   }
-  
+
+  /**
+   * do a find op with the given pattern in the Finder's image
+	 * (hasNext() and next() will reveal possible match results)
+	 * @param img
+	 * @return null. if find setup not possible
+   */
   public String find(Image img) {
     if (img.isValid()) {
       _findInput.setTarget(img.getMatNative());
@@ -185,7 +200,13 @@ public class Finder implements Iterator<Match> {
       return null;
     }
   }
-  
+
+  /**
+   * do a text find with the given text in the Finder's image
+	 * (hasNext() and next() will reveal possible match results)
+	 * @param text
+	 * @return null. if find setup not possible
+   */
   public String findText(String text) {
     _findInput.setTarget(TARGET_TYPE.TEXT, text);
     _results = Vision.find(_findInput);
@@ -194,7 +215,7 @@ public class Finder implements Iterator<Match> {
   }
 
   /**
-	 * internal use: repeat findX with same Finder
+	 * internal use: repeat with same Finder
 	 */
   protected void findAllRepeat() {
     Debug timing = new Debug();
@@ -205,8 +226,10 @@ public class Finder implements Iterator<Match> {
 	}
 
   /**
-   *
+   * do a findAll op with the given image or the given text in the Finder's image
+	 * (hasNext() and next() will reveal possible match results)
    * @param imageOrText
+	 * @return null. if find setup not possible
    */
   public String findAll(String imageOrText) {
 		String target = setTargetSmartly(_findInput, imageOrText);
@@ -229,9 +252,10 @@ public class Finder implements Iterator<Match> {
     return target;
   }
 
-	/**
-   *
-   * @param aPtn
+  /**
+   * do a find op with the given pattern in the Finder's image
+	 * (hasNext() and next() will reveal possible match results)
+	 * @return null. if find setup not possible
    */
   public String findAll(Pattern aPtn)  {
     if (aPtn.isValid()) {
@@ -250,6 +274,12 @@ public class Finder implements Iterator<Match> {
     }
   }
 
+  /**
+   * do a findAll op with the given image in the Finder's image
+	 * (hasNext() and next() will reveal possible match results)
+   * @param imageOrText
+	 * @return null. if find setup not possible
+   */
   public String findAll(Image img)  {
     if (img.isValid()) {
       _findInput.setTarget(img.getMatNative());
@@ -266,6 +296,12 @@ public class Finder implements Iterator<Match> {
     }
   }
 
+  /**
+   * do a findAll op with the given text in the Finder's image
+	 * (hasNext() and next() will reveal possible match results)
+   * @param imageOrText
+	 * @return null. if find setup not possible
+   */
   public String findAllText(String text) {
     _findInput.setTarget(TARGET_TYPE.TEXT, text);
     _findInput.setFindAll(true);
@@ -339,7 +375,7 @@ public class Finder implements Iterator<Match> {
       FindResult fr = _results.get(_cur_result_i++);
       Screen parentScreen = null;
       if (_region != null) {
-        parentScreen = _region.getScreen();        
+        parentScreen = _region.getScreen();
       }
       ret = new Match(fr, parentScreen);
 			fr.delete();

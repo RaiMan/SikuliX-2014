@@ -9,9 +9,11 @@ package org.sikuli.script;
 /**
  * INTERNAL USE
  */
-public interface EventSubject {
+public class ObserveAppear extends ObserveEvent {
 
-  public void addObserver(EventObserver o);
+   public ObserveAppear(Object ptn, Match m, Region r){
+      super(ptn, m, r);
+      type = Type.APPEAR;
+   }
 
-  public void notifyObserver();
 }

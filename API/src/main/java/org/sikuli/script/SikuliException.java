@@ -1,11 +1,14 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
+/**
+ * INTERNAL USE
+ */
 public class SikuliException extends Exception {
 
     protected String _name = "SikuliException";

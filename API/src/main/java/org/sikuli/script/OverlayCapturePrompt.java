@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -13,6 +13,10 @@ import java.awt.event.*;
 import java.awt.image.*;
 import org.sikuli.natives.SysUtil;
 
+/**
+ * INTERNAL USE
+ * implements the screen overlay used with the capture feature
+ */
 public class OverlayCapturePrompt extends OverlayTransparentWindow implements EventSubject {
 
   static Color _overlayColor = new Color(0F, 0F, 0F, 0.6F);

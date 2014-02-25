@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -19,9 +19,8 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 
 /**
- * A Region always lies completely inside its parent screen
+ * A Region is a rectengular area and lies always completely inside its parent screen
  *
- * @author RaiMan
  */
 public class Region {
 
@@ -78,15 +77,15 @@ public class Region {
   private float observeScanRate = Settings.ObserveScanRate;
   private int waitForVanish = Settings.WaitForVanish;
   /**
-   * The {@link SikuliEventManager} Singleton instance
+   * The {@link Observer} Singleton instance
    */
-  private SikuliEventManager evtMgr = null;
+  private Observer evtMgr = null;
 
-  public SikuliEventManager getEvtMgr() {
+  public Observer getEvtMgr() {
     return evtMgr;
   }
 
-  public void setEvtMgr(SikuliEventManager em) {
+  public void setEvtMgr(Observer em) {
     evtMgr = em;
   }
   /**
@@ -578,8 +577,8 @@ public class Region {
   }
 
   /**
-   * used in SikuliEventManager.callChangeObserver, Finder.next to adjust region relative coordinates of matches to
-   * screen coordinates
+   * used in Observer.callChangeObserverManager, Finder.next to adjust region relative coordinates of matches to
+ screen coordinates
    *
    * @param m
    * @return the modified match
@@ -2459,10 +2458,10 @@ public class Region {
   }
   //</editor-fold>
 
-  //<editor-fold defaultstate="collapsed" desc="Observer">
-  private SikuliEventManager getEventManager() {
+  //<editor-fold defaultstate="collapsed" desc="ObserverManager">
+  private Observer getEventManager() {
     if (evtMgr == null) {
-      evtMgr = new SikuliEventManager(this);
+      evtMgr = new Observer(this);
     }
     return evtMgr;
   }
@@ -2476,13 +2475,14 @@ public class Region {
   }
 
   /**
-   * a subsequently started observer in this region should wait for target 
-   * and notify the given observer about this event 
+   * a subsequently started observer in this region should wait for target
+   * and notify the given observer about this event
    * for details about the observe event handler: {@link SikuliEventObserver}
-   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+	 * @param <PSI> Pattern, String or Image
    * @param target
    * @param observer
-   * @return
+   * @return the event's name
    */
   public <PSI> String onAppear(PSI target, Object observer) {
 		return onAppearDo(target, observer);
@@ -2490,25 +2490,30 @@ public class Region {
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
+	 * @param <PSI> Pattern, String or Image
+	 * @param target
+	 * @param observer
+	 * @return the event's name
    */
   public <PSI> String onAppearJ(PSI target, Object observer) {
 		return onAppearDo(target, observer);
 	}
 
   private <PSI> String onAppearDo(PSI target, Object observer) {
-    String name = Observer.add(this, (ObserverCallBack) observer, SikuliEvent.Type.APPEAR);
+    String name = ObserverManager.add(this, (ObserverCallBack) observer, ObserveEvent.Type.APPEAR);
     getEventManager().addAppearObserver(target, (SikuliEventObserver) observer, name);
     return name;
   }
 
   /**
-   * a subsequently started observer in this region should wait for the target to vanish 
-   * and notify the given observer about this event 
+   * a subsequently started observer in this region should wait for the target to vanish
+   * and notify the given observer about this event
    * for details about the observe event handler: {@link SikuliEventObserver}
-   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+	 * @param <PSI> Pattern, String or Image
    * @param target
    * @param observer
-   * @return
+   * @return the event's name
    */
   public <PSI> String onVanish(PSI target, Object observer) {
 		return onVanishDo(target, observer);
@@ -2516,38 +2521,42 @@ public class Region {
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
+	 * @param <PSI> Pattern, String or Image
+	 * @param target
+	 * @param observer
+	 * @return the event's name
    */
   public <PSI> String onVanishJ(PSI target, Object observer) {
 		return onVanishDo(target, observer);
 	}
 
   private <PSI> String onVanishDo(PSI target, Object observer) {
-    String name = Observer.add(this, (ObserverCallBack) observer, SikuliEvent.Type.VANISH);
+    String name = ObserverManager.add(this, (ObserverCallBack) observer, ObserveEvent.Type.VANISH);
     getEventManager().addVanishObserver(target, (SikuliEventObserver) observer, name);
     return name;
   }
 
   /**
-   * a subsequently started observer in this region should wait for changes in the region 
-   * and notify the given observer about this event 
+   * a subsequently started observer in this region should wait for changes in the region
+   * and notify the given observer about this event
    * for details about the observe event handler: {@link SikuliEventObserver}
-   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
    * @param threshold minimum size of changes (rectangle threshhold x threshold)
    * @param observer
-   * @return
+   * @return the event's name
    */
   public String onChange(int threshold, Object observer) {
     return onChangeDo(threshold, observer);
   }
 
   /**
-   * a subsequently started observer in this region should wait for changes in the region 
+   * a subsequently started observer in this region should wait for changes in the region
    * and notify the given observer about this event <br />
    * minimum size of changes used: Settings.ObserveMinChangedPixels
    * for details about the observe event handler: {@link SikuliEventObserver}
-   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
    * @param observer
-   * @return
+   * @return the event's name
    */
   public String onChange(Object observer) {
     return onChangeDo(rows, observer);
@@ -2555,6 +2564,9 @@ public class Region {
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
+	 * @param minSize
+	 * @param observer
+	 * @return the event's name
    */
   public String onChangeJ(int minSize, Object observer) {
     if (minSize == 0) {
@@ -2565,28 +2577,27 @@ public class Region {
   }
 
   public String onChangeDo(int threshold, Object observer) {
-    String name = Observer.add(this, (ObserverCallBack) observer, SikuliEvent.Type.CHANGE);
+    String name = ObserverManager.add(this, (ObserverCallBack) observer, ObserveEvent.Type.CHANGE);
     getEventManager().addChangeObserver(threshold, (SikuliEventObserver) observer, name);
     return name;
   }
 
   /**
-   * start an observer in this region that runs forever (use stopObserver() in handler)
-   * for details about the observe event handler: {@link SikuliEventObserver}
-   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
-   * @param secs
-   * @return
+   * start an observer in this region that runs forever (use stopObserverManager() in handler)
+ for details about the observe event handler: {@link SikuliEventObserver}
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+	 * @return false if not possible, true if events have happened
    */
-  public void observe() {
-    observe(Float.POSITIVE_INFINITY);
+  public boolean observe() {
+    return observe(Float.POSITIVE_INFINITY);
   }
 
   /**
    * start an observer in this region for the given time
    * for details about the observe event handler: {@link SikuliEventObserver}
-   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
    * @param secs
-   * @return
+   * @return false if not possible, true if events have happened
    */
   public boolean observe(double secs) {
     return observeDo(secs);
@@ -2594,12 +2605,15 @@ public class Region {
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
+	 * @param secs
+	 * @param bg
+	 * @return false if not possible, true if events have happened
    */
-  public void observeJ(double secs, boolean bg) {
+  public boolean observeJ(double secs, boolean bg) {
     if (bg) {
-      observeInBackground(secs);
+      return observeInBackground(secs);
     } else {
-      observeDo(secs);
+      return observeDo(secs);
     }
   }
 
@@ -2608,7 +2622,7 @@ public class Region {
       Debug.error("Region: observe: Nothing to observe (Region might be invalid): " + this.toStringShort());
       return false;
     }
-    Observer.getEvents(this);
+    ObserverManager.getEvents(this);
     if (observing) {
       Debug.error("Region: observe: already running for this region. Only one allowed!");
       return false;
@@ -2646,25 +2660,26 @@ public class Region {
       Debug.log(2, "Region: observe: observing has ended for " + this.toStringShort());
     }
     SikuliX.removeRunningObserver(this);
-    return Observer.hasEvents(this);
+    return ObserverManager.hasEvents(this);
   }
 
   /**
    * start an observer in this region for the given time that runs in background
    * for details about the observe event handler: {@link SikuliEventObserver}
-   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
    * @param secs
-   * @return
+   * @return false if not possible, true otherwise
    */
-  public void observeInBackground(double secs) {
+  public boolean observeInBackground(double secs) {
     if (observing) {
       Debug.error("Region: observeInBackground: already running for this region. Only one allowed!");
-      return;
+      return false;
     }
     Debug.log(3, "entering observeInBackground for %f secs", secs);
     Thread observeThread = new Thread(new ObserverThread(secs));
     observeThread.start();
     Debug.log(3, "observeInBackground now running");
+		return true;
   }
 
   private class ObserverThread implements Runnable {
@@ -3141,10 +3156,10 @@ public class Region {
    * where X-X and X are refrences for special keys and N is an otional repeat factor <br />
    * the trailing . ends the special key, a + or - does the same, <br />
    * but signals press-and-hold or release additionally.<br />
-   * a #Wn. inserts a wait of n millisecs or n secs if n < 60 <br /> 
+   * a #Wn. inserts a wait of n millisecs or n secs if n < 60 <br />
    * for more details and examples consult the docs <br />
    * @param text a coded text interpreted as a series of key actions (press/hold/release)
-   * @return
+   * @return 0 for success 1 otherwise
    */
   public int write(String text) {
     Debug.info("Write: " + text);

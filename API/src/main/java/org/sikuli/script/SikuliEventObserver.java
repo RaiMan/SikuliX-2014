@@ -1,16 +1,19 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
 import java.util.*;
 
 
+/**
+ * CANDIDATE FOR DEPRECATION - ONLY HERE TO BE BACKWARD COMPATIBLE
+ */
 public interface SikuliEventObserver extends EventListener {
-   public void targetAppeared(SikuliEventAppear e);
-   public void targetVanished(SikuliEventVanish e);
-   public void targetChanged(SikuliEventChange e);
+   public void targetAppeared(ObserveAppear e);
+   public void targetVanished(ObserveVanish e);
+   public void targetChanged(ObserveChange e);
 }

@@ -71,7 +71,7 @@ public class ImagePath {
   /**
    * get the list of path entries (as PathEntry)
    *
-   * @return
+   * @return pathentries
    */
   public static List<PathEntry> getPaths() {
     return imagePaths;

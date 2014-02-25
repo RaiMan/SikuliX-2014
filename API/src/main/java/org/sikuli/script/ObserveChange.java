@@ -1,15 +1,18 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
 import java.util.List;
 
-public class SikuliEventChange extends SikuliEvent {
-   public SikuliEventChange(List<Match> results, Region r){
+/**
+ * INTERNAL USE
+ */
+public class ObserveChange extends ObserveEvent {
+   public ObserveChange(List<Match> results, Region r){
       type = Type.CHANGE;
       setChanges(results);
       setRegion(r);

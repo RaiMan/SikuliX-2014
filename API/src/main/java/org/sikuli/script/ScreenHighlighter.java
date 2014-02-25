@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -14,6 +14,10 @@ import java.awt.image.*;
 import java.util.HashSet;
 import java.util.Set;
 
+/**
+ * INTERNAL USE
+ * produces and manages the red framed rectangles from Region.highlight()
+ */
 public class ScreenHighlighter extends OverlayTransparentWindow implements MouseListener {
 
   static Color _overlayColor = new Color(0F, 0F, 0F, 0.6F);

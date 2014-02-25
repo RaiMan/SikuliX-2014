@@ -1,12 +1,19 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
+/**
+ * reasonable symbolic constants to be used with Sikuli features
+ */
 public class Constants {
-   public static double FOREVER = Double.POSITIVE_INFINITY;
+
+	/**
+	 * use it for a very long time value
+	 */
+	public static double FOREVER = Double.POSITIVE_INFINITY;
 }
 

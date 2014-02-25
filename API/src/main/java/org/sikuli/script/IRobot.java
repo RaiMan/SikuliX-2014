@@ -1,14 +1,18 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
 import java.awt.Color;
 import java.awt.Rectangle;
 
+/**
+ * INTERNAL USE <br />
+ * function template for (alternative) Robot implementations
+ */
 public interface IRobot {
    enum KeyMode {
       PRESS_ONLY, RELEASE_ONLY, PRESS_RELEASE
@@ -28,7 +32,7 @@ public interface IRobot {
    void mouseDown(int buttons);
    int mouseUp(int buttons);
    void clickStarts();
-   void clickEnds();   
+   void clickEnds();
    void smoothMove(Location dest);
    void smoothMove(Location src, Location dest, long ms);
    void mouseWheel(int wheelAmt);

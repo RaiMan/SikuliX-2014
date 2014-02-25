@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -19,6 +19,9 @@ import javax.swing.JDialog;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+/**
+ * INTERNAL USE
+ */
 class FindFailedDialog extends JDialog implements ActionListener {
 
   JButton retryButton;
@@ -35,7 +38,7 @@ class FindFailedDialog extends JDialog implements ActionListener {
     init(target, isCapture);
   }
 
-  public void init(Object target, boolean isCapture) {
+  private void init(Object target, boolean isCapture) {
     this.isCapture = isCapture;
     setModal(true);
     JPanel panel = new JPanel();

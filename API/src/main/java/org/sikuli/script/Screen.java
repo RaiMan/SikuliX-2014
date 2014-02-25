@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -41,11 +41,11 @@ public class Screen extends Region implements EventObserver, IScreen {
   private static Point lastMousePosition = null;
 
   //<editor-fold defaultstate="collapsed" desc="Initialization">
-  
+
   static {
     initScreens(false);
   }
-  
+
 //  private static void initScreens() {
 //    initScreens(false);
 //  }
@@ -115,17 +115,32 @@ public class Screen extends Region implements EventObserver, IScreen {
     curID = id;
     initScreen();
   }
-  
-  public Screen(boolean isScreenUnion) {
+
+	/**
+	 * INTERNAL USE
+	 * collect all physical screens to one big region<br />
+	 * This is under evaluation, wether it really makes sense
+	 * @param isScreenUnion
+	 */
+	public Screen(boolean isScreenUnion) {
     super();
 //    initScreens();
   }
-  
+
+	/**
+	 * INTERNAL USE
+	 * collect all physical screens to one big region<br />
+	 * This is under evaluation, wether it really makes sense
+	 */
   public void setAsScreenUnion() {
     oldID = curID;
     curID = -1;
   }
 
+	/**
+	 * INTERNAL USE
+	 * reset from being a screen union to the screen used before
+	 */
   public void setAsScreen() {
     curID = oldID;
   }
@@ -213,6 +228,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   }
 
   //</editor-fold>
+
   //<editor-fold defaultstate="collapsed" desc="getters setters">
   protected boolean useFullscreen() {
     return false;
@@ -285,6 +301,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 
   /**
    *
+	 * @return the id
    */
   public int getID() {
     return curID;
@@ -292,6 +309,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 
   /**
    *
+	 * @return active GraphicsDevice
    */
   public GraphicsDevice getGraphicsDevice() {
     return curGD;
@@ -306,7 +324,10 @@ public class Screen extends Region implements EventObserver, IScreen {
   public IRobot getRobot() {
     return robot;
   }
-
+  /**
+	 *
+	 * @return the screen's rectangle
+	 */
   @Override
   public Rectangle getBounds() {
     return curGD.getDefaultConfiguration().getBounds();
@@ -325,7 +346,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   public Region newRegion(Location loc, int width, int height) {
     return Region.create(loc.copyTo(this), width, height);
   }
-  
+
   protected ScreenImage getLastScreenImageFromScreen() {
     return lastScreenImage;
   }
@@ -342,6 +363,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   }
 
   //</editor-fold>
+
   //<editor-fold defaultstate="collapsed" desc="Capture - SelectRegion">
   /**
    * create a ScreenImage with the physical bounds of this screen

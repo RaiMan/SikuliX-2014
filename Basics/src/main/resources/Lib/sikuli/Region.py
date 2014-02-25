@@ -65,13 +65,13 @@ class Region(JRegion):
 # assures, that in any case the same region object is used
     def onAppear(self, target, handler):
         class AnonyObserver(ObserverCallBack):
-            def targetAppeared(self, event):
+            def appeared(self, event):
                 handler(event)
         return self.onAppearJ(self, target, AnonyObserver())
 
     def onVanish(self, target, handler):
         class AnonyObserver(ObserverCallBack):
-            def targetVanished(self, event):
+            def vanished(self, event):
                 handler(event)
         return self.onVanishJ(self, target, AnonyObserver())
 
@@ -85,7 +85,7 @@ class Region(JRegion):
             min_size = 0
             handler = arg1
         class AnonyObserver(ObserverCallBack):
-            def targetChanged(self, event):
+            def changed(self, event):
                 handler(event)
         return self.onChangeJ(min_size, AnonyObserver())
 

@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -18,7 +18,11 @@ import org.sikuli.natives.OCRWord;
 import org.sikuli.natives.OCRWords;
 import org.sikuli.natives.Vision;
 
-// Singleton
+/**
+ * INTERNAL USE
+ *
+ * Will be rewritten for use of Tess4J - Java only implementation
+ */
 public class TextRecognizer {
 
   private static TextRecognizer _instance = null;
@@ -32,7 +36,7 @@ public class TextRecognizer {
     init();
   }
 
-  public void init() {
+  private void init() {
     String path;
     File fpath = null;
     if (Settings.OcrDataPath != null) {

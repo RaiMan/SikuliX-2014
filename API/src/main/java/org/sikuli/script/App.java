@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -25,6 +25,14 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.natives.OSUtil;
 import org.sikuli.natives.SysUtil;
 
+/**
+ * App implements features to manage (open, switch to, close) applications
+ * on the system we are running on and
+ * to access their assets like windows
+ *
+ * TAKE CARE: function behavior differs depending on the running system
+ * (cosult the docs for more info)
+ */
 public class App {
 
   protected static final OSUtil _osUtil = SysUtil.getOSUtil();
@@ -48,7 +56,13 @@ public class App {
     }
   }
 
-  public App(String appName) {
+	/**
+	 * creates an instance for an app with this name
+	 * (nothing done yet)
+	 *
+	 * @param appName
+	 */
+	public App(String appName) {
     _appName = appName;
     _pid = 0;
   }
@@ -58,26 +72,65 @@ public class App {
     _pid = pid;
   }
 
-  public static App open(String appName) {
+	/**
+	 * creates an instance for an app with this name and tries to open it
+	 * @param appName
+	 * @return the App instance or null on failure
+	 */
+	public static App open(String appName) {
     return (new App(appName)).open();
   }
 
-  public static int close(String appName) {
+	/**
+	 * tries to identify a running app with the given name
+	 * and then tries to close it
+	 * @param appName
+	 * @return 0 for success -1 otherwise
+	 */
+	public static int close(String appName) {
     return _osUtil.closeApp(appName);
   }
 
-  public static App focus(String appName) {
+	/**
+	 * tries to identify a running app with name and
+	 * if not running tries to open it
+	 * and tries to make it the foreground application
+	 * bringing its topmost window to front
+	 * @param appName
+	 * @return the App instance or null on failure
+	 */
+	public static App focus(String appName) {
     return (new App(appName)).focus();
   }
 
+	/**
+	 * tries to identify a running app with name and
+	 * if not running tries to open it
+	 * and tries to make it the foreground application
+	 * bringing its window with the given number to front
+	 * @param appName
+	 * @param num
+	 * @return the App instance or null on failure
+	 */
   public static App focus(String appName, int num) {
     return (new App(appName)).focus(num);
   }
 
-  public App focus() {
+	/**
+	 * tries to make it the foreground application
+	 * bringing its topmost window to front
+	 * @return the App instance or null on failure
+	 */
+	public App focus() {
     return focus(0);
   }
 
+	/**
+	 * tries to make it the foreground application
+	 * bringing its window with the given number to front
+	 * @param num
+	 * @return the App instance or null on failure
+	 */
   public App focus(int num) {
     Debug.history("App.focus " + this.toString() + " #" + num);
     if (_pid != 0) {
@@ -106,7 +159,11 @@ public class App {
     return this;
   }
 
-  public App open() {
+	/**
+	 * tries to open the app defined by this App instance
+	 * @return this or null on failure
+	 */
+	public App open() {
     if (Settings.isWindows() || Settings.isLinux()) {
       int pid = _osUtil.openApp(_appName);
       _pid = pid;
@@ -125,7 +182,11 @@ public class App {
     return this;
   }
 
-  public int close() {
+	/**
+	 * tries to close the app defined by this App instance
+	 * @return this or null on failure
+	 */
+	public int close() {
     Debug.history("App.close " + this.toString());
     if (_pid != 0) {
       int ret = _osUtil.closeApp(_pid);
@@ -136,17 +197,36 @@ public class App {
     return close(_appName);
   }
 
-  public String name() {
+	/**
+	 * the app's name as defined by this App instance
+	 * @return the name
+	 */
+	public String name() {
     return _appName;
   }
 
-  public Region window() {
+	/**
+	 * evaluates the region currently occupied
+	 * by the topmost window of this App instance.
+	 * The region might not be fully visible, not visible at all
+	 * or invalid with respect to the current monitor configuration (outside any screen)
+	 * @return the region
+	 */
+	public Region window() {
     if (_pid != 0) {
       return asRegion(_osUtil.getWindow(_pid));
     }
     return asRegion(_osUtil.getWindow(_appName));
   }
 
+	/**
+	 * evaluates the region currently occupied
+	 * by the window with the given number of this App instance.
+	 * The region might not be fully visible, not visible at all
+	 * or invalid with respect to the current monitor configuration (outside any screen)
+	 * @param winNum
+	 * @return the region
+	 */
   public Region window(int winNum) {
     if (_pid != 0) {
       return asRegion(_osUtil.getWindow(_pid, winNum));
@@ -154,11 +234,20 @@ public class App {
     return asRegion(_osUtil.getWindow(_appName, winNum));
   }
 
-  public static Region focusedWindow() {
+	/**
+	 * evaluates the region currently occupied by the systemwide frontmost window
+	 * (usually the one that has focus for mouse and keyboard actions)
+	 * @return the region
+	 */
+	public static Region focusedWindow() {
     return asRegion(_osUtil.getFocusedWindow());
   }
 
-  public static String getClipboard() {
+	/**
+	 * evaluates the current textual content of the system clipboard
+	 * @return the textual content
+	 */
+	public static String getClipboard() {
     Transferable content = Clipboard.getSystemClipboard().getContents(null);
     try {
       if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
@@ -172,7 +261,11 @@ public class App {
     return "";
   }
 
-  public static void setClipboard(String text) {
+	/**
+	 * sets the current textual content of the system clipboard to the given text
+	 * @param text
+	 */
+	public static void setClipboard(String text) {
     Clipboard.putText(Clipboard.PLAIN, Clipboard.UTF8,
             Clipboard.BYTE_BUFFER, text);
   }

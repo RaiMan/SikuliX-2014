@@ -1,14 +1,21 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
 import org.sikuli.basics.Debug;
 import java.awt.Rectangle;
 
+/**
+ * CANDIDATE FOR DEPRECATION
+ * INTERNAL USE
+ * An extension of DesktopScreen, that uses all active monitors as one big screen
+ *
+ * TO BE EVALUATED: is this really needed?
+ */
 public class ScreenUnion extends Screen {
 
   private Rectangle _bounds;
@@ -39,7 +46,7 @@ public class ScreenUnion extends Screen {
                    x, y, _x, _y, sr.x, sr.y, sr.width, sr.height);
     return 0;
   }
-  
+
   @Override
   public Rectangle getBounds() {
     if (_bounds == null) {

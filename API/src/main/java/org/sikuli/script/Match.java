@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
@@ -11,11 +11,11 @@ import java.awt.image.BufferedImage;
 import org.sikuli.natives.FindResult;
 
 /**
- * holds the result of a findX operation, is itself the region on the screen,
+ * holds the result of a find operation, is itself the region on the screen,
  * where the image was found and hence inherits all methods from Region<br>
  * attributes:<br> the match score (0 ... 1.0)<br> the click target (e.g.
- * from Pattern)<br> the filename of the used image<br>or the text used for
- * findX text
+ * from Pattern)<br> a ref to the image used for search<br>or the text used for
+ * find text<br />and elapsed times for debugging
  */
 public class Match extends Region implements Comparable<Match> {
 
@@ -25,8 +25,14 @@ public class Match extends Region implements Comparable<Match> {
   private String ocrText = null;
   private long lastSearchTime;
   private long lastFindTime;
-  
-  public void setTimes(long ftime, long stime) {
+
+	/**
+	 * INTERNAL USE
+	 * set the elapsed times from search
+	 * @param ftime
+	 * @param stime
+	 */
+	public void setTimes(long ftime, long stime) {
     lastFindTime = ftime;
     lastSearchTime = stime;
   }
@@ -109,6 +115,10 @@ public class Match extends Region implements Comparable<Match> {
     return simScore;
   }
 
+  /**
+   * {@inheritDoc}
+   * @return the point defined by target offset (if set) or the center
+   */
   @Override
   public Location getTarget() {
     if (target != null) {
@@ -147,7 +157,7 @@ public class Match extends Region implements Comparable<Match> {
   }
 
   /**
-   * internal use: set the image filename after finding with success
+   * internal use: set the image after finding with success
    * @param img
    */
   protected void setImage(Image img) {
@@ -159,7 +169,7 @@ public class Match extends Region implements Comparable<Match> {
 
   /**
    * get the image used for searching as in-memory image
-   * @return image
+   * @return a buffered image or null
    */
   public BufferedImage getImage() {
     if (image == null) {
@@ -184,7 +194,13 @@ public class Match extends Region implements Comparable<Match> {
   public String getText() {
     return ocrText;
   }
-
+  /**
+	 * first compares score values (<0 means given is higher)<br />
+	 * with equal score then coordinates are compared: >0 is:<br />
+	 * more left or more above or larger width or larger height in this sequence
+	 * @param m
+	 * @return
+	 */
   @Override
   public int compareTo(Match m) {
     if (simScore != m.simScore) {

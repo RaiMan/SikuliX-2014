@@ -1,3 +1,9 @@
+/*
+ * Copyright 2010-2014, Sikuli.org, SikuliX.com
+ * Released under the MIT License.
+ *
+ * modified RaiMan
+ */
 package org.sikuli.script;
 
 import java.util.ArrayList;
@@ -16,8 +22,13 @@ import org.opencv.imgproc.Imgproc;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 
+/**
+ * UNDER DEVELOPMENT --- SURELY HAS BUGS ;-)
+ * Intended replacement for Finder together with ImageFinder
+ * completely implementing the OpenCV usage on the Java level.
+ */
 public class ImageFind implements Iterator<Match>{
-  
+
   private static String me = "ImageFind";
   private static int lvl = 3;
 
@@ -26,7 +37,7 @@ public class ImageFind implements Iterator<Match>{
   }
 
   private ImageFinder owner = null;
-  
+
   private boolean isValid = false;
   private boolean isInnerFind = false;
 
@@ -62,9 +73,9 @@ public class ImageFind implements Iterator<Match>{
 
   public static int ALL_MAX = 100;
   private int allMax = 0;
-  
+
   private List<Match> matches = Collections.synchronizedList(new ArrayList<Match>());
-  
+
   private boolean repeating;
   private long lastFindTime = 0;
   private long lastSearchTime = 0;
@@ -72,23 +83,23 @@ public class ImageFind implements Iterator<Match>{
   public ImageFind() {
     matches.add(null);
   }
-  
+
   public boolean isValid() {
     return true;
   }
-  
+
   public void setIsInnerFind() {
     isInnerFind = true;
   }
-  
+
   void setSimilarity(double sim) {
     similarity = sim;
   }
-  
+
   public void setFindTimeout(double t) {
     waitingTime = t;
   }
-  
+
   public void setFinding(int ftyp) {
     finding = ftyp;
   }
@@ -96,11 +107,11 @@ public class ImageFind implements Iterator<Match>{
   public void setSorted(int styp) {
     sorted = styp;
   }
-  
+
   public void setCount(int c) {
     count = c;
   }
-  
+
   public List<Match> getMatches() {
     return matches;
   }
@@ -139,7 +150,7 @@ public class ImageFind implements Iterator<Match>{
       return false;
     }
     if (probe.empty()) {
-      probe = Image.createMat(pImage.get());      
+      probe = Image.createMat(pImage.get());
     }
     checkProbe();
     if (!owner.isImage()) {
@@ -158,7 +169,7 @@ public class ImageFind implements Iterator<Match>{
     }
     return isValid;
   }
-  
+
   private void checkProbe() {
     MatOfDouble pMean = new MatOfDouble();
     MatOfDouble pStdDev = new MatOfDouble();
@@ -187,7 +198,7 @@ public class ImageFind implements Iterator<Match>{
 
   protected ImageFind doFind() {
     Debug.enter(me + ": doFind");
-    Core.MinMaxLocResult fres = null; 
+    Core.MinMaxLocResult fres = null;
     repeating = false;
     long begin = (new Date()).getTime();
     long lap;
@@ -224,11 +235,11 @@ public class ImageFind implements Iterator<Match>{
         }
         fres = doFindDown(0, 0.0);
         if(fres != null && fres.maxVal > similarity - 0.01) {
-          set(new Match((int) fres.maxLoc.x + owner.offX, (int) fres.maxLoc.y + owner.offY, 
+          set(new Match((int) fres.maxLoc.x + owner.offX, (int) fres.maxLoc.y + owner.offY,
                   probe.width(), probe.height(), fres.maxVal, null, null));
         }
       } else {
-        log(lvl, "downsampling: success: adjusting match");        
+        log(lvl, "downsampling: success: adjusting match");
         set(checkFound(fres));
       }
       lastFindTime = (new Date()).getTime() - lastFindTime;
@@ -258,7 +269,7 @@ public class ImageFind implements Iterator<Match>{
     }
     return this;
   }
-  
+
   private Match checkFound(Core.MinMaxLocResult res) {
     Match match = null;
     ImageFinder f;
@@ -282,7 +293,7 @@ public class ImageFind implements Iterator<Match>{
     }
     return match;
   }
-  
+
   private static Rect getSubMatRect(Mat mat, int x, int y, int w, int h, int margin) {
     x = Math.max(0, x - margin);
     y = Math.max(0, y - margin);
@@ -307,7 +318,7 @@ public class ImageFind implements Iterator<Match>{
       Imgproc.resize(probe, p, sp, 0, 0, Imgproc.INTER_AREA);
       dres = doFindMatch(b, p);
       log(lvl, "doFindDown: score: %.2f at (%d, %d)", dres.maxVal,
-              (int) (dres.maxLoc.x * rfactor), (int) (dres.maxLoc.y * rfactor));     
+              (int) (dres.maxLoc.x * rfactor), (int) (dres.maxLoc.y * rfactor));
     } else {
       dres = doFindMatch(owner.base, probe);
       timer.end();
@@ -324,14 +335,14 @@ public class ImageFind implements Iterator<Match>{
       level++;
       doFindDown(level, factor);
     } else {
-        dres.maxLoc.x *= rfactor; 
+        dres.maxLoc.x *= rfactor;
         dres.maxLoc.y *= rfactor;
         findDownRes = dres;
     }
     timer.end();
     return null;
   }
-  
+
   private Core.MinMaxLocResult doFindMatch(Mat base, Mat probe) {
     Mat res = new Mat();
     Mat bi = new Mat();
