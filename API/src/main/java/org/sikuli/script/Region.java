@@ -2467,46 +2467,95 @@ public class Region {
     return evtMgr;
   }
 
+  /**
+   *
+   * @return true if an observer is active for this region
+   */
   public boolean isObserving() {
     return observing;
   }
 
+  /**
+   * a subsequently started observer in this region should wait for target 
+   * and notify the given observer about this event 
+   * for details about the observe event handler: {@link SikuliEventObserver}
+   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * @param target
+   * @param observer
+   * @return
+   */
   public <PSI> String onAppear(PSI target, Object observer) {
 		return onAppearDo(target, observer);
 	}
 
+  /**
+   *INTERNAL USE ONLY: for use with scripting API bridges
+   */
   public <PSI> String onAppearJ(PSI target, Object observer) {
 		return onAppearDo(target, observer);
 	}
 
-  public <PSI> String onAppearDo(PSI target, Object observer) {
+  private <PSI> String onAppearDo(PSI target, Object observer) {
     String name = Observer.add(this, (ObserverCallBack) observer, SikuliEvent.Type.APPEAR);
     getEventManager().addAppearObserver(target, (SikuliEventObserver) observer, name);
     return name;
   }
 
+  /**
+   * a subsequently started observer in this region should wait for the target to vanish 
+   * and notify the given observer about this event 
+   * for details about the observe event handler: {@link SikuliEventObserver}
+   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * @param target
+   * @param observer
+   * @return
+   */
   public <PSI> String onVanish(PSI target, Object observer) {
 		return onVanishDo(target, observer);
 	}
 
+  /**
+   *INTERNAL USE ONLY: for use with scripting API bridges
+   */
   public <PSI> String onVanishJ(PSI target, Object observer) {
 		return onVanishDo(target, observer);
 	}
 
-  public <PSI> String onVanishDo(PSI target, Object observer) {
+  private <PSI> String onVanishDo(PSI target, Object observer) {
     String name = Observer.add(this, (ObserverCallBack) observer, SikuliEvent.Type.VANISH);
     getEventManager().addVanishObserver(target, (SikuliEventObserver) observer, name);
     return name;
   }
 
+  /**
+   * a subsequently started observer in this region should wait for changes in the region 
+   * and notify the given observer about this event 
+   * for details about the observe event handler: {@link SikuliEventObserver}
+   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * @param threshold minimum size of changes (rectangle threshhold x threshold)
+   * @param observer
+   * @return
+   */
   public String onChange(int threshold, Object observer) {
     return onChangeDo(threshold, observer);
   }
 
+  /**
+   * a subsequently started observer in this region should wait for changes in the region 
+   * and notify the given observer about this event <br />
+   * minimum size of changes used: Settings.ObserveMinChangedPixels
+   * for details about the observe event handler: {@link SikuliEventObserver}
+   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * @param observer
+   * @return
+   */
   public String onChange(Object observer) {
     return onChangeDo(rows, observer);
   }
 
+  /**
+   *INTERNAL USE ONLY: for use with scripting API bridges
+   */
   public String onChangeJ(int minSize, Object observer) {
     if (minSize == 0) {
       return onChangeDo(Settings.ObserveMinChangedPixels, observer);
@@ -2521,14 +2570,31 @@ public class Region {
     return name;
   }
 
+  /**
+   * start an observer in this region that runs forever (use stopObserver() in handler)
+   * for details about the observe event handler: {@link SikuliEventObserver}
+   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * @param secs
+   * @return
+   */
   public void observe() {
     observe(Float.POSITIVE_INFINITY);
   }
 
+  /**
+   * start an observer in this region for the given time
+   * for details about the observe event handler: {@link SikuliEventObserver}
+   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * @param secs
+   * @return
+   */
   public boolean observe(double secs) {
     return observeDo(secs);
   }
 
+  /**
+   *INTERNAL USE ONLY: for use with scripting API bridges
+   */
   public void observeJ(double secs, boolean bg) {
     if (bg) {
       observeInBackground(secs);
@@ -2537,7 +2603,7 @@ public class Region {
     }
   }
 
-  public boolean observeDo(double secs) {
+  private boolean observeDo(double secs) {
     if (evtMgr == null) {
       Debug.error("Region: observe: Nothing to observe (Region might be invalid): " + this.toStringShort());
       return false;
@@ -2583,6 +2649,13 @@ public class Region {
     return Observer.hasEvents(this);
   }
 
+  /**
+   * start an observer in this region for the given time that runs in background
+   * for details about the observe event handler: {@link SikuliEventObserver}
+   * for details about APPEAR/VANISH/CHANGE events: {@link SikuliEvent}
+   * @param secs
+   * @return
+   */
   public void observeInBackground(double secs) {
     if (observing) {
       Debug.error("Region: observeInBackground: already running for this region. Only one allowed!");
@@ -2608,6 +2681,9 @@ public class Region {
     }
   }
 
+  /**
+   * stops a running observer
+   */
   public void stopObserver() {
     Debug.log(2, "Region: observe: request to stop observer for " + this.toStringShort());
     observing = false;
@@ -3059,6 +3135,17 @@ public class Region {
     getRobotForRegion().keyUp(keys);
   }
 
+  /**
+   * Compact alternative for type() with more options <br />
+   * - special keys and options are coded as #X-XN. or #X+ or #X- <br />
+   * where X-X and X are refrences for special keys and N is an otional repeat factor <br />
+   * the trailing . ends the special key, a + or - does the same, <br />
+   * but signals press-and-hold or release additionally.<br />
+   * a #Wn. inserts a wait of n millisecs or n secs if n < 60 <br /> 
+   * for more details and examples consult the docs <br />
+   * @param text a coded text interpreted as a series of key actions (press/hold/release)
+   * @return
+   */
   public int write(String text) {
     Debug.info("Write: " + text);
     char c;

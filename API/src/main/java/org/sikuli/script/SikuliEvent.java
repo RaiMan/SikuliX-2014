@@ -14,33 +14,68 @@ public class SikuliEvent {
     APPEAR, VANISH, CHANGE, GENERIC
   }
   
+  /**
+   * the event's type as SikuliEvent.APPEAR, .VANISH, .CHANGE
+   */
   public Type type;
-  public Region region = null;
-  // AppearEvent must have a match
-  // VanishEvent may have a match, depending on if the pattern appeared before
-  public Match match = null;
-  // ChangeEvent has 0+ changes.
-  public List<Match> changes = null;
-  // the pattern for observing this event
-  public Object pattern = null;
+  
+  private Region region = null;
+  private Match match = null;
+  private List<Match> changes = null;
+  private Object pattern = null;
 
   public SikuliEvent() {
   }
 
+  /**
+   * INTERNAL USE ONLY: creates an observed event
+   */
   public SikuliEvent(Object ptn, Match m, Region r) {
     region = r;
     match = m;
     pattern = ptn;
   }
 
+  /**
+   *
+   * @return this event's observer's region 
+   */
   public Region getRegion() {
     return region;
   }
+  
+  protected void setRegion(Region r) {
+    region = r;
+  }
 
+  /**
+   *
+   * @return the observed match (APEAR, VANISH) 
+   */
   public Match getMatch() {
     return match;
   }
 
+  protected void setMatch(Match m) {
+    match = m;
+  }
+
+  /**
+   *
+   * @return a list of observed changes as matches (CHANGE) 
+   */
+  public List<Match> getChanges() {
+    return changes;
+  }
+
+  protected void setChanges(List<Match> c) {
+    changes = c;
+  }
+
+  /**
+   * 
+   * @return the used pattern for this event's observing
+   */
   public Pattern getPattern() {
     if (pattern.getClass().isInstance("")) {
       return (new Pattern((String) pattern));
@@ -49,14 +84,27 @@ public class SikuliEvent {
     }
   }
 
+  /**
+   * tell the observer to repeat this event's observe action immediately 
+   * after returning from this handler (APPEAR, VANISH)
+   */
   public void repeat() {
     repeat(0);
   }
   
+  /**
+   * tell the observer to repeat this event's observe action after given time in secs 
+   * after returning from this handler (APPEAR, VANISH)
+   * @param secs
+   */
   public void repeat(long secs) {
     region.getEvtMgr().repeat(type, pattern, match, secs); 
   }
   
+  /**
+   * only for (APPEAR, VANISH)
+   * @return the number how often this event has already been triggered until now
+   */
   public int getCount() {
     if (type == Type.CHANGE) {
       return 0;
@@ -65,6 +113,9 @@ public class SikuliEvent {
     } 
   }
   
+  /**
+   * stops the observer after returning from the handler
+   */
   public void stopObserver() {
     region.stopObserver();
   }

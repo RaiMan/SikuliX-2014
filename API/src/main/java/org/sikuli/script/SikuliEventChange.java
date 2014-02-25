@@ -11,13 +11,13 @@ import java.util.List;
 public class SikuliEventChange extends SikuliEvent {
    public SikuliEventChange(List<Match> results, Region r){
       type = Type.CHANGE;
-      changes = results;
-      region = r;
+      setChanges(results);
+      setRegion(r);
    }
 
 	@Override
    public String toString(){
       return String.format("ChangeEvent on %s | %d changes",
-               region, changes.size());
+               getRegion(), getChanges().size());
    }
 }
