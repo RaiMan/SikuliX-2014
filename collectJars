@@ -3,7 +3,9 @@ mversion=1.1
 version=$mversion.0
 
 base=`pwd`
-echo ----------------- SikuliX collecting jars in $base 
+echo -
+echo ---
+echo ----- SikuliX collecting jars in $base 
 
 source=$base/Setup/target
 
@@ -16,20 +18,34 @@ mkdir $dist/Downloads
 
 log=$dist/collectjars-log.txt
 
-echo --- version --- $version
-echo --- major version --- $mversion
+echo --- version $version
+echo --- major   $mversion
 echo --- version --- $version >>$log
 echo --- major version --- $mversion >>$log
 
-echo ----------------- SourceBase $base >>$log
+echo ----- SourceBase $base >>$log
 if [ "$1" != "2" -a "$1" != "3" ]; then
   echo ----------------- running Maven clean install --- takes some time ...
   mvn clean install >>$log
+  buildok=`grep -cim1 "BUILD FAILURE" $log`
+  if [ "$buildok" == "1" ];  then 
+    echo -
+    echo --
+    echo ----
+    echo ------
+    echo -------- BUILD ERROR -----------
+    echo at least one module had problems
+    echo check the logfile
+    echo $log
+    echo correct the problems and run again
+    echo ----------------------------------
+    exit 
+  fi
 fi
 
 if [ "$1" != "3" ]; then
   # ----------- Setup
-  echo --- collecting jars
+  echo ----- collecting jars
   echo --- collecting jars >>$log
   cd $source >>$log
   java -jar sikulixsetup-$version-plain.jar noSetup >>$log
@@ -38,13 +54,13 @@ if [ "$1" != "3" ]; then
 fi
 
 # ----------- Setup
-echo --- copy Setup
+echo ----- copy Setup
 echo --- copy Setup >>$log
 cp $source/sikulixsetup*.jar $dist/sikulixsetup-$mversion.jar
 ls -l $dist >>$log
 
 # ----------- Jars
-echo --- copy Jars 
+echo ----- copy Jars 
 echo --- copy Jars >>$log
 cp $source/Downloads/* $dist/Downloads
 ls -l $dist/Downloads >>$log
