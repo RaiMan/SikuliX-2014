@@ -21,9 +21,10 @@ public class ObserveEvent {
   public Type type;
 
   private Region region = null;
-  private Match match = null;
-  private List<Match> changes = null;
   private Object pattern = null;
+  private Match match = null;
+  private int index = -1;
+  private List<Match> changes = null;
 
   public ObserveEvent() {
   }
@@ -50,7 +51,7 @@ public class ObserveEvent {
   }
 
   protected void setRegion(Region r) {
-    region = new Region(r);
+    region = r;
   }
 
   /**
@@ -62,7 +63,21 @@ public class ObserveEvent {
   }
 
   protected void setMatch(Match m) {
-    match = new Match(m);
+    if (null != m) {
+      match = new Match(m);
+    }
+  }
+
+  /**
+   *
+   * @return the index in the observer map in Observer (CHANGE)
+   */
+  public int getIndex() {
+    return index;
+  }
+
+  public void setIndex(int index) {
+    this.index = index;
   }
 
   /**
@@ -74,8 +89,10 @@ public class ObserveEvent {
   }
 
   protected void setChanges(List<Match> c) {
-		changes = new ArrayList<Match>();
-    changes.addAll(c);
+    if (c != null) {
+      changes = new ArrayList<Match>();
+      changes.addAll(c);
+    }
   }
 
   /**
@@ -83,18 +100,23 @@ public class ObserveEvent {
    * @return the used pattern for this event's observing
    */
   public Pattern getPattern() {
-    if (pattern.getClass().isInstance("")) {
-      return (new Pattern((String) pattern));
-    } else {
-      return (new Pattern((Pattern) pattern));
+    if (null != pattern) {
+      if (pattern.getClass().isInstance("")) {
+        return (new Pattern((String) pattern));
+      } else {
+        return (new Pattern((Pattern) pattern));
+      }
     }
+    return null;
   }
 
   protected void setPattern(Object p) {
-    if (p.getClass().isInstance("")) {
-			pattern = new Pattern((String) p);
-    } else {
-			pattern = new Pattern((Pattern) p);
+    if (null != p) {
+      if (p.getClass().isInstance("")) {
+        pattern = new Pattern((String) p);
+      } else {
+        pattern = new Pattern((Pattern) p);
+      }
     }
   }
 
@@ -112,16 +134,15 @@ public class ObserveEvent {
    * @param secs
    */
   public void repeat(long secs) {
-    region.getEvtMgr().repeat(type, pattern, match, secs);
+    region.getObserver().repeat(type, pattern, match, secs);
   }
 
   /**
-   * only for (APPEAR, VANISH)
    * @return the number how often this event has already been triggered until now
    */
   public int getCount() {
     if (type == Type.CHANGE) {
-      return 0;
+      return region.getObserver().getChangedCount(index);
     } else {
       return region.getEvtMgr().getCount(pattern);
     }
@@ -134,9 +155,18 @@ public class ObserveEvent {
     region.stopObserver();
   }
 
+  public void stopObserver(String msg) {
+    region.stopObserver(msg);
+  }
+
   @Override
   public String toString() {
-    return String.format("SikuliEvent(%s) on %s with %s having last match: %s",
-            type, region, pattern, match);
+    if (type == Type.CHANGE) {
+      return String.format("Event(%s) on: %s with: %d count: %d", 
+            type, region, index, getCount());
+    } else {
+      return String.format("Event(%s) on: %s with: %s match: %s count: %d",
+            type, region, pattern, match, getCount());
+    }
   }
 }

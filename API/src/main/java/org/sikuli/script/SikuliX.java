@@ -39,6 +39,7 @@ public class SikuliX {
       }
       runningObservers.clear();
     }
+    Observing.clear();
   }
 
   public static void endNormal(int n) {

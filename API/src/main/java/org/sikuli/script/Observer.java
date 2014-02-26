@@ -17,68 +17,76 @@ import org.sikuli.natives.Mat;
 import org.sikuli.natives.Vision;
 
 /**
- * INTERNAL USE
- * implements the observe action for a region and calls the ObserverCallBacks
+ * INTERNAL USE implements the observe action for a region and calls the ObserverCallBacks
  */
 public class Observer {
 
+  private static String me = "Observer";
+  private static int lvl = 3;
+
+  private static void log(int level, String message, Object... args) {
+    Debug.logx(level, "", me + ": " + message, args);
+  }
+
   protected enum State {
+
     FIRST, UNKNOWN, MISSING, APPEARED, VANISHED, REPEAT
   }
-  private Region _region;
-  private Mat _lastImgMat = null;
-  private org.opencv.core.Mat _lastImageMat = null;
-  private Map<Object, State> _state;
-  private Map<Object, Long> _wait;
-  private Map<Object, Integer> _count;
-  private Map<Object, Match> _lastMatch;
-  private Map<Object, String> _names;
-//  private Map<Object, SikuliEventObserver> _appearOb, _vanishOb;
-  private Map<Object, Object> _appearOb, _vanishOb;
-//  private Map<Integer, SikuliEventObserver> _changeOb;
-  private Map<Integer, Object> _changeOb;
-  private Map<Integer, Integer> _countc;
-  private Map<Integer, String> _cnames;
-  private int _minChanges;
+  private Region observedRegion;
+  private Mat lastImgMat = null;
+  private org.opencv.core.Mat lastImageMat = null;
+  private Map<Object, State> eventStates;
+  private Map<Object, Long> repeatWaitTimes;
+  private Map<Object, Integer> happenedCount;
+  private Map<Object, Match> lastMatches;
+  private Map<Object, String> eventNames;
+  private Map<Object, Object> appearCallBacks, vanishCallBacks;
+  private Map<Integer, Object> changeCallBacks;
+  private Map<Integer, Integer> changedCount;
+  private Map<Integer, String> onChangeNames;
+  private int minChanges;
   private boolean sthgLeft;
+  private boolean shouldCheckChanges;
 
   public Observer(Region region) {
-    _region = region;
-    _state = new HashMap<Object, State>();
-    _wait = new HashMap<Object, Long>();
-    _count = new HashMap<Object, Integer>();
-    _lastMatch = new HashMap<Object, Match>();
-    _names = new HashMap<Object, String>();
-//    _appearOb = new HashMap<Object, SikuliEventObserver>();
-//    _vanishOb = new HashMap<Object, SikuliEventObserver>();
-//    _changeOb = new HashMap<Integer, SikuliEventObserver>();
-    _appearOb = new HashMap<Object, Object>();
-    _vanishOb = new HashMap<Object, Object>();
-    _changeOb = new HashMap<Integer, Object>();
-    _countc = new HashMap<Integer, Integer>();
-    _cnames = new HashMap<Integer, String>();
+    observedRegion = region;
+    eventStates = new HashMap<Object, State>();
+    repeatWaitTimes = new HashMap<Object, Long>();
+    happenedCount = new HashMap<Object, Integer>();
+    lastMatches = new HashMap<Object, Match>();
+    eventNames = new HashMap<Object, String>();
+    appearCallBacks = new HashMap<Object, Object>();
+    vanishCallBacks = new HashMap<Object, Object>();
+    changeCallBacks = new HashMap<Integer, Object>();
+    changedCount = new HashMap<Integer, Integer>();
+    onChangeNames = new HashMap<Integer, String>();
   }
 
   public void initialize() {
-    Debug.log(2, "SikuliEventManager: resetting observe states for " + _region.toStringShort());
+    log(3, "resetting observe states for " + observedRegion.toStringShort());
     sthgLeft = true;
-    for (Object ptn : _state.keySet()) {
-      _state.put(ptn, State.FIRST);
-      _count.put(ptn, 0);
+    shouldCheckChanges = true;
+    for (Object ptn : eventStates.keySet()) {
+      eventStates.put(ptn, State.FIRST);
+      happenedCount.put(ptn, 0);
     }
-    for (int n : _changeOb.keySet()) {
-      _countc.put(n, 0);
+    for (int n : changeCallBacks.keySet()) {
+      changedCount.put(n, 0);
     }
   }
 
   public void setRegion(Region reg) {
-    _region = reg;
+    observedRegion = reg;
   }
 
   public int getCount(Object ptn) {
-    return _count.get(ptn);
+    return happenedCount.get(ptn);
   }
 
+  public int getChangedCount(int index) {
+    return changedCount.get(index);
+  }
+  
   private <PSC> float getSimiliarity(PSC ptn) {
     float similarity = -1f;
     if (ptn instanceof Pattern) {
@@ -91,64 +99,67 @@ public class Observer {
   }
 
   public <PSC> void addAppearObserver(PSC ptn, ObserverCallBack ob, String name) {
-    _appearOb.put(ptn, ob);
-    _state.put(ptn, State.FIRST);
-    _names.put(ptn, name);
+    appearCallBacks.put(ptn, ob);
+    eventStates.put(ptn, State.FIRST);
+    eventNames.put(ptn, name);
   }
 
   public <PSC> void removeAppearObserver(PSC ptn) {
-    Observing.remove(_names.get(ptn));
-    _names.remove(ptn);
-    _appearOb.remove(ptn);
-    _state.remove(ptn);
+    Observing.remove(eventNames.get(ptn));
+    eventNames.remove(ptn);
+    appearCallBacks.remove(ptn);
+    eventStates.remove(ptn);
   }
 
   public <PSC> void addVanishObserver(PSC ptn, ObserverCallBack ob, String name) {
-    _vanishOb.put(ptn, ob);
-    _state.put(ptn, State.FIRST);
-    _names.put(ptn, name);
+    vanishCallBacks.put(ptn, ob);
+    eventStates.put(ptn, State.FIRST);
+    eventNames.put(ptn, name);
   }
 
   public <PSC> void removeVanishObserver(PSC ptn) {
-    Observing.remove(_names.get(ptn));
-    _names.remove(ptn);
-    _vanishOb.remove(ptn);
-    _state.remove(ptn);
+    Observing.remove(eventNames.get(ptn));
+    eventNames.remove(ptn);
+    vanishCallBacks.remove(ptn);
+    eventStates.remove(ptn);
   }
 
   private void callAppearObserver(Object ptn, Match m) {
-    ObserveAppear se = new ObserveAppear(ptn, m, _region);
-    Object ao = _appearOb.get(ptn);
-    Observing.addEvent(_names.get(ptn), se);
-    if (ao != null && ao instanceof ObserverCallBack) {
-      ((ObserverCallBack)_appearOb.get(ptn)).appeared(se);
+    log(lvl, "appeared: %s with: %s\nat: %s", eventNames.get(ptn), ptn, m);
+    ObserveAppear observeEvent = new ObserveAppear(ptn, m, observedRegion);
+    Object callBack = appearCallBacks.get(ptn);
+    Observing.addEvent(eventNames.get(ptn), observeEvent);
+    if (callBack != null && callBack instanceof ObserverCallBack) {
+      log(lvl, "running call back");
+      ((ObserverCallBack) appearCallBacks.get(ptn)).appeared(observeEvent);
     }
   }
 
   private void callVanishObserver(Object ptn, Match m) {
-    ObserveVanish se = new ObserveVanish(ptn, m, _region);
-    Object ao = _vanishOb.get(ptn);
-    Observing.addEvent(_names.get(ptn), se);
-    if (ao != null && ao instanceof ObserverCallBack) {
-      ((ObserverCallBack)_vanishOb.get(ptn)).vanished(se);
+    log(lvl, "vanished: %s with: %s\nat: %s", eventNames.get(ptn), ptn, m);
+    ObserveVanish observeEvent = new ObserveVanish(ptn, m, observedRegion);
+    Object callBack = vanishCallBacks.get(ptn);
+    Observing.addEvent(eventNames.get(ptn), observeEvent);
+    if (callBack != null && callBack instanceof ObserverCallBack) {
+      log(lvl, "running call back");
+      ((ObserverCallBack) vanishCallBacks.get(ptn)).vanished(observeEvent);
     }
   }
 
   private void checkPatterns(ScreenImage simg) {
     Finder finder = null;
     if (Settings.UseImageFinder) {
-      finder = new ImageFinder(_region);
+      finder = new ImageFinder(observedRegion);
       ((ImageFinder) finder).setIsMultiFinder();
-    }
-    else {
-      finder = new Finder(simg, _region);
+    } else {
+      finder = new Finder(simg, observedRegion);
     }
     String imgOK;
-    Debug.log(3, "observe: checkPatterns entry: sthgLeft: %s isObserving: %s", sthgLeft, _region.isObserving());
-    for (Object ptn : _state.keySet()) {
-      if (_state.get(ptn) != State.FIRST &&
-          _state.get(ptn) != State.UNKNOWN &&
-          _state.get(ptn) != State.REPEAT) {
+    log(lvl + 1, "checkPatterns entry: sthgLeft: %s isObserving: %s", sthgLeft, observedRegion.isObserving());
+    for (Object ptn : eventStates.keySet()) {
+      if (eventStates.get(ptn) != State.FIRST
+              && eventStates.get(ptn) != State.UNKNOWN
+              && eventStates.get(ptn) != State.REPEAT) {
         continue;
       }
       imgOK = null;
@@ -157,7 +168,7 @@ public class Observer {
         Image img = Image.create((String) ptn);
         if (img.isValid()) {
           imgOK = finder.find(img);
-        } else if (img.isText()){
+        } else if (img.isText()) {
           imgOK = finder.findText((String) ptn);
         }
       } else if (ptn instanceof Pattern) {
@@ -167,24 +178,24 @@ public class Observer {
       }
       if (null == imgOK) {
         Debug.error("EventMgr: checkPatterns: Image not valid", ptn);
-        _state.put(ptn, State.MISSING);
+        eventStates.put(ptn, State.MISSING);
         continue;
       }
-      if (_state.get(ptn) == State.REPEAT) {
-        Debug.log(3, "repeat: checking");
-        if (_lastMatch.get(ptn).exists(ptn) != null) {
-          if ((new Date()).getTime() > _wait.get(ptn)) {
-            _state.put(ptn, State.APPEARED);
-            Debug.log(3, "repeat: vanish timeout");
+      if (eventStates.get(ptn) == State.REPEAT) {
+        log(lvl, "repeat: checking");
+        if (lastMatches.get(ptn).exists(ptn) != null) {
+          if ((new Date()).getTime() > repeatWaitTimes.get(ptn)) {
+            eventStates.put(ptn, State.APPEARED);
+            log(lvl, "repeat: vanish timeout");
             // time out
           } else {
             sthgLeft = true;
           }
           continue; // not vanished within given time or still there
         } else {
-          _state.put(ptn, State.UNKNOWN);
+          eventStates.put(ptn, State.UNKNOWN);
           sthgLeft = true;
-          Debug.log(3, "repeat: has vanished");
+          log(lvl, "repeat: has vanished");
           continue; // has vanished, repeat
         }
       }
@@ -194,43 +205,43 @@ public class Observer {
         m = finder.next();
         if (m.getScore() >= getSimiliarity(ptn)) {
           hasMatch = true;
-          _lastMatch.put(ptn, m);
+          lastMatches.put(ptn, m);
         }
       }
       if (hasMatch) {
-        Debug.log(2, "EventMgr: checkPatterns: " + ptn.toString() + " match: " +
-                m.toStringShort() + " in " + _region.toStringShort());
-      } else if (_state.get(ptn) == State.FIRST) {
-        Debug.log(2, "EventMgr: checkPatterns: " + ptn.toString() + " match: " +
-                "NO" + " in " + _region.toStringShort());
-        _state.put(ptn, State.UNKNOWN);
+        log(lvl + 1, "checkPatterns: " + ptn.toString() + " match: "
+                + m.toStringShort() + " in " + observedRegion.toStringShort());
+      } else if (eventStates.get(ptn) == State.FIRST) {
+        log(lvl + 1, "checkPatterns: " + ptn.toString() + " match: "
+                + "NO" + " in " + observedRegion.toStringShort());
+        eventStates.put(ptn, State.UNKNOWN);
       }
-      if (_appearOb.containsKey(ptn)) {
-        if (_state.get(ptn) != State.APPEARED) {
+      if (appearCallBacks.containsKey(ptn)) {
+        if (eventStates.get(ptn) != State.APPEARED) {
           if (hasMatch) {
-            _state.put(ptn, State.APPEARED);
-            _count.put(ptn, _count.get(ptn) + 1);
+            eventStates.put(ptn, State.APPEARED);
+            happenedCount.put(ptn, happenedCount.get(ptn) + 1);
             callAppearObserver(ptn, m);
           } else {
             sthgLeft = true;
           }
         }
-      } else if (_vanishOb.containsKey(ptn)) {
-        if (_state.get(ptn) != State.VANISHED) {
+      } else if (vanishCallBacks.containsKey(ptn)) {
+        if (eventStates.get(ptn) != State.VANISHED) {
           if (!hasMatch) {
-            _state.put(ptn, State.VANISHED);
-            _count.put(ptn, _count.get(ptn) + 1);
-            callVanishObserver(ptn, _lastMatch.get(ptn));
+            eventStates.put(ptn, State.VANISHED);
+            happenedCount.put(ptn, happenedCount.get(ptn) + 1);
+            callVanishObserver(ptn, lastMatches.get(ptn));
           } else {
             sthgLeft = true;
           }
         }
       }
-      if (!_region.isObserving()) {
+      if (!observedRegion.isObserving()) {
         break;
       }
     }
-    Debug.log(3, "observe: checkPatterns exit: sthgLeft: %s isObserving: %s", sthgLeft, _region.isObserving());
+    log(lvl + 1, "checkPatterns exit: sthgLeft: %s isObserving: %s", sthgLeft, observedRegion.isObserving());
   }
 
   public void repeat(ObserveEvent.Type type, Object pattern, Match match, long secs) {
@@ -239,33 +250,33 @@ public class Observer {
     } else if (type == ObserveEvent.Type.VANISH) {
       Debug.error("EventMgr: repeat: not supported for VANISH");
     } else if (type == ObserveEvent.Type.APPEAR) {
-      _state.put(pattern, State.REPEAT);
+      eventStates.put(pattern, State.REPEAT);
       if (secs <= 0) {
-        secs = (long) _region.getWaitForVanish();
+        secs = (long) observedRegion.getWaitForVanish();
       }
-      _wait.put(pattern, (new Date()).getTime() + 1000 * secs);
-      Debug.log(2, "EventMgr: repeat: requested for APPEAR: " +
-              pattern.toString() + " at " + match.toStringShort() + " after " + secs + " seconds");
+      repeatWaitTimes.put(pattern, (new Date()).getTime() + 1000 * secs);
+      log(lvl, "repeat: requested for APPEAR: "
+              + pattern.toString() + " at " + match.toStringShort() + " after " + secs + " seconds");
       sthgLeft = true;
     }
   }
 
   public void addChangeObserver(int threshold, ObserverCallBack ob, String name) {
-    _changeOb.put(new Integer(threshold), ob);
-    _minChanges = getMinChanges();
-    _cnames.put(threshold, name);
+    changeCallBacks.put(new Integer(threshold), ob);
+    minChanges = getMinChanges();
+    onChangeNames.put(threshold, name);
   }
 
   public void removeChangeObserver(int threshold) {
-    Observing.remove(_cnames.get(threshold));
-    _names.remove(threshold);
-    _changeOb.remove(new Integer(threshold));
-    _minChanges = getMinChanges();
+    Observing.remove(onChangeNames.get(threshold));
+    eventNames.remove(threshold);
+    changeCallBacks.remove(new Integer(threshold));
+    minChanges = getMinChanges();
   }
 
   private int getMinChanges() {
     int min = Integer.MAX_VALUE;
-    for (Integer n : _changeOb.keySet()) {
+    for (Integer n : changeCallBacks.keySet()) {
       if (n < min) {
         min = n;
       }
@@ -273,88 +284,101 @@ public class Observer {
     return min;
   }
 
-  private void callChangeObserver(FindResults results) throws AWTException {
-    for (Integer n : _changeOb.keySet()) {
+  private int callChangeObserver(FindResults results) {
+    int activeChangeCallBacks = 0;
+    log(lvl, "changes: %d in: %s", results.size(), observedRegion);
+    for (Integer n : changeCallBacks.keySet()) {
+      if (changedCount.get(n) == -1) {
+        continue;
+      }
+      activeChangeCallBacks++;
       List<Match> changes = new ArrayList<Match>();
       for (int i = 0; i < results.size(); i++) {
         FindResult r = results.get(i);
         if (r.getW() * r.getH() >= n) {
-          changes.add(_region.toGlobalCoord(new Match(r, _region.getScreen())));
+          changes.add(observedRegion.toGlobalCoord(new Match(r, observedRegion.getScreen())));
         }
       }
       if (changes.size() > 0) {
-        _countc.put(n, _countc.get(n) + 1);
-        ObserveChange se = new ObserveChange(changes, _region);
-        Object ao = _changeOb.get(n);
-        Observing.addEvent(_cnames.get(n), se);
-        if (ao instanceof ObserverCallBack) {
-          ((ObserverCallBack)_changeOb.get(n)).changed(se);
+        changedCount.put(n, changedCount.get(n) + 1);
+        ObserveChange observeEvent = new ObserveChange(changes, observedRegion, n);
+        Object callBack = changeCallBacks.get(n);
+        Observing.addEvent(onChangeNames.get(n), observeEvent);
+        if (callBack != null && callBack instanceof ObserverCallBack) {
+          log(lvl, "running call back");
+          ((ObserverCallBack) changeCallBacks.get(n)).changed(observeEvent);
+        } else {
+          // onChange only repeated if CallBack given
+          changedCount.put(n, -1);
+          activeChangeCallBacks--;
         }
       }
     }
+    return activeChangeCallBacks;
   }
 
-  private void checkChanges(ScreenImage img) {
+  private boolean checkChanges(ScreenImage img) {
+    boolean changesObserved = true;
     if (Settings.UseImageFinder) {
       //TODO hack to hide the native call - should be at the top
-      if (_lastImageMat == null) {
-          _lastImageMat = new org.opencv.core.Mat();
+      if (lastImageMat == null) {
+        lastImageMat = new org.opencv.core.Mat();
       }
-      if (_lastImageMat.empty()) {
-        _lastImageMat = Image.createMat(img.getImage());
-        return;
+      if (lastImageMat.empty()) {
+        lastImageMat = Image.createMat(img.getImage());
+        return true;
       }
-      ImageFinder f = new ImageFinder(_lastImageMat);
-      f.setMinChanges(_minChanges);
+      ImageFinder f = new ImageFinder(lastImageMat);
+      f.setMinChanges(minChanges);
       org.opencv.core.Mat current = Image.createMat(img.getImage());
       if (f.hasChanges(current)) {
         //TODO implement ChangeObserver: processing changes
-        Debug.log(3, "ChangeObserver: processing changes");
+        log(lvl, "TODO: processing changes");
       }
-      _lastImageMat = current;
-    }
-    else {
-      if (_lastImgMat == null) {
-        _lastImgMat = Image.convertBufferedImageToMat(img.getImage());
-        return;
+      lastImageMat = current;
+    } else {
+      if (lastImgMat == null) {
+        lastImgMat = Image.convertBufferedImageToMat(img.getImage());
+        return true;
       }
       FindInput fin = new FindInput();
-      fin.setSource(_lastImgMat);
+      fin.setSource(lastImgMat);
       Mat target = Image.convertBufferedImageToMat(img.getImage());
       fin.setTarget(target);
-      fin.setSimilarity(_minChanges);
+      fin.setSimilarity(minChanges);
       FindResults results = Vision.findChanges(fin);
-      try {
-        callChangeObserver(results);
-      } catch (AWTException e) {
-        Debug.error("EventMgr: checkChanges: ", e.getMessage());
+      if (results.size() > 0) {
+        if (0 == callChangeObserver(results)) changesObserved = false;
       }
-      _lastImgMat = target;
+      lastImgMat = target;
     }
+    return changesObserved;
   }
 
   public boolean update(ScreenImage simg) {
-    Debug.log(3, "observe: update entry: sthgLeft: %s obs? %s", sthgLeft, _region.isObserving());
+    log(lvl + 1, "update entry: sthgLeft: %s obs? %s", sthgLeft, observedRegion.isObserving());
     boolean ret;
+    boolean changesObserved;
     ret = sthgLeft;
     if (sthgLeft) {
       sthgLeft = false;
       checkPatterns(simg);
-      if (!_region.isObserving()) {
+      if (!observedRegion.isObserving()) {
         return false;
       }
     }
-    if (_region.isObserving()) {
+    if (observedRegion.isObserving()) {
       ret = sthgLeft;
-      if (_changeOb.size() > 0) {
-        checkChanges(simg);
-        if (!_region.isObserving()) {
+      if (shouldCheckChanges && changeCallBacks.size() > 0) {
+        changesObserved = checkChanges(simg);
+        shouldCheckChanges = changesObserved;
+        if (!observedRegion.isObserving()) {
           return false;
         }
-        ret = true;
+        ret = changesObserved;
       }
     }
-    Debug.log(3, "observe: update exit: ret: %s", ret);
+    log(lvl + 1, "update exit: ret: %s", ret);
     return ret;
   }
 }

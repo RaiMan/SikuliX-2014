@@ -25,12 +25,12 @@ import org.sikuli.basics.Settings;
 public class Region {
 
   private static String me = "Region";
-  private static String mem = "";
   private static int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "", me + ": " + message, args);
   }
+  
   /**
    * The Screen containing the Region
    */
@@ -79,14 +79,14 @@ public class Region {
   /**
    * The {@link Observer} Singleton instance
    */
-  private Observer evtMgr = null;
+  private Observer regionObserver = null;
 
   public Observer getEvtMgr() {
-    return evtMgr;
+    return regionObserver;
   }
 
   public void setEvtMgr(Observer em) {
-    evtMgr = em;
+    regionObserver = em;
   }
   /**
    * The last found {@link Match} in the Region
@@ -328,7 +328,7 @@ public class Region {
   public Region(int X, int Y, int W, int H) {
     this(X, Y, W, H, null);
     this.rows = 0;
-    Debug.log(3, "Region: init: (%d, %d, %d, %d)", X, Y, W, H);
+    log(lvl, "Region: init: (%d, %d, %d, %d)", X, Y, W, H);
   }
 
   /**
@@ -706,6 +706,7 @@ public class Region {
   }
 
   //</editor-fold>
+  
   //<editor-fold defaultstate="collapsed" desc="getters / setters / modificators">
   /**
    *
@@ -1744,7 +1745,7 @@ public class Region {
     if (isOtherScreen()) {
       return this;
     }
-    Debug.history("toggle highlight " + toString() + ": " + toEnable);
+    Debug.action("toggle highlight " + toString() + ": " + toEnable);
     if (toEnable) {
       overlay = new ScreenHighlighter(getScreen());
       overlay.highlight(this);
@@ -1771,7 +1772,7 @@ public class Region {
     if (secs < 0.1) {
       return highlight((int) secs);
     }
-    Debug.history("highlight " + toString() + " for " + secs + " secs");
+    Debug.action("highlight " + toString() + " for " + secs + " secs");
     ScreenHighlighter _overlay = new ScreenHighlighter(getScreen());
     _overlay.highlight(this, secs);
     return this;
@@ -2126,13 +2127,13 @@ public class Region {
   public <PSI> boolean waitVanish(PSI target, double timeout) {
     while (true) {
       try {
-        Debug.log(2, "waiting for " + target + " to vanish");
+        log(lvl, "waiting for " + target + " to vanish");
         RepeatableVanish r = new RepeatableVanish(target);
         if (r.repeat(timeout)) {
-          Debug.log(2, "" + target + " has vanished");
+          log(lvl, "" + target + " has vanished");
           return true;
         }
-        Debug.log(2, "" + target + " has not vanished before timeout");
+        log(lvl, "" + target + " has not vanished before timeout");
         return false;
       } catch (Exception ex) {
         if (ex instanceof IOException) {
@@ -2236,10 +2237,10 @@ public class Region {
         Finder f = new Finder(new Screen().capture(r), r);
         f.find(new Pattern(img).similar(Settings.CheckLastSeenSimilar));
         if (f.hasNext()) {
-          Debug.log(3, "Region: checkLastSeen: still there");
+          log(lvl, "Region: checkLastSeen: still there");
           return f;
         }
-        Debug.log(3, "Region: checkLastSeen: not there");
+        log(lvl, "Region: checkLastSeen: not there");
       }
     }
     if (Settings.UseImageFinder) {
@@ -2459,11 +2460,11 @@ public class Region {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Observing">
-  private Observer getEventManager() {
-    if (evtMgr == null) {
-      evtMgr = new Observer(this);
+  public Observer getObserver() {
+    if (regionObserver == null) {
+      regionObserver = new Observer(this);
     }
-    return evtMgr;
+    return regionObserver;
   }
 
   /**
@@ -2501,7 +2502,8 @@ public class Region {
 
   private <PSI> String onAppearDo(PSI target, Object observer) {
     String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.APPEAR);
-    getEventManager().addAppearObserver(target, (ObserverCallBack) observer, name);
+    getObserver().addAppearObserver(target, (ObserverCallBack) observer, name);
+    log(lvl, "%s: onAppear: %s with: %s", toStringShort(), name, target);
     return name;
   }
 
@@ -2532,7 +2534,8 @@ public class Region {
 
   private <PSI> String onVanishDo(PSI target, Object observer) {
     String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.VANISH);
-    getEventManager().addVanishObserver(target, (ObserverCallBack) observer, name);
+    getObserver().addVanishObserver(target, (ObserverCallBack) observer, name);
+    log(lvl, "%s: onVanish: %s with: %s", toStringShort(), name, target);
     return name;
   }
 
@@ -2559,7 +2562,7 @@ public class Region {
    * @return the event's name
    */
   public String onChange(Object observer) {
-    return onChangeDo(rows, observer);
+    return onChangeDo(0, observer);
   }
 
   /**
@@ -2578,7 +2581,8 @@ public class Region {
 
   public String onChangeDo(int threshold, Object observer) {
     String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.CHANGE);
-    getEventManager().addChangeObserver(threshold, (ObserverCallBack) observer, name);
+    getObserver().addChangeObserver(threshold, (ObserverCallBack) observer, name);
+    log(lvl, "%s: onChange: %s minSize: %d", toStringShort(), name, threshold);
     return name;
   }
 
@@ -2618,7 +2622,7 @@ public class Region {
   }
 
   private boolean observeDo(double secs) {
-    if (evtMgr == null) {
+    if (regionObserver == null) {
       Debug.error("Region: observe: Nothing to observe (Region might be invalid): " + this.toStringShort());
       return false;
     }
@@ -2627,17 +2631,22 @@ public class Region {
       Debug.error("Region: observe: already running for this region. Only one allowed!");
       return false;
     }
-    Debug.log(2, "Region: observe: starting in " + this.toStringShort() + " for " + secs + " seconds");
+    log(lvl, "observe: starting in " + this.toStringShort() + " for " + secs + " seconds");
     int MaxTimePerScan = (int) (1000.0 / observeScanRate);
     long begin_t = (new Date()).getTime();
-    long stop_t = begin_t + (long) (secs * 1000);
-    evtMgr.initialize();
+    long stop_t;
+    if (secs > Long.MAX_VALUE) {
+      stop_t = Long.MAX_VALUE;
+    } else {
+      stop_t = begin_t + (long) (secs * 1000);
+    }
+    regionObserver.initialize();
     observing = true;
     SikuliX.addRunningObserver(this);
     while (observing && stop_t > (new Date()).getTime()) {
       long before_find = (new Date()).getTime();
       ScreenImage simg = getScreen().capture(x, y, w, h);
-      if (!evtMgr.update(simg)) {
+      if (!regionObserver.update(simg)) {
         observing = false;
         break;
       }
@@ -2651,16 +2660,19 @@ public class Region {
         }
       } catch (Exception e) {
       }
+      log(lvl, "observe: checking again in %s", toStringShort());
     }
+    boolean observeSuccess = false;
     if (observing) {
       observing = false;
-      Debug.log(2, "Region: observe: stopped due to timeout in "
+      log(lvl, "observe: stopped due to timeout in "
               + this.toStringShort() + " for " + secs + " seconds");
     } else {
-      Debug.log(2, "Region: observe: observing has ended for " + this.toStringShort());
+      log(lvl, "observe: ended successfully: " + this.toStringShort());
+      observeSuccess = Observing.hasEvents(this);
     }
     SikuliX.removeRunningObserver(this);
-    return Observing.hasEvents(this);
+    return observeSuccess;
   }
 
   /**
@@ -2675,10 +2687,10 @@ public class Region {
       Debug.error("Region: observeInBackground: already running for this region. Only one allowed!");
       return false;
     }
-    Debug.log(3, "entering observeInBackground for %f secs", secs);
+    log(lvl, "entering observeInBackground for %f secs", secs);
     Thread observeThread = new Thread(new ObserverThread(secs));
     observeThread.start();
-    Debug.log(3, "observeInBackground now running");
+    log(lvl, "observeInBackground now running");
 		return true;
   }
 
@@ -2700,8 +2712,17 @@ public class Region {
    * stops a running observer
    */
   public void stopObserver() {
-    Debug.log(2, "Region: observe: request to stop observer for " + this.toStringShort());
+    log(lvl, "Region: observe: request to stop observer for " + this.toStringShort());
     observing = false;
+  }
+
+   /**
+   * stops a running observer printing an info message
+   * @param msg
+   */
+  public void stopObserver(String msg) {
+    Debug.info(msg);
+    stopObserver();
   }
   //</editor-fold>
 
@@ -2740,7 +2761,7 @@ public class Region {
    */
   public <PatternFilenameRegionMatchLocation> int hover(PatternFilenameRegionMatchLocation target)
           throws FindFailed {
-    Debug.log(3, "hover: " + target);
+    log(lvl, "hover: " + target);
     return mouseMove(target);
   }
 
@@ -3402,7 +3423,7 @@ public class Region {
       if ((modifiers & KeyModifier.WIN) != 0) {
         modifiers -= KeyModifier.WIN;
         modifiers |= KeyModifier.META;
-        Debug.log(2, "Key.WIN as modifier");
+        log(lvl, "Key.WIN as modifier");
         modWindows = "Windows";
       }
       if (modifiers != 0) {
@@ -3411,7 +3432,7 @@ public class Region {
           modText = modText.replace("Meta", modWindows);
         }
       }
-      Debug.history(modText + "TYPE \"" + showText + "\"");
+      Debug.action(modText + "TYPE \"" + showText + "\"");
       log(lvl, modText + "TYPE \"" + showText + "\"");
       IRobot r = getRobotForRegion();
       int pause = 20 + (Settings.TypeDelay > 1 ? 1000 : (int) (Settings.TypeDelay * 1000));
@@ -3498,7 +3519,7 @@ public class Region {
         return "--- no text ---";
       }
       String textRead = tr.recognize(simg);
-      Debug.log(2, "Region.text: #(" + textRead + ")#");
+      log(lvl, "Region.text: #(" + textRead + ")#");
       return textRead;
     }
     Debug.error("Region.text: text recognition is currently switched off");
@@ -3521,7 +3542,7 @@ public class Region {
         Debug.error("Region.text: text recognition is now switched off");
         return null;
       }
-      Debug.log(2, "Region.listText");
+      log(lvl, "Region.listText");
       return tr.listText(simg, this);
     }
     Debug.error("Region.text: text recognition is currently switched off");

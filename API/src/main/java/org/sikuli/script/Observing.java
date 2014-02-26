@@ -9,7 +9,9 @@ package org.sikuli.script;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import org.sikuli.basics.Debug;
 
 /**
  * This class implements a container that globally collects
@@ -17,13 +19,20 @@ import java.util.List;
  */
 public class Observing {
 
+  private static String me = "Observing";
+  private static int lvl = 3;
+
+  private static void log(int level, String message, Object... args) {
+    Debug.logx(level, "", me + ": " + message, args);
+  }
+  
   private static class Entry {
 
-    private final Region region;
-    private final String name;
-    private final ObserveEvent.Type type;
-    private final boolean isActive = true;
-    private final ObserverCallBack obs;
+    private Region region;
+    private String name;
+    private ObserveEvent.Type type;
+    private boolean isActive = true;
+    private ObserverCallBack obs;
 
     protected Entry(String name, Region reg, ObserverCallBack obs, ObserveEvent.Type type) {
       this.name = name;
@@ -31,14 +40,39 @@ public class Observing {
       this.obs = obs;
       this.type = type;
     }
+    
+    protected void destroy() {
+      region = null;
+      name = null;
+      type = null;
+      obs = null;
+    }
   }
 
   public static class Event extends ObserveEvent {
-    private Entry observer;
-    private long time;
+    private Entry observer = null;
+    private long time = 0;
+    
+    protected Event() {
+    }
+    
+    protected Event(Event evt) {
+      observer = evt.observer;
+      time = evt.time;
+      setRegion(evt.getRegion());
+      setMatch(evt.getMatch());
+      setChanges(evt.getChanges());
+      setPattern(evt.getPattern());
+      setIndex(evt.getIndex());
+    }
 
     public long getTime() {
       return time;
+    }
+    
+    protected void destroy() {
+      observer = null;
+      time = 0;
     }
   }
 
@@ -93,6 +127,12 @@ public class Observing {
     if (hasName(name, reg)) {
       return false;
     }
+    Iterator<Entry> iter = observers.iterator();
+    while (iter.hasNext()) {
+      if (iter.next() == null) {
+        iter.remove();
+      }
+    }
     return observers.add(new Entry(name, reg, obs, type));
   }
 
@@ -114,6 +154,9 @@ public class Observing {
 
   private static boolean hasName(String name, Region reg) {
     for (Entry obs : observers) {
+      if (obs.name == null) {
+        continue;
+      }
       if (name.equals(obs.name)) {
         if (reg != null && reg == obs.region) {
           return true;
@@ -167,16 +210,16 @@ public class Observing {
     return true;
   }
 
-  private static void remove(Entry obs) {
+  private static synchronized void remove(Entry obs) {
     if (obs.region != null) {
       obs.region.stopObserver();
     }
-    observers.remove(obs);
     for (Event ev:events) {
       if (ev.observer == obs) {
-        events.remove(ev);
+        ev.destroy();
       }
     }
+    obs.destroy();
   }
 
   private static Entry get(Region reg, String name) {
@@ -200,9 +243,23 @@ public class Observing {
    * @return success
    */
   public static synchronized boolean clear() {
+    log(lvl, "*** requested ***: remove all observers");
     for (Entry e : observers) {
       remove(e);
     }
+    Iterator<Entry> itero = observers.iterator();
+    while (itero.hasNext()) {
+      if (itero.next() == null) {
+        itero.remove();
+      }
+    }
+    Iterator<Event> itere = events.iterator();
+    while (itere.hasNext()) {
+      if (itere.next() == null) {
+        itere.remove();
+      }
+    }
+    log(lvl, "as requested: removed all observers");
     return true;
   }
 
@@ -259,6 +316,7 @@ public class Observing {
    * @return the time of creation
    */
   public static synchronized long addEvent(String name, Object pev) {
+    long t = 0;
     if (pev instanceof ObserveEvent) {
       ObserveEvent evt = (ObserveEvent) new Event();
       ObserveEvent event = (ObserveEvent) pev;
@@ -273,9 +331,15 @@ public class Observing {
     ev.observer = get(null, name);
     ev.time = new Date().getTime();
     if (events.add(ev)) {
-      return ev.time;
+      t = ev.time;
     }
-    return 0;
+    Iterator<Event> iter = events.iterator();
+    while (iter.hasNext()) {
+      if (iter.next() == null) {
+        iter.remove();
+      }
+    }
+    return t;
   }
 
   /**
@@ -294,27 +358,32 @@ public class Observing {
     Event event = null;
     if (obs != null) {
       for (Event ev:events) {
-        if (ev.observer == obs) {
+        if (ev.observer == null) {
+          continue;
+        }
+        if (ev.observer.name.equals(obs.name)) {
           if (event == null) {
             event = ev;
             continue;
           }
           if (ev.time > event.time) {
-            events.remove(event);
+            event.destroy();
             event = ev;
           }
         }
       }
     }
     if (null != event && remove) {
-      events.remove(event);
+      Event ev = new Event(event);
+      event.destroy();
+      event = ev;
     }
     return event;
   }
 
   /**
    * remove and return the latest events for that region <br>
-   * earlier events are removed
+   * earlier events are removed as well
    *
    * @return the array of events or size 0 array if none
    */
@@ -335,7 +404,9 @@ public class Observing {
   public static synchronized Event[] getEvents() {
     List<Event> evts = new ArrayList<Event>();
     for (Entry obs:observers) {
-      evts.add(getEvent(obs.name, false));
+      if (obs.name != null) {
+        evts.add(getEvent(obs.name, false));
+      }
     }
     return evts.toArray(new Event[0]);
   }

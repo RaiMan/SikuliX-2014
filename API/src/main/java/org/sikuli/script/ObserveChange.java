@@ -12,10 +12,11 @@ import java.util.List;
  * INTERNAL USE
  */
 public class ObserveChange extends ObserveEvent {
-   public ObserveChange(List<Match> results, Region r){
+   public ObserveChange(List<Match> results, Region r, int eventIndex){
       type = Type.CHANGE;
       setChanges(results);
       setRegion(r);
+      setIndex(eventIndex);
    }
 
 	@Override

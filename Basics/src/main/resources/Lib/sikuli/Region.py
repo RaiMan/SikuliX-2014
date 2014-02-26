@@ -63,19 +63,23 @@ class Region(JRegion):
 
 # observe(): Special setup for Jython
 # assures, that in any case the same region object is used
-    def onAppear(self, target, handler):
+    def onAppear(self, target, handler = None):
+        if not handler:
+            return self.onAppearJ(target, None)
         class AnonyObserver(ObserverCallBack):
             def appeared(self, event):
                 handler(event)
         return self.onAppearJ(target, AnonyObserver())
 
-    def onVanish(self, target, handler):
+    def onVanish(self, target, handler = None):
+        if not handler:
+            return self.onVanishJ(target, None)
         class AnonyObserver(ObserverCallBack):
             def vanished(self, event):
                 handler(event)
-        return self.onVanishJ(self, target, AnonyObserver())
+        return self.onVanishJ(target, AnonyObserver())
 
-    def onChange(self, arg1, arg2=None):
+    def onChange(self, arg1=0, arg2=None):
         if isinstance(arg1, int):
             min_size = arg1
             handler = arg2
@@ -84,10 +88,12 @@ class Region(JRegion):
                 raise Exception("onChange: Invalid parameters set")
             min_size = 0
             handler = arg1
+        if not handler:
+            return self.onChangeJ(min_size, None)
         class AnonyObserver(ObserverCallBack):
             def changed(self, event):
                 handler(event)
         return self.onChangeJ(min_size, AnonyObserver())
 
     def observe(self, time=FOREVER, background=False):
-        self.observeJ(time, background)
+        return self.observeJ(time, background)
