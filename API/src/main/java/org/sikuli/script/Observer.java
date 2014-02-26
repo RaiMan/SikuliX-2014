@@ -90,27 +90,27 @@ public class Observer {
     return similarity;
   }
 
-  public <PSC> void addAppearObserver(PSC ptn, SikuliEventObserver ob, String name) {
+  public <PSC> void addAppearObserver(PSC ptn, ObserverCallBack ob, String name) {
     _appearOb.put(ptn, ob);
     _state.put(ptn, State.FIRST);
     _names.put(ptn, name);
   }
 
   public <PSC> void removeAppearObserver(PSC ptn) {
-    ObserverManager.remove(_names.get(ptn));
+    Observing.remove(_names.get(ptn));
     _names.remove(ptn);
     _appearOb.remove(ptn);
     _state.remove(ptn);
   }
 
-  public <PSC> void addVanishObserver(PSC ptn, SikuliEventObserver ob, String name) {
+  public <PSC> void addVanishObserver(PSC ptn, ObserverCallBack ob, String name) {
     _vanishOb.put(ptn, ob);
     _state.put(ptn, State.FIRST);
     _names.put(ptn, name);
   }
 
   public <PSC> void removeVanishObserver(PSC ptn) {
-    ObserverManager.remove(_names.get(ptn));
+    Observing.remove(_names.get(ptn));
     _names.remove(ptn);
     _vanishOb.remove(ptn);
     _state.remove(ptn);
@@ -119,18 +119,18 @@ public class Observer {
   private void callAppearObserver(Object ptn, Match m) {
     ObserveAppear se = new ObserveAppear(ptn, m, _region);
     Object ao = _appearOb.get(ptn);
-    ObserverManager.addEvent(_names.get(ptn), se);
-    if (ao != null && ao instanceof SikuliEventObserver) {
-      ((SikuliEventObserver)_appearOb.get(ptn)).targetAppeared(se);
+    Observing.addEvent(_names.get(ptn), se);
+    if (ao != null && ao instanceof ObserverCallBack) {
+      ((ObserverCallBack)_appearOb.get(ptn)).appeared(se);
     }
   }
 
   private void callVanishObserver(Object ptn, Match m) {
     ObserveVanish se = new ObserveVanish(ptn, m, _region);
     Object ao = _vanishOb.get(ptn);
-    ObserverManager.addEvent(_names.get(ptn), se);
-    if (ao != null && ao instanceof SikuliEventObserver) {
-      ((SikuliEventObserver)_vanishOb.get(ptn)).targetVanished(se);
+    Observing.addEvent(_names.get(ptn), se);
+    if (ao != null && ao instanceof ObserverCallBack) {
+      ((ObserverCallBack)_vanishOb.get(ptn)).vanished(se);
     }
   }
 
@@ -250,14 +250,14 @@ public class Observer {
     }
   }
 
-  public void addChangeObserver(int threshold, SikuliEventObserver ob, String name) {
+  public void addChangeObserver(int threshold, ObserverCallBack ob, String name) {
     _changeOb.put(new Integer(threshold), ob);
     _minChanges = getMinChanges();
     _cnames.put(threshold, name);
   }
 
   public void removeChangeObserver(int threshold) {
-    ObserverManager.remove(_cnames.get(threshold));
+    Observing.remove(_cnames.get(threshold));
     _names.remove(threshold);
     _changeOb.remove(new Integer(threshold));
     _minChanges = getMinChanges();
@@ -286,9 +286,9 @@ public class Observer {
         _countc.put(n, _countc.get(n) + 1);
         ObserveChange se = new ObserveChange(changes, _region);
         Object ao = _changeOb.get(n);
-        ObserverManager.addEvent(_cnames.get(n), se);
-        if (ao instanceof SikuliEventObserver) {
-          ((SikuliEventObserver)_changeOb.get(n)).targetChanged(se);
+        Observing.addEvent(_cnames.get(n), se);
+        if (ao instanceof ObserverCallBack) {
+          ((ObserverCallBack)_changeOb.get(n)).changed(se);
         }
       }
     }

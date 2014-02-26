@@ -9,7 +9,7 @@ module SikuliX4Ruby
   java_import org.sikuli.script.Region
   java_import org.sikuli.script.ScreenUnion
 
-  java_import org.sikuli.script.ObserverManager
+  java_import org.sikuli.script.Observing
   java_import org.sikuli.script.ObserverCallBack
 
   java_import org.sikuli.script.Constants

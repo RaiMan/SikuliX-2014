@@ -16,7 +16,7 @@ import java.util.EventListener;
  *
  * example:<br>
  * aRegion.onAppear(anImage, <br>
-   new ObserverManagerCallBack() { <br>
+   new ObservingCallBack() { <br>
  *     <br>
      appeared(ObserveEvent e) { <br>
        // do something
@@ -37,6 +37,6 @@ public class ObserverCallBack implements EventListener {
   public void changed(ObserveEvent e) {
   }
 
-  public void happened(ObserverManager.Event e) {
+  public void happened(Observing.Event e) {
   }
 }

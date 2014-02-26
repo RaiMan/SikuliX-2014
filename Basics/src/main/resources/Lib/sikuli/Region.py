@@ -67,7 +67,7 @@ class Region(JRegion):
         class AnonyObserver(ObserverCallBack):
             def appeared(self, event):
                 handler(event)
-        return self.onAppearJ(self, target, AnonyObserver())
+        return self.onAppearJ(target, AnonyObserver())
 
     def onVanish(self, target, handler):
         class AnonyObserver(ObserverCallBack):

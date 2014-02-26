@@ -12,12 +12,10 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * INTERNAL USE
  * This class implements a container that globally collects
- * all running observers, thus allowing to stop any observing
- * on request (e.g. when script or Sikuli app ends)
+ * all running observations.<br />
  */
-public class ObserverManager {
+public class Observing {
 
   private static class Entry {
 
@@ -48,16 +46,18 @@ public class ObserverManager {
   private static List<Event> events = Collections.synchronizedList(new ArrayList<Event>());
 
   /**
-   * adds an ObserverManager with a callback to the list
+   * adds an observer with a callback to the list
    *
    * @param reg the observed region
    * @param obs the callback
-   * @param type one off ObserverManager.Type.APPEAR, VANISH, CHANGE, GENERIC
+   * @param type one off ObserveEvent.Type.APPEAR, VANISH, CHANGE, GENERIC
    * @return a unique name derived from time or null if not possible
    */
   public static synchronized String add(Region reg, ObserverCallBack obs, ObserveEvent.Type type) {
     String name = createName();
-    if (add(name, reg, obs, type)) return name;
+    if (add(name, reg, obs, type)) {
+      return name;
+    }
     return null;
   }
 
@@ -66,7 +66,7 @@ public class ObserverManager {
    *
    * @param reg the observed region
    * @param name a unique name
-   * @param type one off ObserverManager.Type.APPEAR, VANISH, CHANGE, GENERIC
+   * @param type one off Observing.Type.APPEAR, VANISH, CHANGE, GENERIC
    * @return the observers name or null if not possible (duplicate?)
    */
   public static synchronized String add(Region reg, String name, ObserveEvent.Type type) {
@@ -77,7 +77,7 @@ public class ObserverManager {
   }
 
   /**
-   * adds an observer of type GNERIC to the list having no callback
+   * adds an observer of type GENERIC to the list having no callback
    *
    * @param name a unique name
    * @return the observers name or null if not possible (duplicate?)

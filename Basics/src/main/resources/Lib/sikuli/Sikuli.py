@@ -24,7 +24,7 @@ from org.sikuli.basics import OS
 Debug.log(3, "Jython: sikuli: Sikuli: import Region")
 from org.sikuli.script import Region as JRegion
 from Region import *
-from org.sikuli.script import ObserveManager
+from org.sikuli.script import Observing
 
 Debug.log(3, "Jython: sikuli: Sikuli: import Screen")
 from org.sikuli.script import Screen as JScreen
