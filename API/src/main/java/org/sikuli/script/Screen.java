@@ -26,6 +26,13 @@ import java.awt.Rectangle;
  */
 public class Screen extends Region implements EventObserver, IScreen {
 
+  private static String me = "Screen";
+  private static int lvl = 3;
+
+  private static void log(int level, String message, Object... args) {
+    Debug.logx(level, "", me + ": " + message, args);
+  }
+  
   protected static GraphicsEnvironment genv = null;
   protected static GraphicsDevice[] gdevs;
   protected static Screen[] screens;
@@ -85,12 +92,12 @@ public class Screen extends Region implements EventObserver, IScreen {
     }
     primaryScreen = 0;
     if (!reset) {
-      Debug.log(2, "Screen: initScreens: basic initialization (%d Screen(s) found)", gdevs.length);
-      Debug.log(3, "*** monitor configuration (primary: %d) ***", primaryScreen);
+      log(lvl - 1, "initScreens: basic initialization (%d Screen(s) found)", gdevs.length);
+      log(lvl, "*** monitor configuration (primary: %d) ***", primaryScreen);
       for (int i = 0; i < gdevs.length; i++) {
-        Debug.log(3, "Screen %d: %s", i, screens[i].toStringShort());
+        log(lvl, "%d: %s", i, screens[i].toStringShort());
       }
-      Debug.log(3, "*** end monitor configuration ***");
+      log(lvl, "*** end monitor configuration ***");
     }
   }
 
@@ -398,7 +405,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    */
   @Override
   public ScreenImage capture(Rectangle rect) {
-    Debug.log(3, "Screen.capture: (%d,%d) %dx%d", rect.x, rect.y, rect.width, rect.height);
+    log(lvl + 1, "Screen.capture: (%d,%d) %dx%d", rect.x, rect.y, rect.width, rect.height);
     ScreenImage simg = robot.captureScreen(rect);
     lastScreenImage = simg;
     return simg;

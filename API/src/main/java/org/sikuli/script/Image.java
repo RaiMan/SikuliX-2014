@@ -582,9 +582,9 @@ public class Image {
   public BufferedImage get() {
     if (bimg != null) {
       if (!filepath.equals(isBImg)) {
-        log(lvl, "getImage from cache: %s\n%s", imageName, (fileURL == null ? filepath : fileURL));
+        log(lvl + 1, "getImage from cache: %s\n%s", imageName, (fileURL == null ? filepath : fileURL));
       } else {
-        log(lvl, "getImage inMemory: %s", imageName);
+        log(lvl + 1, "getImage inMemory: %s", imageName);
       }
       return bimg;
     } else {

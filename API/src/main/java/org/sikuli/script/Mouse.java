@@ -341,7 +341,7 @@ public class Mouse {
       return 0;
     }
     get().use(region);
-    Debug.history(getClickMsg(loc, buttons, modifiers, dblClick));
+    Debug.action(getClickMsg(loc, buttons, modifiers, dblClick));
     r.smoothMove(loc);
     r.clickStarts();
     r.pressModifiers(modifiers);

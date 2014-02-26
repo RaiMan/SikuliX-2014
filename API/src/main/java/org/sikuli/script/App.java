@@ -132,7 +132,7 @@ public class App {
 	 * @return the App instance or null on failure
 	 */
   public App focus(int num) {
-    Debug.history("App.focus " + this.toString() + " #" + num);
+    Debug.action("App.focus " + this.toString() + " #" + num);
     if (_pid != 0) {
       if (_osUtil.switchApp(_pid, num) == 0) {
         Debug.error("App.focus failed: " + _appName
@@ -167,13 +167,13 @@ public class App {
     if (Settings.isWindows() || Settings.isLinux()) {
       int pid = _osUtil.openApp(_appName);
       _pid = pid;
-      Debug.history("App.open " + this.toString());
+      Debug.action("App.open " + this.toString());
       if (pid == 0) {
         Debug.error("App.open failed: " + _appName + " not found");
         return null;
       }
     } else {
-      Debug.history("App.open " + this.toString());
+      Debug.action("App.open " + this.toString());
       if (_osUtil.openApp(_appName) < 0) {
         Debug.error("App.open failed: " + _appName + " not found");
         return null;
@@ -187,7 +187,7 @@ public class App {
 	 * @return this or null on failure
 	 */
 	public int close() {
-    Debug.history("App.close " + this.toString());
+    Debug.action("App.close " + this.toString());
     if (_pid != 0) {
       int ret = _osUtil.closeApp(_pid);
       if (ret >= 0) {

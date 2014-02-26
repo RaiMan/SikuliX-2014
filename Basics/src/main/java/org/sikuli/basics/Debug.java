@@ -183,12 +183,23 @@ public class Debug {
    * @param message (String or format string)
    * @param args to use with format string
    */
-  public static void history(String message, Object... args) {
+  public static void action(String message, Object... args) {
     if (Settings.ActionLogs) {
       log(-1, "log", message, args);
     }
   }
-
+  
+  /**
+   * use Debug.action() instead
+   * @param message
+   * @param args
+   * @deprecated
+   */
+  @Deprecated
+  public static void history(String message, Object... args) {
+    action(message, args);
+  }
+  
   /**
    * informative Sikuli messages <br> switch on/off: Settings.InfoLogs
    *
