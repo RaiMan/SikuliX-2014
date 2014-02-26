@@ -135,17 +135,52 @@ public class JRubyScriptRunner implements IScriptRunner {
 
 	@Override
 	public int runInteractive(String[] scriptArgs) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            fillSysArgv(null, scriptArgs);
+
+            String[] args = null;
+            String[] iargs = {/*"-i", "-c",*/
+                "require 'irb'\n"
+                + "SikuliScript.runningInteractive();\n"
+                + "print \"Hello, this is your interactive Sikuli (rules for interactive Ruby apply)\\n"
+                + "use the UP/DOWN arrow keys to walk through the input history\\n"
+                + "help()<enter> will output some basic Ruby information\\n"
+                + "shelp()<enter> will output some basic Sikuli information\\n"
+                + "... use ctrl-d to end the session\"\n"
+                + "IRB.start(__FILE__)\n"
+            };
+            if (scriptArgs != null && scriptArgs.length > 0) {
+                args = new String[scriptArgs.length + iargs.length];
+                System.arraycopy(iargs, 0, args, 0, iargs.length);
+                System.arraycopy(scriptArgs, 0, args, iargs.length, scriptArgs.length);
+            } else {
+                args = iargs;
+            }
+            StringBuilder buffer = new StringBuilder();
+            for (String e : args) {
+                buffer.append(e);
+            }
+            createScriptingContainer();
+            executeScriptHeader(new String[0]);
+            interpreter.runScriptlet(buffer.toString());
+            return 0;
 	}
 
 	@Override
 	public String getCommandLineHelp() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return "You are using the JRuby ScriptRunner";
 	}
 
 	@Override
 	public String getInteractiveHelp() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+            return "**** this might be helpful ****\n"
+                    + "-- execute a line of code by pressing <enter>\n"
+                    + "-- separate more than one statement on a line using ;\n"
+                    + "-- Unlike the iDE, this command window will not vanish, when using a Sikuli feature\n"
+                    + "   so take care, that all you need is visible on the screen\n"
+                    + "-- to create an image interactively:\n"
+                    + "img = capture()\n"
+                    + "-- use a captured image later:\n"
+                    + "click(img)";
 	}
 
 	@Override
