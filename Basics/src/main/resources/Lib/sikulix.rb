@@ -116,6 +116,12 @@ module SikuliX4Ruby
     [$SIKULI_SCREEN, SikuliX].inject({}) do |h, obj|
       h.merge!(obj.methods.inject({}){|h, name| h.merge!(name => obj.method(name))})
     end
+
+  # display some help in interactive mode
+  def shelp
+    SikuliScript.shelp
+  end
+
 end
 
 # This method allow to call "undotted" methods that belong to
