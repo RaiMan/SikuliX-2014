@@ -55,7 +55,9 @@ public class PreferencesUser {
   
   public boolean exportPrefs(String path) {
     try {
-      pref.exportSubtree(new FileOutputStream(new File(path))); 
+      FileOutputStream pout = new FileOutputStream(new File(path));              ;
+      pref.exportSubtree(pout); 
+      pout.close();
     } catch (Exception ex) {
       Debug.error("UserPrefs: export: did not work\n" + ex.getMessage());
       return false;

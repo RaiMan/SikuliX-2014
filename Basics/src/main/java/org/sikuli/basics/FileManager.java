@@ -447,7 +447,7 @@ public class FileManager {
     zis.close();
   }
 
-  public static void xcopy(String src, String dest, String current) throws IOException {
+  public static void xcopy(String src, String dest, String saveAsCurrent) throws IOException {
     File fSrc = new File(src);
     File fDest = new File(dest);
     if (fSrc.getAbsolutePath().equals(fDest.getAbsolutePath())) {
@@ -459,8 +459,8 @@ public class FileManager {
       }
       String[] children = fSrc.list();
       for (String child : children) {
-        if (current != null && (child.endsWith(".py") || child.endsWith(".html"))
-                && child.startsWith(current + ".")) {
+        if (saveAsCurrent != null && (child.endsWith(".py") || child.endsWith(".html"))
+                && child.startsWith(saveAsCurrent + ".")) {
           log0(lvl, "xcopy: SaveAs: deleting %s", child);
           continue;
         } else if (child.endsWith("$py.class")) {
@@ -687,6 +687,9 @@ public class FileManager {
           }
         }
         runner = SikuliX.getScriptRunner(null, runType, args);
+        if (runner == null) {
+          scriptFile = null;
+        }
       }
       if (scriptFile == null && runner != null) {
         // try with fileending

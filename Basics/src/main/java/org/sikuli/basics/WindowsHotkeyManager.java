@@ -35,7 +35,15 @@ public class WindowsHotkeyManager extends HotkeyManager {
 
   @Override
   public boolean _addHotkey(int keyCode, int modifiers, HotkeyListener listener) {
-    JIntellitype itype = JIntellitype.getInstance();
+    JIntellitype itype = null;
+    try {
+      itype = JIntellitype.getInstance();
+    } catch (Exception ex) {
+      Debug.error("WindowsHotkeyManager: JIntellitype problem: %s", ex.getMessage());
+    }
+    if (itype == null) {
+      System.exit(1);
+    }
     if (_gHotkeyId == 1) {
       itype.addHotKeyListener(new JIntellitypeHandler());
     }
