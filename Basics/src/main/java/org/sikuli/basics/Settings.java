@@ -7,12 +7,17 @@
 package org.sikuli.basics;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.net.InetAddress;
 import java.net.Proxy;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ServiceLoader;
 import java.util.prefs.Preferences;
 
 public class Settings {
@@ -24,6 +29,7 @@ public class Settings {
 
   private static String me = "Settings";
   private static int lvl = 3;
+
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, level < 0 ? "error" : "debug",
             me + ": " + message, args);
@@ -77,8 +83,7 @@ public class Settings {
   public static String SikuliVersionIDE;
   public static String SikuliVersionScript;
   public static final String versionMonth = "January 2014";
-	public static final String libOpenCV = "libopencv_java248";
-
+  public static final String libOpenCV = "libopencv_java248";
 
   /**
    * Resource types to be used with IResourceLoader implementations
@@ -96,28 +101,32 @@ public class Settings {
 
   private static Preferences options = Preferences.userNodeForPackage(SikuliX.class);
 
-	public static Map<String, String> EndingTypes = new HashMap<String, String>();
-	public static Map<String, String> TypeEndings = new HashMap<String, String>();
-	public static String CPYTHON = "text/python";
-	public static String CRUBY = "text/ruby";
-	public static String CPLAIN = "text/plain";
-	public static String EPYTHON = "py";
-	public static String ERUBY = "rb";
-	public static String EPLAIN = "txt";
-	public static String RPYTHON = "jython";
-	public static String RRUBY = "jruby";
-	public static String EDEFAULT = EPYTHON;
-	public static String TypeCommentToken = "---SikuliX---";
-	public static String TypeCommentDefault = "# This script uses %s " + TypeCommentToken + "\n";
+  public static Map<String, IDESupport> ideSupporter = new HashMap<String, IDESupport>();
+  public static Map<String, IScriptRunner> scriptRunner = new HashMap<String, IScriptRunner>();
+  private static List<String> supportedRunner = new ArrayList<String>();
+  public static Map<String, String> EndingTypes = new HashMap<String, String>();
+  public static Map<String, String> TypeEndings = new HashMap<String, String>();
+  public static String CPYTHON = "text/python";
+  public static String CRUBY = "text/ruby";
+  public static String CPLAIN = "text/plain";
+  public static String EPYTHON = "py";
+  public static String ERUBY = "rb";
+  public static String EPLAIN = "txt";
+  public static String RPYTHON = "jython";
+  public static String RRUBY = "jruby";
+  public static String RDEFAULT = "NotDefined";
+  public static String EDEFAULT = EPYTHON;
+  public static String TypeCommentToken = "---SikuliX---";
+  public static String TypeCommentDefault = "# This script uses %s " + TypeCommentToken + "\n";
 
-	static {
+  static {
     Properties props = System.getProperties(); //for debugging
 
     if (System.getProperty("user.name") != null && !"".equals(System.getProperty("user.name"))) {
       UserName = System.getProperty("user.name");
     }
 
-    BaseTempPath = System.getProperty("java.io.tmpdir") + File.separator + UserName;
+    BaseTempPath = new File(System.getProperty("java.io.tmpdir"), UserName).getAbsolutePath();
 
     // TODO check existence of an extension repository
     SikuliRepo = null;
@@ -133,12 +142,75 @@ public class Settings {
       SikuliVersionScript = SikuliVersionDefaultScript;
     }
 
-		EndingTypes.put("py", CPYTHON );
-		EndingTypes.put("rb", CRUBY);
-		EndingTypes.put("txt", CPLAIN);
-		for (String k : EndingTypes.keySet()) {
-			TypeEndings.put(EndingTypes.get(k), k);
-		}
+    EndingTypes.put("py", CPYTHON);
+    EndingTypes.put("rb", CRUBY);
+    EndingTypes.put("txt", CPLAIN);
+    for (String k : EndingTypes.keySet()) {
+      TypeEndings.put(EndingTypes.get(k), k);
+    }
+  }
+  
+  public static void cleanTemp() {
+    for (File f : new File(System.getProperty("java.io.tmpdir")).listFiles(new FilenameFilter() {
+      @Override
+      public boolean accept(File dir, String name) {
+        if (name.contains("BridJExtractedLibraries")) {
+          return true;
+        }
+        if (name.toLowerCase().contains("sikuli")) {
+          return true;
+        }
+        return false;
+      }})) 
+    {
+      Debug.log(4, "cleanTemp: " + f.getName());
+      FileManager.deleteFileOrFolder(f.getAbsolutePath());
+    }
+    FileManager.deleteFileOrFolder(BaseTempPath);
+  }
+
+  public static void initScriptingSupport() {
+    if (scriptRunner.size() == 0) {
+      ServiceLoader<IDESupport> sloader = ServiceLoader.load(IDESupport.class);
+      Iterator<IDESupport> supIterator = sloader.iterator();
+      while (supIterator.hasNext()) {
+        IDESupport current = supIterator.next();
+        try {
+          for (String ending : current.getEndings()) {
+            ideSupporter.put(ending, current);
+          }
+        } catch (Exception ex) {
+        }
+      }
+      ServiceLoader<IScriptRunner> rloader = ServiceLoader.load(IScriptRunner.class);
+      Iterator<IScriptRunner> rIterator = rloader.iterator();
+      while (rIterator.hasNext()) {
+        IScriptRunner current = rIterator.next();
+        String name = current.getName();
+        if (!name.startsWith("Not")) {
+          scriptRunner.put(name, current);
+        }
+      }
+    }
+    if (scriptRunner.size() == 0) {
+      Debug.error("Settings: No scripting support available. Rerun Setup!");
+      SikuliX.popup("No scripting support available. Rerun Setup!", "SikuliX - Fatal Error!");
+      System.exit(1);
+    } else {
+      RDEFAULT = (String) scriptRunner.keySet().toArray()[0];
+      EDEFAULT = scriptRunner.get(RDEFAULT).getFileEndings()[0];
+      for (IScriptRunner r : scriptRunner.values()) {
+        for (String e : r.getFileEndings()){
+          if (!supportedRunner.contains(EndingTypes.get(e))) {
+            supportedRunner.add(EndingTypes.get(e));
+          }
+        }
+      }
+    }
+  }
+  
+  public static boolean hasTypeRunner(String type) {
+    return supportedRunner.contains(type);
   }
 
   public static final int ISWINDOWS = 0;
@@ -174,11 +246,11 @@ public class Settings {
   public static boolean OcrTextRead = false;
 
   /**
-   * true = start slow motion mode, false: stop it (default: false) show a visual for
-   * SlowMotionDelay seconds (default: 2)
+   * true = start slow motion mode, false: stop it (default: false) show a visual for SlowMotionDelay seconds (default:
+   * 2)
    */
-	public static boolean TRUE = true;
-	public static boolean FALSE = false;
+  public static boolean TRUE = true;
+  public static boolean FALSE = false;
 
   private static boolean ShowActions = false;
 
@@ -189,8 +261,7 @@ public class Settings {
   public static void setShowActions(boolean ShowActions) {
     if (ShowActions) {
       MoveMouseDelaySaved = MoveMouseDelay;
-    }
-    else {
+    } else {
       MoveMouseDelay = MoveMouseDelaySaved;
     }
     Settings.ShowActions = ShowActions;
@@ -201,8 +272,8 @@ public class Settings {
   private static float MoveMouseDelaySaved = MoveMouseDelay;
 
   /**
-   * true = highlight every match (default: false) (show red rectangle around) for
-   * DefaultHighlightTime seconds (default: 2)
+   * true = highlight every match (default: false) (show red rectangle around) for DefaultHighlightTime seconds
+   * (default: 2)
    */
   public static boolean Highlight = false;
   public static float DefaultHighlightTime = 2f;
@@ -307,14 +378,13 @@ public class Settings {
   public static String getVersionShort() {
     if (SikuliVersionBetaN > 0 && SikuliVersionBetaN < 99) {
       return bversion;
-    }
-    else {
+    } else {
       return sversion;
     }
   }
 
   public static String getVersionShortBasic() {
-      return sversion.substring(0, 3);
+    return sversion.substring(0, 3);
   }
 
   public static void setArgs(String[] args, String[] sargs) {

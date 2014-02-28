@@ -114,40 +114,14 @@ public class SikuliIDE extends JFrame {
   private static JFrame splash;
   private boolean firstRun = true;
   private static long start;
-  private static Map<String, IDESupport> ideSupporter = new HashMap<String, IDESupport>();
-  public static Map<String, IScriptRunner> scriptRunner = new HashMap<String, IScriptRunner>();
-
-	static {
-		ServiceLoader<IDESupport> sloader = ServiceLoader.load(IDESupport.class);
-		Iterator<IDESupport> supIterator = sloader.iterator();
-		while (supIterator.hasNext()) {
-			IDESupport current = supIterator.next();
-			try {
-				for (String ending : current.getEndings()) {
-					ideSupporter.put(ending, current);
-				}
-			} catch (Exception ex) {
-			}
-		}
-		ServiceLoader<IScriptRunner> rloader = ServiceLoader.load(IScriptRunner.class);
-		Iterator<IScriptRunner> rIterator = rloader.iterator();
-		IScriptRunner current;
-		while (rIterator.hasNext()) {
-			current = rIterator.next();
-			String name = current.getName();
-			if (!name.startsWith("Not")) {
-				scriptRunner.put(name, current);
-			}
-		}
-		if (scriptRunner.size() == 0) {
-			Debug.error("SikuliIDE: No scripting support available. Rerun Setup!");
-		}
-		current = (IScriptRunner) scriptRunner.values().toArray()[0];
-		Settings.EDEFAULT = current.getFileEndings()[0];
-	}
+  private static File isRunning;
+  private static FileOutputStream isRunningFile = null;
+  
+  static {
+  }
 
   public static IDESupport getIDESupport(String ending) {
-    return ideSupporter.get(ending);
+    return Settings.ideSupporter.get(ending);
   }
 
   public static String _I(String key, Object... args) {
@@ -173,10 +147,8 @@ public class SikuliIDE extends JFrame {
     String[] splashArgs = new String[]{
       "splash", "#", "#" + Settings.SikuliVersionIDE, "", "#", "#... starting - please wait ..."};
 
-    File isRunning;
     new File(Settings.BaseTempPath).mkdirs();
     isRunning = new File(Settings.BaseTempPath, "sikuli-ide-isrunning");
-    FileOutputStream isRunningFile = null;
     try {
       isRunning.createNewFile();
       isRunningFile = new FileOutputStream(isRunning);
@@ -190,10 +162,23 @@ public class SikuliIDE extends JFrame {
     } catch (Exception ex) {
       splashArgs[5] = "Terminating on FatalError: cannot access IDE lock ";
       splash = new MultiFrame(splashArgs);
-      log(-1, splashArgs[5] + isRunning.getAbsolutePath());
+      log(-1, splashArgs[5] + "\n" + isRunning.getAbsolutePath());
       SikuliX.pause(3);
       System.exit(1);
     }
+
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+        @Override
+        public void run() {
+          log(lvl, "final cleanup");
+          try {
+            isRunningFile.close();
+          } catch (IOException ex) {
+          }
+          isRunning.delete();
+          Settings.cleanTemp();
+        }
+    });
 
     if (System.getProperty("sikuli.FromCommandLine") == null) {
       String[] userOptions = SikuliX.collectOptions("IDE", args);
@@ -209,6 +194,9 @@ public class SikuliIDE extends JFrame {
     }
 
     start = (new Date()).getTime();
+
+    Settings.initScriptingSupport();
+    
     for (String e : args) {
       splashArgs[3] += e + " ";
     }
@@ -540,7 +528,7 @@ public class SikuliIDE extends JFrame {
       setCurrentFileTabTitle(file);
       return true;
     }
-    Debug.error("Can't load file " + file);
+    Debug.error("Can't load file " + file + " --- check available runners!");
 //    (new FileAction()).doCloseTab(null);
     return false;
   }
@@ -2007,8 +1995,7 @@ public class SikuliIDE extends JFrame {
       String runnerType = null;
       String cType = pane.getContentType();
       runnerType = cType.equals(Settings.CPYTHON) ? Settings.RPYTHON : Settings.RRUBY;
-      IScriptRunner srunner = SikuliX.getScriptRunner(
-              runnerType, null, Settings.getArgs());
+      IScriptRunner srunner = SikuliX.getScriptRunner(runnerType, null, Settings.getArgs());
       if (srunner == null) {
         Debug.error("Could not load a script runner for: %s (%s)", cType, runnerType);
         return;
