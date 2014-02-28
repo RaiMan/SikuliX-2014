@@ -918,7 +918,6 @@ public class RunSetup {
     //</editor-fold>
 
 		//<editor-fold defaultstate="collapsed" desc="option setup: add native stuff">
-		restore(); //to get back the stuff that was not changed
 		if (test && !popAsk("add native stuff --- proceed?")) {
 			System.exit(0);
 		}
@@ -1111,10 +1110,11 @@ public class RunSetup {
 			}
 			closeSplash(splash);
 		}
-		if (!success) {
+    if (!success) {
 			popError("Bad things happened trying to add native stuff to selected jars --- terminating!");
 			terminate("Adding stuff to jars did not work");
 		}
+		restore(); //to get back the stuff that was not changed
     //</editor-fold>
 
 		//<editor-fold defaultstate="collapsed" desc="option setup: environment setup and test">
@@ -1339,7 +1339,7 @@ public class RunSetup {
 			log1(lvl, "restoring from backup " + "folder " + folder);
 			new File(backup, folder).renameTo(new File(workDir, folder));
     }
-    FileManager.deleteFileOrFolder(new File(workDir, "Backup").getAbsolutePath());
+//    FileManager.deleteFileOrFolder(new File(workDir, "Backup").getAbsolutePath());
     FileManager.deleteFileOrFolder(new File(workDir, "SikuliPrefs.txt").getAbsolutePath());
   }
 
