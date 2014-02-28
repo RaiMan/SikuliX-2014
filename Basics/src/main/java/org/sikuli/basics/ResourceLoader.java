@@ -14,12 +14,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -307,7 +307,7 @@ public class ResourceLoader implements IResourceLoader {
           File wdp = new File(userdir).getParentFile();
           File wdl = new File(FileManager.slashify(wd.getAbsolutePath(), true) + libSub);
           if (wdp != null) {
-              wdpl = new File(FileManager.slashify(wdp.getAbsolutePath(), true) + libSub);
+            wdpl = new File(FileManager.slashify(wdp.getAbsolutePath(), true) + libSub);
           }
           if (wdl.exists()) {
             libPath = wdl.getAbsolutePath();
@@ -328,8 +328,8 @@ public class ResourceLoader implements IResourceLoader {
     }
 
     if (libsDir == null && libPath != null) {
-      log(-1, "libs dir is empty, has wrong content or is outdated");
-      log(-2, "Trying to extract libs to: " + libPath);
+      log(lvl, "libs dir is empty, has wrong content or is outdated");
+      log(lvl, "Trying to extract libs to: " + libPath);
       if (!FileManager.deleteFileOrFolder(libPath,
               new FileManager.fileFilter() {
                 @Override
@@ -348,7 +348,7 @@ public class ResourceLoader implements IResourceLoader {
       File dir = (new File(libPath));
       dir.mkdirs();
       if (extractLibs(dir.getParent(), libSource) == null) {
-        log(-1, "not possible!");
+        log(-1, "... not possible!");
         libPath = null;
       }
       libsDir = checkLibsDir(libPath);
@@ -413,6 +413,59 @@ public class ResourceLoader implements IResourceLoader {
         Settings.OcrDataPath = "/usr/local/share";
       }
     }
+
+    if (Settings.isWindows() && libPath != null) {
+      Field usrPathsField = null;
+      try {
+        usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
+      } catch (NoSuchFieldException ex) {
+        log(-1, ex.getMessage());
+      } catch (SecurityException ex) {
+        log(-1, ex.getMessage());
+      }
+      if (usrPathsField != null) {
+        usrPathsField.setAccessible(true);
+        try {
+          //get array of paths
+          String[] javapaths = (String[]) usrPathsField.get(null);
+          //check if the path to add is already present
+          boolean contained = false;
+          for (String p : javapaths) {
+            if (p.toUpperCase().equals(libPath.toUpperCase())) {
+              contained = true;
+              break;
+            }
+          }
+          //add the new path
+          if (!contained) {
+            final String[] newPaths = Arrays.copyOf(javapaths, javapaths.length + 1);
+            newPaths[newPaths.length - 1] = libPath;
+            usrPathsField.set(null, newPaths);
+            log(lvl, "recreated ClassLoader.usrPaths");
+          }
+        } catch (IllegalAccessException ex) {
+          log(-1, ex.getMessage());
+        } catch (IllegalArgumentException ex) {
+          log(-1, ex.getMessage());
+        }
+      }
+      boolean loadWorks = false;
+      try {
+        System.loadLibrary("JIntellitype");
+        loadWorks = true;
+      } catch (java.lang.UnsatisfiedLinkError ex) {
+        log(-1, "recreating ClassLoader.usrPaths did not work: " + ex.getMessage());
+      }
+      if (!loadWorks) {
+        System.exit(1);
+        // this would be the brute force method
+//              System.setProperty("java.library.path", path);
+//              //set sys_paths to null
+//              final Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
+//              sysPathsField.setAccessible(true);
+//              sysPathsField.set(null, null);              
+      }
+    }
   }
 
   private File checkLibsDir(String path) {
@@ -420,19 +473,26 @@ public class ResourceLoader implements IResourceLoader {
     mem = "checkLibsDir";
     File dir = null;
     if (path != null) {
-      log(lvl, path);
-      if (!Settings.runningSetup && Settings.isWindows()) {
-        // is on system path?
+      log(lvl, "trying: " + path);
+      if (Settings.isWindows()) {
+        log(lvl, "Running on Windows - checking system path!");
         String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
         if (syspath == null) {
           SikuliX.terminate(1);
         } else {
           path = (new File(path).getAbsolutePath()).replaceAll("/", "\\");
           if (!syspath.toUpperCase().contains(path.toUpperCase())) {
-            log(lvl, "Adding libs dir to path: " + path);
             if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", syspath + ";" + path)) {
               SikuliX.terminate(1);
             }
+            log(lvl, "Added libs dir to path: " + path);
+            syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
+            if (!syspath.toUpperCase().contains(path.toUpperCase())) {
+              log(-1, "Adding to path did not work:\n%s", syspath);
+              System.exit(1);
+            }
+            log(lvl, "... " + syspath.substring(
+                    (syspath.length() - 50 < 0 ? 0 : syspath.length() - 50), syspath.length()));
           }
         }
       }
@@ -442,14 +502,14 @@ public class ResourceLoader implements IResourceLoader {
         File checkFile = (new File(FileManager.slashify(path, true) + checkFileName));
         if (checkFile.exists()) {
           if ((new File(jarPath)).lastModified() > checkFile.lastModified()) {
-            log(-1, "libs folder outdated!");
+            log(lvl + 1, "libs folder outdated!");
           } else {
             //convenience: jawt.dll in libsdir avoids need for java/bin in system path
             if (Settings.isWindows()) {
               String lib = "jawt.dll";
               try {
                 extractResource(javahome + "bin/" + lib, new File(libPath, lib), false);
-                log(lvl, "copied to libs: jawt.dll");
+                log(lvl + 1, "copied to libs: jawt.dll");
               } catch (IOException ex) {
                 log(-1, "Fatal error 107: problem copying " + lib + "\n" + ex.getMessage());
                 RunSetup.popError("Trying to add jawt.dll from Java at\n"
@@ -467,7 +527,7 @@ public class ResourceLoader implements IResourceLoader {
             // might be wrong arch
             if ((new File(FileManager.slashify(path, true) + checkFileNameW32)).exists()
                     || (new File(FileManager.slashify(path, true) + checkFileNameW64)).exists()) {
-              log(-1, "libs dir contains wrong arch for " + osarch);
+              log(lvl + 1, "libs dir contains wrong arch for " + osarch);
             }
           } else {
             log(-1, "Not a valid libs dir for SikuliX (" + osarch + "): " + path);
@@ -690,11 +750,11 @@ public class ResourceLoader implements IResourceLoader {
     if (alreadyLoaded.indexOf("*" + libname) < 0) {
       alreadyLoaded.append("*").append(libname);
     } else {
-      log(lvl, "Is already loaded: " + libname);
+      log(lvl + 1, "Is already loaded: " + libname);
       mem = memx;
       return;
     }
-    log(lvl, libname);
+    log(lvl + 1, libname);
     if (libPath == null) {
       log(-1, "Fatal Error 108: No libs directory available");
       RunSetup.popError("Problem with SikuliX libs folder - see error log");
@@ -717,7 +777,7 @@ public class ResourceLoader implements IResourceLoader {
         log(lvl, "Linux: %s not bundled - trying to load from system paths", lib);
       }
     } else {
-      log(lvl, "Found: " + libname + " at " + lib);
+      log(lvl + 1, "Found: " + libname + " at " + lib);
     }
     try {
       System.load(lib);
@@ -736,7 +796,7 @@ public class ResourceLoader implements IResourceLoader {
       RunSetup.popError("Problem with SikuliX libs folder - see error log");
       SikuliX.terminate(110);
     }
-    log(lvl, "Now loaded: " + libname);
+    log(lvl, "Now loaded: %s from: %s", libname, lib);
     mem = memx;
   }
   //</editor-fold>
@@ -788,7 +848,7 @@ public class ResourceLoader implements IResourceLoader {
       try {
         ZipInputStream zip = new ZipInputStream(jar.openStream());
         ZipEntry ze;
-        log(lvl, "from:\n" + jar.toString());
+        log(lvl, "from: " + jar.toString());
         while ((ze = zip.getNextEntry()) != null) {
           String entryName = ze.getName();
           if (entryName.startsWith(path)
@@ -816,7 +876,7 @@ public class ResourceLoader implements IResourceLoader {
           String.format("%d", folder.lastModified())});
         log(lvl, "Found 1 file in %s", path);
       } else {
-        log(lvl, "from:\n" + folder.getAbsolutePath());
+        log(lvl, "from: " + folder.getAbsolutePath());
         for (File f : getDeepFileList(folder, deep)) {
           log(lvl + 2, "file: " + f.getAbsolutePath());
           fList.add(new String[]{FileManager.slashify(f.getAbsolutePath(), false),
@@ -888,8 +948,7 @@ public class ResourceLoader implements IResourceLoader {
   }
 
   /**
-   * Extract files from a jar using a list of files in a file (def.
-   * filelist.txt)
+   * Extract files from a jar using a list of files in a file (def. filelist.txt)
    *
    * @param srcPath from here
    * @param localPath to there (if null, create a default in temp folder)
