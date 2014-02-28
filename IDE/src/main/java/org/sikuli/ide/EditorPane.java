@@ -153,6 +153,10 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		}
 		SikuliIDE.getStatusbar().setCurrentContentType(getSikuliContentType());
 		Debug.log(3, "InitTab: (%s)", getSikuliContentType());
+    if (!Settings.hasTypeRunner(getSikuliContentType())) {
+      SikuliX.popup("No installed runner supports (" + getSikuliContentType() + ")\n"
+              + "Trying to run the script will crash IDE!", "... serious problem detected!");
+    }
 	}
 
 	public String getSikuliContentType() {
@@ -226,14 +230,16 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		setSrcBundle(filename + "/");
 		File script = new File(filename);
 		_editingFile = FileManager.getScriptFile(script, null, null);
-		editingType = _editingFile.getAbsolutePath().substring(_editingFile.getAbsolutePath().lastIndexOf(".") + 1);
-		initBeforeLoad(editingType);
-		try {
-			this.read(new BufferedReader(new InputStreamReader(
-							new FileInputStream(_editingFile), "UTF8")), null);
-		} catch (Exception ex) {
-			_editingFile = null;
-		}
+    if (_editingFile != null) {
+      editingType = _editingFile.getAbsolutePath().substring(_editingFile.getAbsolutePath().lastIndexOf(".") + 1);
+      initBeforeLoad(editingType);
+      try {
+        this.read(new BufferedReader(new InputStreamReader(
+                new FileInputStream(_editingFile), "UTF8")), null);
+      } catch (Exception ex) {
+        _editingFile = null;
+      }
+    }
 		if (_editingFile != null) {
 			updateDocumentListeners();
 			setDirty(false);

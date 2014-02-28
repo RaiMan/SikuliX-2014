@@ -24,6 +24,7 @@ public class SikuliScript {
   private static Boolean runAsTest;
 
   private static boolean isRunningInteractive = false;
+  
   public static void runningInteractive() {
     isRunningInteractive = true;
     SikuliX.displaySplash(null);
@@ -35,6 +36,9 @@ public class SikuliScript {
   
   private static boolean isRunningScript = false;
   
+  static {
+  }
+
   /**
    * Main method
    *
@@ -48,6 +52,8 @@ public class SikuliScript {
     }
     
     isRunningScript = true;
+    
+    Settings.initScriptingSupport();
 
     SikuliX.displaySplash(args);
 
@@ -137,7 +143,7 @@ public class SikuliScript {
       if (runner == null) {
         String givenRunnerName = cmdLine.getOptionValue(CommandArgsEnum.INTERACTIVE.longname());
         if (givenRunnerName == null) {
-          runner = SikuliX.getScriptRunner("jython", null, args);
+          runner = SikuliX.getScriptRunner(Settings.RDEFAULT, null, args);
         } else {
           runner = SikuliX.getScriptRunner(givenRunnerName, null, args);
           if (runner == null) {

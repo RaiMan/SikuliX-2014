@@ -27,6 +27,8 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
   private EditorPane refEditorPane = null;
   public static final String POP_LINE = "POP_LINE";
   private EditorLineNumberView refLineNumberView = null;
+  
+  private static String[] selOptionsType = null;
 
   private MouseEvent mouseTrigger;
 
@@ -192,7 +194,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
     static final String RUN = "doRun";
     static final String RUN_SLOW = "doRunSlow";
     static final String RESET = "doReset";
-
+    
     public PopTabAction() {
       super();
     }
@@ -206,18 +208,20 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 			Debug.log(3, "doSetType: selected");
 			String error = "";
 			EditorPane cp = SikuliIDE.getInstance().getCurrentCodePane();
-			Set<String> types = Settings.TypeEndings.keySet();
-			String[] selOptions = new String[types.size()];
-			int i = 0;
-			for (String e : types) {
-				if (e.contains("plain")) {
-					continue;
-				}
-				selOptions[i++] = e.replaceFirst(".*?\\/", "");
-			}
+      if (selOptionsType == null) {
+        Set<String> types = Settings.TypeEndings.keySet();
+        selOptionsType = new String[types.size()];
+        int i = 0;
+        for (String e : types) {
+          if (e.contains("plain")) {
+            continue;
+          }
+          selOptionsType[i++] = e.replaceFirst(".*?\\/", "");
+        }
+      }
 			String currentType = cp.getSikuliContentType();
 			String targetType = SikuliX.popSelect("Select the Scripting Language ...",
-							selOptions, currentType.replaceFirst(".*?\\/", ""));
+							selOptionsType, currentType.replaceFirst(".*?\\/", ""));
 			if (targetType == null) {
 				targetType = currentType;
 			} else {

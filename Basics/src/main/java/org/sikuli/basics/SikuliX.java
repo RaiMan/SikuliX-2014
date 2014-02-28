@@ -228,6 +228,9 @@ public class SikuliX {
     Iterator<IScriptRunner> scriptRunnerIterator = loader.iterator();
     while (scriptRunnerIterator.hasNext()) {
       IScriptRunner currentRunner = scriptRunnerIterator.next();
+      if (currentRunner.getName().startsWith("Not")) {
+        continue;
+      }
       if ((name != null && currentRunner.getName().toLowerCase().equals(name.toLowerCase()))
               || (ending != null && currentRunner.hasFileEnding(ending) != null)) {
         runner = currentRunner;
@@ -235,7 +238,7 @@ public class SikuliX {
         break;
       }
     }
-    if (runner == null) {
+    if (name != null && runner == null) {
       if (name != null) {
         Debug.error("Fatal error 121: Could not load script runner with name: %s", name);
         SikuliX.terminate(121);
