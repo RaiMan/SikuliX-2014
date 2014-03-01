@@ -28,7 +28,6 @@ import javax.swing.text.html.*;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.IScriptRunner;
 import org.sikuli.basics.Settings;
-import org.sikuli.basics.SikuliX;
 
 public class EditorConsolePane extends JPanel implements Runnable {
 

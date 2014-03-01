@@ -9,12 +9,12 @@
   * RaiMan 2013
   -->
 
-	<parent>
-		<groupId>org.sikuli</groupId>
-		<artifactId>SikuliX-Project</artifactId>
-		<version>1.1.0</version>
-		<relativePath>../</relativePath>
-	</parent>
+  <parent>
+    <groupId>org.sikuli</groupId>
+    <artifactId>SikuliX-Project</artifactId>
+    <version>1.1.0</version>
+    <relativePath>../</relativePath>
+  </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -76,7 +76,7 @@
           </excludes>
         </configuration>
       </plugin>
-<!--      <plugin>
+      <!--      <plugin>
         <artifactId>maven-javadoc-plugin</artifactId>
         <version>2.9.1</version>
         <configuration>
@@ -96,12 +96,12 @@
         </configuration>
       </plugin>
       <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <version>1.2.1</version>
-          <configuration>
-              <mainClass>org.sikuli.ide.SikuliIDE</mainClass>
-          </configuration>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>1.2.1</version>
+        <configuration>
+          <mainClass>org.sikuli.ide.SikuliIDE</mainClass>
+        </configuration>
       </plugin>
     </plugins>
   </build>
