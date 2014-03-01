@@ -54,7 +54,6 @@ import org.sikuli.script.Key;
 public class SikuliIDE extends JFrame {
 
   private static String me = "IDE";
-  private static String mem = "";
   private static int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
@@ -69,7 +68,7 @@ public class SikuliIDE extends JFrame {
   final static int WARNING_DO_NOTHING = 0;
   final static int IS_SAVE_ALL = 3;
   static boolean _runningSkl = false;
-  private static NativeLayer _native;
+  private static NativeSupport nativeSupport;
   private Dimension _windowSize = null;
   private Point _windowLocation = null;
   private boolean smallScreen = false;
@@ -267,8 +266,7 @@ public class SikuliIDE extends JFrame {
     Settings.showJavaInfo();
     Settings.printArgs();
 
-// we should open the IDE
-    initNativeLayer();
+    initNativeSupport();
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
       //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
@@ -276,8 +274,8 @@ public class SikuliIDE extends JFrame {
       log(-1, "Problem loading UIManager!\nError: %s", e.getMessage());
     }
 
-    if (Settings.isMac()) {
-      _native.initApp();
+    if (nativeSupport != null) {
+      nativeSupport.initApp(Debug.getDebugLevel() > 2 ? true : false);
       try {
         Thread.sleep(1000);
       } catch (InterruptedException ie) {
@@ -299,7 +297,9 @@ public class SikuliIDE extends JFrame {
       prefs.setDefaults(prefs.getUserType());
     }
 
-    _native.initIDE(this);
+    if (nativeSupport != null) {
+      nativeSupport.initIDE(this);
+    }
 
     IResourceLoader loader = FileManager.getNativeLoader("basic", args);
     loader.check(Settings.SIKULI_LIB);
@@ -412,7 +412,17 @@ public class SikuliIDE extends JFrame {
     super.setTitle(SikuliIDESettings.SikuliVersion + " - " + title);
   }
 
-  static private void initNativeLayer() {
+  static private void initNativeSupport() {
+//    String jb = FileManager.getJarName();
+//    ClassPool pool  = ClassPool.getDefault();
+//    try {
+//      pool.appendClassPath(jb);
+//      pool.find("resources.NativeSupportMac");
+//      CtClass nsm = pool.get("resources.NativeSupportMac");
+//      nativeSupport = (NativeSupport) nsm.toClass().newInstance();
+//    } catch (Exception ex) {
+//      log(-1, "JavAssist: problem:%s", ex.getMessage());
+//    }
     String os = "unknown";
     if (Settings.isWindows()) {
       os = "Windows";
@@ -421,14 +431,14 @@ public class SikuliIDE extends JFrame {
     } else if (Settings.isLinux()) {
       os = "Linux";
     }
-    String className = "org.sikuli.ide.NativeLayerFor" + os;
-
+    String className = "org.sikuli.ide.NativeSupport" + os;
     try {
       Class c = Class.forName(className);
       Constructor constr = c.getConstructor();
-      _native = (NativeLayer) constr.newInstance();
+      nativeSupport = (NativeSupport) constr.newInstance();
+      log(lvl, "Native support found for " + os);
     } catch (Exception e) {
-      log(-1, "Reflection problem: org.sikuli.ide.NativeLayerFor...!\nError: %s", e.getMessage());
+      log(-1, "No native support for %s\n%s", os, e.getMessage());
     }
   }
 

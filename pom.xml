@@ -37,8 +37,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<exclude.nativelayer.mac>NativeLayerForMac.java</exclude.nativelayer.mac>
-		<exclude.nativelayer.null>NativeLayerForNothing</exclude.nativelayer.null>
+		<exclude.nativelayer.mac>NativeSupportMac.java</exclude.nativelayer.mac>
+		<exclude.nativelayer.null>NativeSupportForNothing</exclude.nativelayer.null>
 		<sikuli.jartype>plain.xml</sikuli.jartype>
 		<sikuli.jarname>${project.version}</sikuli.jarname>
     <sikuli.usedversion>1.1.0-Beta1</sikuli.usedversion>
