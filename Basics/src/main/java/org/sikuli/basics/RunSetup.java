@@ -427,7 +427,7 @@ public class RunSetup {
 				}
 			}
 		} else {
-			workDir = (new File(uhome, "SikuliX")).getAbsolutePath();
+			workDir = (new File(uhome, "SikuliX/Setup")).getAbsolutePath();
 			(new File(workDir)).mkdirs();
 			logfile = (new File(workDir, localLogfile)).getAbsolutePath();
 			Debug.setLogFile(logfile);
@@ -797,10 +797,10 @@ public class RunSetup {
             downloadedFiles += downloadJRuby + " - "; 
 						msg += "\n - with JRuby";
 					}
-					if (Settings.isMac()) {
-            downloadedFiles += downloadMacApp + " - "; 
-						msg += "\n" + downloadMacApp + " (Mac-App)";
-					}
+//					if (Settings.isMac()) {
+//            downloadedFiles += downloadMacApp + " - "; 
+//						msg += "\n" + downloadMacApp + " (Mac-App)";
+//					}
 				}
 				if (getJava) {
 					if (getIDE) {
@@ -851,18 +851,18 @@ public class RunSetup {
 				dlOK = download(downloadBaseDir, dlDir, downloadIDE, localJar, "IDE/Scripting");
 			}
 			downloadOK &= dlOK;
-			if (Settings.isMac()) {
-				targetJar = new File(workDir, localMacApp).getAbsolutePath();
-				if (!test) {
-					dlOK = download(downloadBaseDir, dlDir, downloadMacApp, targetJar, "MacApp");
-				}
-				if (dlOK) {
-					FileManager.deleteFileOrFolder((new File(workDir, folderMacApp)).getAbsolutePath());
-					FileManager.unpackJar(targetJar, workDir, false);
-					FileManager.deleteFileOrFolder(new File(workDir, "META-INF").getAbsolutePath());
-				}
-				downloadOK &= dlOK;
-			}
+//			if (Settings.isMac()) {
+//				targetJar = new File(workDir, localMacApp).getAbsolutePath();
+//				if (!test) {
+//					dlOK = download(downloadBaseDir, dlDir, downloadMacApp, targetJar, "MacApp");
+//				}
+//				if (dlOK) {
+//					FileManager.deleteFileOrFolder((new File(workDir, folderMacApp)).getAbsolutePath());
+//					FileManager.unpackJar(targetJar, workDir, false);
+//					FileManager.deleteFileOrFolder(new File(workDir, "META-INF").getAbsolutePath());
+//				}
+//				downloadOK &= dlOK;
+//			}
 		}
 		if (getJython) {
 			targetJar = new File(workDir, localJython).getAbsolutePath();
@@ -1068,15 +1068,15 @@ public class RunSetup {
 			new File(workDir, localTess).delete();
 		}
 
-		if (Settings.isMac() && getIDE && success) {
-			closeSplash(splash);
-			log1(lvl, "preparing Mac app as SikuliX-IDE.app");
-			splash = showSplash("Now preparing Mac app SikuliX-IDE.app.", "please wait - may take some seconds ...");
-			forAllSystems = false;
-			targetJar = (new File(workDir, localMacAppIDE)).getAbsolutePath();
-			jarsList = new String[]{(new File(workDir, localIDE)).getAbsolutePath()};
-			success &= FileManager.buildJar(targetJar, jarsList, null, null, libsFilter);
-		}
+//		if (Settings.isMac() && getIDE && success) {
+//			closeSplash(splash);
+//			log1(lvl, "preparing Mac app as SikuliX-IDE.app");
+//			splash = showSplash("Now preparing Mac app SikuliX-IDE.app.", "please wait - may take some seconds ...");
+//			forAllSystems = false;
+//			targetJar = (new File(workDir, localMacAppIDE)).getAbsolutePath();
+//			jarsList = new String[]{(new File(workDir, localIDE)).getAbsolutePath()};
+//			success &= FileManager.buildJar(targetJar, jarsList, null, null, libsFilter);
+//		}
 
 		closeSplash(splash);
 		if (success && (getIDE)) {
@@ -1091,15 +1091,15 @@ public class RunSetup {
 			} else if (Settings.isMac()) {
 				if (getIDE) {
 					String fmac = new File(workDir, folderMacAppContent).getAbsolutePath();
-					loader.export("Commands/mac#" + runsikulix, fmac);
+//					loader.export("Commands/mac#" + runsikulix, fmac);
 					loader.export("Commands/mac#" + runsikulix, workDir);
-					loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x",
-						new File(fmac, runsikulix).getAbsolutePath()});
-					loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x",
-						new File(fmac, "MacOS/droplet").getAbsolutePath()});
+//					loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x",
+//						new File(fmac, runsikulix).getAbsolutePath()});
+//					loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x",
+//						new File(fmac, "MacOS/droplet").getAbsolutePath()});
 					loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x",
 						new File(workDir, runsikulix).getAbsolutePath()});
-					FileManager.deleteFileOrFolder(new File(workDir, localMacApp).getAbsolutePath());
+//					FileManager.deleteFileOrFolder(new File(workDir, localMacApp).getAbsolutePath());
 				}
 			} else if (Settings.isLinux()) {
 				if (getIDE) {
@@ -1424,16 +1424,16 @@ public class RunSetup {
 					m += "\nThe generated jars can be used out of the box with Java 32-Bit and Java 64-Bit as well.";
 					m += "\nThe Java version is detected at runtime and the native support is switched accordingly.";
 				}
-				if (Settings.isMac()) {
-					m += "\n\nSpecial info for Mac systems:";
-					m += "\nFinally you will have a Sikuli-IDE.app in the setup working folder.";
-					m += "\nTo use it, just move it into the Applications folder.";
-					m += "\nIf you need to run stuff from commandline or want to use Sikuli with Java,";
-					m += "\nyou have the following additionally in the setup folder:";
-					m += "\nrunIDE: the shellscript to run scripts and";
-					m += "\nsikulix.jar: for all other purposes than IDE and running scripts";
-					m += "\nMind the above special info about Jython, JRuby and Java developement too.";
-				}
+//				if (Settings.isMac()) {
+//					m += "\n\nSpecial info for Mac systems:";
+//					m += "\nFinally you will have a Sikuli-IDE.app in the setup working folder.";
+//					m += "\nTo use it, just move it into the Applications folder.";
+//					m += "\nIf you need to run stuff from commandline or want to use Sikuli with Java,";
+//					m += "\nyou have the following additionally in the setup folder:";
+//					m += "\nrunIDE: the shellscript to run scripts and";
+//					m += "\nsikulix.jar: for all other purposes than IDE and running scripts";
+//					m += "\nMind the above special info about Jython, JRuby and Java developement too.";
+//				}
 				break;
 			case (2):
 				om = "Package 2: To support developement in Java or any Java aware scripting language. you get sikulixapi.jar."
@@ -1555,10 +1555,10 @@ public class RunSetup {
     try {
       FileManager.xcopy(downloaded.getAbsolutePath(), jar, null);
     } catch (IOException ex) {
-      terminate("Unable to copy from local Downloads: "
+      terminate("Unable to copy from Downloads: "
               + downloaded.getAbsolutePath() + "\n" + ex.getMessage());
     }
-    log(lvl, "Copied form local Download: " + item);
+    log(lvl, "Copied from Downloads: " + item);
     return true;
 	}
 
