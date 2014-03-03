@@ -11,8 +11,8 @@ package org.sikuli.script;
  */
 public class ObserveAppear extends ObserveEvent {
 
-   public ObserveAppear(Object ptn, Match m, Region r){
-      super(ptn, m, r);
+   public ObserveAppear(String name, Object ptn, Match m, Region r){
+      super(name, ptn, m, r);
       type = Type.APPEAR;
    }
 

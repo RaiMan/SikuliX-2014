@@ -10,8 +10,8 @@ package org.sikuli.script;
  * INTERNAL USE
  */
 public class ObserveVanish extends ObserveEvent {
-   public ObserveVanish(Object ptn, Match m, Region r){
-      super(ptn, m, r);
+   public ObserveVanish(String name, Object ptn, Match m, Region r){
+      super(name, ptn, m, r);
       type = Type.VANISH;
    }
 }

@@ -9,13 +9,14 @@ package org.sikuli.script;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import org.sikuli.basics.Debug;
 
 /**
- * This class implements a container that globally collects
- * all running observations.<br />
+ * This class globally collects
+ * all running observations and tracks the created events.<br />
  */
 public class Observing {
 
@@ -26,241 +27,114 @@ public class Observing {
     Debug.logx(level, "", me + ": " + message, args);
   }
   
-  private static class Entry {
+  private Observing() {
+  }
+
+  private static class ObserverEntry {
 
     private Region region;
-    private String name;
     private ObserveEvent.Type type;
     private boolean isActive = true;
     private ObserverCallBack obs;
 
-    protected Entry(String name, Region reg, ObserverCallBack obs, ObserveEvent.Type type) {
-      this.name = name;
+    protected ObserverEntry(Region reg, ObserverCallBack obs, ObserveEvent.Type type) {
       region = reg;
       this.obs = obs;
       this.type = type;
     }
-    
-    protected void destroy() {
-      region = null;
-      name = null;
-      type = null;
-      obs = null;
-    }
   }
 
-  public static class Event extends ObserveEvent {
-    private Entry observer = null;
-    private long time = 0;
-    
-    protected Event() {
-    }
-    
-    protected Event(Event evt) {
-      observer = evt.observer;
-      time = evt.time;
-      setRegion(evt.getRegion());
-      setMatch(evt.getMatch());
-      setChanges(evt.getChanges());
-      setPattern(evt.getPattern());
-      setIndex(evt.getIndex());
-    }
+  private static final Map<String, ObserverEntry> observers = Collections.synchronizedMap(new HashMap<String, ObserverEntry>());
+  private static final Map<String, ObserveEvent> events = Collections.synchronizedMap(new HashMap<String, ObserveEvent>());
+  private static final List<Region> runningObservers = Collections.synchronizedList(new ArrayList<Region>());
 
-    public long getTime() {
-      return time;
-    }
-    
-    protected void destroy() {
-      observer = null;
-      time = 0;
-    }
+  protected static void addRunningObserver(Region r) {
+    runningObservers.add(r);
+    log(lvl,"add observer: now running %d observer(s)", runningObservers.size());
   }
 
-  private static List<Entry> observers = Collections.synchronizedList(new ArrayList<Entry>());
-  private static List<Event> events = Collections.synchronizedList(new ArrayList<Event>());
+  protected static void removeRunningObserver(Region r) {
+    runningObservers.remove(r);
+    log(lvl, "remove observer: now running %d observer(s)", runningObservers.size());
+  }
+  
+  protected static void stopRunningObservers() {
+    if (runningObservers.size() > 0) {
+      log(lvl, "stopping %d running observer(s)", runningObservers.size());
+      synchronized (runningObservers) {
+        for (Region r : runningObservers) {
+          r.stopObserver();
+        }
+        runningObservers.clear();
+      }
+    }
+    Observing.clear();
+  }
 
   /**
-   * adds an observer with a callback to the list
+   * INTERNAL USE: adds an observer to the list
    *
    * @param reg the observed region
-   * @param obs the callback
+   * @param obs the callback (might be null - observer without call back)
    * @param type one off ObserveEvent.Type.APPEAR, VANISH, CHANGE, GENERIC
+   * @param target 
    * @return a unique name derived from time or null if not possible
    */
-  public static synchronized String add(Region reg, ObserverCallBack obs, ObserveEvent.Type type) {
-    String name = createName();
-    if (add(name, reg, obs, type)) {
-      return name;
-    }
-    return null;
-  }
-
-  /**
-   * adds an observer to the list having no callback
-   *
-   * @param reg the observed region
-   * @param name a unique name
-   * @param type one off Observing.Type.APPEAR, VANISH, CHANGE, GENERIC
-   * @return the observers name or null if not possible (duplicate?)
-   */
-  public static synchronized String add(Region reg, String name, ObserveEvent.Type type) {
-    if (add(name, reg, null, type)) {
-      return name;
-    }
-    return null;
-  }
-
-  /**
-   * adds an observer of type GENERIC to the list having no callback
-   *
-   * @param name a unique name
-   * @return the observers name or null if not possible (duplicate?)
-   */
-  public static synchronized String add(String name) {
-    if (add(name, null, null, ObserveEvent.Type.GENERIC)) {
-      return name;
-    }
-    return null;
-  }
-
-  private static boolean add(String name, Region reg, ObserverCallBack obs, ObserveEvent.Type type) {
-    if (hasName(name, reg)) {
-      return false;
-    }
-    Iterator<Entry> iter = observers.iterator();
-    while (iter.hasNext()) {
-      if (iter.next() == null) {
-        iter.remove();
-      }
-    }
-    return observers.add(new Entry(name, reg, obs, type));
-  }
-
-  private static String createName() {
+  public static String add(Region reg, ObserverCallBack obs, ObserveEvent.Type type, Object target) {
     String name = null;
-    while (null == name) {
-      name = "" + new Date().getTime();
-      if (!hasName(name, null)) {
-        return name;
-      } else {
-        name = null;
+    long now = new Date().getTime();
+    while (true) {
+      name = "" + now++;
+      if (!hasName(name)) {
+        break;
       }
-      try {
-        Thread.sleep(5);
-      } catch(Exception ex) {}
     }
-    return null;
+    observers.put("" + now, new ObserverEntry(reg, obs, type));
+    reg.getObserver().addObserver(target, (ObserverCallBack) obs, name, type);
+    return name;
   }
 
-  private static boolean hasName(String name, Region reg) {
-    for (Entry obs : observers) {
-      if (obs.name == null) {
-        continue;
-      }
-      if (name.equals(obs.name)) {
-        if (reg != null && reg == obs.region) {
-          return true;
-        }
-      }
-    }
-    return false;
+  private static boolean hasName(String name) {
+    return observers.containsKey(name);
   }
 
   /**
    * remove the observer from the list, a region observer will be stopped <br>
-   * registered events for that observer are removed as well
+   * events for that observer are removed as well
    *
    * @param name name of observer
    * @return success
    */
-  public static boolean remove(String name) {
-    return remove(null, name);
+  public static void remove(String name) {
+    if (observers.containsKey(name)) {
+      observers.get(name).region.stopObserver();
+      observers.remove(name);
+      events.remove(name);
+    }
   }
 
   /**
    * stop and remove all observers registered for this region from the list <br>
-   * registered events for those observers are removed as well
-   *
-   * @return success
+   * events for those observers are removed as well
+   * @param reg
    */
-  public static boolean remove(Region reg) {
-    return remove(reg, null);
-  }
-
-  /**
-   * stop and remove the observer registered for this region from the list <br>
-   * registered events for that observer are removed as well
-   *
-   * @param reg the observed region
-   * @param name name of observer
-   * @return success
-   */
-  public static synchronized boolean remove(Region reg, String name) {
-    for (Entry obs : observers) {
-      if (name != null) {
-        if (name.equals(obs.name)) {
-          if (reg == null || reg == obs.region) {
-           remove(obs);
-          }
-        }
-      } else if (reg != null && reg == obs.region) {
-        remove(obs);
-      }
+  public static void remove(Region reg) {
+    for (String name : reg.getObserver().getNames()) {
+      remove(name);
     }
-    return true;
-  }
-
-  private static synchronized void remove(Entry obs) {
-    if (obs.region != null) {
-      obs.region.stopObserver();
-    }
-    for (Event ev:events) {
-      if (ev.observer == obs) {
-        ev.destroy();
-      }
-    }
-    obs.destroy();
-  }
-
-  private static Entry get(Region reg, String name) {
-    for (Entry obs : observers) {
-      if (name != null) {
-        if (name.equals(obs.name)) {
-          if (reg == null || reg == obs.region) {
-           return obs;
-          }
-        }
-      } else if (reg != null && reg == obs.region) {
-        return obs;
-      }
-    }
-    return null;
   }
 
   /**
    * stop and remove all observers and their registered events
    *
-   * @return success
    */
-  public static synchronized boolean clear() {
-    log(lvl, "*** requested ***: remove all observers");
-    for (Entry e : observers) {
-      remove(e);
-    }
-    Iterator<Entry> itero = observers.iterator();
-    while (itero.hasNext()) {
-      if (itero.next() == null) {
-        itero.remove();
-      }
-    }
-    Iterator<Event> itere = events.iterator();
-    while (itere.hasNext()) {
-      if (itere.next() == null) {
-        itere.remove();
+  public static void clear() {
+    synchronized (observers) {
+      for (String name : observers.keySet()) {
+        remove(name);
       }
     }
     log(lvl, "as requested: removed all observers");
-    return true;
   }
 
   /**
@@ -268,146 +142,79 @@ public class Observing {
    *
    * @return true if yes
    */
-  public static synchronized boolean hasEvents() {
+  public static boolean hasEvents() {
     return events.size() > 0;
   }
 
   /**
-   * are their any events registered for this region
+   * are their any events registered for this region?
    *
    * @return true if yes
    */
-  public static synchronized boolean hasEvents(Region reg) {
-    return hasEvent(reg, null);
-  }
-
-  /**
-   * are their any events registered for the observer having this name
-   *
-   * @return true if yes
-   */
-  public static synchronized boolean hasEvent(String name) {
-    return hasEvent(null, name);
-  }
-
-  /**
-   * are their any events registered for the region's observer having this name
-   *
-   * @return true if yes
-   */
-  public static synchronized boolean hasEvent(Region reg, String name) {
-    Entry obs = get(reg, name);
-    if (obs == null) {
-      return false;
-    }
-    for (Event ev:events) {
-      if (ev.observer == obs) {
+  public static boolean hasEvents(Region reg) {
+    for (String name : reg.getObserver().getNames()) {
+      if (events.containsKey(name)) {
         return true;
       }
     }
-    return false;
+     return false;
+  }
+
+  /**
+   * are their any events registered for the observer having this name?
+   *
+   * @return true if yes
+   */
+  public static boolean hasEvent(String name) {
+    return events.containsKey(name);
   }
 
   /**
    * add a new event to the list
    *
    * @param name name of event
-   * @param pev the event object (ObserveEvent is copied)
-   * @return the time of creation
    */
-  public static synchronized long addEvent(String name, Object pev) {
-    long t = 0;
-    if (pev instanceof ObserveEvent) {
-      ObserveEvent evt = (ObserveEvent) new Event();
-      ObserveEvent event = (ObserveEvent) pev;
-      evt.type = event.type;
-      evt.setChanges(event.getChanges());
-      evt.setMatch(event.getMatch());
-      evt.setPattern(event.getPattern());
-      evt.setRegion(event.getRegion());
-      pev = evt;
-    }
-    Event ev = (Event) pev;
-    ev.observer = get(null, name);
-    ev.time = new Date().getTime();
-    if (events.add(ev)) {
-      t = ev.time;
-    }
-    Iterator<Event> iter = events.iterator();
-    while (iter.hasNext()) {
-      if (iter.next() == null) {
-        iter.remove();
-      }
-    }
-    return t;
+  public static void addEvent(ObserveEvent evt) {
+    events.put(evt.getName(), evt);
   }
 
   /**
-   * remove and return the latest event for the named observer <br>
-   * earlier events are removed
-   *
-   * @param name
-   * @return the event or null if none registered
-   */
-  public static synchronized Event getEvent(String name) {
-    return getEvent(name, true);
-  }
-
-  private static Event getEvent(String name, boolean remove) {
-    Entry obs = get(null, name);
-    Event event = null;
-    if (obs != null) {
-      for (Event ev:events) {
-        if (ev.observer == null) {
-          continue;
-        }
-        if (ev.observer.name.equals(obs.name)) {
-          if (event == null) {
-            event = ev;
-            continue;
-          }
-          if (ev.time > event.time) {
-            event.destroy();
-            event = ev;
-          }
-        }
-      }
-    }
-    if (null != event && remove) {
-      Event ev = new Event(event);
-      event.destroy();
-      event = ev;
-    }
-    return event;
-  }
-
-  /**
-   * remove and return the latest events for that region <br>
-   * earlier events are removed as well
+   * return the events for that region <br>
+   * events are removed from the list
    *
    * @return the array of events or size 0 array if none
    */
-  public static synchronized Event[] getEvents(Region reg) {
-    List<Event> evts = new ArrayList<Event>();
-    for (Entry obs:observers) {
-      if (reg == obs.region) evts.add(getEvent(obs.name));
+  public static ObserveEvent[] getEvents(Region reg) {
+    List<ObserveEvent> evts = new ArrayList<ObserveEvent>();
+    ObserveEvent evt;
+    for (String name : reg.getObserver().getNames()) {
+      evt = events.get(name);
+      if (evt != null) evts.add(evt);
+      events.remove(name);
     }
-    return evts.toArray(new Event[0]);
+    return evts.toArray(new ObserveEvent[0]);
   }
 
   /**
-   * return the latest events (these are preserved) <br>
-   * earlier events for the same observer are removed
+   * return the all events (they are preserved) <br>
    *
    * @return the array of events or size 0 array if none
    */
-  public static synchronized Event[] getEvents() {
-    List<Event> evts = new ArrayList<Event>();
-    for (Entry obs:observers) {
-      if (obs.name != null) {
-        evts.add(getEvent(obs.name, false));
+  public static ObserveEvent[] getEvents() {
+    List<ObserveEvent> evts = new ArrayList<ObserveEvent>();
+    ObserveEvent evt; 
+    synchronized (events) {      
+      for (String name : events.keySet()) {
+        evt = events.get(name);
+        if (evt == null) {
+          evts.add(evt);
+        }
       }
-    }
-    return evts.toArray(new Event[0]);
+    } 
+    return evts.toArray(new ObserveEvent[0]);
+  }
+  
+  public static void clearEvents() {
+    events.clear();
   }
 }

@@ -37,6 +37,6 @@ public class ObserverCallBack implements EventListener {
   public void changed(ObserveEvent e) {
   }
 
-  public void happened(Observing.Event e) {
+  public void happened(ObserveEvent e) {
   }
 }

@@ -7,6 +7,7 @@
 package org.sikuli.script;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ObserveEvent {
@@ -25,22 +26,34 @@ public class ObserveEvent {
   private Match match = null;
   private int index = -1;
   private List<Match> changes = null;
+  private long time;
+  private String name;
 
   public ObserveEvent() {
   }
-
+  
   /**
    * INTERNAL USE ONLY: creates an observed event
    */
-  public ObserveEvent(Object ptn, Match m, Region r) {
-		init(ptn, m, r);
+  public ObserveEvent(String name, Object ptn, Match m, Region r) {
+    init(name, ptn, m, r);
   }
 
-	private void init(Object ptn, Match m, Region r) {
+	private void init(String name, Object ptn, Match m, Region r) {
+    this.name = name;
     setRegion(r);
     setMatch(m);
     setPattern(ptn);
+    time = new Date().getTime();
 	}
+  
+  /**
+   *
+   * @return the observer name of this event
+   */
+  public String getName() {
+    return name;
+  }
 
   /**
    *
@@ -134,17 +147,20 @@ public class ObserveEvent {
    * @param secs
    */
   public void repeat(long secs) {
-    region.getObserver().repeat(type, pattern, match, secs);
+    region.getObserver().repeat(type, name, match, secs);
   }
 
   /**
    * @return the number how often this event has already been triggered until now
    */
   public int getCount() {
+    if (region.getObserver() == null) {
+      return 1;
+    }
     if (type == Type.CHANGE) {
-      return region.getObserver().getChangedCount(index);
+      return region.getObserver().getChangedCount(name);
     } else {
-      return region.getEvtMgr().getCount(pattern);
+      return region.getObserver().getCount(name);
     }
   }
 
@@ -162,11 +178,11 @@ public class ObserveEvent {
   @Override
   public String toString() {
     if (type == Type.CHANGE) {
-      return String.format("Event(%s) on: %s with: %d count: %d", 
-            type, region, index, getCount());
+      return String.format("Event(%s) %s on: %s with: %d count: %d", 
+            type, name, region, index, getCount());
     } else {
-      return String.format("Event(%s) on: %s with: %s match: %s count: %d",
-            type, region, pattern, match, getCount());
+      return String.format("Event(%s) %s on: %s with: %s match: %s count: %d",
+            type, name, region, pattern, match, getCount());
     }
   }
 }

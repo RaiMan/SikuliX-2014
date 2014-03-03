@@ -81,13 +81,6 @@ public class Region {
    */
   private Observer regionObserver = null;
 
-  public Observer getEvtMgr() {
-    return regionObserver;
-  }
-
-  public void setEvtMgr(Observer em) {
-    regionObserver = em;
-  }
   /**
    * The last found {@link Match} in the Region
    */
@@ -175,6 +168,7 @@ public class Region {
    }
    */
   //</editor-fold>
+  
   //<editor-fold defaultstate="collapsed" desc="Initialization">
   /**
    * Detects on which Screen the Region is present. The region is cropped to the intersection with the given screen or
@@ -355,6 +349,7 @@ public class Region {
   }
 
   //</editor-fold>
+  
   //<editor-fold defaultstate="collapsed" desc="Quasi-Constructors to be used in Java">
   /**
    * internal use only, used for new Screen objects to get the Region behavior
@@ -534,6 +529,7 @@ public class Region {
   }
 
   //</editor-fold>
+
   //<editor-fold defaultstate="collapsed" desc="handle coordinates">
   /**
    * check if current region contains given point
@@ -1217,6 +1213,7 @@ public class Region {
   }
 
   //</editor-fold>
+  
   //<editor-fold defaultstate="collapsed" desc="spatial operators - new regions">
   /**
    * check if current region contains given region
@@ -2474,12 +2471,24 @@ public class Region {
   public boolean isObserving() {
     return observing;
   }
+  
+  /**
+   *
+   * @return true if any events have been before, false otherwise
+   */
+  public boolean hasEvents() {
+    return Observing.hasEvents(this);
+  }
+  
+  public ObserveEvent[] getEvents() {
+    return Observing.getEvents(this);
+  }
 
   /**
    * a subsequently started observer in this region should wait for target
-   * and notify the given observer about this event
-   * for details about the observe event handler: {@link ObserverCallBack}
-   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   * and notify the given observer about this event<br />
+   * for details about the observe event handler: {@link ObserverCallBack}<br />
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
 	 * @param <PSI> Pattern, String or Image
    * @param target
    * @param observer
@@ -2487,6 +2496,19 @@ public class Region {
    */
   public <PSI> String onAppear(PSI target, Object observer) {
 		return onAppearDo(target, observer);
+	}
+
+  /**
+   * a subsequently started observer in this region should wait for target
+   * success and details about the event can be obtained using @{link Observing}<br />
+   * for details about the observe event handler: {@link ObserverCallBack}<br />
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
+	 * @param <PSI> Pattern, String or Image
+   * @param target
+   * @return the event's name
+   */
+  public <PSI> String onAppear(PSI target) {
+		return onAppearDo(target, null);
 	}
 
   /**
@@ -2501,17 +2523,18 @@ public class Region {
 	}
 
   private <PSI> String onAppearDo(PSI target, Object observer) {
-    String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.APPEAR);
-    getObserver().addAppearObserver(target, (ObserverCallBack) observer, name);
-    log(lvl, "%s: onAppear: %s with: %s", toStringShort(), name, target);
+    String name = Observing.add(this, 
+            (ObserverCallBack) observer, ObserveEvent.Type.APPEAR, target);
+    log(lvl, "%s: onAppear%s: %s with: %s", toStringShort(), 
+            (observer == null ? "" : " with callback"), name, target);
     return name;
   }
 
   /**
    * a subsequently started observer in this region should wait for the target to vanish
-   * and notify the given observer about this event
-   * for details about the observe event handler: {@link ObserverCallBack}
-   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   * and notify the given observer about this event<br />
+   * for details about the observe event handler: {@link ObserverCallBack}<br />
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
 	 * @param <PSI> Pattern, String or Image
    * @param target
    * @param observer
@@ -2519,6 +2542,19 @@ public class Region {
    */
   public <PSI> String onVanish(PSI target, Object observer) {
 		return onVanishDo(target, observer);
+	}
+
+  /**
+   * a subsequently started observer in this region should wait for the target to vanish
+   * success and details about the event can be obtained using @{link Observing}<br />
+   * for details about the observe event handler: {@link ObserverCallBack}<br />
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
+	 * @param <PSI> Pattern, String or Image
+   * @param target
+   * @return the event's name
+   */
+  public <PSI> String onVanish(PSI target) {
+		return onVanishDo(target, null);
 	}
 
   /**
@@ -2533,9 +2569,10 @@ public class Region {
 	}
 
   private <PSI> String onVanishDo(PSI target, Object observer) {
-    String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.VANISH);
-    getObserver().addVanishObserver(target, (ObserverCallBack) observer, name);
-    log(lvl, "%s: onVanish: %s with: %s", toStringShort(), name, target);
+    String name = Observing.add(this, 
+            (ObserverCallBack) observer, ObserveEvent.Type.VANISH, target);
+    log(lvl, "%s: onVanish%s: %s with: %s", toStringShort(), 
+            (observer == null ? "" : " with callback"), name, target);
     return name;
   }
 
@@ -2554,6 +2591,18 @@ public class Region {
 
   /**
    * a subsequently started observer in this region should wait for changes in the region
+   * success and details about the event can be obtained using @{link Observing}<br />
+   * for details about the observe event handler: {@link ObserverCallBack}
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   * @param threshold minimum size of changes (rectangle threshhold x threshold)
+   * @return the event's name
+   */
+  public String onChange(int threshold) {
+    return onChangeDo(threshold, null);
+  }
+
+  /**
+   * a subsequently started observer in this region should wait for changes in the region
    * and notify the given observer about this event <br />
    * minimum size of changes used: Settings.ObserveMinChangedPixels
    * for details about the observe event handler: {@link ObserverCallBack}
@@ -2563,6 +2612,18 @@ public class Region {
    */
   public String onChange(Object observer) {
     return onChangeDo(0, observer);
+  }
+
+  /**
+   * a subsequently started observer in this region should wait for changes in the region
+   * success and details about the event can be obtained using @{link Observing}<br />
+   * minimum size of changes used: Settings.ObserveMinChangedPixels
+   * for details about the observe event handler: {@link ObserverCallBack}
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   * @return the event's name
+   */
+  public String onChange() {
+    return onChangeDo(0, null);
   }
 
   /**
@@ -2582,7 +2643,8 @@ public class Region {
   public String onChangeDo(int threshold, Object observer) {
     String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.CHANGE);
     getObserver().addChangeObserver(threshold, (ObserverCallBack) observer, name);
-    log(lvl, "%s: onChange: %s minSize: %d", toStringShort(), name, threshold);
+    log(lvl, "%s: onChange%s: %s minSize: %d", toStringShort(), 
+            (observer == null ? "" : " with callback"), name, threshold);
     return name;
   }
 
@@ -2626,7 +2688,6 @@ public class Region {
       Debug.error("Region: observe: Nothing to observe (Region might be invalid): " + this.toStringShort());
       return false;
     }
-    Observing.getEvents(this);
     if (observing) {
       Debug.error("Region: observe: already running for this region. Only one allowed!");
       return false;
@@ -2642,7 +2703,7 @@ public class Region {
     }
     regionObserver.initialize();
     observing = true;
-    SikuliX.addRunningObserver(this);
+    Observing.addRunningObserver(this);
     while (observing && stop_t > (new Date()).getTime()) {
       long before_find = (new Date()).getTime();
       ScreenImage simg = getScreen().capture(x, y, w, h);
@@ -2671,7 +2732,6 @@ public class Region {
       log(lvl, "observe: ended successfully: " + this.toStringShort());
       observeSuccess = Observing.hasEvents(this);
     }
-    SikuliX.removeRunningObserver(this);
     return observeSuccess;
   }
 
