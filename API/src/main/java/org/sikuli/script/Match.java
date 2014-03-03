@@ -194,13 +194,6 @@ public class Match extends Region implements Comparable<Match> {
   public String getText() {
     return ocrText;
   }
-  /**
-	 * first compares score values (<0 means given is higher)<br />
-	 * with equal score then coordinates are compared: >0 is:<br />
-	 * more left or more above or larger width or larger height in this sequence
-	 * @param m
-	 * @return
-	 */
   @Override
   public int compareTo(Match m) {
     if (simScore != m.simScore) {

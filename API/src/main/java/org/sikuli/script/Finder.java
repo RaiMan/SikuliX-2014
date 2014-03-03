@@ -277,7 +277,7 @@ public class Finder implements Iterator<Match> {
   /**
    * do a findAll op with the given image in the Finder's image
 	 * (hasNext() and next() will reveal possible match results)
-   * @param imageOrText
+   * @param img
 	 * @return null. if find setup not possible
    */
   public String findAll(Image img)  {
@@ -299,7 +299,7 @@ public class Finder implements Iterator<Match> {
   /**
    * do a findAll op with the given text in the Finder's image
 	 * (hasNext() and next() will reveal possible match results)
-   * @param imageOrText
+   * @param text
 	 * @return null. if find setup not possible
    */
   public String findAllText(String text) {
