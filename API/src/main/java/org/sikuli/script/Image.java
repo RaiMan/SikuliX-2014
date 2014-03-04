@@ -92,10 +92,12 @@ public class Image {
   private String imageName = null;
   private boolean imageIsText = false;
   private boolean imageIsAbsolute = false;
+  private boolean imageIsPattern = false;
   private boolean beSilent = false;
   private String filepath = null;
   private URL fileURL = null;
   private BufferedImage bimg = null;
+  private Pattern pattern = null;
   private long bsize = 0;
   private int bwidth = -1;
   private int bheight = -1;
@@ -323,6 +325,37 @@ public class Image {
     }
     return createImageValidate(img);
   }
+  
+  public static Image createFromObject(Object obj) {
+    if (obj instanceof String) {
+      return create((String) obj);
+    } else if (obj instanceof Image) {
+      return (Image) obj;
+    }  else if (obj instanceof Pattern) {
+      return new Image((Pattern) obj);
+    }
+    return new Image();
+  } 
+  
+  private Image(Pattern p) {
+    pattern = p;
+    imageIsPattern = true;
+    setLastSeen(p.getImage().getLastSeen(), p.getImage().getLastSeenScore());
+  }
+  
+  public Pattern getPattern() {
+    return pattern;
+  }
+  
+  public Image getImage() {
+    if (isValid()) {
+      return this;
+    }
+    if (pattern != null) {
+      return pattern.getImage();
+    }
+    return null;
+  } 
 
   protected static Image get(URL imgURL) {
     return imageFiles.get(imgURL);
@@ -525,6 +558,10 @@ public class Image {
    */
   public boolean isValid() {
     return filepath != null;
+  }
+  
+  public boolean isUseable() {
+    return isValid() || imageIsPattern;
   }
 
   /**

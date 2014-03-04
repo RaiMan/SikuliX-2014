@@ -48,6 +48,11 @@ public class Match extends Region implements Comparable<Match> {
     copy(m);
   }
 
+  public Match(Region reg, double sc) {
+    init(reg.x, reg.y, reg.w, reg.h, reg.getScreen());
+    simScore = sc;
+  }
+
   private Match(Match m, Screen parent) {
     init(m.x, m.y, m.w, m.h, parent);
     copy(m);

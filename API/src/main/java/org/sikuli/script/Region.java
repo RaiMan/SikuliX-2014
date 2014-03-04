@@ -75,7 +75,7 @@ public class Region {
    */
   private boolean observing = false;
   private float observeScanRate = Settings.ObserveScanRate;
-  private int waitForVanish = Settings.WaitForVanish;
+  private int repeatWaitTime = Settings.RepeatWaitTime;
   /**
    * The {@link Observer} Singleton instance
    */
@@ -686,19 +686,19 @@ public class Region {
 
   /**
    *
-   * @return the regions current WaitForVaish time in seconds
+   * @return the regions current RepeatWaitTime time in seconds
    */
-  public int getWaitForVanish() {
-    return waitForVanish;
+  public int getRepeatWaitTime() {
+    return repeatWaitTime;
   }
 
   /**
    * set the regions individual WaitForVanish
    *
-   * @param waitForVanish time in seconds
+   * @param time in seconds
    */
-  public void setWaitForVanish(int waitForVanish) {
-    this.waitForVanish = waitForVanish;
+  public void setRepeatWaitTime(int time) {
+    repeatWaitTime = time;
   }
 
   //</editor-fold>
@@ -2463,10 +2463,22 @@ public class Region {
     }
     return regionObserver;
   }
+  
+  /**
+   * evaluate if at least one event observer is defined for this region (the observer need not be running)
+   * @return true, if the region has an observer with event observers 
+   */
+  public boolean hasObserver() {
+    if (regionObserver != null) {
+      return regionObserver.hasObservers();
+    } else {
+      return false;
+    }
+  }
 
   /**
    *
-   * @return true if an observer is active for this region
+   * @return true if an observer is running for this region
    */
   public boolean isObserving() {
     return observing;
@@ -2474,14 +2486,49 @@ public class Region {
   
   /**
    *
-   * @return true if any events have been before, false otherwise
+   * @return true if any events have happened for this region, false otherwise
    */
   public boolean hasEvents() {
     return Observing.hasEvents(this);
   }
   
+  /**
+   * the region's events are removed from the list
+   * @return the region's happened events as array if any (size might be 0)  
+   */
   public ObserveEvent[] getEvents() {
     return Observing.getEvents(this);
+  }
+
+  /**
+   * the event is removed from the list
+   * @param name
+   * @return the named event if happened otherwise null 
+   */
+  public ObserveEvent getEvent(String name) {
+    return Observing.getEvent(name);
+  }
+
+  /**
+   * set the observer with the given name inactive (not checked while observing)
+   * @param name
+   */
+  public void setInactive(String name) {
+    if (!hasObserver()) {
+      return;
+    } 
+    Observing.setActive(name, false);
+  }
+
+  /**
+   * set the observer with the given name inactive (not checked while observing)
+   * @param name
+   */
+  public void setActive(String name) {
+    if (!hasObserver()) {
+      return;
+    } 
+    Observing.setActive(name, true);
   }
 
   /**
@@ -2641,8 +2688,7 @@ public class Region {
   }
 
   public String onChangeDo(int threshold, Object observer) {
-    String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.CHANGE);
-    getObserver().addChangeObserver(threshold, (ObserverCallBack) observer, name);
+    String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.CHANGE, threshold);
     log(lvl, "%s: onChange%s: %s minSize: %d", toStringShort(), 
             (observer == null ? "" : " with callback"), name, threshold);
     return name;
@@ -2711,17 +2757,16 @@ public class Region {
         observing = false;
         break;
       }
-      long after_find = (new Date()).getTime();
       if (!observing) {
         break;
       }
+      long after_find = (new Date()).getTime();
       try {
         if (after_find - before_find < MaxTimePerScan) {
           Thread.sleep((int) (MaxTimePerScan - (after_find - before_find)));
         }
       } catch (Exception e) {
       }
-      log(lvl, "observe: checking again in %s", toStringShort());
     }
     boolean observeSuccess = false;
     if (observing) {
@@ -2787,8 +2832,6 @@ public class Region {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Mouse actions - clicking">
-  // returns target offset of lastmatch if exists
-  //Region.center / Match.targetOffset otherwise
   private Location checkMatch() {
     if (lastMatch != null) {
       return lastMatch.getTarget();
@@ -2815,12 +2858,12 @@ public class Region {
    * before and use the match<br> Region - position at center<br> Match - position at match's targetOffset<br> Location
    * - position at that point<br>
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> to search: Pattern, Filename, Text, Region, Match or Location 
+   * @param target
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
-  public <PatternFilenameRegionMatchLocation> int hover(PatternFilenameRegionMatchLocation target)
-          throws FindFailed {
+  public <PFRML> int hover(PFRML target) throws FindFailed {
     log(lvl, "hover: " + target);
     return mouseMove(target);
   }
@@ -2844,12 +2887,12 @@ public class Region {
    * position at center<br> Match - position at match's targetOffset<br>
    * Location - position at that point<br>
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> to search: Pattern, Filename, Text, Region, Match or Location 
+   * @param target
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
-  public <PatternFilenameRegionMatchLocation> int click(PatternFilenameRegionMatchLocation target)
-          throws FindFailed {
+  public <PFRML> int click(PFRML target) throws FindFailed {
     return click(target, 0);
   }
 
@@ -2858,13 +2901,13 @@ public class Region {
    * Pattern or Filename - do a find before and use the match<br> Region - position at center<br>
    * Match - position at match's targetOffset<br> Location - position at that point<br>
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> to search: Pattern, Filename, Text, Region, Match or Location 
+   * @param target
    * @param modifiers the value of the resulting bitmask (see KeyModifier)
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
-  public <PatternFilenameRegionMatchLocation> int click(PatternFilenameRegionMatchLocation target, int modifiers)
-          throws FindFailed {
+  public <PFRML> int click(PFRML target, int modifiers) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     int ret = Mouse.click(loc, InputEvent.BUTTON1_MASK, modifiers, false, this);
 
@@ -2891,12 +2934,12 @@ public class Region {
    * position at center<br> Match - position at match's targetOffset<br>
    * Location - position at that point<br>
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
+   * @param target
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
-  public <PatternFilenameRegionMatchLocation> int doubleClick(PatternFilenameRegionMatchLocation target)
-          throws FindFailed {
+  public <PFRML> int doubleClick(PFRML target) throws FindFailed {
     return doubleClick(target, 0);
   }
 
@@ -2905,13 +2948,13 @@ public class Region {
    * Pattern or Filename - do a find before and use the match<br> Region - position at center<br > Match - position at
    * match's targetOffset<br> Location - position at that point<br>
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
+   * @param target
    * @param modifiers the value of the resulting bitmask (see KeyModifier)
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
-  public <PatternFilenameRegionMatchLocation> int doubleClick(PatternFilenameRegionMatchLocation target, int modifiers)
-          throws FindFailed {
+  public <PFRML> int doubleClick(PFRML target, int modifiers) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     int ret = Mouse.click(loc, InputEvent.BUTTON1_MASK, modifiers, true, this);
 
@@ -2937,12 +2980,12 @@ public class Region {
    * right click at the given target location<br> Pattern or Filename - do a find before and use the match<br> Region -
    * position at center<br> Match - position at match's targetOffset<br > Location - position at that point<br>
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
+   * @param target
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
-  public <PatternFilenameRegionMatchLocation> int rightClick(PatternFilenameRegionMatchLocation target)
-          throws FindFailed {
+  public <PFRML> int rightClick(PFRML target) throws FindFailed {
     return rightClick(target, 0);
   }
 
@@ -2951,13 +2994,13 @@ public class Region {
    * Pattern or Filename - do a find before and use the match<br> Region - position at center<br > Match - position at
    * match's targetOffset<br> Location - position at that point<br>
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
+   * @param target 
    * @param modifiers the value of the resulting bitmask (see KeyModifier)
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
-  public <PatternFilenameRegionMatchLocation> int rightClick(PatternFilenameRegionMatchLocation target, int modifiers)
-          throws FindFailed {
+    public <PFRML> int rightClick(PFRML target, int modifiers) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     int ret = Mouse.click(loc, InputEvent.BUTTON3_MASK, modifiers, false, this);
 
@@ -2980,12 +3023,12 @@ public class Region {
    * Drag from region's last match and drop at given target <br>applying Settings.DelayAfterDrag and DelayBeforeDrop
    * <br> using left mouse button
    *
-   * @param <PatternFilenameRegionMatchLocation> target destination position
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
+   * @param target
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed if the Find operation failed
    */
-  public <PatternFilenameRegionMatchLocation> int dragDrop(PatternFilenameRegionMatchLocation target)
-          throws FindFailed {
+  public <PFRML> int dragDrop(PFRML target) throws FindFailed {
     return dragDrop(lastMatch, target);
   }
 
@@ -2993,13 +3036,13 @@ public class Region {
    * Drag from a position and drop to another using left mouse button<br>applying Settings.DelayAfterDrag and
    * DelayBeforeDrop
    *
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
    * @param t1 source position
    * @param t2 destination position
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed if the Find operation failed
    */
-  public <PatternFilenameRegionMatchLocation> int dragDrop(PatternFilenameRegionMatchLocation t1, PatternFilenameRegionMatchLocation t2)
-          throws FindFailed {
+  public <PFRML> int dragDrop(PFRML t1, PFRML t2) throws FindFailed {
     Location loc1 = getLocationFromTarget(t1);
     Location loc2 = getLocationFromTarget(t2);
     if (loc1 != null && loc2 != null) {
@@ -3029,12 +3072,12 @@ public class Region {
    * Prepare a drag action: move mouse to given target <br>press and hold left mouse button <br >wait
    * Settings.DelayAfterDrag
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
+   * @param target 
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed
    */
-  public <PatternFilenameRegionMatchLocation> int drag(PatternFilenameRegionMatchLocation target)
-          throws FindFailed {
+  public <PFRML> int drag(PFRML target) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     if (loc != null) {
       IRobot r = loc.getRobotForPoint("drag");
@@ -3055,12 +3098,12 @@ public class Region {
    * finalize a drag action with a drop: move mouse to given target <br>wait Settings.DelayBeforeDrop <br>release the
    * left mouse button
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
+   * @param target
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed
    */
-  public <PatternFilenameRegionMatchLocation> int dropAt(PatternFilenameRegionMatchLocation target)
-          throws FindFailed {
+  public <PFRML> int dropAt(PFRML target) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     if (loc != null) {
       IRobot r = loc.getRobotForPoint("drop");
@@ -3126,13 +3169,12 @@ public class Region {
    * and use the match<br> Region - position at center<br> Match - position at match's targetOffset<br>
    * Location - position at that point<br>
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
    * @param target
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
-  public <PatternFilenameRegionMatchLocation> int mouseMove(PatternFilenameRegionMatchLocation target)
-          throws FindFailed {
+  public <PFRML> int mouseMove(PFRML target) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     return Mouse.move(loc, this);
   }
@@ -3154,14 +3196,14 @@ public class Region {
    * move the mouse pointer to the given target location<br> and move the wheel the given steps in the given direction:
    * <br>Button.WHEEL_DOWN, Button.WHEEL_UP
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location target
+   * @param target
    * @param direction to move the wheel
    * @param steps the number of steps
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed if the Find operation failed
    */
-  public <PatternFilenameRegionMatchLocation> int wheel(PatternFilenameRegionMatchLocation target, int direction, int steps)
-          throws FindFailed {
+  public <PFRML> int wheel(PFRML target, int direction, int steps) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     if (loc != null) {
       Mouse.get().use(this);
@@ -3427,13 +3469,13 @@ public class Region {
    * character/key after another using keyDown/keyUp <br>about the usable Key constants see keyDown(keys)
    * <br>Class Key only provides a subset of a US-QWERTY PC keyboard layout
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
+   * @param target
    * @param text containing characters and/or Key constants
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed
    */
-  public <PatternFilenameRegionMatchLocation> int type(PatternFilenameRegionMatchLocation target, String text)
-          throws FindFailed {
+  public <PFRML> int type(PFRML target, String text) throws FindFailed {
     return keyin(target, text, 0);
   }
 
@@ -3442,13 +3484,14 @@ public class Region {
    * character/key after another using keyDown/keyUp <br>while holding down the given modifier keys<br>about the usable
    * Key constants see keyDown(keys) <br>Class Key only provides a subset of a US-QWERTY PC keyboard layout
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
+   * @param target
    * @param text containing characters and/or Key constants
    * @param modifiers constants according to class KeyModifiers
    * @return 1 if possible, 0 otherwise
+   * @throws org.sikuli.script.FindFailed
    */
-  public <PatternFilenameRegionMatchLocation> int type(PatternFilenameRegionMatchLocation target, String text, int modifiers)
-          throws FindFailed {
+  public <PFRML> int type(PFRML target, String text, int modifiers) throws FindFailed {
     return keyin(target, text, modifiers);
   }
 
@@ -3457,18 +3500,19 @@ public class Region {
    * character/key after another using keyDown/keyUp <br>while holding down the given modifier keys<br>about the usable
    * Key constants see keyDown(keys) <br>Class Key only provides a subset of a US-QWERTY PC keyboard layout
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
+   * @param target 
    * @param text containing characters and/or Key constants
    * @param modifiers constants according to class Key - combine using +
    * @return 1 if possible, 0 otherwise
+   * @throws org.sikuli.script.FindFailed
    */
-  public <PatternFilenameRegionMatchLocation> int type(PatternFilenameRegionMatchLocation target, String text, String modifiers)
-          throws FindFailed {
+  public <PFRML> int type(PFRML target, String text, String modifiers) throws FindFailed {
     int modifiersNew = Key.convertModifiers(modifiers);
     return keyin(target, text, modifiersNew);
   }
 
-  private <PatternFilenameRegionMatchLocation> int keyin(PatternFilenameRegionMatchLocation target, String text, int modifiers)
+  private <PFRML> int keyin(PFRML target, String text, int modifiers)
           throws FindFailed {
     if (target != null && 0 == click(target, 0)) {
       return 0;
@@ -3540,13 +3584,13 @@ public class Region {
    * first does a click(target) at the given target position to gain focus/carret <br> and then pastes the text <br>
    * using the clipboard and strg/ctrl/cmd-v (paste keyboard shortcut)
    *
-   * @param <PatternFilenameRegionMatchLocation> target
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location target
+   * @param target
    * @param text a string, which might contain unicode characters
    * @return 0 if possible, 1 otherwise
    * @throws FindFailed
    */
-  public <PatternFilenameRegionMatchLocation> int paste(PatternFilenameRegionMatchLocation target, String text)
-          throws FindFailed {
+  public <PFRML> int paste(PFRML target, String text) throws FindFailed {
     click(target, 0);
     if (text != null) {
       App.setClipboard(text);

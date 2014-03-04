@@ -230,7 +230,7 @@ public class Settings {
   public static float WaitScanRate = 3f; // frames per second
   public static float ObserveScanRate = 3f; // frames per second
   public static int ObserveMinChangedPixels = 50; // in pixels
-  public static int WaitForVanish = 1; // wait 1 second for visual to vanish after action
+  public static int RepeatWaitTime = 1; // wait 1 second for visual to vanish after action
   public static double MinSimilarity = 0.7;
   public static boolean CheckLastSeen = true;
   public static float CheckLastSeenSimilar = 0.95f;

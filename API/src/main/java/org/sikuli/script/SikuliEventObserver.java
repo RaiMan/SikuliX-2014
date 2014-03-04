@@ -8,12 +8,13 @@ package org.sikuli.script;
 
 import java.util.*;
 
-
 /**
- * CANDIDATE FOR DEPRECATION - ONLY HERE TO BE BACKWARD COMPATIBLE
+ * see @{link SikuliEventAdapter}
+ * @deprecated
  */
+@Deprecated
 public interface SikuliEventObserver extends EventListener {
-   public void targetAppeared(ObserveAppear e);
-   public void targetVanished(ObserveVanish e);
-   public void targetChanged(ObserveChange e);
+   public void targetAppeared(ObserveEvent e);
+   public void targetVanished(ObserveEvent e);
+   public void targetChanged(ObserveEvent e);
 }

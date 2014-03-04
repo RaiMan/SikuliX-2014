@@ -1,30 +1,30 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, sikulix.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan 2014
  */
 package org.sikuli.script;
 
 /**
  *
- * @deprecated use ObserverCallBack instead
+ * @deprecated use @{link ObserverCallBack} instead
  */
 @Deprecated
 public class SikuliEventAdapter implements SikuliEventObserver {
 
   @Override
-  public void targetAppeared(ObserveAppear e) {
+  public void targetAppeared(ObserveEvent e) {
     appeared(e);
   }
 
   @Override
-  public void targetVanished(ObserveVanish e) {
+  public void targetVanished(ObserveEvent e) {
     vanished(e);
   }
 
   @Override
-  public void targetChanged(ObserveChange e) {
+  public void targetChanged(ObserveEvent e) {
     changed(e);
   }
 

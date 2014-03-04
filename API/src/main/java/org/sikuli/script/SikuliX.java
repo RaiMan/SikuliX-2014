@@ -49,7 +49,7 @@ public class SikuliX {
   public static void cleanUp(int n) {
     Debug.log(3, me + "cleanUp: %d", n);
     ScreenHighlighter.closeAll();
-    Observing.stopRunningObservers();
+    Observing.cleanUp();
     if (CommandArgs.isIDE()) {
       //TODO reset selected options to defaults
     }

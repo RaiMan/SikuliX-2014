@@ -1,13 +1,12 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, sikulix.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan
  */
 package org.sikuli.script;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 public class ObserveEvent {
@@ -29,22 +28,23 @@ public class ObserveEvent {
   private long time;
   private String name;
 
-  public ObserveEvent() {
+  protected ObserveEvent() {
   }
   
   /**
    * INTERNAL USE ONLY: creates an observed event
    */
-  public ObserveEvent(String name, Object ptn, Match m, Region r) {
-    init(name, ptn, m, r);
+  protected ObserveEvent(String name, Type type, Object ptn, Match m, Region r, long now) {
+    init(name, type, ptn, m, r, now);
   }
 
-	private void init(String name, Object ptn, Match m, Region r) {
+	private void init(String name, Type type, Object ptn, Match m, Region r, long now) {
     this.name = name;
+    this.type = type;
     setRegion(r);
     setMatch(m);
     setPattern(ptn);
-    time = new Date().getTime();
+    time = now;
 	}
   
   /**
@@ -81,15 +81,7 @@ public class ObserveEvent {
     }
   }
 
-  /**
-   *
-   * @return the index in the observer map in Observer (CHANGE)
-   */
-  public int getIndex() {
-    return index;
-  }
-
-  public void setIndex(int index) {
+  protected void setIndex(int index) {
     this.index = index;
   }
 
@@ -132,6 +124,10 @@ public class ObserveEvent {
       }
     }
   }
+  
+  public long getTime() {
+    return time;
+  }
 
   /**
    * tell the observer to repeat this event's observe action immediately
@@ -147,32 +143,29 @@ public class ObserveEvent {
    * @param secs
    */
   public void repeat(long secs) {
-    region.getObserver().repeat(type, name, match, secs);
+    region.getObserver().repeat(name, secs);
   }
 
   /**
    * @return the number how often this event has already been triggered until now
    */
   public int getCount() {
-    if (region.getObserver() == null) {
-      return 1;
-    }
-    if (type == Type.CHANGE) {
-      return region.getObserver().getChangedCount(name);
-    } else {
-      return region.getObserver().getCount(name);
-    }
+    return region.getObserver().getCount(name);
   }
 
   /**
-   * stops the observer after returning from the handler
+   * stops the observer
    */
   public void stopObserver() {
     region.stopObserver();
   }
 
-  public void stopObserver(String msg) {
-    region.stopObserver(msg);
+  /**
+   * stops the observer and prints the given text
+   * @param text
+   */
+  public void stopObserver(String text) {
+    region.stopObserver(text);
   }
 
   @Override

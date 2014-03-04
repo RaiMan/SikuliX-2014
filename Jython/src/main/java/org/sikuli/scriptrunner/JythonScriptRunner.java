@@ -56,9 +56,9 @@ public class JythonScriptRunner implements IScriptRunner {
   private static String[] SCRIPT_HEADER = new String[]{
     "# -*- coding: utf-8 -*- ",
     "import sys",
-    "print '[debug] Running Jython:', sys.version.split('\\n')[0]",
     "from __future__ import with_statement",
     "from sikuli import *",
+    "Debug.log(3, 'Running Jython: ' + sys.version.split('\\n')[0])",
     "use() #resetROI()",
     "setShowActions(False)"
   };

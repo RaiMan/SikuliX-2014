@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014, Sikuli.org, SikuliX.com
+ * Copyright 2010-2014, Sikuli.org, sikulix.com
  * Released under the MIT License.
  *
  * modified RaiMan
@@ -20,8 +20,8 @@ import org.sikuli.basics.Debug;
  */
 public class Observing {
 
-  private static String me = "Observing";
-  private static int lvl = 3;
+  private static final String me = "Observing";
+  private static final int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "", me + ": " + message, args);
@@ -30,25 +30,30 @@ public class Observing {
   private Observing() {
   }
 
-  private static class ObserverEntry {
-
-    private Region region;
-    private ObserveEvent.Type type;
-    private boolean isActive = true;
-    private ObserverCallBack obs;
-
-    protected ObserverEntry(Region reg, ObserverCallBack obs, ObserveEvent.Type type) {
-      region = reg;
-      this.obs = obs;
-      this.type = type;
-    }
-  }
-
-  private static final Map<String, ObserverEntry> observers = Collections.synchronizedMap(new HashMap<String, ObserverEntry>());
+  private static final Map<String, Region> observers = Collections.synchronizedMap(new HashMap<String, Region>());
   private static final Map<String, ObserveEvent> events = Collections.synchronizedMap(new HashMap<String, ObserveEvent>());
   private static final List<Region> runningObservers = Collections.synchronizedList(new ArrayList<Region>());
+  private static long lastName = 0;
+  private static boolean shouldStopOnFirstEvent = false;
 
+  /**
+   * tell the next starting observer, to stop on the first event
+   */
+  public static void setStopOnFirstEvent() {
+    shouldStopOnFirstEvent = true;
+  }
+  
+  protected static boolean getStopOnFirstEvent() {
+    boolean val = shouldStopOnFirstEvent;
+    shouldStopOnFirstEvent = false;
+    return val;
+  }
+  
   protected static void addRunningObserver(Region r) {
+    if (shouldStopOnFirstEvent) {
+      shouldStopOnFirstEvent = false;
+      r.getObserver().setStopOnFirstEvent();
+    }
     runningObservers.add(r);
     log(lvl,"add observer: now running %d observer(s)", runningObservers.size());
   }
@@ -58,44 +63,39 @@ public class Observing {
     log(lvl, "remove observer: now running %d observer(s)", runningObservers.size());
   }
   
-  protected static void stopRunningObservers() {
-    if (runningObservers.size() > 0) {
-      log(lvl, "stopping %d running observer(s)", runningObservers.size());
-      synchronized (runningObservers) {
-        for (Region r : runningObservers) {
-          r.stopObserver();
-        }
-        runningObservers.clear();
-      }
-    }
-    Observing.clear();
-  }
-
-  /**
-   * INTERNAL USE: adds an observer to the list
-   *
-   * @param reg the observed region
-   * @param obs the callback (might be null - observer without call back)
-   * @param type one off ObserveEvent.Type.APPEAR, VANISH, CHANGE, GENERIC
-   * @param target 
-   * @return a unique name derived from time or null if not possible
-   */
-  public static String add(Region reg, ObserverCallBack obs, ObserveEvent.Type type, Object target) {
-    String name = null;
+  protected static synchronized String add(Region reg, ObserverCallBack obs, ObserveEvent.Type type, Object target) {
+    String name;
     long now = new Date().getTime();
-    while (true) {
-      name = "" + now++;
-      if (!hasName(name)) {
-        break;
-      }
+    while (now <= lastName) {
+      now++;
     }
-    observers.put("" + now, new ObserverEntry(reg, obs, type));
+    lastName = now;
+    name = "" + now;
+    observers.put(name, reg);
     reg.getObserver().addObserver(target, (ObserverCallBack) obs, name, type);
     return name;
   }
+  
+  /**
+   * set the observer with the given name inactive (not checked while observing)
+   * @param name
+   */
+  public void setInactive(String name) {
+    setActive(name, false);
+  }
 
-  private static boolean hasName(String name) {
-    return observers.containsKey(name);
+  /**
+   * set the observer with the given name active (checked while observing)
+   * @param name
+   */
+  public void setActive(String name) {
+    setActive(name, true);
+  }
+
+  protected static void setActive(String name, boolean state) {
+    if (observers.containsKey(name)) {
+      observers.get(name).getObserver().setActive(name, state);
+    }
   }
 
   /**
@@ -103,11 +103,10 @@ public class Observing {
    * events for that observer are removed as well
    *
    * @param name name of observer
-   * @return success
    */
   public static void remove(String name) {
     if (observers.containsKey(name)) {
-      observers.get(name).region.stopObserver();
+      observers.get(name).stopObserver();
       observers.remove(name);
       events.remove(name);
     }
@@ -128,17 +127,29 @@ public class Observing {
    * stop and remove all observers and their registered events
    *
    */
-  public static void clear() {
+  public static void cleanUp() {
+    String[] names;
     synchronized (observers) {
+      names = new String[observers.size()];
+      int i = 0;
       for (String name : observers.keySet()) {
-        remove(name);
+        Region reg = observers.get(name);
+        if (reg.isObserving()) {
+          reg.stopObserver();
+        }
+        events.remove(name);
+        names[i++] = name;
       }
     }
-    log(lvl, "as requested: removed all observers");
+    runningObservers.clear();
+    for (String name : names) {
+      observers.remove(name);
+    }
+    log(lvl + 1, "as requested: removed all observers");
   }
 
   /**
-   * are their any events registered
+   * are their any happened events
    *
    * @return true if yes
    */
@@ -147,8 +158,9 @@ public class Observing {
   }
 
   /**
-   * are their any events registered for this region?
+   * are their any happened events for this region?
    *
+   * @param reg
    * @return true if yes
    */
   public static boolean hasEvents(Region reg) {
@@ -161,20 +173,16 @@ public class Observing {
   }
 
   /**
-   * are their any events registered for the observer having this name?
+   * are their any happened events for the observer having this name?
    *
+   * @param name
    * @return true if yes
    */
   public static boolean hasEvent(String name) {
     return events.containsKey(name);
   }
 
-  /**
-   * add a new event to the list
-   *
-   * @param name name of event
-   */
-  public static void addEvent(ObserveEvent evt) {
+  protected static void addEvent(ObserveEvent evt) {
     events.put(evt.getName(), evt);
   }
 
@@ -182,6 +190,7 @@ public class Observing {
    * return the events for that region <br>
    * events are removed from the list
    *
+   * @param reg
    * @return the array of events or size 0 array if none
    */
   public static ObserveEvent[] getEvents(Region reg) {
@@ -189,14 +198,16 @@ public class Observing {
     ObserveEvent evt;
     for (String name : reg.getObserver().getNames()) {
       evt = events.get(name);
-      if (evt != null) evts.add(evt);
+      if (evt != null) {
+        evts.add(evt);
+      }
       events.remove(name);
     }
     return evts.toArray(new ObserveEvent[0]);
   }
 
   /**
-   * return the all events (they are preserved) <br>
+   * return all events (they are preserved) <br>
    *
    * @return the array of events or size 0 array if none
    */
@@ -214,6 +225,18 @@ public class Observing {
     return evts.toArray(new ObserveEvent[0]);
   }
   
+  /**
+   * retrieves and removes the requested event
+   * @param name of event
+   * @return the event or null
+   */
+  public static ObserveEvent getEvent(String name) {
+    return events.remove(name);
+  }
+  
+  /**
+   * the event list is purged
+   */
   public static void clearEvents() {
     events.clear();
   }

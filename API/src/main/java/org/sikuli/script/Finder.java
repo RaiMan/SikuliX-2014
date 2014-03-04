@@ -196,7 +196,13 @@ public class Finder implements Iterator<Match> {
       _results = Vision.find(_findInput);
       _cur_result_i = 0;
       return img.getFilename();
-    } else {
+    } else if (img.isUseable()) {
+      if (img.getPattern() !=null) {
+        return find(img.getPattern());
+      } else {
+        return null;
+      }
+    } else {      
       return null;
     }
   }
