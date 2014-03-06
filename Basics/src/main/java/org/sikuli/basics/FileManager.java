@@ -894,6 +894,28 @@ public class FileManager {
 		}
 	}
 
+  /**
+   * INTERNAL USE
+   */
+  public static void cleanTemp() {
+    for (File f : new File(System.getProperty("java.io.tmpdir")).listFiles(new FilenameFilter() {
+      @Override
+      public boolean accept(File dir, String name) {
+        if (name.contains("BridJExtractedLibraries")) {
+          return true;
+        }
+        if (name.toLowerCase().contains("sikuli")) {
+          return true;
+        }
+        return false;
+      }
+    })) {
+      Debug.log(4, "cleanTemp: " + f.getName());
+      FileManager.deleteFileOrFolder(f.getAbsolutePath());
+    }
+    FileManager.deleteFileOrFolder(Settings.BaseTempPath);
+  }
+
   private static class FileFilterScript implements FilenameFilter {
     private String _check;
     public FileFilterScript(String check) {
