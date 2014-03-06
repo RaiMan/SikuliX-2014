@@ -175,7 +175,7 @@ public class SikuliIDE extends JFrame {
           } catch (IOException ex) {
           }
           isRunning.delete();
-          Settings.cleanTemp();
+          FileManager.cleanTemp();
         }
     });
 
