@@ -2,6 +2,18 @@
 ============
 
 <hr />
+Project paused during March 2014
+================================
+- **no 1.1.0-Beta1 available yet**
+- **having problems with native libraries on Windows and some annoying little bugs**
+- **having 2 weeks vacation**
+- **having some other private priorities**
+
+**I guess, I will be back here beginning of April**
+
+<hr />
+
+<hr />
 **SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer)
 <hr/>
 
