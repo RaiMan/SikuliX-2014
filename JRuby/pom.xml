@@ -31,6 +31,13 @@
 		</developer>
 	</developers>
 
+	<repositories>
+		<repository>
+		<id>rubygems-release</id>
+		<url>http://rubygems-proxy.torquebox.org/releases</url>
+		</repository>
+	</repositories>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.sikuli</groupId>
@@ -42,6 +49,46 @@
 			<artifactId>jruby-complete</artifactId>
 			<version>1.7.11</version>
 		</dependency>
+		<dependency>
+			<groupId>rubygems</groupId>
+			<artifactId>rspec</artifactId>
+			<version>2.14.1</version>
+			<type>gem</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>rubygems</groupId>
+			<artifactId>cucumber</artifactId>
+			<version>1.3.12</version>
+			<type>gem</type>
+			<optional>true</optional>
+		</dependency>
+		<dependency>
+			<groupId>rubygems</groupId>
+			<artifactId>rspec-given</artifactId>
+			<version>3.5.4</version>
+			<type>gem</type>
+			<optional>true</optional>
+		</dependency>
 	</dependencies>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>de.saumya.mojo</groupId>
+				<artifactId>gem-maven-plugin</artifactId>
+				<version>1.0.0</version>
+				<configuration>
+					<includeRubygemsInResources>true</includeRubygemsInResources>
+				</configuration>
+				<executions>
+					<execution>
+						<goals>
+							<goal>initialize</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
