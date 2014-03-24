@@ -71,7 +71,7 @@ module SikuliX4Ruby
       def initialize(block); super(); @block=block; end;
       %w(appeared vanished changed).each do |name|
         define_method(name) do |*args|
-          @block.call *args
+          @block.call *(args.first @block.arity)
         end
       end
     end
@@ -106,7 +106,7 @@ module SikuliX4Ruby
   native_exception_protect Region,
     [:find, :findAll, :wait, :waitVanish, :exists,
      :click, :doubleClick, :rightClick, :hover, :dragDrop,
-     :type, :paste]
+     :type, :paste, :observe]
 
   # default screen object for "undotted" methods
   $SIKULI_SCREEN = Screen.new
@@ -136,9 +136,9 @@ def self.method_missing name, *args, &block
       #Object.send(:define_method, name){ |*args| method.call *args }
       return ret
     else
-      raise "undotted method missing"
+      raise "undotted method '#{name}' missing"
     end
-  rescue Exception => e
+  rescue NativeException => e
     raise "SikuliX4Ruby: Problem (#{e})\nwith undotted method: #{name} (#{args})"
   end
 end
