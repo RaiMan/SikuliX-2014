@@ -1,0 +1,16 @@
+echo ---------------- ant ----------------------------
+target=x86_64-w64-mingw32
+if [ ! -e /mingw/$target ]; then
+  target=i686-w64-mingw32
+fi
+echo ---------------- g++ bitness ----------------------------
+g++ --version
+ls -l /local/local*
+echo ---------------- install ----------------------------
+cp -f bin/* /usr/local/bin/
+cp -f lib/* /usr/local/lib/
+echo ---------------- result ----------------------------
+ls -l /local/local*
+ls -l /usr/local/bin/*ant*
+ls -l /usr/local/lib/*ant*
+echo ---------------- ant end ----------------------------

@@ -1,0 +1,26 @@
+echo ---------------- zlib ----------------------------
+if [ -e /usr/local32 ]; then
+  target=x86_64-w64-mingw32
+else
+  target=i686-w64-mingw32
+fi
+echo ---------------- g++ bitness ----------------------------
+g++ --version
+ls -l /local/local*
+echo ---------------- reset ----------------------------
+make -f win32/Makefile.gcc uninstall
+make -f win32/Makefile.gcc clean
+echo ---------------- prepare ----------------------------
+echo ---------------- compile ----------------------------
+make -f win32/Makefile.gcc
+export BINARY_PATH=/usr/local/bin
+export INCLUDE_PATH=/usr/local/include
+export LIBRARY_PATH=/usr/local/lib
+echo ---------------- install ----------------------------
+make -f win32/Makefile.gcc install SHARED_MODE=1
+echo ---------------- result ----------------------------
+ls -l /usr/local/bin/zlib*
+ls -l /usr/local/lib/libz*
+echo ---------------- zlib end ----------------------------
+cp --remove-destination /usr/local/bin/zlib1.dll /usr/local/bin/libz.dll
+cp --remove-destination /usr/local/bin/libz.dll /mingw/$target/lib/libz.dll

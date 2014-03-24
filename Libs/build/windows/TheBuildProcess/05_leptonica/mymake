@@ -1,0 +1,26 @@
+echo ---------------- leptonica ----------------------------
+target=x86_64-w64-mingw32
+if [ ! -e /mingw/$target ]; then
+  target=i686-w64-mingw32
+fi
+echo ---------------- g++ bitness ----------------------------
+g++ --version
+ls -l /local/local*
+echo ---------------- reset ----------------------------
+make uninstall 
+make clean 
+echo ---------------- prepare ----------------------------
+export "CFLAGS=-I/usr/local/include -O2"
+export "CPPFLAGS=-I/usr/local/include -O2"
+export "LDFLAGS=-L/usr/local/lib"
+./configure --host=$target --disable-programs --disable-static --disable-dependency-tracking
+read -p "Press [Enter] key to continue ... or [Ctrl-C] to terminate ..."
+echo ---------------- compile ----------------------------
+make 
+echo ---------------- install ----------------------------
+make install-strip
+echo ---------------- result ----------------------------
+ls -l /local/local*
+ls -l /usr/local/bin/*lept*
+ls -l /usr/local/lib/*lept*
+echo ---------------- leptonica end ----------------------------

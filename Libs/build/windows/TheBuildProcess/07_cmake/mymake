@@ -1,0 +1,32 @@
+echo ---------------- cmake ----------------------------
+cmx=cmake-2.8.12.2
+target=x86_64-w64-mingw32
+if [ ! -e /mingw/$target ]; then
+  target=i686-w64-mingw32
+fi
+echo ---------------- g++ bitness ----------------------------
+g++ --version
+ls -l /local/local*
+echo ---------------- reset ----------------------------
+cd cmake
+make uninstall
+cd ..
+rm -R -f cmake
+tar xzf $cmx.tar.gz
+mv $cmx cmake
+if [ -e cmake ]; then
+    cd cmake
+	echo ---------------- prepare ----------------------------
+	./bootstrap --no-qt-gui --prefix=/usr/local
+	read -p "Press [Enter] key to continue ... or [Ctrl-C] to terminate ..."
+	echo ---------------- compile ----------------------------
+	make 
+	echo ---------------- install ----------------------------
+	make install 
+	cd ..
+	echo ---------------- result ----------------------------
+	ls -l /local/local*
+	ls -l /usr/local/bin/*cmake*
+	ls -l /usr/local/lib/*cmake*
+fi
+echo ---------------- cmake end ----------------------------

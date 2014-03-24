@@ -1,0 +1,27 @@
+echo ---------------- tesseract ----------------------------
+target=x86_64-w64-mingw32
+if [ ! -e /mingw/$target ]; then
+  target=i686-w64-mingw32
+fi
+echo ---------------- g++ bitness ----------------------------
+g++ --version
+ls -l /local/local*
+echo ---------------- reset ----------------------------
+make uninstall
+make clean 
+echo ---------------- prepare ----------------------------
+./autogen.sh
+export "CFLAGS=-I/usr/local/include -DNDEBUG -fpermissive"
+export "CPPFLAGS=-I/usr/local/include -DNDEBUG -fpermissive"
+export "LDFLAGS=-L/usr/local/lib -Wl,--as-needed"
+./configure --host=$target --disable-tessdata-prefix
+read -p "Press [Enter] key to continue ... or [Ctrl-C] to terminate ..."
+echo ---------------- compile ----------------------------
+make 
+echo ---------------- install ----------------------------
+make install-strip
+echo ---------------- result ----------------------------
+ls -l /local/local*
+ls -l /usr/local/bin/*tess*
+ls -l /usr/local/lib/*tess*
+echo ---------------- tesseract	 end ----------------------------
