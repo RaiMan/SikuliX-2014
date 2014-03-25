@@ -1,0 +1,71 @@
+echo ------------ VisionProxy --------------------------
+echo -----------------------------------------------
+g++ --version
+echo -----------------------------------------------
+
+SRC="/C/Users/RaiMan/Documents/GitHub/SikuliX-2014/Natives/src/main/native"
+MGRP="Vision"
+MOD=VisionProxy
+OCV=248
+J64="1.7.0_51"
+J32="1.7.0_45"
+
+rm -f -R build
+mkdir build
+
+if [ -e /usr/local32 ]; then
+	echo --- 64-Bit
+	rm -f -R libs64
+	mkdir libs64
+	JINC="/C/Program Files/Java/jdk$J64/include"
+	JINC1="/C/Program Files/Java/jdk$J64/include/win32"
+	LIBS="/C/msys/src/SikuliXBuild/ZStuff/libs64"
+else
+	echo --- 32-Bit
+	rm -f -R libs32
+	mkdir libs32
+	JINC="/C/Program Files (x86)/Java/jdk$J32/include"
+	JINC1="/C/Program Files (x86)/Java/jdk$J32/include/win32"
+	LIBS="/C/msys/src/SikuliXBuild/ZStuff/libs32"
+fi
+
+includeParm="-I/usr/include -I/usr/local/include" 
+includeParm="$includeParm -I/src/opencv/modules/core/include -I/src/opencv/modules/highgui/include -I/src/opencv/modules/imgproc/include"
+includeParm="$includeParm -I/src/tesseract/api -I/src/tesseract/ccutil -I/src/tesseract/ccstruct -I/src/tesseract/ccmain"
+
+# the compile steps
+echo -- cvgui
+g++ -c -O3  -MMD -MP -MF build/cvgui.o.d $includeParm -o build/cvgui.o $SRC/$MGRP/cvgui.cpp
+
+echo -- finder
+g++ -c -O3  -MMD -MP -MF build/finder.o.d $includeParm -o build/finder.o $SRC/$MGRP/finder.cpp
+
+echo -- pyramid-template-matcher
+g++ -c -O3  -MMD -MP -MF build/pyramid-template-matcher.o.d $includeParm -o build/pyramid-template-matcher.o $SRC/$MGRP/pyramid-template-matcher.cpp
+
+echo -- sikuli-debug
+g++ -c -O3  -MMD -MP -MF build/sikuli-debug.o.d $includeParm -o build/sikuli-debug.o $SRC/$MGRP/sikuli-debug.cpp
+
+echo -- tessocr
+g++ -c -O3  -MMD -MP -MF build/tessocr.o.d $includeParm -o build/tessocr.o $SRC/$MGRP/tessocr.cpp
+
+echo -- vision
+g++ -c -O3  -MMD -MP -MF build/vision.o.d $includeParm -o build/vision.o $SRC/$MGRP/vision.cpp
+
+echo -- visionJAVA_wrap
+g++ -c -O3  -MMD -MP -MF build/visionJAVA_wrap.o.d -I"$JINC" -I"$JINC1" $includeParm -o build/visionJAVA_wrap.o $SRC/$MGRP/visionJAVA_wrap.cxx
+
+buildLibs="build/cvgui.o build/finder.o build/pyramid-template-matcher.o build/sikuli-debug.o build/tessocr.o build/vision.o build/visionJAVA_wrap.o"
+extLibs="$LIBS/libtesseract-3.dll "
+extLibs="$extLibs $LIBS/libopencv_core$OCV.dll" 
+extLibs="$extLibs $LIBS/libopencv_imgproc$OCV.dll" 
+extLibs="$extLibs $LIBS/libopencv_highgui$OCV.dll" 
+
+echo -- finally linking
+if [  -e /usr/local32 ]; then
+	g++  -shared -s  -dynamic -o libs64/$MOD.dll $buildLibs $extLibs >buildLink.txt 2>&1
+	ls -l libs64
+else
+	g++  -shared -s  -dynamic -o libs32/$MOD.dll $buildLibs $extLibs 
+	ls -l libs32
+fi 

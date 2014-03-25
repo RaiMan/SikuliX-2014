@@ -25,21 +25,36 @@ mingw(64)
 
 --- in msys32.bat to automate this
 if exist c:\mingw64 goto IS32MG
+	
 	rename c:\mingw mingw64
+	
 	rename c:\mingw32 mingw
 :IS32MG
+
 if exist c:\msys\local64 goto IS32
+
 	rename c:\msys\local local64
+	
 	rename c:\msys\local32 local
+
 :IS32
+
 if not exist c:\mingw64 goto ERROR32
+
 if exist c:\msys\local64 goto IS32OK
+
 :ERROR32
+
 dir c:\m*
+
 dir c:\msys\l*
+
 pause
+
 goto EOF
+
 :IS32OK
+
 
 --- in msys64.bat to automate this
 if exist c:\mingw32 goto IS64MG
@@ -81,8 +96,8 @@ lib -> /usr/local/lib
 
 *** zlib (zlib1.dll)
 current zlib-1.2.7 (.tar.bz2)
-m/ymake
-+
+mymake
+
 *** libpng (libpng15-15.dll)
 current: libpng-1.5.14 (.tar.gz)
 mymake
@@ -108,8 +123,9 @@ current: tesseract-ocr-3.02.02 (.tar.gz)
 mymake
 changed files?
 
-*** opencv (libopencv_java248.dll, opencv-248.jar)
+*** opencv (libopencv_xxx248.dll, opencv-248.jar)
 current: opencv-2.4.8 (.zip) (download from web: http://opencv.org/downloads.html - Linux/Mac)
+needs JAVA_HOME set to the correct JDK
 mymake (contains special cmake parameter setup) 
 selects: core feature2d flann highgui imgproc java  
 resulting stuff in buildXX/bin
