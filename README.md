@@ -2,14 +2,14 @@
 ============
 
 <hr />
-Project paused during March 2014
-================================
-- **no 1.1.0-Beta1 available yet**
-- **having problems with native libraries on Windows and some annoying little bugs**
-- **having 2 weeks vacation**
-- **having some other private priorities**
+Project paused until 2014, April 22nd 
+============
+ - no 1.1.0-Beta1 available yet (planned now for April 25th)
+ - still having some annoying little bugs
+ - having some other private priorities
 
-**I guess, I will be back here beginning of April**
+If you do not want to wait:<br />
+Look [here](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-produce-the-ready_to_use-jar-packages) for complete information on how to build the ready-to-use packages.
 
 <hr />
 
