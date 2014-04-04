@@ -8,6 +8,9 @@ Project paused until 2014, April 22nd
  - still having some annoying little bugs
  - having some other private priorities
 
+If you do not want to wait:<br />
+Look [here](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-produce-the-ready_to_use-jar-packages) for complete information on how to build the ready-to-use packages.
+
 <hr />
 
 <hr />
