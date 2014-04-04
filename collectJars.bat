@@ -28,7 +28,7 @@ echo --- major version --- %mversion% >>%log%
 echo ----------------- SourceBase %base% >>%log%
 
 if "%1" == "2" goto :RUNPACK
-if "%1" == "3" goto :RUNSETUP
+if "%1" == "3" goto :COPYSETUP
 echo ----------------- running Maven clean install --- takes some time ...
 call mvn clean install >>%log%
 
@@ -55,7 +55,7 @@ java -jar sikulixsetup-%version%-plain.jar noSetup >>%log%
 cd %base%
 dir %source% >>%log%
 
-:RUNSETUP
+:COPYSETUP
 REM ----------- Setup
 echo --- copy Setup
 echo --- copy Setup >>%log%
@@ -72,6 +72,19 @@ echo ----------- final content of %dist%
 dir %dist%
 dir %dist%\Downloads
 echo ----------- SikuliX collectjars end -----------
+echo -
+echo --
+echo ----
+echo ------
+echo -------- Looks like success -----------
+echo check the logfile to be sure
+echo %log%
+echo Now you can move the folder to where you want
+echo and name it as you like
+echo and run setup, to get your wanted packages.
+echo BE SURE, not to download anything,
+echo you are doing an offline setup
+echo ----------------------------------
 
 :FINALLY
 endlocal

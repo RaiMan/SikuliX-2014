@@ -68,3 +68,16 @@ ls -l $dist/Downloads >>$log
 echo ----------- final content of $dist
 ls -lR $dist
 echo ----------- SikuliX collectjars end -----------
+echo -
+echo --
+echo ----
+echo ------
+echo -------- Looks like success -----------
+echo check the logfile to be sure
+echo $log
+echo Now you can move the folder to where you want
+echo and name it as you like
+echo and run setup, to get your wanted packages.
+echo !! BE SURE, not to download anything !!
+echo !! You are doing an offline setup !!
+echo ---------------------------------------------
