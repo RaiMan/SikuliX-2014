@@ -13,6 +13,7 @@ import java.awt.event.*;
 import java.awt.image.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.lang.reflect.Field;
 
 /**
  * INTERNAL USE
@@ -20,9 +21,8 @@ import java.util.Set;
  */
 public class ScreenHighlighter extends OverlayTransparentWindow implements MouseListener {
 
-  static Color _overlayColor = new Color(0F, 0F, 0F, 0.6F);
   static Color _transparentColor = new Color(0F, 0F, 0F, 0.5F);
-  static Color _targetColor = new Color(1F, 0F, 0F, 0.7F);
+  Color _targetColor;
   final static int TARGET_SIZE = 50;
   final static int DRAGGING_TIME = 200;
   static int MARGIN = 20;
@@ -42,11 +42,22 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
   BasicStroke _StrokeBorder = new BasicStroke(3);
   OverlayAnimator _aniX, _aniY;
 
-  public ScreenHighlighter(Screen scr) {
+  public ScreenHighlighter(Screen scr, String color) {
     _scr = scr;
     init();
     setVisible(false);
     setAlwaysOnTop(true);
+
+    // Attempt to set the color of the frame to what the user provided.
+    // If it fails, set to red. Valid colors are the ones defined in the Color class:
+    // http://docs.oracle.com/javase/7/docs/api/java/awt/Color.html#field_summary
+    try {
+      Field field = Class.forName("java.awt.Color").getField(color);
+      _targetColor = (Color)field.get(null);
+    } catch (Exception e) {
+      // Set to standard red color
+	  _targetColor = new Color(1F, 0F, 0F, 0.7F);
+    }
   }
 
   private void init() {
