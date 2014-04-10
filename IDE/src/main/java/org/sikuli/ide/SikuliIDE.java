@@ -413,6 +413,7 @@ public class SikuliIDE extends JFrame {
   }
 
   static private void initNativeSupport() {
+//TODO IDE native Support
 //    String jb = FileManager.getJarName();
 //    ClassPool pool  = ClassPool.getDefault();
 //    try {

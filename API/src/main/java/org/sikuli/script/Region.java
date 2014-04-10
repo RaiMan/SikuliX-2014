@@ -1718,22 +1718,37 @@ public class Region {
   //<editor-fold defaultstate="collapsed" desc="highlight">
   protected void updateSelf() {
     if (overlay != null) {
-      highlight(false);
-      highlight(true);
+      highlight(false, null);
+      highlight(true, null);
     }
   }
 
   /**
-   * Toggle the regions Highlight visibility (currently red frame)
+   * Toggle the regions Highlight visibility (red frame)
    *
    * @return the region itself
    */
   public Region highlight() {
-    if (overlay == null) {
-      highlight(true);
-    } else {
-      highlight(false);
-    }
+    // Pass true if overlay is null, false otherwise
+    highlight(overlay == null, null);
+    return this;
+  }
+
+  /**
+   * Toggle the regions Highlight visibility (frame of specified color)<br />
+   * allowed color specifications for frame color: <br />
+   * - a color name out of: black, blue, cyan, gray, green, magenta, orange, pink, red, white, yellow
+   * (lowercase and uppercase can be mixed, internally transformed to all uppercase) <br />
+   * - these colornames exactly written: lightGray, LIGHT_GRAY, darkGray and DARK_GRAY <br />
+   * - a hex value like in HTML: #XXXXXX (max 6 hex digits)
+   * - an RGB specification as: #rrrgggbbb where rrr, ggg, bbb are integer values in range 0 - 255 
+   * padded with leading zeros if needed (hence exactly 9 digits)
+   * @param color Color of frame 
+   * @return the region itself
+   */
+  public Region highlight(String color) {
+    // Pass true if overlay is null, false otherwise
+    highlight(overlay == null, color);
     return this;
   }
 
@@ -1741,14 +1756,16 @@ public class Region {
    * Sets the regions Highlighting border
    *
    * @param toEnable set overlay enabled or disabled
+   * @param color Color of frame (see method highlight(color))
    */
-  private Region highlight(boolean toEnable) {
+  private Region highlight(boolean toEnable, String color) {
     if (isOtherScreen()) {
       return this;
     }
-    Debug.action("toggle highlight " + toString() + ": " + toEnable);
+    Debug.action("toggle highlight " + toString() + ": " + toEnable +
+    		(color != null ? " color: " + color : ""));
     if (toEnable) {
-      overlay = new ScreenHighlighter(getScreen());
+      overlay = new ScreenHighlighter(getScreen(), color);
       overlay.highlight(this);
     } else {
       if (overlay != null) {
@@ -1759,22 +1776,36 @@ public class Region {
     return this;
   }
 
+
   /**
-   * show the regions Highlight for the given time in seconds (currently red frame) if 0 - use the global
-   * Settings.SlowMotionDelay
+   * show the regions Highlight for the given time in seconds (red frame)
+   * if 0 - use the global Settings.SlowMotionDelay
    *
    * @param secs time in seconds
    * @return the region itself
    */
   public Region highlight(float secs) {
+    return highlight(secs, null);
+  }
+
+  /**
+   * show the regions Highlight for the given time in seconds (frame of specified color)
+   * if 0 - use the global Settings.SlowMotionDelay
+   *
+   * @param secs time in seconds
+   * @param color Color of frame (see method highlight(color))
+   * @return the region itself
+   */
+  public Region highlight(float secs, String color) {
     if (isOtherScreen()) {
       return this;
     }
     if (secs < 0.1) {
-      return highlight((int) secs);
+      return highlight((int) secs, color);
     }
-    Debug.action("highlight " + toString() + " for " + secs + " secs");
-    ScreenHighlighter _overlay = new ScreenHighlighter(getScreen());
+    Debug.action("highlight " + toString() + " for " + secs + " secs" +
+          (color != null ? " color: " + color : ""));
+    ScreenHighlighter _overlay = new ScreenHighlighter(getScreen(), color);
     _overlay.highlight(this, secs);
     return this;
   }
@@ -1787,17 +1818,29 @@ public class Region {
    * @return this region
    */
   public Region highlight(int secs) {
+	return highlight(secs, null);
+  }
+
+
+  /**
+   * Show highlight in selected color
+   * 
+   * @param secs time in seconds
+   * @param color Color of frame (see method highlight(color))
+   * @return this region
+   */
+  public Region highlight(int secs, String color) {
     if (isOtherScreen()) {
       return this;
     }
     if (secs > 0) {
-      return highlight((float) secs);
+      return highlight((float) secs, color);
     }
     if (lastMatch != null) {
       if (secs < 0) {
-        return lastMatch.highlight((float) -secs);
+        return lastMatch.highlight((float) -secs, color);
       }
-      return lastMatch.highlight(Settings.DefaultHighlightTime);
+      return lastMatch.highlight(Settings.DefaultHighlightTime, color);
     }
     return this;
   }

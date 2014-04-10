@@ -32,7 +32,7 @@ public class Mouse {
   private boolean inUse = false;
   private boolean keep = false;
   private Object owner = null;
-  Point lastPos = null;
+  private Point lastPos;
   private static boolean blocked = false;
 
   public static final int MouseMovedIgnore = 0;
@@ -55,6 +55,7 @@ public class Mouse {
   public static int WHEEL_DOWN = 1;
 
   private Mouse() {
+    this.lastPos = null;
   }
 
   /**

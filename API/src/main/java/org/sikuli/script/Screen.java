@@ -508,7 +508,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 
   protected void showTarget(Location loc, double secs) {
     if (Settings.isShowActions()) {
-      ScreenHighlighter overlay = new ScreenHighlighter(this);
+      ScreenHighlighter overlay = new ScreenHighlighter(this, null);
       overlay.showTarget(loc, (float) secs);
     }
   }

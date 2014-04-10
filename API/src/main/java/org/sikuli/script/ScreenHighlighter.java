@@ -13,16 +13,15 @@ import java.awt.event.*;
 import java.awt.image.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.lang.reflect.Field;
 
 /**
- * INTERNAL USE
- * produces and manages the red framed rectangles from Region.highlight()
+ * INTERNAL USE produces and manages the red framed rectangles from Region.highlight()
  */
 public class ScreenHighlighter extends OverlayTransparentWindow implements MouseListener {
 
-  static Color _overlayColor = new Color(0F, 0F, 0F, 0.6F);
   static Color _transparentColor = new Color(0F, 0F, 0F, 0.5F);
-  static Color _targetColor = new Color(1F, 0F, 0F, 0.7F);
+  Color _targetColor = Color.RED;
   final static int TARGET_SIZE = 50;
   final static int DRAGGING_TIME = 200;
   static int MARGIN = 20;
@@ -42,11 +41,52 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
   BasicStroke _StrokeBorder = new BasicStroke(3);
   OverlayAnimator _aniX, _aniY;
 
-  public ScreenHighlighter(Screen scr) {
+  public ScreenHighlighter(Screen scr, String color) {
     _scr = scr;
     init();
     setVisible(false);
     setAlwaysOnTop(true);
+
+    if (color != null) {
+      // a frame color is specified
+      // if not decodable, then predefined Color.RED is used
+      if (color.startsWith("#")) {
+        if (color.length() > 7) {
+          // might be the version #nnnnnnnnn
+          if (color.length() == 10) {
+            int cR = 255, cG = 0, cB = 0;
+            try {
+              cR = Integer.decode(color.substring(1, 4));
+              cG = Integer.decode(color.substring(4, 7));
+              cB = Integer.decode(color.substring(7, 10));
+            } catch (NumberFormatException ex) {
+            }
+            try {
+              _targetColor = new Color(cR, cG, cB);
+            } catch (IllegalArgumentException ex) {             
+            }
+          }
+        } else {
+          // supposing it is a hex value
+          try {
+            _targetColor = new Color(Integer.decode(color));
+          } catch (NumberFormatException nex) {
+          }
+        }
+      } else {
+        // supposing color contains one of the defined color names
+        if (!color.endsWith("Gray") || "Gray".equals(color)) {
+          // the name might be given with any mix of lower/upper-case
+          // only lightGray, LIGHT_GRAY, darkGray and DARK_GRAY must be given exactly
+          color = color.toUpperCase();
+        }
+        try {
+          Field field = Class.forName("java.awt.Color").getField(color);
+          _targetColor = (Color) field.get(null);
+        } catch (Exception e) {
+        }
+      }
+    }
   }
 
   private void init() {
