@@ -12,7 +12,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 
 /**
- * A point like AWT.Point using global coordinates (x, y),
+ * A point like AWT.Point using global coordinates (x, y).
  * hence modifications might move location out of
  * any screen (not checked as is done with region)
  *

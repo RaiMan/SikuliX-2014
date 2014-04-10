@@ -22,8 +22,8 @@ import org.sikuli.basics.Settings;
 import org.sikuli.basics.SikuliScript;
 
 /**
- * maintain the path list of locations, where images will be searched<br>
- * the first entry always is the bundlepath used on the scripting level<br>
+ * maintain the path list of locations, where images will be searched.
+ * <br>the first entry always is the bundlepath used on the scripting level<br>
  * Python import automatically adds a sikuli bundle here<br>
  * supported locations:<br>
  * - absolute filesystem paths<br>

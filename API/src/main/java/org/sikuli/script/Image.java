@@ -39,10 +39,10 @@ import org.sikuli.basics.Settings;
 import org.sikuli.natives.Vision;
 
 /**
- * This class hides the complexity behind image names given as string.<br>
- * Its companion is ImagePath that maintains a list of places, where images are
+ * This class hides the complexity behind image names given as string.
+ * <br>It's companion is {@link ImagePath} that maintains a list of places, where images are
  * stored.<br>
- * Another companion (ImageGroup) will allow to look at images in a folder as a
+ * Another companion {@link ImageGroup} will allow to look at images in a folder as a
  * group.<br>
  * An Image object:<br>
  * - has a name, either given or taken from the basename<br>
@@ -325,7 +325,7 @@ public class Image {
     }
     return createImageValidate(img);
   }
-  
+
   public static Image createFromObject(Object obj) {
     if (obj instanceof String) {
       return create((String) obj);
@@ -335,18 +335,18 @@ public class Image {
       return new Image((Pattern) obj);
     }
     return new Image();
-  } 
-  
+  }
+
   private Image(Pattern p) {
     pattern = p;
     imageIsPattern = true;
     setLastSeen(p.getImage().getLastSeen(), p.getImage().getLastSeenScore());
   }
-  
+
   public Pattern getPattern() {
     return pattern;
   }
-  
+
   public Image getImage() {
     if (isValid()) {
       return this;
@@ -355,7 +355,7 @@ public class Image {
       return pattern.getImage();
     }
     return null;
-  } 
+  }
 
   protected static Image get(URL imgURL) {
     return imageFiles.get(imgURL);
@@ -559,7 +559,7 @@ public class Image {
   public boolean isValid() {
     return filepath != null;
   }
-  
+
   public boolean isUseable() {
     return isValid() || imageIsPattern;
   }

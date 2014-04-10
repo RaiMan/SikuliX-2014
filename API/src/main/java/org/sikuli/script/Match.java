@@ -12,9 +12,10 @@ import org.sikuli.natives.FindResult;
 
 /**
  * holds the result of a find operation, is itself the region on the screen,
- * where the image was found and hence inherits all methods from Region<br>
+ * where the image was found and hence inherits all methods from {@link Region}.
+ * <br>
  * attributes:<br> the match score (0 ... 1.0)<br> the click target (e.g.
- * from Pattern)<br> a ref to the image used for search<br>or the text used for
+ * from {@link Pattern})<br> a ref to the image used for search<br>or the text used for
  * find text<br />and elapsed times for debugging
  */
 public class Match extends Region implements Comparable<Match> {

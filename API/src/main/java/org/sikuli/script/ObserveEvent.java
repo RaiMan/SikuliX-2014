@@ -9,6 +9,9 @@ package org.sikuli.script;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * provides information about the observed event being in the {@link ObserverCallBack}
+ */
 public class ObserveEvent {
 
   public enum Type {
@@ -30,7 +33,7 @@ public class ObserveEvent {
 
   protected ObserveEvent() {
   }
-  
+
   /**
    * INTERNAL USE ONLY: creates an observed event
    */
@@ -46,7 +49,7 @@ public class ObserveEvent {
     setPattern(ptn);
     time = now;
 	}
-  
+
   /**
    *
    * @return the observer name of this event
@@ -124,7 +127,7 @@ public class ObserveEvent {
       }
     }
   }
-  
+
   public long getTime() {
     return time;
   }
@@ -171,7 +174,7 @@ public class ObserveEvent {
   @Override
   public String toString() {
     if (type == Type.CHANGE) {
-      return String.format("Event(%s) %s on: %s with: %d count: %d", 
+      return String.format("Event(%s) %s on: %s with: %d count: %d",
             type, name, region, index, getCount());
     } else {
       return String.format("Event(%s) %s on: %s with: %s match: %s count: %d",

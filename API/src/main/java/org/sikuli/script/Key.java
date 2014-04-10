@@ -22,7 +22,7 @@ import org.sikuli.basics.Settings;
 
 /**
  * this class implements an interface to the Java key system
- * as represented by java.awt.event.KeyEvent
+ * as represented by java.awt.event.KeyEvent.
  * for the functions Region.type() and Region.write()
  * by translating key constants for special keys and plain text per character.<br />
  * for details consult the docs

@@ -1,0 +1,18 @@
+#!/bin/sh
+# creates the javadocs for selected classes and their public members
+apijar=API/target/SikuliX-API-1.1.0.jar
+basicsjar=Basics/target/SikuliX-Basics-1.1.0.jar
+nativesjar=Natives/target/SikuliX-Natives-1.1.0.jar
+opencvjar=OpenCV4Sikulix/target/OpenCV4Sikulix-2.4.7.jar
+apisrc=API/src/main/java/org/sikuli/script
+echo $apisrc/Region.java >createJavadocsClasses
+echo $apisrc/Match.java >>createJavadocsClasses
+echo $apisrc/Screen.java >>createJavadocsClasses
+echo $apisrc/Pattern.java >>createJavadocsClasses
+echo $apisrc/Location.java >>createJavadocsClasses
+echo $apisrc/Image.java >>createJavadocsClasses
+echo $apisrc/ImagePath.java >>createJavadocsClasses
+echo $apisrc/Key.java >>createJavadocsClasses
+echo $apisrc/ObserverCallBack.java >>createJavadocsClasses
+echo $apisrc/ObserveEvent.java >>createJavadocsClasses
+javadoc -public -classpath $apijar:$basicsjar:$nativesjar:$opencvjar -d target/docs @createJavadocsClasses

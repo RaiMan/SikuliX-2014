@@ -9,22 +9,21 @@ package org.sikuli.script;
 import java.util.EventListener;
 
 /**
- *
- * Use this class to implement call back methods for the Region observers <br>
- * onAppear, onVanish and onChange <br>
+ * Use this class to implement call back methods for the Region observers
+ * onAppear, onVanish and onChange. <br>
  * by overriding the contained empty methods appeared, vanished and changed
- *
- * example:<br>
- * aRegion.onAppear(anImage, <br>
-   new ObservingCallBack() { <br>
- *     <br>
-     appeared(ObserveEvent e) { <br>
-       // do something
-     }
-   }
- );
+ * <pre>
+ * example:
+ * aRegion.onAppear(anImage,
+ *   new ObservingCallBack() {
+ *     appeared(ObserveEvent e) {
+ *       // do something
+ *     }
+ *   }
+ * );
+ * </pre>
  when the image appears, your above call back appeared() will be called
- see ObserveEvent about the features available in the callback function
+ see {@link ObserveEvent} about the features available in the callback function
  */
 public class ObserverCallBack implements EventListener {
 

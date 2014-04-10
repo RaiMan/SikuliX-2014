@@ -26,10 +26,10 @@ import org.sikuli.natives.OSUtil;
 import org.sikuli.natives.SysUtil;
 
 /**
- * App implements features to manage (open, switch to, close) applications
+ * App implements features to manage (open, switch to, close) applications.
  * on the system we are running on and
  * to access their assets like windows
- *
+ * <br>
  * TAKE CARE: function behavior differs depending on the running system
  * (cosult the docs for more info)
  */

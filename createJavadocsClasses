@@ -1,0 +1,10 @@
+API/src/main/java/org/sikuli/script/Region.java
+API/src/main/java/org/sikuli/script/Match.java
+API/src/main/java/org/sikuli/script/Screen.java
+API/src/main/java/org/sikuli/script/Pattern.java
+API/src/main/java/org/sikuli/script/Location.java
+API/src/main/java/org/sikuli/script/Image.java
+API/src/main/java/org/sikuli/script/ImagePath.java
+API/src/main/java/org/sikuli/script/Key.java
+API/src/main/java/org/sikuli/script/ObserverCallBack.java
+API/src/main/java/org/sikuli/script/ObserveEvent.java
