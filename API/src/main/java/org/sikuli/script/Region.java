@@ -30,7 +30,7 @@ public class Region {
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "", me + ": " + message, args);
   }
-  
+
   /**
    * The Screen containing the Region
    */
@@ -168,7 +168,7 @@ public class Region {
    }
    */
   //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="Initialization">
   /**
    * Detects on which Screen the Region is present. The region is cropped to the intersection with the given screen or
@@ -349,7 +349,7 @@ public class Region {
   }
 
   //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="Quasi-Constructors to be used in Java">
   /**
    * internal use only, used for new Screen objects to get the Region behavior
@@ -702,7 +702,7 @@ public class Region {
   }
 
   //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="getters / setters / modificators">
   /**
    *
@@ -1213,7 +1213,7 @@ public class Region {
   }
 
   //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="spatial operators - new regions">
   /**
    * check if current region contains given region
@@ -1280,7 +1280,8 @@ public class Region {
   }
 
   /**
-   * create a region enlarged w pixels on left and right side<br> and h pixels at top and bottom
+   * create a region enlarged w pixels on left and right side
+	 * and h pixels at top and bottom
    *
    * @param w
    * @param h
@@ -1293,8 +1294,8 @@ public class Region {
   }
 
   /**
-   * create a region enlarged l pixels on left and r pixels right side<br> and t pixels at top side and b pixels at
-   * bottom side <br>
+   * create a region enlarged l pixels on left and r pixels right side
+	 * and t pixels at top side and b pixels a bottom side.
    * negative values go inside (shrink)
    *
    * @param l add to the left
@@ -1308,7 +1309,7 @@ public class Region {
   }
 
   /**
-   *
+   * point middle on right edge
    * @return point middle on right edge
    */
   public Location rightAt() {
@@ -1316,7 +1317,8 @@ public class Region {
   }
 
   /**
-   * positive offset goes to the right <br>might be off current screen
+   * positive offset goes to the right.
+	 * might be off current screen
    *
    * @return point with given offset horizontally to middle point on right edge
    */
@@ -1325,7 +1327,8 @@ public class Region {
   }
 
   /**
-   * create a region right of the right side with same height<br> the new region extends to the right screen border<br>
+   * create a region right of the right side with same height.
+	 * the new region extends to the right screen border<br>
    * use grow() to include the current region
    *
    * @return the new region
@@ -1336,8 +1339,9 @@ public class Region {
   }
 
   /**
-   * create a region right of the right side with same height and given width<br>
-   * negative width creates the right part with width inside the region use grow() to include the current region
+   * create a region right of the right side with same height and given width.
+   * negative width creates the right part with width inside the region
+	 * <br />use grow() to include the current region
    *
    * @param width
    * @return the new region
@@ -2463,10 +2467,10 @@ public class Region {
     }
     return regionObserver;
   }
-  
+
   /**
    * evaluate if at least one event observer is defined for this region (the observer need not be running)
-   * @return true, if the region has an observer with event observers 
+   * @return true, if the region has an observer with event observers
    */
   public boolean hasObserver() {
     if (regionObserver != null) {
@@ -2483,7 +2487,7 @@ public class Region {
   public boolean isObserving() {
     return observing;
   }
-  
+
   /**
    *
    * @return true if any events have happened for this region, false otherwise
@@ -2491,10 +2495,10 @@ public class Region {
   public boolean hasEvents() {
     return Observing.hasEvents(this);
   }
-  
+
   /**
    * the region's events are removed from the list
-   * @return the region's happened events as array if any (size might be 0)  
+   * @return the region's happened events as array if any (size might be 0)
    */
   public ObserveEvent[] getEvents() {
     return Observing.getEvents(this);
@@ -2503,7 +2507,7 @@ public class Region {
   /**
    * the event is removed from the list
    * @param name
-   * @return the named event if happened otherwise null 
+   * @return the named event if happened otherwise null
    */
   public ObserveEvent getEvent(String name) {
     return Observing.getEvent(name);
@@ -2516,7 +2520,7 @@ public class Region {
   public void setInactive(String name) {
     if (!hasObserver()) {
       return;
-    } 
+    }
     Observing.setActive(name, false);
   }
 
@@ -2527,7 +2531,7 @@ public class Region {
   public void setActive(String name) {
     if (!hasObserver()) {
       return;
-    } 
+    }
     Observing.setActive(name, true);
   }
 
@@ -2570,9 +2574,9 @@ public class Region {
 	}
 
   private <PSI> String onAppearDo(PSI target, Object observer) {
-    String name = Observing.add(this, 
+    String name = Observing.add(this,
             (ObserverCallBack) observer, ObserveEvent.Type.APPEAR, target);
-    log(lvl, "%s: onAppear%s: %s with: %s", toStringShort(), 
+    log(lvl, "%s: onAppear%s: %s with: %s", toStringShort(),
             (observer == null ? "" : " with callback"), name, target);
     return name;
   }
@@ -2616,9 +2620,9 @@ public class Region {
 	}
 
   private <PSI> String onVanishDo(PSI target, Object observer) {
-    String name = Observing.add(this, 
+    String name = Observing.add(this,
             (ObserverCallBack) observer, ObserveEvent.Type.VANISH, target);
-    log(lvl, "%s: onVanish%s: %s with: %s", toStringShort(), 
+    log(lvl, "%s: onVanish%s: %s with: %s", toStringShort(),
             (observer == null ? "" : " with callback"), name, target);
     return name;
   }
@@ -2689,7 +2693,7 @@ public class Region {
 
   public String onChangeDo(int threshold, Object observer) {
     String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.CHANGE, threshold);
-    log(lvl, "%s: onChange%s: %s minSize: %d", toStringShort(), 
+    log(lvl, "%s: onChange%s: %s minSize: %d", toStringShort(),
             (observer == null ? "" : " with callback"), name, threshold);
     return name;
   }
@@ -2858,7 +2862,7 @@ public class Region {
    * before and use the match<br> Region - position at center<br> Match - position at match's targetOffset<br> Location
    * - position at that point<br>
    *
-   * @param <PFRML> to search: Pattern, Filename, Text, Region, Match or Location 
+   * @param <PFRML> to search: Pattern, Filename, Text, Region, Match or Location
    * @param target
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
@@ -2887,7 +2891,7 @@ public class Region {
    * position at center<br> Match - position at match's targetOffset<br>
    * Location - position at that point<br>
    *
-   * @param <PFRML> to search: Pattern, Filename, Text, Region, Match or Location 
+   * @param <PFRML> to search: Pattern, Filename, Text, Region, Match or Location
    * @param target
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
@@ -2901,7 +2905,7 @@ public class Region {
    * Pattern or Filename - do a find before and use the match<br> Region - position at center<br>
    * Match - position at match's targetOffset<br> Location - position at that point<br>
    *
-   * @param <PFRML> to search: Pattern, Filename, Text, Region, Match or Location 
+   * @param <PFRML> to search: Pattern, Filename, Text, Region, Match or Location
    * @param target
    * @param modifiers the value of the resulting bitmask (see KeyModifier)
    * @return 1 if possible, 0 otherwise
@@ -2934,7 +2938,7 @@ public class Region {
    * position at center<br> Match - position at match's targetOffset<br>
    * Location - position at that point<br>
    *
-   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
    * @param target
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
@@ -2948,7 +2952,7 @@ public class Region {
    * Pattern or Filename - do a find before and use the match<br> Region - position at center<br > Match - position at
    * match's targetOffset<br> Location - position at that point<br>
    *
-   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
    * @param target
    * @param modifiers the value of the resulting bitmask (see KeyModifier)
    * @return 1 if possible, 0 otherwise
@@ -2994,8 +2998,8 @@ public class Region {
    * Pattern or Filename - do a find before and use the match<br> Region - position at center<br > Match - position at
    * match's targetOffset<br> Location - position at that point<br>
    *
-   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
-   * @param target 
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
+   * @param target
    * @param modifiers the value of the resulting bitmask (see KeyModifier)
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
@@ -3072,8 +3076,8 @@ public class Region {
    * Prepare a drag action: move mouse to given target <br>press and hold left mouse button <br >wait
    * Settings.DelayAfterDrag
    *
-   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
-   * @param target 
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
+   * @param target
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed
    */
@@ -3469,7 +3473,7 @@ public class Region {
    * character/key after another using keyDown/keyUp <br>about the usable Key constants see keyDown(keys)
    * <br>Class Key only provides a subset of a US-QWERTY PC keyboard layout
    *
-   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
    * @param target
    * @param text containing characters and/or Key constants
    * @return 1 if possible, 0 otherwise
@@ -3484,7 +3488,7 @@ public class Region {
    * character/key after another using keyDown/keyUp <br>while holding down the given modifier keys<br>about the usable
    * Key constants see keyDown(keys) <br>Class Key only provides a subset of a US-QWERTY PC keyboard layout
    *
-   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
    * @param target
    * @param text containing characters and/or Key constants
    * @param modifiers constants according to class KeyModifiers
@@ -3500,8 +3504,8 @@ public class Region {
    * character/key after another using keyDown/keyUp <br>while holding down the given modifier keys<br>about the usable
    * Key constants see keyDown(keys) <br>Class Key only provides a subset of a US-QWERTY PC keyboard layout
    *
-   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location 
-   * @param target 
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
+   * @param target
    * @param text containing characters and/or Key constants
    * @param modifiers constants according to class Key - combine using +
    * @return 1 if possible, 0 otherwise
