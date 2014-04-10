@@ -1731,9 +1731,15 @@ public class Region {
   }
 
   /**
-   * Toggle the regions Highlight visibility (frame of specified color)
-   *
-   * @param color Color of frame
+   * Toggle the regions Highlight visibility (frame of specified color)<br />
+   * allowed color specifications for frame color: <br />
+   * - a color name out of: black, blue, cyan, gray, green, magenta, orange, pink, red, white, yellow
+   * (lowercase and uppercase can be mixed, internally transformed to all uppercase) <br />
+   * - these colornames exactly written: lightGray, LIGHT_GRAY, darkGray and DARK_GRAY <br />
+   * - a hex value like in HTML: #XXXXXX (max 6 hex digits)
+   * - an RGB specification as: #rrrgggbbb where rrr, ggg, bbb are integer values in range 0 - 255 
+   * padded with leading zeros if needed (hence exactly 9 digits)
+   * @param color Color of frame 
    * @return the region itself
    */
   public Region highlight(String color) {
@@ -1746,7 +1752,7 @@ public class Region {
    * Sets the regions Highlighting border
    *
    * @param toEnable set overlay enabled or disabled
-   * @param color Color of frame
+   * @param color Color of frame (see method highlight(color))
    */
   private Region highlight(boolean toEnable, String color) {
     if (isOtherScreen()) {
@@ -1783,7 +1789,7 @@ public class Region {
    * if 0 - use the global Settings.SlowMotionDelay
    *
    * @param secs time in seconds
-   * @param color Color of frame
+   * @param color Color of frame (see method highlight(color))
    * @return the region itself
    */
   public Region highlight(float secs, String color) {
@@ -1816,7 +1822,7 @@ public class Region {
    * Show highlight in selected color
    * 
    * @param secs time in seconds
-   * @param color Color of frame
+   * @param color Color of frame (see method highlight(color))
    * @return this region
    */
   public Region highlight(int secs, String color) {
