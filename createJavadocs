@@ -15,4 +15,6 @@ echo $apisrc/ImagePath.java >>createJavadocsClasses
 echo $apisrc/Key.java >>createJavadocsClasses
 echo $apisrc/ObserverCallBack.java >>createJavadocsClasses
 echo $apisrc/ObserveEvent.java >>createJavadocsClasses
+echo $apisrc/App.java >>createJavadocsClasses
+echo $apisrc/Env.java >>createJavadocsClasses
 javadoc -public -classpath $apijar:$basicsjar:$nativesjar:$opencvjar -d target/docs @createJavadocsClasses
