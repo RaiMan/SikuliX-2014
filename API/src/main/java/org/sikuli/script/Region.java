@@ -2219,7 +2219,7 @@ public class Region {
           img = Image.create((String) ptn);
           if (img.isValid()) {
             lastSearchTime = (new Date()).getTime();
-            f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut());
+            f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), null);
             if (!f.hasNext()) {
               f.find(img);
             }
@@ -2238,7 +2238,7 @@ public class Region {
         if (((Pattern) ptn).isValid()) {
           img = ((Pattern) ptn).getImage();
           lastSearchTime = (new Date()).getTime();
-          f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut());
+          f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), (Pattern) ptn);
           if (!f.hasNext()) {
             f.find((Pattern) ptn);
           }
@@ -2249,7 +2249,7 @@ public class Region {
         if (((Image) ptn).isValid()) {
           img = ((Image) ptn);
           lastSearchTime = (new Date()).getTime();
-          f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut());
+          f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), null);
           if (!f.hasNext()) {
             f.find(img);
           }
@@ -2274,12 +2274,16 @@ public class Region {
     return m;
   }
 
-  private Finder checkLastSeenAndCreateFinder(Image img, double findTimeout) {
+  private Finder checkLastSeenAndCreateFinder(Image img, double findTimeout, Pattern ptn) {
     if (!Settings.UseImageFinder && Settings.CheckLastSeen && null != img.getLastSeen()) {
       Region r = Region.create(img.getLastSeen());
       if (this.contains(r)) {
         Finder f = new Finder(new Screen().capture(r), r);
-        f.find(new Pattern(img).similar(Settings.CheckLastSeenSimilar));
+        if (ptn == null) {
+          f.find(new Pattern(img).similar(Settings.CheckLastSeenSimilar));
+        } else {
+          f.find(new Pattern(ptn).similar(Settings.CheckLastSeenSimilar));
+        }
         if (f.hasNext()) {
           log(lvl, "Region: checkLastSeen: still there");
           return f;
