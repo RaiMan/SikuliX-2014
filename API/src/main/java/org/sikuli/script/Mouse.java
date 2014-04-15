@@ -32,14 +32,16 @@ public class Mouse {
   private boolean inUse = false;
   private boolean keep = false;
   private Object owner = null;
-  private Point lastPos;
+  private Point lastPos = null;
   private static boolean blocked = false;
+  private static boolean suspended = false;
 
   public static final int MouseMovedIgnore = 0;
   public static final int MouseMovedShow = 1;
   public static final int MouseMovedPause = 2;
   public static final int MouseMovedAction = 3;
   private static int mouseMovedResponse = MouseMovedIgnore;
+  private static ObserverCallBack callBack;
 
   protected Location mousePos;
   protected boolean clickDouble;
@@ -68,6 +70,22 @@ public class Mouse {
     }
     return mouse;
   }
+  
+  public static void reset() {
+    if (mouse == null) {
+      return;
+    }
+    unblock(get().getOwner());
+    get().let(get().getOwner());
+    get().let(get().getOwner());
+    up();
+    setMouseMovedResponse(MouseMovedIgnore);
+    mouse = null;
+  }
+  
+  private Object getOwner() {
+    return owner;
+  }
 
   /**
    * current setting what to do if mouse is moved outside Sikuli's mouse protection
@@ -82,14 +100,29 @@ public class Mouse {
    * - Mouse.MouseMovedIgnore (0) ignore it (default) <br>
    * - Mouse.MouseMovedShow (1) show and ignore it <br>
    * - Mouse.MouseMovedPause (2) show it and pause until user says continue <br>
-   * - Mouse.MouseMovedAction (3) perform a user defined action <br>
-   * 2 and 3 not implemented yet, 1 is used <br>
-   *
+   * (2 not implemented yet - 1 is used)
    * @param mouseMovedResponse
    */
   public static void setMouseMovedResponse(int mouseMovedResponse) {
-//TODO implement 2 and 3
-    Mouse.mouseMovedResponse = Math.max(1, Math.max(0,mouseMovedResponse));
+    if (mouseMovedResponse > -1 && mouseMovedResponse < 3) {
+      Mouse.mouseMovedResponse = mouseMovedResponse;
+    }
+  }
+  
+  /**
+   * what to do if mouse is moved outside Sikuli's mouse protection <br>
+   * only 3 is honored:<br>
+   * in case of event the user provided callBack.happened is called
+   * @param mouseMovedResponse
+   * @param callBack
+   */
+  public static void setMouseMovedResponse(int mouseMovedResponse, ObserverCallBack callBack) {
+    if (mouseMovedResponse == 3) {
+      if(callBack != null) {
+        Mouse.mouseMovedResponse = 3;
+        Mouse.callBack = callBack;
+      }
+    }
   }
 
   /**
@@ -233,6 +266,17 @@ public class Mouse {
       if (mouseMovedResponse > 0) {
         showMousePos(pos);
       }
+      if (mouseMovedResponse == 2) {
+//TODO implement 2
+        return;
+      }
+      if (mouseMovedResponse == 3) {
+//TODO implement 3
+        if (callBack != null) {
+          callBack.happened(new ObserveEvent("MouseMoved", ObserveEvent.Type.GENERIC, 
+                  lastPos, null, Region.create(new Location(pos), 1, 1), 0));
+        }
+      }
     }
   }
 
@@ -279,10 +323,10 @@ public class Mouse {
    * @return the location
    */
   public static Location click(Location loc, String action, Integer... args) {
-    getArgsClick(Mouse.get(), loc, action, args);
-    if (loc.isOtherScreen()) {
+    if (suspended || loc.isOtherScreen()) {
       return null;
     }
+    getArgsClick(Mouse.get(), loc, action, args);
     use();
     delay(Mouse.get().beforeWait);
     Settings.ClickDelay = Mouse.get().innerWait / 1000;
@@ -396,6 +440,9 @@ public class Mouse {
   }
 
   protected static int move(Location loc, Region region) {
+    if (suspended) {
+      return 0;
+    }
     if (loc != null) {
       IRobot r = loc.getRobotForPoint("mouseMove");
       if (r == null) {
@@ -424,6 +471,9 @@ public class Mouse {
   }
 
   protected static void down(int buttons, Region region) {
+    if (suspended) {
+      return;
+    }
     get().use(region);
     Screen.getPrimaryScreen().getRobot().mouseDown(buttons);
   }
@@ -446,6 +496,9 @@ public class Mouse {
   }
 
   protected static void up(int buttons, Region region) {
+    if (suspended) {
+      return;
+    }
     if (0 == Screen.getPrimaryScreen().getRobot().mouseUp(buttons)) {
       get().let(region);
     }
@@ -463,6 +516,9 @@ public class Mouse {
   }
 
   protected static void wheel(int direction, int steps, Region region) {
+    if (suspended) {
+      return;
+    }
     IRobot r = Screen.getPrimaryScreen().getRobot();
     get().use(region);
     Debug.log(3, "Region: wheel: %s steps: %d",

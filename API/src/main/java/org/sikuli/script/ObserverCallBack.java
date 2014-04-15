@@ -15,7 +15,7 @@ import java.util.EventListener;
  * <pre>
  * example:
  * aRegion.onAppear(anImage,
- *   new ObservingCallBack() {
+ *   new ObserverCallBack() {
  *     appeared(ObserveEvent e) {
  *       // do something
  *     }
