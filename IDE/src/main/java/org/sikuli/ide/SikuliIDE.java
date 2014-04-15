@@ -115,7 +115,7 @@ public class SikuliIDE extends JFrame {
   private static long start;
   private static File isRunning;
   private static FileOutputStream isRunningFile = null;
-  
+
   static {
   }
 
@@ -195,7 +195,7 @@ public class SikuliIDE extends JFrame {
     start = (new Date()).getTime();
 
     Settings.initScriptingSupport();
-    
+
     for (String e : args) {
       splashArgs[3] += e + " ";
     }
@@ -2377,9 +2377,9 @@ public class SikuliIDE extends JFrame {
 
   public void onStopRunning() {
     Debug.log(3, "StopRunning");
-    this.setVisible(true);
     _btnRun.stopRunning();
     _btnRunViz.stopRunning();
+    this.setVisible(true);
   }
 
   private void initHotkeys() {
