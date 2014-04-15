@@ -50,6 +50,10 @@ public class SikuliX {
     Debug.log(3, me + "cleanUp: %d", n);
     ScreenHighlighter.closeAll();
     Observing.cleanUp();
+    Mouse.reset();
+    //TODO move to class Keys after implementation
+    Screen.getPrimaryScreen().getRobot().keyUp();
+    //TODO what about remote screen sessions????
     if (CommandArgs.isIDE()) {
       //TODO reset selected options to defaults
     }

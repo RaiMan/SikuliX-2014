@@ -2376,9 +2376,10 @@ public class SikuliIDE extends JFrame {
   }
 
   public void onStopRunning() {
-    Debug.log(3, "StopRunning");
+    Debug.log(3, "StopRunning after AbortKey");
     _btnRun.stopRunning();
     _btnRunViz.stopRunning();
+    org.sikuli.script.SikuliX.cleanUp(-1);
     this.setVisible(true);
   }
 
