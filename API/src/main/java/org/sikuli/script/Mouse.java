@@ -10,6 +10,7 @@ import java.awt.MouseInfo;
 import java.awt.Point;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import java.util.Date;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 
@@ -274,7 +275,7 @@ public class Mouse {
 //TODO implement 3
         if (callBack != null) {
           callBack.happened(new ObserveEvent("MouseMoved", ObserveEvent.Type.GENERIC, 
-                  lastPos, null, Region.create(new Location(pos), 1, 1), 0));
+                  lastPos, new Location(pos), null, (new Date()).getTime()));
         }
       }
     }
