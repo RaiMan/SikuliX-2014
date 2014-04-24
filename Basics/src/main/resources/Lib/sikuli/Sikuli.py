@@ -427,5 +427,5 @@ def _exposeAllMethods(anyObject, saved, theGlobals, exclude_list):
     return tosave
 
 ############### set SCREEN as primary screen at startup ################
-#use(Screen(1))
+use()
 

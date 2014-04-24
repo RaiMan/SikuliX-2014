@@ -122,6 +122,37 @@ module SikuliX4Ruby
     SikuliScript.shelp
   end
 
+  #TODO: check it after Env Java-class refactoring
+  java_import org.sikuli.script.Env
+  java_import org.sikuli.basics.HotkeyListener
+
+  class Env  # :nodoc: all
+    class RHotkeyListener < HotkeyListener
+       def initialize (block); super(); @block=block; end
+       def hotkeyPressed event; @block.call event; end
+     end
+  end
+
+  ##
+  # Register hotkeys
+  #
+  # Example:
+  #    addHotkey( Key::F1, KeyModifier::ALT + KeyModifier::CTRL ) do
+  #      popup 'hallo', 'Title'
+  #    end
+  #
+  def addHotkey key, modifiers, &block
+    Env.addHotkey( key, modifiers, Env::RHotkeyListener.new(block) )
+  end
+
+  ##
+  # Unregister hotkeys
+  #
+  # Example:
+  #    removeHotkey( Key::F1, KeyModifier::ALT + KeyModifier::CTRL )
+  def removeHotkey key, modifiers
+    Env.removeHotkey key, modifiers
+  end
 end
 
 # This method allow to call "undotted" methods that belong to

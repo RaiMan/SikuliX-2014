@@ -1010,6 +1010,17 @@ public class Region {
   }
 
   // ****************************************************
+  
+/**
+   * resets this region (usually a Screen object) to the coordinates of the containing screen
+   *
+   * Because of the wanted side effect for the containing screen, this should only be used with screen objects. 
+   * For Region objects use setRect() instead.
+   */
+  public void setROI() {
+    setROI(getScreen().getBounds());
+  }
+  
   /**
    * resets this region to the given location, and size <br> this might move the region even to another screen
    *
@@ -1051,6 +1062,15 @@ public class Region {
    */
   public void setROI(Region reg) {
     setROI(reg.getX(), reg.getY(), reg.getW(), reg.getH());
+  }
+
+  /**
+   * A function only for backward compatibility - Only makes sense with Screen objects
+   * 
+   * @return the Region being the current ROI of the containing Screen
+   */
+  public Region getROI() {
+    return new Region(getScreen().getRect());
   }
 
   // ****************************************************

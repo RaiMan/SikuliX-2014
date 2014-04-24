@@ -7,7 +7,6 @@
 package org.sikuli.script;
 
 import org.sikuli.basics.Settings;
-import java.awt.image.BufferedImage;
 import org.sikuli.natives.FindResult;
 
 /**
@@ -174,15 +173,11 @@ public class Match extends Region implements Comparable<Match> {
   }
 
   /**
-   * get the image used for searching as in-memory image
+   * get the image used for searching 
    * @return a buffered image or null
    */
-  public BufferedImage getImage() {
-    if (image == null) {
-      return null;
-    } else {
-      return image.get();
-    }
+  public Image getImage() {
+    return image;
   }
 
   /**

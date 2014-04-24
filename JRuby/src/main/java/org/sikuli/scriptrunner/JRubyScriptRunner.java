@@ -11,6 +11,9 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.IScriptRunner;
 
 import java.io.File;
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 //import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
@@ -260,7 +263,9 @@ public class JRubyScriptRunner implements IScriptRunner {
 			} else {
 				filename = ruFile.getAbsolutePath();
 				if (scriptPaths != null) {
-					FileReader script = new FileReader(ruFile.getAbsolutePath());
+					BufferedReader script = new BufferedReader(
+						new InputStreamReader(
+							new FileInputStream(ruFile.getAbsolutePath()), "UTF-8"));
 // TODO implement compile only !!!
 					if (scriptPaths[0].toUpperCase().equals(COMPILE_ONLY)) {
 						log(lvl, "runRuby: running COMPILE_ONLY");

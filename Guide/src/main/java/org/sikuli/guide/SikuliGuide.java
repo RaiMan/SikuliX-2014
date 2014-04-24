@@ -35,11 +35,6 @@ public class SikuliGuide extends OverlayTransparentWindow implements EventObserv
   static public final int LAST = 2;
   static public final int SIMPLE = 4;
   final float DIMMING_OPACITY = 0.5f;
-  boolean _debug = false;
-
-  public void setDebug() {
-    _debug = true;
-  }
 
   Robot robot;
   Region _region;
@@ -51,12 +46,18 @@ public class SikuliGuide extends OverlayTransparentWindow implements EventObserv
   ClickableWindow clickableWindow = null;
   SikuliGuideBeam beam = null;
 
+  /**
+   * create a new guide overlay on whole primary screen
+   */
   public SikuliGuide() {
     super(new Color(0.1f, 0f, 0f, 0.1f), null);
     super.addObserver(this);
     init(new Screen());
   }
 
+  /**
+   * create a new guide overlay on given region
+   */
   public SikuliGuide(Region region) {
     super(new Color(0.1f, 0f, 0f, 0.1f), null);
     super.addObserver(this);
@@ -710,6 +711,11 @@ public class SikuliGuide extends OverlayTransparentWindow implements EventObserv
    *
    * }*///</editor-fold>
 
+  /**
+   * create a rectangle in this guide plane and add to front
+   * @return the rectangle
+   */
+  
   public SikuliGuideComponent rectangle() {
     SikuliGuideComponent gc = new SikuliGuideRectangle();
     gc.setGuide(this);
