@@ -54,7 +54,7 @@ public class SikuliXforJython {
           }
           sik = new File(FileManager.slashify(e.toString(), true) + sikuliStuff);
           if (sik.exists()) {
-            Debug.error("Sikuli Jython API already on sys.path, but not at sikuli-java.jar/Lib");
+            Debug.error("Sikuli Jython API already on sys.path, but not at sikulixapi.jar/Lib");
             Debug.error("Found here: " + FileManager.slashify(e.toString(), true));
             sik = null;
             break;
