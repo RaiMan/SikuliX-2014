@@ -267,7 +267,7 @@ public class App {
 	 */
 	public static void setClipboard(String text) {
     Clipboard.putText(Clipboard.PLAIN, Clipboard.UTF8,
-            Clipboard.BYTE_BUFFER, text);
+            Clipboard.CHAR_BUFFER, text);
   }
 
   @Override
