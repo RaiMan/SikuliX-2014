@@ -1973,7 +1973,7 @@ public class SikuliIDE extends JFrame {
         public void run() {
           EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
           File tmpFile;
-          tmpFile = FileManager.createTempFile(Settings.EndingTypes.get(codePane.getSikuliContentType()));
+          tmpFile = FileManager.createTempFile(Settings.TypeEndings.get(codePane.getSikuliContentType()));
           if (tmpFile == null) {
             return;
           }
@@ -2014,10 +2014,10 @@ public class SikuliIDE extends JFrame {
       addScriptCode(srunner);
       try {
         ImagePath.resetBundlePath(path.getAbsolutePath());
-        int ret = srunner.runScript(sfile, path,
-                Settings.getArgs(),
-                new String[]{parent.getAbsolutePath(),
-                  _mainPane.getTitleAt(_mainPane.getSelectedIndex())});
+				String tabtitle = _mainPane.getTitleAt(_mainPane.getSelectedIndex());
+				if (tabtitle.startsWith("*")) tabtitle = tabtitle.substring(1);
+        int ret = srunner.runScript(sfile, path, Settings.getArgs(),
+								new String[]{parent.getAbsolutePath(), tabtitle});
         addErrorMark(ret);
         srunner.close();
       } catch (Exception e) {
