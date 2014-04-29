@@ -4,7 +4,7 @@
 #include "sikuli-debug.h"
 #include <iostream>
 #include "opencv.hpp"
-//#include "cvgui.h" not used 
+//#include "cvgui.h" not used
 #include "tessocr.h"
 %}
 
@@ -219,6 +219,8 @@ namespace sikuli {
 
       static void setParameter(std::string param, float val);
       static float getParameter(std::string param);
+      static void setSParameter(std::string param, std::string val);
+      static std::string getSParameter(std::string param);
 
    private:
 

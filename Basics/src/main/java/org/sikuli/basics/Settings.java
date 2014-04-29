@@ -227,6 +227,7 @@ public class Settings {
   public static String BundlePath = null;
   public static boolean OcrTextSearch = false;
   public static boolean OcrTextRead = false;
+	public static String OcrLanguage = "eng";
 
   /**
    * true = start slow motion mode, false: stop it (default: false) show a visual for SlowMotionDelay seconds (default:

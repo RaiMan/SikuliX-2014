@@ -9,7 +9,7 @@ export DEVNATIVE=../../../Natives/src/main/native
 export DEVLIBS=../../src/main/resources/META-INF/libs/mac/libs$1
 
 echo ----- create JNI header for MacUtil
-. runJNISetupForMacUtil.sh
+#. runJNISetupForMacUtil.sh
 
 echo ----- build libMacUtil.dylib
 . runBuildMacUtil.sh
@@ -17,13 +17,13 @@ echo ----- build libMacUtil.dylib
 echo ----- create JNI header for MacHotkeyManager
 #. runJNISetupForMacHotkeyManager.sh
 
-echo -----  build libMacHotkeyManager.dylib 
-. runBuildMacHotkeyManager.sh
+echo -----  build libMacHotkeyManager.dylib
+#. runBuildMacHotkeyManager.sh
 
 echo -----  use SWIG to create Java interface sources and native wrapper for VisionProxy
 . runSwigForVision.sh
 
-echo -----  build libVisionProxy.dylib 
+echo -----  build libVisionProxy.dylib
 . runBuildVisionProxy.sh
 
 echo -----  switch external refs to point to @loader_path/

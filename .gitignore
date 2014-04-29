@@ -4,3 +4,4 @@ nb*
 *.iml
 stuff/
 *.versionsBackup
+*.log
