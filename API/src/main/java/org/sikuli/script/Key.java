@@ -784,7 +784,7 @@ public class Key {
     s.wait(3.0F);
 
     Location btnOK = s.find("SikuliLogo").getCenter();
-    Location txtArea = btnOK.offset(0, 200);
+    Location txtArea = btnOK.offset(0, 400);
     s.click(txtArea);
     s.wait(1.0F);
     String[] mods = new String[]{"", "S", "A", "SA"};
@@ -805,6 +805,10 @@ public class Key {
         c = "" + keysx.charAt(n);
         s.paste(c);
         s.type(" ");
+        if (Mouse.hasMoved()) {
+          s.click(txtArea);
+          s.wait(0.3F);
+        }
         s.write(String.format("%s%s ", modx, c));
         if ("=".equals(c) || "]".equals(c) || "\\".equals(c)) {
           s.paste("\n");
@@ -857,6 +861,9 @@ public class Key {
       Debug.log(3, mod + "\n" + kSet);
       nOld = 0;
       for (int i = 0; i < kSet.length(); i++) {
+        if (i + 3 > kSet.length()) {
+          break;
+        }
         if (!" ".equals("" + kSet.charAt(i + 3))) {
           offset = 3;
         }

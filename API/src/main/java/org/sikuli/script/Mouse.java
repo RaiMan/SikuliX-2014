@@ -280,6 +280,14 @@ public class Mouse {
       }
     }
   }
+  
+  public static boolean hasMoved() {
+    Point pos = MouseInfo.getPointerInfo().getLocation();
+    if (Mouse.get().lastPos.x != pos.x || Mouse.get().lastPos.y != pos.y) {
+      return true;
+    }
+    return false;
+  }
 
   private void showMousePos(Point pos) {
     Location lPos = new Location(pos);
