@@ -17,6 +17,7 @@ package org.sikuli.ide;
 // RJHM van den Bergh , rvdb@comweb.nl
 import org.sikuli.basics.PreferencesUser;
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
@@ -25,6 +26,8 @@ import java.util.regex.*;
 import javax.swing.*;
 import javax.swing.text.*;
 import javax.swing.text.html.*;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.IScriptRunner;
 import org.sikuli.basics.Settings;
@@ -45,7 +48,32 @@ public class EditorConsolePane extends JPanel implements Runnable {
   private Thread[] reader;
   private boolean quit;
   private PipedInputStream[] pin;
-  Thread errorThrower; // just for testing (Throws an Exception at this Console
+  private JPopupMenu popup;
+  Thread errorThrower; // just for testing (Throws an Exception at this Console)
+
+
+  class PopupListener extends MouseAdapter {
+    JPopupMenu popup;
+
+    PopupListener(JPopupMenu popupMenu) {
+      popup = popupMenu;
+    }
+
+    public void mousePressed(MouseEvent e) {
+      maybeShowPopup(e);
+    }
+
+    public void mouseReleased(MouseEvent e) {
+      maybeShowPopup(e);
+    }
+
+    private void maybeShowPopup(MouseEvent e) {
+      if (e.isPopupTrigger()) {
+        popup.show(e.getComponent(), e.getX(), e.getY());
+      }
+    }
+  }
+
 
   public EditorConsolePane() {
     super();
@@ -60,31 +88,47 @@ public class EditorConsolePane extends JPanel implements Runnable {
     add(new JScrollPane(textArea), BorderLayout.CENTER);
 
     if (ENABLE_IO_REDIRECT) {
-			int npipes = 2;
-			NUM_PIPES = npipes * Settings.scriptRunner.size();
-			pin = new PipedInputStream[NUM_PIPES];
-			reader = new Thread[NUM_PIPES];
+      int npipes = 2;
+      NUM_PIPES = npipes * Settings.scriptRunner.size();
+      pin = new PipedInputStream[NUM_PIPES];
+      reader = new Thread[NUM_PIPES];
       for (int i = 0; i < NUM_PIPES; i++) {
         pin[i] = new PipedInputStream();
       }
 
-			int irunner = 0;
-			for (IScriptRunner srunner : Settings.scriptRunner.values()) {
-				if (srunner.doSomethingSpecial("redirect", pin)) {
-					Debug.log(2, "EditorConsolePane: stdout/stderr redirected to console"
-									+ " for " + srunner.getName());
-					quit = false; // signals the Threads that they should exit
+      int irunner = 0;
+      for (IScriptRunner srunner : Settings.scriptRunner.values()) {
+        if (srunner.doSomethingSpecial("redirect", pin)) {
+          Debug.log(2, "EditorConsolePane: stdout/stderr redirected to console"
+                       + " for " + srunner.getName());
+          quit = false; // signals the Threads that they should exit
 
-					// Starting two seperate threads to read from the PipedInputStreams
-					for (int i = irunner * npipes; i < irunner * npipes + npipes; i++) {
-						reader[i] = new Thread(this);
-						reader[i].setDaemon(true);
-						reader[i].start();
-					}
-					irunner++;
-				}
-			}
+          // Starting two seperate threads to read from the PipedInputStreams
+          for (int i = irunner * npipes; i < irunner * npipes + npipes; i++) {
+            reader[i] = new Thread(this);
+            reader[i].setDaemon(true);
+            reader[i].start();
+          }
+          irunner++;
+        }
+      }
     }
+
+
+    //Create the popup menu.
+    popup = new JPopupMenu();
+    JMenuItem menuItem = new JMenuItem("Clear messages");
+    // Add ActionListener that clears the textArea
+    menuItem.addActionListener(new ActionListener() {
+      public void actionPerformed(ActionEvent e) {
+        textArea.setText("");
+      }
+    });
+    popup.add(menuItem);
+
+    //Add listener to components that can bring up popup menus.
+    MouseListener popupListener = new PopupListener(popup);
+    textArea.addMouseListener(popupListener);
   }
 
   private void appendMsg(String msg) {
@@ -155,7 +199,6 @@ public class EditorConsolePane extends JPanel implements Runnable {
     } catch (Exception e) {
       Debug.error(me + "Console reports an internal error:\n%s", e.getMessage());
     }
-
   }
 
   public synchronized String readLine(PipedInputStream in) throws IOException {
