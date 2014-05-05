@@ -85,7 +85,7 @@ public class RunSetup {
 	private static long start;
 	private static boolean runningSetup = false;
 	private static boolean generallyDoUpdate = false;
-	public static String timestampBuilt = "2014-02-28-18";
+	public static String timestampBuilt = "2014-05-05-18";
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
@@ -441,7 +441,7 @@ public class RunSetup {
 
     //TODO Windows 8 HKLM/SOFTWARE/JavaSoft add Prefs ????
 		//</editor-fold>
-    
+
 		//<editor-fold defaultstate="collapsed" desc="checking update/beta">
 		if (!runningUpdate && !isUpdateSetup) {
 			String uVersion = "";
@@ -780,7 +780,7 @@ public class RunSetup {
     String downloadedFiles = "";
 		if (!isUpdateSetup) {
 			if (getIDE || getJava || getRServer) {
-        
+
 				if (!proxyMsg.isEmpty()) {
 					msg += proxyMsg + "\n";
 				}
@@ -788,15 +788,15 @@ public class RunSetup {
           downloadedFiles += downloadIDE + " - ";
 					msg += "\n--- Package 1 ---\n" + downloadIDE + " (IDE/Scripting)";
 					if (getJython) {
-            downloadedFiles += downloadJython + " - "; 
+            downloadedFiles += downloadJython + " - ";
 						msg += "\n - with Jython";
 					}
 					if (getJRuby) {
-            downloadedFiles += downloadJRuby + " - "; 
+            downloadedFiles += downloadJRuby + " - ";
 						msg += "\n - with JRuby";
 					}
 //					if (Settings.isMac()) {
-//            downloadedFiles += downloadMacApp + " - "; 
+//            downloadedFiles += downloadMacApp + " - ";
 //						msg += "\n" + downloadMacApp + " (Mac-App)";
 //					}
 				}
@@ -804,7 +804,7 @@ public class RunSetup {
 					if (getIDE) {
 						msg += "\n";
 					}
-          downloadedFiles += downloadJava + " - "; 
+          downloadedFiles += downloadJava + " - ";
 					msg += "\n--- Package 2 ---\n" + downloadJava + " (Java API)";
 				}
 				if (getTess || getRServer) {
@@ -813,11 +813,11 @@ public class RunSetup {
 					}
 					msg += "\n--- Additions ---";
 					if (getTess) {
-            downloadedFiles += downloadTess + " - "; 
+            downloadedFiles += downloadTess + " - ";
 						msg += "\n" + downloadTess + " (Tesseract)";
 					}
 					if (getRServer) {
-            downloadedFiles += downloadRServer + " - "; 
+            downloadedFiles += downloadRServer + " - ";
 						msg += "\n" + downloadRServer + " (RemoteServer)";
 					}
 				}
@@ -1250,7 +1250,7 @@ public class RunSetup {
 	}
 
   private static boolean handleTempAfter(String temp, String target) {
-    boolean success = true; 
+    boolean success = true;
     FileManager.deleteFileOrFolder(target);
     success &= !new File(target).exists();
     if (success) {
