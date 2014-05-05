@@ -1301,7 +1301,7 @@ public class Region {
 
   /**
    * create a region enlarged w pixels on left and right side
-	 * and h pixels at top and bottom
+   * and h pixels at top and bottom
    *
    * @param w
    * @param h
@@ -1315,7 +1315,7 @@ public class Region {
 
   /**
    * create a region enlarged l pixels on left and r pixels right side
-	 * and t pixels at top side and b pixels a bottom side.
+   * and t pixels at top side and b pixels a bottom side.
    * negative values go inside (shrink)
    *
    * @param l add to the left
@@ -1338,7 +1338,7 @@ public class Region {
 
   /**
    * positive offset goes to the right.
-	 * might be off current screen
+   * might be off current screen
    *
    * @return point with given offset horizontally to middle point on right edge
    */
@@ -1348,7 +1348,7 @@ public class Region {
 
   /**
    * create a region right of the right side with same height.
-	 * the new region extends to the right screen border<br>
+   * the new region extends to the right screen border<br>
    * use grow() to include the current region
    *
    * @return the new region
@@ -1360,8 +1360,8 @@ public class Region {
 
   /**
    * create a region right of the right side with same height and given width.
-   * negative width creates the right part with width inside the region
-	 * <br />use grow() to include the current region
+   * negative width creates the right part with width inside the region<br />
+   * use grow() to include the current region
    *
    * @param width
    * @return the new region
@@ -1783,7 +1783,7 @@ public class Region {
       return this;
     }
     Debug.action("toggle highlight " + toString() + ": " + toEnable +
-    		(color != null ? " color: " + color : ""));
+                (color != null ? " color: " + color : ""));
     if (toEnable) {
       overlay = new ScreenHighlighter(getScreen(), color);
       overlay.highlight(this);
@@ -1838,13 +1838,13 @@ public class Region {
    * @return this region
    */
   public Region highlight(int secs) {
-	return highlight(secs, null);
+    return highlight(secs, null);
   }
 
 
   /**
    * Show highlight in selected color
-   * 
+   *
    * @param secs time in seconds
    * @param color Color of frame (see method highlight(color))
    * @return this region
@@ -2542,9 +2542,8 @@ public class Region {
   public boolean hasObserver() {
     if (regionObserver != null) {
       return regionObserver.hasObservers();
-    } else {
-      return false;
     }
+    return false;
   }
 
   /**
@@ -2607,38 +2606,38 @@ public class Region {
    * and notify the given observer about this event<br />
    * for details about the observe event handler: {@link ObserverCallBack}<br />
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target
    * @param observer
    * @return the event's name
    */
   public <PSI> String onAppear(PSI target, Object observer) {
-		return onAppearDo(target, observer);
-	}
+    return onAppearDo(target, observer);
+  }
 
   /**
    * a subsequently started observer in this region should wait for target
    * success and details about the event can be obtained using @{link Observing}<br />
    * for details about the observe event handler: {@link ObserverCallBack}<br />
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target
    * @return the event's name
    */
   public <PSI> String onAppear(PSI target) {
-		return onAppearDo(target, null);
-	}
+    return onAppearDo(target, null);
+  }
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
-	 * @param <PSI> Pattern, String or Image
-	 * @param target
-	 * @param observer
-	 * @return the event's name
+   * @param <PSI> Pattern, String or Image
+   * @param target
+   * @param observer
+   * @return the event's name
    */
   public <PSI> String onAppearJ(PSI target, Object observer) {
-		return onAppearDo(target, observer);
-	}
+    return onAppearDo(target, observer);
+  }
 
   private <PSI> String onAppearDo(PSI target, Object observer) {
     String name = Observing.add(this,
@@ -2653,38 +2652,38 @@ public class Region {
    * and notify the given observer about this event<br />
    * for details about the observe event handler: {@link ObserverCallBack}<br />
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target
    * @param observer
    * @return the event's name
    */
   public <PSI> String onVanish(PSI target, Object observer) {
-		return onVanishDo(target, observer);
-	}
+    return onVanishDo(target, observer);
+  }
 
   /**
    * a subsequently started observer in this region should wait for the target to vanish
    * success and details about the event can be obtained using @{link Observing}<br />
    * for details about the observe event handler: {@link ObserverCallBack}<br />
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target
    * @return the event's name
    */
   public <PSI> String onVanish(PSI target) {
-		return onVanishDo(target, null);
-	}
+    return onVanishDo(target, null);
+  }
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
-	 * @param <PSI> Pattern, String or Image
-	 * @param target
-	 * @param observer
-	 * @return the event's name
+   * @param <PSI> Pattern, String or Image
+   * @param target
+   * @param observer
+   * @return the event's name
    */
   public <PSI> String onVanishJ(PSI target, Object observer) {
-		return onVanishDo(target, observer);
-	}
+    return onVanishDo(target, observer);
+  }
 
   private <PSI> String onVanishDo(PSI target, Object observer) {
     String name = Observing.add(this,
@@ -2746,9 +2745,9 @@ public class Region {
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
-	 * @param minSize
-	 * @param observer
-	 * @return the event's name
+   * @param minSize
+   * @param observer
+   * @return the event's name
    */
   public String onChangeJ(int minSize, Object observer) {
     if (minSize == 0) {
@@ -2767,9 +2766,9 @@ public class Region {
 
   /**
    * start an observer in this region that runs forever (use stopObserving() in handler)
- for details about the observe event handler: {@link ObserverCallBack}
+   * for details about the observe event handler: {@link ObserverCallBack}
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
-	 * @return false if not possible, true if events have happened
+   * @return false if not possible, true if events have happened
    */
   public boolean observe() {
     return observe(Float.POSITIVE_INFINITY);
@@ -2788,9 +2787,9 @@ public class Region {
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
-	 * @param secs
-	 * @param bg
-	 * @return false if not possible, true if events have happened
+   * @param secs
+   * @param bg
+   * @return false if not possible, true if events have happened
    */
   public boolean observeJ(double secs, boolean bg) {
     if (bg) {
@@ -2867,11 +2866,10 @@ public class Region {
     Thread observeThread = new Thread(new ObserverThread(secs));
     observeThread.start();
     log(lvl, "observeInBackground now running");
-		return true;
+    return true;
   }
 
   private class ObserverThread implements Runnable {
-
     private double time;
 
     ObserverThread(double time) {
