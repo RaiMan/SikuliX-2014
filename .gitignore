@@ -5,3 +5,5 @@ nb*
 stuff/
 *.versionsBackup
 *.log
+*.o
+*.o.d

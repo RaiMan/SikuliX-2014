@@ -63,9 +63,9 @@ extLibs="$extLibs $LIBS/libopencv_highgui$OCV.dll"
 
 echo -- finally linking
 if [  -e /usr/local32 ]; then
-	g++  -shared -s  -dynamic -o libs64/$MOD.dll $buildLibs $extLibs >buildLink.txt 2>&1
+	g++  -shared -s  -dynamic -o libs64/$MOD.dll $buildLibs $extLibs >buildLink.log 2>&1
 	ls -l libs64
 else
-	g++  -shared -s  -dynamic -o libs32/$MOD.dll $buildLibs $extLibs 
+	g++  -shared -s  -dynamic -o libs32/$MOD.dll $buildLibs $extLibs >buildLink.log 2>&1
 	ls -l libs32
 fi 
