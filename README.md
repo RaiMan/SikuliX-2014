@@ -2,15 +2,9 @@
 ============
 
 <hr />
-Project paused until 2014, April 22nd 
-============
- - no 1.1.0-Beta1 available yet (planned now for April 25th)
- - still having some annoying little bugs
- - having some other private priorities
-
-If you do not want to wait:<br />
-Look [here](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-produce-the-ready_to_use-jar-packages) for complete information on how to build the ready-to-use packages.
-
+May 5th, 2014: 1.1.0-Beta1 is out
+-----------------
+[look here](https://launchpad.net/sikuli/sikulix/1.1.0)
 <hr />
 
 <hr />
