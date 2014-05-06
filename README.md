@@ -4,7 +4,8 @@
 <hr />
 May 5th, 2014: 1.1.0-Beta1 is out
 -----------------
-[look here](https://launchpad.net/sikuli/sikulix/1.1.0)
+... there seem to be problems on Windows XP/7 with the native library WinUtil.dll. <br />
+[for download look here](https://launchpad.net/sikuli/sikulix/1.1.0)
 <hr />
 
 <hr />
