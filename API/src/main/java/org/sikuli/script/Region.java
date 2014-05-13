@@ -1010,17 +1010,17 @@ public class Region {
   }
 
   // ****************************************************
-  
+
 /**
    * resets this region (usually a Screen object) to the coordinates of the containing screen
    *
-   * Because of the wanted side effect for the containing screen, this should only be used with screen objects. 
+   * Because of the wanted side effect for the containing screen, this should only be used with screen objects.
    * For Region objects use setRect() instead.
    */
   public void setROI() {
     setROI(getScreen().getBounds());
   }
-  
+
   /**
    * resets this region to the given location, and size <br> this might move the region even to another screen
    *
@@ -1066,7 +1066,7 @@ public class Region {
 
   /**
    * A function only for backward compatibility - Only makes sense with Screen objects
-   * 
+   *
    * @return the Region being the current ROI of the containing Screen
    */
   public Region getROI() {
@@ -1761,9 +1761,9 @@ public class Region {
    * (lowercase and uppercase can be mixed, internally transformed to all uppercase) <br />
    * - these colornames exactly written: lightGray, LIGHT_GRAY, darkGray and DARK_GRAY <br />
    * - a hex value like in HTML: #XXXXXX (max 6 hex digits)
-   * - an RGB specification as: #rrrgggbbb where rrr, ggg, bbb are integer values in range 0 - 255 
+   * - an RGB specification as: #rrrgggbbb where rrr, ggg, bbb are integer values in range 0 - 255
    * padded with leading zeros if needed (hence exactly 9 digits)
-   * @param color Color of frame 
+   * @param color Color of frame
    * @return the region itself
    */
   public Region highlight(String color) {
@@ -1964,7 +1964,7 @@ public class Region {
   }
 
   /**
-   * Match find( Pattern/String ) finds the given pattern on the screen and returns the best match. If AutoWaitTimeout
+   * finds the given Pattern, String or Image in the region and returns the best match. If AutoWaitTimeout
    * is set, this is equivalent to wait().
    *
    * @param target A search criteria
@@ -1979,7 +1979,7 @@ public class Region {
     while (true) {
       try {
         lastMatch = doFind(target, null);
-      } catch (Exception ex) {
+      } catch (IOException ex) {
         if (ex instanceof IOException) {
           if (handleFindFailedImageMissing(target)) {
             continue;
@@ -2002,8 +2002,7 @@ public class Region {
   }
 
   /**
-   * Iterator&lt;Match&gt; searchAll( Pattern/String/Image ) finds the given pattern on the screen and returns the best
-   * match. If AutoWaitTimeout is set, this is equivalent to wait().
+   * finds all occurences of the given Pattern, String or Image in the region and returns an Iterator of Matches.
    *
    * @param target A search criteria
    * @return All elements matching
@@ -2038,11 +2037,11 @@ public class Region {
   }
 
   /**
-   * Waits for the Pattern, String or Image to appear
+   * Waits for the Pattern, String or Image to appear until the AutoWaitTimeout value is exceeded.
    *
    * @param target The target to search for
    * @return The found Match
-   * @throws FindFailed
+   * @throws FindFailed if the Find operation finally failed
    */
   public <PSI> Match wait(PSI target) throws FindFailed {
     return wait(target, autoWaitTimeout);
@@ -2059,9 +2058,13 @@ public class Region {
   public <PSI> Match wait(PSI target, double timeout) throws FindFailed {
     RepeatableFind rf;
     lastMatch = null;
+		String targetStr = target.toString();
+		if (target instanceof String) {
+			targetStr = targetStr.trim();
+		}
     while (true) {
       try {
-        log(2, "find: waiting for " + target + " to appear");
+        log(2, "find: waiting for %s to appear", targetStr);
         rf = new RepeatableFind(target);
         rf.repeat(timeout);
         lastMatch = rf.getMatch();
@@ -2078,10 +2081,10 @@ public class Region {
         if (rf._image != null) {
           rf._image.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         }
-        log(lvl, "find: %s has appeared \nat %s", target, lastMatch);
+        log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
         break;
       }
-      log(2, "find: " + target + " has not appeared.");
+      log(2, "find: %s has not appeared", targetStr);
       if (!handleFindFailed(target)) {
         return null;
       }
@@ -2092,7 +2095,8 @@ public class Region {
   /**
    * Check if target exists (with the default autoWaitTimeout)
    *
-   * @param target Pattern or String
+	 * @param <PSI> Pattern, String or Image
+   * @param target Pattern, String or Image
    * @return the match (null if not found or image file missing)
    */
   public <PSI> Match exists(PSI target) {
@@ -2103,15 +2107,19 @@ public class Region {
    * Check if target exists with a specified timeout<br>
    * timout = 0: returns immediately after first search
    *
-   * @param target Pattern, String or Image
+   * @param target The target to search for
    * @param timeout Timeout in seconds
    * @return the match (null if not found or image file missing)
    */
   public <PSI> Match exists(PSI target, double timeout) {
     lastMatch = null;
+		String targetStr = target.toString();
+		if (target instanceof String) {
+			targetStr = targetStr.trim();
+		}
     while (true) {
       try {
-        log(lvl, "exists: waiting for " + target + " to appear");
+        log(2, "exists: waiting for %s to appear", targetStr);
         RepeatableFind rf = new RepeatableFind(target);
         if (rf.repeat(timeout)) {
           lastMatch = rf.getMatch();
@@ -2120,7 +2128,7 @@ public class Region {
           if (img != null) {
             img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
           }
-          log(lvl, "exists: %s has appeared \nat %s", target, lastMatch);
+	        log(lvl, "exists: %s has appeared \nat %s", targetStr, lastMatch);
           return lastMatch;
         } else {
           if (!handleFindFailedQuietly(target)) {
@@ -2135,7 +2143,7 @@ public class Region {
         }
       }
     }
-    log(2, "exists: " + target + " has not appeared.");
+    log(2, "exists: %s has not appeared", targetStr);
     return null;
   }
 
@@ -2145,6 +2153,7 @@ public class Region {
    * @param text
    * @param timeout
    * @return the matched region containing the text
+	 * @throws org.sikuli.script.FindFailed
    */
   public Match findText(String text, double timeout) throws FindFailed {
     // the leading/trailing tab is used to internally switch to text search directly
@@ -2156,16 +2165,18 @@ public class Region {
    *
    * @param text
    * @return the matched region containing the text
+	 * @throws org.sikuli.script.FindFailed
    */
   public Match findText(String text) throws FindFailed {
     return findText(text, autoWaitTimeout);
   }
 
   /**
-   * Use findAllText() instead of find() in cases where the given string could be misinterpreted as an image filename
+   * Use findAllText() instead of findAll() in cases where the given string could be misinterpreted as an image filename
    *
    * @param text
    * @return the matched region containing the text
+	 * @throws org.sikuli.script.FindFailed
    */
   public Iterator<Match> findAllText(String text) throws FindFailed {
     // the leading/trailing tab is used to internally switch to text search directly
@@ -2173,9 +2184,10 @@ public class Region {
   }
 
   /**
-   * boolean waitVanish(Pattern/String/Image target, timeout-sec) waits until target vanishes or timeout (in second) is
-   * passed
+   * waits until target vanishes or timeout (in seconds) is
+   * passed (AutoWaitTimeout)
    *
+	 * @param target The target to wait for it to vanish
    * @return true if the target vanishes, otherwise returns false.
    */
   public <PSI> boolean waitVanish(PSI target) {
@@ -2183,9 +2195,11 @@ public class Region {
   }
 
   /**
-   * boolean waitVanish(Pattern/String/Image target, timeout-sec) waits until target vanishes or timeout (in second) is
+   * waits until target vanishes or timeout (in seconds) is
    * passed
    *
+	 * @param target
+	 * @param timeout
    * @return true if target vanishes, false otherwise and if imagefile is missing.
    */
   public <PSI> boolean waitVanish(PSI target, double timeout) {
@@ -2249,10 +2263,12 @@ public class Region {
             throw new IOException("Region: doFind: Image not loadable: " + (String) ptn);
           }
         }
-        if (findingText) {
-          f = new Finder(getScreen().capture(x, y, w, h), this);
-          lastSearchTime = (new Date()).getTime();
-          f.findText((String) ptn);
+				if (findingText) {
+					if (TextRecognizer.getInstance() != null) {
+						f = new Finder(getScreen().capture(x, y, w, h), this);
+						lastSearchTime = (new Date()).getTime();
+						f.findText((String) ptn);
+					}
         }
       } else if (ptn instanceof Pattern) {
         if (((Pattern) ptn).isValid()) {
