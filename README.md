@@ -10,6 +10,8 @@ May 5th, 2014: 1.1.0-Beta1 is out
 
 <hr />
 **SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer)
+
+... based on Sikuli Script that was discontinued mid 2012 - [see the sources](https://github.com/sikuli/sikuli)
 <hr/>
 
 This Maven multi-module setup contains everything ...
