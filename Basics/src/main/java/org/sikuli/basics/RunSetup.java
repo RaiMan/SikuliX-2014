@@ -432,7 +432,7 @@ public class RunSetup {
 			popInfo("\n... not running from sikuli-setup.jar - using as download folder\n" + workDir);
 		}
 
-		log1(lvl, "Setup in: %s using: %s", workDir, (runningJar.contains("classes") ? "IDE" : runningJar));
+		log1(lvl, "Setup in: %s using: %s", workDir, (runningJar.contains("classes") ? "Development Project" : runningJar));
 		log1(lvl, "SikuliX Setup Build: %s %s", Settings.getVersionShort(), RunSetup.timestampBuilt);
 
 		File localJarIDE = new File(workDir, localIDE);
