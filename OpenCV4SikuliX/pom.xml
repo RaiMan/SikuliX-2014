@@ -20,7 +20,7 @@
 
   <groupId>org.sikuli</groupId>
   <artifactId>OpenCV4SikuliX</artifactId>
-  <version>2.4.7</version>
+  <version>2.4.8</version>
 
   <build>
     <defaultGoal>clean install</defaultGoal>
