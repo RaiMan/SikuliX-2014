@@ -587,7 +587,8 @@ public class Region {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="handle Settings">
-  /**
+	//TODO should be possible to reset to current global value resetXXX()
+	/**
    * true - (initial setting) should throw exception FindFailed if findX unsuccessful in this region<br> false - do not
    * abort script on FindFailed (might leed to null pointer exceptions later)
    *
@@ -613,7 +614,7 @@ public class Region {
 
   /**
    * the time in seconds a find operation should wait for the appearence of the target in this region<br> initial value
-   * 3 secs
+   * is the global AutoWaitTimeout setting at time of Region creation
    *
    * @param sec
    */
@@ -735,6 +736,7 @@ public class Region {
    * Sets a new Screen for this region.
    *
    * @param scr the containing screen object
+	 * @return
    */
   protected Region setScreen(Screen scr) {
     initScreen(scr);
@@ -745,6 +747,7 @@ public class Region {
    * Sets a new Screen for this region.
    *
    * @param id the containing screen object's id
+	 * @return
    */
   protected Region setScreen(int id) {
     return setScreen(Screen.getScreen(id));
@@ -1957,15 +1960,19 @@ public class Region {
       return false;
     } else if (response == FindFailedResponse.RETRY) {
       return true;
-    } else if (response == FindFailedResponse.ABORT) {
-      throw new FindFailed("can not find " + target + " on the screen.");
-    }
+		} else if (response == FindFailedResponse.ABORT) {
+			String targetStr = target.toString();
+			if (target instanceof String) {
+				targetStr = targetStr.trim();
+			}
+			throw new FindFailed(String.format("can not find %s in %s", targetStr, this.toStringShort()));
+		}
     return false;
   }
 
   /**
    * finds the given Pattern, String or Image in the region and returns the best match. If AutoWaitTimeout
-   * is set, this is equivalent to wait().
+   * is set, this is equivalent to wait(). Otherwise only one search attempt will be done.
    *
    * @param target A search criteria
    * @return If found, the element. null otherwise
@@ -1976,8 +1983,13 @@ public class Region {
       return wait(target, autoWaitTimeout);
     }
     lastMatch = null;
+		String targetStr = target.toString();
+		if (target instanceof String) {
+			targetStr = targetStr.trim();
+		}
     while (true) {
       try {
+        log(2, "find: waiting 0 secs for %s to appear in %s", targetStr, this.toStringShort());
         lastMatch = doFind(target, null);
       } catch (IOException ex) {
         if (ex instanceof IOException) {
@@ -1993,8 +2005,10 @@ public class Region {
         if (img != null) {
           img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         }
+	      log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
         return lastMatch;
       }
+	    log(2, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
       if (!handleFindFailed(target)) {
         return null;
       }
@@ -2003,6 +2017,7 @@ public class Region {
 
   /**
    * finds all occurences of the given Pattern, String or Image in the region and returns an Iterator of Matches.
+	 *
    *
    * @param target A search criteria
    * @return All elements matching
@@ -2010,6 +2025,10 @@ public class Region {
    */
   public <PSI> Iterator<Match> findAll(PSI target) throws FindFailed {
     lastMatches = null;
+		String targetStr = target.toString();
+		if (target instanceof String) {
+			targetStr = targetStr.trim();
+		}
     while (true) {
       try {
         if (autoWaitTimeout > 0) {
@@ -2064,7 +2083,7 @@ public class Region {
 		}
     while (true) {
       try {
-        log(2, "find: waiting for %s to appear", targetStr);
+        log(2, "find: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
         rf = new RepeatableFind(target);
         rf.repeat(timeout);
         lastMatch = rf.getMatch();
@@ -2084,7 +2103,7 @@ public class Region {
         log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
         break;
       }
-      log(2, "find: %s has not appeared", targetStr);
+	    log(2, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
       if (!handleFindFailed(target)) {
         return null;
       }
