@@ -5,7 +5,7 @@ version=$mversion.0
 base=`pwd`
 echo -
 echo ---
-echo ----- SikuliX collecting jars in $base 
+echo ----- SikuliX collecting jars in $base
 
 source=$base/Setup/target
 
@@ -13,8 +13,8 @@ dist=$base/../SikuliX-Setup
 if [ -e $dist ]; then
   rm -f -R $dist
 fi
-mkdir $dist 
-mkdir $dist/Downloads 
+mkdir $dist
+mkdir $dist/Downloads
 
 log=$dist/collectjars-log.txt
 
@@ -23,12 +23,18 @@ echo --- major   $mversion
 echo --- version --- $version >>$log
 echo --- major version --- $mversion >>$log
 
+echo --- the Java JDK in use
+java -version
+
+echo --- BE AWARE: must be 1.6+ / developed with 1.7 target 1.6 / 1.8 not yet tested enough
+read -p "Press [Enter] key to continue ... or [Ctrl-C] to terminate ..."
+
 echo ----- SourceBase $base >>$log
 if [ "$1" != "2" -a "$1" != "3" ]; then
   echo ----------------- running Maven clean install --- takes some time ...
   mvn clean install >>$log
   buildok=`grep -cim1 "BUILD FAILURE" $log`
-  if [ "$buildok" == "1" ];  then 
+  if [ "$buildok" == "1" ];  then
     echo -
     echo --
     echo ----
@@ -39,7 +45,7 @@ if [ "$1" != "2" -a "$1" != "3" ]; then
     echo $log
     echo correct the problems and run again
     echo ----------------------------------
-    exit 
+    exit
   fi
 fi
 
@@ -60,7 +66,7 @@ cp $source/sikulixsetup*.jar $dist/sikulixsetup-$mversion.jar
 ls -l $dist >>$log
 
 # ----------- Jars
-echo ----- copy Jars 
+echo ----- copy Jars
 echo --- copy Jars >>$log
 cp $source/Downloads/* $dist/Downloads
 ls -l $dist/Downloads >>$log
