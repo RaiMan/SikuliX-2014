@@ -21,6 +21,8 @@
 	<artifactId>Jygments4SikuliX</artifactId>
 	<version>1.1.0</version>
 
+  <name>Jygments4SikuliX</name>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -33,5 +35,4 @@
 			<version>2.3.1</version>
 		</dependency>
 	</dependencies>
-    <name>Jygments4SikuliX</name>
 </project>

@@ -322,7 +322,7 @@ public class Region {
   public Region(int X, int Y, int W, int H) {
     this(X, Y, W, H, null);
     this.rows = 0;
-    log(lvl, "Region: init: (%d, %d, %d, %d)", X, Y, W, H);
+    log(lvl, "init: (%d, %d, %d, %d)", X, Y, W, H);
   }
 
   /**
@@ -2119,7 +2119,7 @@ public class Region {
 		}
     while (true) {
       try {
-        log(2, "exists: waiting for %s to appear", targetStr);
+        log(2, "exists: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
         RepeatableFind rf = new RepeatableFind(target);
         if (rf.repeat(timeout)) {
           lastMatch = rf.getMatch();
@@ -2143,7 +2143,7 @@ public class Region {
         }
       }
     }
-    log(2, "exists: %s has not appeared", targetStr);
+    log(2, "exists: %s has not appeared [%d msec]", targetStr, lastFindTime);
     return null;
   }
 
@@ -2265,6 +2265,7 @@ public class Region {
         }
 				if (findingText) {
 					if (TextRecognizer.getInstance() != null) {
+						log(lvl, "doFind: Switching to TextSearch");
 						f = new Finder(getScreen().capture(x, y, w, h), this);
 						lastSearchTime = (new Date()).getTime();
 						f.findText((String) ptn);
@@ -2321,10 +2322,10 @@ public class Region {
           f.find(new Pattern(ptn).similar(Settings.CheckLastSeenSimilar));
         }
         if (f.hasNext()) {
-          log(lvl, "Region: checkLastSeen: still there");
+          log(lvl, "checkLastSeen: still there");
           return f;
         }
-        log(lvl, "Region: checkLastSeen: not there");
+        log(lvl, "checkLastSeen: not there");
       }
     }
     if (Settings.UseImageFinder) {
@@ -2902,7 +2903,7 @@ public class Region {
    * stops a running observer
    */
   public void stopObserver() {
-    log(lvl, "Region: observe: request to stop observer for " + this.toStringShort());
+    log(lvl, "observe: request to stop observer for " + this.toStringShort());
     observing = false;
   }
 
@@ -3704,14 +3705,14 @@ public class Region {
       ScreenImage simg = getScreen().capture(x, y, w, h);
       TextRecognizer tr = TextRecognizer.getInstance();
       if (tr == null) {
-        Debug.error("Region.text: text recognition is now switched off");
+        Debug.error("text: text recognition is now switched off");
         return "--- no text ---";
       }
       String textRead = tr.recognize(simg);
-      log(lvl, "Region.text: #(" + textRead + ")#");
+      log(lvl, "text: #(" + textRead + ")#");
       return textRead;
     }
-    Debug.error("Region.text: text recognition is currently switched off");
+    Debug.error("text: text recognition is currently switched off");
     return "--- no text ---";
   }
 
@@ -3728,13 +3729,13 @@ public class Region {
       ScreenImage simg = getScreen().capture(x, y, w, h);
       TextRecognizer tr = TextRecognizer.getInstance();
       if (tr == null) {
-        Debug.error("Region.text: text recognition is now switched off");
+        Debug.error("text: text recognition is now switched off");
         return null;
       }
-      log(lvl, "Region.listText");
+      log(lvl, "listText: scanning %s", this);
       return tr.listText(simg, this);
     }
-    Debug.error("Region.text: text recognition is currently switched off");
+    Debug.error("text: text recognition is currently switched off");
     return null;
   }
   //</editor-fold>

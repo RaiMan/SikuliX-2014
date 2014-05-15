@@ -22,7 +22,9 @@
   <artifactId>OpenCV4SikuliX</artifactId>
   <version>2.4.8</version>
 
-  <build>
+  <name>OpenCV4SikuliX</name>
+
+	<build>
     <defaultGoal>clean install</defaultGoal>
     <plugins>
       <!-- to suppress sources in any case -->
@@ -49,5 +51,4 @@
       </plugin>
     </plugins>
   </build>
-    <name>OpenCV4SikuliX</name>
 </project>

@@ -42,6 +42,7 @@
 		<sikuli.jartype>plain.xml</sikuli.jartype>
 		<sikuli.jarname>${project.version}</sikuli.jarname>
     <sikuli.usedversion>1.1.0-Beta1</sikuli.usedversion>
+    <netbeans.hint.jdkPlatform>JDK_1.7</netbeans.hint.jdkPlatform>
 	</properties>
 
 	<repositories>
