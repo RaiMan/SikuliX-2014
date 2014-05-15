@@ -3,7 +3,7 @@
 mod=MacHotkeyManager
 
 # java source folder
-cpath=$JBASICS
+cpath=$CLBASICS
 
 # native source folder
 odir=$DEVNATIVE/Hotkey/Mac/
@@ -15,4 +15,4 @@ class=org.sikuli.basics.$mod
 header=org_sikuli_basics_$mod.h
 
 rm -f $odir/$header
-javah -v -jni -classpath $cpath -d $odir $class
+javah -jni -classpath $cpath -d $odir $class

@@ -6,7 +6,7 @@ swigbin=/usr/local/bin/swig
 package=org.sikuli.natives
 
 # where SWIG puts the created Java sources
-odir=$DEVJAVA/org/sikuli/natives
+odir=$JNATIVES/org/sikuli/natives
 
 # where SWIG finds native sources and creates the native wrapper
 ivision=$DEVNATIVE/Vision
