@@ -85,7 +85,7 @@ public class RunSetup {
 	private static long start;
 	private static boolean runningSetup = false;
 	private static boolean generallyDoUpdate = false;
-	public static String timestampBuilt = "2014-05-09-18";
+	public static String timestampBuilt = "2014-05-16-18";
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
