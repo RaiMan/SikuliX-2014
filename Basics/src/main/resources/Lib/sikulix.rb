@@ -173,3 +173,12 @@ def self.method_missing name, *args, &block
     raise "SikuliX4Ruby: Problem (#{e})\nwith undotted method: #{name} (#{args})"
   end
 end
+
+# Generate methods like constructors.
+# Example: Pattern("123.png").similar(0.5)
+[:Pattern, :Region, :Screen, :App ].each do |name|
+  cl = Object.const_get "SikuliX4Ruby::#{name}"
+  Object.send(:define_method, name) do |*args|
+    cl.new *args
+  end
+end
