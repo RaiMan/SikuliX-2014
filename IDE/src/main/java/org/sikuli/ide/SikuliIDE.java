@@ -146,26 +146,6 @@ public class SikuliIDE extends JFrame {
     String[] splashArgs = new String[]{
       "splash", "#", "#" + Settings.SikuliVersionIDE, "", "#", "#... starting - please wait ..."};
 
-    new File(Settings.BaseTempPath).mkdirs();
-    isRunning = new File(Settings.BaseTempPath, "sikuli-ide-isrunning");
-    try {
-      isRunning.createNewFile();
-      isRunningFile = new FileOutputStream(isRunning);
-      if (null == isRunningFile.getChannel().tryLock()) {
-        splashArgs[5] = "Terminating on FatalError: IDE already running";
-        splash = new MultiFrame(splashArgs);
-        log(-1, splashArgs[5]);
-        SikuliX.pause(3);
-        System.exit(1);
-      }
-    } catch (Exception ex) {
-      splashArgs[5] = "Terminating on FatalError: cannot access IDE lock ";
-      splash = new MultiFrame(splashArgs);
-      log(-1, splashArgs[5] + "\n" + isRunning.getAbsolutePath());
-      SikuliX.pause(3);
-      System.exit(1);
-    }
-
     Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
         public void run() {
@@ -260,6 +240,26 @@ public class SikuliIDE extends JFrame {
       log(lvl, "Switching to SikuliScript with option -r, -t or -i");
       splash.dispose();
       SikuliScript.main(args);
+    }
+
+    new File(Settings.BaseTempPath).mkdirs();
+    isRunning = new File(Settings.BaseTempPath, "sikuli-ide-isrunning");
+    try {
+      isRunning.createNewFile();
+      isRunningFile = new FileOutputStream(isRunning);
+      if (null == isRunningFile.getChannel().tryLock()) {
+        splashArgs[5] = "Terminating on FatalError: IDE already running";
+        splash = new MultiFrame(splashArgs);
+        log(-1, splashArgs[5]);
+        SikuliX.pause(3);
+        System.exit(1);
+      }
+    } catch (Exception ex) {
+      splashArgs[5] = "Terminating on FatalError: cannot access IDE lock ";
+      splash = new MultiFrame(splashArgs);
+      log(-1, splashArgs[5] + "\n" + isRunning.getAbsolutePath());
+      SikuliX.pause(3);
+      System.exit(1);
     }
 
     Settings.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
