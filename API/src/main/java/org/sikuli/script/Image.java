@@ -264,6 +264,7 @@ public class Image {
       } catch (Exception e) {
         if (!beSilent) {
           log(-1, "could not be loaded from " + filepath);
+					filepath = null;
         }
         return null;
       }

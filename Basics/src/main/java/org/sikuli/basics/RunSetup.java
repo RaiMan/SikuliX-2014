@@ -85,7 +85,7 @@ public class RunSetup {
 	private static long start;
 	private static boolean runningSetup = false;
 	private static boolean generallyDoUpdate = false;
-	public static String timestampBuilt = "2014-05-05-18";
+	public static String timestampBuilt = "2014-05-16-18";
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
@@ -432,7 +432,7 @@ public class RunSetup {
 			popInfo("\n... not running from sikuli-setup.jar - using as download folder\n" + workDir);
 		}
 
-		log1(lvl, "Setup in: %s using: %s", workDir, (runningJar.contains("classes") ? "IDE" : runningJar));
+		log1(lvl, "Setup in: %s using: %s", workDir, (runningJar.contains("classes") ? "Development Project" : runningJar));
 		log1(lvl, "SikuliX Setup Build: %s %s", Settings.getVersionShort(), RunSetup.timestampBuilt);
 
 		File localJarIDE = new File(workDir, localIDE);

@@ -8,6 +8,7 @@
 #include <sstream>
 #include <string>
 #include <stdlib.h>
+#include <locale.h>
 #include "tessocr.h"
 #include "sikuli-debug.h"
 
@@ -394,6 +395,7 @@ OCR::init(const char* datapath){
    if (isInitialized)
       return;
 
+	 setlocale (LC_NUMERIC, "C");
    _datapath = datapath;
 
 #ifdef WIN32

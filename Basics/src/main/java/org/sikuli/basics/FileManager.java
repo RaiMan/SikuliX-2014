@@ -933,11 +933,11 @@ public class FileManager {
     }
     IResourceLoader nl = null;
     ServiceLoader<IResourceLoader> loader = ServiceLoader.load(IResourceLoader.class);
-    Iterator<IResourceLoader> scriptRunnerIterator = loader.iterator();
-    while (scriptRunnerIterator.hasNext()) {
-      IResourceLoader currentRunner = scriptRunnerIterator.next();
-      if ((name != null && currentRunner.getName().toLowerCase().equals(name.toLowerCase()))) {
-        nl = currentRunner;
+    Iterator<IResourceLoader> resourceLoaderIterator = loader.iterator();
+    while (resourceLoaderIterator.hasNext()) {
+      IResourceLoader currentLoader = resourceLoaderIterator.next();
+      if ((name != null && currentLoader.getName().toLowerCase().equals(name.toLowerCase()))) {
+        nl = currentLoader;
         nl.init(args);
         break;
       }

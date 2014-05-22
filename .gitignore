@@ -7,3 +7,4 @@ stuff/
 *.log
 *.o
 *.o.d
+opencv/
