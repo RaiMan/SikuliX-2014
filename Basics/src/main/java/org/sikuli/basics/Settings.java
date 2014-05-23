@@ -7,7 +7,6 @@
 package org.sikuli.basics;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.net.InetAddress;
 import java.net.Proxy;
 import java.util.ArrayList;
@@ -21,7 +20,7 @@ import java.util.ServiceLoader;
 import java.util.prefs.Preferences;
 
 /**
- * This is the container for all 
+ * This is the container for all
  */
 public class Settings {
 
@@ -192,7 +191,7 @@ public class Settings {
       }
     }
   }
-  
+
   public static boolean hasTypeRunner(String type) {
     return supportedRunner.contains(type);
   }
@@ -239,6 +238,7 @@ public class Settings {
   public static String BundlePath = null;
   public static boolean OcrTextSearch = false;
   public static boolean OcrTextRead = false;
+	public static String OcrLanguage = "eng";
 
   /**
    * true = start slow motion mode, false: stop it (default: false) show a visual for SlowMotionDelay seconds (default:

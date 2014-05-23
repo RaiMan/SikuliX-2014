@@ -25,36 +25,21 @@ mingw(64)
 
 --- in msys32.bat to automate this
 if exist c:\mingw64 goto IS32MG
-	
 	rename c:\mingw mingw64
-	
 	rename c:\mingw32 mingw
 :IS32MG
-
 if exist c:\msys\local64 goto IS32
-
 	rename c:\msys\local local64
-	
 	rename c:\msys\local32 local
-
 :IS32
-
 if not exist c:\mingw64 goto ERROR32
-
 if exist c:\msys\local64 goto IS32OK
-
 :ERROR32
-
 dir c:\m*
-
 dir c:\msys\l*
-
 pause
-
 goto EOF
-
 :IS32OK
-
 
 --- in msys64.bat to automate this
 if exist c:\mingw32 goto IS64MG

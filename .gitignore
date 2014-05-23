@@ -4,3 +4,7 @@ nb*
 *.iml
 stuff/
 *.versionsBackup
+*.log
+*.o
+*.o.d
+opencv/

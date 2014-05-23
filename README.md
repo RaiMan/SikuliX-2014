@@ -2,19 +2,20 @@
 ============
 
 <hr />
-Project paused until 2014, April 22nd 
-============
- - no 1.1.0-Beta1 available yet (planned now for April 25th)
- - still having some annoying little bugs
- - having some other private priorities
+May 5th, 2014: 1.1.0-Beta1 is out
+-----------------
+Newest build available per May 19th 15h+ (2014-05-16-18)<br />
+[for download look here](https://launchpad.net/sikuli/sikulix/1.1.0)
 
-If you do not want to wait:<br />
-Look [here](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-produce-the-ready_to_use-jar-packages) for complete information on how to build the ready-to-use packages.
+Known issues and fixes: https://answers.launchpad.net/sikuli/+faq/2521
 
+... there seem to be problems with the native library WinUtil.dll on Windows XP/7 32-Bit and on Windows XP/7 64-Bit when using a 32-Bit Java. It seems to work on Mac 10.6+ and Windows 64-Bit using 64-Bit Java and should work on Linux.<br />
 <hr />
 
 <hr />
 **SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer)
+
+... based on Sikuli Script that was discontinued mid 2012 - [see the sources](https://github.com/sikuli/sikuli)
 <hr/>
 
 This Maven multi-module setup contains everything ...

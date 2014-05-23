@@ -1,9 +1,10 @@
+# coding: utf-8
 # SikuliX for Ruby
+
 require 'java'
 
 # Classes and methods for using SikuliX
 module SikuliX4Ruby
-
   java_import org.sikuli.basics.SikuliX
   java_import org.sikuli.script.Screen
   java_import org.sikuli.script.Region
@@ -47,17 +48,17 @@ module SikuliX4Ruby
   #
   # obj - class for the wrapping
   # methods_array - array of method names as Symbols
-  def self.native_exception_protect( obj, methods_array )
+  def self.native_exception_protect(obj, methods_array)
     methods_array.each do |name|
-      m = obj.instance_method (name)
+      m = obj.instance_method name
       obj.class_exec do
-        alias_method ('java_' + name.to_s).to_sym, name
+        alias_method(('java_' + name.to_s).to_sym, name)
         define_method(name) do |*args|
           begin
             # java specific call for unbound methods
-            m.bind(self).call *args
-          rescue NativeException => e;
-            raise StandardError.new(e.message);
+            m.bind(self).call(*args)
+          rescue NativeException => e
+            raise StandardError, e.message
           end
         end
       end
@@ -67,11 +68,14 @@ module SikuliX4Ruby
   # Redefinition of native org.sikuli.script.Region class
   class Region
     # Service class for all callbacks processing
-    class RObserverCallBack < ObserverCallBack
-      def initialize(block); super(); @block=block; end;
+    class RObserverCallBack < ObserverCallBack # :nodoc: all
+      def initialize(block)
+        super()
+        @block = block
+      end
       %w(appeared vanished changed).each do |name|
         define_method(name) do |*args|
-          @block.call *(args.first @block.arity)
+          @block.call(*(args.first @block.arity))
         end
       end
     end
@@ -80,65 +84,118 @@ module SikuliX4Ruby
     alias_method :java_onChange, :onChange
 
     # Redefinition of the java method for Ruby specific
-    def onAppear target, &block
-      java_onAppear(target, RObserverCallBack.new(block))
+    def onAppear(target, &block)
+      java_onAppear target, RObserverCallBack.new(block)
     end
 
     # Redefinition of the java method for Ruby specific
-    def onVanish target, &block
-      java_onVanish(target, RObserverCallBack.new(block))
+    def onVanish(target, &block)
+      java_onVanish target, RObserverCallBack.new(block)
     end
 
     # Redefinition of the java method for Ruby specific
-    def onChange &block
-      java_onChange(RObserverCallBack.new(block))
+    def onChange(&block)
+      java_onChange RObserverCallBack.new(block)
     end
 
-    #alias_method :java_findAll,  :findAll
-    #def findAll *args
-    #  begin
-    #    java_findAll *args
-    #  rescue NativeException => e; raise e.message; end
-    #end
+    # alias_method :java_findAll,  :findAll
+    # def findAll(*args)
+    #   begin
+    #     java_findAll(*args)
+    #   rescue NativeException => e; raise e.message; end
+    # end
   end
 
   # Wrap following java-methods by an exception processor
-  native_exception_protect Region,
+  native_exception_protect(
+    Region,
     [:find, :findAll, :wait, :waitVanish, :exists,
      :click, :doubleClick, :rightClick, :hover, :dragDrop,
      :type, :paste, :observe]
+   )
 
-  # default screen object for "undotted" methods
+  # Default screen object for "undotted" methods.
   $SIKULI_SCREEN = Screen.new
 
-  # generate hash of (method name => method) for all possible "undotted" methods
+  # Generate hash of ('method name'=>method)
+  # for all possible "undotted" methods.
   UNDOTTED_METHODS =
-    [$SIKULI_SCREEN, SikuliX].inject({}) do |h, obj|
-      h.merge!(obj.methods.inject({}){|h, name| h.merge!(name => obj.method(name))})
+    [$SIKULI_SCREEN, SikuliX].reduce({}) do |h, obj|
+      h.merge!(
+        obj.methods.reduce({}) do |h2, name|
+          h2.merge!(name => obj.method(name))
+        end
+      )
     end
 
-  # display some help in interactive mode
+  # Display some help in interactive mode.
   def shelp
     SikuliScript.shelp
   end
 
+  # TODO: check it after Env Java-class refactoring
+  java_import org.sikuli.script.Env
+  java_import org.sikuli.basics.HotkeyListener
+
+  class Env  # :nodoc: all
+    class RHotkeyListener < HotkeyListener
+      def initialize(block)
+        super()
+        @block = block
+      end
+
+      def hotkeyPressed(event)
+        @block.call event
+      end
+    end
+  end
+
+  ##
+  # Register hotkeys
+  #
+  # Example:
+  #    addHotkey( Key::F1, KeyModifier::ALT + KeyModifier::CTRL ) do
+  #      popup 'hallo', 'Title'
+  #    end
+  #
+  def addHotkey(key, modifiers, &block)
+    Env.addHotkey key, modifiers, Env::RHotkeyListener.new(block)
+  end
+
+  ##
+  # Unregister hotkeys
+  #
+  # Example:
+  #    removeHotkey( Key::F1, KeyModifier::ALT + KeyModifier::CTRL )
+  def removeHotkey(key, modifiers)
+    Env.removeHotkey key, modifiers
+  end
 end
 
 # This method allow to call "undotted" methods that belong to
 # Region/Screen or SikuliX classes.
-def self.method_missing name, *args, &block
-  begin
-    Debug.log 3, "SikuliX4Ruby: looking for undotted method: #{name}"
-    if method = SikuliX4Ruby::UNDOTTED_METHODS[name] then
-      ret = method.call *args, &block
+def self.method_missing(name, *args, &block)
+  Debug.log 3, "SikuliX4Ruby: looking for undotted method: #{name}"
+
+  if (method = SikuliX4Ruby::UNDOTTED_METHODS[name])
+    begin
+      ret = method.call(*args, &block)
       # Dynamic methods that throw a native Java-exception,
       # hide a line number in the scriptfile!
-      #Object.send(:define_method, name){ |*args| method.call *args }
+      # Object.send(:define_method, name){ |*args| method.call(*args) }
       return ret
-    else
-      raise "undotted method '#{name}' missing"
+    rescue NativeException => e
+      raise StandardError, "SikuliX4Ruby: Problem (#{e})\n" \
+        "with undotted method: #{name} (#{args})"
     end
-  rescue NativeException => e
-    raise "SikuliX4Ruby: Problem (#{e})\nwith undotted method: #{name} (#{args})"
+  else
+    fail "undotted method '#{name}' missing"
   end
+end
+
+# Generate methods like constructors.
+# Example: Pattern("123.png").similar(0.5)
+[:Pattern, :Region, :Screen, :App].each do |name|
+  cl = Object.const_get "SikuliX4Ruby::#{name}"
+  SikuliX4Ruby.send(:define_method, name) { |*args| cl.new(*args) }
 end

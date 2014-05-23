@@ -322,7 +322,7 @@ public class Region {
   public Region(int X, int Y, int W, int H) {
     this(X, Y, W, H, null);
     this.rows = 0;
-    log(lvl, "Region: init: (%d, %d, %d, %d)", X, Y, W, H);
+    log(lvl, "init: (%d, %d, %d, %d)", X, Y, W, H);
   }
 
   /**
@@ -587,7 +587,8 @@ public class Region {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="handle Settings">
-  /**
+	//TODO should be possible to reset to current global value resetXXX()
+	/**
    * true - (initial setting) should throw exception FindFailed if findX unsuccessful in this region<br> false - do not
    * abort script on FindFailed (might leed to null pointer exceptions later)
    *
@@ -613,7 +614,7 @@ public class Region {
 
   /**
    * the time in seconds a find operation should wait for the appearence of the target in this region<br> initial value
-   * 3 secs
+   * is the global AutoWaitTimeout setting at time of Region creation
    *
    * @param sec
    */
@@ -735,6 +736,7 @@ public class Region {
    * Sets a new Screen for this region.
    *
    * @param scr the containing screen object
+	 * @return
    */
   protected Region setScreen(Screen scr) {
     initScreen(scr);
@@ -745,6 +747,7 @@ public class Region {
    * Sets a new Screen for this region.
    *
    * @param id the containing screen object's id
+	 * @return
    */
   protected Region setScreen(int id) {
     return setScreen(Screen.getScreen(id));
@@ -1010,17 +1013,17 @@ public class Region {
   }
 
   // ****************************************************
-  
+
 /**
    * resets this region (usually a Screen object) to the coordinates of the containing screen
    *
-   * Because of the wanted side effect for the containing screen, this should only be used with screen objects. 
+   * Because of the wanted side effect for the containing screen, this should only be used with screen objects.
    * For Region objects use setRect() instead.
    */
   public void setROI() {
     setROI(getScreen().getBounds());
   }
-  
+
   /**
    * resets this region to the given location, and size <br> this might move the region even to another screen
    *
@@ -1066,7 +1069,7 @@ public class Region {
 
   /**
    * A function only for backward compatibility - Only makes sense with Screen objects
-   * 
+   *
    * @return the Region being the current ROI of the containing Screen
    */
   public Region getROI() {
@@ -1301,7 +1304,7 @@ public class Region {
 
   /**
    * create a region enlarged w pixels on left and right side
-	 * and h pixels at top and bottom
+   * and h pixels at top and bottom
    *
    * @param w
    * @param h
@@ -1315,7 +1318,7 @@ public class Region {
 
   /**
    * create a region enlarged l pixels on left and r pixels right side
-	 * and t pixels at top side and b pixels a bottom side.
+   * and t pixels at top side and b pixels a bottom side.
    * negative values go inside (shrink)
    *
    * @param l add to the left
@@ -1338,7 +1341,7 @@ public class Region {
 
   /**
    * positive offset goes to the right.
-	 * might be off current screen
+   * might be off current screen
    *
    * @return point with given offset horizontally to middle point on right edge
    */
@@ -1348,7 +1351,7 @@ public class Region {
 
   /**
    * create a region right of the right side with same height.
-	 * the new region extends to the right screen border<br>
+   * the new region extends to the right screen border<br>
    * use grow() to include the current region
    *
    * @return the new region
@@ -1360,8 +1363,8 @@ public class Region {
 
   /**
    * create a region right of the right side with same height and given width.
-   * negative width creates the right part with width inside the region
-	 * <br />use grow() to include the current region
+   * negative width creates the right part with width inside the region<br />
+   * use grow() to include the current region
    *
    * @param width
    * @return the new region
@@ -1761,9 +1764,9 @@ public class Region {
    * (lowercase and uppercase can be mixed, internally transformed to all uppercase) <br />
    * - these colornames exactly written: lightGray, LIGHT_GRAY, darkGray and DARK_GRAY <br />
    * - a hex value like in HTML: #XXXXXX (max 6 hex digits)
-   * - an RGB specification as: #rrrgggbbb where rrr, ggg, bbb are integer values in range 0 - 255 
+   * - an RGB specification as: #rrrgggbbb where rrr, ggg, bbb are integer values in range 0 - 255
    * padded with leading zeros if needed (hence exactly 9 digits)
-   * @param color Color of frame 
+   * @param color Color of frame
    * @return the region itself
    */
   public Region highlight(String color) {
@@ -1783,7 +1786,7 @@ public class Region {
       return this;
     }
     Debug.action("toggle highlight " + toString() + ": " + toEnable +
-    		(color != null ? " color: " + color : ""));
+                (color != null ? " color: " + color : ""));
     if (toEnable) {
       overlay = new ScreenHighlighter(getScreen(), color);
       overlay.highlight(this);
@@ -1838,13 +1841,13 @@ public class Region {
    * @return this region
    */
   public Region highlight(int secs) {
-	return highlight(secs, null);
+    return highlight(secs, null);
   }
 
 
   /**
    * Show highlight in selected color
-   * 
+   *
    * @param secs time in seconds
    * @param color Color of frame (see method highlight(color))
    * @return this region
@@ -1957,15 +1960,19 @@ public class Region {
       return false;
     } else if (response == FindFailedResponse.RETRY) {
       return true;
-    } else if (response == FindFailedResponse.ABORT) {
-      throw new FindFailed("can not find " + target + " on the screen.");
-    }
+		} else if (response == FindFailedResponse.ABORT) {
+			String targetStr = target.toString();
+			if (target instanceof String) {
+				targetStr = targetStr.trim();
+			}
+			throw new FindFailed(String.format("can not find %s in %s", targetStr, this.toStringShort()));
+		}
     return false;
   }
 
   /**
-   * Match find( Pattern/String ) finds the given pattern on the screen and returns the best match. If AutoWaitTimeout
-   * is set, this is equivalent to wait().
+   * finds the given Pattern, String or Image in the region and returns the best match. If AutoWaitTimeout
+   * is set, this is equivalent to wait(). Otherwise only one search attempt will be done.
    *
    * @param target A search criteria
    * @return If found, the element. null otherwise
@@ -1976,10 +1983,15 @@ public class Region {
       return wait(target, autoWaitTimeout);
     }
     lastMatch = null;
+		String targetStr = target.toString();
+		if (target instanceof String) {
+			targetStr = targetStr.trim();
+		}
     while (true) {
       try {
+        log(2, "find: waiting 0 secs for %s to appear in %s", targetStr, this.toStringShort());
         lastMatch = doFind(target, null);
-      } catch (Exception ex) {
+      } catch (IOException ex) {
         if (ex instanceof IOException) {
           if (handleFindFailedImageMissing(target)) {
             continue;
@@ -1993,8 +2005,10 @@ public class Region {
         if (img != null) {
           img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         }
+	      log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
         return lastMatch;
       }
+	    log(2, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
       if (!handleFindFailed(target)) {
         return null;
       }
@@ -2002,8 +2016,8 @@ public class Region {
   }
 
   /**
-   * Iterator&lt;Match&gt; searchAll( Pattern/String/Image ) finds the given pattern on the screen and returns the best
-   * match. If AutoWaitTimeout is set, this is equivalent to wait().
+   * finds all occurences of the given Pattern, String or Image in the region and returns an Iterator of Matches.
+	 *
    *
    * @param target A search criteria
    * @return All elements matching
@@ -2011,6 +2025,10 @@ public class Region {
    */
   public <PSI> Iterator<Match> findAll(PSI target) throws FindFailed {
     lastMatches = null;
+		String targetStr = target.toString();
+		if (target instanceof String) {
+			targetStr = targetStr.trim();
+		}
     while (true) {
       try {
         if (autoWaitTimeout > 0) {
@@ -2038,11 +2056,11 @@ public class Region {
   }
 
   /**
-   * Waits for the Pattern, String or Image to appear
+   * Waits for the Pattern, String or Image to appear until the AutoWaitTimeout value is exceeded.
    *
    * @param target The target to search for
    * @return The found Match
-   * @throws FindFailed
+   * @throws FindFailed if the Find operation finally failed
    */
   public <PSI> Match wait(PSI target) throws FindFailed {
     return wait(target, autoWaitTimeout);
@@ -2059,9 +2077,13 @@ public class Region {
   public <PSI> Match wait(PSI target, double timeout) throws FindFailed {
     RepeatableFind rf;
     lastMatch = null;
+		String targetStr = target.toString();
+		if (target instanceof String) {
+			targetStr = targetStr.trim();
+		}
     while (true) {
       try {
-        log(2, "find: waiting for " + target + " to appear");
+        log(2, "find: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
         rf = new RepeatableFind(target);
         rf.repeat(timeout);
         lastMatch = rf.getMatch();
@@ -2078,10 +2100,10 @@ public class Region {
         if (rf._image != null) {
           rf._image.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         }
-        log(lvl, "find: %s has appeared \nat %s", target, lastMatch);
+        log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
         break;
       }
-      log(2, "find: " + target + " has not appeared.");
+	    log(2, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
       if (!handleFindFailed(target)) {
         return null;
       }
@@ -2092,7 +2114,8 @@ public class Region {
   /**
    * Check if target exists (with the default autoWaitTimeout)
    *
-   * @param target Pattern or String
+	 * @param <PSI> Pattern, String or Image
+   * @param target Pattern, String or Image
    * @return the match (null if not found or image file missing)
    */
   public <PSI> Match exists(PSI target) {
@@ -2103,15 +2126,19 @@ public class Region {
    * Check if target exists with a specified timeout<br>
    * timout = 0: returns immediately after first search
    *
-   * @param target Pattern, String or Image
+   * @param target The target to search for
    * @param timeout Timeout in seconds
    * @return the match (null if not found or image file missing)
    */
   public <PSI> Match exists(PSI target, double timeout) {
     lastMatch = null;
+		String targetStr = target.toString();
+		if (target instanceof String) {
+			targetStr = targetStr.trim();
+		}
     while (true) {
       try {
-        log(lvl, "exists: waiting for " + target + " to appear");
+        log(2, "exists: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
         RepeatableFind rf = new RepeatableFind(target);
         if (rf.repeat(timeout)) {
           lastMatch = rf.getMatch();
@@ -2120,7 +2147,7 @@ public class Region {
           if (img != null) {
             img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
           }
-          log(lvl, "exists: %s has appeared \nat %s", target, lastMatch);
+	        log(lvl, "exists: %s has appeared \nat %s", targetStr, lastMatch);
           return lastMatch;
         } else {
           if (!handleFindFailedQuietly(target)) {
@@ -2135,7 +2162,7 @@ public class Region {
         }
       }
     }
-    log(2, "exists: " + target + " has not appeared.");
+    log(2, "exists: %s has not appeared [%d msec]", targetStr, lastFindTime);
     return null;
   }
 
@@ -2145,6 +2172,7 @@ public class Region {
    * @param text
    * @param timeout
    * @return the matched region containing the text
+	 * @throws org.sikuli.script.FindFailed
    */
   public Match findText(String text, double timeout) throws FindFailed {
     // the leading/trailing tab is used to internally switch to text search directly
@@ -2156,16 +2184,18 @@ public class Region {
    *
    * @param text
    * @return the matched region containing the text
+	 * @throws org.sikuli.script.FindFailed
    */
   public Match findText(String text) throws FindFailed {
     return findText(text, autoWaitTimeout);
   }
 
   /**
-   * Use findAllText() instead of find() in cases where the given string could be misinterpreted as an image filename
+   * Use findAllText() instead of findAll() in cases where the given string could be misinterpreted as an image filename
    *
    * @param text
    * @return the matched region containing the text
+	 * @throws org.sikuli.script.FindFailed
    */
   public Iterator<Match> findAllText(String text) throws FindFailed {
     // the leading/trailing tab is used to internally switch to text search directly
@@ -2173,9 +2203,10 @@ public class Region {
   }
 
   /**
-   * boolean waitVanish(Pattern/String/Image target, timeout-sec) waits until target vanishes or timeout (in second) is
-   * passed
+   * waits until target vanishes or timeout (in seconds) is
+   * passed (AutoWaitTimeout)
    *
+	 * @param target The target to wait for it to vanish
    * @return true if the target vanishes, otherwise returns false.
    */
   public <PSI> boolean waitVanish(PSI target) {
@@ -2183,9 +2214,11 @@ public class Region {
   }
 
   /**
-   * boolean waitVanish(Pattern/String/Image target, timeout-sec) waits until target vanishes or timeout (in second) is
+   * waits until target vanishes or timeout (in seconds) is
    * passed
    *
+	 * @param target
+	 * @param timeout
    * @return true if target vanishes, false otherwise and if imagefile is missing.
    */
   public <PSI> boolean waitVanish(PSI target, double timeout) {
@@ -2249,10 +2282,13 @@ public class Region {
             throw new IOException("Region: doFind: Image not loadable: " + (String) ptn);
           }
         }
-        if (findingText) {
-          f = new Finder(getScreen().capture(x, y, w, h), this);
-          lastSearchTime = (new Date()).getTime();
-          f.findText((String) ptn);
+				if (findingText) {
+					if (TextRecognizer.getInstance() != null) {
+						log(lvl, "doFind: Switching to TextSearch");
+						f = new Finder(getScreen().capture(x, y, w, h), this);
+						lastSearchTime = (new Date()).getTime();
+						f.findText((String) ptn);
+					}
         }
       } else if (ptn instanceof Pattern) {
         if (((Pattern) ptn).isValid()) {
@@ -2305,10 +2341,10 @@ public class Region {
           f.find(new Pattern(ptn).similar(Settings.CheckLastSeenSimilar));
         }
         if (f.hasNext()) {
-          log(lvl, "Region: checkLastSeen: still there");
+          log(lvl, "checkLastSeen: still there");
           return f;
         }
-        log(lvl, "Region: checkLastSeen: not there");
+        log(lvl, "checkLastSeen: not there");
       }
     }
     if (Settings.UseImageFinder) {
@@ -2542,9 +2578,8 @@ public class Region {
   public boolean hasObserver() {
     if (regionObserver != null) {
       return regionObserver.hasObservers();
-    } else {
-      return false;
     }
+    return false;
   }
 
   /**
@@ -2607,38 +2642,38 @@ public class Region {
    * and notify the given observer about this event<br />
    * for details about the observe event handler: {@link ObserverCallBack}<br />
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target
    * @param observer
    * @return the event's name
    */
   public <PSI> String onAppear(PSI target, Object observer) {
-		return onAppearDo(target, observer);
-	}
+    return onAppearDo(target, observer);
+  }
 
   /**
    * a subsequently started observer in this region should wait for target
    * success and details about the event can be obtained using @{link Observing}<br />
    * for details about the observe event handler: {@link ObserverCallBack}<br />
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target
    * @return the event's name
    */
   public <PSI> String onAppear(PSI target) {
-		return onAppearDo(target, null);
-	}
+    return onAppearDo(target, null);
+  }
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
-	 * @param <PSI> Pattern, String or Image
-	 * @param target
-	 * @param observer
-	 * @return the event's name
+   * @param <PSI> Pattern, String or Image
+   * @param target
+   * @param observer
+   * @return the event's name
    */
   public <PSI> String onAppearJ(PSI target, Object observer) {
-		return onAppearDo(target, observer);
-	}
+    return onAppearDo(target, observer);
+  }
 
   private <PSI> String onAppearDo(PSI target, Object observer) {
     String name = Observing.add(this,
@@ -2653,38 +2688,38 @@ public class Region {
    * and notify the given observer about this event<br />
    * for details about the observe event handler: {@link ObserverCallBack}<br />
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target
    * @param observer
    * @return the event's name
    */
   public <PSI> String onVanish(PSI target, Object observer) {
-		return onVanishDo(target, observer);
-	}
+    return onVanishDo(target, observer);
+  }
 
   /**
    * a subsequently started observer in this region should wait for the target to vanish
    * success and details about the event can be obtained using @{link Observing}<br />
    * for details about the observe event handler: {@link ObserverCallBack}<br />
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target
    * @return the event's name
    */
   public <PSI> String onVanish(PSI target) {
-		return onVanishDo(target, null);
-	}
+    return onVanishDo(target, null);
+  }
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
-	 * @param <PSI> Pattern, String or Image
-	 * @param target
-	 * @param observer
-	 * @return the event's name
+   * @param <PSI> Pattern, String or Image
+   * @param target
+   * @param observer
+   * @return the event's name
    */
   public <PSI> String onVanishJ(PSI target, Object observer) {
-		return onVanishDo(target, observer);
-	}
+    return onVanishDo(target, observer);
+  }
 
   private <PSI> String onVanishDo(PSI target, Object observer) {
     String name = Observing.add(this,
@@ -2746,9 +2781,9 @@ public class Region {
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
-	 * @param minSize
-	 * @param observer
-	 * @return the event's name
+   * @param minSize
+   * @param observer
+   * @return the event's name
    */
   public String onChangeJ(int minSize, Object observer) {
     if (minSize == 0) {
@@ -2767,9 +2802,9 @@ public class Region {
 
   /**
    * start an observer in this region that runs forever (use stopObserving() in handler)
- for details about the observe event handler: {@link ObserverCallBack}
+   * for details about the observe event handler: {@link ObserverCallBack}
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
-	 * @return false if not possible, true if events have happened
+   * @return false if not possible, true if events have happened
    */
   public boolean observe() {
     return observe(Float.POSITIVE_INFINITY);
@@ -2788,9 +2823,9 @@ public class Region {
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
-	 * @param secs
-	 * @param bg
-	 * @return false if not possible, true if events have happened
+   * @param secs
+   * @param bg
+   * @return false if not possible, true if events have happened
    */
   public boolean observeJ(double secs, boolean bg) {
     if (bg) {
@@ -2867,11 +2902,10 @@ public class Region {
     Thread observeThread = new Thread(new ObserverThread(secs));
     observeThread.start();
     log(lvl, "observeInBackground now running");
-		return true;
+    return true;
   }
 
   private class ObserverThread implements Runnable {
-
     private double time;
 
     ObserverThread(double time) {
@@ -2888,7 +2922,7 @@ public class Region {
    * stops a running observer
    */
   public void stopObserver() {
-    log(lvl, "Region: observe: request to stop observer for " + this.toStringShort());
+    log(lvl, "observe: request to stop observer for " + this.toStringShort());
     observing = false;
   }
 
@@ -3690,14 +3724,14 @@ public class Region {
       ScreenImage simg = getScreen().capture(x, y, w, h);
       TextRecognizer tr = TextRecognizer.getInstance();
       if (tr == null) {
-        Debug.error("Region.text: text recognition is now switched off");
+        Debug.error("text: text recognition is now switched off");
         return "--- no text ---";
       }
       String textRead = tr.recognize(simg);
-      log(lvl, "Region.text: #(" + textRead + ")#");
+      log(lvl, "text: #(" + textRead + ")#");
       return textRead;
     }
-    Debug.error("Region.text: text recognition is currently switched off");
+    Debug.error("text: text recognition is currently switched off");
     return "--- no text ---";
   }
 
@@ -3714,13 +3748,13 @@ public class Region {
       ScreenImage simg = getScreen().capture(x, y, w, h);
       TextRecognizer tr = TextRecognizer.getInstance();
       if (tr == null) {
-        Debug.error("Region.text: text recognition is now switched off");
+        Debug.error("text: text recognition is now switched off");
         return null;
       }
-      log(lvl, "Region.listText");
+      log(lvl, "listText: scanning %s", this);
       return tr.listText(simg, this);
     }
-    Debug.error("Region.text: text recognition is currently switched off");
+    Debug.error("text: text recognition is currently switched off");
     return null;
   }
   //</editor-fold>

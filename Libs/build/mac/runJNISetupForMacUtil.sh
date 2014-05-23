@@ -3,7 +3,7 @@
 mod=MacUtil
 
 # java source folder
-cpath=$DEVJAVA
+cpath=$CLNATIVES
 
 # native source folder
 odir=$DEVNATIVE/OSUtil/Mac/
@@ -15,4 +15,4 @@ class=org.sikuli.natives.$mod
 header=org_sikuli_natives_$mod.h
 
 rm -f $odir/$header
-javah -v -jni -classpath $cpath -d $odir $class
+javah -jni -classpath $cpath -d $odir $class
