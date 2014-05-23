@@ -222,7 +222,18 @@ public class Settings {
 
   public static double DelayBeforeDrop = 0.3;
   public static double DelayAfterDrag = 0.3;
+
+  /**
+   * Specify a delay between the key presses in seconds as 0.nnn. 
+   * This only applies to the next type and is then reset to 0 again. 
+   * A value > 1 is cut to 1.0 (max delay of 1 second)
+   */
   public static double TypeDelay = 0.0;
+  /**
+   * Specify a delay between the mouse down and up in seconds as 0.nnn. 
+   * This only applies to the next click action and is then reset to 0 again. 
+   * A value > 1 is cut to 1.0 (max delay of 1 second)
+   */
   public static double ClickDelay = 0.0;
 
   public static String BundlePath = null;
