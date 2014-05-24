@@ -128,6 +128,19 @@ module SikuliX4Ruby
       )
     end
 
+  # It makes possible to use java-constants as a methods
+  # Example: Key.CTRL instead of Key::CTRL
+  [Key, KeyModifier].each do |obj|
+    obj.class_exec do
+      def self.method_missing(name)
+        if (val = const_get(name))
+          return val
+        end
+        fails "method missing #{name}"
+      end
+    end
+  end
+
   # Display some help in interactive mode.
   def shelp
     SikuliScript.shelp
