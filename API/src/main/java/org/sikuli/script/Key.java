@@ -651,8 +651,8 @@ public class Key {
       case Key.C_RIGHT: return "#RIGHT.";
       case Key.C_DOWN: return "#DOWN.";
       case Key.C_LEFT: return "#LEFT.";
-      case Key.C_PAGE_UP: return "#P-UP.";
-      case Key.C_PAGE_DOWN: return "#P-DOWN.";
+      case Key.C_PAGE_UP: return "#PUP.";
+      case Key.C_PAGE_DOWN: return "#PDOWN.";
       case Key.C_END: return "#END.";
       case Key.C_HOME: return "#HOME.";
       case Key.C_DELETE: return "#DEL";

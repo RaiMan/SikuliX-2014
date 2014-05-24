@@ -3380,12 +3380,19 @@ public class Region {
 
   /**
    * Compact alternative for type() with more options <br />
-   * - special keys and options are coded as #X-XN. or #X+ or #X- <br />
-   * where X-X and X are refrences for special keys and N is an otional repeat factor <br />
-   * the trailing . ends the special key, a + or - does the same, <br />
+   * - special keys and options are coded as #XN. or #X+ or #X- <br />
+   * where X is a refrence for a special key and N is an optional repeat factor <br />
+   * A modifier key as #X. modifies the next following key<br />
+   * the trailing . ends the special key, the + (press and hold) or - (release) does the same, <br />
    * but signals press-and-hold or release additionally.<br />
-   * a #Wn. inserts a wait of n millisecs or n secs if n < 60 <br />
-   * for more details and examples consult the docs <br />
+   * except #W / #w all special keys are not case-sensitive<br />
+   * a #wn. inserts a wait of n millisecs or n secs if n less than 60 <br />
+   * a #Wn. sets the type delay for the following keys (must be > 60 and denotes millisecs) 
+   * - otherwise taken as normal wait<br />
+   * Example: wait 2 secs then type CMD/CTRL - N then wait 1 sec then type DOWN 3 times<br />
+   * Windows/Linux: write("#w2.#C.n#W1.#d3.")<br />
+   * Mac: write("#w2.#M.n#W1.#D3.")<br />
+   * for more details about the special key codes and examples consult the docs <br />
    * @param text a coded text interpreted as a series of key actions (press/hold/release)
    * @return 0 for success 1 otherwise
    */
@@ -3428,7 +3435,7 @@ public class Region {
       } else {
         log(lvl, "write: token at %d: %s", i, token);
         int repeat = 0;
-        if (token.startsWith("#W")) {
+        if (token.toUpperCase().startsWith("#W")) {
           if (token.length() > 3) {
             i += token.length() - 1;
             int t = 0;
@@ -3436,26 +3443,27 @@ public class Region {
               t = Integer.parseInt(token.substring(2, token.length() - 1));
             } catch (NumberFormatException ex) {
             }
-            log(lvl, "write: wait: " + t);
-            if (t < 60) {
-              robot.delay(t * 1000);
+            if ((token.startsWith("#W") && t > 60) || pause > 20) {
+              pause = 20 + (t > 1000 ? 1000 : t);
+              log(lvl, "write: type delay: " + t);              
             } else {
-              robot.delay(t);
+              log(lvl, "write: wait: " + t);
+              robot.delay((t < 60 ? t * 1000 : t));
             }
             continue;
           }
         }
         tokenSave = token;
-        token = token.substring(0, 2) + ".";
+        token = token.substring(0, 2).toUpperCase() + ".";
         if (Key.isRepeatable(token)) {
           try {
             repeat = Integer.parseInt(tokenSave.substring(2, tokenSave.length() - 1));
           } catch (NumberFormatException ex) {
             token = tokenSave;
           }
-        } else if (tokenSave.length() == 3 && Key.isModifier(tokenSave)) {
+        } else if (tokenSave.length() == 3 && Key.isModifier(tokenSave.toUpperCase())) {
           i += tokenSave.length() - 1;
-          modifier += tokenSave.substring(1, 2);
+          modifier += tokenSave.substring(1, 2).toUpperCase();
           continue;
         } else {
           token = tokenSave;
