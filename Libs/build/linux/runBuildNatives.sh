@@ -1,5 +1,17 @@
 #!/bin/bash
-echo -----  Linux build workflow for native modules on $1-bit systems
+
+if [ -z $1 ]; then
+  ARCH=`getconf LONG_BIT`
+else
+  ARCH=$1
+fi
+
+if ! [[ "$ARCH" == "32" || "$ARCH" == "64" ]]; then
+  printf  "Usage: $0 [ 32 | 64 ]\nSpecify 32 or 64 bit\n"
+  exit
+fi
+
+echo -----  Linux build workflow for native modules on $ARCH-bit systems
 # details see inside the respective scripts
 
 # trying to find the active JDK
@@ -39,24 +51,16 @@ if [ "$includeParm" == "" ]; then
   echo JDK could not be found - check and set path manually \(line 30\)
 fi
 
-LIBS=/usr/lib
-if [ -e $LIBS/libopencv_core.so ]; then
-  libFolderO=$LIBS
-  libFolderT=$LIBS
-  echo --- OpenCV libs seem to be in $LIBS
-fi
-LIBS=/usr/lib64
-if [ "libFolderO" == "" -a -e $LIBS/libopencv_core.so ]; then
-  libFolderO=$LIBS
-  libFolderT=$LIBS
-  echo --- OpenCV libs seem to be in $LIBS
-fi
-LIBS=/usr/local/lib
-if [ "libFolderO" == "" -a -e $LIBS/libopencv_core.so ]; then
-  libFolderO=$LIBS
-  libFolderT=$LIBS
-  echo --- OpenCV libs seem to be in $LIBS
-fi
+for TMP_LIBS in /usr/lib /usr/lib64 /usr/local/lib /usr/local/lib64
+do
+  if [ "$libFolderO" == "" -a -e $TMP_LIBS/libopencv_core.so ]; then
+    LIBS=$TMP_LIBS
+    libFolderO=$LIBS
+    libFolderT=$LIBS
+    echo --- OpenCV libs seem to be in $LIBS
+    break;
+  fi
+done
 
 # if the openCV libs are not found with the above eval
 # folder containing the OpenCV libs
@@ -73,14 +77,17 @@ fi
 # if you want to run the SWIG step: where is your SWIG executable?
 # example: /usr/bin/swig 
 # leave the setting as is, to not run the SWIG step
-export SWIGEXEC=__NOT_SET__
+
+#export SWIGEXEC=/usr/bin/swig
+export SWIGEXEC="__NOT_SET__"
+
 # any specifics should be resolved in runSwigforVision.sh
 
 # set some common folders in the SikuliX package structure
 # no need to change normally
 export DEVJAVA=../../../Natives/src/main/java
 export DEVNATIVE=../../../Natives/src/main/native
-export DEVLIBS=../../src/main/resources/META-INF/libs/linux/libs$1
+export DEVLIBS=../../src/main/resources/META-INF/libs/linux/libs$ARCH
 
 # ------------------------- do what is needed
 if [ "$SWIGEXEC" == "__NOT_SET__" ]; then

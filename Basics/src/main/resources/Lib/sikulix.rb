@@ -117,16 +117,42 @@ module SikuliX4Ruby
   # Default screen object for "undotted" methods.
   $SIKULI_SCREEN = Screen.new
 
-  # Generate hash of ('method name'=>method)
-  # for all possible "undotted" methods.
-  UNDOTTED_METHODS =
-    [$SIKULI_SCREEN, SikuliX].reduce({}) do |h, obj|
-      h.merge!(
-        obj.methods.reduce({}) do |h2, name|
-          h2.merge!(name => obj.method(name))
+# This is an alternative for method generation using define_method
+#  # Generate hash of ('method name'=>method)
+#  # for all possible "undotted" methods.
+#  UNDOTTED_METHODS =
+#    [$SIKULI_SCREEN, SikuliX].reduce({}) do |h, obj|
+#      h.merge!(
+#        obj.methods.reduce({}) do |h2, name|
+#          h2.merge!(name => obj.method(name))
+#        end
+#      )
+#    end
+
+  # It makes possible to use java-constants as a methods
+  # Example: Key.CTRL instead of Key::CTRL
+  [Key, KeyModifier].each do |obj|
+    obj.class_exec do
+      def self.method_missing(name)
+        if (val = const_get(name))
+          return val
         end
-      )
+        fails "method missing #{name}"
+      end
     end
+  end
+
+  # Generate static methods in SikuliX4Ruby context
+  # for possible "undotted" methods.
+  [$SIKULI_SCREEN, SikuliX].each do |obj|
+    mtype = (obj.class == Class ? :java_class_methods : :java_instance_methods)
+    obj.java_class.method(mtype).call.map(&:name).uniq.each do |name|
+      obj_meth = obj.method(name)
+      SikuliX4Ruby.send(:define_method, name) do |*args, &block|
+        obj_meth.call(*args, &block)
+      end
+    end
+  end
 
   # Display some help in interactive mode.
   def shelp
@@ -172,26 +198,26 @@ module SikuliX4Ruby
   end
 end
 
-# This method allow to call "undotted" methods that belong to
-# Region/Screen or SikuliX classes.
-def self.method_missing(name, *args, &block)
-  Debug.log 3, "SikuliX4Ruby: looking for undotted method: #{name}"
-
-  if (method = SikuliX4Ruby::UNDOTTED_METHODS[name])
-    begin
-      ret = method.call(*args, &block)
-      # Dynamic methods that throw a native Java-exception,
-      # hide a line number in the scriptfile!
-      # Object.send(:define_method, name){ |*args| method.call(*args) }
-      return ret
-    rescue NativeException => e
-      raise StandardError, "SikuliX4Ruby: Problem (#{e})\n" \
-        "with undotted method: #{name} (#{args})"
-    end
-  else
-    fail "undotted method '#{name}' missing"
-  end
-end
+# This is an alternative for method generation using define_method
+## This method allow to call "undotted" methods that belong to
+## Region/Screen or SikuliX classes.
+# def self.method_missing(name, *args, &block)
+#
+#  if (method = SikuliX4Ruby::UNDOTTED_METHODS[name])
+#    begin
+#      ret = method.call(*args, &block)
+#      # Dynamic methods that throw a native Java-exception,
+#      # hide a line number in the scriptfile!
+#      # Object.send(:define_method, name){ |*args| method.call(*args) }
+#      return ret
+#    rescue NativeException => e
+#      raise StandardError, "SikuliX4Ruby: Problem (#{e})\n" \
+#        "with undotted method: #{name} (#{args})"
+#    end
+#  else
+#    fail "undotted method '#{name}' missing"
+#  end
+# end
 
 # Generate methods like constructors.
 # Example: Pattern("123.png").similar(0.5)

@@ -36,9 +36,8 @@ else
 	JAWT="/C/Program Files (x86)/Java/jdk$J32/lib"
 	DLLN=jawt
 	echo EXPORTS >build/$DLLN.def
-	echo _JAWT_GetAWT@8 >>build/$DLLN.def
-	echo _imp__JAWT_GetAWT@8 >>build/$DLLN.def
-	dlltool --def build/$DLLN.def -k --dllname $DLLN.dll --output-lib build/$DLLN.a
+	echo JAWT_GetAWT@8 >>build/$DLLN.def
+	dlltool --def build/$DLLN.def -U --dllname $DLLN.dll --output-lib build/$DLLN.a
 	g++ -Wl,--kill-at -o libs32/$MOD.dll build/$MOD.o -L"$JAWT" build/$DLLN.a -shared -s
 	ls -l libs32
 fi 
