@@ -196,6 +196,13 @@ module SikuliX4Ruby
   def removeHotkey(key, modifiers)
     Env.removeHotkey key, modifiers
   end
+
+  # Generate methods like constructors.
+  # Example: Pattern("123.png").similar(0.5)
+  [Pattern, Region, Screen, App].each do |cl|
+    name = cl.java_class.simple_name
+    define_singleton_method(name) { |*args| cl.new(*args) }
+  end
 end
 
 # This is an alternative for method generation using define_method
@@ -218,10 +225,3 @@ end
 #    fail "undotted method '#{name}' missing"
 #  end
 # end
-
-# Generate methods like constructors.
-# Example: Pattern("123.png").similar(0.5)
-[:Pattern, :Region, :Screen, :App].each do |name|
-  cl = Object.const_get "SikuliX4Ruby::#{name}"
-  SikuliX4Ruby.send(:define_method, name) { |*args| cl.new(*args) }
-end
