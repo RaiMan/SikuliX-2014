@@ -148,9 +148,10 @@ module SikuliX4Ruby
     mtype = (obj.class == Class ? :java_class_methods : :java_instance_methods)
     obj.java_class.method(mtype).call.map(&:name).uniq.each do |name|
       obj_meth = obj.method(name)
-      SikuliX4Ruby.send(:define_method, name) do |*args, &block|
+      define_singleton_method(name) do |*args, &block|
         obj_meth.call(*args, &block)
       end
+      define_method(name) { |*args, &block| obj_meth.call(*args, &block) }
     end
   end
 
@@ -202,6 +203,7 @@ module SikuliX4Ruby
   [Pattern, Region, Screen, App].each do |cl|
     name = cl.java_class.simple_name
     define_singleton_method(name) { |*args| cl.new(*args) }
+    define_method(name) { |*args| cl.new(*args) }
   end
 end
 
