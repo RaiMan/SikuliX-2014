@@ -65,6 +65,17 @@ module SikuliX4Ruby
     end
   end
 
+  # Dynamic method definition for several cases of invocation
+  def self.dynamic_def(name, &block)
+    # using as:
+    #   include SikuliX4Ruby
+    #   some_method(...)
+    define_method(name, &block)
+    # using as:
+    #   SikuliX4Rub::some_method(...)
+    define_singleton_method(name, &block)
+  end
+
   # Redefinition of native org.sikuli.script.Region class
   class Region
     # Service class for all callbacks processing
@@ -148,10 +159,7 @@ module SikuliX4Ruby
     mtype = (obj.class == Class ? :java_class_methods : :java_instance_methods)
     obj.java_class.method(mtype).call.map(&:name).uniq.each do |name|
       obj_meth = obj.method(name)
-      define_singleton_method(name) do |*args, &block|
-        obj_meth.call(*args, &block)
-      end
-      define_method(name) { |*args, &block| obj_meth.call(*args, &block) }
+      dynamic_def(name) { |*args, &block| obj_meth.call(*args, &block) }
     end
   end
 
@@ -202,8 +210,7 @@ module SikuliX4Ruby
   # Example: Pattern("123.png").similar(0.5)
   [Pattern, Region, Screen, App].each do |cl|
     name = cl.java_class.simple_name
-    define_singleton_method(name) { |*args| cl.new(*args) }
-    define_method(name) { |*args| cl.new(*args) }
+    dynamic_def(name) { |*args| cl.new(*args) }
   end
 end
 
