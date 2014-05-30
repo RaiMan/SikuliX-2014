@@ -1,20 +1,33 @@
+# special g++ settings (for 4.8.2+)
+# -fPIC not needed (file cmake\OpenCVCompilerOptions.cmake line 255)
+
 basedir=`pwd`
 workdir=$basedir
 if [ "$1" != "" ]; then
    basedir=$1
    cd $1
 fi
+builddir=$basedir/build
+if [ "$NOWIS" != "" ]; then
+	builddir=$builddir$NOWIS
+	buildtype="MSYS Makefiles"
+	if [ "$NOWIS" == "32" ]; then
+		export JAVA_HOME="c:\Program Files (x86)\Java\jdk1.7.0_55"
+	else
+		export JAVA_HOME="c:\Program Files\Java\jdk1.7.0_55"
+	fi
+fi
+echo "JAVA_HOME: $JAVA_HOME" 
 echo ------------ checking ----------
 shouldrun=notok
 jmake=modules/java/build.xml.in
-echo "running in $basedir"
 echo "looking for $jmake"
 if [ -e $jmake ]; then
    targetdone=`grep -c '<javac target' $jmake`
    if [ $targetdone = 0 ]; then
       cp -f $jmake $jmake.org
       echo "now adding target=1.6"
-      sed 's/<javac /<javac target=\"1.6\" /' $jmake >$jmake.new
+      sed 's/<javac /<javac target=\"1.6\" source=\"1.6\" /' $jmake >$jmake.new
       cp -f $jmake.new $jmake
       grep '<javac target' $jmake
       echo "should have been added"
@@ -29,13 +42,13 @@ fi
 if [ "notok" = "$shouldrun" ]; then
 echo "Something is wrong! Terminate here, correct it and come back"
 fi
-echo ------------ configure ----------
-if [ ! -e build ]; then
-  mkdir build
+echo ------------ configure in $builddir ----------
+if [ ! -e $builddir ]; then
+  mkdir $builddir
 fi
-cd build
+cd $builddir
 read -p "Press [Enter] key to continue ... or [Ctrl-C] to terminate ..."
-cmake \
+cmake -G "$buildtype" \
 -DBUILD_SHARED_LIBS="OFF" \
 -DBUILD_FAT_JAVA_LIB="ON" \
 -DBUILD_JPEG="ON" \
@@ -142,7 +155,7 @@ cmake \
 read -p "Press [Enter] key to continue ... or [Ctrl-C] to terminate ..."
 echo ---------------- build ----------------------------
 make
-echo ---------------- result ----------------------------
+echo ---------------- result in $builddir/bin----------------------------
 ls -l bin/
-ls -l lib/
+cd $basedir
 echo ---------------- opencv end ----------------------------
