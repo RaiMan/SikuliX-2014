@@ -209,7 +209,8 @@ public class JRubyScriptRunner implements IScriptRunner {
 	@Override
 	public void close() {
 		if (interpreter != null) {
-			interpreter.clear();
+			interpreter.terminate();
+			interpreter = null;
 		}
 	}
 
