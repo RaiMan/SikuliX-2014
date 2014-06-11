@@ -239,6 +239,9 @@ public class SikuliX {
       }
     }
     if (name != null && runner == null) {
+      if (args != null && args.length == 1 && "convertSrcToHtml".equals(args[0])) {
+        return null;
+      }
       if (name != null) {
         Debug.error("Fatal error 121: Could not load script runner with name: %s", name);
         SikuliX.terminate(121);

@@ -518,8 +518,9 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		return _editingFile.getAbsolutePath();
 	}
 
+//TODO convertSrcToHtml has to be completely revised
 	private void convertSrcToHtml(String bundle) {
-		if (null != SikuliX.getScriptRunner("jython", null, null)) {
+		if (null != SikuliX.getScriptRunner("jython", null, new String[] {"convertSrcToHtml"})) {
 			SikuliX.getScriptRunner("jython", null, null).doSomethingSpecial("convertSrcToHtml",
 							new String[]{bundle});
 		}
