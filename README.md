@@ -4,12 +4,12 @@
 <hr />
 May 5th, 2014: 1.1.0-Beta1 is out
 -----------------
-Newest build available per May 19th 15h+ (2014-05-16-18)<br />
+Newest build available per May 30th 18h+ (2014-05-30-18)<br />
 [for download look here](https://launchpad.net/sikuli/sikulix/1.1.0)
 
 Known issues and fixes: https://answers.launchpad.net/sikuli/+faq/2521
 
-... there seem to be problems with the native library WinUtil.dll on Windows XP/7 32-Bit and on Windows XP/7 64-Bit when using a 32-Bit Java. It seems to work on Mac 10.6+ and Windows 64-Bit using 64-Bit Java and should work on Linux.<br />
+The problems with native libraries on Windows with 32-Bit Java should be fixed.<br />
 <hr />
 
 <hr />
