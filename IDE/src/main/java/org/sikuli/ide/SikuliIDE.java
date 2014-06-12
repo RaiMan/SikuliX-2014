@@ -113,7 +113,7 @@ public class SikuliIDE extends JFrame {
   private static JFrame splash;
   private boolean firstRun = true;
   private static long start;
-  private static File isRunning;
+  private static File isRunning = null;
   private static FileOutputStream isRunningFile = null;
 
   static {
@@ -150,11 +150,13 @@ public class SikuliIDE extends JFrame {
         @Override
         public void run() {
           log(lvl, "final cleanup");
-          try {
-            isRunningFile.close();
-          } catch (IOException ex) {
+          if (isRunning != null) {
+            try {
+              isRunningFile.close();
+            } catch (IOException ex) {
+            }
+            isRunning.delete();
           }
-          isRunning.delete();
           FileManager.cleanTemp();
         }
     });
