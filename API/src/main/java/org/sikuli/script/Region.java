@@ -243,13 +243,6 @@ public class Region {
     return loc.setOtherScreen(scr);
   }
 
-  private Region checkAndSetRemote(Region reg) {
-    if (!isOtherScreen()) {
-      return reg;
-    }
-    return reg.setScreen(scr);
-  }
-
   public boolean isOtherScreen() {
     return otherScreen;
   }
@@ -2528,36 +2521,40 @@ public class Region {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Find internal support">
-  private <PatternStringRegionMatch> Region getRegionFromTarget(PatternStringRegionMatch target) throws FindFailed {
-    if (target instanceof Pattern || target instanceof String || target instanceof Image) {
-      Match m = find(target);
-      if (m != null) {
-        return m.setScreen(scr);
-      }
-      return null;
-    }
-    if (target instanceof Region) {
-      return ((Region) target).setScreen(scr);
-    }
-    return null;
-  }
+//  private <PatternStringRegionMatch> Region getRegionFromTarget(PatternStringRegionMatch target) throws FindFailed {
+//    if (target instanceof Pattern || target instanceof String || target instanceof Image) {
+//      Match m = find(target);
+//      if (m != null) {
+//        return m.setScreen(scr);
+//      }
+//      return null;
+//    }
+//    if (target instanceof Region) {
+//      return ((Region) target).setScreen(scr);
+//    }
+//    return null;
+//  }
 
-  private <PatternStringRegionMatchLocation> Location getLocationFromTarget(PatternStringRegionMatchLocation target) throws FindFailed {
+  private <PSIMRL> Location getLocationFromTarget(PSIMRL target) throws FindFailed {
     if (target instanceof Pattern || target instanceof String || target instanceof Image) {
       Match m = find(target);
       if (m != null) {
-        return m.getTarget().setOtherScreen(scr);
+        if (isOtherScreen()) {
+          return m.getTarget().setOtherScreen(scr);
+        } else {
+          return m.getTarget();
+        }
       }
       return null;
     }
     if (target instanceof Match) {
-      return ((Match) target).getTarget().setOtherScreen(scr);
+      return ((Match) target).getTarget();
     }
     if (target instanceof Region) {
-      return ((Region) target).getCenter().setOtherScreen(scr);
+      return ((Region) target).getCenter();
     }
     if (target instanceof Location) {
-      return ((Location) target).setOtherScreen(scr);
+      return new Location((Location) target);
     }
     return null;
   }
