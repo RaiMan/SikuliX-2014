@@ -13,6 +13,7 @@ import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.Robot;
 
 /**
  * A screen represents a physical monitor with its coordinates and size according to the global
@@ -35,6 +36,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   
   protected static GraphicsEnvironment genv = null;
   protected static GraphicsDevice[] gdevs;
+  private static Robot mouseRobot;
   protected static Screen[] screens;
   protected static int primaryScreen = -1;
   private static int waitForScreenshot = 300;
@@ -99,8 +101,19 @@ public class Screen extends Region implements EventObserver, IScreen {
       }
       log(lvl, "*** end monitor configuration ***");
     }
+    try {
+      mouseRobot = new Robot();
+      mouseRobot.setAutoDelay(10);
+    } catch (AWTException e) {
+      Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
+      SikuliX.endFatal(999);
+    }
   }
-
+  
+  protected static Robot getMouseRobot() {
+    return mouseRobot;
+  }
+          
   // hack to get an additional internal constructor for the initialization
   private Screen(int id, boolean init) {
     super();

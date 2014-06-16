@@ -21,8 +21,7 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
- * INTERNAL USE
- * Implemenation of IRobot making a DeskTopRobot using java.awt.Robot
+ * INTERNAL USE Implemenation of IRobot making a DeskTopRobot using java.awt.Robot
  */
 public class RobotDesktop extends Robot implements IRobot {
 
@@ -44,6 +43,7 @@ public class RobotDesktop extends Robot implements IRobot {
 
   public RobotDesktop(Screen screen) throws AWTException {
     super(screen.getGraphicsDevice());
+//    super();
     scr = screen;
   }
 
@@ -56,10 +56,11 @@ public class RobotDesktop extends Robot implements IRobot {
   public void smoothMove(Location src, Location dest, long ms) {
     Debug.log(4, "RobotDesktop: smoothMove (%.1f): " + src.toString() + "---" + dest.toString(), Settings.MoveMouseDelay);
     if (ms == 0) {
-      Screen s = dest.getScreen();
-      Location p = new Location(dest.x - s.x, dest.y - s.y);
-      s.getRobot().mouseMove(p.x, p.y);
-      moveMouseAndCheckPos(p, s);
+//      Screen s = dest.getScreen();
+//      Location p = new Location(dest.x - s.x, dest.y - s.y);
+//      s.getRobot().mouseMove(p.x, p.y);
+//      moveMouseAndCheckPos(p, s);
+      Screen.getMouseRobot().mouseMove(dest.x, dest.y);
       return;
     }
 
@@ -70,10 +71,11 @@ public class RobotDesktop extends Robot implements IRobot {
     while (aniX.running()) {
       float x = aniX.step();
       float y = aniY.step();
-      Screen s = (new Location(x, y)).getScreen();
-      Location p = new Location(x - s.x, y - s.y);
-      moveMouseAndCheckPos(p, s);
-      delay(50);
+//      Screen s = (new Location(x, y)).getScreen();
+//      Location p = new Location(x - s.x, y - s.y);
+//      moveMouseAndCheckPos(p, s);
+//      delay(50);
+      Screen.getMouseRobot().mouseMove((int) x, (int) y);
     }
   }
 
