@@ -8,6 +8,7 @@ package org.sikuli.script;
 
 import java.awt.MouseInfo;
 import java.awt.Point;
+import java.awt.PointerInfo;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.util.Date;
@@ -231,7 +232,12 @@ public class Mouse {
         keep = false;
         return true;
       }
-      lastPos = MouseInfo.getPointerInfo().getLocation();
+      PointerInfo mp = MouseInfo.getPointerInfo();
+      if (mp != null) {
+        lastPos = MouseInfo.getPointerInfo().getLocation();        
+      } else {
+        Debug.error("Mouse: not possible to get last mouse position (PointerInfo == null)");
+      }
       inUse = false;
       this.owner = null;
       notify();
