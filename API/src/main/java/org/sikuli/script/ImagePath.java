@@ -138,6 +138,9 @@ public class ImagePath {
         log(-1, "File does not exists: " + fname);
       }
     } else {
+      if (0 == getPathCount()) {
+        setBundlePath(System.getProperty("user.dir"));
+      }
       for (PathEntry path : getPaths()) {
         if (path == null) {
           continue;
