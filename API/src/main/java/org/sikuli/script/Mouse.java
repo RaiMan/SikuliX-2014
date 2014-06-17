@@ -68,6 +68,10 @@ public class Mouse {
   private Mouse() {
     this.lastPos = null;
   }
+  
+  public static Location at() {
+    return new Location(getLocation());
+  }
 
   /**
    * To get the one Mouse instance used for synchronisation
