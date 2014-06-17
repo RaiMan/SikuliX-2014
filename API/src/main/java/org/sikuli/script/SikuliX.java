@@ -8,7 +8,7 @@ package org.sikuli.script;
 
 import org.sikuli.basics.CommandArgs;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.SikuliScript;
+import org.sikuli.basics.HotkeyManager;
 
 /**
  * INTERNAL USE
@@ -20,19 +20,19 @@ public class SikuliX {
 
   public static void endNormal(int n) {
     Debug.log(3, me + "endNormal: %d", n);
-    cleanUp(0);
+    cleanUp(n);
     System.exit(n);
   }
 
   public static void endWarning(int n) {
     Debug.log(3, me + "endWarning: %d", n);
-    cleanUp(0);
+    cleanUp(n);
     System.exit(n);
   }
 
   public static void endError(int n) {
     Debug.log(3, me + "endError: %d", n);
-    cleanUp(0);
+    cleanUp(n);
     System.exit(n);
   }
 
@@ -42,7 +42,7 @@ public class SikuliX {
             + "! Sorry, but it makes no sense to continue!\n"
             + "If you do not have any idea about the error cause or solution, run again\n"
             + "with a Debug level of 3. You might paste the output to the Q&A board.", n);
-    cleanUp(0);
+    cleanUp(n);
     System.exit(n);
   }
 
@@ -54,6 +54,7 @@ public class SikuliX {
     //TODO move to class Keys after implementation
     Screen.getPrimaryScreen().getRobot().keyUp();
     //TODO what about remote screen sessions????
+    HotkeyManager.reset();
     if (CommandArgs.isIDE()) {
       //TODO reset selected options to defaults
     }
@@ -65,7 +66,7 @@ public class SikuliX {
     Pattern p = new Pattern(img);
     Finder f = new Finder(img);
     if (null != f.find(p) && f.hasNext()) {
-      SikuliScript.popup("Hallo from Java-API.testSetup\nSikuli seems to be working fine!\n\nHave fun!");
+      org.sikuli.basics.SikuliX.popup("Hallo from Java-API.testSetup\nSikuli seems to be working fine!\n\nHave fun!");
       return true;
     }
     return false;
