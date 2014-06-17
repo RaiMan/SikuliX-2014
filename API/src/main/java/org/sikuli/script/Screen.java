@@ -66,12 +66,24 @@ public class Screen extends Region implements EventObserver, IScreen {
     genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
     gdevs = genv.getScreenDevices();
     screens = new Screen[gdevs.length];
-    primaryScreen = 0;
+    if (gdevs.length == 0) {
+      Debug.error("Screen: initScreens: GraphicsEnvironment has no screens");
+      SikuliX.endFatal(999);
+    }
+    primaryScreen = -1;
     for (int i = 0; i < getNumberScreens(); i++) {
       if (gdevs[i].getDefaultConfiguration().getBounds().contains(new Point(0, 0))) {
-        primaryScreen = i;
-        break;
+        if (primaryScreen < 0) {
+          primaryScreen = i;
+          log(lvl, "initScreens: ScreenDevice %d contains (0,0) --- will be used as primary", i);
+      } else {
+          log(lvl, "initScreens: ScreenDevice %d too contains (0,0)!", i);
+        }
       }
+    }
+    if (primaryScreen < 0) {
+      Debug.log("Screen: initScreens: no ScreenDevice contains (0,0) --- using first ScreenDevice as primary");
+      primaryScreen = 0;
     }
     if (primaryScreen > 0) {
       GraphicsDevice gd0 = gdevs[primaryScreen];
@@ -81,7 +93,7 @@ public class Screen extends Region implements EventObserver, IScreen {
       gdevs[0] = gd0;
     }
     int is;
-    for (int i = 0; i < gdevs.length; i++) {
+    for (int i = 0; i < screens.length; i++) {
       if (i == primaryScreen) {
         is = 0;
       } else if (i < primaryScreen) {
