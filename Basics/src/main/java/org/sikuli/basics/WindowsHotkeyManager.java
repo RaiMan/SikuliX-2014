@@ -98,10 +98,4 @@ public class WindowsHotkeyManager extends HotkeyManager {
     }
     return newMod;
   }
-
-  @Override
-  public boolean addHotkey(int htype, HotkeyListener listener) {
-//TODO hack to avoid usage - predefined hot keys !!!    
-    return false;
-  }
 }

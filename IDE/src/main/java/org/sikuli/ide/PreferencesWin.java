@@ -500,8 +500,8 @@ public class PreferencesWin extends JFrame {
       pref.setPrefMoreTextOCR(true);
     }
     if (old_cap_hkey != cap_hkey || old_cap_mod != cap_mod) {
-      ide.removeCaptureHotkey(old_cap_hkey, old_cap_mod);
-      ide.installCaptureHotkey(cap_hkey, cap_mod);
+      ide.removeCaptureHotkey();
+      ide.installCaptureHotkey();
     }
     pref.setCheckUpdate(chkAutoUpdate.isSelected());
 
@@ -523,8 +523,8 @@ public class PreferencesWin extends JFrame {
     pref.setCaptureHotkey(_old_cap_hkey);
     pref.setCaptureHotkeyModifiers(_old_cap_mod);
     if (old_cap_hkey != _old_cap_hkey || old_cap_mod != _old_cap_mod) {
-      ide.removeCaptureHotkey(old_cap_hkey, old_cap_mod);
-      ide.installCaptureHotkey(_old_cap_hkey, old_cap_mod);
+      ide.removeCaptureHotkey();
+      ide.installCaptureHotkey();
     }
     pref.setAutoNamingMethod(_autoNamingMethod);
     pref.setCheckUpdate(_chkAutoUpdate);

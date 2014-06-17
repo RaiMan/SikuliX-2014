@@ -2340,12 +2340,12 @@ public class SikuliIDE extends JFrame {
 
   }
 
-  public void removeCaptureHotkey(int key, int mod) {
-    HotkeyManager.getInstance()._removeHotkey(key, mod);
+  public void removeCaptureHotkey() {
+    HotkeyManager.getInstance().removeHotkey("Capture");
   }
 
-  public void installCaptureHotkey(int key, int mod) {
-    HotkeyManager.getInstance()._addHotkey(key, mod, new HotkeyListener() {
+  public void installCaptureHotkey() {
+    HotkeyManager.getInstance().addHotkey("Capture", new HotkeyListener() {
       @Override
       public void hotkeyPressed(HotkeyEvent e) {
         if (!SikuliIDE.getInstance().isRunningScript()) {
@@ -2364,12 +2364,12 @@ public class SikuliIDE extends JFrame {
     _btnCapture.capture(0);
   }
 
-  public void removeStopHotkey(int key, int mod) {
-    HotkeyManager.getInstance()._removeHotkey(key, mod);
+  public void removeStopHotkey() {
+    HotkeyManager.getInstance().removeHotkey("Abort");
   }
 
-  public void installStopHotkey(int key, int mod) {
-    HotkeyManager.getInstance()._addHotkey(key, mod, new HotkeyListener() {
+  public void installStopHotkey() {
+    HotkeyManager.getInstance().addHotkey("Abort", new HotkeyListener() {
       @Override
       public void hotkeyPressed(HotkeyEvent e) {
         onStopRunning();
@@ -2386,14 +2386,8 @@ public class SikuliIDE extends JFrame {
   }
 
   private void initHotkeys() {
-    PreferencesUser pref = PreferencesUser.getInstance();
-    int key = pref.getCaptureHotkey();
-    int mod = pref.getCaptureHotkeyModifiers();
-    installCaptureHotkey(key, mod);
-
-    key = pref.getStopHotkey();
-    mod = pref.getStopHotkeyModifiers();
-    installStopHotkey(key, mod);
+    installCaptureHotkey();
+    installStopHotkey();
   }
   //</editor-fold>
 
