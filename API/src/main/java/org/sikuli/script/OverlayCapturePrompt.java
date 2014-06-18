@@ -29,22 +29,22 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
   static final BasicStroke strokeScreenFrame = new BasicStroke(5);
   static final BasicStroke _StrokeCross = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, new float[]{2f}, 0);
   static final BasicStroke bs = new BasicStroke(1);
-  EventObserver _obs;
-  Screen _scr;
-  BufferedImage _scr_img = null;
-  BufferedImage _darker_screen = null;
-  BufferedImage bi = null;
-  float _darker_factor;
-  Rectangle rectSelection;
-  int srcScreenId = 0;
-  Location srcScreenLocation = null;
-  Location destScreenLocation = null;
-  ScreenUnion srcScreenUnion = null;
-  int srcx, srcy, destx, desty;
-  boolean _canceled = false;
-  String _msg;
-  boolean didPurgeMessage = false;
-  boolean dragging = false;
+  private EventObserver obs;
+  private Screen scr;
+  private BufferedImage scr_img = null;
+  private BufferedImage scr_img_darker = null;
+  private BufferedImage bi = null;
+  private float darker_factor;
+  private Rectangle rectSelection;
+  private int srcScreenId = 0;
+  private Location srcScreenLocation = null;
+  private Location destScreenLocation = null;
+  private ScreenUnion srcScreenUnion = null;
+  private int srcx, srcy, destx, desty;
+  private boolean canceled = false;
+  private String msg;
+  private boolean didPurgeMessage = false;
+  private boolean dragging = false;
 
   public OverlayCapturePrompt(Screen scr, EventObserver ob) {
     init(scr, ob);
@@ -59,28 +59,28 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
         scr = Screen.getPrimaryScreen();
       }
     }
-    _scr = scr;
+    this.scr = scr;
 
-    _canceled = false;
+    canceled = false;
     setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     rectSelection = new Rectangle();
     addMouseListener(new MouseAdapter() {
       @Override
       public void mouseMoved(java.awt.event.MouseEvent e) {
-        if (_msg == null) {
+        if (msg == null) {
           return;
         }
-        _msg = null;
+        msg = null;
         repaint();
       }
 
       @Override
       public void mousePressed(java.awt.event.MouseEvent e) {
-        if (_scr_img == null) {
+        if (scr_img == null) {
           return;
         }
-        if (_msg != null) {
-          _msg = null;
+        if (msg != null) {
+          msg = null;
           didPurgeMessage = true;
         }
         destx = srcx = e.getX();
@@ -96,7 +96,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
 
       @Override
       public void mouseReleased(java.awt.event.MouseEvent e) {
-        if (_scr_img == null) {
+        if (scr_img == null) {
           return;
         }
         if (!dragging && didPurgeMessage) {
@@ -104,7 +104,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
           return;
         }
         if (e.getButton() == java.awt.event.MouseEvent.BUTTON3) {
-          _canceled = true;
+          canceled = true;
           Debug.log(2, "CapturePrompt: aborted using right mouse button");
         } else {
           destScreenLocation = new Location(destx + srcScreenUnion.getBounds().x,
@@ -120,7 +120,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
     addMouseMotionListener(new MouseMotionAdapter() {
       @Override
       public void mouseDragged(java.awt.event.MouseEvent e) {
-        if (_scr_img == null) {
+        if (scr_img == null) {
           return;
         }
         dragging = true;
@@ -134,12 +134,12 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
       @Override
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-          if (_msg != null) {
-            _msg = null;
+          if (msg != null) {
+            msg = null;
             repaint();
             return;
           }
-          _canceled = true;
+          canceled = true;
           Debug.log(2, "CapturePrompt: aborted using key ESC");
           setVisible(false);
           notifyObserver();
@@ -152,19 +152,19 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
   public void close() {
     Debug.log(2, "CapturePrompt.close: freeing resources");
     dispose();
-    _scr_img = null;
-    _darker_screen = null;
+    scr_img = null;
+    scr_img_darker = null;
     bi = null;
   }
 
   @Override
   public void addObserver(EventObserver o) {
-    _obs = o;
+    obs = o;
   }
 
   @Override
   public void notifyObserver() {
-    _obs.update(this);
+    obs.update(this);
   }
 
   public void prompt(String msg, int delayMS) {
@@ -184,11 +184,11 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
   }
 
   public void prompt(String msg) {
-    captureScreen(_scr);
-    this.setBounds(_scr.getBounds());
+    captureScreen(scr);
+    this.setBounds(scr.getBounds());
     this.setAlwaysOnTop(true);
-    _msg = msg;
-    Debug.log(2, "CapturePrompt: " + _msg);
+    this.msg = msg;
+    Debug.log(2, "CapturePrompt: " + this.msg);
     this.setVisible(true);
     if (!Settings.isJava7()) {
       if (Settings.isMac()) {
@@ -200,24 +200,22 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
 
   private void captureScreen(Screen scr) {
     ScreenImage simg = scr.capture();
-    _scr_img = simg.getImage();
-
-    _darker_factor = 0.6f;
-    RescaleOp op = new RescaleOp(_darker_factor, 0, null);
-    _darker_screen = op.filter(_scr_img, null);
-
+    scr_img = simg.getImage();
+    darker_factor = 0.6f;
+    RescaleOp op = new RescaleOp(darker_factor, 0, null);
+    scr_img_darker = op.filter(scr_img, null);
   }
 
   public ScreenImage getSelection() {
-    if (_canceled) {
+    if (canceled) {
       return null;
     }
     BufferedImage cropImg = cropSelection();
     if (cropImg == null) {
       return null;
     }
-    rectSelection.x += _scr.getBounds().x;
-    rectSelection.y += _scr.getBounds().y;
+    rectSelection.x += scr.getBounds().x;
+    rectSelection.y += scr.getBounds().y;
     ScreenImage ret = new ScreenImage(rectSelection, cropImg);
     return ret;
   }
@@ -231,7 +229,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
     Graphics2D crop_g2d = crop.createGraphics();
     try {
       crop_g2d.drawImage(
-              _scr_img.getSubimage(rectSelection.x, rectSelection.y, w, h),
+              scr_img.getSubimage(rectSelection.x, rectSelection.y, w, h),
               null, 0, 0);
     } catch (RasterFormatException e) {
       e.printStackTrace();
@@ -247,19 +245,19 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
   }
 
   void drawMessage(Graphics2D g2d) {
-    if (_msg == null) {
+    if (msg == null) {
       return;
     }
     g2d.setFont(fontMsg);
     g2d.setColor(new Color(1f, 1f, 1f, 1));
-    int sw = g2d.getFontMetrics().stringWidth(_msg);
+    int sw = g2d.getFontMetrics().stringWidth(msg);
     int sh = g2d.getFontMetrics().getMaxAscent();
     Rectangle ubound = (new ScreenUnion()).getBounds();
     for (int i = 0; i < Screen.getNumberScreens(); i++) {
       Rectangle bound = Screen.getBounds(i);
       int cx = bound.x + (bound.width - sw) / 2 - ubound.x;
       int cy = bound.y + (bound.height - sh) / 2 - ubound.y;
-      g2d.drawString(_msg, cx, cy);
+      g2d.drawString(msg, cx, cy);
     }
   }
 
@@ -288,7 +286,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
       rectSelection.height = (y2 - y1) + 1;
 
       if (rectSelection.width > 0 && rectSelection.height > 0) {
-        g2d.drawImage(_scr_img.getSubimage(x1, y1, x2 - x1 + 1, y2 - y1 + 1),
+        g2d.drawImage(scr_img.getSubimage(x1, y1, x2 - x1 + 1, y2 - y1 + 1),
                 null, x1, y1);
       }
 
@@ -326,14 +324,14 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
 
   @Override
   public void paint(Graphics g) {
-    if (_scr_img != null) {
+    if (scr_img != null) {
       Graphics2D g2dWin = (Graphics2D) g;
       if (bi == null) {
-        bi = new BufferedImage(_scr.getBounds().width,
-                _scr.getBounds().height, BufferedImage.TYPE_INT_RGB);
+        bi = new BufferedImage(scr.getBounds().width,
+                scr.getBounds().height, BufferedImage.TYPE_INT_RGB);
       }
       Graphics2D bfG2 = bi.createGraphics();
-      bfG2.drawImage(_darker_screen, 0, 0, this);
+      bfG2.drawImage(scr_img_darker, 0, 0, this);
       drawMessage(bfG2);
       drawSelection(bfG2);
       g2dWin.drawImage(bi, 0, 0, this);
