@@ -14,6 +14,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A screen represents a physical monitor with its coordinates and size according to the global
@@ -120,6 +122,25 @@ public class Screen extends Region implements EventObserver, IScreen {
       Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
       SikuliX.endFatal(999);
     }
+    if (0 < getNumberScreens()) {
+      log(lvl, "*** checking: how to click on the available screens");
+      Screen s0 = Screen.getPrimaryScreen();
+      Location lc = null, lcn = null;
+      for (Screen s : screens) {
+        try {
+          lc = s.getCenter();
+          s0.hover(lc);
+          lcn = Mouse.at();
+        } catch (Exception ex) {
+        }
+        if (!lc.equals(lcn)) {
+          log(lvl, "*** checking: %s center: (%d, %d) --- NOT OK:  (%d, %d)",
+                  s.toStringShort(), lc.x, lc.y, lcn.x, lcn.y);
+        } else {
+          log(lvl, "*** checking: %s center: (%d, %d) --- OK", s.toStringShort(), lc.x, lc.y);
+        }
+      }
+    }
   }
   
   protected static Robot getMouseRobot() {
@@ -156,7 +177,6 @@ public class Screen extends Region implements EventObserver, IScreen {
 	 */
 	public Screen(boolean isScreenUnion) {
     super();
-//    initScreens();
   }
 
 	/**
@@ -183,7 +203,6 @@ public class Screen extends Region implements EventObserver, IScreen {
    */
   public Screen() {
     super();
-//    initScreens();
     curID = getPrimaryId();
     initScreen();
   }
