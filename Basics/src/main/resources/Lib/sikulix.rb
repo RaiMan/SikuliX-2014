@@ -208,7 +208,7 @@ module SikuliX4Ruby
 
   # Generate methods like constructors.
   # Example: Pattern("123.png").similar(0.5)
-  [Pattern, Region, Screen, App].each do |cl|
+  [Pattern, Region, Screen, App, Location].each do |cl|
     name = cl.java_class.simple_name
     dynamic_def(name) { |*args| cl.new(*args) }
   end
