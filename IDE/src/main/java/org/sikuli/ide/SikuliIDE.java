@@ -545,8 +545,8 @@ public class SikuliIDE extends JFrame {
 //    (new FileAction()).doCloseTab(null);
     return false;
   }
-
   //</editor-fold>
+  
   //<editor-fold defaultstate="collapsed" desc="Support SikuliIDE">
   public JMenu getFileMenu() {
     return _fileMenu;

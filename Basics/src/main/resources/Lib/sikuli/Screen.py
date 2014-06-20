@@ -13,7 +13,7 @@ import Sikuli
 class Screen(Region):
     def __init__(self, id=None):
         try:
-            # Debug.log(3, "Screen.py: init: %s", id)
+            #Debug.log(3, "Screen.py: init: %s", id)
             if id != None:
                 r = JScreen.getBounds(id)
                 s = JScreen.getScreen(id)
@@ -23,10 +23,10 @@ class Screen(Region):
                 s = JScreen.getScreen(id)
             (self.x, self.y, self.w, self.h) = (int(r.getX()), int(r.getY()), \
                             int(r.getWidth()), int(r.getHeight()))
-            # Debug.log(3, "Screen.py: before initScreen: %s", s)
+            #Debug.log(3, "Screen.py: before initScreen: %s", s)
             self.initScreen(s)
         except:
-            Debug.log(3, "Jython: init: exception while initializing Screen\n%s", sys.exc_info(0))
+            Debug.error("Jython: init: exception while initializing Screen\n%s", sys.exc_info(0))
             sys.exit(1)
 
     @classmethod
