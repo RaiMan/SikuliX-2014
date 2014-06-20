@@ -6,7 +6,6 @@
  */
 package org.sikuli.script;
 
-import java.awt.Point;
 import org.sikuli.basics.Debug;
 import java.awt.Rectangle;
 
@@ -33,6 +32,7 @@ public class ScreenUnion extends Screen {
     h = _bounds.height;
   }
 
+  @Override
   public int getIdFromPoint(int x, int y) {
     Rectangle sr = getBounds();
     int _x = x + getBounds().x;
@@ -58,7 +58,7 @@ public class ScreenUnion extends Screen {
 
   @Override
   public ScreenImage capture(Rectangle rect) {
-    Debug.log(3, "ScreenUnion: capture: " + rect);
+    Debug.log(3, "ScreenUnion: capture: (%d,%d) %dx%d", rect.x, rect.y, rect.width, rect.height);
     Screen s = Screen.getPrimaryScreen();
     Location tl = new Location(rect.getLocation());
     for (Screen sx : Screen.screens) {

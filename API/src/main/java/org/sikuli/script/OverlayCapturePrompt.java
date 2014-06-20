@@ -14,8 +14,7 @@ import java.awt.image.*;
 import org.sikuli.natives.SysUtil;
 
 /**
- * INTERNAL USE
- * implements the screen overlay used with the capture feature
+ * INTERNAL USE implements the screen overlay used with the capture feature
  */
 public class OverlayCapturePrompt extends OverlayTransparentWindow implements EventSubject {
 
@@ -26,11 +25,12 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
   static final Color selFrameColor = new Color(1.0f, 1.0f, 1.0f, 1.0f);
   static final Color selCrossColor = new Color(1.0f, 0.0f, 0.0f, 0.6f);
   static final Color screenFrameColor = new Color(1.0f, 0.0f, 0.0f, 0.6f);
+  private Rectangle screenFrame = null;
   static final BasicStroke strokeScreenFrame = new BasicStroke(5);
   static final BasicStroke _StrokeCross = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, new float[]{2f}, 0);
   static final BasicStroke bs = new BasicStroke(1);
   private EventObserver obs;
-  private Screen scr;
+  private Screen scrOCP;
   private BufferedImage scr_img = null;
   private BufferedImage scr_img_darker = null;
   private BufferedImage bi = null;
@@ -39,14 +39,14 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
   private int srcScreenId = 0;
   private Location srcScreenLocation = null;
   private Location destScreenLocation = null;
-  private ScreenUnion srcScreenUnion = null;
   private int srcx, srcy, destx, desty;
   private boolean canceled = false;
-  private String msg;
+  private String promptMsg;
   private boolean didPurgeMessage = false;
   private boolean dragging = false;
 
   public OverlayCapturePrompt(Screen scr, EventObserver ob) {
+    super();
     init(scr, ob);
   }
 
@@ -59,18 +59,18 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
         scr = Screen.getPrimaryScreen();
       }
     }
-    this.scr = scr;
-
+    scrOCP = scr;
     canceled = false;
     setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     rectSelection = new Rectangle();
     addMouseListener(new MouseAdapter() {
+
       @Override
       public void mouseMoved(java.awt.event.MouseEvent e) {
-        if (msg == null) {
+        if (promptMsg == null) {
           return;
         }
-        msg = null;
+        promptMsg = null;
         repaint();
       }
 
@@ -79,16 +79,14 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
         if (scr_img == null) {
           return;
         }
-        if (msg != null) {
-          msg = null;
+        if (promptMsg != null) {
+          promptMsg = null;
           didPurgeMessage = true;
         }
         destx = srcx = e.getX();
         desty = srcy = e.getY();
-        srcScreenUnion = new ScreenUnion();
-        srcScreenId = srcScreenUnion.getIdFromPoint(srcx, srcy);
-        srcScreenLocation = new Location(srcx + srcScreenUnion.getBounds().x,
-                srcy + srcScreenUnion.getBounds().y);
+        srcScreenId = scrOCP.getIdFromPoint(srcx, srcy);
+        srcScreenLocation = new Location(srcx + scrOCP.x, srcy + scrOCP.y);
         Debug.log(2, "CapturePrompt: started at (%d,%d) as %s on %d", srcx, srcy,
                 srcScreenLocation.toStringShort(), srcScreenId);
         repaint();
@@ -107,8 +105,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
           canceled = true;
           Debug.log(2, "CapturePrompt: aborted using right mouse button");
         } else {
-          destScreenLocation = new Location(destx + srcScreenUnion.getBounds().x,
-                  desty + srcScreenUnion.getBounds().y);
+          destScreenLocation = new Location(destx + scrOCP.x, desty + scrOCP.y);
           Debug.log(2, "CapturePrompt: finished at (%d,%d) as %s on %d", destx, desty,
                   destScreenLocation.toStringShort(), srcScreenId);
         }
@@ -134,8 +131,8 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
       @Override
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-          if (msg != null) {
-            msg = null;
+          if (promptMsg != null) {
+            promptMsg = null;
             repaint();
             return;
           }
@@ -184,11 +181,10 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
   }
 
   public void prompt(String msg) {
-    captureScreen(scr);
-    this.setBounds(scr.getBounds());
-    this.setAlwaysOnTop(true);
-    this.msg = msg;
-    Debug.log(2, "CapturePrompt: " + this.msg);
+    captureScreen(scrOCP);
+    this.setBounds(scrOCP.getBounds());
+    promptMsg = msg;
+    Debug.log(2, "CapturePrompt: " + promptMsg);
     this.setVisible(true);
     if (!Settings.isJava7()) {
       if (Settings.isMac()) {
@@ -214,8 +210,8 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
     if (cropImg == null) {
       return null;
     }
-    rectSelection.x += scr.getBounds().x;
-    rectSelection.y += scr.getBounds().y;
+    rectSelection.x += scrOCP.x;
+    rectSelection.y += scrOCP.y;
     ScreenImage ret = new ScreenImage(rectSelection, cropImg);
     return ret;
   }
@@ -232,32 +228,26 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
               scr_img.getSubimage(rectSelection.x, rectSelection.y, w, h),
               null, 0, 0);
     } catch (RasterFormatException e) {
-      e.printStackTrace();
+      Debug.error(e.getMessage());
     }
     crop_g2d.dispose();
-    /*
-     try{
-     ImageIO.write(crop, "png", new File("debug_crop.png"));
-     }
-     catch(IOException e){}
-     */
     return crop;
   }
 
   void drawMessage(Graphics2D g2d) {
-    if (msg == null) {
+    if (promptMsg == null) {
       return;
     }
     g2d.setFont(fontMsg);
     g2d.setColor(new Color(1f, 1f, 1f, 1));
-    int sw = g2d.getFontMetrics().stringWidth(msg);
+    int sw = g2d.getFontMetrics().stringWidth(promptMsg);
     int sh = g2d.getFontMetrics().getMaxAscent();
     Rectangle ubound = (new ScreenUnion()).getBounds();
     for (int i = 0; i < Screen.getNumberScreens(); i++) {
       Rectangle bound = Screen.getBounds(i);
       int cx = bound.x + (bound.width - sw) / 2 - ubound.x;
       int cy = bound.y + (bound.height - sh) / 2 - ubound.y;
-      g2d.drawString(msg, cx, cy);
+      g2d.drawString(promptMsg, cx, cy);
     }
   }
 
@@ -268,23 +258,10 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
       int x2 = (srcx > destx) ? srcx : destx;
       int y2 = (srcy > desty) ? srcy : desty;
 
-      if (Screen.getNumberScreens() > 1) {
-        Rectangle selRect = new Rectangle(x1, y1, x2 - x1, y2 - y1);
-        Rectangle ubound = (new ScreenUnion()).getBounds();
-        selRect.x += ubound.x;
-        selRect.y += ubound.y;
-        Rectangle inBound = selRect.intersection(Screen.getBounds(srcScreenId));
-        x1 = inBound.x - ubound.x;
-        y1 = inBound.y - ubound.y;
-        x2 = x1 + inBound.width - 1;
-        y2 = y1 + inBound.height - 1;
-      }
-
       rectSelection.x = x1;
       rectSelection.y = y1;
       rectSelection.width = (x2 - x1) + 1;
       rectSelection.height = (y2 - y1) + 1;
-
       if (rectSelection.width > 0 && rectSelection.height > 0) {
         g2d.drawImage(scr_img.getSubimage(x1, y1, x2 - x1 + 1, y2 - y1 + 1),
                 null, x1, y1);
@@ -293,7 +270,6 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
       g2d.setColor(selFrameColor);
       g2d.setStroke(bs);
       g2d.draw(rectSelection);
-
       int cx = (x1 + x2) / 2;
       int cy = (y1 + y2) / 2;
       g2d.setColor(selCrossColor);
@@ -308,18 +284,20 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
   }
 
   private void drawScreenFrame(Graphics2D g2d, int scrId) {
-    Rectangle rect = Screen.getBounds(scrId);
-    Rectangle ubound = (new ScreenUnion()).getBounds();
     g2d.setColor(screenFrameColor);
     g2d.setStroke(strokeScreenFrame);
-    rect.x -= ubound.x;
-    rect.y -= ubound.y;
-    int sw = (int) (strokeScreenFrame.getLineWidth() / 2);
-    rect.x += sw;
-    rect.y += sw;
-    rect.width -= sw * 2;
-    rect.height -= sw * 2;
-    g2d.draw(rect);
+    if (screenFrame == null) {
+      screenFrame = Screen.getBounds(scrId);
+      Rectangle ubound = scrOCP.getBounds();
+      screenFrame.x -= ubound.x;
+      screenFrame.y -= ubound.y;
+      int sw = (int) (strokeScreenFrame.getLineWidth() / 2);
+      screenFrame.x += sw;
+      screenFrame.y += sw;
+      screenFrame.width -= sw * 2;
+      screenFrame.height -= sw * 2;
+    }
+    g2d.draw(screenFrame);
   }
 
   @Override
@@ -327,8 +305,8 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
     if (scr_img != null) {
       Graphics2D g2dWin = (Graphics2D) g;
       if (bi == null) {
-        bi = new BufferedImage(scr.getBounds().width,
-                scr.getBounds().height, BufferedImage.TYPE_INT_RGB);
+        bi = new BufferedImage(scrOCP.w,
+                scrOCP.h, BufferedImage.TYPE_INT_RGB);
       }
       Graphics2D bfG2 = bi.createGraphics();
       bfG2.drawImage(scr_img_darker, 0, 0, this);
