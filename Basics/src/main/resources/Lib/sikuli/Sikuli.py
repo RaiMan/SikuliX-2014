@@ -330,6 +330,11 @@ def closeApp(app):
 def sleep(sec):
     time.sleep(sec)
 
+def reset():
+  JScreen.resetMonitors();
+  use();
+  ALL = JScreen.allMonitors()
+
 ##
 # shutdown and return given exit code
 #
@@ -428,4 +433,5 @@ def _exposeAllMethods(anyObject, saved, theGlobals, exclude_list):
 
 ############### set SCREEN as primary screen at startup ################
 use()
+ALL = JScreen.allMonitors()
 
