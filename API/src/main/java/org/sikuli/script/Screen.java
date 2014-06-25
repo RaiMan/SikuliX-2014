@@ -89,34 +89,9 @@ public class Screen extends Region implements EventObserver, IScreen {
       Debug.log("Screen: initScreens: no ScreenDevice contains (0,0) --- using first ScreenDevice as primary");
       primaryScreen = 0;
     }
-//    if (primaryScreen > 0) {
-//      GraphicsDevice gd0 = gdevs[primaryScreen];
-//      for (int i = primaryScreen; i > 0; i--) {
-//        gdevs[i] = gdevs[i-1];
-//      }
-//      gdevs[0] = gd0;
-//    }
-    int is;
     for (int i = 0; i < screens.length; i++) {
-      is = i;
-//      if (i == primaryScreen) {
-//        is = 0;
-//      } else if (i < primaryScreen) {
-//        is = i + 1;
-//      } else {
-//        is = i;
-//      }
-      screens[is] = new Screen(is, true);
-      screens[is].initScreen();
-    }
-//    primaryScreen = 0;
-    if (!reset) {
-      log(lvl - 1, "initScreens: basic initialization (%d Screen(s) found)", gdevs.length);
-      log(lvl, "*** monitor configuration (primary: %d) ***", primaryScreen);
-      for (int i = 0; i < gdevs.length; i++) {
-        log(lvl, "%d: %s", i, screens[i].toStringShort());
-      }
-      log(lvl, "*** end monitor configuration ***");
+      screens[i] = new Screen(i, true);
+      screens[i].initScreen();
     }
     try {
       mouseRobot = new Robot();
@@ -125,8 +100,15 @@ public class Screen extends Region implements EventObserver, IScreen {
       Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
       SikuliX.endFatal(999);
     }
+    if (!reset) {
+      log(lvl - 1, "initScreens: basic initialization (%d Screen(s) found)", gdevs.length);
+      log(lvl, "*** monitor configuration (primary: %d) ***", primaryScreen);
+      for (int i = 0; i < gdevs.length; i++) {
+        log(lvl, "%d: %s", i, screens[i].toStringShort());
+      }
+      log(lvl, "*** end monitor configuration ***");
+    }
     if (0 < getNumberScreens()) {
-      log(lvl, "*** checking: how to click on the available screens");
       Location lnow = Mouse.at();
       float mmd = Settings.MoveMouseDelay;
       Settings.MoveMouseDelay = 0f;
@@ -140,10 +122,10 @@ public class Screen extends Region implements EventObserver, IScreen {
         } catch (Exception ex) {
         }
         if (!lc.equals(lcn)) {
-          log(lvl, "*** checking: %s center: (%d, %d) --- NOT OK:  (%d, %d)",
+          log(lvl, "*** multimonitor click check: %s center: (%d, %d) --- NOT OK:  (%d, %d)",
                   s.toStringShort(), lc.x, lc.y, lcn.x, lcn.y);
         } else {
-          log(lvl, "*** checking: %s center: (%d, %d) --- OK", s.toStringShort(), lc.x, lc.y);
+          log(lvl+1, "*** checking: %s center: (%d, %d) --- OK", s.toStringShort(), lc.x, lc.y);
         }
       }
       try {
@@ -156,6 +138,15 @@ public class Screen extends Region implements EventObserver, IScreen {
   
   protected static Robot getMouseRobot() {
     return mouseRobot;
+  }
+  
+  /**
+   * create a Screen (ScreenUnion) object as a united region of all available monitors
+   * TODO: check wether this can be a Screen object
+   * @return
+   */
+  public static ScreenUnion all() {
+    return new ScreenUnion();
   }
           
   // hack to get an additional internal constructor for the initialization
@@ -214,7 +205,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    */
   public Screen() {
     super();
-    curID = getPrimaryId();
+    curID = primaryScreen;
     initScreen();
   }
 
@@ -258,17 +249,13 @@ public class Screen extends Region implements EventObserver, IScreen {
     throw new UnsupportedOperationException("The setScreen() method cannot be called from a Screen object.");
   }
   
-  public static ScreenUnion allMonitors() {
-    return new ScreenUnion();
-  }
-
   /**
    * show the current monitor setup
    */
   public static void showMonitors() {
 //    initScreens();
     Debug.info("*** monitor configuration [ %s Screen(s)] ***", Screen.getNumberScreens());
-    Debug.info("*** Primary is Screen %d", Screen.getPrimaryId());
+    Debug.info("*** Primary is Screen %d", primaryScreen);
     for (int i = 0; i < gdevs.length; i++) {
       Debug.info("Screen %d: %s", i, Screen.getScreen(i).toStringShort());
     }
@@ -285,7 +272,7 @@ public class Screen extends Region implements EventObserver, IScreen {
     Debug.error("... Use existing Region/Screen objects only if you know what you are doing!");
     initScreens(true);
     Debug.info("*** new monitor configuration [ %s Screen(s)] ***", Screen.getNumberScreens());
-    Debug.info("*** Primary is Screen %d", Screen.getPrimaryId());
+    Debug.info("*** Primary is Screen %d", primaryScreen);
     for (int i = 0; i < gdevs.length; i++) {
       Debug.info("Screen %d: %s", i, Screen.getScreen(i).toStringShort());
     }
@@ -300,7 +287,6 @@ public class Screen extends Region implements EventObserver, IScreen {
   }
 
   private static int getValidID(int id) {
-//    initScreens();
     if (id < 0 || id >= gdevs.length) {
       Debug.error("Screen: invalid screen id %d - using primary screen", id);
       return primaryScreen;
@@ -313,7 +299,6 @@ public class Screen extends Region implements EventObserver, IScreen {
    * @return number of available screens
    */
   public static int getNumberScreens() {
-//    initScreens();
     return gdevs.length;
   }
 
@@ -322,7 +307,6 @@ public class Screen extends Region implements EventObserver, IScreen {
    * @return the id of the screen at (0,0), if not exists 0
    */
   public static int getPrimaryId() {
-//    initScreens();
     return primaryScreen;
   }
 
@@ -601,6 +585,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    *
    * @return like S(0) [0,0, 1440x900]
    */
+  @Override
   public String toStringShort() {
     Rectangle r = getBounds();
     return String.format("S(%d)[%d,%d %dx%d]",
