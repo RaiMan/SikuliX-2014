@@ -38,6 +38,7 @@ import org.sikuli.script.ImagePath;
 import org.sikuli.syntaxhighlight.ResolutionException;
 import org.sikuli.syntaxhighlight.grammar.Lexer;
 import org.sikuli.syntaxhighlight.grammar.Token;
+import org.sikuli.syntaxhighlight.grammar.TokenType;
 
 public class EditorPane extends JTextPane implements KeyListener, CaretListener {
 
@@ -365,6 +366,38 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		String current;
 		for (Token t : tokens) {
 			current = t.getValue();
+			if (t.getType() == TokenType.Comment) {
+				cleanBundleCheckComments(lexer, t.getValue().substring(1), usedImages);
+				continue;
+			}
+			if (t.getType() == TokenType.String_Doc) {
+				cleanBundleCheckComments(lexer, t.getValue().substring(3, t.getValue().length() - 3), usedImages);
+				continue;
+			}
+			if (!inString) {
+				if (!current.isEmpty() && "'\"".contains(current)) {
+					inString = true;
+				}
+				continue;
+			}
+			if (!current.isEmpty() && "'\"".contains(current)) {
+				inString = false;
+				continue;
+			}
+			cleanBundleIsImageUsed(current, usedImages);
+		}
+		if (usedImages.isEmpty()) {
+			return;
+		}
+		FileManager.deleteNotUsedImages(bundle, usedImages);
+	}
+
+	private void cleanBundleCheckComments(Lexer lexer, String comment, List<String> usedImages) {
+		Iterable<Token> tokens = lexer.getTokens(comment);
+		boolean inString = false;
+		String current;
+		for (Token t : tokens) {
+			current = t.getValue();
 			if (!inString) {
 				if ("'\"".contains(current)) {
 					inString = true;
@@ -375,15 +408,21 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 				inString = false;
 				continue;
 			}
-			if (current.endsWith(".png") || current.endsWith(".jpg")) {
-				Debug.log(3,"IDE: save: used image: %s", current);
-				usedImages.add(current);
+			cleanBundleIsImageUsed(current, usedImages);
+		}
+	}
+
+	private void cleanBundleIsImageUsed(String img, List<String> usedImages) {
+			if (img.endsWith(".png") || img.endsWith(".jpg") || img.endsWith(".jpeg")) {
+				if (FileManager.slashify(img, false).contains("/")) {
+					Debug.log(3,"IDE: save: used image ignored: %s", img);
+					return;
+				}
+				Debug.log(3,"IDE: save: used image: %s", img);
+				if (!usedImages.contains(img)) {
+					usedImages.add(img);
+				}
 			}
-		}
-		if (usedImages.size() == 0) {
-			return;
-		}
-		FileManager.deleteNotUsedImages(bundle, usedImages);
 	}
 
 	private Lexer getLexer() {
