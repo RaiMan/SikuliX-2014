@@ -68,7 +68,7 @@ public class Mouse {
   private Mouse() {
     this.lastPos = null;
   }
-  
+
   public static Location at() {
     return new Location(getLocation());
   }
@@ -534,9 +534,10 @@ public class Mouse {
     if (suspended) {
       return;
     }
-    if (0 == Screen.getPrimaryScreen().getRobot().mouseUp(buttons)) {
-      get().let(region);
-    }
+    Screen.getPrimaryScreen().getRobot().mouseUp(buttons);
+		if (region != null) {
+			get().let(region);
+		}
   }
 
   /**

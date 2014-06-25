@@ -106,7 +106,10 @@ public class RobotDesktop extends Robot implements IRobot {
       Screen.getMouseRobot().mouseRelease(buttons);
       heldButtons &= ~buttons;
     }
-    Screen.getMouseRobot().waitForIdle();
+		try {
+			Screen.getMouseRobot().waitForIdle();
+		} catch (Exception e) {
+		}
     return heldButtons;
   }
 
