@@ -140,7 +140,7 @@ public class Image {
    */
   public static Image create(String fName) {
     Image img = get(fName, false);
-    return createImageValidate(img);
+    return createImageValidate(img, true);
   }
 
   /**
@@ -151,7 +151,7 @@ public class Image {
    */
   public static Image createThumbNail(String fName) {
     Image img = get(fName, true);
-    return createImageValidate(img);
+    return createImageValidate(img, false);
   }
 
   /**
@@ -213,9 +213,8 @@ public class Image {
       }
     }
     if (img == null) {
-      img = new Image(fileName, fURL);
+      img = new Image(fileName, fURL, silent);
       img.setIsAbsolute(absoluteFileName);
-      img.setBeSilent(silent);
     }
     return img;
   }
@@ -236,10 +235,14 @@ public class Image {
   }
 
   private Image(String fname, URL fURL) {
-    init(fname, fURL);
+    init(fname, fURL, true);
   }
 
-  private void init(String fileName, URL fURL) {
+  private Image(String fname, URL fURL, boolean silent) {
+    init(fname, fURL, silent);
+  }
+
+	private void init(String fileName, URL fURL, boolean silent) {
     imageName = fileName;
     if (imageName.isEmpty() || fURL == null) {
       return;
@@ -254,6 +257,7 @@ public class Image {
       log(-1, "URL not supported: " + fileURL);
       return;
     }
+		beSilent = silent;
     loadImage();
   }
 
@@ -264,8 +268,8 @@ public class Image {
       } catch (Exception e) {
         if (!beSilent) {
           log(-1, "could not be loaded from " + filepath);
-					filepath = null;
         }
+				filepath = null;
         return null;
       }
       if (imageName != null) {
@@ -293,7 +297,7 @@ public class Image {
     return bimg;
   }
 
-  private static Image createImageValidate(Image img) {
+  private static Image createImageValidate(Image img, boolean verbose) {
     if (img == null) {
       log(-1, "Image not valid, creating empty Image");
       return new Image("", null);
@@ -302,7 +306,9 @@ public class Image {
       if (Settings.OcrTextSearch) {
         img.setIsText(true);
       } else {
-        log(-1, "Image not valid, but TextSearch is switched off!");
+        if (verbose) {
+					log(-1, "Image not valid, but TextSearch is switched off!");
+				}
       }
     }
     return img;
@@ -324,7 +330,7 @@ public class Image {
     if (img == null) {
       img = new Image(url);
     }
-    return createImageValidate(img);
+    return createImageValidate(img, true);
   }
 
   public static Image createFromObject(Object obj) {
@@ -364,9 +370,9 @@ public class Image {
 
   private Image(URL fURL) {
     if ("file".equals(fURL.getProtocol())) {
-      init(fURL.getPath(), fURL);
+      init(fURL.getPath(), fURL, true);
     } else {
-      init(getNameFromURL(fURL), fURL);
+      init(getNameFromURL(fURL), fURL, true);
     }
   }
 
@@ -668,14 +674,6 @@ public class Image {
     if (group != null) {
       group.addImageFacts(this, lastSeen, sim);
     }
-  }
-
-  /**
-   * INTERNAL USE from IDE
-   * @param val
-   */
-  public void setBeSilent(boolean val) {
-    beSilent = val;
   }
 
   /**
