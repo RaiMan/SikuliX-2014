@@ -131,7 +131,6 @@ public class Mouse {
    * only 3 is honored:<br>
    * in case of event the user provided callBack.happened is called
    *
-   * @param mouseMovedResponse
    * @param callBack
    */
   public static void setMouseMovedCallback(ObserverCallBack callBack) {
@@ -155,6 +154,7 @@ public class Mouse {
    * to block the mouse globally for the given owner <br>
    * only the contained mouse methods having the same owner will be granted
    *
+   * @param owner
    * @return success
    */
   public static boolean block(Object owner) {
@@ -178,6 +178,7 @@ public class Mouse {
   /**
    * free the mouse globally for this owner after a block(owner)
    *
+   * @param owner
    * @return success (false means: not blocked currently for this owner)
    */
   public static boolean unblock(Object owner) {
@@ -222,7 +223,7 @@ public class Mouse {
       checkLastPos();
       keep = false;
       this.owner = owner;
-      log(lvl, "use start: %s", owner);
+      log(lvl+1, "use start: %s", owner);
       return true;
     }
     Debug.error("Mouse: synch problem - use start: %s", owner);
@@ -250,7 +251,7 @@ public class Mouse {
       inUse = false;
       this.owner = null;
       notify();
-      log(lvl, "use stop: %s", owner);
+      log(lvl+1, "use stop: %s", owner);
       return true;
     }
     return false;
@@ -266,7 +267,7 @@ public class Mouse {
     }
     if (inUse && this.owner == owner) {
       keep = true;
-      log(lvl, "use keep: %s", owner);
+      log(lvl+1, "use keep: %s", owner);
       return true;
     }
     return false;
@@ -315,7 +316,7 @@ public class Mouse {
     return false;
   }
 
-  private void showMousePos(Point pos) {
+  private static void showMousePos(Point pos) {
     Location lPos = new Location(pos);
     Region inner = lPos.grow(20).highlight();
     delay(500);
