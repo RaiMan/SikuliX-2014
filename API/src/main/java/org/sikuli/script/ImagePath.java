@@ -229,7 +229,8 @@ public class ImagePath {
    * (e.g. running in some IDE) the path will be the path to the compiled
    * classes (for Maven based projects this is target/classes that contains all
    * stuff copied from src/main/resources automatically)<br>
-   *
+   * For situations, where the images cannot be found automatically in the non-jar situation, you 
+   * might give an alternative path either absolute or relative to the working folder.
    * @param mainPath absolute path name or a valid classname optionally followed by /subfolder...
    * @param altPath alternative image folder, when not running from jar
    * @return true if successful otherwise false
@@ -446,8 +447,9 @@ public class ImagePath {
           if (altPath == null) {
             altPath = jarURL.getPath();
           }
-          if (new File(altPath, subPath).exists()) {
-            pathURL = FileManager.makeURL(FileManager.slashify(new File(altPath, subPath).getAbsolutePath(), true));
+          File ap = new File(altPath, subPath);
+          if (ap.exists()) {
+            pathURL = FileManager.makeURL(FileManager.slashify(ap.getAbsolutePath(), true));
           }
         }
       }
