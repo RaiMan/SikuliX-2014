@@ -546,7 +546,7 @@ public class SikuliIDE extends JFrame {
     return false;
   }
   //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="Support SikuliIDE">
   public JMenu getFileMenu() {
     return _fileMenu;
@@ -715,8 +715,7 @@ public class SikuliIDE extends JFrame {
             + "Tsung-Hsiang Chang aka vgod\n"
             + "Tom Yeh\n"
             + "Raimund Hocke aka RaiMan\n\n"
-            + Settings.versionMonth
-            + "\n\nBuild: " + RunSetup.timestampBuilt;
+            + "\n\nBuild: " + Settings.SikuliVersionBuild;
     JOptionPane.showMessageDialog(this, info,
             "Sikuli About", JOptionPane.PLAIN_MESSAGE);
   }

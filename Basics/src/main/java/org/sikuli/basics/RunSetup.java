@@ -85,7 +85,7 @@ public class RunSetup {
 	private static long start;
 	private static boolean runningSetup = false;
 	private static boolean generallyDoUpdate = false;
-	public static String timestampBuilt = "2014-05-30-18";
+	public static String timestampBuilt = Settings.SikuliVersionBuild;
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
@@ -106,7 +106,6 @@ public class RunSetup {
 		} else {
 			sout = "[" + prefix + "] " + message;
 		}
-		System.out.println(sout);
 		Debug.logx(level, level < 0 ? "error" : "debug",
 						me + ": " + message, args);
 	}
@@ -134,6 +133,11 @@ public class RunSetup {
 		options.addAll(Arrays.asList(args));
 
 		//<editor-fold defaultstate="collapsed" desc="options special">
+		if (args.length > 0 && "build".equals(args[0])) {
+			System.out.println(Settings.SikuliVersionBuild);
+			System.exit(0);
+		}
+
 		if (args.length > 0 && "version".equals(args[0])) {
 			System.out.println(Settings.getVersionShort());
 			System.exit(0);
@@ -433,7 +437,7 @@ public class RunSetup {
 		}
 
 		log1(lvl, "Setup in: %s using: %s", workDir, (runningJar.contains("classes") ? "Development Project" : runningJar));
-		log1(lvl, "SikuliX Setup Build: %s %s", Settings.getVersionShort(), RunSetup.timestampBuilt);
+		log1(lvl, "SikuliX Setup Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
 
 		File localJarIDE = new File(workDir, localIDE);
 		File localJarJava = new File(workDir, localJava);
@@ -626,7 +630,7 @@ public class RunSetup {
 			winSetup.setVisible(true);
 
 			//setup version basic
-			winSU.suVersion.setText(Settings.getVersionShort() + "   (" + timestampBuilt + ")");
+			winSU.suVersion.setText(Settings.getVersionShort() + "   (" + Settings.SikuliVersionBuild + ")");
 
 			// running system
 			Settings.getOS();

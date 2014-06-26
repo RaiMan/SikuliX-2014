@@ -24,18 +24,18 @@ public class SikuliScript {
   private static Boolean runAsTest;
 
   private static boolean isRunningInteractive = false;
-  
+
   public static void runningInteractive() {
     isRunningInteractive = true;
     SikuliX.displaySplash(null);
   }
-  
+
   public static boolean getRunningInteractive() {
     return isRunningInteractive;
   }
-  
+
   private static boolean isRunningScript = false;
-  
+
   static {
   }
 
@@ -45,14 +45,14 @@ public class SikuliScript {
    * @param args passed arguments
    */
   public static void main(String[] args) {
-    
+
     if (isRunningScript) {
       System.out.println("[error] SikuliScript: can only run one at a time!");
       return;
     }
-    
+
     isRunningScript = true;
-    
+
     Settings.initScriptingSupport();
 
     SikuliX.displaySplash(args);
@@ -76,11 +76,11 @@ public class SikuliScript {
       isRunningScript = false;
       return;
     }
-    
+
     CommandArgs cmdArgs = new CommandArgs("SCRIPT");
     CommandLine cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
     String cmdValue;
-    
+
     if (cmdLine == null || cmdLine.getOptions().length == 0) {
       Debug.error("Did not find any valid option on command line!");
       cmdArgs.printHelp();
@@ -119,7 +119,7 @@ public class SikuliScript {
         }
       } else {
         Debug.setDebugLevel(cmdValue);
-      }      
+      }
     }
 
     Settings.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
@@ -138,7 +138,7 @@ public class SikuliScript {
     // option is overloaded - might specify runner for -r/-t
     if (cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
       System.out.println(String.format(
-              "SikuliX Package Build: %s %s", Settings.getVersionShort(), RunSetup.timestampBuilt));
+              "SikuliX Package Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild));
       int exitCode = 0;
       if (runner == null) {
         String givenRunnerName = cmdLine.getOptionValue(CommandArgsEnum.INTERACTIVE.longname());
@@ -163,7 +163,7 @@ public class SikuliScript {
     runAsTest = false;
 
     if (cmdLine.hasOption(CommandArgsEnum.LOAD.shortname())) {
-      String loadScript = FileManager.slashify(cmdLine.getOptionValue(CommandArgsEnum.LOAD.longname()),false);    
+      String loadScript = FileManager.slashify(cmdLine.getOptionValue(CommandArgsEnum.LOAD.longname()),false);
       Debug.log(3, "Sikuli-Script: requested to run: " + loadScript);
       givenScriptName = loadScript;
     }
@@ -175,7 +175,7 @@ public class SikuliScript {
       Debug.error("Command line option -t: not yet supported! %s", Arrays.asList(args).toString());
       runAsTest = true;
     }
-    
+
     if (givenScriptName != null) {
       if (givenScriptName.endsWith(".skl")) {
         givenScriptName = FileManager.unzipSKL(givenScriptName);
@@ -226,12 +226,12 @@ public class SikuliScript {
   public static String input(String msg) {
     return SikuliX.input(msg);
   }
-  
+
   @Deprecated
   public static String input(String msg, String preset) {
     return SikuliX.input(msg, preset);
   }
-  
+
   @Deprecated
   public static String inputText(String msg, String preset, String title, int width, int lines) {
     return SikuliX.inputText(msg, title, width, lines);
@@ -239,7 +239,7 @@ public class SikuliScript {
 
   @Deprecated
   public static String run(String cmdline) {
-    return SikuliX.run(cmdline);    
+    return SikuliX.run(cmdline);
   }
 
   /**

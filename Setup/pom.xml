@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-  
+
   <!--
   * Copyright 2010-2013, Sikuli.org
   * Released under the MIT License.
@@ -35,7 +35,7 @@
       <version>${project.version}</version>
     </dependency>
   </dependencies>
-  
+
 	<build>
     <defaultGoal>clean package</defaultGoal>
 		<plugins>
@@ -47,7 +47,7 @@
             <manifest>
               <mainClass>org.sikuli.basics.RunSetup</mainClass>
             </manifest>
-          </archive> 
+          </archive>
 					<descriptors>
 						<descriptor>../plain.xml</descriptor>
 					</descriptors>

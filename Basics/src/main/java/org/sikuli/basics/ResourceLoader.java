@@ -92,7 +92,7 @@ public class ResourceLoader implements IResourceLoader {
   private String javahome;
 
   public ResourceLoader() {
-    log0(lvl, "SikuliX Package Build: %s %s", Settings.getVersionShort(), RunSetup.timestampBuilt);
+    log0(lvl, "SikuliX Package Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
     cl = this.getClass().getClassLoader();
     codeSrc = this.getClass().getProtectionDomain().getCodeSource();
     if (codeSrc != null && codeSrc.getLocation() != null) {
@@ -463,7 +463,7 @@ public class ResourceLoader implements IResourceLoader {
 //              //set sys_paths to null
 //              final Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
 //              sysPathsField.setAccessible(true);
-//              sysPathsField.set(null, null);              
+//              sysPathsField.set(null, null);
       }
     }
   }

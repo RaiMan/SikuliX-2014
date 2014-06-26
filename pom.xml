@@ -42,6 +42,12 @@
 		<sikuli.jartype>plain.xml</sikuli.jartype>
 		<sikuli.jarname>${project.version}</sikuli.jarname>
     <sikuli.usedversion>1.1.0-Beta1</sikuli.usedversion>
+		<sikulixvmaj>1</sikulixvmaj>
+		<sikulixvmin>1</sikulixvmin>
+		<sikulixvsub>0</sikulixvsub>
+		<sikulixbeta>2</sikulixbeta>
+		<timestamp>${maven.build.timestamp}</timestamp>
+		<maven.build.timestamp.format>yyyy-MM-dd_HH:mm</maven.build.timestamp.format>
 	</properties>
 
 	<repositories>
