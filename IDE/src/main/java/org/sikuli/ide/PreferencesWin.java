@@ -395,7 +395,7 @@ public class PreferencesWin extends JFrame {
           btnCancelActionPerformed(e);
         }
       });
-      
+
       this.addWindowListener(new WindowAdapter() {
         public void windowClosing(WindowEvent we) {
           _btnCancel.doClick();
@@ -573,6 +573,7 @@ public class PreferencesWin extends JFrame {
       sortedLocales[count++] = l;
     }
     Arrays.sort(sortedLocales, new Comparator<Locale>() {
+			@Override
       public int compare(Locale l1, Locale l2) {
         return l1.getDisplayLanguage().compareTo(l2.getDisplayLanguage());
       }
