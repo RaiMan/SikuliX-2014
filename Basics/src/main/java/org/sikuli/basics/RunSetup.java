@@ -363,10 +363,6 @@ public class RunSetup {
 				String apiFat = downloadJava.replace(".jar", "-plain.jar");
 				String jythonFat = downloadJython.replace(".jar", "-plain.jar");
 				String jrubyFat = downloadJRuby.replace(".jar", "-plain.jar");
-				File fIDEFat = null;
-				File fAPIFat = null;
-				File fJythonFat = null;
-				File fJRubyFat = null;
 				boolean doit = true;
 				if (new File(workDir, "Downloads").exists()) {
 					FileManager.deleteFileOrFolder(new File(workDir, "Downloads").getAbsolutePath(), null);
@@ -377,28 +373,25 @@ public class RunSetup {
 						if (entry.isDirectory()) {
 							return true;
 						}
-						if (entry.getName().startsWith("sikulixsetup")) {
-							return false;
-						}
-						return true;
+						return !entry.getName().startsWith("sikulixsetup");
 					}
 				});
-				fIDEFat = new File(projectDir, "IDEFat/target/" + ideFat);
+				File fIDEFat = new File(projectDir, "IDEFat/target/" + ideFat);
 				if (!fIDEFat.exists()) {
 					Debug.log(3, "missing: " + fIDEFat.getAbsolutePath());
 					doit = false;
 				}
-				fAPIFat = new File(projectDir, "APIFat/target/" + apiFat);
+				File fAPIFat = new File(projectDir, "APIFat/target/" + apiFat);
 				if (!fAPIFat.exists()) {
 					Debug.log(3, "missing: " + fAPIFat.getAbsolutePath());
 					doit = false;
 				}
-				fJythonFat = new File(projectDir, "JythonFat/target/" + jythonFat);
+				File fJythonFat = new File(projectDir, "JythonFat/target/" + jythonFat);
 				if (!fJythonFat.exists()) {
 					Debug.log(3, "missing: " + fJythonFat.getAbsolutePath());
 					doit = false;
 				}
-				fJRubyFat = new File(projectDir, "JRubyFat/target/" + jrubyFat);
+				File fJRubyFat = new File(projectDir, "JRubyFat/target/" + jrubyFat);
 				if (!fJRubyFat.exists()) {
 					Debug.log(3, "missing " + fJRubyFat.getAbsolutePath());
 					doit = false;
@@ -428,6 +421,9 @@ public class RunSetup {
 					}
 				}
 				if (noSetup) {
+					if (noSetupSilent && doit) {
+						Debug.log(3, "Copying jars to Downloads should have succeeded");
+					}
 					System.exit(0);
 				}
 				if (!doit) {
