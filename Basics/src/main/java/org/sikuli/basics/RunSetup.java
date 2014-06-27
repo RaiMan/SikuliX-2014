@@ -42,9 +42,6 @@ public class RunSetup {
 	private static String version = Settings.getVersionShort();
 	private static String majorversion = Settings.getVersionShortBasic();
 	private static String updateVersion;
-	private static String downloadBaseDirBase = "https://launchpad.net/raiman/sikulix2013+/";
-	private static String downloadBaseDirWeb = downloadBaseDirBase + majorversion + ".0";
-	private static String downloadBaseDir = downloadBaseDirWeb + "/+download/";
 	private static String downloadSetup;
 	private static String downloadIDE = version + "-1.jar";
 	private static String downloadJava = version + "-2.jar";
@@ -510,9 +507,9 @@ public class RunSetup {
 					log1(lvl, "%s is available", uVersion);
 					if (uVersion.equals(updateVersion)) {
 						reset(avail);
-						downloadBaseDir = downloadBaseDirBase + uVersion.substring(0, 3) + "/";
+						Settings.downloadBaseDir = Settings.downloadBaseDirBase + uVersion.substring(0, 3) + "/";
 						downloadSetup = "sikuli-update-" + uVersion + ".jar";
-						if (!download(downloadBaseDir, workDir, downloadSetup,
+						if (!download(Settings.downloadBaseDir, workDir, downloadSetup,
 										new File(workDir, downloadSetup).getAbsolutePath(), "")) {
 							restore();
 							popError("Download did not complete successfully.\n"
@@ -854,7 +851,7 @@ public class RunSetup {
 		if (getIDE) {
 			localJar = new File(workDir, localIDE).getAbsolutePath();
 			if (!test) {
-				dlOK = download(downloadBaseDir, dlDir, downloadIDE, localJar, "IDE/Scripting");
+				dlOK = download(Settings.downloadBaseDir, dlDir, downloadIDE, localJar, "IDE/Scripting");
 			}
 			downloadOK &= dlOK;
 //			if (Settings.isMac()) {
@@ -873,48 +870,48 @@ public class RunSetup {
 		if (getJython) {
 			targetJar = new File(workDir, localJython).getAbsolutePath();
 			if (!test) {
-				downloadOK = download(downloadBaseDir, dlDir, downloadJython, targetJar, "Jython");
+				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJython, targetJar, "Jython");
 			}
 			downloadOK &= dlOK;
 		}
 		if (getJRuby) {
 			targetJar = new File(workDir, localJRuby).getAbsolutePath();
 			if (!test) {
-				downloadOK = download(downloadBaseDir, dlDir, downloadJRuby, targetJar, "JRuby");
+				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJRuby, targetJar, "JRuby");
 			}
 			downloadOK &= dlOK;
 		}
 		if (getJava) {
 			targetJar = new File(workDir, localJava).getAbsolutePath();
 			if (!test) {
-				downloadOK = download(downloadBaseDir, dlDir, downloadJava, targetJar, "JavaAPI");
+				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJava, targetJar, "JavaAPI");
 			}
 			downloadOK &= dlOK;
 		}
 		if (getTess) {
 			targetJar = new File(workDir, localTess).getAbsolutePath();
 			if (!test) {
-				downloadOK = download(downloadBaseDir, dlDir, downloadTess, targetJar, "Tesseract");
+				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadTess, targetJar, "Tesseract");
 			}
 			downloadOK &= dlOK;
 		}
 		if (getRServer) {
 			targetJar = new File(workDir, localRServer).getAbsolutePath();
 			if (!test) {
-				downloadOK = download(downloadBaseDir, dlDir, downloadRServer, targetJar, "RemoteServer");
+				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadRServer, targetJar, "RemoteServer");
 			}
 			downloadOK &= dlOK;
 		}
 		log1(lvl, "Download ended");
 		log1(lvl, "Downloads for selected options:\n" + downloadedFiles);
-		log1(lvl, "Download page: " + downloadBaseDirWeb);
+		log1(lvl, "Download page: " + Settings.downloadBaseDirWeb);
 		if (!test && !downloadOK) {
 			popError("Some of the downloads did not complete successfully.\n"
 							+ "Check the logfile for possible error causes.\n\n"
 							+ "If you think, setup's inline download is blocked somehow on,\n"
 							+ "your system, you might download the appropriate raw packages manually\n"
 							+ "into the folder Downloads in the setup folder and run setup again.\n\n"
-							+ "download page: " + downloadBaseDirWeb + "\n"
+							+ "download page: " + Settings.downloadBaseDirWeb + "\n"
 							+ "files to download (information is in the setup log file too)\n"
 							+ downloadedFiles
 							+ "\n\nBe aware: The raw packages are not useable without being processed by setup!\n\n"
