@@ -182,7 +182,7 @@ public class Settings {
 				SikuliVersionIDE = SikuliVersionDefaultIDE;
 				SikuliVersionScript = SikuliVersionDefaultScript;
 			}
-			if ("production".equals(svt)) {
+			if ("release".equals(svt)) {
 				downloadBaseDirBase = dlProdLink;
 				downloadBaseDirWeb = downloadBaseDirBase + getVersionShortBasic() + dlProdLink1;
 				downloadBaseDir = downloadBaseDirWeb + dlProdLink2;
