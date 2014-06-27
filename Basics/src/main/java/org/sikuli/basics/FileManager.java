@@ -641,6 +641,7 @@ public class FileManager {
     if (scriptName.getPath().contains("..")) {
       //TODO accept double-dot pathnames
       log0(-1, "Sorry, scriptnames with dot or double-dot path elements are not supported: %s", scriptName.getPath());
+      if (CommandArgs.isIDE()) return null;
       SikuliX.terminate(0);
     }
     int pos = scriptName.getName().lastIndexOf(".");
@@ -654,6 +655,7 @@ public class FileManager {
     }
     if (!scriptName.exists()) {
       log0(-1, "Not a valid Sikuli script: " + scriptName.getAbsolutePath());
+      if (CommandArgs.isIDE()) return null;
       SikuliX.terminate(0);
     }
     if ("skl".equals(scriptType) || "zip".equals(scriptType)) {
