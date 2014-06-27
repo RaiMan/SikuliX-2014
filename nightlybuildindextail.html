@@ -1,5 +1,25 @@
-<h4>Build: 2014-06-28</h4>
+<h4>Build: 2014-06-28 (this is the release status of 1.1.0-Beta2)</h4>
 fixed: IDE terminates on trying to open a non sikuli directory or an incorrect sikuli project<br>
+fixed: possible loss of images at save (images in comments, images given with path)<br>
+fixed: multi-monitor issues with respect to mouse actions (Screen(0) no longer is the primary monitor in all cases, but Screen.getPrimaryScreen() is)<br>
+fixed: out-of-bounds crash during error eval when running from command line (thanks to github user fpmchu)<br>
+fixed: IDE: NPE on termination when running from command line<br>
+fixed: bug 1330348: running Java: ImagePath is set to working directory if no path is set before first image search<br>
+fixed: possible NPE in special situations (mouse moved to invalid location)<br>
+fixed: the native library problems on Windows when using 32-Bit Java<br>
+added: Screen.all() makes a ScreenUnion of all monitors, on Python level ALL is predefined and can be used as ALL.function() like a Screen/Region<br>
+added: reset() to renew the multimonitor configuration inline on Python level<br>
+added: Settings.OcrLanguage is now accepted by Tesseract (after using org.sikuli.script.TextRecognizer.reset())<br>
+added: images can now be loaded from jars (see JavaDocs::ImagePath)<br>
+revised: completely: observe processing (see JavaDocs for now)<br>
+revised: further reduced error verbosity at script load and creating image thumbnails<br>
+revised: class Mouse, added Mouse.at() to get the mouse location, external mouse moves are detected, mouse use should now be thread safe<br>
+revised: moved the handling of capture and stop hotkey to HotkeyManager to prepare a more general usability (run on command line, using callbacks)<br>
+revised: Region.write() and it's javadoc (alternative for type() with more features)<br>
+revised: the native build for Linux, Mac and Windows (now using MinGW from http://win-builds.org/)<br>
+revised: JRuby support: many minors (see GitHub)<br>
+<br>
+... more can be found in commits before 2014-05-01 on GitHub
 <hr>
 </body>
 </html>
