@@ -142,7 +142,7 @@ public class RunSetup {
 		}
 
 		if (args.length > 0 && "majorversion".equals(args[0])) {
-			System.out.println(version.substring(0, 3));
+			System.out.println(majorversion);
 			System.exit(0);
 		}
 
