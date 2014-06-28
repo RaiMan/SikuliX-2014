@@ -125,10 +125,10 @@ public class PatternPaneNaming extends JPanel {
    }
 
 	 public static String getFilenameFromImage(BufferedImage img){
-     if (! PreferencesUser.getInstance().getPrefMoreTextOCR()) {
+		 TextRecognizer tr = TextRecognizer.getInstance();
+     if (! PreferencesUser.getInstance().getPrefMoreTextOCR() || tr == null) {
        return "";
      }
-		 TextRecognizer tr = TextRecognizer.getInstance();
 		 String text = tr.recognize(img);
 		 text = text.replaceAll("\\W","");
 		 if( text.length() > MAX_OCR_TEXT_LENGTH ) {

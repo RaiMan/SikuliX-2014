@@ -30,6 +30,15 @@ public class Settings {
 	public static int SikuliVersionSub;
 	public static int SikuliVersionBetaN;
 	public static String SikuliVersionBuild;
+	public static String downloadBaseDirBase;
+	public static String downloadBaseDirWeb;
+	public static String downloadBaseDir;
+	// used for download of production versions
+	private static final String dlProdLink = "https://launchpad.net/raiman/sikulix2013+/";
+	private static final String dlProdLink1 = ".0";
+	private static final String dlProdLink2 = "/+download/";
+	// used for download of development versions (nightly builds)
+	private static final String dlDevLink = "http://nightly.sikuli.de/";
 
 	private static String me = "Settings";
 	private static int lvl = 3;
@@ -135,11 +144,12 @@ public class Settings {
 
 		// set the version strings
 		Properties prop = new Properties();
+		String svf = "sikulixversion.txt";
 		try {
 			InputStream is;
-			String svf = "sikulixversion.txt";
 			is = Settings.class.getClassLoader().getResourceAsStream("Settings/" + svf);
 			prop.load(is);
+			String svt = prop.getProperty("sikulixdev");
 			SikuliVersionMajor = Integer.decode(prop.getProperty("sikulixvmaj"));
 			SikuliVersionMinor = Integer.decode(prop.getProperty("sikulixvmin"));
 			SikuliVersionSub = Integer.decode(prop.getProperty("sikulixvsub"));
@@ -149,33 +159,42 @@ public class Settings {
 				ssxbeta = String.format("-Beta%d", SikuliVersionBetaN);
 			}
 			SikuliVersionBuild = prop.getProperty("sikulixbuild");
-			log(lvl + 1, "version from %s: %d.%d.%d%s build: %s", svf,
+			log(lvl + 1, "%s version from %s: %d.%d.%d%s build: %s", svt, svf,
 							SikuliVersionMajor, SikuliVersionMinor, SikuliVersionSub, ssxbeta,
 							SikuliVersionBuild);
+			sversion = String.format("%d.%d.%d",
+							SikuliVersionMajor, SikuliVersionMinor, SikuliVersionSub);
+			bversion = String.format("%d.%d.%d-Beta%d",
+							SikuliVersionMajor, SikuliVersionMinor, SikuliVersionSub, SikuliVersionBetaN);
+			SikuliVersionDefault = "Sikuli " + sversion;
+			SikuliVersionBeta = "Sikuli " + bversion;
+			SikuliVersionDefaultIDE = "Sikuli IDE " + sversion;
+			SikuliVersionBetaIDE = "Sikuli IDE " + bversion;
+			SikuliVersionDefaultScript = "Sikuli Script " + sversion;
+			SikuliVersionBetaScript = "Sikuli Script " + bversion;
+
+			if (SikuliVersionBetaN > 0) {
+				SikuliVersion = SikuliVersionBeta;
+				SikuliVersionIDE = SikuliVersionBetaIDE;
+				SikuliVersionScript = SikuliVersionBetaScript;
+			} else {
+				SikuliVersion = SikuliVersionDefault;
+				SikuliVersionIDE = SikuliVersionDefaultIDE;
+				SikuliVersionScript = SikuliVersionDefaultScript;
+			}
+			if ("release".equals(svt)) {
+				downloadBaseDirBase = dlProdLink;
+				downloadBaseDirWeb = downloadBaseDirBase + getVersionShortBasic() + dlProdLink1;
+				downloadBaseDir = downloadBaseDirWeb + dlProdLink2;
+			} else {
+				downloadBaseDirBase = dlDevLink;
+				downloadBaseDirWeb = dlDevLink;
+				downloadBaseDir = dlDevLink;
+			}
+			log(lvl, "%s version: downloading from %s", svt, downloadBaseDir);
 		} catch (Exception e) {
-			Debug.error("Settings: load version file %s did not work");
+			Debug.error("Settings: load version file %s did not work", svf);
 			SikuliX.terminate(999);
-		}
-
-		sversion = String.format("%d.%d.%d",
-						SikuliVersionMajor, SikuliVersionMinor, SikuliVersionSub);
-		bversion = String.format("%d.%d.%d-Beta%d",
-						SikuliVersionMajor, SikuliVersionMinor, SikuliVersionSub, SikuliVersionBetaN);
-		SikuliVersionDefault = "Sikuli " + sversion;
-		SikuliVersionBeta = "Sikuli " + bversion;
-		SikuliVersionDefaultIDE = "Sikuli IDE " + sversion;
-		SikuliVersionBetaIDE = "Sikuli IDE " + bversion;
-		SikuliVersionDefaultScript = "Sikuli Script " + sversion;
-		SikuliVersionBetaScript = "Sikuli Script " + bversion;
-
-		if (SikuliVersionBetaN > 0) {
-			SikuliVersion = SikuliVersionBeta;
-			SikuliVersionIDE = SikuliVersionBetaIDE;
-			SikuliVersionScript = SikuliVersionBetaScript;
-		} else {
-			SikuliVersion = SikuliVersionDefault;
-			SikuliVersionIDE = SikuliVersionDefaultIDE;
-			SikuliVersionScript = SikuliVersionDefaultScript;
 		}
 
 		EndingTypes.put("py", CPYTHON);

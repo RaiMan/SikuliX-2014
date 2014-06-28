@@ -44,7 +44,10 @@
 		<sikulixvmaj>1</sikulixvmaj>
 		<sikulixvmin>1</sikulixvmin>
 		<sikulixvsub>0</sikulixvsub>
-		<sikulixbeta>2</sikulixbeta>
+		<sikulixbeta>3</sikulixbeta>
+		<!--   this decides, where setup downloads from   -->
+<!--		<sikulixdev>release</sikulixdev>-->
+		<sikulixdev>development</sikulixdev>
 		<!-- TODO: find better solution for beta / non-beta -->
     <sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}-Beta${sikulixbeta}</sikuli.usedversion>
 		<!--
