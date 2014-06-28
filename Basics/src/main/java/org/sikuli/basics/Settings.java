@@ -31,6 +31,7 @@ public class Settings {
 	public static int SikuliVersionBetaN;
 	public static String SikuliVersionBuild;
 	public static String SikuliVersionType;
+	public static String SikuliVersionTypeText;
 	public static String downloadBaseDirBase;
 	public static String downloadBaseDirWeb;
 	public static String downloadBaseDir;
@@ -96,8 +97,18 @@ public class Settings {
 	public static String SikuliVersionScript;
 	//TODO needed ???
 	public static final String libOpenCV = "libopencv_java248";
+  
+	public static String osName;
+	public static final float FOREVER = Float.POSITIVE_INFINITY;
+	public static final int JavaVersion = Integer.parseInt(java.lang.System.getProperty("java.version").substring(2, 3));
+	public static final String JREVersion = java.lang.System.getProperty("java.runtime.version");
+  public static final String JavaArch = 	System.getProperty("os.arch");
+  
+  public static String SikuliVersionLong;
+  public static String SikuliSystemVersion;
+  public static String SikuliJavaVersion;
 
-	/**
+  /**
 	 * Resource types to be used with IResourceLoader implementations
 	 */
 	public static final String SIKULI_LIB = "*sikuli_lib";
@@ -174,27 +185,42 @@ public class Settings {
 			SikuliVersionDefaultScript = "Sikuli Script " + sversion;
 			SikuliVersionBetaScript = "Sikuli Script " + bversion;
 
-			if (SikuliVersionBetaN > 0) {
-				SikuliVersion = SikuliVersionBeta;
-				SikuliVersionIDE = SikuliVersionBetaIDE;
-				SikuliVersionScript = SikuliVersionBetaScript;
-			} else {
-				SikuliVersion = SikuliVersionDefault;
-				SikuliVersionIDE = SikuliVersionDefaultIDE;
-				SikuliVersionScript = SikuliVersionDefaultScript;
-			}
 			if ("release".equals(svt)) {
 				downloadBaseDirBase = dlProdLink;
 				downloadBaseDirWeb = downloadBaseDirBase + getVersionShortBasic() + dlProdLink1;
 				downloadBaseDir = downloadBaseDirWeb + dlProdLink2;
         SikuliVersionType = "";
+        SikuliVersionTypeText = "";
 			} else {
 				downloadBaseDirBase = dlDevLink;
 				downloadBaseDirWeb = dlDevLink;
 				downloadBaseDir = dlDevLink;
-        SikuliVersionBuild += " nightly";
+        SikuliVersionTypeText = "nightly";
+        SikuliVersionBuild += SikuliVersionTypeText;
         SikuliVersionType = svt;
 			}
+			if (SikuliVersionBetaN > 0) {
+				SikuliVersion = SikuliVersionBeta;
+				SikuliVersionIDE = SikuliVersionBetaIDE;
+				SikuliVersionScript = SikuliVersionBetaScript;
+        SikuliVersionLong = bversion + "(" + SikuliVersionBuild + ")";
+			} else {
+				SikuliVersion = SikuliVersionDefault;
+				SikuliVersionIDE = SikuliVersionDefaultIDE;
+				SikuliVersionScript = SikuliVersionDefaultScript;
+        SikuliVersionLong = sversion + "(" + SikuliVersionBuild + ")";
+			}
+      String osn = "UnKnown";
+      String os = System.getProperty("os.name").toLowerCase();
+      if (os.startsWith("mac")) {
+        osn = "Mac";
+      } else if (os.startsWith("windows")) {
+        osn = "Windows";
+      } else if (os.startsWith("linux")) {
+        osn = "Linux";
+      }      
+      SikuliSystemVersion = osn + System.getProperty("os.version");
+      SikuliJavaVersion = "Java" + JavaVersion + "(" + JavaArch + ")" + JREVersion;
 			log(lvl, "%s version: downloading from %s", svt, downloadBaseDir);
 		} catch (Exception e) {
 			Debug.error("Settings: load version file %s did not work", svf);
@@ -208,6 +234,10 @@ public class Settings {
 			TypeEndings.put(EndingTypes.get(k), k);
 		}
 	}
+  
+  public static String getSystemInfo() {
+    return String.format("%s/%s/%s", SikuliVersionLong, SikuliSystemVersion, SikuliJavaVersion);
+  }
 
 	public static void initScriptingSupport() {
 		if (scriptRunner.size() == 0) {
@@ -259,11 +289,6 @@ public class Settings {
 	public static final int ISNOTSUPPORTED = 3;
 	public static boolean isMacApp = false;
 	public static final String appPathMac = "/Applications/SikuliX-IDE.app/Contents";
-
-	public static String osName;
-	public static final float FOREVER = Float.POSITIVE_INFINITY;
-	public static final int JavaVersion = Integer.parseInt(java.lang.System.getProperty("java.version").substring(2, 3));
-	public static final String JREVersion = java.lang.System.getProperty("java.runtime.version");
 
 	public static boolean ThrowException = true; // throw FindFailed exception
 	public static float AutoWaitTimeout = 3f; // in seconds
