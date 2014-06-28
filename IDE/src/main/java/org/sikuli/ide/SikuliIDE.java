@@ -10,6 +10,8 @@ package org.sikuli.ide;
 // dirty pane handling: on individual tab
 import com.explodingpixels.macwidgets.MacUtils;
 import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.io.*;
 import java.lang.reflect.Constructor;
@@ -1587,11 +1589,11 @@ public class SikuliIDE extends JFrame {
     }
 
     public void openQuickStart(ActionEvent ae) {
-      FileManager.openURL("http://sikulix.com");
+      FileManager.openURL("http://www.sikulix.com/quickstart.html");
     }
 
     public void openDoc(ActionEvent ae) {
-      FileManager.openURL("http://doc.sikuli.org");
+      FileManager.openURL("http://sikulix-2014.readthedocs.org/en/latest/index.html");
     }
 
     public void openTutor(ActionEvent ae) {
@@ -1603,11 +1605,46 @@ public class SikuliIDE extends JFrame {
     }
 
     public void openAsk(ActionEvent ae) {
-      FileManager.openURL("https://answers.launchpad.net/sikuli");
+      String title = "SikuliX - Ask a question";
+      String msg = "If you want to ask a question about SikuliX\n%s\n" + 
+              "\nplease do the following:" +
+              "\n- after having clicked yes" +
+              "\n   the page on Launchpad should open in your browser." +
+              "\n- You should first check using Launchpad's search funktion," +
+              "\n   wether similar questions have already been asked." +
+              "\n- If you decide to ask a new question," +
+              "\n   try to enter a short but speaking title" +
+              "\n- In a new questions's text field first paste using ctrl/cmd-v" +
+              "\n   which should enter the SikuliX version/system/java info" +
+              "\n   that was internally stored in the clipboard before" +
+              "\n\nIf you do not want to ask a question now: click No";
+      askBugOrAnswer(msg, title, "https://answers.launchpad.net/sikuli");
     }
 
     public void openBugReport(ActionEvent ae) {
-      FileManager.openURL("https://bugs.launchpad.net/sikuli/+filebug");
+      String title = "SikuliX - Report a bug";
+      String msg = "If you want to report a bug for SikuliX\n%s\n" + 
+              "\nplease do the following:" +
+              "\n- after having clicked yes" +
+              "\n   the page on Launchpad should open in your browser" +
+              "\n- fill in a short but speaking bug title and create the bug" +
+              "\n- in the bug's text field first paste using ctrl/cmd-v" +
+              "\n   which should enter the SikuliX version/system/java info" +
+              "\n   that was internally stored in the clipboard before" +
+              "\n\nIf you do not want to report a bug now: click No";
+      askBugOrAnswer(msg, title, "https://bugs.launchpad.net/sikuli/+filebug");
+    }
+    
+    private void askBugOrAnswer(String msg, String title, String url) {
+      String si = Settings.getSystemInfo();
+      System.out.println(si);
+      msg = String.format(msg, si);
+      if (SikuliX.popAsk(msg, title)) {
+        Clipboard clb = Toolkit.getDefaultToolkit().getSystemClipboard();
+        StringSelection sic = new StringSelection(si.toString());
+        clb.setContents(sic, sic);
+        FileManager.openURL(url);
+      }
     }
 
     public void openTranslation(ActionEvent ae) {
