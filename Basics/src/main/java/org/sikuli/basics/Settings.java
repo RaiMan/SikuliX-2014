@@ -30,6 +30,7 @@ public class Settings {
 	public static int SikuliVersionSub;
 	public static int SikuliVersionBetaN;
 	public static String SikuliVersionBuild;
+	public static String SikuliVersionType;
 	public static String downloadBaseDirBase;
 	public static String downloadBaseDirWeb;
 	public static String downloadBaseDir;
@@ -159,9 +160,9 @@ public class Settings {
 				ssxbeta = String.format("-Beta%d", SikuliVersionBetaN);
 			}
 			SikuliVersionBuild = prop.getProperty("sikulixbuild");
-			log(lvl + 1, "%s version from %s: %d.%d.%d%s build: %s", svt, svf,
+			log(lvl + 1, "%s version from %s: %d.%d.%d%s build: %s", svf,
 							SikuliVersionMajor, SikuliVersionMinor, SikuliVersionSub, ssxbeta,
-							SikuliVersionBuild);
+							SikuliVersionBuild, svt);
 			sversion = String.format("%d.%d.%d",
 							SikuliVersionMajor, SikuliVersionMinor, SikuliVersionSub);
 			bversion = String.format("%d.%d.%d-Beta%d",
@@ -186,10 +187,13 @@ public class Settings {
 				downloadBaseDirBase = dlProdLink;
 				downloadBaseDirWeb = downloadBaseDirBase + getVersionShortBasic() + dlProdLink1;
 				downloadBaseDir = downloadBaseDirWeb + dlProdLink2;
+        SikuliVersionType = "";
 			} else {
 				downloadBaseDirBase = dlDevLink;
 				downloadBaseDirWeb = dlDevLink;
 				downloadBaseDir = dlDevLink;
+        SikuliVersionBuild += " nightly";
+        SikuliVersionType = svt;
 			}
 			log(lvl, "%s version: downloading from %s", svt, downloadBaseDir);
 		} catch (Exception e) {
