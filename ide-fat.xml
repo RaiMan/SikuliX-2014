@@ -11,6 +11,7 @@
       <excludes>
         <exclude>org.python:jython-standalone</exclude>
         <exclude>org.jruby:jruby-complete</exclude>
+        <exclude>*:gem:*</exclude>
       </excludes>
       <useProjectArtifact>true</useProjectArtifact>
       <unpack>true</unpack>
