@@ -263,7 +263,11 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
       pane.insertString(img);
     } else {
       if (PreferencesUser.getInstance().getPrefMoreImageThumbs()) {
-        pane.insertComponent(new EditorPatternButton(pane, imgFilename));
+        EditorPatternButton comp = EditorPatternButton.createFromString(pane, imgFilename, null); 
+        // pane.insertComponent(new EditorPatternButton(pane, imgFilename));
+        if (comp != null) {
+          pane.insertComponent(comp);
+        }      
       } else {
         pane.insertComponent(new EditorPatternLabel(pane, imgFilename, true));
       }
