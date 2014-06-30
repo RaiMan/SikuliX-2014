@@ -41,11 +41,15 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
   private EditorPatternLabel _lbl;
 
   protected EditorPatternButton(EditorPane pane) {
-		init(pane, null);
+		init(pane, null, null);
 	}
 
 	public EditorPatternButton(EditorPane pane, String imgFilename) {
-		init(pane, imgFilename);
+		init(pane, imgFilename, null);
+	}
+
+	private EditorPatternButton(EditorPane pane, Image img) {
+		init(pane, null, img);
 	}
 
   protected EditorPatternButton(EditorPatternLabel lbl) {
@@ -59,7 +63,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
     _pane = _lbl.getPane();
   }
 
-	private void init(EditorPane pane, String imgFilename) {
+	private void init(EditorPane pane, String imgFilename, Image img) {
     //TODO thumbMax = PreferencesUser.getInstance().getDefaultThumbHeight() == 0 ? false : true;
 		_pane = pane;
 		_exact = false;
@@ -67,6 +71,8 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 		_numMatches = DEFAULT_NUM_MATCHES;
 		if (imgFilename != null) {
 			setFilename(imgFilename);
+		} else if (img != null) {
+			setFilename(img);
 		}
     setMargin(new Insets(0, 0, 0, 0));
     setBorderPainted(true);
@@ -82,9 +88,10 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
   public static EditorPatternButton createFromString(EditorPane parentPane, String str, EditorPatternLabel lbl) {
     if (!str.startsWith("Pattern")) {
       if (str.charAt(0) == '\"' && str.charAt(str.length() - 1) == '\"') {
-        str = str.substring(1, str.length() - 1);
-        if (parentPane.getImageInBundle(FileManager.slashify(str, false)).isValid()) {
-          return new EditorPatternButton(parentPane, FileManager.slashify(str, false));
+        str = FileManager.slashify(str.substring(1, str.length() - 1), false);
+				Image img = Image.createThumbNail(str);
+				if (img.isValid() && img.isBundled()) {
+          return new EditorPatternButton(parentPane, img);
         }
       }
       return null;
@@ -97,10 +104,10 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 				btn.setExact(true);
 				btn.setSimilarity(0.99f);
 			} else if (tok.startsWith("Pattern")) {
-				String filename = tok.substring(
-								tok.indexOf("\"") + 1, tok.lastIndexOf("\""));
-        Image img = parentPane.getImageInBundle(FileManager.slashify(filename, false));
-        if (img.isValid()) {
+				String filename = FileManager.slashify(tok.substring(
+								tok.indexOf("\"") + 1, tok.lastIndexOf("\"")), false);
+        Image img = Image.createThumbNail(filename);
+        if (img.isValid() && img.isBundled()) {
 					btn.setFilename(img);
         } else {
           return null;
@@ -214,12 +221,12 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
     setIcon(new ImageIcon(createThumbnailImage(_imgFilename, PreferencesUser.getInstance().getDefaultThumbHeight())));
     setButtonText();
   }
-  
+
   private void setFilename(Image img) {
     _image = img;
     _imgFilename = _image.getFilename();
     setIcon(new ImageIcon(createThumbnailImage(_imgFilename, PreferencesUser.getInstance().getDefaultThumbHeight())));
-    setButtonText();    
+    setButtonText();
   }
 
 	private String createThumbnail(String imgFname) {
@@ -405,7 +412,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 
 	@Override
 	public String toString() {
-    return _pane.getPatternString(_imgFilename, _similarity, _offset);
+    return _pane.getPatternString(_imgFilename, _similarity, _offset, _image);
 	}
 
   private void setButtonText() {

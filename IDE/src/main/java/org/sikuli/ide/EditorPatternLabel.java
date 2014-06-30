@@ -224,7 +224,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
 
   public void setLabelPyText() {
     if (!lblText.startsWith(NOTFOUND)) {
-      pyText = pane.getPatternString(imgName, sim, off);
+      pyText = pane.getPatternString(imgName, sim, off, image);
     }
   }
 
