@@ -93,6 +93,7 @@ public class Image {
   private boolean imageIsText = false;
   private boolean imageIsAbsolute = false;
   private boolean imageIsPattern = false;
+	private boolean imageIsBundled = false;
   private boolean beSilent = false;
   private String filepath = null;
   private URL fileURL = null;
@@ -133,7 +134,7 @@ public class Image {
    * absolute filename is taken as is
    * if image exists, it is loaded to cache <br>
    * already loaded image with same name (given path) is reused (taken from cache) <br>
-   * 
+   *
    * if image not found, it might be a text to be searched (imageIsText = true)
    *
    * @param fName
@@ -188,16 +189,10 @@ public class Image {
     } else {
       fileName = FileManager.slashify(fileName, false);
       File imgFile = new File(fileName);
-      String fn = fileName;
       if (imgFile.isAbsolute()) {
         if (imgFile.exists()) {
-          String bundlePath = ImagePath.getBundlePath();
-          if (bundlePath != null && fileName.startsWith(bundlePath)) {
-            fileName = new File(fileName).getName();
-          } else {
-            absoluteFileName = true;
-          }
-          fURL = FileManager.makeURL(fn);
+					absoluteFileName = true;
+          fURL = FileManager.makeURL(fileName);
           imageNames.put(fileName, fURL);
         } else {
           existsFileName = false;
@@ -300,7 +295,13 @@ public class Image {
 					log(-1, "Image not valid, but TextSearch is switched off!");
 				}
       }
-    }
+    } else {
+			if (Settings.BundlePath != null) {
+				String ip = new File(img.filepath).getParent();
+				String sp = new File(Settings.BundlePath).getAbsolutePath();
+				img.imageIsBundled = ip.equals(sp);
+			}
+		}
     return img;
   }
 
@@ -560,6 +561,10 @@ public class Image {
   public boolean isUseable() {
     return isValid() || imageIsPattern;
   }
+
+	public boolean isBundled() {
+		return imageIsBundled;
+	}
 
   /**
    *
