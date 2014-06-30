@@ -918,6 +918,10 @@ public class FileManager {
     FileManager.deleteFileOrFolder(Settings.BaseTempPath);
   }
 
+	public static boolean isBundle(String dir) {
+		return dir.endsWith(".sikuli");
+	}
+
   private static class FileFilterScript implements FilenameFilter {
     private String _check;
     public FileFilterScript(String check) {
