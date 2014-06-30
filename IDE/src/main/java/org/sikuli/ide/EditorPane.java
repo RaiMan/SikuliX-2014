@@ -874,7 +874,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			//System.out.println("["+line+"]");
 			if (m.find()) {
 				int len = m.end() - m.start();
-				if (replaceWithImage(startOff + m.start(), startOff + m.end(), ptn)) {
+        boolean replaced = replaceWithImage(startOff + m.start(), startOff + m.end(), ptn);
+				if (replaced) {
 					startOff += m.start() + 1;
 					endOff -= len - 1;
 				} else {

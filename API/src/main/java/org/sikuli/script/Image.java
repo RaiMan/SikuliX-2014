@@ -129,10 +129,11 @@ public class Image {
   /**
    * create a new image from a filename <br>
    * file ending .png is added if missing (currently valid: png, jpg, jpeg)<br>
-   * filename: [...path.../]name[.png] is searched on current image path and
-   * loaded to cache <br>
-   * already loaded image with same name is reused (reference) and taken from
-   * cache <br>
+   * relative filename: [...path.../]name[.png] is searched on current image path<br>
+   * absolute filename is taken as is
+   * if image exists, it is loaded to cache <br>
+   * already loaded image with same name (given path) is reused (taken from cache) <br>
+   * 
    * if image not found, it might be a text to be searched (imageIsText = true)
    *
    * @param fName
@@ -180,8 +181,8 @@ public class Image {
     boolean existsFileName = true;
     Image img = null;
     URL fURL = null;
-    String fileName = getImageFilename(fName);
-    if (fileName == null) {
+    String fileName = Settings.getValidImageFilename(fName);
+    if (fileName.isEmpty()) {
       log(-1, "not a valid image type: " + fName);
       fileName = fName;
     } else {
@@ -220,17 +221,6 @@ public class Image {
   }
 
   private static String getImageFilename(String fname) {
-    //TODO valid imagefile endings - where to store?
-    int dot = fname.lastIndexOf(".");
-    String ending;
-    if (dot > 0) {
-      ending = fname.substring(dot).toLowerCase();
-      if (!ending.equals(".png") && !ending.equals(".jpg") && !ending.equals(".jepg")) {
-        return null;
-      }
-    } else {
-      fname += ".png";
-    }
     return fname;
   }
 

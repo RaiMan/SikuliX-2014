@@ -282,6 +282,23 @@ public class Settings {
 	public static boolean hasTypeRunner(String type) {
 		return supportedRunner.contains(type);
 	}
+  
+  public static String getValidImageFilename(String fname) {
+    String validEndings = ".png.jpg.jpeg";
+    String defaultEnding = ".png";
+    int dot = fname.lastIndexOf(".");
+    String ending = defaultEnding;
+    if (dot > 0) {
+      ending = fname.substring(dot);
+      if (validEndings.contains(ending.toLowerCase())) {
+        return fname;
+      }
+    } else {
+      fname += ending;
+      return fname;
+    }
+    return "";
+  }
 
 	public static final int ISWINDOWS = 0;
 	public static final int ISMAC = 1;
