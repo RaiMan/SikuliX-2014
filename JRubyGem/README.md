@@ -18,7 +18,7 @@ Or run
 gem build sikulix.gemspec
 ```
 
-Or download sukulix.gem from https://launchpad.net/sikuli
+Or download sukulix.gem from https://launchpad.net/sikuli/+download
 
 ## Install
 
