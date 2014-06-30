@@ -242,6 +242,7 @@
 		<module>JythonFat</module>
 		<module>JRuby</module>
 		<module>JRubyFat</module>
+		<module>JRubyGem</module>
 		<module>API</module>
 		<module>APIFat</module>
 		<module>IDE</module>

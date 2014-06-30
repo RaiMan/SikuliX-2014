@@ -1,36 +1,44 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0                       http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-    <!--
-    * Copyright 2010-2014, Sikuli.org
-    * Released under the MIT License.
-    *
-    * Roman S Samarev, RaiMan 2014
-    -->
+  <!--
+  * Copyright 2010-2014, Sikuli.org
+  * Released under the MIT License.
+  *
+  * Roman S Samarev, RaiMan 2014
+  -->
 
-    <modelVersion>4.0.0</modelVersion>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.sikuli</groupId>
+  <artifactId>SikuliX-JRubyGem</artifactId>
+  <version>1.1.0.1</version>
+
+  <parent>
     <groupId>org.sikuli</groupId>
-    <artifactId>JRubyGem</artifactId>
-    <version>0.0.1</version>
+    <artifactId>SikuliX-Project</artifactId>
+    <version>1.1.0</version>
+    <relativePath>../</relativePath>
+  </parent>
 
-    <parent>
-        <groupId>org.sikuli</groupId>
-        <artifactId>SikuliX-Project</artifactId>
-        <version>1.1.0</version>
-        <relativePath>../</relativePath>
-    </parent>
+  <developers>
+    <developer>
+      <id>RomanSSamarev</id>
+      <name>Roman S Samarev</name>
+      <email>samarev@acm.org</email>
+    </developer>
+  </developers>
 
-    <build>
-        <defaultGoal>package gem:package</defaultGoal>
-        <plugins>
-            <plugin>
-                <groupId>de.saumya.mojo</groupId>
-                <artifactId>gem-maven-plugin</artifactId>
-                <version>1.0.0</version>
-                <configuration>
-                    <gemspec>sikulix.gemspec</gemspec>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+  <build>
+    <defaultGoal>package gem:package</defaultGoal>
+    <plugins>
+      <plugin>
+        <groupId>de.saumya.mojo</groupId>
+        <artifactId>gem-maven-plugin</artifactId>
+        <version>1.0.0</version>
+        <configuration>
+          <gemspec>sikulix.gemspec</gemspec>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 </project>
