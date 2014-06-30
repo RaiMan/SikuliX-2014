@@ -61,11 +61,15 @@ public class ImagePath {
   }
 
   private static final List<PathEntry> imagePaths = Collections.synchronizedList(new ArrayList<PathEntry>());
-  private static String BundlePath = null;
+  private static String bundlePath = null;
+	private static String userDir = System.getProperty("user.dir");
 
   static {
     imagePaths.add(null);
-    BundlePath = Settings.BundlePath;
+    bundlePath = Settings.BundlePath;
+		if (FileManager.isBundle(userDir)) {
+			userDir = new File(userDir).getParent();
+		}
   }
 
   /**
@@ -137,9 +141,10 @@ public class ImagePath {
       } else {
         log(-1, "File does not exists: " + fname);
       }
+			return fURL;
     } else {
       if (0 == getPathCount()) {
-        setBundlePath(System.getProperty("user.dir"));
+        setBundlePath(userDir);
       }
       for (PathEntry path : getPaths()) {
         if (path == null) {
@@ -158,14 +163,15 @@ public class ImagePath {
         } else {
           //TODO support for http image path
           log(-1, "URL not supported: " + path.pathURL);
+					return fURL;
         }
       }
       if (fURL == null) {
         log(-1, "not found on image path: " + fname);
         printPaths();
       }
+	    return fURL;
     }
-    return fURL;
   }
 
   /**
@@ -229,7 +235,7 @@ public class ImagePath {
    * (e.g. running in some IDE) the path will be the path to the compiled
    * classes (for Maven based projects this is target/classes that contains all
    * stuff copied from src/main/resources automatically)<br>
-   * For situations, where the images cannot be found automatically in the non-jar situation, you 
+   * For situations, where the images cannot be found automatically in the non-jar situation, you
    * might give an alternative path either absolute or relative to the working folder.
    * @param mainPath absolute path name or a valid classname optionally followed by /subfolder...
    * @param altPath alternative image folder, when not running from jar
@@ -351,7 +357,7 @@ public class ImagePath {
 
   /**
    * the given path is added to the list replacing the first entry and
-   * Settings.BundlePath is replaced as well
+ Settings.bundlePath is replaced as well
    *
    * @param bundlePath an absolute file path
    * @return true on success, false otherwise
@@ -363,7 +369,7 @@ public class ImagePath {
         if (new File(new File(path.pathURL.getPath()).getAbsolutePath()).exists()) {
           imagePaths.set(0, path);
           Settings.BundlePath = path.pathURL.getPath();
-          BundlePath = Settings.BundlePath;
+          ImagePath.bundlePath = Settings.BundlePath;
           log(3, "new BundlePath: " + Settings.BundlePath);
           return true;
         }
@@ -378,7 +384,7 @@ public class ImagePath {
   }
 
   /**
-   * the resetting version of setBundlePath for IDE usage
+   * the resetting version of setbundlePath for IDE usage
    *
    * @param bundlePath
    * @return true on success, false otherwise
@@ -398,11 +404,11 @@ public class ImagePath {
   public static String getBundlePath() {
     if (imagePaths.get(0) == null) {
       setBundlePath(Settings.BundlePath);
-      return BundlePath;
+      return bundlePath;
     }
     String path = imagePaths.get(0).pathURL.getPath();
     if (Settings.BundlePath != null && path.equals(Settings.BundlePath)) {
-      return BundlePath;
+      return bundlePath;
     } else {
       log(-1, "getBundlePath: Settings.BundlePath is invalid: returning working dir\n"
               + "Settings.BundlePath: %s\nImagePaths[0]: %s",
