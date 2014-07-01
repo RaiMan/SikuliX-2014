@@ -894,9 +894,6 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		String imgStr = doc.getText(startOff, endOff - startOff);
 		JComponent comp = null;
 
-		if (ptn == patPngStr) {
-      imgStr = imgStr.substring(1, imgStr.length() - 1);
-    }
 		if (ptn == patPatternStr || ptn == patPngStr) {
 			if (pref.getPrefMoreImageThumbs()) {
 				comp = EditorPatternButton.createFromString(this, imgStr, null);

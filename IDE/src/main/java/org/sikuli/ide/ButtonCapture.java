@@ -197,7 +197,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
     _isCapturing = false;
     SikuliIDE ide = SikuliIDE.getInstance();
     ide.setVisible(true);
-    ide.requestFocus();    
+    ide.requestFocus();
   }
 
   private Element getSrcElement() {
@@ -263,11 +263,10 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
       pane.insertString(img);
     } else {
       if (PreferencesUser.getInstance().getPrefMoreImageThumbs()) {
-        EditorPatternButton comp = EditorPatternButton.createFromString(pane, imgFilename, null); 
-        // pane.insertComponent(new EditorPatternButton(pane, imgFilename));
+        EditorPatternButton comp = EditorPatternButton.createFromFilename(pane, imgFilename, null);
         if (comp != null) {
           pane.insertComponent(comp);
-        }      
+        }
       } else {
         pane.insertComponent(new EditorPatternLabel(pane, imgFilename, true));
       }

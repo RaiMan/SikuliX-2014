@@ -215,15 +215,7 @@ public class Image {
     return img;
   }
 
-  public String getImageName() {
-    if (filepath != null) {
-      return new File(filepath).getName();
-    } else {
-      return null;
-    }
-  }
-
-  private Image(String fname, URL fURL) {
+ private Image(String fname, URL fURL) {
     init(fname, fURL, true);
   }
 
@@ -246,6 +238,12 @@ public class Image {
       log(-1, "URL not supported: " + fileURL);
       return;
     }
+		if (Settings.BundlePath != null) {
+			String ip = new File(filepath).getParent();
+			String sp = new File(Settings.BundlePath).getAbsolutePath();
+			imageIsBundled = ip.equals(sp);
+			imageName = new File(imageName).getName();
+		}
 		beSilent = silent;
     loadImage();
   }
@@ -299,13 +297,7 @@ public class Image {
 					log(-1, "Image not valid, but TextSearch is switched off!");
 				}
       }
-    } else {
-			if (Settings.BundlePath != null) {
-				String ip = new File(img.filepath).getParent();
-				String sp = new File(Settings.BundlePath).getAbsolutePath();
-				img.imageIsBundled = ip.equals(sp);
-			}
-		}
+    }
     return img;
   }
 
