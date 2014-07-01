@@ -87,12 +87,10 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 
   public static EditorPatternButton createFromString(EditorPane parentPane, String str, EditorPatternLabel lbl) {
     if (!str.startsWith("Pattern")) {
-      if (str.charAt(0) == '\"' && str.charAt(str.length() - 1) == '\"') {
-        str = FileManager.slashify(str.substring(1, str.length() - 1), false);
-				Image img = Image.createThumbNail(str);
-				if (img.isValid() && img.isBundled()) {
-          return new EditorPatternButton(parentPane, img);
-        }
+      str = FileManager.slashify(str, false);
+			Image img = Image.createThumbNail(str);
+      if (img.isValid() && img.isBundled()) {
+        return new EditorPatternButton(parentPane, img);
       }
       return null;
     }

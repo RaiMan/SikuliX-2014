@@ -57,7 +57,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	public boolean showThumbs;
 	// TODO: move to SikuliDocument ????
 	private IndentationLogic _indentationLogic = null;
-	static Pattern patPngStr = Pattern.compile("(\"[^\"]+?\\.(?i)(png|jpg)\")");
+	static Pattern patPngStr = Pattern.compile("(\"[^\"]+?\\.(?i)(png|jpg|jpeg)\")");
 	static Pattern patCaptureBtn = Pattern.compile("(\"__CLICK-TO-CAPTURE__\")");
 	static Pattern patPatternStr = Pattern.compile(
 					"\\b(Pattern\\s*\\(\".*?\"\\)(\\.\\w+\\([^)]*\\))+)");
@@ -894,6 +894,9 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		String imgStr = doc.getText(startOff, endOff - startOff);
 		JComponent comp = null;
 
+		if (ptn == patPngStr) {
+      imgStr = imgStr.substring(1, imgStr.length() - 1);
+    }
 		if (ptn == patPatternStr || ptn == patPngStr) {
 			if (pref.getPrefMoreImageThumbs()) {
 				comp = EditorPatternButton.createFromString(this, imgStr, null);

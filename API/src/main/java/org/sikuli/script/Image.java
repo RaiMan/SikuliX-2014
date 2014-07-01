@@ -215,8 +215,12 @@ public class Image {
     return img;
   }
 
-  private static String getImageFilename(String fname) {
-    return fname;
+  public String getImageName() {
+    if (filepath != null) {
+      return new File(filepath).getName();
+    } else {
+      return null;
+    }
   }
 
   private Image(String fname, URL fURL) {
