@@ -12,6 +12,9 @@
       <useProjectArtifact>true</useProjectArtifact>
       <unpack>true</unpack>
       <scope>runtime</scope>
+      <excludes>
+            <exclude>*:gem:*</exclude>
+      </excludes>
     </dependencySet>
   </dependencySets>
 </assembly>
