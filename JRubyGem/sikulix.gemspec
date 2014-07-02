@@ -5,7 +5,7 @@ Gem::Specification.new do |s|
   s.summary     = 'SikuliX gem'
   s.description = 'This is a wrapper over SikuliX java lib'
   s.authors     = ['Roman S Samarev']
-  s.email       = 'samarev@acm.or'
+  s.email       = 'samarev@acm.org'
   s.files       = [
                    'sikulix.rb',
                    'sikulix/platform.rb',
