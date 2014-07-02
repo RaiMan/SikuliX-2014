@@ -145,7 +145,7 @@ public class PatternWindow extends JFrame {
 				btnCancel.doClick();
 			}
 		});
-		KeyStroke escapeKeyStroke = 
+		KeyStroke escapeKeyStroke =
 			KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0, false);
 		this.getRootPane().
 			getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).
@@ -225,8 +225,8 @@ public class PatternWindow extends JFrame {
 						_screenshot.isExact(), _screenshot.getSimilarity(),
 						_screenshot.getNumMatches()));
 		addDirty(_imgBtn.setTargetOffset(_tarOffsetPane.getTargetOffset()));
-		Debug.log(2, "update: " + _imgBtn.toString());
 		if (isDirty() || tempDirty) {
+			Debug.log(3, "Preview: update: " + _imgBtn.toString());
 			int i = _imgBtn.getWindow().getTabbedPane().getSelectedIndex();
 			_imgBtn.getWindow().setMessageApplied(i, true);
 			_imgBtn.repaint();
