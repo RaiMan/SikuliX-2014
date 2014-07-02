@@ -25,18 +25,22 @@ class MyCompoundEdit extends CompoundEdit {
       return edits.size();
    }
 
+	 @Override
    public void undo() throws CannotUndoException {
       super.undo();
       isUnDone=true;
    }
+	 @Override
    public void redo() throws CannotUndoException {
       super.redo();
       isUnDone=false;
    }
+	 @Override
    public boolean canUndo() {
       return edits.size()>0 && !isUnDone;
    }
 
+	 @Override
    public boolean canRedo() {
       return edits.size()>0 && isUnDone;
    }
@@ -45,12 +49,13 @@ class MyCompoundEdit extends CompoundEdit {
 
 public class EditorUndoManager extends AbstractUndoableEdit
                   implements UndoableEditListener {
-  private static final String me = "EditorUndoManager: "; 
+  private static final String me = "EditorUndoManager: ";
    String lastEditName=null;
    ArrayList<MyCompoundEdit> edits=new ArrayList<MyCompoundEdit>();
    MyCompoundEdit current;
    int pointer=-1;
 
+	@Override
    public void undoableEditHappened(UndoableEditEvent e) {
       UndoableEdit edit=e.getEdit();
       if (edit instanceof AbstractDocument.DefaultDocumentEvent) {
@@ -104,6 +109,7 @@ public class EditorUndoManager extends AbstractUndoableEdit
       pointer++;
    }
 
+	@Override
    public void undo() throws CannotUndoException {
       if (!canUndo()) {
          throw new CannotUndoException();
@@ -116,6 +122,7 @@ public class EditorUndoManager extends AbstractUndoableEdit
       refreshControls();
    }
 
+	@Override
    public void redo() throws CannotUndoException {
       if (!canRedo()) {
          throw new CannotUndoException();
@@ -128,10 +135,12 @@ public class EditorUndoManager extends AbstractUndoableEdit
       refreshControls();
    }
 
+	@Override
    public boolean canUndo() {
       return pointer>=0;
    }
 
+	@Override
    public boolean canRedo() {
       return edits.size()>0 && pointer<edits.size()-1;
    }

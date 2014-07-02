@@ -242,7 +242,9 @@ public class Image {
 			String ip = new File(filepath).getParent();
 			String sp = new File(Settings.BundlePath).getAbsolutePath();
 			imageIsBundled = ip.equals(sp);
-			imageName = new File(imageName).getName();
+			if (imageIsBundled) {
+				imageName = new File(imageName).getName();
+			}
 		}
 		beSilent = silent;
     loadImage();

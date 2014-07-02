@@ -144,7 +144,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		Debug.log(2, "open Pattern Settings");
+		Debug.log(3, "ThumbButtonLabel: open Pattern Settings");
 		if (pwin == null) {
 			_offsetSaved = new Location(_offset);
 			_similaritySaved = _similarity;
@@ -210,7 +210,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 		File img = new File(_imgFilename);
 		String oldBundle = img.getParent();
 		String newBundle = _pane.getSrcBundle();
-		Debug.log(2, "ImageButton.getFilename: old: " + oldBundle + "\nnew: " + newBundle);
+		Debug.log(4, "ImageButton.getFilename: old: " + oldBundle + "\nnew: " + newBundle);
 		if (oldBundle == newBundle) {
 			return _imgFilename;
 		}
@@ -273,7 +273,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 
 	public boolean setParameters(boolean exact, float similarity, int numMatches) {
 		boolean dirty = false;
-		Debug.log(2, "setParameters: " + exact + "," + similarity + "," + numMatches);
+		Debug.log(3, "ThumbButtonLabel: setParameters: " + exact + "," + similarity + "," + numMatches);
 		dirty |= setExact(exact);
 		dirty |= setSimilarity(similarity);
     setButtonText();
@@ -315,7 +315,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
   }
 
 	public boolean setTargetOffset(Location offset) {
-		Debug.log(3, "setTargetOffset: " + offset.toStringShort());
+		Debug.log(3, "ThumbButtonLabel: setTargetOffset: " + offset.toStringShort());
 		if (!_offset.equals(offset)) {
 			_offset = offset;
       setButtonText();
