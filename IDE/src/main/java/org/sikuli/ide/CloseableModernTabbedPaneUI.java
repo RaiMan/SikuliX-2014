@@ -278,10 +278,9 @@ public class CloseableModernTabbedPaneUI extends BasicTabbedPaneUI {
 
 		@Override
 		public void mousePressed(MouseEvent e) {
-			if (!tabPane.isEnabled()) {
+			if (tabPane == null || !tabPane.isEnabled()) {
 				return;
 			}
-
 			tabPressed = tabForCoordinate(tabPane, e.getX(), e.getY());
 			if (tabPressed != -1) {
 				tabPane.repaint(getTabBounds(tabPane, tabPressed));
