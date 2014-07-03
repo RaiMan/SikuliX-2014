@@ -1,15 +1,12 @@
 [![RaiMan's Stuff](https://raw.github.com/RaiMan/SikuliX-2014-Docs/master/src/main/resources/docs/source/RaiManStuff64.png)](http://www.sikuli.org) SikuliX-2014 (current version 1.1.0)
 ============
 
-<hr />
-**1.1.0-Beta3 is under development**
-
-Beta1 and Beta2 are retracted<br>
+1.1.0-Beta3 is under development
 -----------------
+Beta1 and Beta2 are retracted
 
 [for download look here](https://launchpad.net/sikuli/sikulix/1.1.0)<br>
 Known issues and fixes: https://answers.launchpad.net/sikuli/+faq/2521<br>
-<hr />
 
 <hr />
 **SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer)
