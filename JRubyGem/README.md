@@ -5,28 +5,36 @@ Implements the Ruby gem for using sikulix.<br />
 (Requires SIKULIXAPI_JAR with full path of `sikulixapi.jar`)
 
 ## Where to get
-It is possible to build it from sources using mvn or gem.
-Run in this path
+It is possible:
 
-```
-mvn
-```
+* install sikulix from http://rubygems.org
+* download sukulix.gem from https://launchpad.net/sikuli/+download
+* build it from sources using mvn or gem.
+  Run in this path
 
-Or run
+  ```
+  mvn
+  ```
 
-```
-gem build sikulix.gemspec
-```
+  Or run
 
-Or download sukulix.gem from https://launchpad.net/sikuli/+download
+  ```
+  gem build sikulix.gemspec
+  ```
 
 ## Install
 
-Run
+* Install from rubygems:
 
-```
-gem install sikulix.gem --local
-```
+  ```
+  jgem install sikulix
+  ```
+
+* Local install:
+
+  ```
+  jgem install sikulix-x.x.x.x.gem --local
+  ```
 
 ## How to use
 
@@ -92,3 +100,7 @@ gem install sikulix.gem --local
       puts obj.getTarget.toString()
     end
     ```
+
+## Other docs
+
+**Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) (work in progress)**
