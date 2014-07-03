@@ -2,14 +2,13 @@
 ============
 
 <hr />
-May 5th, 2014: 1.1.0-Beta1 is out
+**1.1.0-Beta3 is under development**
+
+Beta1 and Beta2 are retracted<br>
 -----------------
-Newest build available per May 30th 18h+ (2014-05-30-18)<br />
-[for download look here](https://launchpad.net/sikuli/sikulix/1.1.0)
 
-Known issues and fixes: https://answers.launchpad.net/sikuli/+faq/2521
-
-The problems with native libraries on Windows with 32-Bit Java should be fixed.<br />
+[for download look here](https://launchpad.net/sikuli/sikulix/1.1.0)<br>
+Known issues and fixes: https://answers.launchpad.net/sikuli/+faq/2521<br>
 <hr />
 
 <hr />
