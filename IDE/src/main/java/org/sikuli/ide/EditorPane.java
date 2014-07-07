@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, sikulix.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan 2014
  */
 package org.sikuli.ide;
 
@@ -373,6 +373,12 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	}
 
 	private void cleanBundle(String bundle) {
+    log(3, "cleanBundle: for %s", bundle);
+    String pbundle = FileManager.slashify(bundle, false);
+    if (! (new File(pbundle).isDirectory())) {
+      log(-1, "cleanBundle: no directory/folder");
+      return;
+    }
 		String scriptText = getText();
 		Lexer lexer = getLexer();
 		Iterable<Token> tokens = lexer.getTokens(scriptText);
@@ -382,11 +388,12 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		for (Token t : tokens) {
 			current = t.getValue();
 			if (t.getType() == TokenType.Comment) {
-				cleanBundleCheckComments(lexer, t.getValue().substring(1), usedImages);
+				cleanBundleCheckComments(pbundle, lexer, t.getValue().substring(1), usedImages);
 				continue;
 			}
 			if (t.getType() == TokenType.String_Doc) {
-				cleanBundleCheckComments(lexer, t.getValue().substring(3, t.getValue().length() - 3), usedImages);
+				cleanBundleCheckComments(pbundle, lexer, 
+                t.getValue().substring(3, t.getValue().length() - 3), usedImages);
 				continue;
 			}
 			if (!inString) {
@@ -399,7 +406,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 				inString = false;
 				continue;
 			}
-			cleanBundleIsImageUsed(current, usedImages);
+			cleanBundleIsImageUsed(pbundle, current, usedImages);
 		}
 		if (usedImages.isEmpty()) {
 			return;
@@ -407,7 +414,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		FileManager.deleteNotUsedImages(bundle, usedImages);
 	}
 
-	private void cleanBundleCheckComments(Lexer lexer, String comment, List<String> usedImages) {
+	private void cleanBundleCheckComments(String pbundle, Lexer lexer, String comment, List<String> usedImages) {
 		Iterable<Token> tokens = lexer.getTokens(comment);
 		boolean inString = false;
 		String current;
@@ -423,15 +430,21 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 				inString = false;
 				continue;
 			}
-			cleanBundleIsImageUsed(current, usedImages);
+			cleanBundleIsImageUsed(pbundle, current, usedImages);
 		}
 	}
 
-	private void cleanBundleIsImageUsed(String img, List<String> usedImages) {
+	private void cleanBundleIsImageUsed(String pbundle, String img, List<String> usedImages) {
+    String fimg;
 		if (img.endsWith(".png") || img.endsWith(".jpg") || img.endsWith(".jpeg")) {
-			if (FileManager.slashify(img, false).contains("/")) {
-				log(lvl, "save: used image ignored: %s", img);
-				return;
+      fimg = FileManager.slashify(img, false);
+			if (fimg.contains("/")) {
+        if (fimg.contains(pbundle)) {
+          img = new File(fimg).getName();
+        } else {
+          log(lvl, "save: used image ignored: %s", img);
+          return;
+        }
 			}
 			log(lvl, "save: used image: %s", img);
 			if (!usedImages.contains(img)) {

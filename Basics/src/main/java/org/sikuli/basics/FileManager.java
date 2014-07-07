@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, sikulix.com
  * Released under the MIT License.
  *
- * modified RaiMan 2013
+ * modified RaiMan 2014
  */
 package org.sikuli.basics;
 
@@ -883,7 +883,7 @@ public class FileManager {
 		for (File image : scriptFolder.listFiles(new FilenameFilter() {
 					@Override
 					public boolean accept(File dir, String name) {
-						if ((name.endsWith(".png") || name.endsWith(".jpg"))) {
+						if ((name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg"))) {
 							return true;
 						}
 						return false;
