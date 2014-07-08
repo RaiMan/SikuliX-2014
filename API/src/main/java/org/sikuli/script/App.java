@@ -41,6 +41,7 @@ public class App {
 
   static {
 //TODO Sikuli hangs if App is used before Screen
+    //System.out.println("[static] App");
     new Screen();
 		String libName = _osUtil.getLibName();
 		if (!libName.isEmpty()) {
