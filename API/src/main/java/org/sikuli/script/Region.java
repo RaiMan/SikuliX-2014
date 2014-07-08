@@ -176,7 +176,7 @@ public class Region {
    *
    * @param scr The Screen containing the Region
    */
-  protected void initScreen(Screen scr) {
+  public void initScreen(Screen scr) {
     // check given screen first
     Rectangle rect, screenRect;
     Screen screen, screenOn;
