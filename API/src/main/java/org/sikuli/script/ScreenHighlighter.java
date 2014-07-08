@@ -6,6 +6,7 @@
  */
 package org.sikuli.script;
 
+import org.sikuli.basics.Animator;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import java.awt.*;
@@ -35,11 +36,11 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
   boolean _borderOnly = false;
   boolean _native_transparent = false;
   boolean _double_buffered = false;
-  OverlayAnimator _anim;
+  Animator _anim;
   BasicStroke _StrokeCross = new BasicStroke(1);
   BasicStroke _StrokeCircle = new BasicStroke(2);
   BasicStroke _StrokeBorder = new BasicStroke(3);
-  OverlayAnimator _aniX, _aniY;
+  Animator _aniX, _aniY;
 
   public ScreenHighlighter(Screen scr, String color) {
     _scr = scr;
