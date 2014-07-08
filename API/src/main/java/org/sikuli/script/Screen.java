@@ -212,7 +212,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    * {@inheritDoc} TODO: remove this method if it is not needed
    */
   @Override
-  protected void initScreen(Screen scr) {
+  public void initScreen(Screen scr) {
     updateSelf();
   }
 

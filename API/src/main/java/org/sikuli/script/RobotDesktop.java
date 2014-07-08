@@ -6,6 +6,9 @@
  */
 package org.sikuli.script;
 
+import org.sikuli.basics.Animator;
+import org.sikuli.basics.AnimatorOutQuarticEase;
+import org.sikuli.basics.AnimatorTimeBased;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import java.awt.AWTException;
@@ -58,10 +61,10 @@ public class RobotDesktop extends Robot implements IRobot {
       checkMousePos(dest);
       return;
     }
-    OverlayAnimator aniX = new TimeBasedAnimator(
-            new OutQuarticEase(src.x, dest.x, ms));
-    OverlayAnimator aniY = new TimeBasedAnimator(
-            new OutQuarticEase(src.y, dest.y, ms));
+    Animator aniX = new AnimatorTimeBased(
+            new AnimatorOutQuarticEase(src.x, dest.x, ms));
+    Animator aniY = new AnimatorTimeBased(
+            new AnimatorOutQuarticEase(src.y, dest.y, ms));
     float x = 0, y = 0;
     while (aniX.running()) {
       x = aniX.step();
