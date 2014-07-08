@@ -66,6 +66,7 @@ public class ResourceLoader implements IResourceLoader {
   private String checkFileNameL64 = checkFileNameAll + "64L.txt";
   private String checkFileName = null;
   private String checkLib = null;
+  private final String checkLibWindows = "JIntellitype";
   private static final String prefixSikuli = "SikuliX";
   private static final String suffixLibs = "/libs";
   private static final String libSub = prefixSikuli + suffixLibs;
@@ -415,6 +416,7 @@ public class ResourceLoader implements IResourceLoader {
     }
 
     if (Settings.isWindows() && libPath != null) {
+      log(lvl, "checking ClassLoader.usrPaths having: %s", libPath);
       Field usrPathsField = null;
       try {
         usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
@@ -423,13 +425,13 @@ public class ResourceLoader implements IResourceLoader {
       } catch (SecurityException ex) {
         log(-1, ex.getMessage());
       }
+      boolean contained = false;
       if (usrPathsField != null) {
         usrPathsField.setAccessible(true);
         try {
           //get array of paths
           String[] javapaths = (String[]) usrPathsField.get(null);
           //check if the path to add is already present
-          boolean contained = false;
           for (String p : javapaths) {
             if (p.toUpperCase().equals(libPath.toUpperCase())) {
               contained = true;
@@ -441,29 +443,22 @@ public class ResourceLoader implements IResourceLoader {
             final String[] newPaths = Arrays.copyOf(javapaths, javapaths.length + 1);
             newPaths[newPaths.length - 1] = libPath;
             usrPathsField.set(null, newPaths);
-            log(lvl, "recreated ClassLoader.usrPaths");
+            log(lvl, "added to ClassLoader.usrPaths");
           }
         } catch (IllegalAccessException ex) {
           log(-1, ex.getMessage());
         } catch (IllegalArgumentException ex) {
           log(-1, ex.getMessage());
         }
-      }
-      boolean loadWorks = false;
-      try {
-        System.loadLibrary("JIntellitype");
-        loadWorks = true;
-      } catch (java.lang.UnsatisfiedLinkError ex) {
-        log(-1, "recreating ClassLoader.usrPaths did not work: " + ex.getMessage());
-      }
-      if (!loadWorks) {
-        System.exit(1);
-        // this would be the brute force method
-//              System.setProperty("java.library.path", path);
-//              //set sys_paths to null
-//              final Field sysPathsField = ClassLoader.class.getDeclaredField("sys_paths");
-//              sysPathsField.setAccessible(true);
-//              sysPathsField.set(null, null);
+        //check the new path
+        if (!contained) {
+          try {
+            System.loadLibrary(checkLibWindows);
+          } catch (java.lang.UnsatisfiedLinkError ex) {
+            log(-1, "adding to ClassLoader.usrPaths did not work:\n" + ex.getMessage());
+            System.exit(1);
+          }
+        }
       }
     }
   }
@@ -482,7 +477,7 @@ public class ResourceLoader implements IResourceLoader {
         } else {
           path = (new File(path).getAbsolutePath()).replaceAll("/", "\\");
           if (!syspath.toUpperCase().contains(path.toUpperCase())) {
-            if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", syspath + ";" + path)) {
+            if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", path + ";" + syspath)) {
               SikuliX.terminate(1);
             }
             log(lvl, "Added libs dir to path: " + path);
@@ -491,8 +486,7 @@ public class ResourceLoader implements IResourceLoader {
               log(-1, "Adding to path did not work:\n%s", syspath);
               System.exit(1);
             }
-            log(lvl, "... " + syspath.substring(
-                    (syspath.length() - 50 < 0 ? 0 : syspath.length() - 50), syspath.length()));
+            log(lvl, syspath);
           }
         }
       }
