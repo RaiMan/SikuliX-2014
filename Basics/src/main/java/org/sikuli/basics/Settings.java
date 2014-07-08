@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Proxy;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -247,6 +249,12 @@ public class Settings {
     log(lvl, "*** System Environment");
     for (String key : System.getenv().keySet()) {
       System.out.println(String.format("%s = %s", key, System.getenv(key)));
+    }
+    log(lvl, "*** Java Class Path");
+    URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+    URL[] urls = sysLoader.getURLs();
+    for (int i = 0; i < urls.length; i++) {
+      System.out.println(String.format("%d: %s", i, urls[i]));
     }
     log(lvl, "***** Information Dump ***** end *****");    
   }
