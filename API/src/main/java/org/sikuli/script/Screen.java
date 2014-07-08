@@ -14,6 +14,7 @@ import java.awt.GraphicsEnvironment;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import org.sikuli.basics.FileManager;
 
 /**
  * A screen represents a physical monitor with its coordinates and size according to the global
@@ -54,6 +55,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   //<editor-fold defaultstate="collapsed" desc="Initialization">
 
   static {
+    FileManager.loadLibrary("VisionProxy");
     initScreens(false);
   }
 
@@ -62,6 +64,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 //  }
 
   private static void initScreens(boolean reset) {
+    log(3, "initScreens: entry");
     if (genv != null && !reset) {
       return;
     }
@@ -89,11 +92,13 @@ public class Screen extends Region implements EventObserver, IScreen {
       Debug.log("Screen: initScreens: no ScreenDevice contains (0,0) --- using first ScreenDevice as primary");
       primaryScreen = 0;
     }
+    log(3, "initScreens: after GD evaluation");
     for (int i = 0; i < screens.length; i++) {
       screens[i] = new Screen(i, true);
       screens[i].initScreen();
     }
     try {
+      log(3, "initScreens: getting mouseRobot");
       mouseRobot = new Robot();
       mouseRobot.setAutoDelay(10);
     } catch (AWTException e) {
@@ -108,30 +113,24 @@ public class Screen extends Region implements EventObserver, IScreen {
       }
       log(lvl, "*** end monitor configuration ***");
     }
-    if (0 < getNumberScreens()) {
+    if (getNumberScreens() > 1) {
+      log(3, "initScreens: multi monitor mouse check");
       Location lnow = Mouse.at();
       float mmd = Settings.MoveMouseDelay;
       Settings.MoveMouseDelay = 0f;
-      Screen s0 = Screen.getPrimaryScreen();
       Location lc = null, lcn = null;
       for (Screen s : screens) {
-        try {
-          lc = s.getCenter();
-          s0.hover(lc);
-          lcn = Mouse.at();
-        } catch (Exception ex) {
-        }
-        if (!lc.equals(lcn)) {
+        lc = s.getCenter();
+        Mouse.move(lc);
+        lcn = Mouse.at();
+      if (!lc.equals(lcn)) {
           log(lvl, "*** multimonitor click check: %s center: (%d, %d) --- NOT OK:  (%d, %d)",
                   s.toStringShort(), lc.x, lc.y, lcn.x, lcn.y);
         } else {
-          log(lvl+1, "*** checking: %s center: (%d, %d) --- OK", s.toStringShort(), lc.x, lc.y);
+          log(lvl, "*** checking: %s center: (%d, %d) --- OK", s.toStringShort(), lc.x, lc.y);
         }
       }
-      try {
-        s0.hover(lnow);
-      } catch (FindFailed ex) {
-      }
+      Mouse.move(lnow);
       Settings.MoveMouseDelay = mmd;
     }
   }
