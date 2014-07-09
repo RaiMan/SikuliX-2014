@@ -412,7 +412,7 @@ public class Debug {
    * lap timer and print message with timer message
 	 * <br>log output depends on Settings.ProfileLogs
    *
-	 * @param message
+	 * @param message String or format string
    * @return the time in msec
    */
   public long lap(String message) {

@@ -442,7 +442,7 @@ public class Settings {
 	}
 
 	/**
-	 * returns the absolute path to the user's extension path
+	 * @return absolute path to the user's extension path
 	 */
 	public static String getUserExtPath() {
 		String ret = getSikuliDataPath() + File.separator + "extensions";
