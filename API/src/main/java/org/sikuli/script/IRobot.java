@@ -10,7 +10,7 @@ import java.awt.Color;
 import java.awt.Rectangle;
 
 /**
- * INTERNAL USE <br />
+ * INTERNAL USE <br>
  * function template for (alternative) Robot implementations
  */
 public interface IRobot {

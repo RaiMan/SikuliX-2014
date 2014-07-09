@@ -19,11 +19,11 @@ import org.sikuli.natives.TARGET_TYPE;
 import org.sikuli.natives.Vision;
 
 /**
- * implements the process to find one image in another image <br />
+ * implements the process to find one image in another image <br>
  * this is the historical implementation
- * based on the C++ JNI access to the native OpenCV libraries<br />
+ * based on the C++ JNI access to the native OpenCV libraries<br>
  * It is being replaced by ImageFinder, that implements the Finder features
- * completely in Java using the OpenCV newly provided JAVA interface<br />
+ * completely in Java using the OpenCV newly provided JAVA interface<br>
  * At time of realisation the Finder API will be redirected to ImageFinder
  */
 public class Finder implements Iterator<Match> {

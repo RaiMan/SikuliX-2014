@@ -15,7 +15,7 @@ import org.sikuli.natives.FindResult;
  * <br>
  * attributes:<br> the match score (0 ... 1.0)<br> the click target (e.g.
  * from {@link Pattern})<br> a ref to the image used for search<br>or the text used for
- * find text<br />and elapsed times for debugging
+ * find text<br>and elapsed times for debugging
  */
 public class Match extends Region implements Comparable<Match> {
 

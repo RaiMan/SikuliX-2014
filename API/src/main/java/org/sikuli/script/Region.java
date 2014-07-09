@@ -1356,7 +1356,7 @@ public class Region {
 
   /**
    * create a region right of the right side with same height and given width.
-   * negative width creates the right part with width inside the region<br />
+   * negative width creates the right part with width inside the region<br>
    * use grow() to include the current region
    *
    * @param width
@@ -1751,11 +1751,11 @@ public class Region {
   }
 
   /**
-   * Toggle the regions Highlight visibility (frame of specified color)<br />
-   * allowed color specifications for frame color: <br />
+   * Toggle the regions Highlight visibility (frame of specified color)<br>
+   * allowed color specifications for frame color: <br>
    * - a color name out of: black, blue, cyan, gray, green, magenta, orange, pink, red, white, yellow
-   * (lowercase and uppercase can be mixed, internally transformed to all uppercase) <br />
-   * - these colornames exactly written: lightGray, LIGHT_GRAY, darkGray and DARK_GRAY <br />
+   * (lowercase and uppercase can be mixed, internally transformed to all uppercase) <br>
+   * - these colornames exactly written: lightGray, LIGHT_GRAY, darkGray and DARK_GRAY <br>
    * - a hex value like in HTML: #XXXXXX (max 6 hex digits)
    * - an RGB specification as: #rrrgggbbb where rrr, ggg, bbb are integer values in range 0 - 255
    * padded with leading zeros if needed (hence exactly 9 digits)
@@ -2636,9 +2636,9 @@ public class Region {
 
   /**
    * a subsequently started observer in this region should wait for target
-   * and notify the given observer about this event<br />
-   * for details about the observe event handler: {@link ObserverCallBack}<br />
-   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
+   * and notify the given observer about this event<br>
+   * for details about the observe event handler: {@link ObserverCallBack}<br>
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br>
    * @param <PSI> Pattern, String or Image
    * @param target
    * @param observer
@@ -2650,9 +2650,9 @@ public class Region {
 
   /**
    * a subsequently started observer in this region should wait for target
-   * success and details about the event can be obtained using @{link Observing}<br />
-   * for details about the observe event handler: {@link ObserverCallBack}<br />
-   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
+   * success and details about the event can be obtained using @{link Observing}<br>
+   * for details about the observe event handler: {@link ObserverCallBack}<br>
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br>
    * @param <PSI> Pattern, String or Image
    * @param target
    * @return the event's name
@@ -2682,9 +2682,9 @@ public class Region {
 
   /**
    * a subsequently started observer in this region should wait for the target to vanish
-   * and notify the given observer about this event<br />
-   * for details about the observe event handler: {@link ObserverCallBack}<br />
-   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
+   * and notify the given observer about this event<br>
+   * for details about the observe event handler: {@link ObserverCallBack}<br>
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br>
    * @param <PSI> Pattern, String or Image
    * @param target
    * @param observer
@@ -2696,9 +2696,9 @@ public class Region {
 
   /**
    * a subsequently started observer in this region should wait for the target to vanish
-   * success and details about the event can be obtained using @{link Observing}<br />
-   * for details about the observe event handler: {@link ObserverCallBack}<br />
-   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br />
+   * success and details about the event can be obtained using @{link Observing}<br>
+   * for details about the observe event handler: {@link ObserverCallBack}<br>
+   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br>
    * @param <PSI> Pattern, String or Image
    * @param target
    * @return the event's name
@@ -2741,7 +2741,7 @@ public class Region {
 
   /**
    * a subsequently started observer in this region should wait for changes in the region
-   * success and details about the event can be obtained using @{link Observing}<br />
+   * success and details about the event can be obtained using @{link Observing}<br>
    * for details about the observe event handler: {@link ObserverCallBack}
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
    * @param threshold minimum size of changes (rectangle threshhold x threshold)
@@ -2753,7 +2753,7 @@ public class Region {
 
   /**
    * a subsequently started observer in this region should wait for changes in the region
-   * and notify the given observer about this event <br />
+   * and notify the given observer about this event <br>
    * minimum size of changes used: Settings.ObserveMinChangedPixels
    * for details about the observe event handler: {@link ObserverCallBack}
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
@@ -2766,7 +2766,7 @@ public class Region {
 
   /**
    * a subsequently started observer in this region should wait for changes in the region
-   * success and details about the event can be obtained using @{link Observing}<br />
+   * success and details about the event can be obtained using @{link Observing}<br>
    * minimum size of changes used: Settings.ObserveMinChangedPixels
    * for details about the observe event handler: {@link ObserverCallBack}
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
@@ -3376,20 +3376,20 @@ public class Region {
   }
 
   /**
-   * Compact alternative for type() with more options <br />
-   * - special keys and options are coded as #XN. or #X+ or #X- <br />
-   * where X is a refrence for a special key and N is an optional repeat factor <br />
-   * A modifier key as #X. modifies the next following key<br />
-   * the trailing . ends the special key, the + (press and hold) or - (release) does the same, <br />
-   * but signals press-and-hold or release additionally.<br />
-   * except #W / #w all special keys are not case-sensitive<br />
-   * a #wn. inserts a wait of n millisecs or n secs if n less than 60 <br />
+   * Compact alternative for type() with more options <br>
+   * - special keys and options are coded as #XN. or #X+ or #X- <br>
+   * where X is a refrence for a special key and N is an optional repeat factor <br>
+   * A modifier key as #X. modifies the next following key<br>
+   * the trailing . ends the special key, the + (press and hold) or - (release) does the same, <br>
+   * but signals press-and-hold or release additionally.<br>
+   * except #W / #w all special keys are not case-sensitive<br>
+   * a #wn. inserts a wait of n millisecs or n secs if n less than 60 <br>
    * a #Wn. sets the type delay for the following keys (must be > 60 and denotes millisecs) 
-   * - otherwise taken as normal wait<br />
-   * Example: wait 2 secs then type CMD/CTRL - N then wait 1 sec then type DOWN 3 times<br />
-   * Windows/Linux: write("#w2.#C.n#W1.#d3.")<br />
-   * Mac: write("#w2.#M.n#W1.#D3.")<br />
-   * for more details about the special key codes and examples consult the docs <br />
+   * - otherwise taken as normal wait<br>
+   * Example: wait 2 secs then type CMD/CTRL - N then wait 1 sec then type DOWN 3 times<br>
+   * Windows/Linux: write("#w2.#C.n#W1.#d3.")<br>
+   * Mac: write("#w2.#M.n#W1.#D3.")<br>
+   * for more details about the special key codes and examples consult the docs <br>
    * @param text a coded text interpreted as a series of key actions (press/hold/release)
    * @return 0 for success 1 otherwise
    */

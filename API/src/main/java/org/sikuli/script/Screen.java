@@ -172,7 +172,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 
 	/**
 	 * INTERNAL USE
-	 * collect all physical screens to one big region<br />
+	 * collect all physical screens to one big region<br>
 	 * This is under evaluation, wether it really makes sense
 	 * @param isScreenUnion
 	 */
@@ -182,7 +182,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 
 	/**
 	 * INTERNAL USE
-	 * collect all physical screens to one big region<br />
+	 * collect all physical screens to one big region<br>
 	 * This is under evaluation, wether it really makes sense
 	 */
   public void setAsScreenUnion() {
