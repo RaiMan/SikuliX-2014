@@ -202,7 +202,7 @@ public class Finder implements Iterator<Match> {
       } else {
         return null;
       }
-    } else {      
+    } else {
       return null;
     }
   }
@@ -224,11 +224,10 @@ public class Finder implements Iterator<Match> {
 	 * internal use: repeat with same Finder
 	 */
   protected void findAllRepeat() {
-    Debug timing = new Debug();
-    timing.startTiming("Finder.findAll");
+    Debug timing = Debug.startTimer("Finder.findAll");
     _results = Vision.find(_findInput);
     _cur_result_i = 0;
-    timing.endTiming("Finder.findAll");
+    timing.end();
 	}
 
   /**
@@ -245,8 +244,7 @@ public class Finder implements Iterator<Match> {
 		if (target.equals(imageOrText+"???")) {
 			return target;
 		}
-    Debug timing = new Debug();
-    timing.startTiming("Finder.findAll");
+    Debug timing = Debug.startTimer("Finder.findAll");
 
     setTargetSmartly(_findInput, imageOrText);
     _findInput.setSimilarity(Settings.MinSimilarity);
@@ -254,7 +252,7 @@ public class Finder implements Iterator<Match> {
     _results = Vision.find(_findInput);
     _cur_result_i = 0;
 
-    timing.endTiming("Finder.findAll");
+    timing.end();
     return target;
   }
 
@@ -269,11 +267,10 @@ public class Finder implements Iterator<Match> {
       _findInput.setTarget(aPtn.getImage().getMatNative());
       _findInput.setSimilarity(aPtn.getSimilar());
       _findInput.setFindAll(true);
-      Debug timing = new Debug();
-      timing.startTiming("Finder.findAll");
+	    Debug timing = Debug.startTimer("Finder.findAll");
       _results = Vision.find(_findInput);
       _cur_result_i = 0;
-      timing.endTiming("Finder.findAll");
+      timing.end();
       return aPtn.getFilename();
     } else {
       return null;
@@ -291,11 +288,10 @@ public class Finder implements Iterator<Match> {
       _findInput.setTarget(img.getMatNative());
       _findInput.setSimilarity(Settings.MinSimilarity);
       _findInput.setFindAll(true);
-      Debug timing = new Debug();
-      timing.startTiming("Finder.findAll");
+	    Debug timing = Debug.startTimer("Finder.findAll");
       _results = Vision.find(_findInput);
       _cur_result_i = 0;
-      timing.endTiming("Finder.findAll");
+      timing.end();
       return img.getFilename();
     } else {
       return null;
@@ -311,11 +307,10 @@ public class Finder implements Iterator<Match> {
   public String findAllText(String text) {
     _findInput.setTarget(TARGET_TYPE.TEXT, text);
     _findInput.setFindAll(true);
-    Debug timing = new Debug();
-    timing.startTiming("Finder.findAll");
+    Debug timing = Debug.startTimer("Finder.findAllText");
     _results = Vision.find(_findInput);
     _cur_result_i = 0;
-    timing.endTiming("Finder.findAll");
+    timing.end();
     return text;
   }
 
