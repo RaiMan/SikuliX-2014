@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.InetAddress;
 import java.net.Proxy;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -143,8 +145,6 @@ public class Settings {
 	public static String TypeCommentDefault = "# This script uses %s " + TypeCommentToken + "\n";
 
 	static {
-		Properties props = System.getProperties(); //for debugging
-
 		if (System.getProperty("user.name") != null && !"".equals(System.getProperty("user.name"))) {
 			UserName = System.getProperty("user.name");
 		}
@@ -221,7 +221,10 @@ public class Settings {
       }      
       SikuliSystemVersion = osn + System.getProperty("os.version");
       SikuliJavaVersion = "Java" + JavaVersion + "(" + JavaArch + ")" + JREVersion;
-			log(lvl, "%s version: downloading from %s", svt, downloadBaseDir);
+//TODO this should be in RunSetup only
+//TODO debug version: where to do in sikulixapi.jar
+//TODO need a function: reveal all environment and system information
+//      log(lvl, "%s version: downloading from %s", svt, downloadBaseDir);
 		} catch (Exception e) {
 			Debug.error("Settings: load version file %s did not work", svf);
 			SikuliX.terminate(999);
@@ -237,6 +240,23 @@ public class Settings {
   
   public static String getSystemInfo() {
     return String.format("%s/%s/%s", SikuliVersionLong, SikuliSystemVersion, SikuliJavaVersion);
+  }
+  
+  public static void getStatus() {
+    log(lvl, "***** Information Dump *****");
+    log(lvl, "*** SystemInfo\n%s", getSystemInfo());
+    System.getProperties().list(System.out);
+    log(lvl, "*** System Environment");
+    for (String key : System.getenv().keySet()) {
+      System.out.println(String.format("%s = %s", key, System.getenv(key)));
+    }
+    log(lvl, "*** Java Class Path");
+    URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+    URL[] urls = sysLoader.getURLs();
+    for (int i = 0; i < urls.length; i++) {
+      System.out.println(String.format("%d: %s", i, urls[i]));
+    }
+    log(lvl, "***** Information Dump ***** end *****");    
   }
 
 	public static void initScriptingSupport() {
