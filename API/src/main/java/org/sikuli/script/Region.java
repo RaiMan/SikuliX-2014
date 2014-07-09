@@ -3384,7 +3384,7 @@ public class Region {
    * but signals press-and-hold or release additionally.<br>
    * except #W / #w all special keys are not case-sensitive<br>
    * a #wn. inserts a wait of n millisecs or n secs if n less than 60 <br>
-   * a #Wn. sets the type delay for the following keys (must be > 60 and denotes millisecs) 
+   * a #Wn. sets the type delay for the following keys (must be &gt; 60 and denotes millisecs)
    * - otherwise taken as normal wait<br>
    * Example: wait 2 secs then type CMD/CTRL - N then wait 1 sec then type DOWN 3 times<br>
    * Windows/Linux: write("#w2.#C.n#W1.#d3.")<br>
@@ -3442,7 +3442,7 @@ public class Region {
             }
             if ((token.startsWith("#W") && t > 60) || pause > 20) {
               pause = 20 + (t > 1000 ? 1000 : t);
-              log(lvl, "write: type delay: " + t);              
+              log(lvl, "write: type delay: " + t);
             } else {
               log(lvl, "write: wait: " + t);
               robot.delay((t < 60 ? t * 1000 : t));

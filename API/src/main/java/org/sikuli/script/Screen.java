@@ -34,7 +34,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "", me + ": " + message, args);
   }
-  
+
   protected static GraphicsEnvironment genv = null;
   protected static GraphicsDevice[] gdevs;
   protected static Rectangle[] gdevsBounds;
@@ -64,7 +64,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 //  }
 
   private static void initScreens(boolean reset) {
-    log(3, "initScreens: entry");
+    log(lvl+1, "initScreens: entry");
     if (genv != null && !reset) {
       return;
     }
@@ -92,13 +92,13 @@ public class Screen extends Region implements EventObserver, IScreen {
       Debug.log("Screen: initScreens: no ScreenDevice contains (0,0) --- using first ScreenDevice as primary");
       primaryScreen = 0;
     }
-    log(3, "initScreens: after GD evaluation");
+    log(lvl+1, "initScreens: after GD evaluation");
     for (int i = 0; i < screens.length; i++) {
       screens[i] = new Screen(i, true);
       screens[i].initScreen();
     }
     try {
-      log(3, "initScreens: getting mouseRobot");
+      log(lvl+1, "initScreens: getting mouseRobot");
       mouseRobot = new Robot();
       mouseRobot.setAutoDelay(10);
     } catch (AWTException e) {
@@ -114,7 +114,7 @@ public class Screen extends Region implements EventObserver, IScreen {
       log(lvl, "*** end monitor configuration ***");
     }
     if (getNumberScreens() > 1) {
-      log(3, "initScreens: multi monitor mouse check");
+      log(lvl, "initScreens: multi monitor mouse check");
       Location lnow = Mouse.at();
       float mmd = Settings.MoveMouseDelay;
       Settings.MoveMouseDelay = 0f;
@@ -134,11 +134,11 @@ public class Screen extends Region implements EventObserver, IScreen {
       Settings.MoveMouseDelay = mmd;
     }
   }
-  
+
   protected static Robot getMouseRobot() {
     return mouseRobot;
   }
-  
+
   /**
    * create a Screen (ScreenUnion) object as a united region of all available monitors
    * TODO: check wether this can be a Screen object
@@ -147,7 +147,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   public static ScreenUnion all() {
     return new ScreenUnion();
   }
-          
+
   // hack to get an additional internal constructor for the initialization
   private Screen(int id, boolean init) {
     super();
@@ -247,7 +247,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   protected Region setScreen(Screen s) {
     throw new UnsupportedOperationException("The setScreen() method cannot be called from a Screen object.");
   }
-  
+
   /**
    * show the current monitor setup
    */
