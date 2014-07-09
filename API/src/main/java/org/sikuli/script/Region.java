@@ -540,7 +540,7 @@ public class Region {
    * @return true/false
    */
   public boolean containsMouse() {
-    return contains(atMouse());
+    return contains(Mouse.at());
   }
 
   /**
@@ -3318,13 +3318,14 @@ public class Region {
     return 0;
   }
 
-  /**
-   *
-   * @return the current mouse pointer Location
-   */
-  public static Location atMouse() {
-    Point loc = MouseInfo.getPointerInfo().getLocation();
-    return new Location(loc.x, loc.y);
+	/**
+	 *
+	 * @return current location of mouse pointer
+	 * @deprecated use {@link Mouse.at()} instead
+	 */
+	@Deprecated
+	public static Location atMouse() {
+    return Mouse.at();
   }
   //</editor-fold>
 
