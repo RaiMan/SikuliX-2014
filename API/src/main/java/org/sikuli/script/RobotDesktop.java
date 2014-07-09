@@ -58,7 +58,7 @@ public class RobotDesktop extends Robot implements IRobot {
     Debug.log(4, "RobotDesktop: smoothMove (%.1f): " + src.toString() + "---" + dest.toString(), Settings.MoveMouseDelay);
     if (ms == 0) {
       Screen.getMouseRobot().mouseMove(dest.x, dest.y);
-      checkMousePos(dest);
+      checkMousePosition(dest);
       return;
     }
     Animator aniX = new AnimatorTimeBased(
@@ -71,19 +71,19 @@ public class RobotDesktop extends Robot implements IRobot {
       y = aniY.step();
       Screen.getMouseRobot().mouseMove((int) x, (int) y);
     }
-    checkMousePos(new Location((int) x, (int) y));
+    checkMousePosition(new Location((int) x, (int) y));
   }
 
-  private void checkMousePos(Location p) {
+  private void checkMousePosition(Location p) {
     PointerInfo mp = MouseInfo.getPointerInfo();
     Point pc;
     if (mp == null) {
-      Debug.error("RobotDesktop: MouseInfo.getPointerInfo invalid\nafter mouseMove to %s", p);
+      Debug.error("RobotDesktop: checkMousePosition: MouseInfo.getPointerInfo invalid\nafter move to %s", p);
     } else {
       pc = mp.getLocation();
       if (pc.x != p.x || pc.y != p.y) {
-        Debug.error("RobotDesktop: MouseInfo.getPointerInfo.getLocation %s\nafter mouseMove to %s",
-                new Location(pc), p);
+        Debug.error("RobotDesktop: checkMousePosition: should be %s\nbut after move is %s",
+                p, new Location(pc));
       }
     }
   }
