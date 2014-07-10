@@ -29,8 +29,8 @@ public class Match extends Region implements Comparable<Match> {
 	/**
 	 * INTERNAL USE
 	 * set the elapsed times from search
-	 * @param ftime
-	 * @param stime
+	 * @param ftime time
+	 * @param stime time
 	 */
 	public void setTimes(long ftime, long stime) {
     lastFindTime = ftime;
@@ -41,14 +41,19 @@ public class Match extends Region implements Comparable<Match> {
    * create a copy of Match object<br>
    * to e.g. set another TargetOffset for same match
    *
-   * @param m
+   * @param m other Match
    */
   public Match(Match m) {
     init(m.x, m.y, m.w, m.h, m.getScreen());
     copy(m);
   }
 
-  public Match(Region reg, double sc) {
+	/**
+	 * create a Match from a region with given SimScore
+	 * @param reg Region
+	 * @param sc SimScore
+	 */
+	public Match(Region reg, double sc) {
     init(reg.x, reg.y, reg.w, reg.h, reg.getScreen());
     simScore = sc;
   }
@@ -61,13 +66,13 @@ public class Match extends Region implements Comparable<Match> {
   /**
    * internally used constructor by TextRecognizer.listText()
    *
-   * @param x
-   * @param y
-   * @param w
-   * @param h
-   * @param Score
-   * @param parent
-   * @param text
+   * @param x x
+   * @param y y
+   * @param w width
+   * @param h height
+   * @param Score SimScore
+   * @param parent Screen
+   * @param text given text
    */
   protected Match(int x, int y, int w, int h, double Score, Screen parent, String text) {
     init(x, y, w, h, parent);
@@ -133,10 +138,10 @@ public class Match extends Region implements Comparable<Match> {
   }
 
   /**
-   * like Pattern.TargetOffset sets the click target by offset relative to the
-   * center
+   * like {@link Pattern#targetOffset(org.sikuli.script.Location) Pattern.targetOffset}
+	 * sets the click target by offset relative to the center
    *
-   * @param offset
+   * @param offset as a Location
    */
   public void setTargetOffset(Location offset) {
     target = new Location(getCenter());
@@ -144,16 +149,17 @@ public class Match extends Region implements Comparable<Match> {
   }
 
   /**
-   * like Pattern.TargetOffset sets the click target relative to the center
-   * @param x
-   * @param y
+   * like {@link Pattern#targetOffset(int, int) Pattern.targetOffset}
+	 * sets the click target relative to the center
+   * @param x x offset
+   * @param y y offset
    */
   public void setTargetOffset(int x, int y) {
     setTargetOffset(new Location(x,y));
   }
 
   /**
-   * convenience - same as for Pattern
+   * convenience - same as {@link Pattern#getTargetOffset()}
    *
    * @return the relative offset to the center
    */
@@ -162,8 +168,8 @@ public class Match extends Region implements Comparable<Match> {
   }
 
   /**
-   * internal use: set the image after finding with success
-   * @param img
+   * set the image after finding with success
+   * @param img Image
    */
   protected void setImage(Image img) {
     image = img;
@@ -173,8 +179,8 @@ public class Match extends Region implements Comparable<Match> {
   }
 
   /**
-   * get the image used for searching 
-   * @return a buffered image or null
+   * get the image used for searching
+   * @return image or null
    */
   public Image getImage() {
     return image;
@@ -195,6 +201,7 @@ public class Match extends Region implements Comparable<Match> {
   public String getText() {
     return ocrText;
   }
+	
   @Override
   public int compareTo(Match m) {
     if (simScore != m.simScore) {

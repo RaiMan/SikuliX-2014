@@ -49,7 +49,7 @@ public class Finder implements Iterator<Match> {
    * <br>internally used with a screen snapshot
    *
    * @param imageFilename a string (name, path, url)
-	 * @throws java.io.IOException
+	 * @throws java.io.IOException if imagefile not found
    */
   public Finder(String imageFilename) throws IOException {
     this(imageFilename, null);
@@ -61,7 +61,7 @@ public class Finder implements Iterator<Match> {
    *
    * @param imageFilename a string (name, path, url)
    * @param region search Region within image - topleft = (0,0)
-	 * @throws java.io.IOException
+	 * @throws java.io.IOException if imagefile not found
    */
   public Finder(String imageFilename, Region region) throws IOException  {
     String fname = Image.create(imageFilename).getFilename();

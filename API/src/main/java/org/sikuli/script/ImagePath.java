@@ -51,8 +51,8 @@ public class ImagePath {
     /**
      * create a new image path entry
      *
-     * @param givenName
-     * @param eqivalentURL
+     * @param givenName the given path relative or absolute
+     * @param eqivalentURL the evaluated URL
      */
     public PathEntry(String givenName, URL eqivalentURL) {
       pathGiven = givenName;
@@ -219,7 +219,7 @@ public class ImagePath {
    * end of the current image path<br>
    * for usage with jars see; {@link #add(String, String)}
    *
-   * @param mainPath relative path
+   * @param mainPath relative or absolute path
    * @return true if successful otherwise false
    */
   public static boolean add(String mainPath) {
@@ -285,7 +285,7 @@ public class ImagePath {
   /**
    * remove entry with given path (same as given with add)
    *
-   * @param path
+   * @param path relative or absolute path
    * @return true on success, false ozherwise
    */
   public static boolean remove(String path) {

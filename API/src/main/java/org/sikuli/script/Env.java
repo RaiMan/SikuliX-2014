@@ -6,7 +6,6 @@
  */
 package org.sikuli.script;
 
-import java.awt.*;
 import org.sikuli.basics.HotkeyListener;
 import org.sikuli.basics.HotkeyManager;
 import org.sikuli.basics.OS;
@@ -48,7 +47,7 @@ public class Env {
 
   /**
    * @return current Location
-   * @deprecated use {@link Mouse.at()} instead
+   * @deprecated use {@link Mouse#at()} instead
    */
   @Deprecated
   public static Location getMouseLocation() {

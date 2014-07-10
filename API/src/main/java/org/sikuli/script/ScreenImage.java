@@ -53,7 +53,7 @@ public class ScreenImage {
 	 * creates the PNG tempfile only when needed.
 	 *
 	 * @return absolute path to stored tempfile
-	 * @throws IOException
+	 * @throws IOException if not found
 	 * @deprecated use getFile() instead
 	 */
 	@Deprecated

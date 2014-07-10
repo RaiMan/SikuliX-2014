@@ -104,6 +104,7 @@ public class Mouse {
   /**
    * current setting what to do if mouse is moved outside Sikuli's mouse protection
    *
+	 * @return current setting see {@link #setMouseMovedAction(int)}
    */
   public static int getMouseMovedResponse() {
     return mouseMovedResponse;
@@ -116,7 +117,7 @@ public class Mouse {
    * - Mouse.MouseMovedPause (2) show it and pause until user says continue <br>
    * (2 not implemented yet - 1 is used)
    *
-   * @param movedAction
+   * @param movedAction value
    */
   public static void setMouseMovedAction(int movedAction) {
     if (movedAction > -1 && movedAction < 3) {
@@ -131,7 +132,7 @@ public class Mouse {
    * only 3 is honored:<br>
    * in case of event the user provided callBack.happened is called
    *
-   * @param callBack
+   * @param callBack ObserverCallBack
    */
   public static void setMouseMovedCallback(ObserverCallBack callBack) {
     if (callBack != null) {
@@ -154,7 +155,7 @@ public class Mouse {
    * to block the mouse globally for the given owner <br>
    * only the contained mouse methods having the same owner will be granted
    *
-   * @param owner
+   * @param owner Object
    * @return success
    */
   public static boolean block(Object owner) {
@@ -178,7 +179,7 @@ public class Mouse {
   /**
    * free the mouse globally for this owner after a block(owner)
    *
-   * @param owner
+   * @param owner Object
    * @return success (false means: not blocked currently for this owner)
    */
   public static boolean unblock(Object owner) {
@@ -308,7 +309,11 @@ public class Mouse {
     }
   }
 
-  public static boolean hasMoved() {
+	/**
+	 * check if mouse was moved since last mouse action
+	 * @return true/false
+	 */
+	public static boolean hasMoved() {
     Point pos = getLocation();
     if (Mouse.get().lastPos.x != pos.x || Mouse.get().lastPos.y != pos.y) {
       return true;
@@ -467,7 +472,7 @@ public class Mouse {
   /**
    * move the mouse to the given location (local and remote)
    *
-   * @param loc
+   * @param loc Location
    * @return 1 for success, 0 otherwise
    */
   public static int move(Location loc) {
@@ -497,9 +502,9 @@ public class Mouse {
   }
 
   /**
-   * press and hold the given buttons
+   * press and hold the given buttons {@link Button}
    *
-   * @param buttons
+   * @param buttons value
    */
   public static void down(int buttons) {
     down(buttons, null);
@@ -522,7 +527,7 @@ public class Mouse {
   }
 
   /**
-   * release the given buttons
+   * release the given buttons {@link Button}
    *
    * @param buttons (0 releases all buttons)
    */
@@ -544,8 +549,8 @@ public class Mouse {
    * move mouse using mouse wheel in the given direction the given steps <br>
    * the result is system dependent
    *
-   * @param direction
-   * @param steps
+   * @param direction {@link Button}
+   * @param steps value
    */
   public static void wheel(int direction, int steps) {
     wheel(direction, steps, null);

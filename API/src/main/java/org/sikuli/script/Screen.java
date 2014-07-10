@@ -48,9 +48,8 @@ public class Screen extends Region implements EventObserver, IScreen {
   protected GraphicsDevice curGD = null;
   protected boolean waitPrompt;
   protected OverlayCapturePrompt prompt;
-  private String promptMsg = "Select a region on the screen";
+  private final String promptMsg = "Select a region on the screen";
   private ScreenImage lastScreenImage = null;
-  private static Point lastMousePosition = null;
 
   //<editor-fold defaultstate="collapsed" desc="Initialization">
 
@@ -142,7 +141,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   /**
    * create a Screen (ScreenUnion) object as a united region of all available monitors
    * TODO: check wether this can be a Screen object
-   * @return
+   * @return ScreenUnion
    */
   public static ScreenUnion all() {
     return new ScreenUnion();
@@ -155,26 +154,27 @@ public class Screen extends Region implements EventObserver, IScreen {
   }
 
   /**
-   * Is the screen object at the given id
+   * The screen object with the given id
    *
-   * @param id
-   * @throws Exception TODO: implement an own Exception instead of using the Exception class
+   * @param id valid screen number
    */
-  public Screen(int id) throws Exception {
+  public Screen(int id) {
     super();
-//    initScreens();
     if (id < 0 || id >= gdevs.length) {
-      throw new IllegalArgumentException("Screen ID " + id + " not in valid range (between 0 and " + (gdevs.length - 1));
-    }
-    curID = id;
+      Debug.error("Screen(%d) not in valid range 0 to %d - using primary %d",
+							id, gdevs.length - 1, primaryScreen);
+			curID = primaryScreen;
+    } else {
+			curID = id;
+		}
     initScreen();
   }
 
 	/**
 	 * INTERNAL USE
 	 * collect all physical screens to one big region<br>
-	 * This is under evaluation, wether it really makes sense
-	 * @param isScreenUnion
+	 * TODO: under evaluation, wether it really makes sense
+	 * @param isScreenUnion true/false
 	 */
 	public Screen(boolean isScreenUnion) {
     super();
@@ -209,7 +209,8 @@ public class Screen extends Region implements EventObserver, IScreen {
   }
 
   /**
-   * {@inheritDoc} TODO: remove this method if it is not needed
+   * {@inheritDoc}
+	 * <br>TODO: remove this method if it is not needed
    */
   @Override
   public void initScreen(Screen scr) {
@@ -234,6 +235,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 
   /**
    * {@inheritDoc}
+	 * @return Screen
    */
   @Override
   public Screen getScreen() {
@@ -241,7 +243,9 @@ public class Screen extends Region implements EventObserver, IScreen {
   }
 
   /**
-   * {@inheritDoc}
+   * Should not be used - throws UnsupportedOperationException
+	 * @param s Screen
+	 * @return should not return
    */
   @Override
   protected Region setScreen(Screen s) {
@@ -328,7 +332,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 
   /**
    *
-   * @param id
+   * @param id of the screen
    * @return the physical coordinate/size <br>as AWT.Rectangle to avoid mix up with getROI
    */
   public static Rectangle getBounds(int id) {
@@ -340,7 +344,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    * <br>available as a convenience for those who know what they are doing. Should not be needed
    * normally.
    *
-   * @param id
+   * @param id of the screen
    * @return the AWT.Robot of the given screen, if id invalid the primary screen
    */
   public static IRobot getRobot(int id) {
@@ -357,9 +361,9 @@ public class Screen extends Region implements EventObserver, IScreen {
 
   /**
    * INTERNAL USE: to be compatible with ScreenUnion
-   * @param x
-   * @param y
-   * @return
+   * @param x value
+   * @param y value
+   * @return id of the screen
    */
   protected int getIdFromPoint(int x, int y) {
     return curID;
@@ -396,9 +400,9 @@ public class Screen extends Region implements EventObserver, IScreen {
    * translated to the current screen from its relative position on the screen it would have been
    * created normally.
    *
-   * @param loc
-   * @param width
-   * @param height
+   * @param loc Location
+   * @param width value
+   * @param height value
    * @return the new region
    */
   public Region newRegion(Location loc, int width, int height) {
@@ -413,7 +417,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    * the current screen from its relative position on the screen it would have been created
    * normally.
    *
-   * @param loc
+   * @param loc Location
    * @return the new location
    */
   public Location newLocation(Location loc) {
@@ -487,19 +491,20 @@ public class Screen extends Region implements EventObserver, IScreen {
    * interactive capture with given message: lets the user capture a screen image using the mouse to
    * draw the rectangle
    *
+	 * @param message text
    * @return the image
    */
-  public ScreenImage userCapture(final String msg) {
+  public ScreenImage userCapture(final String message) {
     waitPrompt = true;
     Thread th = new Thread() {
       @Override
       public void run() {
-        if ("".equals(msg)) {
+        if ("".equals(message)) {
           prompt = new OverlayCapturePrompt(null, Screen.this);
           prompt.prompt(promptMsg);
        } else {
           prompt = new OverlayCapturePrompt(Screen.this, Screen.this);
-          prompt.prompt(msg);
+          prompt.prompt(message);
         }
       }
     };
@@ -534,10 +539,11 @@ public class Screen extends Region implements EventObserver, IScreen {
   /**
    * interactive region create with given message: lets the user draw the rectangle using the mouse
    *
+	 * @param message text
    * @return the region
    */
-  public Region selectRegion(final String msg) {
-    ScreenImage sim = userCapture(msg);
+  public Region selectRegion(final String message) {
+    ScreenImage sim = userCapture(message);
     if (sim == null) {
       return null;
     }
@@ -549,7 +555,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   /**
    * Internal use only
    *
-   * @param s
+   * @param s EventSubject
    */
   @Override
   public void update(EventSubject s) {

@@ -40,10 +40,10 @@ public class FindFailed extends SikuliException {
 
 	/**
 	 * the exception
-	 * @param msg
+	 * @param message to be shown
 	 */
-	public FindFailed(String msg) {
-    super(msg);
+	public FindFailed(String message) {
+    super(message);
     _name = "FindFailed";
   }
 }

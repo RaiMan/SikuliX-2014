@@ -6,8 +6,6 @@
  */
 package org.sikuli.script;
 
-import java.awt.MouseInfo;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -243,11 +241,20 @@ public class Region {
     return loc.setOtherScreen(scr);
   }
 
-  public boolean isOtherScreen() {
+	/**
+	 * INTERNAL USE:
+	 * checks wether this region belongs to a non-Desktop screen
+	 * @return true/false
+	 */
+	public boolean isOtherScreen() {
     return otherScreen;
   }
 
-  public void setOtherScreen() {
+	/**
+	 * INTERNAL USE:
+	 * flags this region as belonging to a non-Desktop screen
+	 */
+	public void setOtherScreen() {
     otherScreen = true;
   }
 
@@ -527,7 +534,7 @@ public class Region {
   /**
    * check if current region contains given point
    *
-   * @param point
+   * @param point Point
    * @return true/false
    */
   public boolean contains(Location point) {
@@ -609,7 +616,7 @@ public class Region {
    * the time in seconds a find operation should wait for the appearence of the target in this region<br> initial value
    * is the global AutoWaitTimeout setting at time of Region creation
    *
-   * @param sec
+   * @param sec seconds
    */
   public void setAutoWaitTimeout(double sec) {
     autoWaitTimeout = sec;
@@ -655,7 +662,7 @@ public class Region {
   /**
    * set the regions individual WaitScanRate
    *
-   * @param waitScanRate
+   * @param waitScanRate decimal number
    */
   public void setWaitScanRate(float waitScanRate) {
     this.waitScanRate = waitScanRate;
@@ -672,14 +679,14 @@ public class Region {
   /**
    * set the regions individual ObserveScanRate
    *
-   * @param observeScanRate
+   * @param observeScanRate decimal number
    */
   public void setObserveScanRate(float observeScanRate) {
     this.observeScanRate = observeScanRate;
   }
 
   /**
-   *
+   * INTERNAL USE: Observe
    * @return the regions current RepeatWaitTime time in seconds
    */
   public int getRepeatWaitTime() {
@@ -687,6 +694,7 @@ public class Region {
   }
 
   /**
+   * INTERNAL USE: Observe
    * set the regions individual WaitForVanish
    *
    * @param time in seconds
@@ -1020,13 +1028,13 @@ public class Region {
   /**
    * resets this region to the given location, and size <br> this might move the region even to another screen
    *
-   * Because of the wanted side effect for the containing screen, this should only be used with screen objects. For
-   * Region objects use setRect() instead.
+   * <br>Because of the wanted side effect for the containing screen, this should only be used with screen objects.
+	 * <br>For Region objects use setRect() instead.
    *
-   * @param X
-   * @param Y
-   * @param W
-   * @param H
+   * @param X new x
+   * @param Y new y
+   * @param W new width
+   * @param H new height
    */
   public void setROI(int X, int Y, int W, int H) {
     x = X;
@@ -1039,22 +1047,22 @@ public class Region {
   /**
    * resets this region to the given rectangle <br> this might move the region even to another screen
    *
-   * Because of the wanted side effect for the containing screen, this should only be used with screen objects. For
-   * Region objects use setRect() instead.
+   * <br>Because of the wanted side effect for the containing screen, this should only be used with screen objects.
+	 * <br>For Region objects use setRect() instead.
    *
-   * @param roi
+   * @param r AWT Rectangle
    */
-  public void setROI(Rectangle roi) {
-    setROI(roi.x, roi.y, roi.width, roi.height);
+  public void setROI(Rectangle r) {
+    setROI(r.x, r.y, r.width, r.height);
   }
 
   /**
    * resets this region to the given region <br> this might move the region even to another screen
    *
-   * Because of the wanted side effect for the containing screen, this should only be used with screen objects. For
-   * Region objects use setRect() instead.
+   * <br>Because of the wanted side effect for the containing screen, this should only be used with screen objects.
+	 * <br>For Region objects use setRect() instead.
    *
-   * @param reg
+   * @param reg Region
    */
   public void setROI(Region reg) {
     setROI(reg.getX(), reg.getY(), reg.getW(), reg.getH());
@@ -1108,7 +1116,7 @@ public class Region {
   /**
    * set the regions position/size<br>this might move the region even to another screen
    *
-   * @param r
+   * @param r Region
    * @return the region itself
    * @deprecated to be like AWT Rectangle API use setRect() instead
    */
@@ -1203,9 +1211,10 @@ public class Region {
    * stores the lastScreenImage in the current bundle path with a created unique name
    *
    * @return the absolute file name
+	 * @throws java.io.IOException if not possible
    */
   public String getLastScreenImageFile() throws IOException {
-    return getLastScreenImageFile(ImagePath.getBundlePath(), null);
+    return getScreen().getLastScreenImageFile(ImagePath.getBundlePath(), null);
   }
 
   /**
@@ -1213,6 +1222,7 @@ public class Region {
    *
    * @param name file name (.png is added if not there)
    * @return the absolute file name
+	 * @throws java.io.IOException if not possible
    */
   public String getLastScreenImageFile(String name) throws IOException {
     return getScreen().getLastScreenImageFromScreen().getFile(ImagePath.getBundlePath(), name);
@@ -1221,8 +1231,10 @@ public class Region {
   /**
    * stores the lastScreenImage in the given path with the given name
    *
+	 * @param path path to use
    * @param name file name (.png is added if not there)
    * @return the absolute file name
+	 * @throws java.io.IOException if not possible
    */
   public String getLastScreenImageFile(String path, String name) throws IOException {
     return getScreen().getLastScreenImageFromScreen().getFile(path, name);
@@ -1234,7 +1246,7 @@ public class Region {
   /**
    * check if current region contains given region
    *
-   * @param region
+   * @param region the other Region
    * @return true/false
    */
   public boolean contains(Region region) {
@@ -1276,7 +1288,7 @@ public class Region {
   /**
    * create a region enlarged range pixels on each side
    *
-   * @param range
+   * @param range the margin to be added around
    * @return the new region
    * @deprecated to be like AWT Rectangle API use grow() instaed
    */
@@ -1288,7 +1300,7 @@ public class Region {
   /**
    * create a region enlarged range pixels on each side
    *
-   * @param range
+   * @param range the margin to be added around
    * @return the new region
    */
   public Region grow(int range) {
@@ -1299,8 +1311,8 @@ public class Region {
    * create a region enlarged w pixels on left and right side
    * and h pixels at top and bottom
    *
-   * @param w
-   * @param h
+   * @param w pixels horizontally
+   * @param h pixels vertically
    * @return the new region
    */
   public Region grow(int w, int h) {
@@ -1336,6 +1348,7 @@ public class Region {
    * positive offset goes to the right.
    * might be off current screen
    *
+	 * @param offset pixels
    * @return point with given offset horizontally to middle point on right edge
    */
   public Location rightAt(int offset) {
@@ -1359,7 +1372,7 @@ public class Region {
    * negative width creates the right part with width inside the region<br>
    * use grow() to include the current region
    *
-   * @param width
+   * @param width pixels
    * @return the new region
    */
   public Region right(int width) {
@@ -1383,6 +1396,7 @@ public class Region {
   /**
    * negative offset goes to the left <br>might be off current screen
    *
+	 * @param offset pixels
    * @return point with given offset horizontally to middle point on left edge
    */
   public Location leftAt(int offset) {
@@ -1404,7 +1418,7 @@ public class Region {
    * create a region left of the left side with same height and given width<br>
    * negative width creates the left part with width inside the region use grow() to include the current region <br>
    *
-   * @param width
+   * @param width pixels
    * @return the new region
    */
   public Region left(int width) {
@@ -1428,6 +1442,7 @@ public class Region {
   /**
    * negative offset goes towards top of screen <br>might be off current screen
    *
+	 * @param offset pixels
    * @return point with given offset vertically to middle point on top edge
    */
   public Location aboveAt(int offset) {
@@ -1449,7 +1464,7 @@ public class Region {
    * create a region above the top side with same width and given height<br>
    * negative height creates the top part with height inside the region use grow() to include the current region
    *
-   * @param height
+   * @param height pixels
    * @return the new region
    */
   public Region above(int height) {
@@ -1473,6 +1488,7 @@ public class Region {
   /**
    * positive offset goes towards bottom of screen <br>might be off current screen
    *
+	 * @param offset pixels
    * @return point with given offset vertically to middle point on bottom edge
    */
   public Location belowAt(int offset) {
@@ -1494,7 +1510,7 @@ public class Region {
    * create a region below the bottom side with same width and given height<br>
    * negative height creates the bottom part with height inside the region use grow() to include the current region
    *
-   * @param height
+   * @param height pixels
    * @return the new region
    */
   public Region below(int height) {
@@ -1542,11 +1558,11 @@ public class Region {
    * MID_HALF (M2) half of width / half of height centered <br>
    * MID_THIRD (M3) third of width / third of height centered <br>
    *
-   * @param reg
+   * @param part the part to get
    * @return new region
    */
-  public Region get(int reg) {
-    return Region.create(getRectangle(x, y, w, h, reg));
+  public Region get(int part) {
+    return Region.create(getRectangle(x, y, w, h, part));
   }
 
   static protected Rectangle getRectangle(int X, int Y, int W, int H, int part) {
@@ -1606,7 +1622,7 @@ public class Region {
    * store info: this region is divided vertically into n even rows <br>
    * a preparation for using getRow()
    *
-   * @param n
+   * @param n number of rows
    * @return the top row
    */
   public Region setRows(int n) {
@@ -1617,26 +1633,42 @@ public class Region {
    * store info: this region is divided horizontally into n even columns <br>
    * a preparation for using getCol()
    *
-   * @param n
+   * @param n number of columns
    * @return the leftmost column
    */
   public Region setCols(int n) {
     return setRaster(0, n);
   }
 
-  public int getRows() {
+	/**
+	 *
+	 * @return the number of rows or null
+	 */
+	public int getRows() {
     return rows;
   }
 
-  public int getRowH() {
+	/**
+	 *
+	 * @return the row height or 0
+	 */
+	public int getRowH() {
     return rowH;
   }
 
-  public int getCols() {
+	/**
+	 *
+	 * @return the number of columns or 0
+	 */
+	public int getCols() {
     return cols;
   }
 
-  public int getColW() {
+	/**
+	 *
+	 * @return the columnwidth or 0
+	 */
+	public int getColW() {
     return colW;
   }
 
@@ -1644,8 +1676,8 @@ public class Region {
    * store info: this region is divided into a raster of even cells <br>
    * a preparation for using getCell()
    *
-   * @param r
-   * @param c
+   * @param r number of rows
+   * @param c number of columns
    * @return the topleft cell
    */
   public Region setRaster(int r, int c) {
@@ -1666,7 +1698,7 @@ public class Region {
    * get the specified row counting from 0, if rows or raster are setup negative counts reverse from the end (last = -1)
    * values outside range are 0 or last respectively
    *
-   * @param r
+   * @param r row number
    * @return the row as new region or the region itself, if no rows are setup
    */
   public Region getRow(int r) {
@@ -1685,7 +1717,7 @@ public class Region {
    * get the specified column counting from 0, if columns or raster are setup negative counts reverse from the end (last
    * = -1) values outside range are 0 or last respectively
    *
-   * @param c
+   * @param c column number
    * @return the column as new region or the region itself, if no columns are setup
    */
   public Region getCol(int c) {
@@ -1704,7 +1736,8 @@ public class Region {
    * get the specified cell counting from (0, 0), if a raster is setup <br>
    * negative counts reverse from the end (last = -1) values outside range are 0 or last respectively
    *
-   * @param c
+	 * @param r row number
+   * @param c column number
    * @return the cell as new region or the region itself, if no raster is setup
    */
   public Region getCell(int r, int c) {
@@ -1830,7 +1863,7 @@ public class Region {
    * hack to implement the getLastMatch() convenience 0 means same as highlight() &lt; 0 same as highlight(secs) if
    * available the last match is highlighted
    *
-   * @param secs
+   * @param secs seconds
    * @return this region
    */
   public Region highlight(int secs) {
@@ -1967,6 +2000,7 @@ public class Region {
    * finds the given Pattern, String or Image in the region and returns the best match. If AutoWaitTimeout
    * is set, this is equivalent to wait(). Otherwise only one search attempt will be done.
    *
+	 * @param <PSI> Pattern, String or Image
    * @param target A search criteria
    * @return If found, the element. null otherwise
    * @throws FindFailed if the Find operation failed
@@ -2012,6 +2046,7 @@ public class Region {
    * finds all occurences of the given Pattern, String or Image in the region and returns an Iterator of Matches.
 	 *
    *
+	 * @param <PSI> Pattern, String or Image
    * @param target A search criteria
    * @return All elements matching
    * @throws FindFailed if the Find operation failed
@@ -2051,6 +2086,7 @@ public class Region {
   /**
    * Waits for the Pattern, String or Image to appear until the AutoWaitTimeout value is exceeded.
    *
+	 * @param <PSI> Pattern, String or Image
    * @param target The target to search for
    * @return The found Match
    * @throws FindFailed if the Find operation finally failed
@@ -2062,6 +2098,7 @@ public class Region {
   /**
    * Waits for the Pattern, String or Image to appear or timeout (in second) is passed
    *
+	 * @param <PSI> Pattern, String or Image
    * @param target The target to search for
    * @param timeout Timeout in seconds
    * @return The found Match
@@ -2119,6 +2156,7 @@ public class Region {
    * Check if target exists with a specified timeout<br>
    * timout = 0: returns immediately after first search
    *
+	 * @param <PSI> Pattern, String or Image
    * @param target The target to search for
    * @param timeout Timeout in seconds
    * @return the match (null if not found or image file missing)
@@ -2162,10 +2200,10 @@ public class Region {
   /**
    * Use findText() instead of find() in cases where the given string could be misinterpreted as an image filename
    *
-   * @param text
-   * @param timeout
+   * @param text text
+   * @param timeout time
    * @return the matched region containing the text
-	 * @throws org.sikuli.script.FindFailed
+	 * @throws org.sikuli.script.FindFailed if not found
    */
   public Match findText(String text, double timeout) throws FindFailed {
     // the leading/trailing tab is used to internally switch to text search directly
@@ -2175,9 +2213,9 @@ public class Region {
   /**
    * Use findText() instead of find() in cases where the given string could be misinterpreted as an image filename
    *
-   * @param text
+   * @param text text
    * @return the matched region containing the text
-	 * @throws org.sikuli.script.FindFailed
+	 * @throws org.sikuli.script.FindFailed if not found
    */
   public Match findText(String text) throws FindFailed {
     return findText(text, autoWaitTimeout);
@@ -2186,9 +2224,9 @@ public class Region {
   /**
    * Use findAllText() instead of findAll() in cases where the given string could be misinterpreted as an image filename
    *
-   * @param text
+   * @param text text
    * @return the matched region containing the text
-	 * @throws org.sikuli.script.FindFailed
+	 * @throws org.sikuli.script.FindFailed  if not found
    */
   public Iterator<Match> findAllText(String text) throws FindFailed {
     // the leading/trailing tab is used to internally switch to text search directly
@@ -2199,6 +2237,7 @@ public class Region {
    * waits until target vanishes or timeout (in seconds) is
    * passed (AutoWaitTimeout)
    *
+	 * @param <PSI> Pattern, String or Image
 	 * @param target The target to wait for it to vanish
    * @return true if the target vanishes, otherwise returns false.
    */
@@ -2210,8 +2249,9 @@ public class Region {
    * waits until target vanishes or timeout (in seconds) is
    * passed
    *
-	 * @param target
-	 * @param timeout
+	 * @param <PSI> Pattern, String or Image
+	 * @param target Pattern, String or Image
+	 * @param timeout time in seconds
    * @return true if target vanishes, false otherwise and if imagefile is missing.
    */
   public <PSI> boolean waitVanish(PSI target, double timeout) {
@@ -2561,7 +2601,8 @@ public class Region {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Observing">
-  public Observer getObserver() {
+
+	  protected Observer getObserver() {
     if (regionObserver == null) {
       regionObserver = new Observer(this);
     }
@@ -2605,7 +2646,7 @@ public class Region {
 
   /**
    * the event is removed from the list
-   * @param name
+   * @param name event's name
    * @return the named event if happened otherwise null
    */
   public ObserveEvent getEvent(String name) {
@@ -2614,7 +2655,7 @@ public class Region {
 
   /**
    * set the observer with the given name inactive (not checked while observing)
-   * @param name
+   * @param name observers name
    */
   public void setInactive(String name) {
     if (!hasObserver()) {
@@ -2624,8 +2665,8 @@ public class Region {
   }
 
   /**
-   * set the observer with the given name inactive (not checked while observing)
-   * @param name
+   * set the observer with the given name active (not checked while observing)
+   * @param name  observers name
    */
   public void setActive(String name) {
     if (!hasObserver()) {
@@ -2640,8 +2681,8 @@ public class Region {
    * for details about the observe event handler: {@link ObserverCallBack}<br>
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br>
    * @param <PSI> Pattern, String or Image
-   * @param target
-   * @param observer
+   * @param target Pattern, String or Image
+   * @param observer ObserverCallBack
    * @return the event's name
    */
   public <PSI> String onAppear(PSI target, Object observer) {
@@ -2651,10 +2692,9 @@ public class Region {
   /**
    * a subsequently started observer in this region should wait for target
    * success and details about the event can be obtained using @{link Observing}<br>
-   * for details about the observe event handler: {@link ObserverCallBack}<br>
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br>
    * @param <PSI> Pattern, String or Image
-   * @param target
+   * @param target Pattern, String or Image
    * @return the event's name
    */
   public <PSI> String onAppear(PSI target) {
@@ -2664,8 +2704,8 @@ public class Region {
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
    * @param <PSI> Pattern, String or Image
-   * @param target
-   * @param observer
+   * @param target Pattern, String or Image
+   * @param observer ObserverCallBack
    * @return the event's name
    */
   public <PSI> String onAppearJ(PSI target, Object observer) {
@@ -2686,8 +2726,8 @@ public class Region {
    * for details about the observe event handler: {@link ObserverCallBack}<br>
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br>
    * @param <PSI> Pattern, String or Image
-   * @param target
-   * @param observer
+   * @param target Pattern, String or Image
+   * @param observer ObserverCallBack
    * @return the event's name
    */
   public <PSI> String onVanish(PSI target, Object observer) {
@@ -2697,10 +2737,9 @@ public class Region {
   /**
    * a subsequently started observer in this region should wait for the target to vanish
    * success and details about the event can be obtained using @{link Observing}<br>
-   * for details about the observe event handler: {@link ObserverCallBack}<br>
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br>
    * @param <PSI> Pattern, String or Image
-   * @param target
+   * @param target Pattern, String or Image
    * @return the event's name
    */
   public <PSI> String onVanish(PSI target) {
@@ -2710,8 +2749,8 @@ public class Region {
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
    * @param <PSI> Pattern, String or Image
-   * @param target
-   * @param observer
+   * @param target Pattern, String or Image
+   * @param observer ObserverCallBack
    * @return the event's name
    */
   public <PSI> String onVanishJ(PSI target, Object observer) {
@@ -2732,7 +2771,7 @@ public class Region {
    * for details about the observe event handler: {@link ObserverCallBack}
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
    * @param threshold minimum size of changes (rectangle threshhold x threshold)
-   * @param observer
+   * @param observer ObserverCallBack
    * @return the event's name
    */
   public String onChange(int threshold, Object observer) {
@@ -2742,7 +2781,6 @@ public class Region {
   /**
    * a subsequently started observer in this region should wait for changes in the region
    * success and details about the event can be obtained using @{link Observing}<br>
-   * for details about the observe event handler: {@link ObserverCallBack}
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
    * @param threshold minimum size of changes (rectangle threshhold x threshold)
    * @return the event's name
@@ -2757,7 +2795,7 @@ public class Region {
    * minimum size of changes used: Settings.ObserveMinChangedPixels
    * for details about the observe event handler: {@link ObserverCallBack}
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
-   * @param observer
+   * @param observer ObserverCallBack
    * @return the event's name
    */
   public String onChange(Object observer) {
@@ -2768,7 +2806,6 @@ public class Region {
    * a subsequently started observer in this region should wait for changes in the region
    * success and details about the event can be obtained using @{link Observing}<br>
    * minimum size of changes used: Settings.ObserveMinChangedPixels
-   * for details about the observe event handler: {@link ObserverCallBack}
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
    * @return the event's name
    */
@@ -2778,8 +2815,8 @@ public class Region {
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
-   * @param minSize
-   * @param observer
+   * @param minSize value
+   * @param observer ObserverCallBack
    * @return the event's name
    */
   public String onChangeJ(int minSize, Object observer) {
@@ -2811,7 +2848,7 @@ public class Region {
    * start an observer in this region for the given time
    * for details about the observe event handler: {@link ObserverCallBack}
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
-   * @param secs
+   * @param secs time in seconds the observer should run
    * @return false if not possible, true if events have happened
    */
   public boolean observe(double secs) {
@@ -2820,8 +2857,8 @@ public class Region {
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
-   * @param secs
-   * @param bg
+   * @param secs time in seconds the observer should run
+   * @param bg run in background true/false
    * @return false if not possible, true if events have happened
    */
   public boolean observeJ(double secs, boolean bg) {
@@ -2887,7 +2924,7 @@ public class Region {
    * start an observer in this region for the given time that runs in background
    * for details about the observe event handler: {@link ObserverCallBack}
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
-   * @param secs
+   * @param secs time in seconds the observer should run
    * @return false if not possible, true otherwise
    */
   public boolean observeInBackground(double secs) {
@@ -2925,10 +2962,10 @@ public class Region {
 
    /**
    * stops a running observer printing an info message
-   * @param msg
+   * @param message text
    */
-  public void stopObserver(String msg) {
-    Debug.info(msg);
+  public void stopObserver(String message) {
+    Debug.info(message);
     stopObserver();
   }
   //</editor-fold>
@@ -2961,7 +2998,7 @@ public class Region {
    * - position at that point<br>
    *
    * @param <PFRML> to search: Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
@@ -2990,7 +3027,7 @@ public class Region {
    * Location - position at that point<br>
    *
    * @param <PFRML> to search: Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
@@ -3004,7 +3041,7 @@ public class Region {
    * Match - position at match's targetOffset<br> Location - position at that point<br>
    *
    * @param <PFRML> to search: Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @param modifiers the value of the resulting bitmask (see KeyModifier)
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
@@ -3037,7 +3074,7 @@ public class Region {
    * Location - position at that point<br>
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
@@ -3051,7 +3088,7 @@ public class Region {
    * match's targetOffset<br> Location - position at that point<br>
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @param modifiers the value of the resulting bitmask (see KeyModifier)
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
@@ -3083,7 +3120,7 @@ public class Region {
    * position at center<br> Match - position at match's targetOffset<br > Location - position at that point<br>
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
@@ -3097,7 +3134,7 @@ public class Region {
    * match's targetOffset<br> Location - position at that point<br>
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @param modifiers the value of the resulting bitmask (see KeyModifier)
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
@@ -3113,7 +3150,7 @@ public class Region {
   /**
    * time in milliseconds to delay between button down/up at next click only (max 1000)
    *
-   * @param millisecs
+   * @param millisecs value
    */
   public void delayClick(int millisecs) {
     Settings.ClickDelay = millisecs;
@@ -3126,7 +3163,7 @@ public class Region {
    * <br> using left mouse button
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed if the Find operation failed
    */
@@ -3175,9 +3212,9 @@ public class Region {
    * Settings.DelayAfterDrag
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @return 1 if possible, 0 otherwise
-   * @throws FindFailed
+   * @throws FindFailed if not found
    */
   public <PFRML> int drag(PFRML target) throws FindFailed {
     Location loc = getLocationFromTarget(target);
@@ -3201,9 +3238,9 @@ public class Region {
    * left mouse button
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @return 1 if possible, 0 otherwise
-   * @throws FindFailed
+   * @throws FindFailed  if not found
    */
   public <PFRML> int dropAt(PFRML target) throws FindFailed {
     Location loc = getLocationFromTarget(target);
@@ -3228,7 +3265,7 @@ public class Region {
    * press and hold the specified buttons - use + to combine Button.LEFT left mouse button Button.MIDDLE middle mouse
    * button Button.RIGHT right mouse button
    *
-   * @param buttons
+   * @param buttons spec
    */
   public void mouseDown(int buttons) {
     Mouse.down(buttons, this);
@@ -3244,7 +3281,7 @@ public class Region {
   /**
    * release the specified mouse buttons (see mouseDown) if buttons==0, all currently held buttons are released
    *
-   * @param buttons
+   * @param buttons spec
    */
   public void mouseUp(int buttons) {
     Mouse.up(buttons, this);
@@ -3272,7 +3309,7 @@ public class Region {
    * Location - position at that point<br>
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
@@ -3299,7 +3336,7 @@ public class Region {
    * <br>Button.WHEEL_DOWN, Button.WHEEL_UP
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location target
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @param direction to move the wheel
    * @param steps the number of steps
    * @return 1 if possible, 0 otherwise
@@ -3321,7 +3358,7 @@ public class Region {
 	/**
 	 *
 	 * @return current location of mouse pointer
-	 * @deprecated use {@link Mouse.at()} instead
+	 * @deprecated use {@link Mouse#at()} instead
 	 */
 	@Deprecated
 	public static Location atMouse() {
@@ -3334,7 +3371,7 @@ public class Region {
    * press and hold the given key use a constant from java.awt.event.KeyEvent which might be special in the current
    * machine/system environment
    *
-   * @param keycode
+   * @param keycode Java KeyCode
    */
   public void keyDown(int keycode) {
     getRobotForRegion().keyDown(keycode);
@@ -3345,7 +3382,7 @@ public class Region {
    * only provides a subset of a US-QWERTY PC keyboard layout <br>might be mixed with simple characters
    * <br>use + to concatenate Key constants
    *
-   * @param keys
+   * @param keys valid keys
    */
   public void keyDown(String keys) {
     getRobotForRegion().keyDown(keys);
@@ -3361,7 +3398,7 @@ public class Region {
   /**
    * release the given keys (see keyDown(keycode) )
    *
-   * @param keycode
+   * @param keycode Java KeyCode
    */
   public void keyUp(int keycode) {
     getRobotForRegion().keyUp(keycode);
@@ -3370,7 +3407,7 @@ public class Region {
   /**
    * release the given keys (see keyDown(keys) )
    *
-   * @param keys
+   * @param keys valid keys
    */
   public void keyUp(String keys) {
     getRobotForRegion().keyUp(keys);
@@ -3581,10 +3618,10 @@ public class Region {
    * <br>Class Key only provides a subset of a US-QWERTY PC keyboard layout
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @param text containing characters and/or Key constants
    * @return 1 if possible, 0 otherwise
-   * @throws FindFailed
+   * @throws FindFailed if not found
    */
   public <PFRML> int type(PFRML target, String text) throws FindFailed {
     return keyin(target, text, 0);
@@ -3596,11 +3633,11 @@ public class Region {
    * Key constants see keyDown(keys) <br>Class Key only provides a subset of a US-QWERTY PC keyboard layout
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @param text containing characters and/or Key constants
    * @param modifiers constants according to class KeyModifiers
    * @return 1 if possible, 0 otherwise
-   * @throws org.sikuli.script.FindFailed
+   * @throws FindFailed if not found
    */
   public <PFRML> int type(PFRML target, String text, int modifiers) throws FindFailed {
     return keyin(target, text, modifiers);
@@ -3612,11 +3649,11 @@ public class Region {
    * Key constants see keyDown(keys) <br>Class Key only provides a subset of a US-QWERTY PC keyboard layout
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @param text containing characters and/or Key constants
    * @param modifiers constants according to class Key - combine using +
    * @return 1 if possible, 0 otherwise
-   * @throws org.sikuli.script.FindFailed
+   * @throws FindFailed if not found
    */
   public <PFRML> int type(PFRML target, String text, String modifiers) throws FindFailed {
     int modifiersNew = Key.convertModifiers(modifiers);
@@ -3670,7 +3707,7 @@ public class Region {
   /**
    * time in milliseconds to delay between each character at next type only (max 1000)
    *
-   * @param millisecs
+   * @param millisecs value
    */
   public void delayType(int millisecs) {
     Settings.TypeDelay = millisecs;
@@ -3696,10 +3733,10 @@ public class Region {
    * using the clipboard and strg/ctrl/cmd-v (paste keyboard shortcut)
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location target
-   * @param target
+   * @param target Pattern, Filename, Text, Region, Match or Location
    * @param text a string, which might contain unicode characters
    * @return 0 if possible, 1 otherwise
-   * @throws FindFailed
+   * @throws FindFailed if not found
    */
   public <PFRML> int paste(PFRML target, String text) throws FindFailed {
     click(target, 0);

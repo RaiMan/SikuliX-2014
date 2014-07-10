@@ -54,10 +54,10 @@ public class ObserveEvent {
       setPattern(ptn);
     }
 	}
-  
+
   /**
-   * for type GENERIC: 3 values can be stored in the event 
-   * (the value's type is known by creator and user of getVals as some private protocol) 
+   * for type GENERIC: 3 values can be stored in the event
+   * (the value's type is known by creator and user of getVals as some private protocol)
    * @param v1
    * @param v2
    * @param v3
@@ -67,7 +67,7 @@ public class ObserveEvent {
     vals[1] = v2;
     vals[2] = v3;
   }
-  
+
   /**
    * for type GENERIC: (the value's type is known by creator and user of getVals as some private protocol)
    * @return an array with the 3 stored values (might be null)
@@ -86,7 +86,7 @@ public class ObserveEvent {
 
   /**
    *
-   * @return this event's observer's region 
+   * @return this event's observer's region
    */
   public Region getRegion() {
     return region;
@@ -173,7 +173,7 @@ public class ObserveEvent {
   /**
    * tell the observer to repeat this event's observe action after given time in secs
    * after returning from this handler (APPEAR, VANISH)
-   * @param secs
+   * @param secs seconds
    */
   public void repeat(long secs) {
     region.getObserver().repeat(name, secs);
@@ -195,7 +195,7 @@ public class ObserveEvent {
 
   /**
    * stops the observer and prints the given text
-   * @param text
+   * @param text text
    */
   public void stopObserver(String text) {
     region.stopObserver(text);

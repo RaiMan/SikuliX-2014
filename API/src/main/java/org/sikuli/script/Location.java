@@ -25,8 +25,8 @@ public class Location implements Comparable<Location>{
 
   /**
    * to allow calculated x and y that might not be integers
-   * @param x
-   * @param y
+   * @param x column
+   * @param y row
    * truncated to the integer part
    */
   public Location(double x, double y) {
@@ -36,8 +36,8 @@ public class Location implements Comparable<Location>{
 
   /**
    * a new point at the given coordinates
-   * @param x
-   * @param y
+   * @param x column
+   * @param y row
    */
   public Location(int x, int y) {
     this.x = x;
@@ -46,7 +46,7 @@ public class Location implements Comparable<Location>{
 
   /**
    * duplicates the point
-   * @param loc
+   * @param loc other Location
    */
   public Location(Location loc) {
     x = loc.x;
@@ -58,7 +58,7 @@ public class Location implements Comparable<Location>{
 
   /**
    * create from AWT point
-   * @param point
+   * @param point a Point
    */
   public Location(Point point) {
     x = (int) point.x;
@@ -83,7 +83,7 @@ public class Location implements Comparable<Location>{
 
   /**
    * get as AWT point
-   * @return point
+   * @return Point
    */
   public Point getPoint() {
     return new Point(x,y);
@@ -91,9 +91,9 @@ public class Location implements Comparable<Location>{
 
   /**
    * sets the coordinates to the given values (moves it)
-   * @param x
-   * @param y
-   * @return self/this
+   * @param x new x
+   * @param y new y
+   * @return this
    */
   public Location setLocation(int x, int y) {
     this.x = x;
@@ -103,9 +103,9 @@ public class Location implements Comparable<Location>{
 
   /**
    * sets the coordinates to the given values (moves it)
-   * @param x might be non-int
-   * @param y might be non-int
-   * @return self/this
+   * @param x new x might be non-int
+   * @param y new y might be non-int
+   * @return this
    */
   public Location setLocation(double x, double y) {
     this.x = (int) x;
@@ -146,6 +146,7 @@ public class Location implements Comparable<Location>{
 	/**
 	 * INTERNAL USE
 	 * identifies the point as being on a non-desktop-screen
+	 * @param scr Screen
 	 * @return this
 	 */
   public Location setOtherScreen(Screen scr) {
@@ -182,7 +183,7 @@ public class Location implements Comparable<Location>{
   /**
    * the offset of given point to this Location
    *
-   * @param loc
+   * @param loc the other Location
    * @return relative offset
    */
   public Location getOffset(Location loc) {
@@ -228,10 +229,12 @@ public class Location implements Comparable<Location>{
    * moves the point the given amounts in the x and y direction, might be negative <br>might move
    * point outside of any screen, not checked
    *
-   * @param dx
-   * @param dy
+   * @param dx x offset
+   * @param dy y offset
    * @return the location itself modified
+	 * @deprecated use {@link #translate(int, int)}
    */
+	@Deprecated
   public Location moveFor(int dx, int dy) {
     x += dx;
     y += dy;
@@ -240,8 +243,8 @@ public class Location implements Comparable<Location>{
 
   /**
    * convenience: like awt point
-   * @param dx
-   * @param dy
+   * @param dx x offset
+   * @param dy y offset
    * @return the location itself modified
    */
   public Location translate(int dx, int dy) {
@@ -252,10 +255,12 @@ public class Location implements Comparable<Location>{
    * changes the locations x and y value to the given values (moves it) <br>might move point
    * outside of any screen, not checked
    *
-   * @param X
-   * @param Y
+   * @param X new x
+   * @param Y new y
    * @return the location itself modified
+	 * @deprecated use {@link #move(int, int)}
    */
+	@Deprecated
   public Location moveTo(int X, int Y) {
     x = X;
     y = Y;
@@ -264,8 +269,8 @@ public class Location implements Comparable<Location>{
 
   /**
    * convenience: like awt point
-   * @param X
-   * @param Y
+   * @param X new x
+   * @param Y new y
    * @return the location itself modified
    */
   public Location move(int X, int Y) {
@@ -276,8 +281,8 @@ public class Location implements Comparable<Location>{
    * creates a point at the given offset, might be negative <br>might create a point outside of
    * any screen, not checked
    *
-   * @param dx
-   * @param dy
+   * @param dx x offset
+   * @param dy y offset
    * @return new location
    */
   public Location offset(int dx, int dy) {
@@ -288,7 +293,7 @@ public class Location implements Comparable<Location>{
    * creates a point at the given offset, might be negative <br>might create a point outside of
    * any screen, not checked
    *
-   * @param loc
+   * @param loc offset given as Location
    * @return new location
    */
   public Location offset(Location loc) {
@@ -299,7 +304,7 @@ public class Location implements Comparable<Location>{
    * creates a point at the given offset to the left, might be negative <br>might create a point
    * outside of any screen, not checked
    *
-   * @param dx
+   * @param dx x offset
    * @return new location
    */
   public Location left(int dx) {
@@ -310,7 +315,7 @@ public class Location implements Comparable<Location>{
    * creates a point at the given offset to the right, might be negative <br>might create a point
    * outside of any screen, not checked
    *
-   * @param dx
+   * @param dx x offset
    * @return new location
    */
   public Location right(int dx) {
@@ -321,7 +326,7 @@ public class Location implements Comparable<Location>{
    * creates a point at the given offset above, might be negative <br>might create a point outside
    * of any screen, not checked
    *
-   * @param dy
+   * @param dy y offset
    * @return new location
    */
   public Location above(int dy) {
@@ -332,7 +337,7 @@ public class Location implements Comparable<Location>{
    * creates a point at the given offset below, might be negative <br>might create a point outside
    * of any screen, not checked
    *
-   * @param dy
+   * @param dy y offset
    * @return new location
    */
   public Location below(int dy) {
@@ -417,7 +422,7 @@ public class Location implements Comparable<Location>{
 
   /**
    * {@inheritDoc}
-	 * @param loc
+	 * @param loc other Location
    * @return -1 if given point is more above and/or left, 1 otherwise (0 is equal)
    */
   @Override
