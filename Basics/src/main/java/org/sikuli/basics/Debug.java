@@ -58,7 +58,15 @@ public class Debug {
     setUserLogFile(null);
   }
 
-  public static boolean setLogFile(String fileName) {
+	/**
+	 * specify, where the logs should be written:<br>
+	 * null - use from property sikuli.Logfile
+	 * empty - use SikuliLog.txt in working folder
+	 * not empty - use given filename
+	 * @param fileName null, empty or absolute filename
+	 * @return success
+	 */
+	public static boolean setLogFile(String fileName) {
     if (fileName == null) {
       fileName = System.getProperty("sikuli.Logfile");
     }
@@ -87,11 +95,23 @@ public class Debug {
     return false;
   }
 
-  public static boolean isLogToFile() {
+	/**
+	 * does Sikuli log go to a file?
+	 * @return true if yes, false otherwise
+	 */
+	public static boolean isLogToFile() {
     return (printout != null);
   }
 
-  public static boolean setUserLogFile(String fileName) {
+	/**
+	 * specify, where the user logs (Debug.user) should be written:<br>
+	 * null - use from property sikuli.LogfileUser
+	 * empty - use UserLog.txt in working folder
+	 * not empty - use given filename
+	 * @param fileName null, empty or absolute filename
+	 * @return success
+	 */
+	public static boolean setUserLogFile(String fileName) {
     if (fileName == null) {
       fileName = System.getProperty("sikuli.LogfileUser");
     }
@@ -119,6 +139,10 @@ public class Debug {
     return false;
   }
 
+	/**
+	 * does user log go to a file?
+	 * @return true if yes, false otherwise
+	 */
   public static boolean isUserLogToFile() {
     return (printoutuser != null);
   }
@@ -149,7 +173,7 @@ public class Debug {
   /**
    * set debug level to given value
    *
-   * @param level
+   * @param level value
    */
   public static void setDebugLevel(int level) {
     DEBUG_LEVEL = level;
@@ -161,9 +185,9 @@ public class Debug {
   }
 
   /**
-   * set debug level to given value
+   * set debug level to given number value as string (ignored if invalid)
    *
-   * @param level
+   * @param level valid number string
    */
   public static void setDebugLevel(String level) {
     try {
@@ -173,14 +197,14 @@ public class Debug {
       } else {
         Settings.DebugLogs = false;
       }
-    } catch (NumberFormatException numberFormatException) {
+    } catch (NumberFormatException e) {
     }
   }
 
   /**
    * Sikuli messages from actions like click, ...<br> switch on/off: Settings.ActionLogs
    *
-   * @param message (String or format string)
+   * @param message String or format string (String.format)
    * @param args to use with format string
    */
   public static void action(String message, Object... args) {
@@ -188,22 +212,22 @@ public class Debug {
       log(-1, "log", message, args);
     }
   }
-  
+
   /**
    * use Debug.action() instead
-   * @param message
-   * @param args
+   * @param message String or format string (String.format)
+   * @param args to use with format string
    * @deprecated
    */
   @Deprecated
   public static void history(String message, Object... args) {
     action(message, args);
   }
-  
+
   /**
    * informative Sikuli messages <br> switch on/off: Settings.InfoLogs
    *
-   * @param message (String or format string)
+   * @param message String or format string (String.format)
    * @param args to use with format string
    */
   public static void info(String message, Object... args) {
@@ -215,7 +239,7 @@ public class Debug {
   /**
    * Sikuli error messages<br> switch on/off: always on
    *
-   * @param message (String or format string)
+   * @param message String or format string (String.format)
    * @param args to use with format string
    */
   public static void error(String message, Object... args) {
@@ -226,7 +250,7 @@ public class Debug {
    * Sikuli debug messages with default level<br> switch on/off: Settings.DebugLogs (off) and/or
    * -Dsikuli.Debug
    *
-   * @param message (String or format string)
+   * @param message String or format string (String.format)
    * @param args to use with format string
    */
   public static void log(String message, Object... args) {
@@ -238,7 +262,7 @@ public class Debug {
    * Settings.UserLogTime, the prefix contains a timestamp <br> the user prefix (default "user")
    * can be set: Settings,UserLogPrefix
    *
-   * @param message (String or format string)
+   * @param message String or format string (String.format)
    * @param args to use with format string
    */
   public static void user(String message, Object... args) {
@@ -257,8 +281,8 @@ public class Debug {
    * Sikuli debug messages with level<br> switch on/off: Settings.DebugLogs (off) and/or
    * -Dsikuli.Debug
    *
-   * @param level
-   * @param message (String or format string)
+   * @param level value
+   * @param message String or format string (String.format)
    * @param args to use with format string
    */
   public static void log(int level, String message, Object... args) {
@@ -267,7 +291,14 @@ public class Debug {
     }
   }
 
-  public static void logx(int level, String prefix, String message, Object... args) {
+	/**
+	 * INTERNAL USE: special debug messages
+	 * @param level value
+	 * @param prefix not used
+	 * @param message text or format string
+	 * @param args for use with format string
+	 */
+	public static void logx(int level, String prefix, String message, Object... args) {
     if (level == -1) {
       log(level, "error", message, args);
     } else if (level == -2) {
@@ -314,7 +345,7 @@ public class Debug {
   /**
    * Sikuli profiling messages<br> switch on/off: Settings.ProfileLogs, default off
    *
-   * @param message (String or format string)
+   * @param message String or format string
    * @param args to use with format string
    */
   public static void profile(String message, Object... args) {
@@ -322,11 +353,41 @@ public class Debug {
       log(-1, "profile", message, args);
     }
   }
-  
-  public static Debug startTimer() {
+
+	/**
+	 * profile convenience: entering a method
+   * @param message String or format string
+   * @param args to use with format string
+	 */
+	public static void enter(String message, Object... args) {
+    profile("entering: " + message, args);
+  }
+
+	/**
+	 * profile convenience: exiting a method
+   * @param message String or format string
+   * @param args to use with format string
+	 */
+	public static void exit(String message, Object... args) {
+    profile("exiting: " + message, args);
+  }
+
+	/**
+	 * start timer
+	 * <br>log output depends on Settings.ProfileLogs
+	 * @return timer
+	 */
+	public static Debug startTimer() {
     return startTimer("");
   }
-  
+
+	/**
+	 * start timer with a message
+	 * <br>log output depends on Settings.ProfileLogs
+   * @param message String or format string
+   * @param args to use with format string
+	 * @return timer
+	 */
   public static Debug startTimer(String message, Object... args) {
     Debug timer = new Debug();
     timer.startTiming(message, args);
@@ -334,12 +395,35 @@ public class Debug {
   }
 
   /**
-   * start the timer<br> usage: Debug timer = new Debug(); timer.startTiming(...)
-   *
-   * @param message (String or format string)
-   * @param args to use with format string
+   * stop timer and print timer message
+ 	 * <br>log output depends on Settings.ProfileLogs
+  *
+   * @return the time in msec
    */
-  public void startTiming(String message, Object... args) {
+  public long end() {
+    if (_title == null) {
+      return endTiming(_message, false, new Object[0]);
+    } else {
+      return endTiming(_title, false, new Object[0]);
+    }
+  }
+
+  /**
+   * lap timer and print message with timer message
+	 * <br>log output depends on Settings.ProfileLogs
+   *
+	 * @param message String or format string
+   * @return the time in msec
+   */
+  public long lap(String message) {
+    if (_title == null) {
+      return endTiming("(" + message + ") " + _message, true, new Object[0]);
+    } else {
+      return endTiming("(" + message + ") " + _title, true, new Object[0]);
+    }
+  }
+
+	private void startTiming(String message, Object... args) {
     int pos;
     if ((pos = message.indexOf("\t")) < 0) {
       _title = null;
@@ -354,24 +438,6 @@ public class Debug {
     _beginTime = (new Date()).getTime();
   }
 
-  /**
-   * convenience: silently start timer<br> usage: Debug timer = new Debug(); timer.start(); ...
-   * timer.end();
-   */
-  public void start() {
-    startTiming("");
-  }
-
-  /**
-   * stop the timer and print message, if current debug level &gt; default level
-   *
-   * @param message
-   * @return the time in msec
-   */
-  public long endTiming(String message, Object... args) {
-    return endTiming(message, true, args);
-  }
-
   private long endTiming(String message, boolean isLap, Object... args) {
     if (_beginTime == 0) {
       profile("TError: timer not started (%s)", message);
@@ -383,43 +449,9 @@ public class Debug {
       _beginTime = 0;
     }
     if (!"".equals(message)) {
-      profile(String.format((isLap ? "TLap:" : "TEnd") + 
+      profile(String.format((isLap ? "TLap:" : "TEnd") +
               " (%.3f sec): ", (float) dt / 1000) + message, args);
     }
     return dt;
-  }
-
-  /**
-   * convenience: stop timer and print standard message
-   *
-   * @return the time in msec
-   */
-  public long end() {
-    if (_title == null) {
-      return endTiming(_message, false, new Object[0]);
-    } else {
-      return endTiming(_title, false, new Object[0]);
-    }
-  }
-
-  /**
-   * convenience: lap timer and print standard message
-   *
-   * @return the time in msec
-   */
-  public long lap(String msg) {
-    if (_title == null) {
-      return endTiming("(" + msg + ") " + _message, true, new Object[0]);
-    } else {
-      return endTiming("(" + msg + ") " + _title, true, new Object[0]);
-    }
-  }
-  
-  public static void enter(String msg, Object... args) {
-    profile("entering: " + msg, args);
-  }
-
-  public static void exit(String msg, Object... args) {
-    profile("exiting: " + msg, args);
   }
 }

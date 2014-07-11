@@ -156,9 +156,9 @@ public class AutoUpdater {
       if ((line = in.readLine()) != null) {
         if (line.startsWith("DOWNLOAD")) {
           server = line.split(" ")[1];
-          details += "Please download at: " + server + "<br />";
+          details += "Please download at: " + server + "<br>";
           details += "-------------------------------------------------------------------------";
-          details += "<br /><br />";
+          details += "<br><br>";
         } else {
           details += line;
         }
@@ -174,9 +174,9 @@ public class AutoUpdater {
       if (beta > 0) {
         if (! "".equals(bdetails)) {
           bserver = bdetails.split(" ")[1];
-          bdetails = "Please download at: " + bserver + "<br />";
+          bdetails = "Please download at: " + bserver + "<br>";
           bdetails += "-------------------------------------------------------------------------";
-          bdetails += "<br /><br />";
+          bdetails += "<br><br>";
         }
         while ((line = in.readLine()) != null) {
           bdetails += line;

@@ -51,8 +51,8 @@ public class ImagePath {
     /**
      * create a new image path entry
      *
-     * @param givenName
-     * @param eqivalentURL
+     * @param givenName the given path relative or absolute
+     * @param eqivalentURL the evaluated URL
      */
     public PathEntry(String givenName, URL eqivalentURL) {
       pathGiven = givenName;
@@ -129,7 +129,7 @@ public class ImagePath {
    * starting from entry 0, the first found existence is taken<br>
    * absolute file names are checked for existence
    *
-   * @param fname
+   * @param fname relative or absolute filename
    * @return a valid URL or null if not found/exists
    */
   public static URL find(String fname) {
@@ -179,7 +179,7 @@ public class ImagePath {
    * is tried to open as a BufferedReader<br>
    * BE AWARE: use br.close() when finished
    *
-   * @param fname
+   * @param fname relative or absolute filename
    * @return the BufferedReader to be used or null if not possible
    */
   public static BufferedReader open(String fname) {
@@ -219,7 +219,7 @@ public class ImagePath {
    * end of the current image path<br>
    * for usage with jars see; {@link #add(String, String)}
    *
-   * @param mainPath
+   * @param mainPath relative or absolute path
    * @return true if successful otherwise false
    */
   public static boolean add(String mainPath) {
@@ -276,7 +276,7 @@ public class ImagePath {
   /**
    * add entry to end of list (the given URL is not checked)
    *
-   * @param pURL
+   * @param pURL a valid URL (not checked)
    */
   public static void add(URL pURL) {
     imagePaths.add(new PathEntry("__PATH_URL__", pURL));
@@ -285,7 +285,7 @@ public class ImagePath {
   /**
    * remove entry with given path (same as given with add)
    *
-   * @param path
+   * @param path relative or absolute path
    * @return true on success, false ozherwise
    */
   public static boolean remove(String path) {
@@ -295,7 +295,7 @@ public class ImagePath {
   /**
    * remove entry with given URL
    *
-   * @param pURL
+   * @param pURL a valid URL (not checked)
    * @return true on success, false ozherwise
    */
   public static boolean remove(URL pURL) {
@@ -325,7 +325,7 @@ public class ImagePath {
   /**
    * empty path list and add given path as first entry
    *
-   * @param path
+   * @param path absolute path
    * @return true on success, false otherwise
    */
   public static boolean reset(String path) {
@@ -386,7 +386,7 @@ public class ImagePath {
   /**
    * the resetting version of setbundlePath for IDE usage
    *
-   * @param bundlePath
+   * @param bundlePath an absolute file path
    * @return true on success, false otherwise
    */
   public static boolean resetBundlePath(String bundlePath) {
@@ -427,7 +427,7 @@ public class ImagePath {
       }
     }
     Class cls = null;
-    String klassName = null;;
+    String klassName;
     String subPath = "";
     URL pathURL = null;
     int n = mainPath.indexOf("/");

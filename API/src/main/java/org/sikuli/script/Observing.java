@@ -16,7 +16,7 @@ import org.sikuli.basics.Debug;
 
 /**
  * This class globally collects
- * all running observations and tracks the created events.<br />
+ * all running observations and tracks the created events.<br>
  */
 public class Observing {
 

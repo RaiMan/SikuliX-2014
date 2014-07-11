@@ -41,8 +41,8 @@ public class TessAPI implements Library {
      * When Tesseract/Cube is initialized we can choose to instantiate/load/run
      * only the Tesseract part, only the Cube part or both along with the
      * combiner. The preference of which engine to use is stored in
-     * <code>tessedit_ocr_engine_mode</code>.<br />
-     * <br />
+     * <code>tessedit_ocr_engine_mode</code>.<br>
+     * <br>
      * ATTENTION: When modifying this enum, please make sure to make the
      * appropriate changes to all the enums mirroring it (e.g. OCREngine in
      * cityblock/workflow/detection/detection_storage.proto). Such enums will
@@ -173,26 +173,26 @@ public class TessAPI implements Library {
      *  | 3 #######      c |
      *  +------------------+
      * </pre>
-     * Orientation Example:<br />
-     * ====================<br />
+     * Orientation Example:<br>
+     * ====================<br>
      * Above is a
      * diagram of some (1) English and (2) Chinese text and a (3) photo
-     * credit.<br />
-     * <br />
+     * credit.<br>
+     * <br>
      * Upright Latin characters are represented as A and a. '<' represents
      * a latin character rotated anti-clockwise 90 degrees. Upright
-     * Chinese characters are represented C and c.<br />
-     * <br />
-     * NOTA BENE: enum values here should match goodoc.proto<br />
-     * <br />
+     * Chinese characters are represented C and c.<br>
+     * <br>
+     * NOTA BENE: enum values here should match goodoc.proto<br>
+     * <br>
      * If you orient your head so that "up" aligns with Orientation, then
-     * the characters will appear "right side up" and readable.<br />
-     * <br />
+     * the characters will appear "right side up" and readable.<br>
+     * <br>
      * In the example above, both the
      * English and Chinese paragraphs are oriented so their "up" is the top of
      * the page (page up). The photo credit is read with one's head turned
-     * leftward ("up" is to page left).<br />
-     * <br /> The values of this enum
+     * leftward ("up" is to page left).<br>
+     * <br> The values of this enum
      * match the convention of Tesseract's osdetect.h
      */
     public static interface TessOrientation {
@@ -206,8 +206,8 @@ public class TessAPI implements Library {
     /**
      * The grapheme clusters within a line of text are laid out logically in
      * this direction, judged when looking at the text line rotated so that its
-     * Orientation is "page up".<br />
-     * <br />
+     * Orientation is "page up".<br>
+     * <br>
      * For English text, the writing direction is left-to-right. For the Chinese
      * text in the above example, the writing direction is top-to-bottom.
      */
@@ -219,10 +219,10 @@ public class TessAPI implements Library {
     };
 
     /**
-     * The text lines are read in the given sequence.<br /> <br /> In English,
+     * The text lines are read in the given sequence.<br> <br> In English,
      * the order is top-to-bottom. In Chinese, vertical text lines are read
      * right-to-left. Mongolian is written in vertical columns top to bottom
-     * like Chinese, but the lines order left-to right.<br /> <br /> Note that
+     * like Chinese, but the lines order left-to right.<br> <br> Note that
      * only some combinations make sense. For example,
      * <code>WRITING_DIRECTION_LEFT_TO_RIGHT</code> implies
      * <code>TEXTLINE_ORDER_TOP_TO_BOTTOM</code>.
@@ -275,8 +275,8 @@ public class TessAPI implements Library {
      * <code>SetVariable("tessedit_char_blacklist", "xyz");</code> to ignore x, y and z. Or
      * <code>SetVariable("classify_bln_numeric_mode", "1");</code> to set numeric-only mode.
      * <code>SetVariable</code> may be used before <code>Init</code>, but settings will revert to defaults
-     * on <code>End()</code>.<br />
-     * <br />
+     * on <code>End()</code>.<br>
+     * <br>
      * Note: Must be called after <code>Init()</code>. Only works for non-init variables
      * (init variables should be passed to <code>Init()</code>).
      */
@@ -295,8 +295,8 @@ public class TessAPI implements Library {
     public static native String TessBaseAPIGetStringVariable(TessAPI.TessBaseAPI handle, String name);
 
     /**
-     * Print Tesseract parameters to the given file.<br />
-     * <br />
+     * Print Tesseract parameters to the given file.<br>
+     * <br>
      * Note: Must not be the first method called after instance create.
      */
     public static native void TessBaseAPIPrintVariablesToFile(TessAPI.TessBaseAPI handle, String filename);
@@ -306,12 +306,12 @@ public class TessAPI implements Library {
      * global parameters remain. Basically it is safe to use multiple
      * TessBaseAPIs in different threads in parallel, UNLESS: you use
      * <code>SetVariable</code> on some of the Params in classify and textord. If you do,
-     * then the effect will be to change it for all your instances.<br />
-     * <br />
+     * then the effect will be to change it for all your instances.<br>
+     * <br>
      * Start tesseract. Returns zero on success and -1 on failure. NOTE that the
      * only members that may be called before Init are those listed above here
-     * in the class definition.<br />
-     * <br />
+     * in the class definition.<br>
+     * <br>
      * The <code>datapath</code> must be the name of the parent directory of tessdata and
      * must end in / . Any name after the last / will be stripped. The language
      * is (usually) an <code>ISO 639-3</code> string or <code>NULL</code> will default to eng. It is
@@ -332,8 +332,8 @@ public class TessAPI implements Library {
      * set a Variable that controls initialization for a second call to <code>Init</code> you
      * should explicitly call <code>End()</code> and then use <code>SetVariable</code> before <code>Init</code>. This
      * is only a very rare use case, since there are very few uses that require
-     * any parameters to be set before <code>Init</code>.<br />
-     * <br />
+     * any parameters to be set before <code>Init</code>.<br>
+     * <br>
      * If <code>set_only_non_debug_params</code> is true, only params that do not contain
      * "debug" in the name will be set.
      */
@@ -407,8 +407,8 @@ public class TessAPI implements Library {
      * must be byte packed with the MSB of the first byte being the first pixel,
      * and a 1 represents WHITE. For binary images set bytes_per_pixel=0. The
      * recognized text is returned as a char* which is coded as UTF8 and must be
-     * freed with the delete [] operator.<br />
-     * <br />
+     * freed with the delete [] operator.<br>
+     * <br>
      * Note that <code>TesseractRect</code> is the simplified convenience interface. For
      * advanced uses, use <code>SetImage</code>, (optionally) <code>SetRectangle</code>, <code>Recognize</code>, and
      * one or more of the <code>Get*Text</code> functions below.

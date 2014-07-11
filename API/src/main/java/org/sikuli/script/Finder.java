@@ -19,11 +19,11 @@ import org.sikuli.natives.TARGET_TYPE;
 import org.sikuli.natives.Vision;
 
 /**
- * implements the process to find one image in another image <br />
+ * implements the process to find one image in another image <br>
  * this is the historical implementation
- * based on the C++ JNI access to the native OpenCV libraries<br />
+ * based on the C++ JNI access to the native OpenCV libraries<br>
  * It is being replaced by ImageFinder, that implements the Finder features
- * completely in Java using the OpenCV newly provided JAVA interface<br />
+ * completely in Java using the OpenCV newly provided JAVA interface<br>
  * At time of realisation the Finder API will be redirected to ImageFinder
  */
 public class Finder implements Iterator<Match> {
@@ -49,6 +49,7 @@ public class Finder implements Iterator<Match> {
    * <br>internally used with a screen snapshot
    *
    * @param imageFilename a string (name, path, url)
+	 * @throws java.io.IOException if imagefile not found
    */
   public Finder(String imageFilename) throws IOException {
     this(imageFilename, null);
@@ -60,6 +61,7 @@ public class Finder implements Iterator<Match> {
    *
    * @param imageFilename a string (name, path, url)
    * @param region search Region within image - topleft = (0,0)
+	 * @throws java.io.IOException if imagefile not found
    */
   public Finder(String imageFilename, Region region) throws IOException  {
     String fname = Image.create(imageFilename).getFilename();
@@ -70,7 +72,7 @@ public class Finder implements Iterator<Match> {
 	/**
 	 * Constructor for special use from a BufferedImage
 	 *
-	 * @param bimg
+	 * @param bimg BufferedImage
 	 */
 	public Finder(BufferedImage bimg) {
     _findInput.setSource(Image.convertBufferedImageToMat(bimg));
@@ -79,7 +81,7 @@ public class Finder implements Iterator<Match> {
   /**
 	 * Finder constructor for special use from a ScreenImage
 	 *
-	 * @param simg
+	 * @param simg ScreenImage
 	 */
 	public Finder(ScreenImage simg) {
 		initScreenFinder(simg, null);
@@ -88,8 +90,8 @@ public class Finder implements Iterator<Match> {
   /**
 	 * Finder constructor for special use from a ScreenImage
 	 *
-	 * @param simg
-	 * @param region
+	 * @param simg ScreenImage
+	 * @param region the cropping region
 	 */
 	public Finder(ScreenImage simg, Region region) {
 		initScreenFinder(simg, region);
@@ -98,7 +100,7 @@ public class Finder implements Iterator<Match> {
   /**
 	 * Finder constructor for special use from an Image
 	 *
-	 * @param simg
+	 * @param simg Image
 	 */
 	public Finder(Image simg) {
     _findInput.setSource(Image.convertBufferedImageToMat(simg.get()));
@@ -123,7 +125,7 @@ public class Finder implements Iterator<Match> {
 	/**
 	 * internal use: exchange the source image in existing Finder
 	 *
-	 * @param simg
+	 * @param simg ScreenImage
 	 */
 	protected void setScreenImage(ScreenImage simg) {
     _findInput.setSource(Image.convertBufferedImageToMat(simg.getImage()));
@@ -147,7 +149,7 @@ public class Finder implements Iterator<Match> {
   /**
    * do a find op with the given image or the given text in the Finder's image
 	 * (hasNext() and next() will reveal possible match results)
-   * @param imageOrText
+   * @param imageOrText image file name or text
 	 * @return null. if find setup not possible
    */
   public String find(String imageOrText) {
@@ -167,7 +169,7 @@ public class Finder implements Iterator<Match> {
   /**
    * do a find op with the given pattern in the Finder's image
 	 * (hasNext() and next() will reveal possible match results)
-   * @param aPtn
+   * @param aPtn Pattern
 	 * @return null. if find setup not possible
    */
   public String find(Pattern aPtn) {
@@ -186,7 +188,7 @@ public class Finder implements Iterator<Match> {
   /**
    * do a find op with the given pattern in the Finder's image
 	 * (hasNext() and next() will reveal possible match results)
-	 * @param img
+	 * @param img Image
 	 * @return null. if find setup not possible
    */
   public String find(Image img) {
@@ -202,7 +204,7 @@ public class Finder implements Iterator<Match> {
       } else {
         return null;
       }
-    } else {      
+    } else {
       return null;
     }
   }
@@ -210,7 +212,7 @@ public class Finder implements Iterator<Match> {
   /**
    * do a text find with the given text in the Finder's image
 	 * (hasNext() and next() will reveal possible match results)
-	 * @param text
+	 * @param text text
 	 * @return null. if find setup not possible
    */
   public String findText(String text) {
@@ -224,17 +226,16 @@ public class Finder implements Iterator<Match> {
 	 * internal use: repeat with same Finder
 	 */
   protected void findAllRepeat() {
-    Debug timing = new Debug();
-    timing.startTiming("Finder.findAll");
+    Debug timing = Debug.startTimer("Finder.findAll");
     _results = Vision.find(_findInput);
     _cur_result_i = 0;
-    timing.endTiming("Finder.findAll");
+    timing.end();
 	}
 
   /**
    * do a findAll op with the given image or the given text in the Finder's image
 	 * (hasNext() and next() will reveal possible match results)
-   * @param imageOrText
+   * @param imageOrText iamge file name or text
 	 * @return null. if find setup not possible
    */
   public String findAll(String imageOrText) {
@@ -245,8 +246,7 @@ public class Finder implements Iterator<Match> {
 		if (target.equals(imageOrText+"???")) {
 			return target;
 		}
-    Debug timing = new Debug();
-    timing.startTiming("Finder.findAll");
+    Debug timing = Debug.startTimer("Finder.findAll");
 
     setTargetSmartly(_findInput, imageOrText);
     _findInput.setSimilarity(Settings.MinSimilarity);
@@ -254,13 +254,14 @@ public class Finder implements Iterator<Match> {
     _results = Vision.find(_findInput);
     _cur_result_i = 0;
 
-    timing.endTiming("Finder.findAll");
+    timing.end();
     return target;
   }
 
   /**
    * do a find op with the given pattern in the Finder's image
 	 * (hasNext() and next() will reveal possible match results)
+	 * @param aPtn Pattern
 	 * @return null. if find setup not possible
    */
   public String findAll(Pattern aPtn)  {
@@ -269,11 +270,10 @@ public class Finder implements Iterator<Match> {
       _findInput.setTarget(aPtn.getImage().getMatNative());
       _findInput.setSimilarity(aPtn.getSimilar());
       _findInput.setFindAll(true);
-      Debug timing = new Debug();
-      timing.startTiming("Finder.findAll");
+	    Debug timing = Debug.startTimer("Finder.findAll");
       _results = Vision.find(_findInput);
       _cur_result_i = 0;
-      timing.endTiming("Finder.findAll");
+      timing.end();
       return aPtn.getFilename();
     } else {
       return null;
@@ -283,7 +283,7 @@ public class Finder implements Iterator<Match> {
   /**
    * do a findAll op with the given image in the Finder's image
 	 * (hasNext() and next() will reveal possible match results)
-   * @param img
+   * @param img Image
 	 * @return null. if find setup not possible
    */
   public String findAll(Image img)  {
@@ -291,11 +291,10 @@ public class Finder implements Iterator<Match> {
       _findInput.setTarget(img.getMatNative());
       _findInput.setSimilarity(Settings.MinSimilarity);
       _findInput.setFindAll(true);
-      Debug timing = new Debug();
-      timing.startTiming("Finder.findAll");
+	    Debug timing = Debug.startTimer("Finder.findAll");
       _results = Vision.find(_findInput);
       _cur_result_i = 0;
-      timing.endTiming("Finder.findAll");
+      timing.end();
       return img.getFilename();
     } else {
       return null;
@@ -305,17 +304,16 @@ public class Finder implements Iterator<Match> {
   /**
    * do a findAll op with the given text in the Finder's image
 	 * (hasNext() and next() will reveal possible match results)
-   * @param text
+   * @param text text
 	 * @return null. if find setup not possible
    */
   public String findAllText(String text) {
     _findInput.setTarget(TARGET_TYPE.TEXT, text);
     _findInput.setFindAll(true);
-    Debug timing = new Debug();
-    timing.startTiming("Finder.findAll");
+    Debug timing = Debug.startTimer("Finder.findAllText");
     _results = Vision.find(_findInput);
     _cur_result_i = 0;
-    timing.endTiming("Finder.findAll");
+    timing.end();
     return text;
   }
 

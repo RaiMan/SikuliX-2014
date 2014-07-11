@@ -137,7 +137,7 @@ public class Image {
    *
    * if image not found, it might be a text to be searched (imageIsText = true)
    *
-   * @param fName
+   * @param fName image filename
    * @return an Image object (might not be valid - check with isValid())
    */
   public static Image create(String fName) {
@@ -148,7 +148,7 @@ public class Image {
   /**
    * FOR INTERNAL USE: from IDE - suppresses load error message
    *
-   * @param fName
+   * @param fName image filename
    * @return this
    */
   public static Image createThumbNail(String fName) {
@@ -159,7 +159,7 @@ public class Image {
   /**
    * FOR INTERNAL USE: see get(String, boolean)
    *
-   * @param fName
+   * @param fName image filename
    * @return this
    */
   protected static Image get(String fName) {
@@ -170,7 +170,7 @@ public class Image {
    * FOR INTERNAL USE: tries to get the image from the cache, if not cached yet:
    * create and load a new image
    *
-   * @param fName
+   * @param fName image filename
    * @param silent true: suppress some error messages
    * @return this
    */
@@ -311,7 +311,7 @@ public class Image {
    * already loaded image with same url is reused (reference) and taken from
    * cache
    *
-   * @param url
+   * @param url image file URL
    * @return the image
    */
   public static Image create(URL url) {
@@ -322,7 +322,12 @@ public class Image {
     return createImageValidate(img, true);
   }
 
-  public static Image createFromObject(Object obj) {
+	/**
+	 * create new Image from
+	 * @param obj String, Pattern or other Image
+	 * @return Image
+	 */
+	public static Image createFromObject(Object obj) {
     if (obj instanceof String) {
       return create((String) obj);
     } else if (obj instanceof Image) {
@@ -339,11 +344,19 @@ public class Image {
     setLastSeen(p.getImage().getLastSeen(), p.getImage().getLastSeenScore());
   }
 
-  public Pattern getPattern() {
+	/**
+	 * get the Pattern, the image was created from
+	 * @return Pattern or null
+	 */
+	public Pattern getPattern() {
     return pattern;
   }
 
-  public Image getImage() {
+	/**
+	 * INTERNAL USE: TODO: should be made obsolete
+	 * @return Image
+	 */
+	public Image getImage() {
     if (isValid()) {
       return this;
     }
@@ -381,7 +394,7 @@ public class Image {
    * create a new image from a buffered image<br>
    * can only be reused with the object reference
    *
-   * @param img
+   * @param img BufferedImage
    */
   public Image(BufferedImage img) {
     this(img, null);
@@ -392,7 +405,7 @@ public class Image {
    * giving it a descriptive name for printout and logging <br>
    * can only be reused with the object reference
    *
-   * @param img
+   * @param img BufferedImage
    * @param name descriptive name
    */
   public Image(BufferedImage img, String name) {
@@ -411,7 +424,7 @@ public class Image {
    * create a new image from a Sikuli ScreenImage (captured)<br>
    * can only be reused with the object reference
    *
-   * @param img
+   * @param img ScreenImage
    */
   public Image(ScreenImage img) {
     this(img.getImage(), null);
@@ -422,7 +435,7 @@ public class Image {
    * giving it a descriptive name for printout and logging <br>
    * can only be reused with the object reference
    *
-   * @param img
+   * @param img ScreenImage
    * @param name descriptive name
    */
   public Image(ScreenImage img, String name) {
@@ -430,10 +443,10 @@ public class Image {
   }
 
   /**
-   * Internal Use: IDE: to get rid of cache entries at script save, close or
+   * INTERNAL USE: IDE: to get rid of cache entries at script save, close or
    * save as
    *
-   * @param bundlePath
+   * @param bundlePath absolute path
    */
   public static void purge(String bundlePath) {
     if (imageFiles.isEmpty()) {
@@ -541,7 +554,7 @@ public class Image {
   /**
    * set the ImageGroup this image should belong to
    *
-   * @param group
+   * @param group ImageGroup
    */
   public void setGroup(ImageGroup group) {
     this.group = group;
@@ -556,10 +569,18 @@ public class Image {
     return filepath != null;
   }
 
-  public boolean isUseable() {
+	/**
+	 * INTERNAL USE: TODO: should be made obsolete
+	 * @return true/false
+	 */
+	public boolean isUseable() {
     return isValid() || imageIsPattern;
   }
 
+	/**
+	 * INTERNAL USE: image is contained in a bundle (.sikuli)
+	 * @return true/false
+	 */
 	public boolean isBundled() {
 		return imageIsBundled;
 	}
@@ -615,6 +636,7 @@ public class Image {
   /**
    * return the image's BufferedImage (load it if not in cache)
    *
+	 * @return BufferedImage (might be null)
    */
   public BufferedImage get() {
     if (bimg != null) {
@@ -658,8 +680,8 @@ public class Image {
   /**
    * Internal Use: set the last seen info after a find
    *
-   * @param lastSeen
-   * @param sim
+   * @param lastSeen Match
+   * @param sim SimilarityScore
    */
   protected void setLastSeen(Rectangle lastSeen, double sim) {
     this.lastSeen = lastSeen;
@@ -671,7 +693,7 @@ public class Image {
 
   /**
    *
-   * @param factor
+   * @param factor resize factor
    * @return a new BufferedImage resized (width*factor, height*factor)
    */
   public BufferedImage resize(float factor) {
@@ -690,10 +712,10 @@ public class Image {
   /**
    * create a sub image from this image
    *
-   * @param x
-   * @param y
-   * @param w
-   * @param h
+   * @param x pixel column
+   * @param y pixel row
+   * @param w width
+   * @param h height
    * @return the new image
    */
   public Image getSub(int x, int y, int w, int h) {
@@ -707,7 +729,7 @@ public class Image {
   /**
    * create a sub image from this image
    *
-   * @param part (the constants Region.XXX as used with region.get())
+   * @param part (the constants Region.XXX as used with {@link Region#get(int)})
    * @return the sub image
    */
   public Image getSub(int part) {
@@ -719,7 +741,7 @@ public class Image {
    * store info: this image is divided vertically into n even rows <br>
    * a preparation for using getRow()
    *
-   * @param n
+   * @param n number of rows
    * @return the top row
    */
   public Image setRows(int n) {
@@ -730,7 +752,7 @@ public class Image {
    * store info: this image is divided horizontally into n even columns <br>
    * a preparation for using getCol()
    *
-   * @param n
+   * @param n number of Columns
    * @return the leftmost column
    */
   public Image setCols(int n) {
@@ -773,8 +795,8 @@ public class Image {
    * store info: this image is divided into a raster of even cells <br>
    * a preparation for using getCell()
    *
-   * @param r
-   * @param c
+   * @param r number of rows
+   * @param c number of columns
    * @return the top left cell
    */
   public Image setRaster(int r, int c) {
@@ -796,7 +818,7 @@ public class Image {
    * counts reverse from the end (last = -1) <br>values outside range are 0 or last
    * respectively
    *
-   * @param r
+   * @param r row number
    * @return the row as new image or the image itself, if no rows are setup
    */
   public Image getRow(int r) {
@@ -816,7 +838,7 @@ public class Image {
    * negative counts reverse from the end (last = -1) <br>values outside range are 0
    * or last respectively
    *
-   * @param c
+   * @param c column number
    * @return the column as new image or the image itself, if no columns are
    * setup
    */
@@ -837,7 +859,8 @@ public class Image {
    * negative counts reverse from the end (last = -1) <br>values outside range are 0
    * or last respectively
    *
-   * @param c
+	 * @param r row number
+   * @param c column number
    * @return the cell as new image or the image itself, if no raster is setup
    */
   public Image getCell(int r, int c) {

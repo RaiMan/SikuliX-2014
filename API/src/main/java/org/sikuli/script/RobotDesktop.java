@@ -50,7 +50,7 @@ public class RobotDesktop extends Robot implements IRobot {
 
   @Override
   public void smoothMove(Location dest) {
-    smoothMove(Region.atMouse(), dest, (long) (Settings.MoveMouseDelay * 1000L));
+    smoothMove(Mouse.at(), dest, (long) (Settings.MoveMouseDelay * 1000L));
   }
 
   @Override
@@ -82,7 +82,9 @@ public class RobotDesktop extends Robot implements IRobot {
     } else {
       pc = mp.getLocation();
       if (pc.x != p.x || pc.y != p.y) {
-        Debug.error("RobotDesktop: checkMousePosition: should be %s\nbut after move is %s",
+        Debug.error("RobotDesktop: checkMousePosition: should be %s\nbut after move is %s"
+								+ "\nPossible cause: Mouse actions are blocked generally or by the frontmost application."
+								+ (Settings.isWindows() ? "\nYou might try to run the SikuliX stuff as admin." : ""),
                 p, new Location(pc));
       }
     }

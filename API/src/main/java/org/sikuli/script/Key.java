@@ -24,7 +24,7 @@ import org.sikuli.basics.Settings;
  * this class implements an interface to the Java key system
  * as represented by java.awt.event.KeyEvent.
  * for the functions Region.type() and Region.write()
- * by translating key constants for special keys and plain text per character.<br />
+ * by translating key constants for special keys and plain text per character.<br>
  * for details consult the docs
  */
 public class Key {
@@ -441,6 +441,8 @@ public class Key {
 
   /**
    * Convert Sikuli Key to Java virtual key code
+	 * @param key as String
+	 * @return the Java KeyCodes
    */
   public static int[] toJavaKeyCode(String key) {
     if (key.length() > 0) {
@@ -451,6 +453,8 @@ public class Key {
 
   /**
    * Convert Sikuli Key to Java virtual key code
+	 * @param key as Character
+	 * @return the Java KeyCodes
    */
   public static int[] toJavaKeyCode(char key) {
     switch (key) {
@@ -635,7 +639,7 @@ public class Key {
 
   /**
    *
-   * @param key
+   * @param key as Character
    * @return a printable version of a special key
    */
   public static String toJavaKeyCodeText(char key) {
@@ -739,7 +743,7 @@ public class Key {
   /**
    * get the lock state of the given key
    *
-   * @param key
+   * @param key as Character (scroll, caps, num)
    * @return true/false
    */
   public static boolean isLockOn(char key) {
@@ -756,7 +760,11 @@ public class Key {
     }
   }
 
-  public static int getHotkeyModifier() {
+	/**
+	 * HotKey modifier to be used with Sikuli's HotKey feature
+	 * @return META(CMD) on Mac, CTRL otherwise
+	 */
+	public static int getHotkeyModifier() {
     if (Settings.isMac()) {
       return KeyEvent.VK_META;
     } else {
@@ -771,153 +779,158 @@ public class Key {
    * INTERNAL USE ONLY
    * create an alternate keycode table for a non-US keyboard
    */
-  public static void keyBoardSetup() throws FindFailed, Exception {
-    Map<Character, Integer[]> keyLocal = new HashMap<Character, Integer[]>();
-    String[] keyXX = new String[] {"", "", "", "",};
-    String keysx = Key.keyboardUS;
+	public static void keyBoardSetup() {
+		Map<Character, Integer[]> keyLocal = new HashMap<Character, Integer[]>();
+		String[] keyXX = new String[]{"", "", "", "",};
+		String keysx = Key.keyboardUS;
 
-    Screen s = new Screen(0);
-    ImagePath.add("org.sikuli.basics.SikuliX/Images");
+		try {
+			Screen s = new Screen(0);
+			ImagePath.add("org.sikuli.basics.SikuliX/Images");
 
-    ShowKeyBoardSetupWindow win = new ShowKeyBoardSetupWindow();
-    win.start();
-    s.wait(3.0F);
+			ShowKeyBoardSetupWindow win = new ShowKeyBoardSetupWindow();
+			win.start();
+			s.wait(3.0F);
 
-    Location btnOK = s.find("SikuliLogo").getCenter();
-    Location txtArea = btnOK.offset(0, 400);
-    s.click(txtArea);
-    s.wait(1.0F);
-    String[] mods = new String[]{"", "S", "A", "SA"};
-		Debug.setDebugLevel(0);
-    for (String modx : mods) {
-      s.paste((modx.isEmpty() ? "NO" : modx) + " modifier" + "\n");
-      if (!modx.isEmpty()) {
-        if (modx.length() == 1) {
-          modx = "#" + modx + ".";
-        } else if (modx.length() == 2) {
-          modx = "#" + modx.substring(0, 1) + ".#" + modx.substring(1, 2) + ".";
-        } else {
-          break;
-        }
-      }
-      String c;
-      for (int n = 0; n < keysx.length(); n++) {
-        c = "" + keysx.charAt(n);
-        s.paste(c);
-        s.type(" ");
-        if (Mouse.hasMoved()) {
-          s.click(txtArea);
-          s.wait(0.3F);
-        }
-        s.write(String.format("%s%s ", modx, c));
-        if ("=".equals(c) || "]".equals(c) || "\\".equals(c)) {
-          s.paste("\n");
-        }
-      }
-      s.paste("\n");
-      s.type(Key.ENTER);
-    }
-		Debug.setDebugLevel(3);
-    s.click(btnOK);
-    while (true) {
+			Location btnOK = s.find("SikuliLogo").getCenter();
+			Location txtArea = btnOK.offset(0, 400);
+			s.click(txtArea);
+			s.wait(1.0F);
+			String[] mods = new String[]{"", "S", "A", "SA"};
+			Debug.setDebugLevel(0);
+			for (String modx : mods) {
+				s.paste((modx.isEmpty() ? "NO" : modx) + " modifier" + "\n");
+				if (!modx.isEmpty()) {
+					if (modx.length() == 1) {
+						modx = "#" + modx + ".";
+					} else if (modx.length() == 2) {
+						modx = "#" + modx.substring(0, 1) + ".#" + modx.substring(1, 2) + ".";
+					} else {
+						break;
+					}
+				}
+				String c;
+				for (int n = 0; n < keysx.length(); n++) {
+					c = "" + keysx.charAt(n);
+					s.paste(c);
+					s.type(" ");
+					if (Mouse.hasMoved()) {
+						s.click(txtArea);
+						s.wait(0.3F);
+					}
+					s.write(String.format("%s%s ", modx, c));
+					if ("=".equals(c) || "]".equals(c) || "\\".equals(c)) {
+						s.paste("\n");
+					}
+				}
+				s.paste("\n");
+				s.type(Key.ENTER);
+			}
+			Debug.setDebugLevel(3);
+			s.click(btnOK);
+		} catch (FindFailed e) {
+			Debug.error("KeyBoardSetup: Does not work - getting FindFailed");
+			return;
+		}
+		while (true) {
 			try {
 				Thread.sleep(1000);
 			} catch (InterruptedException ex) {
 			}
 			Debug.log(3, "waiting for result\n" + result[0]);
-      if (!result[0].isEmpty()) {
-        break;
-      }
-    }
-    String[] keyNewx = result[0].split("\n");
-    String keysNew;
-    String mod;
-    int nKDE = 0;
-    for (int n = 0; n < keyNewx.length; n += 6) {
-      mod = keyNewx[n].substring(0, 2);
-      keysNew = keyNewx[n + 1] + keyNewx[n + 2] + keyNewx[n + 3] + keyNewx[n + 4];
-      keyXX[nKDE] = mod + ": " + keysNew;
-      Debug.log(3, "%s", keyXX[nKDE]);
-      nKDE++;
-    }
+			if (!result[0].isEmpty()) {
+				break;
+			}
+		}
+		String[] keyNewx = result[0].split("\n");
+		String keysNew;
+		String mod;
+		int nKDE = 0;
+		for (int n = 0; n < keyNewx.length; n += 6) {
+			mod = keyNewx[n].substring(0, 2);
+			keysNew = keyNewx[n + 1] + keyNewx[n + 2] + keyNewx[n + 3] + keyNewx[n + 4];
+			keyXX[nKDE] = mod + ": " + keysNew;
+			Debug.log(3, "%s", keyXX[nKDE]);
+			nKDE++;
+		}
 		String kSet;
-    int offset = 4;
-    char keyOld, keyNew;
-    int[] codeA;
-    String codeS;
-    String modText;
-    int nOld;
-    for (int n = 0; n < 4; n++) {
-      kSet = keyXX[n].substring(4);
-      mod = keyXX[n].substring(0, 2);
-      modText = "";
-      if ("S ".equals(mod)) {
-        modText = "SHIFT ";
-      } else if ("A ".equals(mod)) {
-        modText = "ALT ";
-      } else if ("SA".equals(mod)) {
-        modText = "SHIFT ALT ";
-      }
-      Debug.log(3, mod + "\n" + kSet);
-      nOld = 0;
-      for (int i = 0; i < kSet.length(); i++) {
-        if (i + 3 > kSet.length()) {
-          break;
-        }
-        if (!" ".equals("" + kSet.charAt(i + 3))) {
-          offset = 3;
-        }
-        keyOld = kSet.charAt(i);
-        keyNew = kSet.charAt(i + 2);
-        Integer[] codeI = new Integer[]{-1, -1, -1};
-        try {
-          codeA = Key.toJavaKeyCode(keyNew);
-          codeS = "";
-          for (int iK : codeA) {
-            codeS += KeyEvent.getKeyText(iK) + " ";
-          }
-          if (codeA.length == 1) {
-            codeI[2] = codeA[0];
-          } else if (codeA.length == 2) {
-            codeI[2] = codeA[1];
-            codeI[0] = codeA[0];
-          } else if (codeA.length == 3) {
-            codeI[2] = codeA[2];
-            codeI[0] = codeA[0];
-            codeI[1] = codeA[1];
-          }
-        } catch (Exception e) {
-          codeS = "UNKNOWN ";
-          codeI[2] = Key.toJavaKeyCode(keysx.charAt(nOld))[0];
-          codeS += modText + KeyEvent.getKeyText(codeI[2]);
-          for (int ik = 0; ik < 2; ik++) {
-            if (mod.charAt(ik) == 'S') {
-              codeI[ik] = KeyEvent.VK_SHIFT;
-            } else if (mod.charAt(ik) == 'A') {
-              codeI[ik] = KeyEvent.VK_ALT;
-            }
-          }
-        }
-        if (keyLocal.get(keyNew) == null) {
-          keyLocal.put(keyNew, codeI);
-        }
-        Debug.log(3,"%s %c %c %s", mod, keyOld, keyNew, codeS);
-        i += offset - 1;
-        offset = 4;
-        nOld += 1;
-      }
-    }
+		int offset = 4;
+		char keyOld, keyNew;
+		int[] codeA;
+		String codeS;
+		String modText;
+		int nOld;
+		for (int n = 0; n < 4; n++) {
+			kSet = keyXX[n].substring(4);
+			mod = keyXX[n].substring(0, 2);
+			modText = "";
+			if ("S ".equals(mod)) {
+				modText = "SHIFT ";
+			} else if ("A ".equals(mod)) {
+				modText = "ALT ";
+			} else if ("SA".equals(mod)) {
+				modText = "SHIFT ALT ";
+			}
+			Debug.log(3, mod + "\n" + kSet);
+			nOld = 0;
+			for (int i = 0; i < kSet.length(); i++) {
+				if (i + 3 > kSet.length()) {
+					break;
+				}
+				if (!" ".equals("" + kSet.charAt(i + 3))) {
+					offset = 3;
+				}
+				keyOld = kSet.charAt(i);
+				keyNew = kSet.charAt(i + 2);
+				Integer[] codeI = new Integer[]{-1, -1, -1};
+				try {
+					codeA = Key.toJavaKeyCode(keyNew);
+					codeS = "";
+					for (int iK : codeA) {
+						codeS += KeyEvent.getKeyText(iK) + " ";
+					}
+					if (codeA.length == 1) {
+						codeI[2] = codeA[0];
+					} else if (codeA.length == 2) {
+						codeI[2] = codeA[1];
+						codeI[0] = codeA[0];
+					} else if (codeA.length == 3) {
+						codeI[2] = codeA[2];
+						codeI[0] = codeA[0];
+						codeI[1] = codeA[1];
+					}
+				} catch (Exception e) {
+					codeS = "UNKNOWN ";
+					codeI[2] = Key.toJavaKeyCode(keysx.charAt(nOld))[0];
+					codeS += modText + KeyEvent.getKeyText(codeI[2]);
+					for (int ik = 0; ik < 2; ik++) {
+						if (mod.charAt(ik) == 'S') {
+							codeI[ik] = KeyEvent.VK_SHIFT;
+						} else if (mod.charAt(ik) == 'A') {
+							codeI[ik] = KeyEvent.VK_ALT;
+						}
+					}
+				}
+				if (keyLocal.get(keyNew) == null) {
+					keyLocal.put(keyNew, codeI);
+				}
+				Debug.log(3, "%s %c %c %s", mod, keyOld, keyNew, codeS);
+				i += offset - 1;
+				offset = 4;
+				nOld += 1;
+			}
+		}
 
-    Debug.log(3,"--------------- keyLocal");
-    Integer[] codeI;
-    for (Character kc : keyLocal.keySet()) {
-      codeI = keyLocal.get(kc);
-      Debug.log(3,"%c %s %s %s", kc.charValue(),
-              (codeI[0] == -1 ? "" : KeyEvent.getKeyText(codeI[0])),
-              (codeI[1] == -1 ? "" : KeyEvent.getKeyText(codeI[1])),
-              (codeI[2] == -1 ? "" : KeyEvent.getKeyText(codeI[2])) );
-    }
-  }
+		Debug.log(3, "--------------- keyLocal");
+		Integer[] codeI;
+		for (Character kc : keyLocal.keySet()) {
+			codeI = keyLocal.get(kc);
+			Debug.log(3, "%c %s %s %s", kc.charValue(),
+							(codeI[0] == -1 ? "" : KeyEvent.getKeyText(codeI[0])),
+							(codeI[1] == -1 ? "" : KeyEvent.getKeyText(codeI[1])),
+							(codeI[2] == -1 ? "" : KeyEvent.getKeyText(codeI[2])));
+		}
+	}
 
   public static String convertKeyToText(int code, int mod) {
     String txtMod = KeyEvent.getKeyModifiersText(mod);

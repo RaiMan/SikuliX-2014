@@ -99,13 +99,13 @@ public class Settings {
 	public static String SikuliVersionScript;
 	//TODO needed ???
 	public static final String libOpenCV = "libopencv_java248";
-  
+
 	public static String osName;
 	public static final float FOREVER = Float.POSITIVE_INFINITY;
 	public static final int JavaVersion = Integer.parseInt(java.lang.System.getProperty("java.version").substring(2, 3));
 	public static final String JREVersion = java.lang.System.getProperty("java.runtime.version");
   public static final String JavaArch = 	System.getProperty("os.arch");
-  
+
   public static String SikuliVersionLong;
   public static String SikuliSystemVersion;
   public static String SikuliJavaVersion;
@@ -218,7 +218,7 @@ public class Settings {
         osn = "Windows";
       } else if (os.startsWith("linux")) {
         osn = "Linux";
-      }      
+      }
       SikuliSystemVersion = osn + System.getProperty("os.version");
       SikuliJavaVersion = "Java" + JavaVersion + "(" + JavaArch + ")" + JREVersion;
 //TODO this should be in RunSetup only
@@ -237,11 +237,11 @@ public class Settings {
 			TypeEndings.put(EndingTypes.get(k), k);
 		}
 	}
-  
+
   public static String getSystemInfo() {
     return String.format("%s/%s/%s", SikuliVersionLong, SikuliSystemVersion, SikuliJavaVersion);
   }
-  
+
   public static void getStatus() {
     log(lvl, "***** Information Dump *****");
     log(lvl, "*** SystemInfo\n%s", getSystemInfo());
@@ -256,7 +256,7 @@ public class Settings {
     for (int i = 0; i < urls.length; i++) {
       System.out.println(String.format("%d: %s", i, urls[i]));
     }
-    log(lvl, "***** Information Dump ***** end *****");    
+    log(lvl, "***** Information Dump ***** end *****");
   }
 
 	public static void initScriptingSupport() {
@@ -302,7 +302,7 @@ public class Settings {
 	public static boolean hasTypeRunner(String type) {
 		return supportedRunner.contains(type);
 	}
-  
+
   public static String getValidImageFilename(String fname) {
     String validEndings = ".png.jpg.jpeg";
     String defaultEnding = ".png";
@@ -343,14 +343,14 @@ public class Settings {
 
 	/**
 	 * Specify a delay between the key presses in seconds as 0.nnn. This only
-	 * applies to the next type and is then reset to 0 again. A value > 1 is cut
+	 * applies to the next type and is then reset to 0 again. A value &gt; 1 is cut
 	 * to 1.0 (max delay of 1 second)
 	 */
 	public static double TypeDelay = 0.0;
 	/**
 	 * Specify a delay between the mouse down and up in seconds as 0.nnn. This
 	 * only applies to the next click action and is then reset to 0 again. A value
-	 * > 1 is cut to 1.0 (max delay of 1 second)
+	 * &gt; 1 is cut to 1.0 (max delay of 1 second)
 	 */
 	public static double ClickDelay = 0.0;
 
@@ -442,7 +442,7 @@ public class Settings {
 	}
 
 	/**
-	 * returns the absolute path to the user's extension path
+	 * @return absolute path to the user's extension path
 	 */
 	public static String getUserExtPath() {
 		String ret = getSikuliDataPath() + File.separator + "extensions";

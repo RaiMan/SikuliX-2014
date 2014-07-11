@@ -57,20 +57,22 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+<!-- TODO enable when used
 		<dependency>
-			<!-- Javassist (Java Programming Assistant) makes Java bytecode manipulation simple.
-			http://www.csg.ci.i.u-tokyo.ac.jp/~chiba/javassist/ -->
+			 Javassist (Java Programming Assistant) makes Java bytecode manipulation simple.
+			http://www.csg.ci.i.u-tokyo.ac.jp/~chiba/javassist/
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<version>3.18.1-GA</version>
 		</dependency>
 		<dependency>
-			<!-- BeanShell Scripting Language
-			http://www.beanshell.org/home.html -->
+			 BeanShell Scripting Language
+			http://www.beanshell.org/home.html
 			<groupId>org.beanshell</groupId>
 			<artifactId>bsh</artifactId>
 			<version>2.0b5</version>
 		</dependency>
+-->
 	</dependencies>
 
 	<build>
