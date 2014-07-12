@@ -3,11 +3,10 @@
 
 1.1.0-Beta3 is under development
 -----------------
-Beta1 and Beta2 are retracted
-
-[for download look here](https://launchpad.net/sikuli/sikulix/1.1.0)<br>
-Known issues and fixes: https://answers.launchpad.net/sikuli/+faq/2521<br>
-
+The **latest stable version** is **SikuliX 1.0.1** [download here](https://launchpad.net/sikuli/+download)<br><br>
+**If you want to test the head of developement without the need to build from sources:** <br>
+[look here: I have setup a page with nightly builds](http://nightly.sikuli.de)<br>
+**At your own risk ;-) Take care for your existing work - be prepared to restore your stuff!!**
 <hr />
 **SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer)
 
