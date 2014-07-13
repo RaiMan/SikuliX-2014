@@ -18,6 +18,7 @@ public abstract class HotkeyManager {
 
   private static HotkeyManager _instance = null;
   private static Map<Integer, Integer> hotkeys;
+  private static Map<Integer, Integer> hotkeysGlobal = new HashMap<Integer, Integer>();
   private static final String HotkeyTypeCapture = "Capture";
   private static int HotkeyTypeCaptureKey;
   private static int HotkeyTypeCaptureMod;
@@ -56,7 +57,7 @@ public abstract class HotkeyManager {
    * remove all hotkeys and reset HotkeyManager to undefined
    */
   public static void reset() {
-    if (_instance == null && hotkeys.isEmpty()) {
+    if (_instance == null || hotkeys.isEmpty()) {
       return;
     }
     Debug.log(3, "HotkeyManager: reset - removing all defined hotkeys.");
@@ -68,6 +69,7 @@ public abstract class HotkeyManager {
                 getKeyModifierText(hotkeys.get(k)), getKeyCodeText(k));
       }
     }
+    hotkeys = new HashMap<Integer, Integer>();
     _instance = null;
   }
 
@@ -164,7 +166,11 @@ public abstract class HotkeyManager {
     }
     res = _instance._addHotkey(key, mod, callback);
     if (res) {
-      hotkeys.put(key, mod);
+      if (hotkeyType.isEmpty()) {
+        hotkeys.put(key, mod);
+      } else {
+        hotkeysGlobal.put(key, mod);
+      }
     } else {
       Debug.error("HotkeyManager: addHotkey: failed");
     }
