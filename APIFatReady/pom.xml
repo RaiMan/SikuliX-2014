@@ -46,7 +46,7 @@
 					<descriptors>
 						<descriptor>../plain.xml</descriptor>
 					</descriptors>
-					<finalName>sikulixapi-${sikuli.usedversion}</finalName>
+					<finalName>sikulixapi</finalName>
 				</configuration>
 				<executions>
 					<execution>
