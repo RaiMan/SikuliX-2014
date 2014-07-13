@@ -157,11 +157,24 @@ public abstract class HotkeyManager {
     String txtMod = getKeyModifierText(mod);
     String txtCode = getKeyCodeText(key);
     Debug.info("HotkeyManager: add" + hotkeyType + "Hotkey: " + txtMod + " " + txtCode);
-    if (hotkeys.containsKey(key) && mod == hotkeys.get(key)) {
-      res = _instance._removeHotkey(key, hotkeys.get(key));
-      if (!res) {
-        Debug.error("HotkeyManager: addHotkey: failed to remove already defined hotkey");
-        return false;
+    boolean checkGlobal = true;
+    for (Integer k : hotkeys.keySet()) {
+      if (k == key && mod == hotkeys.get(key)) {
+        res = _instance._removeHotkey(key, hotkeys.get(key));
+        if (!res) {
+          Debug.error("HotkeyManager: addHotkey: failed to remove already defined hotkey");
+          return false;
+        } else {
+          checkGlobal = false;
+        }
+      }
+    }
+    if (checkGlobal) {
+      for (Integer kg : hotkeysGlobal.keySet()) {
+        if (kg == key && mod == hotkeysGlobal.get(key)) {
+          Debug.error("HotkeyManager: addHotkey: ignored: trying to redefine a global hotkey");
+          return false;
+        }
       }
     }
     res = _instance._addHotkey(key, mod, callback);
