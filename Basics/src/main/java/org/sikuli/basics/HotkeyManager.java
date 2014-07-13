@@ -17,7 +17,7 @@ import java.util.Map;
 public abstract class HotkeyManager {
 
   private static HotkeyManager _instance = null;
-  private static final Map<Integer, Integer> hotkeys = new HashMap<Integer, Integer>();
+  private static Map<Integer, Integer> hotkeys;
   private static final String HotkeyTypeCapture = "Capture";
   private static int HotkeyTypeCaptureKey;
   private static int HotkeyTypeCaptureMod;
@@ -48,6 +48,7 @@ public abstract class HotkeyManager {
         }
       }
     }
+    hotkeys = new HashMap<Integer, Integer>();
     return _instance;
   }
 
@@ -55,9 +56,10 @@ public abstract class HotkeyManager {
    * remove all hotkeys and reset HotkeyManager to undefined
    */
   public static void reset() {
-    if (_instance == null) {
+    if (_instance == null && hotkeys.isEmpty()) {
       return;
     }
+    Debug.log(3, "HotkeyManager: reset - removing all defined hotkeys.");
     boolean res;
     for (Integer k : hotkeys.keySet()) {
       res = _instance._removeHotkey(k, hotkeys.get(k));
