@@ -18,5 +18,6 @@ API/src/main/java/org/sikuli/script/ObserverCallBack.java
 API/src/main/java/org/sikuli/script/ObserveEvent.java
 API/src/main/java/org/sikuli/script/App.java
 API/src/main/java/org/sikuli/script/Env.java
+API/src/main/java/org/sikuli/script/SikuliX.java
 Basics/src/main/java/org/sikuli/basics/Settings.java
 Basics/src/main/java/org/sikuli/basics/Debug.java
