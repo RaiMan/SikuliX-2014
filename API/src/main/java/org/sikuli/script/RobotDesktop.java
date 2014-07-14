@@ -99,7 +99,8 @@ public class RobotDesktop extends Robot implements IRobot {
       heldButtons = buttons;
     }
     Screen.getMouseRobot().mousePress(heldButtons);
-    Screen.getMouseRobot().waitForIdle();
+//TODO check: does this produce Robot locked situations?
+//    Screen.getMouseRobot().waitForIdle();
   }
 
   @Override
