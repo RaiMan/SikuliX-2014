@@ -17,7 +17,8 @@ import java.util.Map;
 public abstract class HotkeyManager {
 
   private static HotkeyManager _instance = null;
-  private static final Map<Integer, Integer> hotkeys = new HashMap<Integer, Integer>();
+  private static Map<Integer, Integer> hotkeys;
+  private static Map<Integer, Integer> hotkeysGlobal = new HashMap<Integer, Integer>();
   private static final String HotkeyTypeCapture = "Capture";
   private static int HotkeyTypeCaptureKey;
   private static int HotkeyTypeCaptureMod;
@@ -48,6 +49,7 @@ public abstract class HotkeyManager {
         }
       }
     }
+    hotkeys = new HashMap<Integer, Integer>();
     return _instance;
   }
 
@@ -55,9 +57,10 @@ public abstract class HotkeyManager {
    * remove all hotkeys and reset HotkeyManager to undefined
    */
   public static void reset() {
-    if (_instance == null) {
+    if (_instance == null || hotkeys.isEmpty()) {
       return;
     }
+    Debug.log(3, "HotkeyManager: reset - removing all defined hotkeys.");
     boolean res;
     for (Integer k : hotkeys.keySet()) {
       res = _instance._removeHotkey(k, hotkeys.get(k));
@@ -66,6 +69,7 @@ public abstract class HotkeyManager {
                 getKeyModifierText(hotkeys.get(k)), getKeyCodeText(k));
       }
     }
+    hotkeys = new HashMap<Integer, Integer>();
     _instance = null;
   }
 
@@ -153,16 +157,33 @@ public abstract class HotkeyManager {
     String txtMod = getKeyModifierText(mod);
     String txtCode = getKeyCodeText(key);
     Debug.info("HotkeyManager: add" + hotkeyType + "Hotkey: " + txtMod + " " + txtCode);
-    if (hotkeys.containsKey(key) && mod == hotkeys.get(key)) {
-      res = _instance._removeHotkey(key, hotkeys.get(key));
-      if (!res) {
-        Debug.error("HotkeyManager: addHotkey: failed to remove already defined hotkey");
-        return false;
+    boolean checkGlobal = true;
+    for (Integer k : hotkeys.keySet()) {
+      if (k == key && mod == hotkeys.get(key)) {
+        res = _instance._removeHotkey(key, hotkeys.get(key));
+        if (!res) {
+          Debug.error("HotkeyManager: addHotkey: failed to remove already defined hotkey");
+          return false;
+        } else {
+          checkGlobal = false;
+        }
+      }
+    }
+    if (checkGlobal) {
+      for (Integer kg : hotkeysGlobal.keySet()) {
+        if (kg == key && mod == hotkeysGlobal.get(key)) {
+          Debug.error("HotkeyManager: addHotkey: ignored: trying to redefine a global hotkey");
+          return false;
+        }
       }
     }
     res = _instance._addHotkey(key, mod, callback);
     if (res) {
-      hotkeys.put(key, mod);
+      if (hotkeyType.isEmpty()) {
+        hotkeys.put(key, mod);
+      } else {
+        hotkeysGlobal.put(key, mod);
+      }
     } else {
       Debug.error("HotkeyManager: addHotkey: failed");
     }
