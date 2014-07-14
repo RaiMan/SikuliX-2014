@@ -27,6 +27,7 @@ echo $apisrc/ObserverCallBack.java >>createJavadocsClasses
 echo $apisrc/ObserveEvent.java >>createJavadocsClasses
 echo $apisrc/App.java >>createJavadocsClasses
 echo $apisrc/Env.java >>createJavadocsClasses
+echo $apisrc/SikuliX.java >>createJavadocsClasses
 echo $basicssrc/Settings.java >>createJavadocsClasses
 echo $basicssrc/Debug.java >>createJavadocsClasses
 javadoc -public -classpath $apijar:$basicsjar:$nativesjar:$opencvjar -d target/docs @createJavadocsClasses
