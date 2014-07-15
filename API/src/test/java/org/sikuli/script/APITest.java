@@ -1,6 +1,6 @@
 package org.sikuli.script;
 
-import static junit.framework.Assert.assertTrue;
+import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.BeforeClass;
 import org.sikuli.basics.Debug;
@@ -24,6 +24,18 @@ public class APITest {
     s.wait(5f);
     s.click();
     Debug.test("APITest: clickCenterOfPrimaryScreen_2Times_WithPause5: ending");
-    assertTrue(true);
+    Assert.assertEquals(s.getCenter(), Mouse.at());
+  }
+
+  @Test
+  public void findAndHighlightTopLeftSixth() {
+    Debug.test("APITest: findAndHighlightTopLeftSixth: starting");
+    Region r = s.get(Region.NORTH_WEST);
+    Match m = s.exists(new Image(s.capture(r).getImage()));
+    if (m != null) {
+      m.highlight(2f);
+    }    
+    Debug.test("APITest: findAndHighlightTopLeftSixth: ending");
+    Assert.assertTrue(m != null);
   }
 }
