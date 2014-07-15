@@ -29,22 +29,8 @@ import org.sikuli.basics.Settings;
  */
 public class Mouse {
 
-  private static final String me = "Mouse";
-  private static final int lvl = 3;
-
-  private static void log(int level, String message, Object... args) {
-    Debug.logx(level, "", me + ": " + message, args);
-  }
-
-  private static Mouse mouse = null;
-
-  private boolean inUse = false;
-  private boolean keep = false;
-  private Object owner = null;
-  private Point lastPos = null;
-  private static boolean blocked = false;
-  private static boolean suspended = false;
-
+  private static Mouse mouse = null; 
+  private Device device = null;
   public static final int MouseMovedIgnore = 0;
   public static final int MouseMovedShow = 1;
   public static final int MouseMovedPause = 2;
@@ -64,41 +50,39 @@ public class Mouse {
   public static final int RIGHT = InputEvent.BUTTON3_MASK;
   public static final int WHEEL_UP = -1;
   public static int WHEEL_DOWN = 1;
-
+  
   private Mouse() {
-    this.lastPos = null;
+    super();
+  }
+
+  public static void init() {
+    if (mouse == null) {
+      mouse = new Mouse();
+      device = new Device(mouse);
+      setInstance(dev);
+      me = "Mouse";
+      log(3, "init: completed");
+    }
+  }
+  
+  private static Mouse getMouse() {
+    return (Mouse) get(); 
   }
 
   public static Location at() {
-    return new Location(getLocation());
-  }
-
-  /**
-   * To get the one Mouse instance used for synchronisation
-   *
-   */
-  protected static Mouse get() {
-    if (mouse == null) {
-      mouse = new Mouse();
-    }
-    return mouse;
+    return get().getLocation();
   }
 
   public static void reset() {
-    if (mouse == null) {
+    if (get() == null) {
       return;
     }
-    unblock(get().getOwner());
-    get().let(get().getOwner());
-    get().let(get().getOwner());
+    unblock(get().owner);
+    get().let(get().owner);
+    get().let(get().owner);
     up();
     mouseMovedResponse = MouseMovedIgnore;
     mouseMovedCallback = null;
-    mouse = null;
-  }
-
-  private Object getOwner() {
-    return owner;
   }
 
   /**
@@ -141,159 +125,28 @@ public class Mouse {
     }
   }
 
-  /**
-   * to block the mouse globally <br>
-   * only the contained mouse methods without owner will be granted
-   *
-   * @return success
-   */
-  public static boolean block() {
-    return block(null);
-  }
-
-  /**
-   * to block the mouse globally for the given owner <br>
-   * only the contained mouse methods having the same owner will be granted
-   *
-   * @param owner Object
-   * @return success
-   */
-  public static boolean block(Object owner) {
-    if (Mouse.get().use(owner)) {
-      blocked = true;
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  /**
-   * free the mouse globally after a block()
-   *
-   * @return success (false means: not blocked currently)
-   */
-  public static boolean unblock() {
-    return unblock(null);
-  }
-
-  /**
-   * free the mouse globally for this owner after a block(owner)
-   *
-   * @param owner Object
-   * @return success (false means: not blocked currently for this owner)
-   */
-  public static boolean unblock(Object owner) {
-    if (owner == null) {
-      owner = Mouse.get();
-    } else if (owner instanceof Region) {
-      if (((Region) owner).isOtherScreen()) {
-        return false;
-      }
-    }
-    if (blocked && Mouse.get().owner == owner) {
-      blocked = false;
-      Mouse.get().let(owner);
-      return true;
-    }
-    return false;
-  }
-
-  private static boolean use() {
-    return Mouse.get().use(null);
-  }
-
-  protected synchronized boolean use(Object owner) {
-    if (owner == null) {
-      owner = this;
-    } else if (owner instanceof Region) {
-      if (((Region) owner).isOtherScreen()) {
-        return false;
-      }
-    }
-    if ((blocked || inUse) && this.owner == owner) {
-      return true;
-    }
-    while (inUse) {
-      try {
-        wait();
-      } catch (InterruptedException e) {
-      }
-    }
-    if (!inUse) {
-      inUse = true;
-      checkLastPos();
-      keep = false;
-      this.owner = owner;
-      log(lvl+1, "use start: %s", owner);
-      return true;
-    }
-    Debug.error("Mouse: synch problem - use start: %s", owner);
-    return false;
-  }
-
-  private static boolean let() {
-    return Mouse.get().let(null);
-  }
-
-  protected synchronized boolean let(Object owner) {
-    if (owner == null) {
-      owner = this;
-    } else if (owner instanceof Region) {
-      if (((Region) owner).isOtherScreen()) {
-        return false;
-      }
-    }
-    if (inUse && this.owner == owner) {
-      if (keep) {
-        keep = false;
-        return true;
-      }
-      lastPos = getLocation();
-      inUse = false;
-      this.owner = null;
-      notify();
-      log(lvl+1, "use stop: %s", owner);
-      return true;
-    }
-    return false;
-  }
-
-  protected synchronized boolean keep(Object owner) {
-    if (owner == null) {
-      owner = this;
-    } else if (owner instanceof Region) {
-      if (((Region) owner).isOtherScreen()) {
-        return false;
-      }
-    }
-    if (inUse && this.owner == owner) {
-      keep = true;
-      log(lvl+1, "use keep: %s", owner);
-      return true;
-    }
-    return false;
-  }
-
-  private static Point getLocation() {
+  @Override
+  protected Location getLocation() {
     PointerInfo mp = MouseInfo.getPointerInfo();
     if (mp != null) {
-      return MouseInfo.getPointerInfo().getLocation();
+      return new Location(MouseInfo.getPointerInfo().getLocation());
     } else {
       Debug.error("Mouse: not possible to get mouse position (PointerInfo == null)");
       return null;
     }
   }
 
-  private void checkLastPos() {
+  @Override
+  protected void checkLastPos() {
     if (lastPos == null) {
       return;
     }
-    Point pos = getLocation();
+    Location pos = getLocation();
     if (pos != null && (lastPos.x != pos.x || lastPos.y != pos.y)) {
       log(lvl, "moved externally: now (%d,%d) was (%d,%d) (mouseMovedResponse %d)",
               pos.x, pos.y, lastPos.x, lastPos.y, mouseMovedResponse);
       if (mouseMovedResponse > 0) {
-        showMousePos(pos);
+        showMousePos(pos.getPoint());
       }
       if (mouseMovedResponse == MouseMovedPause) {
 //TODO implement 2
@@ -314,7 +167,7 @@ public class Mouse {
 	 * @return true/false
 	 */
 	public static boolean hasMoved() {
-    Point pos = getLocation();
+    Location pos = get().getLocation();
     if (Mouse.get().lastPos.x != pos.x || Mouse.get().lastPos.y != pos.y) {
       return true;
     }
@@ -363,15 +216,15 @@ public class Mouse {
    * @return the location
    */
   public static Location click(Location loc, String action, Integer... args) {
-    if (suspended || loc.isOtherScreen()) {
+    if (isSuspended() || loc.isOtherScreen()) {
       return null;
     }
-    getArgsClick(Mouse.get(), loc, action, args);
+    getArgsClick(getMouse(), loc, action, args);
     use();
-    delay(Mouse.get().beforeWait);
-    Settings.ClickDelay = Mouse.get().innerWait / 1000;
-    click(loc, Mouse.get().buttons, 0, Mouse.get().clickDouble, null);
-    delay(Mouse.get().afterWait);
+    delay(getMouse().beforeWait);
+    Settings.ClickDelay = getMouse().innerWait / 1000;
+    click(loc, getMouse().buttons, 0, ((Mouse) get()).clickDouble, null);
+    delay(getMouse().afterWait);
     let();
     return loc;
   }
@@ -480,7 +333,7 @@ public class Mouse {
   }
 
   protected static int move(Location loc, Region region) {
-    if (suspended) {
+    if (isSuspended()) {
       return 0;
     }
     if (loc != null) {
@@ -511,7 +364,7 @@ public class Mouse {
   }
 
   protected static void down(int buttons, Region region) {
-    if (suspended) {
+    if (isSuspended()) {
       return;
     }
     get().use(region);
@@ -536,7 +389,7 @@ public class Mouse {
   }
 
   protected static void up(int buttons, Region region) {
-    if (suspended) {
+    if (isSuspended()) {
       return;
     }
     Screen.getPrimaryScreen().getRobot().mouseUp(buttons);
@@ -557,7 +410,7 @@ public class Mouse {
   }
 
   protected static void wheel(int direction, int steps, Region region) {
-    if (suspended) {
+    if (isSuspended()) {
       return;
     }
     IRobot r = Screen.getPrimaryScreen().getRobot();

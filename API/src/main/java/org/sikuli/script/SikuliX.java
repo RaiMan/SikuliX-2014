@@ -23,6 +23,17 @@ import org.sikuli.basics.Settings;
 public class SikuliX {
 
   private static final String me = "SikuliX: ";
+  
+  /**
+   * call this, to initialize Sikuli up to useability
+   * @return the primary screen object
+   */
+  public static Screen init() {
+//TODO collect initializations here
+    Mouse.init();
+    Keys.init();
+    return new Screen();
+  }
 
   /**
    * INTERNAL USE:

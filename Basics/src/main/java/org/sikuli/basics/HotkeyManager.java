@@ -48,13 +48,13 @@ public abstract class HotkeyManager {
           Debug.error("HotkeyManager: Can't create " + cls + ": " + e.getMessage());
         }
       }
+      hotkeys = new HashMap<Integer, Integer>();
     }
-    hotkeys = new HashMap<Integer, Integer>();
     return _instance;
   }
 
   /**
-   * remove all hotkeys and reset HotkeyManager to undefined
+   * remove all hotkeys
    */
   public static void reset() {
     if (_instance == null || hotkeys.isEmpty()) {
@@ -62,15 +62,25 @@ public abstract class HotkeyManager {
     }
     Debug.log(3, "HotkeyManager: reset - removing all defined hotkeys.");
     boolean res;
+    int[] hk = new int[hotkeys.size()];
+    int i = 0;
     for (Integer k : hotkeys.keySet()) {
       res = _instance._removeHotkey(k, hotkeys.get(k));
       if (!res) {
         Debug.error("HotkeyManager: reset: failed to remove hotkey: %s %s",
                 getKeyModifierText(hotkeys.get(k)), getKeyCodeText(k));
+        hk[i++] = -1;        
+      } else {
+        hk[i++] = k;
+        Debug.log(3, "removed (%d, %d)" , k, hotkeys.get(k));
       }
     }
-    hotkeys = new HashMap<Integer, Integer>();
-    _instance = null;
+    for (int k : hk) {
+      if (k == -1) {
+        continue;
+      }
+      hotkeys.remove(k);
+    }
   }
 
   private static String getOSHotkeyManagerClass() {
@@ -106,9 +116,9 @@ public abstract class HotkeyManager {
   }
 
   /**
-   *
-   * @param hotkeyType
-   * @param callback
+   * install a hotkey listener for a global hotkey (capture, abort, ...)
+   * @param hotkeyType a type string
+   * @param callback HotkeyListener
    * @return
    */
   public boolean addHotkey(String hotkeyType, HotkeyListener callback) {
@@ -132,6 +142,9 @@ public abstract class HotkeyManager {
   /**
    * install a hotkey listener.
    *
+   * @param key key character (class Key)
+   * @param modifiers modifiers flag
+   * @param callback HotkeyListener
    * @return true if success. false otherwise.
    */
   public boolean addHotkey(char key, int modifiers, HotkeyListener callback) {
@@ -156,7 +169,7 @@ public abstract class HotkeyManager {
     boolean res;
     String txtMod = getKeyModifierText(mod);
     String txtCode = getKeyCodeText(key);
-    Debug.info("HotkeyManager: add" + hotkeyType + "Hotkey: " + txtMod + " " + txtCode);
+    Debug.info("HotkeyManager: add %s Hotkey: %s %s (%d, %d)" , hotkeyType, txtMod, txtCode, key, mod);
     boolean checkGlobal = true;
     for (Integer k : hotkeys.keySet()) {
       if (k == key && mod == hotkeys.get(key)) {
@@ -227,7 +240,7 @@ public abstract class HotkeyManager {
     boolean res;
     String txtMod = getKeyModifierText(mod);
     String txtCode = getKeyCodeText(key);
-    Debug.info("HotkeyManager: remove" + hotkeyType + "Hotkey: " + txtMod + " " + txtCode);
+    Debug.info("HotkeyManager: remove %s Hotkey: %s %s (%d, %d)" , hotkeyType, txtMod, txtCode, key, mod);
     res = _instance._removeHotkey(key, mod);
     if (res) {
       hotkeys.remove(key);

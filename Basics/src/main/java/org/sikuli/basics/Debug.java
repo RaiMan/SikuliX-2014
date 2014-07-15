@@ -209,7 +209,7 @@ public class Debug {
    */
   public static void action(String message, Object... args) {
     if (Settings.ActionLogs) {
-      log(-1, "log", message, args);
+      log(-1, "LOG", message, args);
     }
   }
 
@@ -232,7 +232,7 @@ public class Debug {
    */
   public static void info(String message, Object... args) {
     if (Settings.InfoLogs) {
-      log(-1, "info", message, args);
+      log(-1, "INFO", message, args);
     }
   }
 
@@ -243,7 +243,17 @@ public class Debug {
    * @param args to use with format string
    */
   public static void error(String message, Object... args) {
-    log(-1, "error", message, args);
+    log(-1, "ERROR", message, args);
+  }
+
+  /**
+   * Sikuli messages to use in tests<br> switch on/off: always on
+   *
+   * @param message String or format string (String.format)
+   * @param args to use with format string
+   */
+  public static void test(String message, Object... args) {
+    log(-1, "TEST", message, args);
   }
 
   /**
@@ -287,7 +297,7 @@ public class Debug {
    */
   public static void log(int level, String message, Object... args) {
     if (Settings.DebugLogs) {
-      log(level, "debug", message, args);
+      log(level, "DEBUG", message, args);
     }
   }
 

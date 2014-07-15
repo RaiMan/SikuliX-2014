@@ -112,6 +112,8 @@ public class Screen extends Region implements EventObserver, IScreen {
       }
       log(lvl, "*** end monitor configuration ***");
     }
+    Mouse.init();
+    Keys.init();
     if (getNumberScreens() > 1) {
       log(lvl, "initScreens: multi monitor mouse check");
       Location lnow = Mouse.at();
