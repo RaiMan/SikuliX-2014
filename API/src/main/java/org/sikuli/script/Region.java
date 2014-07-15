@@ -3189,19 +3189,19 @@ public class Region {
       if (r == null) {
         return 0;
       }
-      Mouse.get().use(this);
+      Mouse.use(this);
       r.smoothMove(loc1);
       r.mouseDown(InputEvent.BUTTON1_MASK);
       r.delay((int) (Settings.DelayAfterDrag * 1000));
       r = loc2.getRobotForPoint("drop");
       if (r == null) {
-        Mouse.get().let(this);
+        Mouse.let(this);
         return 0;
       }
       r.smoothMove(loc2);
       r.delay((int) (Settings.DelayBeforeDrop * 1000));
       r.mouseUp(InputEvent.BUTTON1_MASK);
-      Mouse.get().let(this);
+      Mouse.let(this);
       return 1;
     }
     return 0;
@@ -3223,7 +3223,7 @@ public class Region {
       if (r == null) {
         return 0;
       }
-      Mouse.get().use(this);
+      Mouse.use(this);
       r.smoothMove(loc);
       r.mouseDown(InputEvent.BUTTON1_MASK);
       r.delay((int) (Settings.DelayAfterDrag * 1000));
@@ -3253,7 +3253,7 @@ public class Region {
       r.delay((int) (Settings.DelayBeforeDrop * 1000));
       r.mouseUp(InputEvent.BUTTON1_MASK);
       r.waitForIdle();
-      Mouse.get().let(this);
+      Mouse.let(this);
       return 1;
     }
     return 0;
@@ -3345,11 +3345,11 @@ public class Region {
   public <PFRML> int wheel(PFRML target, int direction, int steps) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     if (loc != null) {
-      Mouse.get().use(this);
-      Mouse.get().keep(this);
+      Mouse.use(this);
+      Mouse.keep(this);
       Mouse.move(loc, this);
       Mouse.wheel(direction, steps, this);
-      Mouse.get().let(this);
+      Mouse.let(this);
       return 1;
     }
     return 0;

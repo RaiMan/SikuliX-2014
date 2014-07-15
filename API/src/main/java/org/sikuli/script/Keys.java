@@ -6,6 +6,8 @@
  */
 package org.sikuli.script;
 
+import org.sikuli.basics.Debug;
+
 /**
  * Main pupose is to coordinate the keyboard usage among threads <br>
  * At any one time, the keyboard has one owner (usually a Region object) <br>
@@ -19,18 +21,25 @@ package org.sikuli.script;
  * Contained are methods to use the keyboard (click, press, release) as is<br>
  * The keys are specified completely and only as string either litterally by their keynames<br>
  */
-public class Keys extends Device {
+public class Keys {
+
+  private static String me = "KeyBoard";
+  private static final int lvl = 3;
+  private static void log(int level, String message, Object... args) {
+    Debug.logx(level, "", me + ": " + message, args);
+  }
+
+  private static Keys keys = null;
+  private static Device device = null;
 
   private Keys() {
-    super();
   }
 
   public static void init() {
-    if (get() == null) {
-      Device dev = new Keys();
-      setInstance(dev);
-      me = "Keys";
-      log(3, "init: completed");
+    if (keys == null) {
+      keys = new Keys();
+      device = new Device(keys);
+      log(3, "init");
     }
   }
 }

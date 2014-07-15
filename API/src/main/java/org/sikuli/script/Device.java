@@ -1,11 +1,15 @@
 /*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+ * Copyright 2010-2014, Sikuli.org, sikulix.com
+ * Released under the MIT License.
+ *
+ * modified RaiMan
  */
-
 package org.sikuli.script;
 
+import java.awt.MouseInfo;
+import java.awt.Point;
+import java.awt.PointerInfo;
+import java.util.Date;
 import org.sikuli.basics.Debug;
 
 /**
@@ -13,36 +17,51 @@ import org.sikuli.basics.Debug;
  * @author RaiMan
  */
 public class Device {
-  
-  protected static String me = "Device";
-  protected static final int lvl = 3;
 
-  protected static void log(int level, String message, Object... args) {
+  private static String me = "Device";
+  private static final int lvl = 3;
+
+  private static void log(int level, String message, Object... args) {
     Debug.logx(level, "", me + ": " + message, args);
   }
 
-  private static volatile Object device = null;
-  
+  private Object device = null;
+  private String devName = "Device";  
+
   protected boolean inUse = false;
   protected boolean keep = false;
   protected Object owner = null;
-  private static boolean blocked = false;
-  private static boolean suspended = false;
+  private boolean blocked = false;
+  private boolean suspended = false;
   protected Location lastPos = null;
-  
+  protected boolean isMouse = false;
+
+  protected int MouseMovedIgnore = 0;
+  protected int MouseMovedShow = 1;
+  protected int MouseMovedPause = 2;
+  protected int MouseMovedAction = 3;
+  protected int mouseMovedResponse = MouseMovedIgnore;
+  protected ObserverCallBack mouseMovedCallback = null;
+
   protected Device(Mouse m) {
     device = m;
+    devName = "Mouse"; 
   }
-  
+
+  protected Device(Keys k) {
+    device = k;
+    devName = "KeyBoard"; 
+  }
+
   public boolean isInUse() {
     return inUse;
   }
 
-  public static boolean isSuspended() {
+  public boolean isSuspended() {
     return suspended;
   }
 
-  public static boolean isBlocked() {
+  public boolean isBlocked() {
     return blocked;
   }
 
@@ -52,7 +71,7 @@ public class Device {
    *
    * @return success
    */
-  public static boolean block() {
+  public boolean block() {
     return block(null);
   }
 
@@ -63,7 +82,7 @@ public class Device {
    * @param owner Object
    * @return success
    */
-  public static boolean block(Object owner) {
+  public boolean block(Object owner) {
     if (use(owner)) {
       blocked = true;
       return true;
@@ -77,34 +96,34 @@ public class Device {
    *
    * @return success (false means: not blocked currently)
    */
-  public static boolean unblock() {
+  public boolean unblock() {
     return unblock(null);
   }
 
   /**
    * free the mouse globally for this owner after a block(owner)
    *
-   * @param owner Object
+   * @param ownerGiven Object
    * @return success (false means: not blocked currently for this owner)
    */
-  public static boolean unblock(Object owner) {
-    if (owner == null) {
-      owner = get();
-    } else if (owner instanceof Region) {
-      if (((Region) owner).isOtherScreen()) {
+  public boolean unblock(Object ownerGiven) {
+    if (ownerGiven == null) {
+      ownerGiven = device;
+    } else if (ownerGiven instanceof Region) {
+      if (((Region) ownerGiven).isOtherScreen()) {
         return false;
       }
     }
-    if (blocked && get().owner == owner) {
+    if (blocked && owner == ownerGiven) {
       blocked = false;
-      get().let(owner);
+      let(ownerGiven);
       return true;
     }
     return false;
   }
 
-  protected static boolean use() {
-    return get().use(null);
+  protected boolean use() {
+    return use(null);
   }
 
   protected synchronized boolean use(Object owner) {
@@ -126,18 +145,18 @@ public class Device {
     }
     if (!inUse) {
       inUse = true;
-      checkLastPos();
+      if (isMouse) {
+        checkLastPos();
+      }
       keep = false;
       this.owner = owner;
-      log(lvl+1, "use start: %s", owner);
+      log(lvl + 1, "%s: use start: %s", devName, owner);
       return true;
     }
     log(-1, "synch problem - use start: %s", owner);
     return false;
   }
 
-  protected void checkLastPos(){}
-  
   protected synchronized boolean keep(Object ownerGiven) {
     if (ownerGiven == null) {
       ownerGiven = this;
@@ -148,14 +167,14 @@ public class Device {
     }
     if (inUse && owner == ownerGiven) {
       keep = true;
-      log(lvl+1, "use keep: %s", ownerGiven);
+      log(lvl + 1, "%s: use keep: %s", devName, ownerGiven);
       return true;
     }
     return false;
   }
 
-  protected static boolean let() {
-    return get().let(null);
+  protected boolean let() {
+    return let(null);
   }
 
   protected synchronized boolean let(Object owner) {
@@ -171,17 +190,72 @@ public class Device {
         keep = false;
         return true;
       }
-      lastPos = getLocation();
+      if (isMouse) {
+        lastPos = getLocation();
+      }
       inUse = false;
       this.owner = null;
       notify();
-      log(lvl+1, "use stop: %s", owner);
+      log(lvl + 1, "%s: use stop: %s", devName, owner);
       return true;
     }
     return false;
   }
-  
-  protected Location getLocation(){
-    return lastPos;
+
+  protected Location getLocation() {
+    PointerInfo mp = MouseInfo.getPointerInfo();
+    if (mp != null) {
+      return new Location(MouseInfo.getPointerInfo().getLocation());
+    } else {
+      Debug.error("Mouse: not possible to get mouse position (PointerInfo == null)");
+      return null;
+    }
+  }
+
+  private void checkLastPos() {
+    if (lastPos == null) {
+      return;
+    }
+    Location pos = getLocation();
+    if (pos != null && (lastPos.x != pos.x || lastPos.y != pos.y)) {
+      log(lvl, "%s: moved externally: now (%d,%d) was (%d,%d) (mouseMovedResponse %d)",
+              devName, pos.x, pos.y, lastPos.x, lastPos.y, mouseMovedResponse);
+      if (mouseMovedResponse > 0) {
+        showMousePos(pos.getPoint());
+      }
+      if (mouseMovedResponse == MouseMovedPause) {
+//TODO implement 2
+        return;
+      }
+      if (mouseMovedResponse == MouseMovedAction) {
+//TODO implement 3
+        if (mouseMovedCallback != null) {
+          mouseMovedCallback.happened(new ObserveEvent("MouseMoved", ObserveEvent.Type.GENERIC,
+                  lastPos, new Location(pos), null, (new Date()).getTime()));
+        }
+      }
+    }
+  }
+
+  private static void showMousePos(Point pos) {
+    Location lPos = new Location(pos);
+    Region inner = lPos.grow(20).highlight();
+    delay(500);
+    lPos.grow(40).highlight(1);
+    delay(500);
+    inner.highlight();
+  }
+
+  protected static void delay(int time) {
+    if (time == 0) {
+      return;
+    }
+    if (time < 60) {
+      time = time * 1000;
+    }
+    try {
+      Thread.sleep(time);
+    } catch (InterruptedException e) {
+    }
   }
 }
