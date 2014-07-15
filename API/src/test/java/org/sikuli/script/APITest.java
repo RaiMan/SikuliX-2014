@@ -2,6 +2,7 @@ package org.sikuli.script;
 
 import junit.framework.Assert;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.BeforeClass;
 import org.sikuli.basics.Debug;
 
@@ -17,7 +18,7 @@ public class APITest {
     Debug.test("APITest: init: ending");
   }
 
-  @Test
+  @Ignore
   public void clickCenterOfPrimaryScreen_2Times_WithPause5() {
     Debug.test("APITest: clickCenterOfPrimaryScreen_2Times_WithPause5: starting");
     s.click();
@@ -27,7 +28,7 @@ public class APITest {
     Assert.assertEquals(s.getCenter(), Mouse.at());
   }
 
-  @Test
+  @Ignore
   public void findAndHighlightTopLeftSixth() {
     Debug.test("APITest: findAndHighlightTopLeftSixth: starting");
     Region r = s.get(Region.NORTH_WEST);
