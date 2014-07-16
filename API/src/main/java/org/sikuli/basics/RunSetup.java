@@ -405,7 +405,7 @@ public class RunSetup {
 						FileManager.xcopyAll(fJRubyFat.getAbsolutePath(),
 										new File(fDownloads, downloadJRuby).getAbsolutePath());
 						String fname = new File(projectDir, "Remote/target/"
-										+ "SikuliX-Remote-" + version.substring(0, 5) + ".jar").getAbsolutePath();
+										+ "sikulixremote-" + version.substring(0, 5) + ".jar").getAbsolutePath();
 						FileManager.xcopyAll(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
 						fname = new File(projectDir, "Tesseract/target/"
 										+ downloadTess).getAbsolutePath();
