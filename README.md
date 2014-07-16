@@ -7,16 +7,17 @@
 The Maven GroupID for the project is switched to **com.sikulix** (package names remain org.sikuli....)
 
 The structure is reduced to 3 main packages:
- - API now contains Basics and OpenCV2Sikuli as well (gets sikulixapi.jar)
+ - API now contains Basics and OpenCV4Sikuli as well (gets sikulixapi.jar)
  - IDE unchanged (gets sikulix.jar)
  - Libs includes Natives (contains everything related to native stuff - gets sikulixlibs.jar)
 
 The other packages are mostly unchanged.
 <hr>
-The **latest stable version** is **SikuliX 1.0.1** [download here](https://launchpad.net/sikuli/+download)<br><br>
 **If you want to test the head of developement without the need to build from sources:** <br>
 [look here: I have setup a page with nightly builds](http://nightly.sikuli.de)<br>
 **At your own risk ;-) Take care for your existing work - be prepared to restore your stuff!!**
+<hr>
+The **latest stable version** is **SikuliX 1.0.1** [download here](https://launchpad.net/sikuli/+download)
 <hr />
 **SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer)
 
