@@ -203,7 +203,6 @@ public class RobotDesktop extends Robot implements IRobot {
           heldKeys += keys.charAt(i);
         }
       }
-      waitForIdle();
     }
   }
 
@@ -213,7 +212,6 @@ public class RobotDesktop extends Robot implements IRobot {
       keyPress(code);
       heldKeyCodes.add(code);
     }
-    waitForIdle();
   }
 
   @Override
@@ -302,6 +300,7 @@ public class RobotDesktop extends Robot implements IRobot {
       }
     }
     doType(KeyMode.PRESS_RELEASE, key);
+    waitForIdle();
   }
 
   @Override
