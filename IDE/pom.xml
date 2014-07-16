@@ -10,32 +10,32 @@
   -->
 
   <parent>
-    <groupId>org.sikuli</groupId>
-    <artifactId>SikuliX-Project</artifactId>
+    <groupId>com.sikulix</groupId>
+    <artifactId>SikuliX-2014</artifactId>
     <version>1.1.0</version>
     <relativePath>../</relativePath>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.sikuli</groupId>
-  <artifactId>SikuliX-IDE</artifactId>
+  <groupId>com.sikulix</groupId>
+  <artifactId>sikulix</artifactId>
   <version>1.1.0</version>
 
   <dependencies>
     <dependency>
-      <groupId>org.sikuli</groupId>
-      <artifactId>SikuliX-API</artifactId>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixapi</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.sikuli</groupId>
-      <artifactId>SikuliX-Jython</artifactId>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixjython</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.sikuli</groupId>
-      <artifactId>SikuliX-JRuby</artifactId>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixjruby</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -59,8 +59,8 @@
       <version>0.9.5</version>
     </dependency>
     <dependency>
-      <groupId>org.sikuli</groupId>
-      <artifactId>Jygments4SikuliX</artifactId>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixjygments</artifactId>
       <version>1.1.0</version>
     </dependency>
   </dependencies>

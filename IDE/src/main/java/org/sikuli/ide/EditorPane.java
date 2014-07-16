@@ -32,7 +32,7 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.basics.IResourceLoader;
 import org.sikuli.basics.IndentationLogic;
 import org.sikuli.script.Location;
-import org.sikuli.basics.SikuliX;
+import org.sikuli.basics.Sikulix;
 import org.sikuli.script.Image;
 import org.sikuli.script.ImagePath;
 import org.sikuli.syntaxhighlight.ResolutionException;
@@ -166,7 +166,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		SikuliIDE.getStatusbar().setCurrentContentType(getSikuliContentType());
 		log(lvl, "InitTab: (%s)", getSikuliContentType());
 		if (!Settings.hasTypeRunner(getSikuliContentType())) {
-			SikuliX.popup("No installed runner supports (" + getSikuliContentType() + ")\n"
+			Sikulix.popup("No installed runner supports (" + getSikuliContentType() + ")\n"
 							+ "Trying to run the script will crash IDE!", "... serious problem detected!");
 		}
 	}
@@ -587,8 +587,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 //TODO convertSrcToHtml has to be completely revised
 	private void convertSrcToHtml(String bundle) {
-		if (null != SikuliX.getScriptRunner("jython", null, new String[]{"convertSrcToHtml"})) {
-			SikuliX.getScriptRunner("jython", null, null).doSomethingSpecial("convertSrcToHtml",
+		if (null != Sikulix.getScriptRunner("jython", null, new String[]{"convertSrcToHtml"})) {
+			Sikulix.getScriptRunner("jython", null, null).doSomethingSpecial("convertSrcToHtml",
 							new String[]{bundle});
 		}
 	}

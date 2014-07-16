@@ -9,20 +9,20 @@
 	-->
 
 	<parent>
-		<groupId>org.sikuli</groupId>
-		<artifactId>SikuliX-Project</artifactId>
+		<groupId>com.sikulix</groupId>
+		<artifactId>SikuliX-2014</artifactId>
 		<version>1.1.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 
   <modelVersion>4.0.0</modelVersion>
 
-  <groupId>org.sikuli</groupId>
-  <artifactId>SikuliX-Remote</artifactId>
+  <groupId>com.sikulix</groupId>
+  <artifactId>sikulixremote</artifactId>
   <version>1.1.0</version>
-  
+
   <build>
-    <plugins>      
+    <plugins>
       <plugin>
         <artifactId>maven-jar-plugin</artifactId>
         <version>2.4</version>
@@ -33,7 +33,7 @@
             </manifest>
           </archive>
         </configuration>
-      </plugin>   
+      </plugin>
     </plugins>
   </build>
 </project>

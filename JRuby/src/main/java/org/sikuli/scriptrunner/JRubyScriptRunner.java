@@ -25,18 +25,16 @@ import java.util.regex.Pattern;
 import java.util.List;
 //import java.io.PrintWriter;
 //import java.io.StringWriter;
-import java.io.FileReader;
 
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
-import org.sikuli.basics.SikuliX;
+import org.sikuli.basics.Sikulix;
 
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.javasupport.JavaEmbedUtils.EvalUnit;
 import org.jruby.CompatVersion;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.RubyInstanceConfig.CompileMode;
-import org.jruby.embed.PathType;
 
 public class JRubyScriptRunner implements IScriptRunner {
 
@@ -90,7 +88,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 	@Override
 	public void init(String[] args) {
 		//TODO classpath and other path handlings
-		sikuliLibPath = new File(SikuliX.getJarPath(), "Lib").getAbsolutePath();
+		sikuliLibPath = new File(Sikulix.getJarPath(), "Lib").getAbsolutePath();
 	}
 
 	@Override
@@ -100,7 +98,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 			fillSysArgv(null, null);
 			createScriptingContainer();
 			executeScriptHeader(new String[0]);
-			SikuliX.displaySplash(null);
+//			SikuliX.displaySplash(null);
 			return runRuby(null, scriptArgs, null);
 		}
 		scriptfile = new File(scriptfile.getAbsolutePath());
@@ -115,8 +113,8 @@ public class JRubyScriptRunner implements IScriptRunner {
 				forIDE[0]});
 		}
 		int exitCode = 0;
-		SikuliX.displaySplashFirstTime(null);
-		SikuliX.displaySplash(null);
+//		SikuliX.displaySplashFirstTime(null);
+//		SikuliX.displaySplash(null);
 		if (forIDE == null) {
 			exitCode = runRuby(scriptfile, null,
 							new String[]{scriptfile.getParentFile().getAbsolutePath()});

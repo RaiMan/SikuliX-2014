@@ -10,17 +10,16 @@
 	-->
 
 	<parent>
-		<groupId>org.sikuli</groupId>
-		<artifactId>SikuliX-Project</artifactId>
+		<groupId>com.sikulix</groupId>
+		<artifactId>SikuliX-2014</artifactId>
 		<version>1.1.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.sikuli</groupId>
-	<artifactId>SikuliX-JRuby</artifactId>
-	<name>SikuliX-JRuby</name>
+	<groupId>com.sikulix</groupId>
+	<artifactId>sikulixjruby</artifactId>
 	<version>1.1.0</version>
 
 	<developers>
@@ -40,8 +39,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.sikuli</groupId>
-			<artifactId>SikuliX-Basics</artifactId>
+			<groupId>com.sikulix</groupId>
+			<artifactId>sikulixapi</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>

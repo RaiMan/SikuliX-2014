@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014, Sikuli.org, SikuliX.com
+ * Copyright 2010-2014, Sikuli.org, Sikulix.com
  * Released under the MIT License.
  *
  * modified RaiMan
@@ -73,7 +73,7 @@ public class Screen extends Region implements EventObserver, IScreen {
     screens = new Screen[gdevs.length];
     if (gdevs.length == 0) {
       Debug.error("Screen: initScreens: GraphicsEnvironment has no screens");
-      SikuliX.endFatal(999);
+      Sikulix.endFatal(999);
     }
     primaryScreen = -1;
     for (int i = 0; i < getNumberScreens(); i++) {
@@ -102,7 +102,7 @@ public class Screen extends Region implements EventObserver, IScreen {
       mouseRobot.setAutoDelay(10);
     } catch (AWTException e) {
       Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
-      SikuliX.endFatal(999);
+      Sikulix.endFatal(999);
     }
     if (!reset) {
       log(lvl - 1, "initScreens: basic initialization (%d Screen(s) found)", gdevs.length);

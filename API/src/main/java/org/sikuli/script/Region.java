@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014, Sikuli.org, SikuliX.com
+ * Copyright 2010-2014, Sikuli.org, Sikulix.com
  * Released under the MIT License.
  *
  * modified RaiMan
@@ -2347,7 +2347,7 @@ public class Region {
         }
       } else {
         log(-1, "doFind: invalid parameter: %s", ptn);
-        SikuliX.endFatal(1);
+        Sikulix.endFatal(1);
       }
       if (repeating != null) {
         repeating._finder = f;
@@ -2437,7 +2437,7 @@ public class Region {
         }
       } else {
         log(-1, "doFind: invalid parameter: %s", ptn);
-        SikuliX.endFatal(1);
+        Sikulix.endFatal(1);
       }
       if (repeating != null) {
         repeating._finder = f;

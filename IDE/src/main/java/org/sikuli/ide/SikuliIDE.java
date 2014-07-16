@@ -48,9 +48,8 @@ import org.sikuli.basics.IDESupport;
 import org.sikuli.basics.IResourceLoader;
 import org.sikuli.script.ImagePath;
 import org.sikuli.basics.MultiFrame;
-import org.sikuli.basics.RunSetup;
 import org.sikuli.basics.SikuliScript;
-import org.sikuli.basics.SikuliX;
+import org.sikuli.basics.Sikulix;
 import org.sikuli.script.Key;
 
 public class SikuliIDE extends JFrame {
@@ -164,7 +163,7 @@ public class SikuliIDE extends JFrame {
     });
 
     if (System.getProperty("sikuli.FromCommandLine") == null) {
-      String[] userOptions = SikuliX.collectOptions("IDE", args);
+      String[] userOptions = Sikulix.collectOptions("IDE", args);
       if (userOptions == null) {
         System.exit(0);
       }
@@ -255,14 +254,14 @@ public class SikuliIDE extends JFrame {
         splashArgs[5] = "Terminating on FatalError: IDE already running";
         splash = new MultiFrame(splashArgs);
         log(-1, splashArgs[5]);
-        SikuliX.pause(3);
+        Sikulix.pause(3);
         System.exit(1);
       }
     } catch (Exception ex) {
       splashArgs[5] = "Terminating on FatalError: cannot access IDE lock ";
       splash = new MultiFrame(splashArgs);
       log(-1, splashArgs[5] + "\n" + isRunning.getAbsolutePath());
-      SikuliX.pause(3);
+      Sikulix.pause(3);
       System.exit(1);
     }
 
@@ -907,7 +906,7 @@ public class SikuliIDE extends JFrame {
           return;
         }
       }
-      SikuliX.cleanUp(0);
+      Sikulix.cleanUp(0);
       HotkeyManager.getInstance().cleanUp();
       System.exit(0);
     }
@@ -1606,7 +1605,7 @@ public class SikuliIDE extends JFrame {
 
     public void openAsk(ActionEvent ae) {
       String title = "SikuliX - Ask a question";
-      String msg = "If you want to ask a question about SikuliX\n%s\n" + 
+      String msg = "If you want to ask a question about SikuliX\n%s\n" +
               "\nplease do the following:" +
               "\n- after having clicked yes" +
               "\n   the page on Launchpad should open in your browser." +
@@ -1623,7 +1622,7 @@ public class SikuliIDE extends JFrame {
 
     public void openBugReport(ActionEvent ae) {
       String title = "SikuliX - Report a bug";
-      String msg = "If you want to report a bug for SikuliX\n%s\n" + 
+      String msg = "If you want to report a bug for SikuliX\n%s\n" +
               "\nplease do the following:" +
               "\n- after having clicked yes" +
               "\n   the page on Launchpad should open in your browser" +
@@ -1634,12 +1633,12 @@ public class SikuliIDE extends JFrame {
               "\n\nIf you do not want to report a bug now: click No";
       askBugOrAnswer(msg, title, "https://bugs.launchpad.net/sikuli/+filebug");
     }
-    
+
     private void askBugOrAnswer(String msg, String title, String url) {
       String si = Settings.getSystemInfo();
       System.out.println(si);
       msg = String.format(msg, si);
-      if (SikuliX.popAsk(msg, title)) {
+      if (Sikulix.popAsk(msg, title)) {
         Clipboard clb = Toolkit.getDefaultToolkit().getSystemClipboard();
         StringSelection sic = new StringSelection(si.toString());
         clb.setContents(sic, sic);
@@ -2002,7 +2001,7 @@ public class SikuliIDE extends JFrame {
       SikuliIDE.getStatusbar().resetMessage();
       ide.setVisible(false);
       if (ide.firstRun) {
-        SikuliX.displaySplashFirstTime(new String[0]);
+        Sikulix.displaySplashFirstTime(new String[0]);
         ide.firstRun = false;
       }
       ide.setIsRunningScript(true);
@@ -2030,7 +2029,7 @@ public class SikuliIDE extends JFrame {
             SikuliIDE.getInstance().setIsRunningScript(false);
             SikuliIDE.getInstance().setVisible(true);
             _runningThread = null;
-            SikuliX.cleanUp(0);
+            Sikulix.cleanUp(0);
           }
         }
       };
@@ -2044,7 +2043,7 @@ public class SikuliIDE extends JFrame {
       String runnerType = null;
       String cType = pane.getContentType();
       runnerType = cType.equals(Settings.CPYTHON) ? Settings.RPYTHON : Settings.RRUBY;
-      IScriptRunner srunner = SikuliX.getScriptRunner(runnerType, null, Settings.getArgs());
+      IScriptRunner srunner = Sikulix.getScriptRunner(runnerType, null, Settings.getArgs());
       if (srunner == null) {
         Debug.error("Could not load a script runner for: %s (%s)", cType, runnerType);
         return;
@@ -2417,7 +2416,7 @@ public class SikuliIDE extends JFrame {
     Debug.log(3, "StopRunning after AbortKey");
     _btnRun.stopRunning();
     _btnRunViz.stopRunning();
-    org.sikuli.script.SikuliX.cleanUp(-1);
+    org.sikuli.script.Sikulix.cleanUp(-1);
     this.setVisible(true);
   }
 

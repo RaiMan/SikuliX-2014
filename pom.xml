@@ -10,8 +10,8 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>org.sikuli</groupId>
-	<artifactId>SikuliX-Project</artifactId>
+	<groupId>com.sikulix</groupId>
+	<artifactId>SikuliX-2014</artifactId>
 	<version>1.1.0</version>
 
 	<packaging>pom</packaging>
@@ -43,7 +43,7 @@
 		<sikulixvmaj>1</sikulixvmaj>
 		<sikulixvmin>1</sikulixvmin>
 		<sikulixvsub>0</sikulixvsub>
-		<sikulixbeta>3</sikulixbeta>
+		<sikulixbeta>4</sikulixbeta>
 		<!--   this decides, where setup downloads from   -->
 <!--		<sikulixdev>release</sikulixdev>-->
 		<sikulixdev>development</sikulixdev>
@@ -160,9 +160,9 @@
 			</properties>
 			<dependencies>
 				<dependency>
-					<groupId>org.sikuli</groupId>
-					<artifactId>SikuliX-Libs</artifactId>
-					<version>1.1.0</version>
+					<groupId>com.sikulix</groupId>
+					<artifactId>sikulixlibs</artifactId>
+					<version>${project.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -176,9 +176,9 @@
 			</properties>
 			<dependencies>
 				<dependency>
-					<groupId>org.sikuli</groupId>
-					<artifactId>SikuliX-Tesseract</artifactId>
-					<version>1.1.0</version>
+					<groupId>com.sikulix</groupId>
+					<artifactId>sikulixtessdata</artifactId>
+					<version>${project.version}</version>
 				</dependency>
 			</dependencies>
 		</profile>
@@ -230,25 +230,22 @@
 	</profiles>
 
 	<modules>
-		<module>Jygments4SikuliX</module>
-		<module>OpenCV4SikuliX</module>
-		<module>Tesseract4SikuliX</module>
 		<module>Libs</module>
-		<module>Natives</module>
-		<module>Basics</module>
-		<module>Setup</module>
+		<module>API</module>
 		<module>Jython</module>
 		<module>JythonFat</module>
 		<module>JRuby</module>
 		<module>JRubyFat</module>
 		<module>JRubyGem</module>
-		<module>API</module>
+		<module>Jygments4SikuliX</module>
+		<module>IDE</module>
+		<module>Setup</module>
+		<module>IDEFat</module>
 		<module>APIFat</module>
 		<module>APIFatReady</module>
-		<module>IDE</module>
-		<module>IDEFat</module>
 		<module>MacApp</module>
 		<module>Tesseract</module>
+		<module>Tesseract4SikuliX</module>
 		<module>Remote</module>
 		<module>Guide</module>
   </modules>

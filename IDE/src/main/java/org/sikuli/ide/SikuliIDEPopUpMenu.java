@@ -10,7 +10,7 @@ import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
-import org.sikuli.basics.SikuliX;
+import org.sikuli.basics.Sikulix;
 import org.sikuli.script.Image;
 import org.sikuli.script.ImagePath;
 
@@ -220,7 +220,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
         }
       }
 			String currentType = cp.getSikuliContentType();
-			String targetType = SikuliX.popSelect("Select the Scripting Language ...",
+			String targetType = Sikulix.popSelect("Select the Scripting Language ...",
 							selOptionsType, currentType.replaceFirst(".*?\\/", ""));
 			if (targetType == null) {
 				targetType = currentType;
@@ -234,7 +234,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 			String targetEnding = Settings.TypeEndings.get(targetType);
 			if (cp.reparseBefore() != null) {
 				if (!cp.reparseCheckContent()) {
-					if (!SikuliX.popAsk(String.format(
+					if (!Sikulix.popAsk(String.format(
 									"Switch to %s requested, but tab is not empty!\n"
 									+ "Click YES, to discard content and switch\n"
 									+ "Click NO to cancel this action and keep content.",
@@ -332,7 +332,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       ImagePath.reset();
       Image.dump();
   }
-}
+	}
 
   private void popImageMenu() {
     try {

@@ -7,18 +7,18 @@ import org.junit.BeforeClass;
 import org.sikuli.basics.Debug;
 
 public class APITest {
-  
+
   public static Screen s;
-  
+
   @BeforeClass
   public static void init() {
     Debug.test("APITest: init: starting");
     Debug.setDebugLevel(3);
-    s = SikuliX.init();
+    s = Sikulix.init();
     Debug.test("APITest: init: ending");
   }
 
-  @Ignore
+  @Test
   public void clickCenterOfPrimaryScreen_2Times_WithPause5() {
     Debug.test("APITest: clickCenterOfPrimaryScreen_2Times_WithPause5: starting");
     s.click();
@@ -28,14 +28,14 @@ public class APITest {
     Assert.assertEquals(s.getCenter(), Mouse.at());
   }
 
-  @Ignore
+  @Test
   public void findAndHighlightTopLeftSixth() {
     Debug.test("APITest: findAndHighlightTopLeftSixth: starting");
     Region r = s.get(Region.NORTH_WEST);
     Match m = s.exists(new Image(s.capture(r).getImage()));
     if (m != null) {
       m.highlight(2f);
-    }    
+    }
     Debug.test("APITest: findAndHighlightTopLeftSixth: ending");
     Assert.assertTrue(m != null);
   }
