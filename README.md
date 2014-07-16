@@ -65,19 +65,19 @@ The Java implementation comprising the API to access the top elements (Screen, R
 The ready-to-use package `sikulixapi.jar` provides this API for Java programming and any Java aware scripting languages.
 <br>**this is the candidate for MavenCentral**
 
-**Module Basics** (now contained in API)
+**Basics** (now contained in API)
 
 Implements basic utility and helper features used in the top level packages (basic file and folder handling, download features, jar access and handling, export of native libraries, parameter and preferences handling, update and extension handling, ...) and hence it is contained in all packages.
 
 As a special feature it comprises the `sikulixsetup.jar`, which is run after download to build the wanted SikuliX packages and make them ready-to-use on the specific system (Windows, Mac or Linux).
 
-**Module Natives** (now contained in API)
+**Natives** (now contained in API)
 
 Contains the Java sources interface classes (JNI based, mainly SWIG generated) and the C++ sources providing the implementation of the OpenCV and Tesseract usage and the implementation of some system specific features (HotKeyHandling, App class support,...).
 
 A maven based build workflow for the native libraries (libVisionProxy, lib...Util and hotky support on Mac) is available in the module Libs, which is also the target module for the prebuilt libraries finally bundled with the top level packages.
 
-**Module OpenCV4SikuliX** (now contained in API)
+**OpenCV4SikuliX** (now contained in API)
 
 Sikuli's image search is based on features of [OpenCV](http://opencv.org). Starting with version 2.4.6 OpenCV provides a self-contained JNI interface to the OpenCV native libraries, allowing to use OpenCV features directly in Java (and hence making C++ programming obsolete for this).
 
