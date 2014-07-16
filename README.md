@@ -1,8 +1,17 @@
 [![RaiMan's Stuff](https://raw.github.com/RaiMan/SikuliX-2014-Docs/master/src/main/resources/docs/source/RaiManStuff64.png)](http://www.sikuli.org) SikuliX-2014 (current version 1.1.0)
 ============
 
-1.1.0-Beta3 is under development
+1.1.0-Beta4 is under development
 -----------------
+
+The Maven GroupID for the project is switched to **com.sikulix** (package names remain org.sikuli....)
+
+The structure is reduced to 3 main packages:
+ - API now contains Basics and OpenCV2Sikuli as well (gets sikulixapi.jar)
+ - IDE unchanged (gets sikulix.jar)
+ - Libs includes Natives (contains everything related to native stuff - gets sikulixlibs.jar)
+The other packages are mostly unchanged.
+<hr>
 The **latest stable version** is **SikuliX 1.0.1** [download here](https://launchpad.net/sikuli/+download)<br><br>
 **If you want to test the head of developement without the need to build from sources:** <br>
 [look here: I have setup a page with nightly builds](http://nightly.sikuli.de)<br>
