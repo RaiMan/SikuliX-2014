@@ -10,6 +10,7 @@ The structure is reduced to 3 main packages:
  - API now contains Basics and OpenCV2Sikuli as well (gets sikulixapi.jar)
  - IDE unchanged (gets sikulix.jar)
  - Libs includes Natives (contains everything related to native stuff - gets sikulixlibs.jar)
+ - 
 The other packages are mostly unchanged.
 <hr>
 The **latest stable version** is **SikuliX 1.0.1** [download here](https://launchpad.net/sikuli/+download)<br><br>
