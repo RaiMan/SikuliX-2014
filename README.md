@@ -7,9 +7,9 @@
 The Maven GroupID for the project is switched to **com.sikulix** (package names remain org.sikuli....)
 
 The structure is reduced to 3 main packages:
- - API now contains Basics and OpenCV4Sikuli as well (gets sikulixapi.jar)
- - IDE unchanged (gets sikulix.jar)
- - Libs includes Natives (contains everything related to native stuff - gets sikulixlibs.jar)
+ - API: now contains Basics, Natives and OpenCV4Sikuli (gets sikulixapi.jar)
+ - IDE: unchanged (gets sikulix.jar)
+ - Libs: everything related to native stuff including the prebuilt libraries (gets sikulixlibs.jar)
 
 The other packages are mostly unchanged.
 <hr>
@@ -63,6 +63,52 @@ Each folder (module) in this repo is a Maven project by itself with its own POM,
 The Java implementation comprising the API to access the top elements (Screen, Region, Pattern, Match, Image, ...) and their methods allowing to search for images and to act on points and matches simulating mouse and keyboard.
 
 The ready-to-use package `sikulixapi.jar` provides this API for Java programming and any Java aware scripting languages.
+<br>**this is the candidate for MavenCentral**
+
+**Module Basics** (now contained in API)
+
+Implements basic utility and helper features used in the top level packages (basic file and folder handling, download features, jar access and handling, export of native libraries, parameter and preferences handling, update and extension handling, ...) and hence it is contained in all packages.
+
+As a special feature it comprises the `sikulixsetup.jar`, which is run after download to build the wanted SikuliX packages and make them ready-to-use on the specific system (Windows, Mac or Linux).
+
+**Module Natives** (now contained in API)
+
+Contains the Java sources interface classes (JNI based, mainly SWIG generated) and the C++ sources providing the implementation of the OpenCV and Tesseract usage and the implementation of some system specific features (HotKeyHandling, App class support,...).
+
+A maven based build workflow for the native libraries (libVisionProxy, lib...Util and hotky support on Mac) is available in the module Libs, which is also the target module for the prebuilt libraries finally bundled with the top level packages.
+
+**Module OpenCV4SikuliX** (now contained in API)
+
+Sikuli's image search is based on features of [OpenCV](http://opencv.org). Starting with version 2.4.6 OpenCV provides a self-contained JNI interface to the OpenCV native libraries, allowing to use OpenCV features directly in Java (and hence making C++ programming obsolete for this).
+
+This module contains a specially configured Java/JNI OpenCV package (built using the standard OpenCV configure/make workflow) for use with the OpenCV features currently needed by Sikuli (core, imgproc, feature2d and highgui). The corresponding native library pack (currently Mac only) is contained in the module Libs.
+
+With the availability of the final version 1.1.0 the implementation of the OpenCV usage will be moved completely to the Java level. Until then the existing implementation in C++ is activated in the standard. The usage of the new implementation (in the new classes ImageFinder and ImageFind) can be switched on optinally for testing and developement.
+
+For Windows and Mac the native packages will again be pre-built and ready-to-use. For Linux there will be advices and scripts available to get the needed libraries ready.
+
+For more information on preparation and usage of the new OpenCV Java API [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-and-use-the-new-OpenCV-Java-API)
+
+**Module Libs**
+
+The prebuilt native libraries for Windows, Mac and Linux (partially).<br />
+(gets `sikulixlibs.jar` and is contained in `sikulixsetup.jar`)
+
+It contains a Maven workflow to execute build scripts for the native libraries on the system running on:
+ - Windows (not yet ready): WinUtil.dll, VisionProxy.dll
+ - Mac: libMacHotkeyManager.dylib, libMacUtil.dylib, libVisionProxy.dylib
+ - Linux: libVisionProxy.so
+
+To run it from the project root folder:<br />
+`mvn -f Libs/x*`
+
+The build scripts are in the respective system folder in folder `build` <br />
+The built libraries will directly go to the respective resources folder. <br />
+In case of errors you have to check the prerequisites: [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-for-and-build-the-native-libraries)
+
+For Linux there will still be a supplemental package available on the download page, that allows to build libVisionProxy.so
+<br><br>`sikulixlibs.jar` **is a candidate for MavenCentral**
+
 
 **Module IDE**
 
@@ -89,24 +135,6 @@ Implements Jython support for the IDE and for running scripts using Python as sc
 Implements JRuby support for the IDE and for running scripts using Ruby as scripting language.<br />
 (optionally contained in package sikulix.jar)
 
-**Module Basics**
-
-Implements basic utility and helper features used in the top level packages (basic file and folder handling, download features, jar access and handling, export of native libraries, parameter and preferences handling, update and extension handling, ...) and hence it is contained in all packages.
-
-As a special feature it comprises the `sikulixsetup.jar`, which is run after download to build the wanted SikuliX packages and make them ready-to-use on the specific system (Windows, Mac or Linux).
-
-**Module OpenCV4SikuliX**
-
-Sikuli's image search is based on features of [OpenCV](http://opencv.org). Starting with version 2.4.6 OpenCV provides a self-contained JNI interface to the OpenCV native libraries, allowing to use OpenCV features directly in Java (and hence making C++ programming obsolete for this).
-
-This module contains a specially configured Java/JNI OpenCV package (built using the standard OpenCV configure/make workflow) for use with the OpenCV features currently needed by Sikuli (core, imgproc, feature2d and highgui). The corresponding native library pack (currently Mac only) is contained in the module Libs.
-
-With the availability of the final version 1.1.0 the implementation of the OpenCV usage will be moved completely to the Java level. Until then the existing implementation in C++ is activated in the standard. The usage of the new implementation (in the new classes ImageFinder and ImageFind) can be switched on optinally for testing and developement.
-
-For Windows and Mac the native packages will again be pre-built and ready-to-use. For Linux there will be advices and scripts available to get the needed libraries ready.
-
-For more information on preparation and usage of the new OpenCV Java API [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-and-use-the-new-OpenCV-Java-API)
-
 **Module Tesseract4SikuliX**
 
 This is an adaption of the work [Tess4J](http://tess4j.sourceforge.net) to the needs of this project, to allow the use of relevant Tesseract features directly from the Java level. The implementation is on level Tesseract 3.02 and uses JNA direct mapping to access the native functions in the library libtesseract.
@@ -115,12 +143,6 @@ For Windows and Mac the native packages will again be pre-built and ready-to-use
 
 For more information on preparation and usage of the new Tesseract Java API [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-and-use-the-new-Tesseract-Java-API)
 
-**Module Natives**
-
-Contains the Java sources interface classes (JNI based, mainly SWIG generated) and the C++ sources providing the implementation of the OpenCV and Tesseract usage and the implementation of some system specific features (HotKeyHandling, App class support,...).
-
-A maven based build workflow for the native libraries (libVisionProxy, lib...Util and hotky support on Mac) is available in the module Libs, which is also the target module for the prebuilt libraries finally bundled with the top level packages.
-
 **Module Jygments4SikuliX**
 
 This is an adaption of the work [Jygments](https://code.google.com/p/jygments/) to the needs of SikuliX: it contains lexer/parser/formatter features and is a port from Python to Java of the well known Pygments tool, that is widely used for syntax highlighting and formatting of program code. In SikuliX it is intended to be used for syntax highlighting and other purposes, where scripting language grammar awareness is needed.
@@ -128,25 +150,6 @@ This is an adaption of the work [Jygments](https://code.google.com/p/jygments/) 
 <hr/>
 
 **--- The modules used to support package production (container jars) ---**
-
-**Module Libs**
-
-The prebuilt native libraries for Windows, Mac and Linux (partially).<br />
-(contained in `sikulixsetup.jar`)
-
-It contains a Maven workflow to execute build scripts for the native libraries on the system running on:
- - Windows (not yet ready): WinUtil.dll, VisionProxy.dll
- - Mac: libMacHotkeyManager.dylib, libMacUtil.dylib, libVisionProxy.dylib
- - Linux: libVisionProxy.so
-
-To run it from the project root folder:<br />
-`mvn -f Libs/x*`
-
-The build scripts are in the respective system folder in folder `build` <br />
-The built libraries will directly go to the respective resources folder. <br />
-In case of errors you have to check the prerequisites: [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-for-and-build-the-native-libraries)
-
-For Linux there will still be a supplemental package available on the download page, that allows to build libVisionProxy.so
 
 **Module Tesseract**
 
