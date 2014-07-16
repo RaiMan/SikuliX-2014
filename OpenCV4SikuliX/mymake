@@ -1,12 +1,12 @@
 # special g++ settings (for 4.8.2+)
 # -fPIC not needed (file cmake\OpenCVCompilerOptions.cmake line 255)
 
-basedir=`pwd`
-workdir=$basedir
+workdir=`pwd`
+basedir=$workdir/opencvsrc
 if [ "$1" != "" ]; then
    basedir=$1
-   cd $1
 fi
+cd $basedir
 builddir=$basedir/build
 if [ "$NOWIS" != "" ]; then
 	builddir=$builddir$NOWIS
