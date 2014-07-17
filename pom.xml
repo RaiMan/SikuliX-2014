@@ -57,7 +57,7 @@
 	</properties>
 
 	<repositories>
-		<repository> <!-- needed for jxgrabkey -->
+		<repository>  <!-- com.sikulix.sikulixapi: jxgrabkey -->
 			<id>uni-due.de</id>
 			<name>uni-due.de</name>
 			<url>http://mvn.is.inf.uni-due.de:8081/nexus/content/repositories/atunes-dependencies/</url>
@@ -71,7 +71,7 @@
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</repository>
-		<repository>
+		<repository> <!-- Tesseract4SikuliX: java/dev/jai-imageio/jai-imageio-core-standalone/1.2 -->
 			<releases/>
 			<snapshots>
 				<enabled>false</enabled>
