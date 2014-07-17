@@ -5,7 +5,7 @@ require 'java'
 
 # Classes and methods for using SikuliX
 module SikuliX4Ruby
-  java_import org.sikuli.basics.SikuliX
+  java_import org.sikuli.basics.Sikulix
   java_import org.sikuli.script.Screen
   java_import org.sikuli.script.Region
   java_import org.sikuli.script.ScreenUnion
@@ -15,6 +15,8 @@ module SikuliX4Ruby
 
   java_import org.sikuli.script.Constants
   java_import org.sikuli.script.Finder
+  java_import org.sikuli.script.ImageFinder
+  java_import org.sikuli.script.ImageFind
 
   java_import org.sikuli.script.Button
   java_import org.sikuli.basics.OS
@@ -24,11 +26,14 @@ module SikuliX4Ruby
   java_import org.sikuli.script.Location
 
   java_import org.sikuli.script.ImagePath
+  java_import org.sikuli.script.Image
+  java_import org.sikuli.script.ImageGroup
 
   java_import org.sikuli.script.App
   java_import org.sikuli.script.Key
   java_import org.sikuli.script.KeyModifier
   java_import org.sikuli.script.Mouse
+  java_import org.sikuli.script.Keys
 
   java_import org.sikuli.basics.Settings
   java_import org.sikuli.basics.ExtensionManager
@@ -155,7 +160,7 @@ module SikuliX4Ruby
 
   # Generate static methods in SikuliX4Ruby context
   # for possible "undotted" methods.
-  [$SIKULI_SCREEN, SikuliX].each do |obj|
+  [$SIKULI_SCREEN, Sikulix].each do |obj|
     mtype = (obj.class == Class ? :java_class_methods : :java_instance_methods)
     obj.java_class.method(mtype).call.map(&:name).uniq.each do |name|
       obj_meth = obj.method(name)
