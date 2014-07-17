@@ -31,6 +31,8 @@ public class Settings {
 	public static int SikuliVersionMinor;
 	public static int SikuliVersionSub;
 	public static int SikuliVersionBetaN;
+	public static String SikuliProjectVersionUsed = "";
+	public static String SikuliProjectVersion = "";
 	public static String SikuliVersionBuild;
 	public static String SikuliVersionType;
 	public static String SikuliVersionTypeText;
@@ -210,6 +212,8 @@ public class Settings {
 				SikuliVersionScript = SikuliVersionDefaultScript;
         SikuliVersionLong = sversion + "(" + SikuliVersionBuild + ")";
 			}
+			SikuliProjectVersionUsed = prop.getProperty("sikulixvused");
+			SikuliProjectVersion = prop.getProperty("sikulixvproject");
       String osn = "UnKnown";
       String os = System.getProperty("os.name").toLowerCase();
       if (os.startsWith("mac")) {
