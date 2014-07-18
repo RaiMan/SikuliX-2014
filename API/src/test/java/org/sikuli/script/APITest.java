@@ -40,6 +40,7 @@ public class APITest {
   public void findAndHighlightTopLeftSixth() {
 		if (!Sikulix.canRun()) {
 			Assert.assertTrue(true);
+			return;
 		}
 		Debug.test("APITest: findAndHighlightTopLeftSixth: starting");
     Region r = s.get(Region.NORTH_WEST);
