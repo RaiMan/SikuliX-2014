@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<!--
+	* Copyright 2010-2014, Sikuli.org, sikulix.com
+	* Released under the MIT License.
+	*
+	* RaiMan 2014
+	-->
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.sikulix</groupId>
+	<artifactId>sikulixapi</artifactId>
+	<version>1.1.0-Beta4-SNAPSHOT</version>
+
+	<packaging>jar</packaging>
+
+	<name>SikuliX Java API</name>
+	<description>... for visual testing and automation</description>
+	<url>http://www.sikulix.com</url>
+
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.sikulix.com/disclaimer.html</url>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>RaiMan</id>
+			<name>Raimund Hocke</name>
+			<email>rmhdevelop@me.com</email>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:RaiMan/SikuliX-2014.git</connection>
+		<developerConnection>scm:git:git@github.com:RaiMan/SikuliX-2014.git</developerConnection>
+		<url>git@github.com:RaiMan/SikuliX-2014.git</url>
+	</scm>
+
+	<repositories>
+		<repository>  <!-- com.sikulix.sikulixapi: jxgrabkey -->
+			<id>uni-due.de</id>
+			<name>uni-due.de</name>
+			<url>http://mvn.is.inf.uni-due.de:8081/nexus/content/repositories/atunes-dependencies/</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>never</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+				<updatePolicy>never</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>commons-cli</groupId>
+			<artifactId>commons-cli</artifactId>
+			<version>1.2</version>
+		</dependency>
+		<dependency>
+			<groupId>com.melloware</groupId>
+			<artifactId>jintellitype</artifactId>
+			<version>1.3.7</version>
+		</dependency>
+		<dependency>
+			<groupId>jxgrabkey</groupId>
+			<artifactId>jxgrabkey</artifactId>
+			<version>1.0</version>
+		</dependency>
+		<dependency>
+			<groupId>org.swinglabs</groupId>
+			<artifactId>swing-layout</artifactId>
+			<version>1.0.3</version>
+		</dependency>
+		<dependency>
+			<!-- BridJ aims to be the ultimate Java / native interoperability library
+			Call C, C++, ObjectiveC libraries without compiling native code
+			https://code.google.com/p/bridj/ -->
+			<groupId>com.nativelibs4java</groupId>
+			<artifactId>bridj</artifactId>
+			<version>0.6.2</version>
+			<exclusions>
+				<!-- exclude this artifact - it includes old junit, which causes problems in classpath -->
+				<exclusion>
+					<groupId>com.google.android.tools</groupId>
+					<artifactId>dx</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.sikulix</groupId>
+			<artifactId>sikulixlibs</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+
+	<distributionManagement>
+		<repository>
+			<id>sikulix.releases</id>
+			<url>file:/Users/Shared/Jenkins/Home/workspace/SikuliX-DeployAPI/mavenrepo/raw/master/releases</url>
+		</repository>
+		<snapshotRepository>
+			<id>sikulix.shapshots</id>
+			<url>file:/Users/Shared/Jenkins/Home/workspace/SikuliX-DeployAPI/mavenrepo/raw/master/snapshots</url>
+		</snapshotRepository>
+
+		<!--
+		<repository>
+				<id>sonatype.releases</id>
+				<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository> -->
+	</distributionManagement>
+</project>
