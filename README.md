@@ -13,6 +13,19 @@ The structure is reduced to 3 main packages:
 
 The other packages are mostly unchanged.
 <hr>
+**sikulixapi.jar is half way up to Maven Central -- SNAPSHOTS available on OSSRH**<br>
+    <repositories>
+      <repository>
+        <id>com-sikulix</id>
+        <name>com-sikulix</name>
+        <url>http://oss.sonatype.org/content/groups/public</url>
+        <snapshots>
+           <enabled>true</enabled>
+        </snapshots>
+      </repository>
+    </repositories>
+
+<hr>
 **If you want to test the head of developement without the need to build from sources:** <br>
 [look here: I have setup a page with nightly builds](http://nightly.sikuli.de)<br>
 **At your own risk ;-) Take care for your existing work - be prepared to restore your stuff!!**
