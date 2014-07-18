@@ -19,8 +19,8 @@ The repository URL:<br>
 `<url>http://oss.sonatype.org/content/groups/public</url>`<br>
 
 The coordinates:<br>
-`<groupId>com.sikulix</groupId>`
-`<artifactId>sikulixapi</artifactId>`
+`<groupId>com.sikulix</groupId>`<br>
+`<artifactId>sikulixapi</artifactId>`<br>
 `<version>1.1.0-Beta4-SNAPSHOT</version>`
 
 <hr>
