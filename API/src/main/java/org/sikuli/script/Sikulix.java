@@ -6,6 +6,7 @@
  */
 package org.sikuli.script;
 
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URI;
@@ -23,6 +24,13 @@ import org.sikuli.basics.Settings;
 public class Sikulix {
 
   private static final String me = "SikuliX: ";
+	private static boolean runningHeadless = false;
+
+	static {
+		if (GraphicsEnvironment.isHeadless()) {
+			runningHeadless = true;
+		}
+	}
 
   private static boolean runningSikulixapi = false;
 
@@ -50,14 +58,25 @@ public class Sikulix {
 
   /**
    * call this, to initialize Sikuli up to useability
-   * @return the primary screen object
+   * @return the primary screen object or null if headless
    */
   public static Screen init() {
+		if (!canRun()) {
+			return null;
+		}
 //TODO collect initializations here
     Mouse.init();
     Keys.init();
     return new Screen();
   }
+
+	/**
+	 * Can SikuliX be run on this machine?
+	 * @return true if not running headless false otherwise
+	 */
+	public static boolean canRun() {
+		return !runningHeadless;
+	}
 
   /**
    * INTERNAL USE:

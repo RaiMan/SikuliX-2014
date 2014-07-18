@@ -60,6 +60,7 @@ from org.sikuli.script import Key
 from org.sikuli.script import KeyModifier
 from org.sikuli.script.KeyModifier import KEY_CTRL, KEY_SHIFT, KEY_META, KEY_CMD, KEY_WIN, KEY_ALT
 from org.sikuli.script import Mouse
+from org.sikuli.script import Keys
 
 Debug.log(3, "Jython: sikuli: Sikuli: import from Basics")
 from org.sikuli.basics import Settings
@@ -73,9 +74,9 @@ from org.sikuli.script.compare import HorizontalComparator
 Debug.log(3, "Jython: sikuli: Sikuli: init SikuliImporter")
 import SikuliImporter
 
-Debug.log(3, "Jython: sikuli: Sikuli: import SikuliX")
+Debug.log(3, "Jython: sikuli: Sikuli: import Sikulix")
 from org.sikuli.basics import SikuliScript
-from org.sikuli.basics import SikuliX
+from org.sikuli.basics import Sikulix
 
 ##
 # some support for handling unicode and strings

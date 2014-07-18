@@ -48,8 +48,10 @@ public class RunSetup {
 	private static String downloadRServer = version + "-3.jar";
 	private static String downloadJython = version + "-4.jar";
 	private static String downloadJRuby = version + "-5.jar";
-	private static String downloadMacApp = version.substring(0, 5) + "-9.jar";
-	private static String downloadTess = version.substring(0, 5) + "-8.jar";
+	private static String downloadMacAppSuffix = "-9.jar";
+	private static String downloadMacApp = version.substring(0, 5) + downloadMacAppSuffix;
+	private static String downloadTessSuffix = "-8.jar";
+	private static String downloadTess = version.substring(0, 5) + downloadTessSuffix;
 	private static String localJava = "sikulixapi.jar";
 	private static String localIDE = "sikulix.jar";
 	private static String localMacApp = "sikulixmacapp.jar";
@@ -133,6 +135,16 @@ public class RunSetup {
 		//<editor-fold defaultstate="collapsed" desc="options special">
 		if (args.length > 0 && "build".equals(args[0])) {
 			System.out.println(Settings.SikuliVersionBuild);
+			System.exit(0);
+		}
+
+		if (args.length > 0 && "pversion".equals(args[0])) {
+			System.out.println(Settings.SikuliProjectVersion);
+			System.exit(0);
+		}
+
+		if (args.length > 0 && "uversion".equals(args[0])) {
+			System.out.println(Settings.SikuliProjectVersionUsed);
 			System.exit(0);
 		}
 
@@ -405,13 +417,13 @@ public class RunSetup {
 						FileManager.xcopyAll(fJRubyFat.getAbsolutePath(),
 										new File(fDownloads, downloadJRuby).getAbsolutePath());
 						String fname = new File(projectDir, "Remote/target/"
-										+ "sikulixremote-" + version.substring(0, 5) + ".jar").getAbsolutePath();
+										+ "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
 						FileManager.xcopyAll(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
 						fname = new File(projectDir, "Tesseract/target/"
-										+ downloadTess).getAbsolutePath();
+										+ Settings.SikuliProjectVersion + downloadTessSuffix).getAbsolutePath();
 						FileManager.xcopyAll(fname, new File(fDownloads, downloadTess).getAbsolutePath());
 						fname = new File(projectDir, "MacApp/target/"
-										+ downloadMacApp).getAbsolutePath();
+										+ Settings.SikuliProjectVersion + downloadMacAppSuffix).getAbsolutePath();
 						FileManager.xcopyAll(fname, new File(fDownloads, downloadMacApp).getAbsolutePath());
 					} catch (Exception ex) {
 						doit = false;

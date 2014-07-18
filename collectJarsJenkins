@@ -1,7 +1,7 @@
 #!/bin/sh
-source=$JENKINS_HOME/Workspace/SikuliX-Git/Setup/target
+source=Setup/target
 base=`pwd`
-dist=$base/SikuliX-Setup
+dist=$base/../SikuliX-Setup
 if [ -e $dist ]; then
   rm -f -R $dist
 fi
@@ -10,12 +10,16 @@ mkdir $dist/Downloads
 
 echo ----- collecting jars
 cd $source
-java -jar sikulixsetup-1.1.0-plain.jar noSetup
+jar=`ls *-plain.jar`
+version=`java -jar $jar pversion`
+uversion=`java -jar $jar uversion`
+echo ----- for version $version
+java -Dsikuli.Debug=3 -jar sikulixsetup-$version-plain.jar noSetup
 cd $base
 ls -l $source
 
 echo ----- copy Setup
-cp $source/sikulixsetup*.jar $dist/sikulixsetup-1.1.jar
+cp $source/sikulixsetup-$version-plain.jar $dist/sikulixsetup-$uversion.jar
 ls -l $dist
 
 echo ----- copy Jars
