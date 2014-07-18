@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2013, Sikuli.org
+ * Copyright 2010-2014, Sikuli.org, sikulix.com
  * Released under the MIT License.
  *
- * modified RaiMan 2012
+ * modified RaiMan 2014
  */
 package org.sikuli.basics;
 
@@ -40,7 +40,7 @@ public class ResourceLoader implements IResourceLoader {
   }
   //</editor-fold>
 
-  private String loaderName = "basic";
+  private final String loaderName = "basic";
   private static final String NL = String.format("%n");
   private StringBuffer alreadyLoaded = new StringBuffer("");
   private ClassLoader cl;
@@ -59,11 +59,11 @@ public class ResourceLoader implements IResourceLoader {
   private String libPathFallBack = null;
   private File libsDir = null;
   private static final String checkFileNameAll = Settings.getVersionShortBasic() + "-MadeForSikuliX";
-  private String checkFileNameMac = checkFileNameAll + "64M.txt";
-  private String checkFileNameW32 = checkFileNameAll + "32W.txt";
-  private String checkFileNameW64 = checkFileNameAll + "64W.txt";
-  private String checkFileNameL32 = checkFileNameAll + "32L.txt";
-  private String checkFileNameL64 = checkFileNameAll + "64L.txt";
+  private final String checkFileNameMac = checkFileNameAll + "64M.txt";
+  private final String checkFileNameW32 = checkFileNameAll + "32W.txt";
+  private final String checkFileNameW64 = checkFileNameAll + "64W.txt";
+  private final String checkFileNameL32 = checkFileNameAll + "32L.txt";
+  private final String checkFileNameL64 = checkFileNameAll + "64L.txt";
   private String checkFileName = null;
   private String checkLib = null;
   private final String checkLibWindows = "JIntellitype";
@@ -71,22 +71,23 @@ public class ResourceLoader implements IResourceLoader {
   private static final String suffixLibs = "/libs";
   private static final String libSub = prefixSikuli + suffixLibs;
   private String userSikuli = null;
-  private boolean extractingFromJar = false;
+  public boolean extractingFromJar = false;
+  private boolean runningSikulixapi = false;
   private static boolean itIsJython = false;
   /**
    * Mac: standard place for native libs
    */
-  private static String libPathMac = Settings.appPathMac + "/libs";
+  private static final String libPathMac = Settings.appPathMac + "/libs";
   /**
    * in-jar folder to load other ressources from
    */
-  private static String jarResources = "META-INF/res/";
+  private static final String jarResources = "META-INF/res/";
   /**
    * in-jar folder to load native libs from
    */
   private static final String libSourcebase = "META-INF/libs/";
-  private static String libSource32 = libSourcebase + "%s/libs32/";
-  private static String libSource64 = libSourcebase + "%s/libs64/";
+  private static final String libSource32 = libSourcebase + "%s/libs32/";
+  private static final String libSource64 = libSourcebase + "%s/libs64/";
   private String libSource;
 
   private String osarch;
@@ -101,7 +102,12 @@ public class ResourceLoader implements IResourceLoader {
       jarPath = jarURL.getPath();
       jarParentPath = FileManager.slashify((new File(jarPath)).getParent(), true);
       if (jarPath.endsWith(".jar")) {
+//TODO evaluation of running situation should be put in one place
         extractingFromJar = true;
+        if (jarPath.contains("sikulixapi")) {
+          runningSikulixapi = true;
+          org.sikuli.script.Sikulix.setRunningSikulixapi(true);
+        }
       } else {
         jarPath = FileManager.slashify((new File(jarPath)).getAbsolutePath(), true);
       }
@@ -145,6 +151,7 @@ public class ResourceLoader implements IResourceLoader {
 
   /**
    * {@inheritDoc}
+   * @param what check type
    */
   @Override
   public void check(String what) {
@@ -163,18 +170,35 @@ public class ResourceLoader implements IResourceLoader {
 
       if (System.getProperty("sikuli.DoNotExport") == null && !isFatJar()) {
         libsURL = null;
+//TODO evaluation of running situation should be put in one place
         if (jarPath.contains("API")) {
-          try {
             log(-1, "The jar in use was not built with setup!\n"
                     + "We might be running from local Maven repository?\n" + jarPath);
             Sikulix.addToClasspath(jarPath.replace("API", "Libs"));
+          try {
             libsURL = new URL(jarURL.toString().replace("API", "Libs"));
             tessURL = new URL(jarURL.toString().replace("API", "Tesseract"));
           } catch (Exception ex) {
+            log(-1,"\n%s", ex);
+          }
+        }
+        if (runningSikulixapi) {
+          try {
+            log(3, "The jar in use is some sikulixapi.jar\n%s", jarPath);
+            libsURL = new URL(jarURL.toString().replace("sikulixapi", "sikulixlibs"));
+            if (!org.sikuli.script.Sikulix.isOnClasspath("sikulixlibs")) {
+              libsURL = null;
+            }
+            tessURL = new URL(jarURL.toString().replace("sikulixapi", "sikulixtessdata"));
+            if (!org.sikuli.script.Sikulix.isOnClasspath("sikulixlibs")) {
+              tessURL = null;
+            }
+          } catch (Exception ex) {
+            log(-1,"\n%s", ex);
           }
         }
         if (libsURL == null) {
-          RunSetup.popError("Terminating: The jar in use was not built with setup!\n" + jarPath);
+          RunSetup.popError("Terminating: The jar was not built with setup nor is sikulixlibs on classpath!\n" + jarPath);
           System.exit(1);
         }
       }
@@ -536,6 +560,9 @@ public class ResourceLoader implements IResourceLoader {
   //<editor-fold defaultstate="collapsed" desc="overwritten">
   /**
    * {@inheritDoc}
+   * @param res what to export
+   * @param target target folder
+   * @return success
    */
   @Override
   public boolean export(String res, String target) {
@@ -602,6 +629,7 @@ public class ResourceLoader implements IResourceLoader {
 
   /**
    * {@inheritDoc}
+   * @param args what to do
    */
   @Override
   public void install(String[] args) {
@@ -989,7 +1017,7 @@ public class ResourceLoader implements IResourceLoader {
    */
   private void copy(InputStream in, OutputStream out) throws IOException {
     byte[] tmp = new byte[8192];
-    int len = 0;
+    int len;
     while (true) {
       len = in.read(tmp);
       if (len <= 0) {
