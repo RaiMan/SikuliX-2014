@@ -100,6 +100,12 @@
 			<artifactId>sikulixlibs</artifactId>
 			<version>1.1.0-Beta4-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.10</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<distributionManagement>
@@ -116,6 +122,7 @@
 	</distributionManagement>
 
 	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sikulixvmaj>1</sikulixvmaj>
 		<sikulixvmin>1</sikulixvmin>
 		<sikulixvsub>0</sikulixvsub>
@@ -131,7 +138,7 @@
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd_HH:mm</maven.build.timestamp.format>
 	</properties>
-	
+
 	<build>
 		<resources>
 			<resource>
