@@ -12,13 +12,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.sikulix</groupId>
-	<artifactId>sikulixapi</artifactId>
+	<artifactId>sikulixlibs</artifactId>
 	<version>1.1.0-Beta4-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
-	<name>SikuliX Java API</name>
-	<description>... for visual testing and automation</description>
+	<name>SikuliX Java API Libs</name>
+	<description>supporting native libraries for Winows, Mac and Linux</description>
 	<url>http://www.sikulix.com</url>
 
 	<licenses>
@@ -42,64 +42,7 @@
 		<url>git@github.com:RaiMan/SikuliX-2014.git</url>
 	</scm>
 
-	<repositories>
-		<repository>  <!-- com.sikulix.sikulixapi: jxgrabkey -->
-			<id>uni-due.de</id>
-			<name>uni-due.de</name>
-			<url>http://mvn.is.inf.uni-due.de:8081/nexus/content/repositories/atunes-dependencies/</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>never</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-				<updatePolicy>never</updatePolicy>
-			</snapshots>
-		</repository>
-	</repositories>
-
 	<dependencies>
-		<dependency>
-			<groupId>commons-cli</groupId>
-			<artifactId>commons-cli</artifactId>
-			<version>1.2</version>
-		</dependency>
-		<dependency>
-			<groupId>com.melloware</groupId>
-			<artifactId>jintellitype</artifactId>
-			<version>1.3.7</version>
-		</dependency>
-		<dependency>
-			<groupId>jxgrabkey</groupId>
-			<artifactId>jxgrabkey</artifactId>
-			<version>1.0</version>
-		</dependency>
-		<dependency>
-			<groupId>org.swinglabs</groupId>
-			<artifactId>swing-layout</artifactId>
-			<version>1.0.3</version>
-		</dependency>
-		<dependency>
-			<!-- BridJ aims to be the ultimate Java / native interoperability library
-			Call C, C++, ObjectiveC libraries without compiling native code
-			https://code.google.com/p/bridj/ -->
-			<groupId>com.nativelibs4java</groupId>
-			<artifactId>bridj</artifactId>
-			<version>0.6.2</version>
-			<exclusions>
-				<!-- exclude this artifact - it includes old junit, which causes problems in classpath -->
-				<exclusion>
-					<groupId>com.google.android.tools</groupId>
-					<artifactId>dx</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>com.sikulix</groupId>
-			<artifactId>sikulixlibs</artifactId>
-			<version>1.1.0-Beta4-SNAPSHOT</version>
-		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -123,18 +66,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sikulixvmaj>1</sikulixvmaj>
-		<sikulixvmin>1</sikulixvmin>
-		<sikulixvsub>0</sikulixvsub>
-		<sikulixbeta>4</sikulixbeta>
-		<!--   this decides, where setup downloads from   -->
-		<!--		<sikulixdev>release</sikulixdev>-->
-		<sikulixdev>development</sikulixdev>
-		<!-- TODO: find better solution for beta / non-beta -->
-		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}-Beta${sikulixbeta}</sikuli.usedversion>
-		<!--
-		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
-		-->
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd_HH:mm</maven.build.timestamp.format>
 	</properties>
@@ -169,6 +100,11 @@
 			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.9.1</version>
+				<configuration>
+					<excludePackageNames>org.opencv.*</excludePackageNames>
+					<show>public</show>
+					<quiet>true</quiet>
+				</configuration>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -180,7 +116,7 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2.1</version>
+				<version>2.3</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -193,5 +129,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
 </project>
