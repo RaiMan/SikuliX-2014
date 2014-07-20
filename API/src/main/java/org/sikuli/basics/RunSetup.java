@@ -58,7 +58,7 @@ public class RunSetup {
 	private static String localMacAppIDE = "SikuliX-IDE.app/Contents/sikulix.jar";
 	private static String folderMacApp = "SikuliX-IDE.app";
 	private static String folderMacAppContent = folderMacApp + "/Contents";
-	private static String localSetup = "sikulixsetup-" + majorversion + ".jar";
+	private static String localSetup = "sikulixsetup-" + version + ".jar";
 	private static String localUpdate = "sikulixupdate";
 	private static String localTess = "sikulixtessdata.jar";
 	private static String localRServer = "sikulixremoteserver.jar";
