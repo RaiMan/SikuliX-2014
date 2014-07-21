@@ -905,7 +905,7 @@ public class RunSetup {
 		if (getJava) {
 			targetJar = new File(workDir, localJava).getAbsolutePath();
 			if (!test) {
-				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJava, targetJar, "JavaAPI");
+//**API**				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJava, targetJar, "JavaAPI");
 			}
 			downloadOK &= dlOK;
 		}
@@ -1061,7 +1061,7 @@ public class RunSetup {
 		if (success && getJava) {
 			log1(lvl, "adding needed stuff to sikulixapi.jar");
 			localJar = (new File(workDir, localJava)).getAbsolutePath();
-			jarsList[0] = localJar;
+//**API**			jarsList[0] = localJar;
 			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
 			success &= FileManager.buildJar(targetJar, jarsList, null, null, libsFilter);
 			success &= handleTempAfter(localTemp, localJar);
