@@ -827,11 +827,11 @@ public class RunSetup {
 //					}
 				}
 				if (getJava) {
-					if (getIDE) {
-						msg += "\n";
-					}
-					downloadedFiles += downloadJava + " - ";
-					msg += "\n--- Package 2 ---\n" + downloadJava + " (Java API)";
+//**API**					if (getIDE) {
+//						msg += "\n";
+//					}
+//					downloadedFiles += downloadJava + " - ";
+//					msg += "\n--- Package 2 ---\n" + downloadJava + " (Java API)";
 				}
 				if (getTess || getRServer) {
 					if (getIDE || getJava) {
@@ -851,10 +851,12 @@ public class RunSetup {
 		}
 
 		if (getIDE || getJava || getRServer) {
-			msg += "\n\nOnly click NO, if you want to terminate setup now!\n"
-							+ "Click YES even if you want to use local copies in Downloads!";
-			if (!popAsk(msg)) {
-				terminate("");
+			if (getIDE || getRServer) {
+				msg += "\n\nOnly click NO, if you want to terminate setup now!\n"
+								+ "Click YES even if you want to use local copies in Downloads!";
+				if (!popAsk(msg)) {
+					terminate("");
+				}
 			}
 		} else {
 			popError("Nothing selected! You might try again ;-)");
@@ -902,13 +904,14 @@ public class RunSetup {
 			}
 			downloadOK &= dlOK;
 		}
-		if (getJava) {
-			targetJar = new File(workDir, localJava).getAbsolutePath();
-			if (!test) {
-//**API**				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJava, targetJar, "JavaAPI");
-			}
-			downloadOK &= dlOK;
-		}
+//**API**
+//		if (getJava) {
+//			targetJar = new File(workDir, localJava).getAbsolutePath();
+//			if (!test) {
+//				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJava, targetJar, "JavaAPI");
+//			}
+//			downloadOK &= dlOK;
+//		}
 		if (getTess) {
 			targetJar = new File(workDir, localTess).getAbsolutePath();
 			if (!test) {
