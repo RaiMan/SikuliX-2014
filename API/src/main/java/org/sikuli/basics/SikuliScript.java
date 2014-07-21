@@ -27,7 +27,7 @@ public class SikuliScript {
 
   public static void runningInteractive() {
     isRunningInteractive = true;
-    Sikulix.displaySplash(null);
+//    Sikulix.displaySplash(null);
   }
 
   public static boolean getRunningInteractive() {
@@ -55,7 +55,7 @@ public class SikuliScript {
 
     Settings.initScriptingSupport();
 
-    Sikulix.displaySplash(args);
+//    Sikulix.displaySplash(args);
 
     if (args != null && args.length > 1 && args[0].startsWith("-testSetup")) {
       runner = Sikulix.getScriptRunner(args[1], null, args);

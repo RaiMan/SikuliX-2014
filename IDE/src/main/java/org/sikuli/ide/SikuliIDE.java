@@ -2001,7 +2001,7 @@ public class SikuliIDE extends JFrame {
       SikuliIDE.getStatusbar().resetMessage();
       ide.setVisible(false);
       if (ide.firstRun) {
-        Sikulix.displaySplashFirstTime(new String[0]);
+//        Sikulix.displaySplashFirstTime(new String[0]);
         ide.firstRun = false;
       }
       ide.setIsRunningScript(true);
