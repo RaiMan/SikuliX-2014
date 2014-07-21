@@ -49,7 +49,7 @@
 					<descriptors>
 						<descriptor>../plain.xml</descriptor>
 					</descriptors>
-					<finalName>${sikuli.usedversion}-6</finalName>
+					<finalName>${sikuli.usedversion}-0</finalName>
 				</configuration>
 				<executions>
 					<execution>
