@@ -174,9 +174,10 @@ public class ResourceLoader implements IResourceLoader {
         if (jarPath.contains("API")) {
             log(-1, "The jar in use was not built with setup!\n"
                     + "We might be running from local Maven repository?\n" + jarPath);
-            Sikulix.addToClasspath(jarPath.replace("API", "Libs"));
+						String libsJarName = "Libs" + Settings.getShortOS();
+            Sikulix.addToClasspath(jarPath.replace("API", libsJarName));
           try {
-            libsURL = new URL(jarURL.toString().replace("API", "Libs"));
+            libsURL = new URL(jarURL.toString().replace("API", libsJarName));
             tessURL = new URL(jarURL.toString().replace("API", "Tesseract"));
           } catch (Exception ex) {
             log(-1,"\n%s", ex);
@@ -185,9 +186,10 @@ public class ResourceLoader implements IResourceLoader {
         if (runningSikulixapi) {
           try {
             log(3, "The jar in use is some sikulixapi.jar\n%s", jarPath);
-            libsURL = new URL(jarURL.toString().replace("sikulixapi", "sikulixlibs"));
+						String libsJarName = "sikulixlibs" + Settings.getShortOS();
+            libsURL = new URL(jarURL.toString().replace("sikulixapi", libsJarName));
 						Sikulix.addToClasspath(libsURL.getPath());
-            if (!org.sikuli.script.Sikulix.isOnClasspath("sikulixlibs")) {
+            if (!org.sikuli.script.Sikulix.isOnClasspath(libsJarName)) {
               libsURL = null;
             }
             tessURL = new URL(jarURL.toString().replace("sikulixapi", "sikulixtessdata"));

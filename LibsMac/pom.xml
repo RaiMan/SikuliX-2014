@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<!--
+	* Copyright 2010-2013, Sikuli.org
+	* Released under the MIT License.
+	*
+	* RaiMan 2013
+	-->
+
+	<parent>
+		<groupId>com.sikulix</groupId>
+		<artifactId>SikuliX-2014</artifactId>
+		<version>1.1.0-Beta4</version>
+		<relativePath>../</relativePath>
+	</parent>
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.sikulix</groupId>
+	<artifactId>sikulixlibsmac</artifactId>
+	<version>1.1.0-Beta4</version>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>org.sikuli.libs.Sikulix</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

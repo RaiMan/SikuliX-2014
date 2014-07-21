@@ -21,52 +21,46 @@
 	<artifactId>sikulixlibs</artifactId>
 	<version>1.1.0-Beta4</version>
 
+  <dependencies>
+    <dependency>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixlibslux</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixlibsmac</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixlibswin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
 	<build>
+    <defaultGoal>clean package</defaultGoal>
 		<plugins>
 			<plugin>
-				<artifactId>maven-jar-plugin</artifactId>
+				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>org.sikuli.libs.Sikulix</mainClass>
-						</manifest>
-					</archive>
+					<descriptors>
+						<descriptor>../plain.xml</descriptor>
+					</descriptors>
+					<finalName>${sikuli.usedversion}-6</finalName>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9.1</version>
 				<executions>
 					<execution>
-						<id>attach-javadocs</id>
+						<id>make-assembly</id>
+						<phase>package</phase>
 						<goals>
-							<goal>jar</goal>
+							<goal>single</goal>
 						</goals>
 					</execution>
 				</executions>
 			</plugin>
-			<plugin>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.3</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-      <plugin>
-          <groupId>org.codehaus.mojo</groupId>
-          <artifactId>exec-maven-plugin</artifactId>
-          <version>1.2.1</version>
-          <configuration>
-              <mainClass>org.sikuli.script.SikuliX</mainClass>
-          </configuration>
-      </plugin>
 		</plugins>
 	</build>
 </project>

@@ -9,6 +9,7 @@
   <dependencySets>
     <dependencySet>
       <excludes>
+        <exclude>com.sikulix:sikulixapi</exclude>
         <exclude>org.python:jython-standalone</exclude>
         <exclude>org.jruby:jruby-complete</exclude>
         <exclude>*:gem:*</exclude>

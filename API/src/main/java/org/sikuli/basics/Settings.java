@@ -485,6 +485,16 @@ public class Settings {
 		return getOS() == ISMAC;
 	}
 
+	public static String getShortOS() {
+		if (isWindows()) {
+			return "win";
+		}
+		if (isMac()) {
+			return "mac";
+		}
+		return "lux";
+	}
+	
 	public static String getOSVersion() {
 		return System.getProperty("os.version");
 	}

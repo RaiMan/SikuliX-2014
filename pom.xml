@@ -112,7 +112,6 @@
 				</os>
 			</activation>
 			<properties>
-				<sikuli.uselibs>META-INF/libs/windows/**/*</sikuli.uselibs>
 				<exclude.nativelayer>${exclude.nativelayer.mac}</exclude.nativelayer>
 			</properties>
 		</profile>
@@ -124,7 +123,6 @@
 				</os>
 			</activation>
 			<properties>
-				<sikuli.uselibs>META-INF/libs/linux/**/*</sikuli.uselibs>
 				<exclude.nativelayer>${exclude.nativelayer.mac}</exclude.nativelayer>
 			</properties>
 		</profile>
@@ -136,7 +134,6 @@
 				</os>
 			</activation>
 			<properties>
-				<sikuli.uselibs>META-INF/libs/mac/**/*</sikuli.uselibs>
 				<exclude.nativelayer>${exclude.nativelayer.null}</exclude.nativelayer>
 			</properties>
 		</profile>
@@ -230,6 +227,9 @@
 	</profiles>
 
 	<modules>
+		<module>LibsLux</module>
+		<module>LibsMac</module>
+		<module>LibsWin</module>
 		<module>Libs</module>
 		<module>API</module>
 		<module>Jython</module>
