@@ -110,15 +110,9 @@
 
   <distributionManagement>
     <repository>
-      <id>sikulix.releases</id>
-      <url>file:/Users/Shared/Jenkins/Home/workspace/SikuliX-DeployAPI/mavenrepo</url>
+      <id>sikulix.deploy</id>
+      <url>${sikulix.deploy.target}</url>
     </repository>
-
-    <!--
-    <repository>
-        <id>sonatype.releases</id>
-        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-    </repository> -->
   </distributionManagement>
 
   <properties>
