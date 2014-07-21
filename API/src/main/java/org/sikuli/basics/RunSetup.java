@@ -224,6 +224,7 @@ public class RunSetup {
 
 		runningJar = FileManager.getJarName();
 
+//**API** sikulixapi.jar should not be runnable
 		if (runningJar.contains("sikulixapi")) {
 			System.exit(0);
 		}
@@ -392,21 +393,23 @@ public class RunSetup {
 						return !entry.getName().startsWith("sikulixsetup");
 					}
 				});
-				File fLibsFat = new File(projectDir, "Libs/target/" + libsFat);
-				if (!fLibsFat.exists()) {
-					Debug.log(3, "missing: " + fLibsFat.getAbsolutePath());
-					doit = false;
-				}
+//LibsFat currently not neeeded
+//				File fLibsFat = new File(projectDir, "Libs/target/" + libsFat);
+//				if (!fLibsFat.exists()) {
+//					Debug.log(3, "missing: " + fLibsFat.getAbsolutePath());
+//					doit = false;
+//				}
 				File fIDEFat = new File(projectDir, "IDEFat/target/" + ideFat);
 				if (!fIDEFat.exists()) {
 					Debug.log(3, "missing: " + fIDEFat.getAbsolutePath());
 					doit = false;
 				}
-				File fAPIFat = new File(projectDir, "APIFat/target/" + apiFat);
-				if (!fAPIFat.exists()) {
-					Debug.log(3, "missing: " + fAPIFat.getAbsolutePath());
-					doit = false;
-				}
+//**API** no longer needed
+//				File fAPIFat = new File(projectDir, "APIFat/target/" + apiFat);
+//				if (!fAPIFat.exists()) {
+//					Debug.log(3, "missing: " + fAPIFat.getAbsolutePath());
+//					doit = false;
+//				}
 				File fJythonFat = new File(projectDir, "JythonFat/target/" + jythonFat);
 				if (!fJythonFat.exists()) {
 					Debug.log(3, "missing: " + fJythonFat.getAbsolutePath());
@@ -420,12 +423,12 @@ public class RunSetup {
 				if (doit) {
 					fDownloads.mkdir();
 					try {
-						FileManager.xcopyAll(fLibsFat.getAbsolutePath(),
-										new File(fDownloads, downloadLibs).getAbsolutePath());
+//						FileManager.xcopyAll(fLibsFat.getAbsolutePath(),
+//										new File(fDownloads, downloadLibs).getAbsolutePath());
 						FileManager.xcopyAll(fIDEFat.getAbsolutePath(),
 										new File(fDownloads, downloadIDE).getAbsolutePath());
-						FileManager.xcopyAll(fAPIFat.getAbsolutePath(),
-										new File(fDownloads, downloadJava).getAbsolutePath());
+//						FileManager.xcopyAll(fAPIFat.getAbsolutePath(),
+//										new File(fDownloads, downloadJava).getAbsolutePath());
 						FileManager.xcopyAll(fJythonFat.getAbsolutePath(),
 										new File(fDownloads, downloadJython).getAbsolutePath());
 						FileManager.xcopyAll(fJRubyFat.getAbsolutePath(),
