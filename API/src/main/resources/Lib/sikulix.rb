@@ -137,7 +137,7 @@ module SikuliX4Ruby
 #  # Generate hash of ('method name'=>method)
 #  # for all possible "undotted" methods.
 #  UNDOTTED_METHODS =
-#    [$SIKULI_SCREEN, SikuliX].reduce({}) do |h, obj|
+#    [$SIKULI_SCREEN, Sikulix].reduce({}) do |h, obj|
 #      h.merge!(
 #        obj.methods.reduce({}) do |h2, name|
 #          h2.merge!(name => obj.method(name))

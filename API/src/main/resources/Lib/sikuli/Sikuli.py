@@ -203,7 +203,7 @@ def setShowActions(flag):
 # Shows a message dialog containing the given message.
 # @param msg The given message string.
 def popup(msg, title="Sikuli"):
-    SikuliX.popup(msg, title)
+    Sikulix.popup(msg, title)
 
 ##
 # Shows a question-message dialog requesting input from the user.
@@ -216,7 +216,7 @@ def popup(msg, title="Sikuli"):
 def input(msg="", default="", title="", hidden=False):
     if (hidden):
       default = ""
-    return SikuliX.input(msg, default, title, hidden)
+    return Sikulix.input(msg, default, title, hidden)
 ##
 # Shows a dialog request to enter text in a multiline text field
 # Though not all text might be visible, everything entered is delivered with the returned text
@@ -227,7 +227,7 @@ def input(msg="", default="", title="", hidden=False):
 # @param width the maximum number of characters visible in one line (default 20)
 # @return The user's input including the line breaks.
 def inputText(msg="", title="", lines=0, width=0):
-    return SikuliX.input(msg, title, width, lines)
+    return Sikulix.input(msg, title, width, lines)
 
 def capture(*args):
     scr = ScreenUnion()
@@ -344,7 +344,7 @@ def exit(code=0):
     if remoteScreen:
       remoteScreen.close()
       remoteScreen = None
-    SikuliX.cleanUp(code)
+    Sikulix.cleanUp(code)
     sys.exit(code)
 
 ##
@@ -352,7 +352,7 @@ def exit(code=0):
 # @param msg The given string command.
 # @return Returns the output from the executed command.
 def run(cmd):
-    return SikuliX.run(cmd)
+    return Sikulix.run(cmd)
 
 ##
 # display some help in interactive mode

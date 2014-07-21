@@ -186,11 +186,13 @@ public class ResourceLoader implements IResourceLoader {
           try {
             log(3, "The jar in use is some sikulixapi.jar\n%s", jarPath);
             libsURL = new URL(jarURL.toString().replace("sikulixapi", "sikulixlibs"));
+						Sikulix.addToClasspath(libsURL.getPath());
             if (!org.sikuli.script.Sikulix.isOnClasspath("sikulixlibs")) {
               libsURL = null;
             }
             tessURL = new URL(jarURL.toString().replace("sikulixapi", "sikulixtessdata"));
-            if (!org.sikuli.script.Sikulix.isOnClasspath("sikulixlibs")) {
+						Sikulix.addToClasspath(tessURL.getPath());
+            if (!org.sikuli.script.Sikulix.isOnClasspath("sikulixtessdata")) {
               tessURL = null;
             }
           } catch (Exception ex) {

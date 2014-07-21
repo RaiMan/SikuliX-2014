@@ -1159,7 +1159,7 @@ public class RunSetup {
 
 		if (getJava) {
 			log1(lvl, "Trying to run functional test: JAVA-API");
-			splash = showSplash("Trying to run functional test(s)", "Java-API: org.sikuli.script.SikuliX.testSetup()");
+			splash = showSplash("Trying to run functional test(s)", "Java-API: org.sikuli.script.Sikulix.testSetup()");
 			if (!Sikulix.addToClasspath(localJarJava.getAbsolutePath())) {
 				closeSplash(splash);
 				log0(-1, "Java-API test: ");
@@ -1168,7 +1168,7 @@ public class RunSetup {
 				terminate("Functional test JAVA-API did not work");
 			}
 			try {
-				log0(lvl, "trying to run org.sikuli.script.SikuliX.testSetup()");
+				log0(lvl, "trying to run org.sikuli.script.Sikulix.testSetup()");
 				loader.doSomethingSpecial("itIsJython", null); // export Lib folder
 				if (getTess) {
 					loader.doSomethingSpecial("exportTessdata", null); // export tessdata folder
