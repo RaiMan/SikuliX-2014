@@ -18,7 +18,9 @@
 	<packaging>pom</packaging>
 
 	<modules>
-		<module>Libs</module>
+		<module>Libswin</module>
+		<module>Libsmac</module>
+		<module>Libslux</module>
 		<module>API</module>
 	</modules>
 
