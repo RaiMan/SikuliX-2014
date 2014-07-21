@@ -223,6 +223,11 @@ public class RunSetup {
 		}
 
 		runningJar = FileManager.getJarName();
+
+		if (runningJar.contains("sikulixapi")) {
+			System.exit(0);
+		}
+
 		if (runningJar.isEmpty()) {
 			popError("error accessing jar - terminating");
 			System.exit(0);
