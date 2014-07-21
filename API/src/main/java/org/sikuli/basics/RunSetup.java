@@ -1183,7 +1183,7 @@ public class RunSetup {
 					loader.doSomethingSpecial("exportTessdata", null); // export tessdata folder
 				}
 				Class sysclass = URLClassLoader.class;
-				Class SikuliCL = sysclass.forName("org.sikuli.script.SikuliX");
+				Class SikuliCL = sysclass.forName("org.sikuli.script.Sikulix");
 				log0(lvl, "class found: " + SikuliCL.toString());
 				Method method = SikuliCL.getDeclaredMethod("testSetup", new Class[0]);
 				log0(lvl, "getMethod: " + method.toString());
