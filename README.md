@@ -9,7 +9,7 @@ The Maven GroupID for the project is switched to **com.sikulix** (package names 
 The structure is reduced to 3 main packages:
  - API: now contains Basics, Natives and OpenCV4Sikuli (gets sikulixapi.jar)
  - IDE: unchanged (gets sikulix.jar)
- - Libs: everything related to native stuff including the prebuilt libraries (gets sikulixlibs.jar)
+ - 3 LibsXxx: everything related to native stuff including the prebuilt libraries (gets sikulixlibsxxx.jar)
 
 The other packages are mostly unchanged.
 <hr>
