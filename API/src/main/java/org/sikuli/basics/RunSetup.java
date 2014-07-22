@@ -1535,19 +1535,15 @@ public class RunSetup {
 
 	public static void popError(String msg) {
 		log0(-1, msg);
-		JOptionPane.showMessageDialog(null, msg, "SikuliX-Setup: having problems ...", JOptionPane.ERROR_MESSAGE);
+		Sikulix.popError(msg, "SikuliX-Setup: having problems ...");
 	}
 
 	public static void popInfo(String msg) {
-		JOptionPane.showMessageDialog(null, msg, "SikuliX-Setup: info ...", JOptionPane.PLAIN_MESSAGE);
+		Sikulix.popup(msg, "SikuliX-Setup: info ...");
 	}
 
 	public static boolean popAsk(String msg) {
-		int ret = JOptionPane.showConfirmDialog(null, msg, "SikuliX-Setup: ... want to proceed? ", JOptionPane.YES_NO_OPTION);
-		if (ret == JOptionPane.CLOSED_OPTION || ret == JOptionPane.NO_OPTION) {
-			return false;
-		}
-		return true;
+		return Sikulix.popAsk(msg, "SikuliX-Setup: question ...");
 	}
 
 	public static JFrame showSplash(String title, String msg) {
