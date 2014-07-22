@@ -248,7 +248,8 @@
 		<module>Tesseract4SikuliX</module>
 		<module>Remote</module>
 		<module>Guide</module>
-  </modules>
+	 <module>TestRunMaven</module>
+	</modules>
 
 	<build>
 		<plugins>
