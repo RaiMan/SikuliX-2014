@@ -23,6 +23,8 @@ The coordinates:<br>
 `<artifactId>sikulixapi</artifactId>`<br>
 `<version>1.1.0-Beta4-SNAPSHOT</version>`
 
+find a **usage example** in [module TestRunMaven](https://github.com/RaiMan/SikuliX-2014/tree/master/TestRunMaven)
+
 <hr>
 **If you want to test the head of developement without the need to build from sources:** <br>
 [look here: I have setup a page with nightly builds](http://nightly.sikuli.de)<br>
