@@ -230,7 +230,6 @@
 		<module>LibsLux</module>
 		<module>LibsMac</module>
 		<module>LibsWin</module>
-		<module>Libs</module>
 		<module>API</module>
 		<module>Jython</module>
 		<module>JythonFat</module>
