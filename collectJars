@@ -1,13 +1,10 @@
 #!/bin/sh
-mversion=1.1
-version=$mversion.0
-
 base=`pwd`
 echo -
 echo ---
 echo ----- SikuliX collecting jars in $base
 
-source=$base/Setup/target
+source=$base/APIFat/target
 
 dist=$base/../SikuliX-Setup
 if [ -e $dist ]; then
@@ -18,61 +15,31 @@ mkdir $dist/Downloads
 
 log=$dist/collectjars-log.txt
 
-echo --- version $version
-echo --- major   $mversion
-echo --- version --- $version >>$log
-echo --- major version --- $mversion >>$log
-
-echo --- the Java JDK in use
-java -version
-
-echo --- BE AWARE: must be 1.6+ / developed with 1.7 target 1.6 / 1.8 not yet tested enough
-read -p "Press [Enter] key to continue ... or [Ctrl-C] to terminate ..."
-
-echo ----- SourceBase $base >>$log
-if [ "$1" != "2" -a "$1" != "3" ]; then
-  echo ----------------- running Maven clean install --- takes some time ...
-  mvn clean install >>$log
-  buildok=`grep -cim1 "BUILD FAILURE" $log`
-  if [ "$buildok" == "1" ];  then
-    echo -
-    echo --
-    echo ----
-    echo ------
-    echo -------- BUILD ERROR -----------
-    echo at least one module had problems
-    echo check the logfile
-    echo $log
-    echo correct the problems and run again
-    echo ----------------------------------
-    exit
-  fi
-fi
-
-if [ "$1" != "3" ]; then
-  # ----------- Setup
-  echo ----- collecting jars
-  echo --- collecting jars >>$log
-  cd $source >>$log
-  java -jar sikulixsetup-$version-plain.jar noSetup >>$log
-  cd $base
-  ls -l $source >>$log
-fi
+# ----------- Setup
+echo ----- collecting jars
+echo --- collecting jars >>$log
+cd $source >>$log
+apijar=`ls *-plain.jar`
+java -jar $api noSetup >>$log
+cd $base
+ls -l $source >>$log
+ls -l $source/Downloads >>$log
 
 # ----------- Setup
 echo ----- copy Setup
 echo --- copy Setup >>$log
-cp $source/sikulixsetup*.jar $dist/sikulixsetup-$mversion.jar
-ls -l $dist >>$log
+cp $source/$api $dist/sikulixsetup.jar
 
 # ----------- Jars
 echo ----- copy Jars
 echo --- copy Jars >>$log
 cp $source/Downloads/* $dist/Downloads
-ls -l $dist/Downloads >>$log
 
 echo ----------- final content of $dist
-ls -lR $dist
+ls -l $dist
+ls -l $dist >>$log
+ls -l $dist/Downloads
+ls -l $dist/Downloads >>$log
 echo ----------- SikuliX collectjars end -----------
 echo -
 echo --

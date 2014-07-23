@@ -19,8 +19,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.sikulix</groupId>
-  <artifactId>sikulixapiFat</artifactId>
-  <name>sikulixapiFat</name>
+  <artifactId>sikulixapi-complete</artifactId>
   <version>1.1.0-Beta4</version>
 
   <dependencies>
@@ -28,6 +27,21 @@
       <groupId>com.sikulix</groupId>
       <artifactId>sikulixapi</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixlibswin</artifactId>
+      <version>1.1.0-Beta4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixlibsmac</artifactId>
+      <version>1.1.0-Beta4</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixlibslux</artifactId>
+      <version>1.1.0-Beta4</version>
     </dependency>
   </dependencies>
 
@@ -38,10 +52,15 @@
 				<artifactId>maven-assembly-plugin</artifactId>
 				<version>2.4</version>
 				<configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.sikuli.basics.RunSetup</mainClass>
+            </manifest>
+          </archive>
 					<descriptors>
 						<descriptor>../plain.xml</descriptor>
 					</descriptors>
-					<finalName>${sikuli.usedversion}-2</finalName>
+					<finalName>sikulixapi-complete-${project.version}</finalName>
 				</configuration>
 				<executions>
 					<execution>

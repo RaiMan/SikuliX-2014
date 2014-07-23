@@ -43,7 +43,6 @@ public class RunSetup {
 	private static String majorversion = Settings.getVersionShortBasic();
 	private static String updateVersion;
 	private static String downloadSetup;
-	private static String downloadLibs = version + "-0.jar";
 	private static String downloadIDE = version + "-1.jar";
 	private static String downloadJava = version + "-2.jar";
 	private static String downloadRServer = version + "-3.jar";
@@ -375,11 +374,9 @@ public class RunSetup {
 				}
 				File fDownloads = new File(workDir, "Downloads");
 				Debug.log(3, "projectDir: " + projectDir);
-				String libsFat = downloadLibs.replace(".jar", "-plain.jar");
-				String ideFat = downloadIDE.replace(".jar", "-ide-fat.jar");
-				String apiFat = downloadJava.replace(".jar", "-plain.jar");
-				String jythonFat = downloadJython.replace(".jar", "-plain.jar");
-				String jrubyFat = downloadJRuby.replace(".jar", "-plain.jar");
+				String ideFat = "sikulix-complete-" + Settings.SikuliVersion + "-ide-fat.jar";
+				File jythonJar = new File(Settings.SikuliJython);
+				File jrubyJar = new File(Settings.SikuliJRuby);
 				boolean doit = true;
 				if (new File(workDir, "Downloads").exists()) {
 					FileManager.deleteFileOrFolder(new File(workDir, "Downloads").getAbsolutePath(), null);
@@ -393,45 +390,27 @@ public class RunSetup {
 						return !entry.getName().startsWith("sikulixsetup");
 					}
 				});
-//LibsFat currently not neeeded
-//				File fLibsFat = new File(projectDir, "Libs/target/" + libsFat);
-//				if (!fLibsFat.exists()) {
-//					Debug.log(3, "missing: " + fLibsFat.getAbsolutePath());
-//					doit = false;
-//				}
 				File fIDEFat = new File(projectDir, "IDEFat/target/" + ideFat);
 				if (!fIDEFat.exists()) {
 					Debug.log(3, "missing: " + fIDEFat.getAbsolutePath());
 					doit = false;
 				}
-//**API** no longer needed
-//				File fAPIFat = new File(projectDir, "APIFat/target/" + apiFat);
-//				if (!fAPIFat.exists()) {
-//					Debug.log(3, "missing: " + fAPIFat.getAbsolutePath());
-//					doit = false;
-//				}
-				File fJythonFat = new File(projectDir, "JythonFat/target/" + jythonFat);
-				if (!fJythonFat.exists()) {
-					Debug.log(3, "missing: " + fJythonFat.getAbsolutePath());
+				if (!jythonJar.exists()) {
+					Debug.log(3, "missing: " + jythonJar.getAbsolutePath());
 					doit = false;
 				}
-				File fJRubyFat = new File(projectDir, "JRubyFat/target/" + jrubyFat);
-				if (!fJRubyFat.exists()) {
-					Debug.log(3, "missing " + fJRubyFat.getAbsolutePath());
+				if (!jrubyJar.exists()) {
+					Debug.log(3, "missing " + jrubyJar.getAbsolutePath());
 					doit = false;
 				}
 				if (doit) {
 					fDownloads.mkdir();
 					try {
-//						FileManager.xcopyAll(fLibsFat.getAbsolutePath(),
-//										new File(fDownloads, downloadLibs).getAbsolutePath());
 						FileManager.xcopyAll(fIDEFat.getAbsolutePath(),
 										new File(fDownloads, downloadIDE).getAbsolutePath());
-//						FileManager.xcopyAll(fAPIFat.getAbsolutePath(),
-//										new File(fDownloads, downloadJava).getAbsolutePath());
-						FileManager.xcopyAll(fJythonFat.getAbsolutePath(),
+						FileManager.xcopyAll(jythonJar.getAbsolutePath(),
 										new File(fDownloads, downloadJython).getAbsolutePath());
-						FileManager.xcopyAll(fJRubyFat.getAbsolutePath(),
+						FileManager.xcopyAll(jrubyJar.getAbsolutePath(),
 										new File(fDownloads, downloadJRuby).getAbsolutePath());
 						String fname = new File(projectDir, "Remote/target/"
 										+ "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();

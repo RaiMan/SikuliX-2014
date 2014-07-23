@@ -45,13 +45,16 @@
 		<sikulixvsub>0</sikulixvsub>
 		<sikulixbeta>4</sikulixbeta>
 		<!--   this decides, where setup downloads from   -->
-<!--		<sikulixdev>release</sikulixdev>-->
+		<!--		<sikulixdev>release</sikulixdev>-->
 		<sikulixdev>development</sikulixdev>
 		<!-- TODO: find better solution for beta / non-beta -->
-    <sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}-Beta${sikulixbeta}</sikuli.usedversion>
+		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}-Beta${sikulixbeta}</sikuli.usedversion>
 		<!--
 		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
 		-->
+		<sikulixjythonversion>2.7-b2</sikulixjythonversion>
+		<sikulixjrubyversion>1.7.13</sikulixjrubyversion>
+		<sikulixlocalrepo>${settings.localRepository}</sikulixlocalrepo>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd_HH:mm</maven.build.timestamp.format>
 	</properties>
@@ -230,25 +233,18 @@
 		<module>LibsLux</module>
 		<module>LibsMac</module>
 		<module>LibsWin</module>
-		<module>Libs</module>
 		<module>API</module>
-		<module>Jython</module>
-		<module>JythonFat</module>
-		<module>JRuby</module>
-		<module>JRubyFat</module>
-		<module>JRubyGem</module>
+		<module>APIFat</module>
 		<module>Jygments4SikuliX</module>
 		<module>IDE</module>
-		<module>Setup</module>
 		<module>IDEFat</module>
-		<module>APIFat</module>
-		<module>APIFatReady</module>
+		<module>Setup</module>
 		<module>MacApp</module>
 		<module>Tesseract</module>
 		<module>Tesseract4SikuliX</module>
 		<module>Remote</module>
 		<module>Guide</module>
-	 <module>TestRunMaven</module>
+		<module>TestRunMaven</module>
 	</modules>
 
 	<build>

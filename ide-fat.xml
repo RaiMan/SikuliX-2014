@@ -8,20 +8,18 @@
   <includeBaseDirectory>false</includeBaseDirectory>
   <dependencySets>
     <dependencySet>
+      <outputDirectory>/</outputDirectory>
+      <useProjectArtifact>true</useProjectArtifact>
       <excludes>
         <exclude>com.sikulix:sikulixapi</exclude>
+        <exclude>com.nativelibs4java:bridj</exclude>
+				<exclude>com.melloware:jintellitype</exclude>
+				<exclude>jxgrabkey:jxgrabkey</exclude>
         <exclude>org.python:jython-standalone</exclude>
         <exclude>org.jruby:jruby-complete</exclude>
         <exclude>*:gem:*</exclude>
       </excludes>
-      <useProjectArtifact>true</useProjectArtifact>
       <unpack>true</unpack>
-      <unpackOptions>
-        <excludes>
-          <exclude>**/idesupport/*</exclude>
-          <exclude>**/scriptrunner/*</exclude>
-        </excludes>
-      </unpackOptions>
       <scope>runtime</scope>
     </dependencySet>
   </dependencySets>
