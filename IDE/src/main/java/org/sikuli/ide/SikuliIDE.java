@@ -233,7 +233,7 @@ public class SikuliIDE extends JFrame {
       if (loadScript[0].endsWith(".skl")) {
         log(lvl, "Switching to SikuliScript to run " + loadScript);
         splash.dispose();
-        SikuliScript.main(args);
+        SikuliScript.run(args);
       }
     }
 
@@ -242,7 +242,7 @@ public class SikuliIDE extends JFrame {
             || cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
       log(lvl, "Switching to SikuliScript with option -r, -t or -i");
       splash.dispose();
-      SikuliScript.main(args);
+      SikuliScript.run(args);
     }
 
     new File(Settings.BaseTempPath).mkdirs();

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
@@ -1210,7 +1209,7 @@ public class RunSetup {
 				try {
 					String testargs[] = new String[]{"-testSetup", "jython", "popup(\"" + testSetupSuccess + "\")"};
 					closeSplash(splash);
-					SikuliScript.main(testargs);
+					SikuliScript.run(testargs);
 					if (null == testargs[0]) {
 						throw new Exception("testSetup ran with problems");
 					}
@@ -1231,7 +1230,7 @@ public class RunSetup {
 				try {
 					String testargs[] = new String[]{"-testSetup", "jruby", "popup(\"" + testSetupSuccess + "\")"};
 					closeSplash(splash);
-					SikuliScript.main(testargs);
+					SikuliScript.run(testargs);
 					if (null == testargs[0]) {
 						throw new Exception("testSetup ran with problems");
 					}
