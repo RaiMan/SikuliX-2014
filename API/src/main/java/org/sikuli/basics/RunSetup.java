@@ -85,6 +85,8 @@ public class RunSetup {
 	private static boolean runningSetup = false;
 	private static boolean generallyDoUpdate = false;
 	public static String timestampBuilt = Settings.SikuliVersionBuild;
+  private static boolean shouldrun;
+  private static int optionsSize;
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
@@ -130,6 +132,8 @@ public class RunSetup {
 		}
 
 		options.addAll(Arrays.asList(args));
+    optionsSize = options.size();
+    shouldrun = 0 < optionsSize;
 
 		//<editor-fold defaultstate="collapsed" desc="options special">
 		if (args.length > 0 && "build".equals(args[0])) {
@@ -222,9 +226,11 @@ public class RunSetup {
 
 		runningJar = FileManager.getJarName();
 
-//**API** sikulixapi.jar should not be runnable
-		if (runningJar.contains("sikulixapi")) {
-			System.exit(0);
+//**API** sikulixapi.jar should not be runnable without defined options
+		if (shouldrun) {
+      if (options.size() == optionsSize && runningJar.contains("sikulixapi")) {
+        System.exit(0);
+      }
 		}
 
 		if (runningJar.isEmpty()) {
@@ -354,7 +360,7 @@ public class RunSetup {
 		Settings.LogTime = true;
 		Debug.setDebugLevel(3);
 
-		if (runningfromJar) {
+		if (test || runningfromJar) {
 			if (!noSetupSilent) {
 				logfile = (new File(workDir, localLogfile)).getAbsolutePath();
 				if (!Debug.setLogFile(logfile)) {
@@ -386,7 +392,7 @@ public class RunSetup {
 						if (entry.isDirectory()) {
 							return true;
 						}
-						return !entry.getName().startsWith("sikulixsetup");
+						return !entry.getName().startsWith("sikulix");
 					}
 				});
 				File fIDEFat = new File(projectDir, "IDEFat/target/" + ideFat);

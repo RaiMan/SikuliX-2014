@@ -18,9 +18,10 @@ log=$dist/collectjars-log.txt
 # ----------- Setup
 echo ----- collecting jars
 echo --- collecting jars >>$log
-cd $source >>$log
+cd $source 
 apijar=`ls *-plain.jar`
-java -jar $api noSetup >>$log
+echo -jar $apijar noSetup 
+java -jar $apijar noSetup 
 cd $base
 ls -l $source >>$log
 ls -l $source/Downloads >>$log
@@ -28,7 +29,7 @@ ls -l $source/Downloads >>$log
 # ----------- Setup
 echo ----- copy Setup
 echo --- copy Setup >>$log
-cp $source/$api $dist/sikulixsetup.jar
+cp $source/$apijar $dist/sikulixsetup.jar
 
 # ----------- Jars
 echo ----- copy Jars
