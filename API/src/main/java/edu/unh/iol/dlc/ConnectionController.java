@@ -130,6 +130,10 @@ public class ConnectionController extends GraphicsEnvironment {
 	public void start(int index){
 		threads.get(index).start();
 	}
+	
+	public int getNumberOfConnections(){
+		return threads.size();
+	}
     
 //GraphicsEnvironment extension***********************************************/
 	
