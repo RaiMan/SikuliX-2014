@@ -204,9 +204,9 @@ public class ExtensionManagerFrame extends JFrame {
     }
   }
 
-  public static void main(String[] args) throws IOException {
-
-    ExtensionManagerFrame f = ExtensionManagerFrame.getInstance();
-    f.setVisible(true);
-  }
+//  public static void main(String[] args) throws IOException {
+//
+//    ExtensionManagerFrame f = ExtensionManagerFrame.getInstance();
+//    f.setVisible(true);
+//  }
 }
