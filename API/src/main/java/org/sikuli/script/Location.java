@@ -21,7 +21,7 @@ public class Location implements Comparable<Location>{
 
   public int x;
   public int y;
-  private Screen otherScreen = null;
+  private IScreen otherScreen = null;
 
   /**
    * to allow calculated x and y that might not be integers
@@ -119,7 +119,7 @@ public class Location implements Comparable<Location>{
     *
     * @return the screen, that contains the given point
     */
-  public Screen getScreen() {
+  public IScreen getScreen() {
     Rectangle r;
     if (otherScreen != null) {
       return otherScreen;
@@ -149,7 +149,7 @@ public class Location implements Comparable<Location>{
 	 * @param scr Screen
 	 * @return this
 	 */
-  public Location setOtherScreen(Screen scr) {
+  public Location setOtherScreen(IScreen scr) {
     otherScreen = scr;
     return this;
   }
@@ -360,8 +360,8 @@ public class Location implements Comparable<Location>{
    * @param screen new parent screen
    * @return new location
    */
-  public Location copyTo(Screen screen) {
-    Screen s = getScreen();
+  public Location copyTo(IScreen screen) {
+    IScreen s = getScreen();
     s = (s == null ? Screen.getPrimaryScreen() : s);
     Location o = new Location(s.getBounds().getLocation());
     Location n = new Location(screen.getBounds().getLocation());
@@ -446,9 +446,15 @@ public class Location implements Comparable<Location>{
    */
   @Override
   public String toString() {
-    Screen s = getScreen();
-    return "L(" + x + "," + y + ")" +
-            ((s == null) ? "" : "@" + s.toStringShort());
+    IScreen s = getScreen();
+    
+    if(s instanceof Screen){
+    	return "L(" + x + "," + y + ")" + "@" + ((Screen) s).toStringShort();
+    }
+    else{
+    	return "L(" + x + "," + y + ")" +
+                ((s == null) ? "" : "@" + s.toString());
+    }
   }
 
   /**

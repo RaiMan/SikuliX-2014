@@ -27,7 +27,7 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
   final static int DRAGGING_TIME = 200;
   static int MARGIN = 20;
   static Set<ScreenHighlighter> _opened = new HashSet<ScreenHighlighter>();
-  Screen _scr;
+  IScreen _scr;
   BufferedImage _screen = null;
   BufferedImage _darker_screen = null;
   BufferedImage bi = null;
@@ -42,7 +42,7 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
   BasicStroke _StrokeBorder = new BasicStroke(3);
   Animator _aniX, _aniY;
 
-  public ScreenHighlighter(Screen scr, String color) {
+  public ScreenHighlighter(IScreen scr, String color) {
     _scr = scr;
     init();
     setVisible(false);

@@ -377,7 +377,7 @@ public class Finder implements Iterator<Match> {
     Match ret = null;
     if (hasNext()) {
       FindResult fr = _results.get(_cur_result_i++);
-      Screen parentScreen = null;
+      IScreen parentScreen = null;
       if (_region != null) {
         parentScreen = _region.getScreen();
       }

@@ -214,7 +214,6 @@ public class Screen extends Region implements EventObserver, IScreen {
    * {@inheritDoc}
 	 * <br>TODO: remove this method if it is not needed
    */
-  @Override
   public void initScreen(Screen scr) {
     updateSelf();
   }
@@ -250,7 +249,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 	 * @return should not return
    */
   @Override
-  protected Region setScreen(Screen s) {
+  protected Region setScreen(IScreen s) {
     throw new UnsupportedOperationException("The setScreen() method cannot be called from a Screen object.");
   }
 
@@ -357,6 +356,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    *
 	 * @return the id
    */
+  @Override
   public int getID() {
     return curID;
   }
@@ -367,7 +367,8 @@ public class Screen extends Region implements EventObserver, IScreen {
    * @param y value
    * @return id of the screen
    */
-  protected int getIdFromPoint(int x, int y) {
+  @Override
+  public int getIdFromPoint(int x, int y) {
     return curID;
   }
 
@@ -411,7 +412,8 @@ public class Screen extends Region implements EventObserver, IScreen {
     return Region.create(loc.copyTo(this), width, height);
   }
 
-  protected ScreenImage getLastScreenImageFromScreen() {
+  @Override
+  public ScreenImage getLastScreenImageFromScreen() {
     return lastScreenImage;
   }
   /**
@@ -496,6 +498,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 	 * @param message text
    * @return the image
    */
+  @Override
   public ScreenImage userCapture(final String message) {
     waitPrompt = true;
     Thread th = new Thread() {
@@ -566,7 +569,8 @@ public class Screen extends Region implements EventObserver, IScreen {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Visual effects">
-  protected void showTarget(Location loc) {
+  @Override
+  public void showTarget(Location loc) {
     showTarget(loc, Settings.SlowMotionDelay);
   }
 
