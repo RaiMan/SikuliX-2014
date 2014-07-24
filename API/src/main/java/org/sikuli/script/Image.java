@@ -80,7 +80,7 @@ public class Image {
   private static List<Image> images = Collections.synchronizedList(new ArrayList<Image>());
   private static List<Image> imagePurgeList = Collections.synchronizedList(new ArrayList<Image>());
   private static List<String> imageNamePurgeList = Collections.synchronizedList(new ArrayList<String>());
-  private static Map<URL, Image> imageFiles = Collections.synchronizedMap(new HashMap<URL, Image>());
+  private static Map<String, Image> imageFiles = Collections.synchronizedMap(new HashMap<String, Image>());
   private static Map<String, URL> imageNames = Collections.synchronizedMap(new HashMap<String, URL>());
   private static int KB = 1024;
   private static int MB = KB * KB;
@@ -174,7 +174,7 @@ public class Image {
    * @param silent true: suppress some error messages
    * @return this
    */
-  protected static Image get(String fName, boolean silent) {
+  private static Image get(String fName, boolean silent) {
     if (fName == null || fName.isEmpty()) {
       return null;
     }
@@ -204,7 +204,7 @@ public class Image {
           fURL = ImagePath.find(fileName);
         }
         if (fURL != null) {
-          img = imageFiles.get(fURL);
+          img = imageFiles.get(fURL.toString());
         }
       }
     }
@@ -262,7 +262,7 @@ public class Image {
         return null;
       }
       if (imageName != null) {
-        imageFiles.put(fileURL, this);
+        imageFiles.put(fileURL.toString(), this);
         imageNames.put(imageName, fileURL);
         log(lvl, "added to image list: %s \nwith URL: %s",
                 imageName, fileURL);
@@ -327,7 +327,7 @@ public class Image {
 	 * @param obj String, Pattern or other Image
 	 * @return Image
 	 */
-	public static Image createFromObject(Object obj) {
+	protected static Image createFromObject(Object obj) {
     if (obj instanceof String) {
       return create((String) obj);
     } else if (obj instanceof Image) {
@@ -367,7 +367,7 @@ public class Image {
   }
 
   protected static Image get(URL imgURL) {
-    return imageFiles.get(imgURL);
+    return imageFiles.get(imgURL.toString());
   }
 
   private Image(URL fURL) {
@@ -461,22 +461,22 @@ public class Image {
   }
 
   protected static synchronized void purge(URL pathURL) {
-    String pathStr = pathURL.toExternalForm();
-    URL imgURL;
+    String pathStr = pathURL.toString();
+    String imgURL;
     Image img;
     log(lvl, "purge: " + pathStr);
-    Iterator<Map.Entry<URL, Image>> it = imageFiles.entrySet().iterator();
-    Map.Entry<URL, Image> entry;
+    Iterator<Map.Entry<String, Image>> it = imageFiles.entrySet().iterator();
+    Map.Entry<String, Image> entry;
     Iterator<Image> bit;
     imagePurgeList.clear();
     imageNamePurgeList.clear();
     while (it.hasNext()) {
       entry = it.next();
       imgURL = entry.getKey();
-      if (imgURL.toExternalForm().startsWith(pathStr)) {
+      if (imgURL.startsWith(pathStr)) {
         log(lvl, "purge: entry: " + imgURL.toString());
         imagePurgeList.add(entry.getValue());
-        imageNamePurgeList.add(entry.getKey().toExternalForm());
+        imageNamePurgeList.add(entry.getKey());
         it.remove();
       }
     }
@@ -496,7 +496,7 @@ public class Image {
       Map.Entry<String, URL> name;
       while (nit.hasNext()) {
         name = nit.next();
-        if (imageNamePurgeList.remove(name.getValue().toExternalForm())) {
+        if (imageNamePurgeList.remove(name.getValue().toString())) {
           nit.remove();
         }
       }
@@ -515,11 +515,11 @@ public class Image {
     log(0, "--- start of Image dump ---");
     ImagePath.printPaths();
     log(0, "ImageFiles entries: %d", imageFiles.size());
-    Iterator<Map.Entry<URL, Image>> it = imageFiles.entrySet().iterator();
-    Map.Entry<URL, Image> entry;
+    Iterator<Map.Entry<String, Image>> it = imageFiles.entrySet().iterator();
+    Map.Entry<String, Image> entry;
     while (it.hasNext()) {
       entry = it.next();
-      log(lvl, entry.getKey().toExternalForm());
+      log(lvl, entry.getKey());
     }
     log(0, "ImageNames entries: %d", imageNames.size());
     Iterator<Map.Entry<String, URL>> nit = imageNames.entrySet().iterator();
