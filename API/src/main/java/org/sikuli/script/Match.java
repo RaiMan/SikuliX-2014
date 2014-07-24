@@ -58,7 +58,7 @@ public class Match extends Region implements Comparable<Match> {
     simScore = sc;
   }
 
-  private Match(Match m, Screen parent) {
+  private Match(Match m, IScreen parent) {
     init(m.x, m.y, m.w, m.h, parent);
     copy(m);
   }
@@ -74,13 +74,13 @@ public class Match extends Region implements Comparable<Match> {
    * @param parent Screen
    * @param text given text
    */
-  protected Match(int x, int y, int w, int h, double Score, Screen parent, String text) {
+  protected Match(int x, int y, int w, int h, double Score, IScreen parent, String text) {
     init(x, y, w, h, parent);
     simScore = Score;
     ocrText = text;
   }
 
-  private Match(int _x, int _y, int _w, int _h, double score, Screen _parent) {
+  private Match(int _x, int _y, int _w, int _h, double score, IScreen _parent) {
     init(_x, _y, _w, _h, _parent);
     simScore = score;
   }
@@ -91,12 +91,12 @@ public class Match extends Region implements Comparable<Match> {
    * @param f
    * @param _parent
    */
-  protected Match(FindResult f, Screen _parent) {
+  protected Match(FindResult f, IScreen _parent) {
     init(f.getX(), f.getY(), f.getW(), f.getH(), _parent);
     simScore = f.getScore();
   }
 
-  private void init(int X, int Y, int W, int H, Screen parent) {
+  private void init(int X, int Y, int W, int H, IScreen parent) {
     x = X;
     y = Y;
     w = W;

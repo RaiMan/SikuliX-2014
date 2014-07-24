@@ -233,7 +233,7 @@ public class SikuliIDE extends JFrame {
       if (loadScript[0].endsWith(".skl")) {
         log(lvl, "Switching to SikuliScript to run " + loadScript);
         splash.dispose();
-        SikuliScript.main(args);
+        SikuliScript.run(args);
       }
     }
 
@@ -242,7 +242,7 @@ public class SikuliIDE extends JFrame {
             || cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
       log(lvl, "Switching to SikuliScript with option -r, -t or -i");
       splash.dispose();
-      SikuliScript.main(args);
+      SikuliScript.run(args);
     }
 
     new File(Settings.BaseTempPath).mkdirs();
@@ -309,7 +309,7 @@ public class SikuliIDE extends JFrame {
 
     _windowSize = prefs.getIdeSize();
     _windowLocation = prefs.getIdeLocation();
-    Screen m = (new Location(_windowLocation)).getScreen();
+    Screen m = (Screen) (new Location(_windowLocation)).getScreen();
     if (m == null) {
       Debug.error("IDE: remembered window not valid - going to primary screen");
       m = Screen.getPrimaryScreen();

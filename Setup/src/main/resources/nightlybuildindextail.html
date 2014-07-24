@@ -1,0 +1,45 @@
+<h4>Build: 2014-07-24 intermediate --- might not work yet</h4>
+added: Michaeal Johnsons VNC solution
+revised: build process and collectjars
+<h4>Build: 2014-07-23</h4>
+revised: lib export when running with sikulixapi.jar: exported to parent folder of jar in all cases.<br>
+added: a usecase for sikulixapi.jar from OSSRH in Maven projects (on git)
+<h4>Build: 2014-07-22</h4>
+finally fixed: problems after migrating to new version/naming/structural concept <br>
+setup: API (option 2) now contained in setup - no extra download<br>
+sikulixapi.jar for MavenCentral: Libs splitted into 3 system specific parts Libswin, Libsmac and LibsLux
+<h4>Build: 2014-07-21</h4>
+finally fixed: problems after migrating to new version/naming/structural concept <br>
+switched of yellow splash-screens at script run
+<h4>Build: 2014-07-17</h4> (first build of 1.1.0-Beta4)
+revised: IDE save: handling of images <br>
+revised: HotKeys: reset at scriptend in IDE<br>
+revised: Mouse: new classes Keys and Device for synching<br>
+<h4>Build: 2014-06-29</h4>
+revised: IDE help menu: post question, report bug: version/system/java info in clipboard, to support pasting<br>
+fixed: IDE crash Java NPE: if Tesseract not working and auto-image-naming is text/OCR
+<h4>Build: 2014-06-28 (this is the release status of 1.1.0-Beta2)</h4>
+fixed: IDE terminates on trying to open a non sikuli directory or an incorrect sikuli project<br>
+fixed: possible loss of images at save (images in comments, images given with path)<br>
+fixed: multi-monitor issues with respect to mouse actions (Screen(0) no longer is the primary monitor in all cases, but Screen.getPrimaryScreen() is)<br>
+fixed: out-of-bounds crash during error eval when running from command line (thanks to github user fpmchu)<br>
+fixed: IDE: NPE on termination when running from command line<br>
+fixed: bug 1330348: running Java: ImagePath is set to working directory if no path is set before first image search<br>
+fixed: possible NPE in special situations (mouse moved to invalid location)<br>
+fixed: the native library problems on Windows when using 32-Bit Java<br>
+added: Screen.all() makes a ScreenUnion of all monitors, on Python level ALL is predefined and can be used as ALL.function() like a Screen/Region<br>
+added: reset() to renew the multimonitor configuration inline on Python level<br>
+added: Settings.OcrLanguage is now accepted by Tesseract (after using org.sikuli.script.TextRecognizer.reset())<br>
+added: images can now be loaded from jars (see JavaDocs::ImagePath)<br>
+revised: completely: observe processing (see JavaDocs for now)<br>
+revised: further reduced error verbosity at script load and creating image thumbnails<br>
+revised: class Mouse, added Mouse.at() to get the mouse location, external mouse moves are detected, mouse use should now be thread safe<br>
+revised: moved the handling of capture and stop hotkey to HotkeyManager to prepare a more general usability (run on command line, using callbacks)<br>
+revised: Region.write() and it's javadoc (alternative for type() with more features)<br>
+revised: the native build for Linux, Mac and Windows (now using MinGW from http://win-builds.org/)<br>
+revised: JRuby support: many minors (see GitHub)<br>
+<br>
+... more can be found in commits before 2014-05-01 on GitHub
+<hr>
+</body>
+</html>

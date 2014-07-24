@@ -1,0 +1,60 @@
+#!/bin/sh
+base=`pwd`
+echo -
+echo ---
+
+
+if [ "$sbase" == "" ]; then
+	source=$base/APIFat/target
+	dist=$base/SikuliX-Setup
+else
+  echo ----- running on Jenkins
+  source=$sbase/APIFat/target
+	dist=$jbase/SikuliX-Setup
+  isjenkins=true
+fi
+
+echo ----- SikuliX collecting jars in $base
+
+if [ -e $dist ]; then
+  rm -f -R $dist
+fi
+mkdir $dist
+mkdir $dist/Downloads
+
+# ----------- Setup
+echo ----- collecting jars
+apijar=`ls $source/*-plain.jar`
+pversion=`java -jar $apijar pversion`
+java -jar $apijar noSetup
+echo ----- content of $source
+ls -l $source
+ls -l $source/Downloads
+
+# ----------- Setup
+echo ----- copy Setup
+cp $apijar $dist/sikulixsetup-$pversion.jar
+cp $apijar $dist/sikulixapi-$pversion.jar
+
+# ----------- Jars
+echo ----- copy Jars
+cp $source/Downloads/* $dist/Downloads
+
+echo ----------- final content of $dist
+ls -l $dist
+ls -l $dist/Downloads
+echo ----------- SikuliX collectjars end -----------
+if [ "$isjenkins" == "" ]; then
+	echo -
+	echo --
+	echo ----
+	echo ------
+	echo -------- If it looks like success -----------
+	echo ... move the folder $dist
+	echo to where you want
+	echo and name it as you like
+	echo and run setup, to get your wanted packages.
+	echo !! BE SURE, not to download anything !!
+	echo !! You are doing an offline setup !!
+	echo ---------------------------------------------
+fi

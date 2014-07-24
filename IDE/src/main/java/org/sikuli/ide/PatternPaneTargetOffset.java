@@ -19,6 +19,7 @@ import org.sikuli.script.Finder;
 import org.sikuli.script.Location;
 import org.sikuli.script.Match;
 import org.sikuli.script.Region;
+import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenImage;
 
 class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWheelListener, ChangeListener {
@@ -62,9 +63,10 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 					f.find(patFilename);
 					if (f.hasNext()) {
 //TODO rewrite completely for ScreenUnion
-            screenUnion.getScreen().setAsScreenUnion();
+            Screen s = (Screen) screenUnion.getScreen();
+            s.setAsScreenUnion();
 						_match = f.next();
-            screenUnion.getScreen().setAsScreen();
+            s.setAsScreen();
 						if (initOffset != null) {
 							setTarget(initOffset.x, initOffset.y);
 						} else {

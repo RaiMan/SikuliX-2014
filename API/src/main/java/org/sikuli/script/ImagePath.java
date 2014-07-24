@@ -22,7 +22,7 @@ import org.sikuli.basics.Settings;
 import org.sikuli.basics.SikuliScript;
 
 /**
- * maintain the path list of locations, where images will be searched.
+ * runtain the path list of locations, where images will be searched.
  * <br>the first entry always is the bundlepath used on the scripting level<br>
  * Python import automatically adds a sikuli bundle here<br>
  * supported locations:<br>
@@ -232,9 +232,9 @@ public class ImagePath {
    * for images stored in jars:<br>
    * Set the primary image path to the top folder level of a jar based on the
    * given class name (must be found on class path). When not running from a jar
-   * (e.g. running in some IDE) the path will be the path to the compiled
-   * classes (for Maven based projects this is target/classes that contains all
-   * stuff copied from src/main/resources automatically)<br>
+ (e.g. running in some IDE) the path will be the path to the compiled
+ classes (for Maven based projects this is target/classes that contains all
+ stuff copied from src/run/resources automatically)<br>
    * For situations, where the images cannot be found automatically in the non-jar situation, you
    * might give an alternative path either absolute or relative to the working folder.
    * @param mainPath absolute path name or a valid classname optionally followed by /subfolder...

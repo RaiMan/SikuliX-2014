@@ -11,7 +11,7 @@ import java.util.Arrays;
 import org.apache.commons.cli.CommandLine;
 
 /**
- * Contains the main class
+ * Contains the run class
  */
 public class SikuliScript {
 
@@ -44,7 +44,7 @@ public class SikuliScript {
    *
    * @param args passed arguments
    */
-  public static void main(String[] args) {
+  public static void run(String[] args) {
 
     if (isRunningScript) {
       System.out.println("[error] SikuliScript: can only run one at a time!");

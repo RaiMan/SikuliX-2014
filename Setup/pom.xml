@@ -1,13 +1,13 @@
 <?xml version="1.0"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <!--
-  * Copyright 2010-2013, Sikuli.org
-  * Released under the MIT License.
-  *
-  * kelthuzad, RaiMan 2013
-  -->
+	<!--
+	* Copyright 2010-2013, Sikuli.org
+	* Released under the MIT License.
+	*
+	* kelthuzad, RaiMan 2013
+	-->
 
 	<parent>
 		<groupId>com.sikulix</groupId>
@@ -16,53 +16,23 @@
 		<relativePath>../</relativePath>
 	</parent>
 
-  <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-  <groupId>com.sikulix</groupId>
-  <artifactId>sikulixsetup</artifactId>
-  <name>sikulixsetup</name>
-  <version>1.1.0-Beta4</version>
+	<groupId>com.sikulix</groupId>
+	<artifactId>sikulixsetup</artifactId>
+	<name>sikulixsetup</name>
+	<version>1.1.0-Beta4</version>
 
-  <dependencies>
-    <dependency>
-      <groupId>com.sikulix</groupId>
-      <artifactId>sikulixlibs</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.sikulix</groupId>
-      <artifactId>sikulixapi</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-  </dependencies>
+	<properties>
+		<atChar>@</atChar>
+	</properties>
 
 	<build>
-    <defaultGoal>clean package</defaultGoal>
-		<plugins>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-          <archive>
-            <manifest>
-              <mainClass>org.sikuli.basics.RunSetup</mainClass>
-            </manifest>
-          </archive>
-					<descriptors>
-						<descriptor>../plain.xml</descriptor>
-					</descriptors>
-					<finalName>sikulixsetup-${project.version}</finalName>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
 	</build>
 </project>

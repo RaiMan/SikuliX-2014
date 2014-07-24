@@ -30,7 +30,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
   static final BasicStroke _StrokeCross = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, new float[]{2f}, 0);
   static final BasicStroke bs = new BasicStroke(1);
   private EventObserver obs;
-  private Screen scrOCP;
+  private IScreen scrOCP;
   private BufferedImage scr_img = null;
   private BufferedImage scr_img_darker = null;
   private BufferedImage bi = null;
@@ -45,12 +45,12 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
   private boolean didPurgeMessage = false;
   private boolean dragging = false;
 
-  public OverlayCapturePrompt(Screen scr, EventObserver ob) {
+  public OverlayCapturePrompt(IScreen scr, EventObserver ob) {
     super();
     init(scr, ob);
   }
 
-  private void init(Screen scr, EventObserver ob) {
+  private void init(IScreen scr, EventObserver ob) {
     addObserver(ob);
     if (scr == null) {
       if (Screen.getNumberScreens() > 1) {
@@ -86,7 +86,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
         destx = srcx = e.getX();
         desty = srcy = e.getY();
         srcScreenId = scrOCP.getIdFromPoint(srcx, srcy);
-        srcScreenLocation = new Location(srcx + scrOCP.x, srcy + scrOCP.y);
+        srcScreenLocation = new Location(srcx + scrOCP.getX(), srcy + scrOCP.getY());
         Debug.log(2, "CapturePrompt: started at (%d,%d) as %s on %d", srcx, srcy,
                 srcScreenLocation.toStringShort(), srcScreenId);
         repaint();
@@ -105,7 +105,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
           canceled = true;
           Debug.log(2, "CapturePrompt: aborted using right mouse button");
         } else {
-          destScreenLocation = new Location(destx + scrOCP.x, desty + scrOCP.y);
+          destScreenLocation = new Location(destx + scrOCP.getX(), desty + scrOCP.getY());
           Debug.log(2, "CapturePrompt: finished at (%d,%d) as %s on %d", destx, desty,
                   destScreenLocation.toStringShort(), srcScreenId);
         }
@@ -194,7 +194,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
     this.requestFocus();
   }
 
-  private void captureScreen(Screen scr) {
+  private void captureScreen(IScreen scr) {
     ScreenImage simg = scr.capture();
     scr_img = simg.getImage();
     darker_factor = 0.6f;
@@ -210,8 +210,8 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
     if (cropImg == null) {
       return null;
     }
-    rectSelection.x += scrOCP.x;
-    rectSelection.y += scrOCP.y;
+    rectSelection.x += scrOCP.getX();
+    rectSelection.y += scrOCP.getY();
     ScreenImage ret = new ScreenImage(rectSelection, cropImg);
     return ret;
   }
@@ -305,8 +305,8 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
     if (scr_img != null) {
       Graphics2D g2dWin = (Graphics2D) g;
       if (bi == null) {
-        bi = new BufferedImage(scrOCP.w,
-                scrOCP.h, BufferedImage.TYPE_INT_RGB);
+        bi = new BufferedImage(scrOCP.getW(),
+                scrOCP.getH(), BufferedImage.TYPE_INT_RGB);
       }
       Graphics2D bfG2 = bi.createGraphics();
       bfG2.drawImage(scr_img_darker, 0, 0, this);

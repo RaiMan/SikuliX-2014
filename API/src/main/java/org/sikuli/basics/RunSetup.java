@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 
@@ -40,19 +39,20 @@ public class RunSetup {
 	private static String uhome;
 	private static String logfile;
 	private static String version = Settings.getVersionShort();
-	private static String majorversion = Settings.getVersionShortBasic();
+//TODO wrong if version number parts have more than one digit
+	private static String minorversion = Settings.getVersionShort().substring(0,5);
+	private static String majorversion = Settings.getVersionShort().substring(0,3);
 	private static String updateVersion;
 	private static String downloadSetup;
-	private static String downloadLibs = version + "-0.jar";
 	private static String downloadIDE = version + "-1.jar";
 	private static String downloadJava = version + "-2.jar";
 	private static String downloadRServer = version + "-3.jar";
 	private static String downloadJython = version + "-4.jar";
 	private static String downloadJRuby = version + "-5.jar";
 	private static String downloadMacAppSuffix = "-9.jar";
-	private static String downloadMacApp = version.substring(0, 5) + downloadMacAppSuffix;
+	private static String downloadMacApp = minorversion + downloadMacAppSuffix;
 	private static String downloadTessSuffix = "-8.jar";
-	private static String downloadTess = version.substring(0, 5) + downloadTessSuffix;
+	private static String downloadTess = minorversion + downloadTessSuffix;
 	private static String localJava = "sikulixapi.jar";
 	private static String localIDE = "sikulix.jar";
 	private static String localMacApp = "sikulixmacapp.jar";
@@ -87,6 +87,8 @@ public class RunSetup {
 	private static boolean runningSetup = false;
 	private static boolean generallyDoUpdate = false;
 	public static String timestampBuilt = Settings.SikuliVersionBuild;
+  private static boolean shouldrun;
+  private static int optionsSize;
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
@@ -132,6 +134,8 @@ public class RunSetup {
 		}
 
 		options.addAll(Arrays.asList(args));
+    optionsSize = options.size();
+    shouldrun = 0 < optionsSize;
 
 		//<editor-fold defaultstate="collapsed" desc="options special">
 		if (args.length > 0 && "build".equals(args[0])) {
@@ -154,6 +158,11 @@ public class RunSetup {
 			System.exit(0);
 		}
 
+		if (args.length > 0 && "minorversion".equals(args[0])) {
+			System.out.println(minorversion);
+			System.exit(0);
+		}
+
 		if (args.length > 0 && "majorversion".equals(args[0])) {
 			System.out.println(majorversion);
 			System.exit(0);
@@ -169,33 +178,58 @@ public class RunSetup {
 			options.remove(0);
 		}
 
-		if (args.length > 0 && "runningSetup".equals(args[0])) {
+		if (options.size() > 0 && "runningSetup".equals(options.get(0))) {
 			runningSetup = true;
 			options.remove(0);
 		}
 
-		if (args.length > 0 && "update".equals(args[0])) {
+		if (options.size() > 0 && "update".equals(options.get(0))) {
 			runningUpdate = true;
 			options.remove(0);
 		}
 
-		if (args.length > 0 && "updateSetup".equals(args[0])) {
+		if (options.size() > 0 && "updateSetup".equals(options.get(0))) {
 			isUpdateSetup = true;
 			options.remove(0);
 		}
 
-		if (args.length > 0 && "noSetup".equals(args[0])) {
+		if (options.size() > 0 && "noSetup".equals(options.get(0))) {
 			noSetup = true;
 			options.remove(0);
 		}
 
-		if (args.length > 0 && "noSetupSilent".equals(args[0])) {
+		if (options.size() > 0 && "noSetupSilent".equals(options.get(0))) {
 			noSetup = true;
 			noSetupSilent = true;
 			options.remove(0);
 		}
 
-		if (args.length == 1 && "keyboardsetup".equals(args[0].toLowerCase())) {
+		runningJar = FileManager.getJarName();
+
+//**API** sikulixapi.jar should not be runnable without defined options
+		if (shouldrun) {
+      if (options.size() == optionsSize && runningJar.contains("sikulixapi")) {
+        System.exit(0);
+      }
+		}
+
+		if (runningJar.isEmpty()) {
+			popError("error accessing jar - terminating");
+			System.exit(0);
+		}
+		if (runningJar.startsWith("sikulixupdate")) {
+			runningUpdate = true;
+		}
+
+		if (runningUpdate) {
+			localLogfile = "SikuliX-" + version + "-UpdateLog.txt";
+		} else {
+			localLogfile = "SikuliX-" + version + "-SetupLog.txt";
+		}
+    //</editor-fold>
+
+		//<editor-fold defaultstate="collapsed" desc="option makeJar">
+		if (options.size() > 0 && "keyboardsetup".equals(options.get(0).toLowerCase())) {
 			String dir = System.getProperty("user.dir");
 			String jar = "sikulixapi.jar";
 			File jf = new File(dir, jar);
@@ -222,34 +256,6 @@ public class RunSetup {
 			System.exit(0);
 		}
 
-		runningJar = FileManager.getJarName();
-
-//**API** sikulixapi.jar should not be runnable
-		if (runningJar.contains("sikulixapi")) {
-			System.exit(0);
-		}
-
-		if (runningJar.isEmpty()) {
-			popError("error accessing jar - terminating");
-			System.exit(0);
-		}
-		if (runningJar.startsWith("sikulixupdate")) {
-			runningUpdate = true;
-		}
-
-		if (runningUpdate) {
-			localLogfile = "SikuliX-" + version + "-UpdateLog.txt";
-		} else {
-			localLogfile = "SikuliX-" + version + "-SetupLog.txt";
-		}
-    //</editor-fold>
-
-		//<editor-fold defaultstate="collapsed" desc="option makeJar">
-		if (args.length > 0) {
-			log1(lvl, "... starting with " + Sikulix.arrayToString(args));
-		} else {
-			log1(lvl, "... starting with no args given");
-		}
 		String baseDir = null;
 		if (options.size() > 0 && options.get(0).equals("makeJar")) {
 			options.remove(0);
@@ -337,6 +343,7 @@ public class RunSetup {
 			}
 			System.exit(0);
 		}
+
 		if (options.size() > 0) {
 			log(-1, "invalid command line options - terminating");
 			System.exit(0);
@@ -356,7 +363,13 @@ public class RunSetup {
 		Settings.LogTime = true;
 		Debug.setDebugLevel(3);
 
-		if (runningfromJar) {
+		if (args.length > 0) {
+			log1(lvl, "... starting with: " + Sikulix.arrayToString(args));
+		} else {
+			log1(lvl, "... starting with no args given");
+		}
+
+		if (test || runningfromJar) {
 			if (!noSetupSilent) {
 				logfile = (new File(workDir, localLogfile)).getAbsolutePath();
 				if (!Debug.setLogFile(logfile)) {
@@ -366,7 +379,7 @@ public class RunSetup {
 				}
 			}
 			String projectDir;
-			if (runningJar.endsWith("-plain.jar")) {
+			if ("classes".equals(runningJar) || runningJar.endsWith("-plain.jar")) {
 				localSetup = runningJar;
 				projectDir = new File(workDir).getParentFile().getParentFile().getAbsolutePath();
 				if (!noSetup && !popAsk("Setup seems to be running in Maven project structure\n"
@@ -375,11 +388,9 @@ public class RunSetup {
 				}
 				File fDownloads = new File(workDir, "Downloads");
 				Debug.log(3, "projectDir: " + projectDir);
-				String libsFat = downloadLibs.replace(".jar", "-plain.jar");
-				String ideFat = downloadIDE.replace(".jar", "-ide-fat.jar");
-				String apiFat = downloadJava.replace(".jar", "-plain.jar");
-				String jythonFat = downloadJython.replace(".jar", "-plain.jar");
-				String jrubyFat = downloadJRuby.replace(".jar", "-plain.jar");
+				String ideFat = "sikulix-complete-" + Settings.SikuliProjectVersion + "-ide-fat.jar";
+				File jythonJar = new File(Settings.SikuliJython);
+				File jrubyJar = new File(Settings.SikuliJRuby);
 				boolean doit = true;
 				if (new File(workDir, "Downloads").exists()) {
 					FileManager.deleteFileOrFolder(new File(workDir, "Downloads").getAbsolutePath(), null);
@@ -390,48 +401,30 @@ public class RunSetup {
 						if (entry.isDirectory()) {
 							return true;
 						}
-						return !entry.getName().startsWith("sikulixsetup");
+						return !entry.getName().startsWith("sikulix");
 					}
 				});
-//LibsFat currently not neeeded
-//				File fLibsFat = new File(projectDir, "Libs/target/" + libsFat);
-//				if (!fLibsFat.exists()) {
-//					Debug.log(3, "missing: " + fLibsFat.getAbsolutePath());
-//					doit = false;
-//				}
 				File fIDEFat = new File(projectDir, "IDEFat/target/" + ideFat);
 				if (!fIDEFat.exists()) {
 					Debug.log(3, "missing: " + fIDEFat.getAbsolutePath());
 					doit = false;
 				}
-//**API** no longer needed
-//				File fAPIFat = new File(projectDir, "APIFat/target/" + apiFat);
-//				if (!fAPIFat.exists()) {
-//					Debug.log(3, "missing: " + fAPIFat.getAbsolutePath());
-//					doit = false;
-//				}
-				File fJythonFat = new File(projectDir, "JythonFat/target/" + jythonFat);
-				if (!fJythonFat.exists()) {
-					Debug.log(3, "missing: " + fJythonFat.getAbsolutePath());
+				if (!jythonJar.exists()) {
+					Debug.log(3, "missing: " + jythonJar.getAbsolutePath());
 					doit = false;
 				}
-				File fJRubyFat = new File(projectDir, "JRubyFat/target/" + jrubyFat);
-				if (!fJRubyFat.exists()) {
-					Debug.log(3, "missing " + fJRubyFat.getAbsolutePath());
+				if (!jrubyJar.exists()) {
+					Debug.log(3, "missing " + jrubyJar.getAbsolutePath());
 					doit = false;
 				}
 				if (doit) {
 					fDownloads.mkdir();
 					try {
-//						FileManager.xcopyAll(fLibsFat.getAbsolutePath(),
-//										new File(fDownloads, downloadLibs).getAbsolutePath());
 						FileManager.xcopyAll(fIDEFat.getAbsolutePath(),
 										new File(fDownloads, downloadIDE).getAbsolutePath());
-//						FileManager.xcopyAll(fAPIFat.getAbsolutePath(),
-//										new File(fDownloads, downloadJava).getAbsolutePath());
-						FileManager.xcopyAll(fJythonFat.getAbsolutePath(),
+						FileManager.xcopyAll(jythonJar.getAbsolutePath(),
 										new File(fDownloads, downloadJython).getAbsolutePath());
-						FileManager.xcopyAll(fJRubyFat.getAbsolutePath(),
+						FileManager.xcopyAll(jrubyJar.getAbsolutePath(),
 										new File(fDownloads, downloadJRuby).getAbsolutePath());
 						String fname = new File(projectDir, "Remote/target/"
 										+ "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
@@ -1231,7 +1224,7 @@ public class RunSetup {
 				try {
 					String testargs[] = new String[]{"-testSetup", "jython", "popup(\"" + testSetupSuccess + "\")"};
 					closeSplash(splash);
-					SikuliScript.main(testargs);
+					SikuliScript.run(testargs);
 					if (null == testargs[0]) {
 						throw new Exception("testSetup ran with problems");
 					}
@@ -1252,7 +1245,7 @@ public class RunSetup {
 				try {
 					String testargs[] = new String[]{"-testSetup", "jruby", "popup(\"" + testSetupSuccess + "\")"};
 					closeSplash(splash);
-					SikuliScript.main(testargs);
+					SikuliScript.run(testargs);
 					if (null == testargs[0]) {
 						throw new Exception("testSetup ran with problems");
 					}

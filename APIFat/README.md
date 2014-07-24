@@ -1,4 +1,4 @@
 For Build only
 ==============
 
-produces the fat jar `.....-2.jar` (base for `sikulixapi.jar`)
+produces a ready to use `sikulixapi-{version}.jar` containing the native libs for all systems and is "maven ready"

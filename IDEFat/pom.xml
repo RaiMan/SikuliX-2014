@@ -19,7 +19,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.sikulix</groupId>
-  <artifactId>sikulixFat</artifactId>
+  <artifactId>sikulix-complete</artifactId>
   <version>1.1.0-Beta4</version>
 
   <dependencies>
@@ -68,9 +68,9 @@
             </manifest>
           </archive>
 					<descriptors>
-						<descriptor>../ide-fat.xml</descriptor>
+						<descriptor>../${sikuli.helpers}/ide-fat.xml</descriptor>
 					</descriptors>
-					<finalName>${sikuli.usedversion}-1</finalName>
+					<finalName>sikulix-complete-${project.version}</finalName>
 				</configuration>
 				<executions>
 					<execution>

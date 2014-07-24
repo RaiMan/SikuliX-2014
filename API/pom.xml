@@ -22,6 +22,10 @@
   <artifactId>sikulixapi</artifactId>
   <version>1.1.0-Beta4</version>
 
+	<properties>
+		<maven.test.skip>true</maven.test.skip>
+	</properties>
+
   <dependencies>
  		<dependency>
 			<groupId>commons-cli</groupId>

@@ -16,6 +16,8 @@ import java.util.List;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 
+import edu.unh.iol.dlc.VNCScreen;
+
 /**
  * A Region is a rectengular area and lies always completely inside its parent screen
  *
@@ -32,8 +34,8 @@ public class Region {
   /**
    * The Screen containing the Region
    */
-  private Screen scr;
-  private boolean otherScreen = false;
+  private IScreen scr;
+  protected boolean otherScreen = false;
 
   /**
    * The ScreenHighlighter for this Region
@@ -174,10 +176,10 @@ public class Region {
    *
    * @param scr The Screen containing the Region
    */
-  public void initScreen(Screen scr) {
+  public void initScreen(IScreen scr) {
     // check given screen first
     Rectangle rect, screenRect;
-    Screen screen, screenOn;
+    IScreen screen, screenOn;
     if (scr != null) {
       if (scr.isOtherScreen()) {
         if (x < 0) {
@@ -211,13 +213,37 @@ public class Region {
     // crop to the screen with the largest intersection
     screenRect = new Rectangle(0, 0, 0, 0);
     screenOn = null;
-    for (int i = 0; i < Screen.getNumberScreens(); i++) {
-      screen = Screen.getScreen(i);
-      rect = regionOnScreen(screen);
-      if (rect != null) {
-        if (rect.width * rect.height > screenRect.width * screenRect.height) {
-          screenRect = rect;
-          screenOn = screen;
+    if (scr instanceof Screen) {
+      for (int i = 0; i < Screen.getNumberScreens(); i++) {
+        screen = Screen.getScreen(i);
+        rect = regionOnScreen(screen);
+        if (rect != null) {
+          if (rect.width * rect.height > screenRect.width * screenRect.height) {
+            screenRect = rect;
+            screenOn = screen;
+          }
+        }
+      }
+    } else if (scr instanceof VNCScreen) {
+      for (int i = 0; i < VNCScreen.getNumberScreens(); i++) {
+        screen = VNCScreen.getScreen(i);
+        rect = regionOnScreen(screen);
+        if (rect != null) {
+          if (rect.width * rect.height > screenRect.width * screenRect.height) {
+            screenRect = rect;
+            screenOn = screen;
+          }
+        }
+      }
+    } else {//when scr == null
+      for (int i = 0; i < Screen.getNumberScreens(); i++) {
+        screen = Screen.getScreen(i);
+        rect = regionOnScreen(screen);
+        if (rect != null) {
+          if (rect.width * rect.height > screenRect.width * screenRect.height) {
+            screenRect = rect;
+            screenOn = screen;
+          }
         }
       }
     }
@@ -264,7 +290,7 @@ public class Region {
    * @param screen The Screen in which the Region might be
    * @return True, if the Region is on the Screen. False if the Region is not inside the Screen
    */
-  protected Rectangle regionOnScreen(Screen screen) {
+  protected Rectangle regionOnScreen(IScreen screen) {
     if (screen == null) {
       return null;
     }
@@ -302,7 +328,7 @@ public class Region {
    * @param H heigth
    * @param parentScreen the screen containing the Region
    */
-  public Region(int X, int Y, int W, int H, Screen parentScreen) {
+  public Region(int X, int Y, int W, int H, IScreen parentScreen) {
     this.rows = 0;
     this.x = X;
     this.y = Y;
@@ -381,7 +407,7 @@ public class Region {
    * @param scr the source screen
    * @return the new region
    */
-  private static Region create(int X, int Y, int W, int H, Screen scr) {
+  private static Region create(int X, int Y, int W, int H, IScreen scr) {
     return new Region(X, Y, W, H, scr);
   }
 
@@ -486,7 +512,7 @@ public class Region {
    * @param parentScreen the new parent screen
    * @return the new region
    */
-  protected static Region create(Rectangle r, Screen parentScreen) {
+  protected static Region create(Rectangle r, IScreen parentScreen) {
     return Region.create(r.x, r.y, r.width, r.height, parentScreen);
   }
 
@@ -566,7 +592,7 @@ public class Region {
    * @param screen new parent screen
    * @return new region
    */
-  public Region copyTo(Screen screen) {
+  public Region copyTo(IScreen screen) {
     Location o = new Location(getScreen().getBounds().getLocation());
     Location n = new Location(screen.getBounds().getLocation());
     return Region.create(n.x + x - o.x, n.y + y - o.y, w, h, screen);
@@ -710,7 +736,7 @@ public class Region {
    *
    * @return the Screen object containing the region
    */
-  public Screen getScreen() {
+  public IScreen getScreen() {
     return scr;
   }
 
@@ -729,7 +755,7 @@ public class Region {
    * @deprecated Only for compatibility, to get the screen containing this region, use {@link #getScreen()}
    */
   @Deprecated
-  public Screen getScreenContaining() {
+  public IScreen getScreenContaining() {
     return getScreen();
   }
 
@@ -739,7 +765,7 @@ public class Region {
    * @param scr the containing screen object
 	 * @return
    */
-  protected Region setScreen(Screen scr) {
+  protected Region setScreen(IScreen scr) {
     initScreen(scr);
     return this;
   }
@@ -774,7 +800,7 @@ public class Region {
    * @return the center pixel location of the region
    */
   public Location getCenter() {
-    return checkAndSetRemote(new Location(x + w / 2, y + h / 2));
+    return checkAndSetRemote(new Location(getX() + getW() / 2, getY() + getH() / 2));
   }
 
   /**
@@ -2367,7 +2393,12 @@ public class Region {
     if (!Settings.UseImageFinder && Settings.CheckLastSeen && null != img.getLastSeen()) {
       Region r = Region.create(img.getLastSeen());
       if (this.contains(r)) {
-        Finder f = new Finder(new Screen().capture(r), r);
+        Finder f = null;
+        if (this.scr instanceof VNCScreen) {
+          f = new Finder(new VNCScreen().capture(r), r);
+        } else {
+          f = new Finder(new Screen().capture(r), r);
+        }
         if (ptn == null) {
           f.find(new Pattern(img).similar(Settings.CheckLastSeenSimilar));
         } else {
