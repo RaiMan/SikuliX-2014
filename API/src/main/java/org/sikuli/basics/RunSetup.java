@@ -39,7 +39,9 @@ public class RunSetup {
 	private static String uhome;
 	private static String logfile;
 	private static String version = Settings.getVersionShort();
-	private static String majorversion = Settings.getVersionShortBasic();
+//TODO wrong if version number parts have more than one digit
+	private static String minorversion = Settings.getVersionShort().substring(0,5);
+	private static String majorversion = Settings.getVersionShort().substring(0,3);
 	private static String updateVersion;
 	private static String downloadSetup;
 	private static String downloadIDE = version + "-1.jar";
@@ -48,9 +50,9 @@ public class RunSetup {
 	private static String downloadJython = version + "-4.jar";
 	private static String downloadJRuby = version + "-5.jar";
 	private static String downloadMacAppSuffix = "-9.jar";
-	private static String downloadMacApp = version.substring(0, 5) + downloadMacAppSuffix;
+	private static String downloadMacApp = minorversion + downloadMacAppSuffix;
 	private static String downloadTessSuffix = "-8.jar";
-	private static String downloadTess = version.substring(0, 5) + downloadTessSuffix;
+	private static String downloadTess = minorversion + downloadTessSuffix;
 	private static String localJava = "sikulixapi.jar";
 	private static String localIDE = "sikulix.jar";
 	private static String localMacApp = "sikulixmacapp.jar";
@@ -153,6 +155,11 @@ public class RunSetup {
 
 		if (args.length > 0 && "version".equals(args[0])) {
 			System.out.println(Settings.getVersionShort());
+			System.exit(0);
+		}
+
+		if (args.length > 0 && "minorversion".equals(args[0])) {
+			System.out.println(minorversion);
 			System.exit(0);
 		}
 
