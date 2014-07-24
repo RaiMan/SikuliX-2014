@@ -171,57 +171,30 @@ public class RunSetup {
 			options.remove(0);
 		}
 
-		if (args.length > 0 && "runningSetup".equals(args[0])) {
+		if (options.size() > 0 && "runningSetup".equals(options.get(0))) {
 			runningSetup = true;
 			options.remove(0);
 		}
 
-		if (args.length > 0 && "update".equals(args[0])) {
+		if (options.size() > 0 && "update".equals(options.get(0))) {
 			runningUpdate = true;
 			options.remove(0);
 		}
 
-		if (args.length > 0 && "updateSetup".equals(args[0])) {
+		if (options.size() > 0 && "updateSetup".equals(options.get(0))) {
 			isUpdateSetup = true;
 			options.remove(0);
 		}
 
-		if (args.length > 0 && "noSetup".equals(args[0])) {
+		if (options.size() > 0 && "noSetup".equals(options.get(0))) {
 			noSetup = true;
 			options.remove(0);
 		}
 
-		if (args.length > 0 && "noSetupSilent".equals(args[0])) {
+		if (options.size() > 0 && "noSetupSilent".equals(options.get(0))) {
 			noSetup = true;
 			noSetupSilent = true;
 			options.remove(0);
-		}
-
-		if (args.length == 1 && "keyboardsetup".equals(args[0].toLowerCase())) {
-			String dir = System.getProperty("user.dir");
-			String jar = "sikulixapi.jar";
-			File jf = new File(dir, jar);
-			if (jf.exists()) {
-				Sikulix.addToClasspath(jf.getAbsolutePath());
-				jf = null;
-			}
-			if (jf != null) {
-				jar = "sikulix.jar";
-				jf = new File(dir, jar);
-				if (jf.exists()) {
-					Sikulix.addToClasspath(jf.getAbsolutePath());
-					jf = null;
-				}
-			}
-			if (jf != null) {
-				Debug.error("no suitable jar found");
-				System.exit(0);
-			}
-			Settings.ActionLogs = false;
-			Settings.InfoLogs = false;
-			Debug.setDebugLevel(3);
-			Sikulix.callKeyBoardSetup();
-			System.exit(0);
 		}
 
 		runningJar = FileManager.getJarName();
@@ -249,11 +222,33 @@ public class RunSetup {
     //</editor-fold>
 
 		//<editor-fold defaultstate="collapsed" desc="option makeJar">
-		if (args.length > 0) {
-			log1(lvl, "... starting with " + Sikulix.arrayToString(args));
-		} else {
-			log1(lvl, "... starting with no args given");
+		if (options.size() > 0 && "keyboardsetup".equals(options.get(0).toLowerCase())) {
+			String dir = System.getProperty("user.dir");
+			String jar = "sikulixapi.jar";
+			File jf = new File(dir, jar);
+			if (jf.exists()) {
+				Sikulix.addToClasspath(jf.getAbsolutePath());
+				jf = null;
+			}
+			if (jf != null) {
+				jar = "sikulix.jar";
+				jf = new File(dir, jar);
+				if (jf.exists()) {
+					Sikulix.addToClasspath(jf.getAbsolutePath());
+					jf = null;
+				}
+			}
+			if (jf != null) {
+				Debug.error("no suitable jar found");
+				System.exit(0);
+			}
+			Settings.ActionLogs = false;
+			Settings.InfoLogs = false;
+			Debug.setDebugLevel(3);
+			Sikulix.callKeyBoardSetup();
+			System.exit(0);
 		}
+
 		String baseDir = null;
 		if (options.size() > 0 && options.get(0).equals("makeJar")) {
 			options.remove(0);
@@ -341,6 +336,7 @@ public class RunSetup {
 			}
 			System.exit(0);
 		}
+
 		if (options.size() > 0) {
 			log(-1, "invalid command line options - terminating");
 			System.exit(0);
@@ -360,6 +356,12 @@ public class RunSetup {
 		Settings.LogTime = true;
 		Debug.setDebugLevel(3);
 
+		if (args.length > 0) {
+			log1(lvl, "... starting with: " + Sikulix.arrayToString(args));
+		} else {
+			log1(lvl, "... starting with no args given");
+		}
+
 		if (test || runningfromJar) {
 			if (!noSetupSilent) {
 				logfile = (new File(workDir, localLogfile)).getAbsolutePath();
@@ -370,7 +372,7 @@ public class RunSetup {
 				}
 			}
 			String projectDir;
-			if (runningJar.endsWith("-plain.jar")) {
+			if ("classes".equals(runningJar) || runningJar.endsWith("-plain.jar")) {
 				localSetup = runningJar;
 				projectDir = new File(workDir).getParentFile().getParentFile().getAbsolutePath();
 				if (!noSetup && !popAsk("Setup seems to be running in Maven project structure\n"
@@ -379,7 +381,7 @@ public class RunSetup {
 				}
 				File fDownloads = new File(workDir, "Downloads");
 				Debug.log(3, "projectDir: " + projectDir);
-				String ideFat = "sikulix-complete-" + Settings.SikuliVersion + "-ide-fat.jar";
+				String ideFat = "sikulix-complete-" + Settings.SikuliProjectVersion + "-ide-fat.jar";
 				File jythonJar = new File(Settings.SikuliJython);
 				File jrubyJar = new File(Settings.SikuliJRuby);
 				boolean doit = true;

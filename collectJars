@@ -2,56 +2,60 @@
 base=`pwd`
 echo -
 echo ---
+
+
+if [ "$sbase" == "" ]; then
+	source=$base/APIFat/target
+	dist=$base/SikuliX-Setup
+else
+  echo ----- running on Jenkins
+  source=$sbase/APIFat/target
+	dist=$jbase/SikuliX-Setup
+  base = $jbase
+  isjenkins=true
+fi
+
 echo ----- SikuliX collecting jars in $base
 
-source=$base/APIFat/target
-
-dist=$base/../SikuliX-Setup
 if [ -e $dist ]; then
   rm -f -R $dist
 fi
 mkdir $dist
 mkdir $dist/Downloads
 
-log=$dist/collectjars-log.txt
-
 # ----------- Setup
 echo ----- collecting jars
-echo --- collecting jars >>$log
-cd $source 
-apijar=`ls *-plain.jar`
-echo -jar $apijar noSetup 
-java -jar $apijar noSetup 
-cd $base
-ls -l $source >>$log
-ls -l $source/Downloads >>$log
+apijar=`ls $source/*-plain.jar`
+pversion=`java -jar $apijar pversion`
+java -jar $apijar noSetup
+echo ----- content of $source
+ls -l $source
+ls -l $source/Downloads
 
 # ----------- Setup
 echo ----- copy Setup
-echo --- copy Setup >>$log
-cp $source/$apijar $dist/sikulixsetup.jar
+cp $apijar $dist/sikulixsetup-$pversion.jar
+cp $apijar $dist/sikulixapi-$pversion.jar
 
 # ----------- Jars
 echo ----- copy Jars
-echo --- copy Jars >>$log
 cp $source/Downloads/* $dist/Downloads
 
 echo ----------- final content of $dist
 ls -l $dist
-ls -l $dist >>$log
 ls -l $dist/Downloads
-ls -l $dist/Downloads >>$log
 echo ----------- SikuliX collectjars end -----------
-echo -
-echo --
-echo ----
-echo ------
-echo -------- Looks like success -----------
-echo check the logfile to be sure
-echo $log
-echo Now you can move the folder to where you want
-echo and name it as you like
-echo and run setup, to get your wanted packages.
-echo !! BE SURE, not to download anything !!
-echo !! You are doing an offline setup !!
-echo ---------------------------------------------
+if [ "$isjenkins" == "" ]; then
+	echo -
+	echo --
+	echo ----
+	echo ------
+	echo -------- If it looks like success -----------
+	echo ... move the folder $dist
+	echo to where you want
+	echo and name it as you like
+	echo and run setup, to get your wanted packages.
+	echo !! BE SURE, not to download anything !!
+	echo !! You are doing an offline setup !!
+	echo ---------------------------------------------
+fi
