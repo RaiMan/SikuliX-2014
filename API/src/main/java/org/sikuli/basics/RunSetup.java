@@ -1224,7 +1224,7 @@ public class RunSetup {
 				try {
 					String testargs[] = new String[]{"-testSetup", "jython", "popup(\"" + testSetupSuccess + "\")"};
 					closeSplash(splash);
-					SikuliScript.run(testargs);
+					SikuliScript.runscript(testargs);
 					if (null == testargs[0]) {
 						throw new Exception("testSetup ran with problems");
 					}
@@ -1245,7 +1245,7 @@ public class RunSetup {
 				try {
 					String testargs[] = new String[]{"-testSetup", "jruby", "popup(\"" + testSetupSuccess + "\")"};
 					closeSplash(splash);
-					SikuliScript.run(testargs);
+					SikuliScript.runscript(testargs);
 					if (null == testargs[0]) {
 						throw new Exception("testSetup ran with problems");
 					}

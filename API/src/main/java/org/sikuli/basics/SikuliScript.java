@@ -44,7 +44,7 @@ public class SikuliScript {
    *
    * @param args passed arguments
    */
-  public static void run(String[] args) {
+  public static void runscript(String[] args) {
 
     if (isRunningScript) {
       System.out.println("[error] SikuliScript: can only run one at a time!");
