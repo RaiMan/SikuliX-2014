@@ -68,7 +68,7 @@
             </manifest>
           </archive>
 					<descriptors>
-						<descriptor>../ide-fat.xml</descriptor>
+						<descriptor>../${sikuli.helpers}/ide-fat.xml</descriptor>
 					</descriptors>
 					<finalName>sikulix-complete-${project.version}</finalName>
 				</configuration>

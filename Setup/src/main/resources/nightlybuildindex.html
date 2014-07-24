@@ -10,7 +10,7 @@ SikuliX 2014 --- Nightly Builds
 <h1><a href="https://github.com/RaiMan/SikuliX-2014" target="_blank">SikuliX 2014</a> --- Nightly Builds</h1>
 <hr>
 <h3>
-Latest available Build: #version# #stamp#
+Latest available Build: ${sikuli.usedversion} ${timestamp}nightly
 </h3>
 <hr>
 This is an experimental service --- USE AT YOUR OWN RISK <br>
@@ -35,7 +35,7 @@ On success the artifacts as known from the
 <hr>
 Available Downlods
 <hr>
-<a href="sikulixsetup-#version#.jar">sikulixsetup-#version#</a> (store and run in an empty folder)
+<a href="sikulixsetup-${sikuli.usedversion}.jar">sikulixsetup-${sikuli.usedversion}</a> (store and run in an empty folder)
 <br><br>
 The following jars would be downloaded automatically when running setup.
 <br><br>
@@ -46,18 +46,18 @@ If you download manually, the jars have to be in a folder Downloads in the folde
 Setup will find the local files and ask you to use them instead of downloading fresh versions.<br><br>
 BE AWARE: These files are not useable for any other purpose than being processed by sikulixsetup.
 <hr>
-- <a href="#version#-1.jar">#version#-1</a> to get the SikuliX IDE (setup option1)<br>
+- <a href="${sikuli.usedversion}-1.jar">${sikuli.usedversion}-1</a> to get the SikuliX IDE (setup option1)<br>
 - to use the IDE you must have at least one of the following (suboptions of setup option 1):<br>
-&nbsp;&nbsp;<a href="#version#-4.jar">#version#-4</a> scripting with Python/Jython<br>
-&nbsp;&nbsp;<a href="#version#-5.jar">#version#-5</a> scripting with Ruby/JRuby<br><br>
+&nbsp;&nbsp;<a href="${sikuli.usedversion}-4.jar">${sikuli.usedversion}-4</a> scripting with Python/Jython<br>
+&nbsp;&nbsp;<a href="${sikuli.usedversion}-5.jar">${sikuli.usedversion}-5</a> scripting with Ruby/JRuby<br><br>
 - if you want to use SikuliX with Java and Java aware languages (setup option 2) (now contained in sikulixsetup...jar)<br>
-- <a href="#versionminor#-8.jar">#versionminor#-8</a> if you want to use the Tesseract based text features (setup option 3)<br>
-- <a href="#versionminor#-3.jar">#versionminor#-3</a> if you want to try the experimental remote support (setup option 5)<br>
+- <a href="${sikuli.minorversion}-8.jar">${sikuli.minorversion}-8</a> if you want to use the Tesseract based text features (setup option 3)<br>
+- <a href="${sikuli.minorversion}-3.jar">${sikuli.minorversion}-3</a> if you want to try the experimental remote support (setup option 5)<br>
 <hr>
 As a special service for the users of sikulixapi.jar a ready to use jar (no setup needed) is available
 for download from now on here.<br>
 The only caveat: it is bigger, since it contains the native libraries for all systems.<br>
-<a href="sikulixapi.jar">sikulixapi.jar</a><br>
+<a href="sikulixapi-${sikuli.usedversion}.jar">sikulixapi-${sikuli.usedversion}.jar</a><br>
 This is part of the preparation for having it later on MavenCentral.<br>
 <h3>Status of bug fixes and new features</h3>
 <hr>

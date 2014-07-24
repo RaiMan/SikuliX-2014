@@ -52,9 +52,11 @@
 		<!--
 		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
 		-->
+		<sikuli.minorversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.minorversion>
 		<sikulixjythonversion>2.7-b2</sikulixjythonversion>
 		<sikulixjrubyversion>1.7.13</sikulixjrubyversion>
 		<sikulixlocalrepo>${settings.localRepository}</sikulixlocalrepo>
+		<sikuli.helpers>Setup/src/main/resources</sikuli.helpers>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd_HH:mm</maven.build.timestamp.format>
 	</properties>
@@ -139,93 +141,6 @@
 			<properties>
 				<exclude.nativelayer>${exclude.nativelayer.null}</exclude.nativelayer>
 			</properties>
-		</profile>
-		<profile>
-			<id>withLibs</id>
-			<activation>
-				<activeByDefault>no</activeByDefault>
-			</activation>
-			<properties>
-				<sikuli.jartype>complete.xml</sikuli.jartype>
-				<sikuli.jarname>sikulix</sikuli.jarname>
-			</properties>
-		</profile>
-		<profile>
-			<id>withAllLibs</id>
-			<activation>
-				<activeByDefault>no</activeByDefault>
-			</activation>
-			<properties>
-				<sikuli.jarname>sikulix</sikuli.jarname>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>com.sikulix</groupId>
-					<artifactId>sikulixlibs</artifactId>
-					<version>${project.version}</version>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>withOCR</id>
-			<activation>
-				<activeByDefault>no</activeByDefault>
-			</activation>
-			<properties>
-				<sikuli.jarname>sikulix</sikuli.jarname>
-			</properties>
-			<dependencies>
-				<dependency>
-					<groupId>com.sikulix</groupId>
-					<artifactId>sikulixtessdata</artifactId>
-					<version>${project.version}</version>
-				</dependency>
-			</dependencies>
-		</profile>
-		<profile>
-			<id>withDocs</id>
-			<activation>
-				<activeByDefault>no</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-javadoc-plugin</artifactId>
-						<version>2.9.1</version>
-						<executions>
-							<execution>
-								<id>attach-javadocs</id>
-								<goals>
-									<goal>jar</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
-		</profile>
-		<profile>
-			<id>withSource</id>
-			<activation>
-				<activeByDefault>no</activeByDefault>
-			</activation>
-			<build>
-				<plugins>
-					<plugin>
-						<artifactId>maven-source-plugin</artifactId>
-						<version>2.2.1</version>
-						<executions>
-							<execution>
-								<id>attach-sources</id>
-								<phase>verify</phase>
-								<goals>
-									<goal>jar-no-fork</goal>
-								</goals>
-							</execution>
-						</executions>
-					</plugin>
-				</plugins>
-			</build>
 		</profile>
 	</profiles>
 

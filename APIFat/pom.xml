@@ -58,7 +58,7 @@
             </manifest>
           </archive>
 					<descriptors>
-						<descriptor>../plain.xml</descriptor>
+						<descriptor>../${sikuli.helpers}/plain.xml</descriptor>
 					</descriptors>
 					<finalName>sikulixapi-complete-${project.version}</finalName>
 				</configuration>

@@ -11,7 +11,6 @@ else
   echo ----- running on Jenkins
   source=$sbase/APIFat/target
 	dist=$jbase/SikuliX-Setup
-  base = $jbase
   isjenkins=true
 fi
 

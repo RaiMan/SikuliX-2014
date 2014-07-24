@@ -1,4 +1,4 @@
 For Build only
 ==============
 
-produces the fat jar `sikulixsetup.jar`
+container for helper scripts and other needed stuff for building
