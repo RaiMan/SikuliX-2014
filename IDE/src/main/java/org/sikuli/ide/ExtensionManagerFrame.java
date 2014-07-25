@@ -41,7 +41,9 @@ public class ExtensionManagerFrame extends JFrame {
 
   static public ExtensionManagerFrame getInstance() {
     if (_instance == null) {
-      _instance = new ExtensionManagerFrame();
+//TODO reactivate extension manager
+      _instance = null;
+//      _instance = new ExtensionManagerFrame();
     }
     return _instance;
   }
