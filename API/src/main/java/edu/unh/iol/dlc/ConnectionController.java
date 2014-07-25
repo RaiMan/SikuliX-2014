@@ -28,6 +28,8 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Locale;
 
+import org.sikuli.basics.Debug;
+
 /**
  * The ConnectionController class manages all of the VNC connections as well
  *  as the local copies of the remote Framebuffers.  A thread (VNCThread) is
@@ -111,12 +113,12 @@ public class ConnectionController extends GraphicsEnvironment {
 	public void setPixelFormat(int index, String format, 
 			int bitsPerPixel, int bigEndianFlag) {
 		try {
-//			System.out.println("Setting Pixel format for thread: "+index);
+			Debug.log(3, "Setting Pixel format for thread: "+index);
 			threads.get(index).setPixelFormat(format, 
 					bitsPerPixel, bigEndianFlag);
 		}
 		catch (IOException io) {
-			System.err.println("Error: IO Exception"+io);
+			Debug.log(3, "Error: IO Exception"+io);
 		}
 	}
 	

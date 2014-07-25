@@ -20,6 +20,8 @@ package edu.unh.iol.dlc;
 import java.io.IOException;
 import java.net.Socket;
 
+import org.sikuli.basics.Debug;
+
 /**
  * The VNC thread object handles connecting to the server and keeping the
  * framebuffer up to date by polling the server for changes.
@@ -98,10 +100,10 @@ public class VNCThread extends Thread{
     		connected = true;
     	}
     	catch(IOException e){
-    		System.err.println(e);
+    		Debug.log(3, ""+e);
     	}
     	catch(InterruptedException ie){
-    		System.err.println(ie);
+    		Debug.log(3, ""+ie);
     	}
     }
     
@@ -120,8 +122,8 @@ public class VNCThread extends Thread{
     	
         if(format.equals("Truecolor")){
         	
-//        	System.out.println("Format: "+format);
-//        	System.out.println("Bits: "+bits);
+        	Debug.log(3, "Format: "+format);
+        	Debug.log(3, "Bits: "+bits);
         	
             switch(bits){
                 case 8:
@@ -146,7 +148,7 @@ public class VNCThread extends Thread{
                 	pixel_flag = false;
                     break;
                 default:
-                    System.err.println("Error: Number of Bits unsupported");
+                	Debug.log(3, "Error: Number of Bits unsupported");
                     pixel_flag = true;
                     break;
             }
@@ -175,13 +177,13 @@ public class VNCThread extends Thread{
                 	pixel_flag = true;
                     break;
                 default:
-                    System.err.println("Error: Number of Bits unsupported");
+                	Debug.log(3, "Error: Number of Bits unsupported");
                     pixel_flag = true;
                     break;
             }
         }
         else{
-            System.err.println("Error: Format not supported.");
+        	Debug.log(3, "Error: Format not supported.");
             pixel_flag = true;
         }
     }
@@ -195,7 +197,7 @@ public class VNCThread extends Thread{
 				Thread.sleep(100);
 			} 
     		catch (InterruptedException e) {
-    			System.err.println("Error: Thread Interrupted");
+    			Debug.log(3, "Error: Thread Interrupted");
 			}
     	}
     	
@@ -222,7 +224,7 @@ public class VNCThread extends Thread{
                          	//client.listenServerCutText();
                             break;
                         default:
-                            System.err.println("Error: Unsupported " +
+                        	Debug.log(3, "Error: Unsupported " +
                             		"Message Type: "+message);
                             break;
                     }
@@ -236,10 +238,10 @@ public class VNCThread extends Thread{
             client.close();
         }
         catch(IOException io){
-        	System.err.println("Error: IO Exception"+io);
+        	Debug.log(3, "Error: IO Exception"+io);
         }
         catch (InterruptedException e) {
-			System.err.println("Error: Thread Interrupted");
+        	Debug.log(3, "Error: Thread Interrupted");
 		}
     }
     
@@ -273,7 +275,7 @@ public class VNCThread extends Thread{
             		screen.copyRect(x,y,w,h,srcX,srcY);
             		break;
             	default:
-            		System.err.println("Error: Encoding type not recognized " +
+            		Debug.log(3, "Error: Encoding type not recognized " +
             				"or supported: "+Integer.toString(encType));
             		break;
             }
@@ -285,15 +287,15 @@ public class VNCThread extends Thread{
     
     /*
     private void listenBell(){
-        System.out.println("Ring");
+        Debug.log(3, "Ring");
     }
     
     private void listenSetColorMap()throws IOException{
         dataIn.readUnsignedByte();
         int first=dataIn.readUnsignedShort();
         int num = dataIn.readUnsignedShort();
-        System.out.println(first+" first");
-        System.out.println(num+" num");
+        Debug.log(3, first+" first");
+        Debug.log(3, num+" num");
         for(int i=0;i<num;i++){
             int r = dataIn.readUnsignedShort();
             int g = dataIn.readUnsignedShort();
