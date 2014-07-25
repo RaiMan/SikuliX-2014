@@ -93,6 +93,9 @@ public class ResourceLoader implements IResourceLoader {
   private String osarch;
   private String javahome;
 
+	private boolean initDone = false;
+	private boolean usrPathProblem = false;
+
   public ResourceLoader() {
     log0(lvl, "SikuliX Package Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
     cl = this.getClass().getClassLoader();
@@ -161,6 +164,8 @@ public class ResourceLoader implements IResourceLoader {
       log(-1, "Currently only Sikuli libs supported!");
       return;
     }
+
+		if (initDone) return;
 
     if (libPath == null || libsDir == null) {
       libPath = null;
@@ -235,7 +240,7 @@ public class ResourceLoader implements IResourceLoader {
         }
         libSource = String.format(libSource64, "mac");
         checkFileName = checkFileNameMac;
-        checkLib = "MacUtil";
+        checkLib = "VisionProxy";
 //TODO libs dir fallback
 //        if ((new File(libPathMac)).exists()) {
 //          libPathFallBack = libPathMac;
@@ -261,7 +266,7 @@ public class ResourceLoader implements IResourceLoader {
 //            libPathFallBack = libPathWin32;
 //          }
         }
-        checkLib = "WinUtil";
+        checkLib = "VisionProxy";
       }
 
       // Linux specific
@@ -273,7 +278,7 @@ public class ResourceLoader implements IResourceLoader {
           libSource = String.format(libSource32, "linux");
           checkFileName = checkFileNameL32;
         }
-        checkLib = "JXGrabKey";
+        checkLib = "VisionProxy";
       }
 
       if (!Settings.runningSetup) {
@@ -452,54 +457,59 @@ public class ResourceLoader implements IResourceLoader {
         Settings.OcrDataPath = "/usr/local/share";
       }
     }
-
-    if (Settings.isWindows() && libPath != null) {
-      log(lvl, "checking ClassLoader.usrPaths having: %s", libPath);
-      Field usrPathsField = null;
-      try {
-        usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
-      } catch (NoSuchFieldException ex) {
-        log(-1, ex.getMessage());
-      } catch (SecurityException ex) {
-        log(-1, ex.getMessage());
-      }
-      boolean contained = false;
-      if (usrPathsField != null) {
-        usrPathsField.setAccessible(true);
-        try {
-          //get array of paths
-          String[] javapaths = (String[]) usrPathsField.get(null);
-          //check if the path to add is already present
-          for (String p : javapaths) {
-            if (p.toUpperCase().equals(libPath.toUpperCase())) {
-              contained = true;
-              break;
-            }
-          }
-          //add the new path
-          if (!contained) {
-            final String[] newPaths = Arrays.copyOf(javapaths, javapaths.length + 1);
-            newPaths[newPaths.length - 1] = libPath;
-            usrPathsField.set(null, newPaths);
-            log(lvl, "added to ClassLoader.usrPaths");
-          }
-        } catch (IllegalAccessException ex) {
-          log(-1, ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-          log(-1, ex.getMessage());
-        }
-        //check the new path
-        if (!contained) {
-          try {
-            System.loadLibrary(checkLibWindows);
-          } catch (java.lang.UnsatisfiedLinkError ex) {
-            log(-1, "adding to ClassLoader.usrPaths did not work:\n" + ex.getMessage());
-            System.exit(1);
-          }
-        }
-      }
-    }
+		initDone = true;
   }
+
+	private boolean checkJavaUsrPath() {
+		if (Settings.isWindows() && libPath != null) {
+			log(lvl, "checking ClassLoader.usrPaths having: %s", libPath);
+			Field usrPathsField = null;
+			try {
+				usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
+			} catch (NoSuchFieldException ex) {
+				log(-1, ex.getMessage());
+			} catch (SecurityException ex) {
+				log(-1, ex.getMessage());
+			}
+			boolean contained = false;
+			if (usrPathsField != null) {
+				usrPathsField.setAccessible(true);
+				try {
+					//get array of paths
+					String[] javapaths = (String[]) usrPathsField.get(null);
+					//check if the path to add is already present
+					for (String p : javapaths) {
+						if (FileManager.pathEquals(p, libPath)) {
+							contained = true;
+							break;
+						}
+					}
+					//add the new path
+					if (!contained) {
+						final String[] newPaths = Arrays.copyOf(javapaths, javapaths.length + 1);
+						newPaths[newPaths.length - 1] = libPath;
+						usrPathsField.set(null, newPaths);
+						log(lvl, "added to ClassLoader.usrPaths");
+					}
+				} catch (IllegalAccessException ex) {
+					log(-1, ex.getMessage());
+				} catch (IllegalArgumentException ex) {
+					log(-1, ex.getMessage());
+				}
+				return true;
+//				//check the new path
+//				if (!contained) {
+//					try {
+//						System.loadLibrary(checkLibWindows);
+//					} catch (java.lang.UnsatisfiedLinkError ex) {
+//						log(-1, "adding to ClassLoader.usrPaths did not work:\n" + ex.getMessage());
+//						System.exit(1);
+//					}
+//				}
+			}
+		}
+		return false;
+	}
 
   private File checkLibsDir(String path) {
     String memx = mem;
@@ -527,6 +537,9 @@ public class ResourceLoader implements IResourceLoader {
             log(lvl, syspath);
           }
         }
+				if (!checkJavaUsrPath()) {
+					usrPathProblem = true;
+				}
       }
       if (System.getProperty("sikuli.DoNotExport") != null) {
         dir = new File(path);
@@ -810,7 +823,7 @@ public class ResourceLoader implements IResourceLoader {
         Sikulix.terminate(109);
       } else {
         lib = mappedlib;
-        log(lvl, "Linux: %s not bundled - trying to load from system paths", lib);
+        log(lvl, "Linux: %s \nnot bundled - trying to load from system paths", lib);
       }
     } else {
       log(lvl + 1, "Found: " + libname + " at " + lib);
@@ -819,8 +832,8 @@ public class ResourceLoader implements IResourceLoader {
       System.load(lib);
     } catch (Error e) {
       log(-1, "Fatal Error 110: loading: " + mappedlib);
-      log(-1, "Since native library was found, it might be a problem with needed dependent libraries\n%s",
-              e.getMessage());
+      log(-1, "Since native library was found at %s\n it might be a problem with needed dependent libraries\nERROR: %s",
+              libPath, e.getMessage());
       if (Settings.isWindows()) {
         log(-1, "Check, wether a valid Sikuli libs folder is in system path at runtime!");
         if (Settings.runningSetup) {

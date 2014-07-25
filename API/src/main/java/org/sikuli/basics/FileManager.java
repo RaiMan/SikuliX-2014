@@ -1199,7 +1199,13 @@ public class FileManager {
     out.flush();
   }
 
-  public static boolean pathEquals(String path1, String path2) {
+	/**
+	 * compares to path strings using java.io.File.equals()
+	 * @param path1 string
+	 * @param path2 string
+	 * @return true if same file or folder
+	 */
+	public static boolean pathEquals(String path1, String path2) {
     return (new File(path1)).equals(new File(path2));
   }
 }
