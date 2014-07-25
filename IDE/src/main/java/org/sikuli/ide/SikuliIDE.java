@@ -45,9 +45,9 @@ import org.sikuli.basics.Settings;
 import org.sikuli.basics.AutoUpdater;
 import org.sikuli.basics.CommandArgsEnum;
 import org.sikuli.basics.IDESupport;
-import org.sikuli.basics.IResourceLoader;
 import org.sikuli.script.ImagePath;
 import org.sikuli.basics.MultiFrame;
+import org.sikuli.basics.ResourceLoader;
 import org.sikuli.basics.SikuliScript;
 import org.sikuli.basics.Sikulix;
 import org.sikuli.script.Key;
@@ -304,8 +304,7 @@ public class SikuliIDE extends JFrame {
       nativeSupport.initIDE(this);
     }
 
-    IResourceLoader loader = FileManager.getNativeLoader("basic", args);
-    loader.check(Settings.SIKULI_LIB);
+    ResourceLoader.get().check(Settings.SIKULI_LIB);
 
     _windowSize = prefs.getIdeSize();
     _windowLocation = prefs.getIdeLocation();
@@ -442,7 +441,7 @@ public class SikuliIDE extends JFrame {
       nativeSupport = (NativeSupport) constr.newInstance();
       log(lvl, "Native support found for " + os);
     } catch (Exception e) {
-      log(-1, "No native support for %s\n%s", os, e.getMessage());
+      log(lvl, "No native support for %s (%s)", os, e.getMessage());
     }
   }
 
@@ -1439,7 +1438,7 @@ public class SikuliIDE extends JFrame {
               new ViewAction(ViewAction.CMD_LIST)));
     }
 
-    chkShowThumbs = new JCheckBoxMenuItem(_I("menuShowThumbs"), false);
+    chkShowThumbs = new JCheckBoxMenuItem(_I("menuViewShowThumbs"), false);
     _viewMenu.add(createMenuItem(chkShowThumbs,
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_T, scMask),
             new ViewAction(ViewAction.SHOW_THUMBS)));
@@ -1489,11 +1488,9 @@ public class SikuliIDE extends JFrame {
     int scMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     _toolMenu.setMnemonic(java.awt.event.KeyEvent.VK_T);
 
-    if (Settings.SikuliRepo != null) {
       _toolMenu.add(createMenuItem(_I("menuToolExtensions"),
               null,
               new ToolAction(ToolAction.EXTENSIONS)));
-    }
   }
 
   class ToolAction extends MenuAction {
@@ -1514,11 +1511,12 @@ public class SikuliIDE extends JFrame {
   }
 
   public void showExtensionsFrame() {
-    String warn = "You might proceed, if you\n"
-            + "- have some programming skills\n"
-            + "- read the docs about extensions\n"
-            + "- know what you are doing\n\n"
-            + "Otherwise you should press Cancel!";
+//    String warn = "You might proceed, if you\n"
+//            + "- have some programming skills\n"
+//            + "- read the docs about extensions\n"
+//            + "- know what you are doing\n\n"
+//            + "Otherwise you should press Cancel!";
+    String warn = "Not available yet - click what you like ;-)";
     String title = "Need your attention!";
     String[] options = new String[3];
     options[WARNING_DO_NOTHING] = "OK";
@@ -1532,7 +1530,9 @@ public class SikuliIDE extends JFrame {
       //TODO set prefs to be quiet on extensions warning
     };
     ExtensionManagerFrame extmg = ExtensionManagerFrame.getInstance();
-    extmg.setVisible(true);
+    if (extmg != null) {
+      extmg.setVisible(true);
+    }
   }
   //</editor-fold>
 

@@ -527,9 +527,10 @@ public class Sikulix {
 	}
 
   public static String run(String cmdline) {
-    IResourceLoader loader = FileManager.getNativeLoader("basic", new String[0]);
-    String[] args = new String[]{cmdline};
-    loader.doSomethingSpecial("runcmd", args);
-    return args[0];
+    return run(new String[]{cmdline});
+  }
+  
+  public static String run(String[] cmd) {
+    return ResourceLoader.get().runcmd(cmd);
   }
 }

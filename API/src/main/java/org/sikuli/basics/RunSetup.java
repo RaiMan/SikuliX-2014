@@ -352,7 +352,7 @@ public class RunSetup {
 
 		//<editor-fold defaultstate="collapsed" desc="general preps">
 		Settings.runningSetup = true;
-		IResourceLoader loader = FileManager.getNativeLoader("basic", args);
+		ResourceLoader loader = ResourceLoader.get();
 
 		uhome = System.getProperty("user.home");
 		workDir = FileManager.getJarParentFolder();
@@ -1124,15 +1124,14 @@ public class RunSetup {
 //						new File(fmac, runsikulix).getAbsolutePath()});
 //					loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x",
 //						new File(fmac, "MacOS/droplet").getAbsolutePath()});
-					loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x",
-						new File(workDir, runsikulix).getAbsolutePath()});
+					ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x", new File(workDir, runsikulix).getAbsolutePath()});
 //					FileManager.deleteFileOrFolder(new File(workDir, localMacApp).getAbsolutePath());
 				}
 			} else if (Settings.isLinux()) {
 				if (getIDE) {
 					loader.export("Commands/linux#" + runsikulix, workDir);
-					loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x", new File(workDir, runsikulix).getAbsolutePath()});
-					loader.doSomethingSpecial("runcmd", new String[]{"chmod", "ugo+x", new File(workDir, localIDE).getAbsolutePath()});
+					ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x", new File(workDir, runsikulix).getAbsolutePath()});
+					ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x", new File(workDir, localIDE).getAbsolutePath()});
 				}
 			}
 			closeSplash(splash);
@@ -1157,9 +1156,7 @@ public class RunSetup {
 			folderLibs.mkdirs();
 		}
 
-		loader.check(Settings.SIKULI_LIB);
-
-		if (loader.doSomethingSpecial("checkLibsDir", null)) {
+		if (loader.check(Settings.SIKULI_LIB)) {
 			closeSplash(splash);
 			splash = showSplash(" ", "Environment seems to be ready!");
 			closeSplash(splash);
@@ -1182,9 +1179,9 @@ public class RunSetup {
 			}
 			try {
 				log0(lvl, "trying to run org.sikuli.script.Sikulix.testSetup()");
-				loader.doSomethingSpecial("itIsJython", null); // export Lib folder
+				loader.setItIsJython(); // export Lib folder
 				if (getTess) {
-					loader.doSomethingSpecial("exportTessdata", null); // export tessdata folder
+					ResourceLoader.get().exportTessdata(true); // export tessdata folder
 				}
 				Class sysclass = URLClassLoader.class;
 				Class SikuliCL = sysclass.forName("org.sikuli.script.Sikulix");
@@ -1216,7 +1213,7 @@ public class RunSetup {
 				terminate("Functional test Java-API did not work");
 			}
 			if (getTess) {
-				loader.doSomethingSpecial("exportTessdata", null); // export tessdata folder
+        ResourceLoader.get().exportTessdata(true);
 			}
 			String testSetupSuccess = "Setup: Sikuli Jython seems to work! Have fun!";
 			if (getJython) {

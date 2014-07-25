@@ -138,6 +138,10 @@ msgstr ""
 msgid "Command List"
 msgstr ""
 
+#: menuViewShowThumbs
+msgid "Show Thumbnails"
+msgstr ""
+
 #: menuToolExtensions
 msgid "Extensions..."
 msgstr ""

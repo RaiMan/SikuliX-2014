@@ -70,7 +70,7 @@ public class SikulixForJython {
             e = (String) pssPath[n];
             Debug.log(3, mem + "sys.path[%d]: " + e.toString(), n);
           }
-          FileManager.getNativeLoader("basic", null).doSomethingSpecial("itIsJython", null);
+          ResourceLoader.get().setItIsJython();
        }
       } catch (Exception e) {
         Debug.error(mem + "Fatal error: Jython not found on classpath or not accessible - Sikuli might not work");

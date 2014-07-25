@@ -29,7 +29,6 @@ import javax.swing.text.*;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.IResourceLoader;
 import org.sikuli.basics.IndentationLogic;
 import org.sikuli.script.Location;
 import org.sikuli.basics.Sikulix;
@@ -312,11 +311,9 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 	private void makeBundle(String path, boolean asFile) {
 		String isBundle = asFile ? "B" : "b";
-		IResourceLoader loader = FileManager.getNativeLoader("basic", new String[0]);
-		String[] cmd = new String[]{"#SetFile", "-a", isBundle, path};
-		loader.doSomethingSpecial("runcmd", cmd);
-		if (!cmd[0].isEmpty()) {
-			log(-1, "makeBundle: return: " + cmd[0]);
+		String result = Sikulix.run(new String[]{"#SetFile", "-a", isBundle, path});
+		if (!result.isEmpty()) {
+			log(-1, "makeBundle: return: " + result);
 		}
 		if (asFile) {
 			if (!FileManager.writeStringToFile("/Applications/SikuliX-IDE.app",
