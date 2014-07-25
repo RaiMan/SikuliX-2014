@@ -24,7 +24,10 @@ import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-public class ResourceLoader implements IResourceLoader {
+public class ResourceLoader {
+//implements IResourceLoader {
+
+  private static ResourceLoader resourceLoader = null;
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private String me = "ResourceLoader";
@@ -96,7 +99,7 @@ public class ResourceLoader implements IResourceLoader {
 	private boolean initDone = false;
 	private boolean usrPathProblem = false;
 
-  public ResourceLoader() {
+  private ResourceLoader() {
     log0(lvl, "SikuliX Package Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
     cl = this.getClass().getClassLoader();
     codeSrc = this.getClass().getProtectionDomain().getCodeSource();
@@ -125,14 +128,17 @@ public class ResourceLoader implements IResourceLoader {
       Sikulix.terminate(101);
     }
   }
-
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public void init(String[] args) {
-    //Debug.log(lvl, "%s: %s: init", me, loaderName);
+  
+  public static ResourceLoader get() {
+    if (resourceLoader == null) {
+      resourceLoader = new ResourceLoader();
+    }
+    return resourceLoader;
   }
+
+//  public void init(String[] args) {
+//    //Debug.log(lvl, "%s: %s: init", me, loaderName);
+//  }
 
   private boolean isFatJar() {
     if (extractingFromJar) {
@@ -156,16 +162,17 @@ public class ResourceLoader implements IResourceLoader {
    * {@inheritDoc}
    * @param what check type
    */
-  @Override
-  public void check(String what) {
+  public boolean check(String what) {
     mem = "check";
 
     if (!what.equals(Settings.SIKULI_LIB)) {
       log(-1, "Currently only Sikuli libs supported!");
-      return;
+      return false;
     }
 
-		if (initDone) return;
+		if (initDone) {
+      return true;
+    }
 
     if (libPath == null || libsDir == null) {
       libPath = null;
@@ -372,6 +379,8 @@ public class ResourceLoader implements IResourceLoader {
       }
     }
 
+    initDone = true;
+    
     if (libsDir == null && libPath != null) {
       log(lvl, "libs dir is empty, has wrong content or is outdated");
       log(lvl, "Trying to extract libs to: " + libPath);
@@ -394,8 +403,10 @@ public class ResourceLoader implements IResourceLoader {
       if (extractLibs(dir.getParent(), libSource) == null) {
         log(-1, "... not possible!");
         libPath = null;
+        initDone = false;
+      } else {
+        libsDir = checkLibsDir(libPath);
       }
-      libsDir = checkLibsDir(libPath);
     }
 
     //<editor-fold defaultstate="collapsed" desc="libs dir finally invalid">
@@ -458,6 +469,7 @@ public class ResourceLoader implements IResourceLoader {
       }
     }
 		initDone = true;
+    return libsDir != null;
   }
 
 	private boolean checkJavaUsrPath() {
@@ -517,7 +529,7 @@ public class ResourceLoader implements IResourceLoader {
     File dir = null;
     if (path != null) {
       log(lvl, "trying: " + path);
-      if (Settings.isWindows()) {
+      if (Settings.isWindows() && !initDone) {
         log(lvl, "Running on Windows - checking system path!");
         String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
         if (syspath == null) {
@@ -534,7 +546,7 @@ public class ResourceLoader implements IResourceLoader {
               log(-1, "Adding to path did not work:\n%s", syspath);
               System.exit(1);
             }
-            log(lvl, syspath);
+            log(lvl, syspath.substring(0, Math.min(path.length()+50, syspath.length())) + "...");
           }
         }
 				if (!checkJavaUsrPath()) {
@@ -591,7 +603,6 @@ public class ResourceLoader implements IResourceLoader {
    * @param target target folder
    * @return success
    */
-  @Override
   public boolean export(String res, String target) {
     String memx = mem;
     mem = "export";
@@ -658,49 +669,52 @@ public class ResourceLoader implements IResourceLoader {
    * {@inheritDoc}
    * @param args what to do
    */
-  @Override
-  public void install(String[] args) {
-    mem = "install";
-    log(lvl, "entered");
-    //extractLibs(args[0]);
-  }
+//  public void install(String[] args) {
+//    mem = "install";
+//    log(lvl, "entered");
+//    //extractLibs(args[0]);
+//  }
 
-  /**
-   * {@inheritDoc}
-   */
-  @Override
-  public boolean doSomethingSpecial(String action, Object[] args) {
-    if ("loadLib".equals(action)) {
-      loadLib((String) args[0]);
-      return true;
-    } else if ("runcmd".equals(action)) {
-      String retval = runcmd((String[]) args);
-      args[0] = retval;
-      return true;
-    } else if ("checkLibsDir".equals(action)) {
-      return (libsDir != null);
-    } else if ("itIsJython".equals(action)) {
-      itIsJython = true;
-      return true;
-    } else if ("exportTessdata".equals(action)) {
-      if (tessURL != null) {
-        Sikulix.addToClasspath(jarPath.replace("Basics", "Tesseract"));
-      }
-      if (!new File(Settings.OcrDataPath, "tessdata").exists()) {
-        log(lvl, "Trying to extract tessdata folder since it does not exist yet.");
-        export("META-INF/libs#tessdata", libPath);
-      }
-      return true;
-    } else {
-      return false;
+//  public boolean doSomethingSpecial(String action, Object[] args) {
+//    if ("loadLib".equals(action)) {
+//      loadLib((String) args[0]);
+//      return true;
+//    } else if ("runcmd".equals(action)) {
+//      String retval = runcmd((String[]) args);
+//      args[0] = retval;
+//      return true;
+//    } else if ("checkLibsDir".equals(action)) {
+//      return (libsDir != null);
+//    } else if ("exportTessdata".equals(action)) {
+//      return true;
+//    } else {
+//      return false;
+//    }
+//  }
+  
+  public void setItIsJython() {
+      itIsJython = true;    
+  }
+  
+  public void exportTessdata(boolean overwrite) {
+    if (tessURL == null) {
+      log(-1, "exportTessdata: no valid Tessdata.jar available");
+    }
+    if (overwrite) {
+      
+    }
+    if (!new File(Settings.OcrDataPath, "tessdata").exists()) {
+      log(lvl, "Trying to extract tessdata folder since it does not exist yet.");
+      export("META-INF/libs#tessdata", libPath);
     }
   }
+  
 
-  private String runcmd(String cmd) {
+  public String runcmd(String cmd) {
     return runcmd(new String[]{cmd});
   }
 
-  private String runcmd(String args[]) {
+  public String runcmd(String args[]) {
     if (args.length == 0) {
       return "";
     }
@@ -770,18 +784,16 @@ public class ResourceLoader implements IResourceLoader {
   /**
    * {@inheritDoc}
    */
-  @Override
-  public String getName() {
-    return loaderName;
-  }
+//  public String getName() {
+//    return loaderName;
+//  }
 
   /**
    * {@inheritDoc}
    */
-  @Override
-  public String getResourceTypes() {
-    return Settings.SIKULI_LIB;
-  }
+//  public String getResourceTypes() {
+//    return Settings.SIKULI_LIB;
+//  }
 
   /**
    * make sure, a native library is available and loaded

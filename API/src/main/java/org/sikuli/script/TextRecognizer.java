@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.ResourceLoader;
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -43,7 +44,7 @@ public class TextRecognizer {
       path = FileManager.slashify(Settings.OcrDataPath, true);
       fpath = new File(path, "tessdata");
       if (!fpath.exists()) {
-        FileManager.getNativeLoader("basic", null).doSomethingSpecial("exportTessdata", new String[]{});
+        ResourceLoader.get().exportTessdata(true);
       }
       if (!fpath.exists()) {
         Debug.error("TextRecognizer not working: tessdata folder not found at %s", path);

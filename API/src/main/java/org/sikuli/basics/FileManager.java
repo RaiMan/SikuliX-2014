@@ -33,10 +33,8 @@ import java.net.UnknownHostException;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
-import java.util.ServiceLoader;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -64,7 +62,6 @@ public class FileManager {
   //</editor-fold>
 
   static final int DOWNLOAD_BUFFER_SIZE = 153600;
-  static IResourceLoader nativeLoader = null;
   private static MultiFrame _progress = null;
   private static final String EXECUTABLE = "#executable";
 
@@ -80,11 +77,8 @@ public class FileManager {
 	 * @param libname generic library name (no pre nor post fix)
    */
   public static void loadLibrary(String libname) {
-    if (nativeLoader == null) {
-      nativeLoader = getNativeLoader("basic", null);
-    }
-    nativeLoader.check(Settings.SIKULI_LIB);
-    nativeLoader.doSomethingSpecial("loadLib", new String[]{libname});
+    ResourceLoader.get().check(Settings.SIKULI_LIB);
+    ResourceLoader.get().loadLib(libname);
   }
 
   private static int tryGetFileSize(URL url) {
@@ -943,30 +937,30 @@ public class FileManager {
     }
   }
 
-  public static IResourceLoader getNativeLoader(String name, String[] args) {
-    if (nativeLoader != null) {
-      return nativeLoader;
-    }
-    IResourceLoader nl = null;
-    ServiceLoader<IResourceLoader> loader = ServiceLoader.load(IResourceLoader.class);
-    Iterator<IResourceLoader> resourceLoaderIterator = loader.iterator();
-    while (resourceLoaderIterator.hasNext()) {
-      IResourceLoader currentLoader = resourceLoaderIterator.next();
-      if ((name != null && currentLoader.getName().toLowerCase().equals(name.toLowerCase()))) {
-        nl = currentLoader;
-        nl.init(args);
-        break;
-      }
-    }
-    if (nl == null) {
-      log0(-1, "Fatal error 121: Could not load any NativeLoader!");
-      Sikulix.terminate(121);
-    } else {
-      nativeLoader = nl;
-    }
-    return nativeLoader;
-  }
-
+//  public static IResourceLoader getNativeLoader(String name, String[] args) {
+//    if (nativeLoader != null) {
+//      return nativeLoader;
+//    }
+//    IResourceLoader nl = null;
+//    ServiceLoader<IResourceLoader> loader = ServiceLoader.load(IResourceLoader.class);
+//    Iterator<IResourceLoader> resourceLoaderIterator = loader.iterator();
+//    while (resourceLoaderIterator.hasNext()) {
+//      IResourceLoader currentLoader = resourceLoaderIterator.next();
+//      if ((name != null && currentLoader.getName().toLowerCase().equals(name.toLowerCase()))) {
+//        nl = currentLoader;
+//        nl.init(args);
+//        break;
+//      }
+//    }
+//    if (nl == null) {
+//      log0(-1, "Fatal error 121: Could not load any NativeLoader!");
+//      Sikulix.terminate(121);
+//    } else {
+//      nativeLoader = nl;
+//    }
+//    return nativeLoader;
+//  }
+//
   public static String getJarParentFolder() {
     CodeSource src = FileManager.class.getProtectionDomain().getCodeSource();
     String jarParentPath = "--- not known ---";
