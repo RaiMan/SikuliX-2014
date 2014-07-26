@@ -28,6 +28,8 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
+import org.sikuli.basics.Debug;
+
 /**
  * The VNCClient class controls all of the messages between
  * the client and the server.
@@ -67,7 +69,7 @@ public class VNCClient {
                 new BufferedInputStream(socket.getInputStream()));
         }
         catch(IOException e){
-            System.err.println("Error: IO Exception"+e);
+        	Debug.log(3, "Error: IO Exception"+e);
         }
     }
     
@@ -94,7 +96,7 @@ public class VNCClient {
                 case 7:break;
                 case 8:break;
                 default:
-                    System.err.println(
+                	Debug.log(3, 
                         "Error: Unrecognized protocol version," +
                         " closing connection"+version);
                     socket.close();
@@ -106,7 +108,7 @@ public class VNCClient {
             in = null;
         }
         catch(NumberFormatException n){
-        	System.err.println("Error: Number Format Exception"+n);
+        	Debug.log(3, "Error: Number Format Exception"+n);
         }
     }
 
@@ -130,7 +132,7 @@ public class VNCClient {
          if (version >= 7){
             int numSecurityTypes = (int)dataIn.readByte();
             if (numSecurityTypes == 0){
-                System.err.println("Error: Server reported" +
+            	Debug.log(3, "Error: Server reported" +
                         " an error, closing connection");
                 socket.close();
             }
@@ -148,7 +150,7 @@ public class VNCClient {
                 selectedType = desiredSecurityType;
                 return selectedType;
             }
-            System.err.println("Error: Desired Security Type" +
+            Debug.log(3, "Error: Desired Security Type" +
                         " Not supported by Server, closing connection");
             socket.close();
         }
@@ -169,12 +171,12 @@ public class VNCClient {
         switch (type){
             case 0:
                 try{
-                    System.err.println("Error: Server" +
+                	Debug.log(3, "Error: Server" +
                         " reported an error, closing connection");
                     socket.close();
                 }
                 catch(IOException e){
-                	System.err.println("Error: IO Exception"+e);
+                	Debug.log(3, "Error: IO Exception"+e);
                 }
                 break;
             case 1:
@@ -196,12 +198,12 @@ public class VNCClient {
                 break;
             default:
                 try{
-                    System.err.println("Error: Desired Security" +
+                	Debug.log(3, "Error: Desired Security" +
                             " Type Not supported, closing connection");
                     socket.close();
                 }
                 catch(IOException e){
-                	System.err.println("Error: IO Exception"+e);
+                	Debug.log(3, "Error: IO Exception"+e);
                 }
                 break;
         }
@@ -214,13 +216,13 @@ public class VNCClient {
         try{
             int securityResult = dataIn.readInt();
             if(securityResult == 1){
-                System.err.println(
+            	Debug.log(3, 
                         "Error: Server reported an error, closing connection");
                 socket.close();
             }
         }
         catch(IOException e){
-        	System.err.println("Error: IO Exception"+e);
+        	Debug.log(3, "Error: IO Exception"+e);
         }
     }
 
@@ -356,7 +358,7 @@ public class VNCClient {
     		int incremental,short x, short y,
             short w, short h) throws IOException{
     	if(flag == true){
-    		System.err.println("Error: SetPixelFormat Required.");
+    		Debug.log(3, "Error: SetPixelFormat Required.");
     		return;
     	}
         dataOut.writeByte(3); //message identifier
@@ -381,7 +383,7 @@ public class VNCClient {
         dataOut.writeByte(0); //padding
         dataOut.writeInt(key);
         dataOut.flush();
-        //System.out.println("Writing key down-"+Integer.toHexString(key));
+        Debug.log(3, "Writing key down-"+Integer.toHexString(key));
     }
 
     /**
@@ -397,7 +399,7 @@ public class VNCClient {
         dataOut.writeByte(0); //padding
         dataOut.writeInt(key);
         dataOut.flush();
-        //System.out.println("Writing key up-"+Integer.toHexString(key));
+        Debug.log(3, "Writing key up-"+Integer.toHexString(key));
     }
 
     /**
@@ -431,7 +433,7 @@ public class VNCClient {
         dataOut.writeShort(x);
         dataOut.writeShort(y);
         dataOut.flush();
-        //System.out.println("MouseEvent-"+Byte.toString(flag));
+        Debug.log(3, "MouseEvent-"+Byte.toString(flag));
     }
 
     /**

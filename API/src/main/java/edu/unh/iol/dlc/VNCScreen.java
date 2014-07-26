@@ -148,6 +148,10 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 			log(lvl, "*** end monitor configuration ***");
 		}
 		
+		//im not sure if this is valid for VNCScreens yet,
+		//with multiple normal screens there is only one mouse
+		//but with VNCScreens there is a separate mouse for each
+		//screen
 		if (getNumberScreens() > 1) {
 			log(lvl, "initScreens: multi monitor mouse check");
 			Location lnow = Mouse.at();
@@ -245,6 +249,11 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 	
 	public VNCScreen(int id){
 		super();
+		//this needs to be called because while with a normal screen it
+		//is not expected that a new one will be connected during the normal
+		//operation of the program, a VNCScreen can be arbitratily connected and
+		//disconnected so _gdev needs to be updated to a new size
+		initScreens(true); 
 	    if(id < 0 || id >= _gdev.length) {
 	    	throw new IllegalArgumentException("VNCScreen ID " + id + " not in valid range " +
 	    			"(between 0 and " + (_gdev.length - 1));

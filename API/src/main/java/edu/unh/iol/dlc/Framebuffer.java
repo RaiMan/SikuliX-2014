@@ -22,6 +22,8 @@ import java.awt.GraphicsDevice;
 import java.awt.image.BufferedImage;
 import java.awt.image.WritableRaster;
 
+import org.sikuli.basics.Debug;
+
 /**
  * The framebuffer class is responsible for maintaining the local
  * copy of the remote framebuffer.  The class extends GraphicsDevice
@@ -168,23 +170,23 @@ public class Framebuffer extends GraphicsDevice {
 		switch(conf.getIdNum()){
 		case 0:
 			//8bit colormap
-			System.err.println("Error: Config not supported");
+			Debug.log(3, "Error: Config not supported");
 			break;
 		case 1:
 			//16bit colormap
-			System.err.println("Error: Config not supported");
+			Debug.log(3, "Error: Config not supported");
 			break;
 		case 2:
 			//32bit colormap
-			System.err.println("Error: Config not supported");
+			Debug.log(3, "Error: Config not supported");
 			break;
 		case 3:
 			//8bit truecolor
-			System.err.println("Error: Config not supported");
+			Debug.log(3, "Error: Config not supported");
 			break;
 		case 4:
 			//16bit truecolor
-			System.err.println("Error: Config not supported");
+			Debug.log(3, "Error: Config not supported");
 			break;
 		case 5:
 			//32bit truecolor
@@ -204,7 +206,7 @@ public class Framebuffer extends GraphicsDevice {
 	        setBuffer(raster);
 			break;
 		default:
-			System.err.println("Error: Config not supported");
+			Debug.log(3, "Error: Config not supported");
 			break;
 		}
 	}

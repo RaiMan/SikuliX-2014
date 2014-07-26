@@ -29,6 +29,8 @@ import java.awt.image.DirectColorModel;
 import java.awt.image.Raster;
 import java.awt.image.WritableRaster;
 
+import org.sikuli.basics.Debug;
+
 /**
  * The FBConfig class stores configuration information about the
  * framebuffer
@@ -78,34 +80,34 @@ public class FBConfig extends GraphicsConfiguration {
 		desktopName = name;
 		bounds = new Rectangle(0,0,width,height);
 		
-//		System.out.println("VNC Server Response:");
-//		for(int i : config){
-//			System.out.println(i);
-//		}
-//		System.out.println("Name: "+desktopName);
+		Debug.log(3, "VNC Server Response:");
+		for(int i : config){
+			Debug.log(3, ""+i);
+		}
+		Debug.log(3, "Name: "+desktopName);
 		
 		switch(bitsPerPixel){
 			case 8:
 				if(trueColorFlag!=0){
 					idnum=3;
-					System.err.println("Error: Unsupported bits per pixel," +
+					Debug.log(3, "Error: Unsupported bits per pixel," +
 					" setPixelFormatRequired");
 				}
 				else{
 					idnum=0;
-					System.err.println("Error: Unsupported bits per pixel," +
+					Debug.log(3, "Error: Unsupported bits per pixel," +
 					" setPixelFormatRequired");
 				}
 				break;
 			case 16:
 				if(trueColorFlag!=0){
 					idnum=4;
-					System.err.println("Error: Unsupported bits per pixel," +
+					Debug.log(3, "Error: Unsupported bits per pixel," +
 					" setPixelFormatRequired");
 				}
 				else{
 					idnum=1;
-					System.err.println("Error: Unsupported bits per pixel," +
+					Debug.log(3, "Error: Unsupported bits per pixel," +
 					" setPixelFormatRequired");
 				}
 				break;
@@ -121,12 +123,12 @@ public class FBConfig extends GraphicsConfiguration {
 				}
 				else{
 					idnum=2;
-					System.err.println("Error: Unsupported bits per pixel," +
+					Debug.log(3, "Error: Unsupported bits per pixel," +
 					" setPixelFormatRequired");
 				}
 				break;
 			default:
-				System.err.println("Error: Unrecognized bits per pixel," +
+				Debug.log(3, "Error: Unrecognized bits per pixel," +
 				" setPixelFormatRequired");
 				break;
 		}
