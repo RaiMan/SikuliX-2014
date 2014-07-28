@@ -1,0 +1,146 @@
+>>>mvn -version
+Apache Maven 3.1.1 (0728685237757ffbf44136acec0402957f723d9a; 2013-09-17 17:22:22+0200)
+Maven home: c:\Maven
+Java version: 1.7.0_65, vendor: Oracle Corporation
+Java home: c:\Program Files\Java\jdk1.7.0_65\jre
+Default locale: de_DE, platform encoding: Cp1252
+OS name: "windows 8.1", version: "6.3", arch: "amd64", family: "windows"
+
+>>>cd projectfolder sikulixtestrun
+>>>mvn exec:exec
+[INFO] Scanning for projects...
+[INFO]                                                                         
+[INFO] ------------------------------------------------------------------------
+[INFO] Building sikulixtestrun 1.1.0-Beta4
+[INFO] ------------------------------------------------------------------------
+Downloading: https://oss.sonatype.org/content/groups/public/com/sikulix/sikulixapi/1.1.0-Beta4-SNAPSHOT/maven-metadata.xml
+2/2 KB            Downloaded: https://oss.sonatype.org/content/groups/public/com/sikulix/sikulixapi/1.1.0-Beta4-SNAPSHOT/maven-metadata.xml (2 KB at 0.9 KB/sec)
+Downloading: https://oss.sonatype.org/content/groups/public/com/sikulix/sikulixlibswin/1.1.0-Beta4-SNAPSHOT/maven-metadata.xml
+2/2 KB            Downloaded: https://oss.sonatype.org/content/groups/public/com/sikulix/sikulixlibswin/1.1.0-Beta4-SNAPSHOT/maven-metadata.xml (2 KB at 3.6 KB/sec)
+[INFO] 
+[INFO] --- exec-maven-plugin:1.3.1:exec (default-cli) @ sikulixtestrun ---
+[TEST] SikuliX 2014 TestRun: hello
+[debug] Mouse: init
+[debug] KeyBoard: init
+[debug] ResourceLoader: SikuliX Package Build: 1.1.0-Beta4 2014-07-26_07:39nightly
+[debug] ResourceLoader: check: The jar in use is some sikulixapi.jar
+/C:/Users/RaiMan/.m2/repository/com/sikulix/sikulixapi/1.1.0-Beta4-SNAPSHOT/sikulixapi-1.1.0-Beta4-SNAPSHOT.jar
+[debug] SikuliX: add to classpath: /C:/Users/RaiMan/.m2/repository/com/sikulix/sikulixlibswin/1.1.0-Beta4-SNAPSHOT/sikulixlibswin-1.1.0-Beta4-SNAPSHOT.jar
+[debug] SikuliX: add to classpath: /C:/Users/RaiMan/.m2/repository/com/sikulix/sikulixtessdata/1.1.0-Beta4-SNAPSHOT/sikulixtessdata-1.1.0-Beta4-SNAPSHOT.jar
+[error] SikuliX: does not exist - not added
+[debug] ResourceLoader: check: we are running on arch: amd64
+[debug] ResourceLoader: check: using Java at: c:/Program Files/Java/jdk1.7.0_65/jre/
+[debug] ResourceLoader: check: Exists libs folder at location of jar? YES: C:/Users/RaiMan/.m2/repository/com/sikulix/sikulixapi/1.1.0-Beta4-SNAPSHOT/
+[debug] ResourceLoader: checkLibsDir: trying: C:\Users\RaiMan\.m2\repository\com\sikulix\sikulixapi\1.1.0-Beta4-SNAPSHOT\libs
+[debug] ResourceLoader: checkLibsDir: Running on Windows - checking system path!
+[debug] ResourceLoader: checkLibsDir: Added libs dir to path: C:\Users\RaiMan\.m2\repository\com\sikulix\sikulixapi\1.1.0-Beta4-SNAPSHOT\libs
+[debug] ResourceLoader: checkLibsDir: C:\Users\RaiMan\.m2\repository\com\sikulix\sikulixapi\1.1.0-Beta4-SNAPSHOT\libs;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System3...
+[debug] ResourceLoader: checkLibsDir: checking ClassLoader.usrPaths having: C:\Users\RaiMan\.m2\repository\com\sikulix\sikulixapi\1.1.0-Beta4-SNAPSHOT\libs
+[debug] ResourceLoader: checkLibsDir: added to ClassLoader.usrPaths
+[debug] ResourceLoader: loadLib: Now loaded: VisionProxy from: C:\Users\RaiMan\.m2\repository\com\sikulix\sikulixapi\1.1.0-Beta4-SNAPSHOT\libs\VisionProxy.dll
+[debug] ResourceLoader: checkLibsDir: Using libs at: C:\Users\RaiMan\.m2\repository\com\sikulix\sikulixapi\1.1.0-Beta4-SNAPSHOT\libs
+[debug] Screen: initScreens: ScreenDevice 0 contains (0,0) --- will be used as primary
+[debug] Screen: initScreens: basic initialization (1 Screen(s) found)
+[debug] Screen: *** monitor configuration (primary: 0) ***
+[debug] Screen: 0: S(0)[0,0 1920x1200]
+[debug] Screen: *** end monitor configuration ***
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD SUCCESS
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time: 4.412s
+[INFO] Finished at: Mon Jul 28 11:15:28 CEST 2014
+[INFO] Final Memory: 12M/245M
+[INFO] ------------------------------------------------------------------------
+
+------------------------------------------------------------------------------------>>>POM used
+<?xml version="1.0"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+				 xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.sikulix</groupId>
+	<artifactId>sikulixtestrun</artifactId>
+	<version>1.1.0-Beta4</version>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<repositories>
+		<repository>  <!-- OSSRH: com.sikulix -->
+			<id>com-sikulix</id>
+			<name>com-sikulix</name>
+			<url>https://oss.sonatype.org/content/groups/public</url>
+			<layout>default</layout>
+			<releases>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+				<updatePolicy>always</updatePolicy>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.sikulix</groupId>
+			<artifactId>sikulixapi</artifactId>
+			<version>1.1.0-Beta4-SNAPSHOT</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.1</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>com.sikulix.testrun.TestRun</mainClass>
+						</manifest>
+					</archive>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.3.1</version>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-classpath</argument>
+						<classpath/>
+						<argument>com.sikulix.testrun.TestRun</argument>
+					</arguments>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
+
+------------------------------------------------------------------------>>> source used
+package com.sikulix.testrun;
+
+import org.sikuli.script.*;
+import org.sikuli.basics.Debug;
+
+public class TestRun
+{
+    public static void main( String[] args )
+    {
+        Debug.test( "SikuliX 2014 TestRun: hello" );
+				Debug.setDebugLevel(3);
+				Sikulix.init();
+    }
+}
+
