@@ -5,6 +5,11 @@ require 'java'
 
 # Classes and methods for using SikuliX
 module SikuliX4Ruby
+  private
+
+  # 'private' for avoiding of unexpected effects when
+  #   'include SikuliX4Ruby' is used.
+
   java_import org.sikuli.basics.Sikulix
   java_import org.sikuli.script.Screen
   java_import org.sikuli.script.Region
@@ -79,6 +84,9 @@ module SikuliX4Ruby
     # using as:
     #   SikuliX4Rub::some_method(...)
     define_singleton_method(name, &block)
+
+    # private method to avoid of attachment to all subclasses
+    private name
   end
 
   # Redefinition of native org.sikuli.script.Region class
