@@ -204,6 +204,11 @@ public class RunSetup {
 			options.remove(0);
 		}
 
+		if (options.size() > 0 && "showDebug".equals(options.get(0))) {
+			noSetupSilent = true;
+			options.remove(0);
+		}
+
 		runningJar = FileManager.getJarName();
 
 //**API** sikulixapi.jar should not be runnable without defined options
@@ -360,8 +365,21 @@ public class RunSetup {
 			runningfromJar = false;
 		}
 		workDir = workDir.substring(1);
+		if (!test && !runningfromJar) {
+			workDir = (new File(uhome, "SikuliX/Setup")).getAbsolutePath();
+			(new File(workDir)).mkdirs();
+		}
+
 		Settings.LogTime = true;
 		Debug.setDebugLevel(3);
+		if (!noSetupSilent) {
+			logfile = (new File(workDir, localLogfile)).getAbsolutePath();
+			if (!Debug.setLogFile(logfile)) {
+				popError(workDir + "\n... folder we are running in must be user writeable! \n"
+								+ "please correct the problem and start again.");
+				System.exit(0);
+			}
+		}
 
 		if (args.length > 0) {
 			log1(lvl, "... starting with: " + Sikulix.arrayToString(args));
@@ -370,14 +388,6 @@ public class RunSetup {
 		}
 
 		if (test || runningfromJar) {
-			if (!noSetupSilent) {
-				logfile = (new File(workDir, localLogfile)).getAbsolutePath();
-				if (!Debug.setLogFile(logfile)) {
-					popError(workDir + "\n... folder we are running in must be user writeable! \n"
-									+ "please correct the problem and start again.");
-					System.exit(0);
-				}
-			}
 			String projectDir;
 			if ("classes".equals(runningJar) || runningJar.endsWith("-plain.jar")) {
 				localSetup = runningJar;
@@ -453,10 +463,6 @@ public class RunSetup {
 				}
 			}
 		} else {
-			workDir = (new File(uhome, "SikuliX/Setup")).getAbsolutePath();
-			(new File(workDir)).mkdirs();
-			logfile = (new File(workDir, localLogfile)).getAbsolutePath();
-			Debug.setLogFile(logfile);
 			popInfo("\n... not running from sikuli-setup.jar - using as download folder\n" + workDir);
 		}
 
@@ -1006,61 +1012,61 @@ public class RunSetup {
 			jarsList[2] = (new File(workDir, localTess)).getAbsolutePath();
 		}
 
-		if (getIDE) {
-			log1(lvl, "recreating IDE (exclude scripting support)");
-			localJar = (new File(workDir, localIDE)).getAbsolutePath();
-			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-			success &= FileManager.buildJar(targetJar,
-							new String[]{localJar}, null, null, new FileManager.JarFileFilter() {
-								@Override
-								public boolean accept(ZipEntry entry) {
-									if (entry.getName().contains("JythonIDESupport")
-									|| entry.getName().contains("JythonScriptRunner")
-									|| entry.getName().contains("JRubyIDESupport")
-									|| entry.getName().contains("JRubyScriptRunner")) {
-										return false;
-									}
-									return true;
-								}
-							});
-			success &= handleTempAfter(localTemp, localJar);
-		}
+//		if (getIDE) {
+//			log1(lvl, "recreating IDE (exclude scripting support)");
+//			localJar = (new File(workDir, localIDE)).getAbsolutePath();
+//			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
+//			success &= FileManager.buildJar(targetJar,
+//							new String[]{localJar}, null, null, new FileManager.JarFileFilter() {
+//								@Override
+//								public boolean accept(ZipEntry entry) {
+//									if (entry.getName().contains("JythonIDESupport")
+//									|| entry.getName().contains("JythonScriptRunner")
+//									|| entry.getName().contains("JRubyIDESupport")
+//									|| entry.getName().contains("JRubyScriptRunner")) {
+//										return false;
+//									}
+//									return true;
+//								}
+//							});
+//			success &= handleTempAfter(localTemp, localJar);
+//		}
 
-		if (success && getJython && getJRuby) {
-			log1(lvl, "recreating JRuby (exclude Jython empty stuff)");
-			localJar = (new File(workDir, localJRuby)).getAbsolutePath();
-			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-			success &= FileManager.buildJar(targetJar,
-							new String[]{localJar}, null, null, new FileManager.JarFileFilter() {
-								@Override
-								public boolean accept(ZipEntry entry) {
-									if (entry.getName().contains("JythonIDESupport")
-									|| entry.getName().contains("JythonScriptRunner")) {
-										return false;
-									}
-									return true;
-								}
-							});
-			success &= handleTempAfter(localTemp, localJar);
-
-			if (success) {
-				log1(lvl, "recreating Jython (exclude JRuby empty stuff)");
-				localJar = (new File(workDir, localJython)).getAbsolutePath();
-				targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-				success &= FileManager.buildJar(targetJar,
-								new String[]{localJar}, null, null, new FileManager.JarFileFilter() {
-									@Override
-									public boolean accept(ZipEntry entry) {
-										if (entry.getName().contains("JRubyIDESupport")
-										|| entry.getName().contains("JRubyScriptRunner")) {
-											return false;
-										}
-										return true;
-									}
-								});
-				success &= handleTempAfter(localTemp, localJar);
-			}
-		}
+//		if (success && getJython && getJRuby) {
+//			log1(lvl, "recreating JRuby (exclude Jython empty stuff)");
+//			localJar = (new File(workDir, localJRuby)).getAbsolutePath();
+//			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
+//			success &= FileManager.buildJar(targetJar,
+//							new String[]{localJar}, null, null, new FileManager.JarFileFilter() {
+//								@Override
+//								public boolean accept(ZipEntry entry) {
+//									if (entry.getName().contains("JythonIDESupport")
+//									|| entry.getName().contains("JythonScriptRunner")) {
+//										return false;
+//									}
+//									return true;
+//								}
+//							});
+//			success &= handleTempAfter(localTemp, localJar);
+//
+//			if (success) {
+//				log1(lvl, "recreating Jython (exclude JRuby empty stuff)");
+//				localJar = (new File(workDir, localJython)).getAbsolutePath();
+//				targetJar = (new File(workDir, localTemp)).getAbsolutePath();
+//				success &= FileManager.buildJar(targetJar,
+//								new String[]{localJar}, null, null, new FileManager.JarFileFilter() {
+//									@Override
+//									public boolean accept(ZipEntry entry) {
+//										if (entry.getName().contains("JRubyIDESupport")
+//										|| entry.getName().contains("JRubyScriptRunner")) {
+//											return false;
+//										}
+//										return true;
+//									}
+//								});
+//				success &= handleTempAfter(localTemp, localJar);
+//			}
+//		}
 
 		if (success && getJava) {
 			log1(lvl, "adding needed stuff to sikulixapi.jar");
