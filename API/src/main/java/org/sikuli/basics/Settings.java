@@ -413,7 +413,7 @@ public class Settings {
 	public static float WaitAfterHighlight = 0.3f;
 	public static boolean ActionLogs = true;
 	public static boolean InfoLogs = true;
-	public static boolean DebugLogs;
+	public static boolean DebugLogs = false;
 	public static boolean ProfileLogs = false;
 	public static boolean LogTime = false;
 	public static boolean UserLogs = true;
