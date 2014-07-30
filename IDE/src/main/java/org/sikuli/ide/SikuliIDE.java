@@ -179,11 +179,11 @@ public class SikuliIDE extends JFrame {
 
     Settings.initScriptingSupport();
 
-    for (String e : args) {
-      splashArgs[3] += e + " ";
-    }
-    splashArgs[3] = splashArgs[3].trim();
-    splash = new MultiFrame(splashArgs);
+//    for (String e : args) {
+//      splashArgs[3] += e + " ";
+//    }
+//    splashArgs[3] = splashArgs[3].trim();
+//    splash = new MultiFrame(splashArgs);
 
     CommandArgs cmdArgs = new CommandArgs("IDE");
     cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
@@ -331,13 +331,17 @@ public class SikuliIDE extends JFrame {
     setSize(_windowSize);
     setLocation(_windowLocation);
 
+		Debug.log(3, "IDE: Adding components to window");
     initMenuBars(this);
     final Container c = getContentPane();
     c.setLayout(new BorderLayout());
+		Debug.log(3, "IDE: creating tabbed editor");
     initTabPane();
+		Debug.log(3, "IDE: creating message area");
     initMsgPane(prefs.getPrefMoreMessage() == PreferencesUser.HORIZONTAL);
 // RaiMan not used		initSidePane(); // IDE UnitTest
 
+		Debug.log(3, "IDE: creating combined work window");
     JPanel codeAndUnitPane = new JPanel(new BorderLayout(10, 10));
     codeAndUnitPane.setBorder(BorderFactory.createEmptyBorder(0, 8, 0, 0));
     codeAndUnitPane.add(_mainPane, BorderLayout.CENTER);
@@ -350,6 +354,7 @@ public class SikuliIDE extends JFrame {
     _mainSplitPane.setResizeWeight(0.6);
     _mainSplitPane.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 0));
 
+		Debug.log(3, "IDE: Putting all together");
     JPanel editPane = new JPanel(new BorderLayout(0, 0));
 
     JComponent cp = createCommandPane();
@@ -380,7 +385,7 @@ public class SikuliIDE extends JFrame {
       getCurrentCodePane().requestFocus();
     } catch (Exception e) {
     }
-    splash.dispose();
+//    splash.dispose();
 //TODO restore selected tab
     restoreSession();
     makeTabNull();
@@ -1992,83 +1997,92 @@ public class SikuliIDE extends JFrame {
       runCurrentScript();
     }
 
-    public void runCurrentScript() {
-      SikuliIDE.getStatusbar().setMessage("... PLEASE WAIT ... checking IDE state before running script");
-      SikuliIDE ide = SikuliIDE.getInstance();
-      if (ideIsRunningScript || !ide.doBeforeRun()) {
-        return;
-      }
-      SikuliIDE.getStatusbar().resetMessage();
-      ide.setVisible(false);
-      if (ide.firstRun) {
+		public void runCurrentScript() {
+			SikuliIDE.getStatusbar().setMessage("... PLEASE WAIT ... checking IDE state before running script");
+			SikuliIDE ide = SikuliIDE.getInstance();
+			if (ideIsRunningScript || !ide.doBeforeRun()) {
+				return;
+			}
+			SikuliIDE.getStatusbar().resetMessage();
+			ide.setVisible(false);
+			if (ide.firstRun) {
 //        Sikulix.displaySplashFirstTime(new String[0]);
-        ide.firstRun = false;
-      }
-      ide.setIsRunningScript(true);
-      _runningThread = new Thread() {
-        @Override
-        public void run() {
-          EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
-          File tmpFile;
-          tmpFile = FileManager.createTempFile(Settings.TypeEndings.get(codePane.getSikuliContentType()));
-          if (tmpFile == null) {
-            return;
-          }
-          try {
-            BufferedWriter bw = new BufferedWriter(
-                    new OutputStreamWriter(
-                            new FileOutputStream(tmpFile),
-                            "UTF8"));
-            codePane.write(bw);
-            //SikuliIDE.getInstance().setVisible(false);
-            _console.clear();
-            resetErrorMark();
-            runScript(tmpFile, codePane);
-          } catch (Exception e) {
-          } finally {
-            SikuliIDE.getInstance().setIsRunningScript(false);
-            SikuliIDE.getInstance().setVisible(true);
-            _runningThread = null;
-            Sikulix.cleanUp(0);
-          }
-        }
-      };
+				ide.firstRun = false;
+			}
+			ide.setIsRunningScript(true);
+			final IScriptRunner[] srunners = new IScriptRunner[] {null};
+			_runningThread = new Thread() {
+				@Override
+				public void run() {
+					EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
+					File tmpFile;
+					tmpFile = FileManager.createTempFile(Settings.TypeEndings.get(codePane.getSikuliContentType()));
+					if (tmpFile == null) {
+						return;
+					}
+					try {
+						BufferedWriter bw = new BufferedWriter(
+										new OutputStreamWriter(
+														new FileOutputStream(tmpFile),
+														"UTF8"));
+						codePane.write(bw);
+						//SikuliIDE.getInstance().setVisible(false);
+						_console.clear();
+						resetErrorMark();
+//            runScript(tmpFile, codePane);
+						File path = new File(SikuliIDE.getInstance().getCurrentBundlePath());
+						File parent = path.getParentFile();
+						//TODO implement alternative script types
+						String runnerType = null;
+						String cType = codePane.getContentType();
+						runnerType = cType.equals(Settings.CPYTHON) ? Settings.RPYTHON : Settings.RRUBY;
+						IScriptRunner srunner = Sikulix.getScriptRunner(runnerType, null, Settings.getArgs());
+						if (srunner == null) {
+							Debug.error("Could not load a script runner for: %s (%s)", cType, runnerType);
+							return;
+						}
+						addScriptCode(srunner);
+						srunners[0] = srunner;
+						try {
+							ImagePath.resetBundlePath(path.getAbsolutePath());
+							String tabtitle = _mainPane.getTitleAt(_mainPane.getSelectedIndex());
+							if (tabtitle.startsWith("*")) {
+								tabtitle = tabtitle.substring(1);
+							}
+							int ret = srunner.runScript(tmpFile, path, Settings.getArgs(),
+											new String[]{parent.getAbsolutePath(), tabtitle});
+							addErrorMark(ret);
+							srunner.close();
+							srunners[0] = null;
+						} catch (Exception e) {
+							srunner.close();
+							srunners[0] = null;
+							throw e;
+						}
+					} catch (Exception e) {
+					} finally {
+						SikuliIDE.getInstance().setIsRunningScript(false);
+						SikuliIDE.getInstance().setVisible(true);
+						_runningThread = null;
+						Sikulix.cleanUp(0);
+					}
+				}
+			};
 			_runningThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 				@Override
 				public void uncaughtException(Thread t, Throwable e) {
-					Debug.error("Jython UncaughtExceptionHandler: not supported yet.\n%s", e.getMessage());
-					Debug.error("Trying to run Jython.cleanup()");
+					Debug.error("Jython UncaughtExceptionHandler: trying to cleanup.\n%s", e.getMessage());
+					if (srunners[0] != null) {
+						srunners[0].close();
+					}
+					SikuliIDE.getInstance().setIsRunningScript(false);
+					SikuliIDE.getInstance().setVisible(true);
+					_runningThread = null;
+					Sikulix.cleanUp(0);
 				}
 			});
-      _runningThread.start();
-    }
-
-    private void runScript(File sfile, EditorPane pane) throws Exception {
-      File path = new File(SikuliIDE.getInstance().getCurrentBundlePath());
-      File parent = path.getParentFile();
-      //TODO implement alternative script types
-      String runnerType = null;
-      String cType = pane.getContentType();
-      runnerType = cType.equals(Settings.CPYTHON) ? Settings.RPYTHON : Settings.RRUBY;
-      IScriptRunner srunner = Sikulix.getScriptRunner(runnerType, null, Settings.getArgs());
-      if (srunner == null) {
-        Debug.error("Could not load a script runner for: %s (%s)", cType, runnerType);
-        return;
-      }
-      addScriptCode(srunner);
-      try {
-        ImagePath.resetBundlePath(path.getAbsolutePath());
-				String tabtitle = _mainPane.getTitleAt(_mainPane.getSelectedIndex());
-				if (tabtitle.startsWith("*")) tabtitle = tabtitle.substring(1);
-        int ret = srunner.runScript(sfile, path, Settings.getArgs(),
-								new String[]{parent.getAbsolutePath(), tabtitle});
-        addErrorMark(ret);
-        srunner.close();
-      } catch (Exception e) {
-        srunner.close();
-        throw e;
-      }
-    }
+			_runningThread.start();
+		}
 
     protected void addScriptCode(IScriptRunner srunner) {
       srunner.execBefore(null);

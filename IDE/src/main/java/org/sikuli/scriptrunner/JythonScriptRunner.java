@@ -614,20 +614,29 @@ public class JythonScriptRunner implements IScriptRunner {
 
 	private boolean doRedirect(PipedInputStream[] pin) {
 		PythonInterpreter py = getPythonInterpreter();
+		Debug.saveRedirected(System.out, System.err);
+		log(3, "doRedirect: creating out stream");
 		try {
 			PipedOutputStream pout = new PipedOutputStream(pin[0]);
 			PrintStream ps = new PrintStream(pout, true);
+			log(3, "doRedirect: switching system");
 			System.setOut(ps);
+			log(3, "doRedirect: switching interpreter");
 			py.setOut(ps);
+			log(3, "doRedirect: done");
 		} catch (Exception e) {
 			log(-1, "%s: redirect STDOUT: %s", getName(), e.getMessage());
 			return false;
 		}
+		log(3, "doRedirect: creating err stream");
 		try {
-			PipedOutputStream pout = new PipedOutputStream(pin[1]);
-			PrintStream ps = new PrintStream(pout, true);
-			System.setErr(ps);
-			py.setErr(ps);
+			PipedOutputStream eout = new PipedOutputStream(pin[1]);
+			PrintStream eps = new PrintStream(eout, true);
+			log(3, "[debug] doRedirect: switching system");
+			System.setErr(eps);
+			log(3, "[debug] doRedirect: switching interpreter");
+			py.setErr(eps);
+			log(3, "[debug] doRedirect: done");
 		} catch (Exception e) {
 			log(-1, "%s: redirect STDERR: %s", getName(), e.getMessage());
 			return false;
