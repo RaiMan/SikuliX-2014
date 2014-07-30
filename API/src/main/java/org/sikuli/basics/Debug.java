@@ -38,6 +38,8 @@ public class Debug {
           DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM);
   public static String logfile;
 
+	private static PrintStream redirectedOut = null, redirectedErr = null;
+
   static {
     String debug = System.getProperty("sikuli.Debug");
     if (debug != null && "".equals(debug)) {
@@ -57,6 +59,17 @@ public class Debug {
     setLogFile(null);
     setUserLogFile(null);
   }
+
+	public static void saveRedirected(PrintStream rdo, PrintStream rde) {
+		redirectedOut = rdo;
+		redirectedErr = rde;
+	}
+
+	public static void out(String msg) {
+		if (redirectedOut != null && DEBUG_LEVEL > 2) {
+			redirectedOut.println(msg);
+		}
+	}
 
 	/**
 	 * specify, where the logs should be written:<br>
@@ -341,6 +354,9 @@ public class Debug {
         System.out.print(sout);
         System.out.println();
       }
+			if (level == -1 || level > 2) {
+				out(sout);
+			}
     }
   }
 
