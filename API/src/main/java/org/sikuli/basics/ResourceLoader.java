@@ -128,7 +128,7 @@ public class ResourceLoader {
       Sikulix.terminate(101);
     }
   }
-  
+
   public static ResourceLoader get() {
     if (resourceLoader == null) {
       resourceLoader = new ResourceLoader();
@@ -342,7 +342,7 @@ public class ResourceLoader {
         }
 
         // check the users home folder
-        if (!runningSikulixapi && libPath == null && userSikuli != null) {
+        if (!Settings.runningSetup && !runningSikulixapi && libPath == null && userSikuli != null) {
           File ud = new File(userSikuli , suffixLibs);
           if (ud.exists()) {
             libPath = ud.getAbsolutePath();
@@ -353,7 +353,7 @@ public class ResourceLoader {
         }
 
         // check the working directory and its parent
-        if (!runningSikulixapi && libPath == null && userdir != null) {
+        if (!Settings.runningSetup && !runningSikulixapi && libPath == null && userdir != null) {
           File wd = new File(userdir);
           File wdpl = null;
           File wdp = new File(userdir).getParentFile();
@@ -371,7 +371,7 @@ public class ResourceLoader {
           libsDir = checkLibsDir(libPath);
         }
 
-        if (!runningSikulixapi && libPath == null && libPathFallBack != null) {
+        if (!Settings.runningSetup && !runningSikulixapi && libPath == null && libPathFallBack != null) {
           libPath = libPathFallBack;
           log(lvl, "Checking available fallback for libs folder: " + libPath);
           libsDir = checkLibsDir(libPath);
@@ -380,7 +380,7 @@ public class ResourceLoader {
     }
 
     initDone = true;
-    
+
     if (libsDir == null && libPath != null) {
       log(lvl, "libs dir is empty, has wrong content or is outdated");
       log(lvl, "Trying to extract libs to: " + libPath);
@@ -412,7 +412,8 @@ public class ResourceLoader {
     //<editor-fold defaultstate="collapsed" desc="libs dir finally invalid">
     if (libPath == null) {
       log(-1, "No valid libs path available until now!");
-      if (libPath == null && jarParentPath != null) {
+
+			if (libPath == null && jarParentPath != null) {
         if (jarPath.endsWith(".jar") && libsURL == null) {
           log(-2, "Please wait! Trying to extract libs to jar parent folder: " + jarParentPath);
           File jarPathLibs = extractLibs((new File(jarParentPath)).getAbsolutePath(), libSource);
@@ -691,24 +692,24 @@ public class ResourceLoader {
 //      return false;
 //    }
 //  }
-  
+
   public void setItIsJython() {
-      itIsJython = true;    
+      itIsJython = true;
   }
-  
+
   public void exportTessdata(boolean overwrite) {
     if (tessURL == null) {
       log(-1, "exportTessdata: no valid Tessdata.jar available");
     }
     if (overwrite) {
-      
+
     }
     if (!new File(Settings.OcrDataPath, "tessdata").exists()) {
       log(lvl, "Trying to extract tessdata folder since it does not exist yet.");
       export("META-INF/libs#tessdata", libPath);
     }
   }
-  
+
 
   public String runcmd(String cmd) {
     return runcmd(new String[]{cmd});
