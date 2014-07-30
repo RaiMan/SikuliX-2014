@@ -2033,6 +2033,13 @@ public class SikuliIDE extends JFrame {
           }
         }
       };
+			_runningThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+				@Override
+				public void uncaughtException(Thread t, Throwable e) {
+					Debug.error("Jython UncaughtExceptionHandler: not supported yet.\n%s", e.getMessage());
+					Debug.error("Trying to run Jython.cleanup()");
+				}
+			});
       _runningThread.start();
     }
 
