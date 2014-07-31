@@ -49,6 +49,7 @@ public class RunSetup {
 	private static String downloadRServer = version + "-3.jar";
 	private static String downloadJython = version + "-4.jar";
 	private static String downloadJRuby = version + "-5.jar";
+	private static String downloadJRubyAddOns = version + "-6.jar";
 	private static String downloadMacAppSuffix = "-9.jar";
 	private static String downloadMacApp = minorversion + downloadMacAppSuffix;
 	private static String downloadTessSuffix = "-8.jar";
@@ -65,6 +66,7 @@ public class RunSetup {
 	private static String localRServer = "sikulixremoteserver.jar";
 	private static String localJython = "sikulijython.jar";
 	private static String localJRuby = "sikulijruby.jar";
+	private static String localJRubyAddOns = "sikulijrubyaddons.jar";
 	private static String runsikulix = "runsikulix";
 	private static String localLogfile;
 	private static SetUpSelect winSU;
@@ -398,7 +400,6 @@ public class RunSetup {
 				}
 				File fDownloads = new File(workDir, "Downloads");
 				Debug.log(3, "projectDir: " + projectDir);
-				String ideFat = "sikulix-complete-" + Settings.SikuliProjectVersion + "-ide-fat.jar";
 				File jythonJar = new File(Settings.SikuliJython);
 				File jrubyJar = new File(Settings.SikuliJRuby);
 				boolean doit = true;
@@ -414,6 +415,7 @@ public class RunSetup {
 						return !entry.getName().startsWith("sikulix");
 					}
 				});
+				String ideFat = "sikulix-complete-" + Settings.SikuliProjectVersion + "-ide-fat.jar";
 				File fIDEFat = new File(projectDir, "IDEFat/target/" + ideFat);
 				if (!fIDEFat.exists()) {
 					Debug.log(3, "missing: " + fIDEFat.getAbsolutePath());
@@ -427,6 +429,12 @@ public class RunSetup {
 					Debug.log(3, "missing " + jrubyJar.getAbsolutePath());
 					doit = false;
 				}
+				String jrubyAddons =  "sikulixjrubyaddons-" + Settings.SikuliProjectVersion + "-plain.jar";
+				File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
+				if (!fJRubyAddOns.exists()) {
+					Debug.log(3, "missing: " + fJRubyAddOns.getAbsolutePath());
+					doit = false;
+				}
 				if (doit) {
 					fDownloads.mkdir();
 					try {
@@ -436,6 +444,8 @@ public class RunSetup {
 										new File(fDownloads, downloadJython).getAbsolutePath());
 						FileManager.xcopyAll(jrubyJar.getAbsolutePath(),
 										new File(fDownloads, downloadJRuby).getAbsolutePath());
+						FileManager.xcopyAll(fJRubyAddOns.getAbsolutePath(),
+										new File(fDownloads, downloadJRubyAddOns).getAbsolutePath());
 						String fname = new File(projectDir, "Remote/target/"
 										+ "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
 						FileManager.xcopyAll(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
@@ -475,6 +485,7 @@ public class RunSetup {
 
     //TODO Windows 8 HKLM/SOFTWARE/JavaSoft add Prefs ????
 		//</editor-fold>
+
 		//<editor-fold defaultstate="collapsed" desc="checking update/beta">
 		if (!runningUpdate && !isUpdateSetup) {
 			String uVersion = "";
@@ -826,19 +837,13 @@ public class RunSetup {
 					}
 					if (getJRuby) {
 						downloadedFiles += downloadJRuby + " - ";
-						msg += "\n - with JRuby";
+						downloadedFiles += downloadJRubyAddOns + " - ";
+						msg += "\n - with JRuby incl. AddOns";
 					}
 //					if (Settings.isMac()) {
 //            downloadedFiles += downloadMacApp + " - ";
 //						msg += "\n" + downloadMacApp + " (Mac-App)";
 //					}
-				}
-				if (getJava) {
-//**API**					if (getIDE) {
-//						msg += "\n";
-//					}
-//					downloadedFiles += downloadJava + " - ";
-//					msg += "\n--- Package 2 ---\n" + downloadJava + " (Java API)";
 				}
 				if (getTess || getRServer) {
 					if (getIDE || getJava) {
@@ -910,15 +915,14 @@ public class RunSetup {
 				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJRuby, targetJar, "JRuby");
 			}
 			downloadOK &= dlOK;
+			if (downloadOK) {
+				targetJar = new File(workDir, localJRubyAddOns).getAbsolutePath();
+				if (!test) {
+					downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJRubyAddOns, targetJar, "JRubyAddOns");
+				}
+				downloadOK &= dlOK;
+			}
 		}
-//**API**
-//		if (getJava) {
-//			targetJar = new File(workDir, localJava).getAbsolutePath();
-//			if (!test) {
-//				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJava, targetJar, "JavaAPI");
-//			}
-//			downloadOK &= dlOK;
-//		}
 		if (getTess) {
 			targetJar = new File(workDir, localTess).getAbsolutePath();
 			if (!test) {
@@ -1003,7 +1007,7 @@ public class RunSetup {
 			}
 		};
 
-		String[] jarsList = new String[]{null, null, null, null, null};
+		String[] jarsList = new String[]{null, null, null, null, null, null};
 		String localTemp = "sikuli-temp.jar";
 		splash = showSplash("Now adding needed stuff to selected jars.", "please wait - may take some seconds ...");
 
@@ -1012,66 +1016,9 @@ public class RunSetup {
 			jarsList[2] = (new File(workDir, localTess)).getAbsolutePath();
 		}
 
-//		if (getIDE) {
-//			log1(lvl, "recreating IDE (exclude scripting support)");
-//			localJar = (new File(workDir, localIDE)).getAbsolutePath();
-//			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-//			success &= FileManager.buildJar(targetJar,
-//							new String[]{localJar}, null, null, new FileManager.JarFileFilter() {
-//								@Override
-//								public boolean accept(ZipEntry entry) {
-//									if (entry.getName().contains("JythonIDESupport")
-//									|| entry.getName().contains("JythonScriptRunner")
-//									|| entry.getName().contains("JRubyIDESupport")
-//									|| entry.getName().contains("JRubyScriptRunner")) {
-//										return false;
-//									}
-//									return true;
-//								}
-//							});
-//			success &= handleTempAfter(localTemp, localJar);
-//		}
-
-//		if (success && getJython && getJRuby) {
-//			log1(lvl, "recreating JRuby (exclude Jython empty stuff)");
-//			localJar = (new File(workDir, localJRuby)).getAbsolutePath();
-//			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-//			success &= FileManager.buildJar(targetJar,
-//							new String[]{localJar}, null, null, new FileManager.JarFileFilter() {
-//								@Override
-//								public boolean accept(ZipEntry entry) {
-//									if (entry.getName().contains("JythonIDESupport")
-//									|| entry.getName().contains("JythonScriptRunner")) {
-//										return false;
-//									}
-//									return true;
-//								}
-//							});
-//			success &= handleTempAfter(localTemp, localJar);
-//
-//			if (success) {
-//				log1(lvl, "recreating Jython (exclude JRuby empty stuff)");
-//				localJar = (new File(workDir, localJython)).getAbsolutePath();
-//				targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-//				success &= FileManager.buildJar(targetJar,
-//								new String[]{localJar}, null, null, new FileManager.JarFileFilter() {
-//									@Override
-//									public boolean accept(ZipEntry entry) {
-//										if (entry.getName().contains("JRubyIDESupport")
-//										|| entry.getName().contains("JRubyScriptRunner")) {
-//											return false;
-//										}
-//										return true;
-//									}
-//								});
-//				success &= handleTempAfter(localTemp, localJar);
-//			}
-//		}
-
 		if (success && getJava) {
 			log1(lvl, "adding needed stuff to sikulixapi.jar");
 			localJar = (new File(workDir, localJava)).getAbsolutePath();
-//**API**			jarsList[0] = localJar;
 			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
 			success &= FileManager.buildJar(targetJar, jarsList, null, null, libsFilter);
 			success &= handleTempAfter(localTemp, localJar);
@@ -1086,6 +1033,7 @@ public class RunSetup {
 			}
 			if (getJRuby) {
 				jarsList[4] = (new File(workDir, localJRuby)).getAbsolutePath();;
+				jarsList[5] = (new File(workDir, localJRubyAddOns)).getAbsolutePath();;
 			}
 			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
 			success &= FileManager.buildJar(targetJar, jarsList, null, null, libsFilter);
@@ -1097,6 +1045,7 @@ public class RunSetup {
 		}
 		if (getJRuby) {
 			new File(workDir, localJRuby).delete();
+			new File(workDir, localJRubyAddOns).delete();
 		}
 		if (getTess) {
 			new File(workDir, localTess).delete();

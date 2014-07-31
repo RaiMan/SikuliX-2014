@@ -11,7 +11,7 @@ import java.awt.Color;
  * @author rhocke
  */
 public class SetUpSelect extends javax.swing.JPanel {
-  
+
   /**
    * Creates new form SetUpSelect
    */
@@ -182,7 +182,7 @@ public class SetUpSelect extends javax.swing.JPanel {
       }
     });
 
-    option3.setText("Ruby (JRuby)");
+    option3.setText("Ruby (JRuby) incl. AddOns (rspec, cucumber)");
     option3.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         option3ActionPerformed(evt);
