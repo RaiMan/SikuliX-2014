@@ -15,8 +15,6 @@ import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.python.core.PyList;
@@ -443,7 +441,7 @@ public class JythonScriptRunner implements IScriptRunner {
 	@Override
 	public String getName() {
     try {
-      Class.forName("PythonInterpreter");
+      Class.forName("org.python.util.PythonInterpreter");
     } catch (ClassNotFoundException ex) {
       return null;
     }

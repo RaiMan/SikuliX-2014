@@ -187,7 +187,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 	@Override
 	public String getName() {
     try {
-      Class.forName("ScriptingContainer");
+      Class.forName("org.jruby.embed.ScriptingContainer");
     } catch (ClassNotFoundException ex) {
       return null;
     }

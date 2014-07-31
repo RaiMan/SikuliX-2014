@@ -280,7 +280,7 @@ public class Settings {
   }
 
 	public static void initScriptingSupport() {
-		if (scriptRunner.size() == 0) {
+		if (scriptRunner.isEmpty()) {
 			ServiceLoader<IDESupport> sloader = ServiceLoader.load(IDESupport.class);
 			Iterator<IDESupport> supIterator = sloader.iterator();
 			while (supIterator.hasNext()) {
@@ -302,7 +302,7 @@ public class Settings {
 				}
 			}
 		}
-		if (scriptRunner.size() == 0) {
+		if (scriptRunner.isEmpty()) {
 			Debug.error("Settings: No scripting support available. Rerun Setup!");
 			Sikulix.popup("No scripting support available. Rerun Setup!", "SikuliX - Fatal Error!");
 			System.exit(1);

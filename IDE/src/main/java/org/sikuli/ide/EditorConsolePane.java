@@ -22,6 +22,7 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.io.*;
+import java.util.Arrays;
 import java.util.regex.*;
 import javax.swing.*;
 import javax.swing.text.*;
@@ -99,7 +100,7 @@ public class EditorConsolePane extends JPanel implements Runnable {
       int irunner = 0;
       for (IScriptRunner srunner : Settings.scriptRunner.values()) {
 				Debug.log(3, "EditorConsolePane: redirection for %s", srunner.getName());
-        if (srunner.doSomethingSpecial("redirect", pin)) {
+        if (srunner.doSomethingSpecial("redirect", Arrays.copyOfRange(pin, irunner*npipes, irunner*npipes+2))) {
           Debug.log(3, "EditorConsolePane: redirection success for %s", srunner.getName());
           quit = false; // signals the Threads that they should exit
 //TODO Hack to avoid repeated redirect of stdout/err
