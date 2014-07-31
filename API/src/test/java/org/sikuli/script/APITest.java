@@ -23,6 +23,7 @@ public class APITest {
   }
 
   @Test
+	@Ignore
   public void clickCenterOfPrimaryScreen_2Times_WithPause5() {
 		if (!Sikulix.canRun()) {
 			Assert.assertTrue(true);
@@ -37,6 +38,7 @@ public class APITest {
   }
 
   @Test
+	@Ignore
   public void findAndHighlightTopLeftSixth() {
 		if (!Sikulix.canRun()) {
 			Assert.assertTrue(true);
@@ -51,4 +53,26 @@ public class APITest {
     Debug.test("APITest: findAndHighlightTopLeftSixth: ending");
     Assert.assertTrue(m != null);
   }
+
+	@Test
+	public void addingPrivateLogger() {
+		Debug.test("addingPrivateLogger");
+		Debug.info("this should be visible as info message");
+		Debug.info("this should be visible as info message");
+		Debug.info("this should be visible as info message");
+		Debug.setLogger(new APITest());
+		Assert.assertTrue(Debug.setLoggerInfo("info"));
+	}
+
+	@Test
+	public void usingPrivateLoggerInfo() {
+		Debug.test("usingPrivateLogger");
+		Debug.info("test message info");
+		Assert.assertTrue(true);
+	}
+
+	public void info(String msg) {
+		Debug.test("myLogger.info " + msg);
+//			System.out.println("FromLoggerInfo: " + msg);
+	}
 }
