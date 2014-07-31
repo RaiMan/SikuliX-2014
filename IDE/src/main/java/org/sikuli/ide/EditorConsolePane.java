@@ -102,6 +102,8 @@ public class EditorConsolePane extends JPanel implements Runnable {
         if (srunner.doSomethingSpecial("redirect", pin)) {
           Debug.log(3, "EditorConsolePane: redirection success for %s", srunner.getName());
           quit = false; // signals the Threads that they should exit
+//TODO Hack to avoid repeated redirect of stdout/err
+          Settings.systemRedirected = true;
 
           // Starting two seperate threads to read from the PipedInputStreams
           for (int i = irunner * npipes; i < irunner * npipes + npipes; i++) {
@@ -111,7 +113,6 @@ public class EditorConsolePane extends JPanel implements Runnable {
           }
           irunner++;
         }
-				break;
       }
     }
 

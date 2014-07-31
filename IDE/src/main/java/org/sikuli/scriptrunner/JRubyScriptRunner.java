@@ -186,6 +186,11 @@ public class JRubyScriptRunner implements IScriptRunner {
 
 	@Override
 	public String getName() {
+    try {
+      Class.forName("ScriptingContainer");
+    } catch (ClassNotFoundException ex) {
+      return null;
+    }
 		return Settings.RRUBY;
 	}
 
@@ -514,7 +519,9 @@ public class JRubyScriptRunner implements IScriptRunner {
 		try {
 			PipedOutputStream pout = new PipedOutputStream(pin[0]);
 			PrintStream ps = new PrintStream(pout, true);
-			System.setOut(ps);
+      if (!Settings.systemRedirected) {
+        System.setOut(ps);
+      }
 			interpreter.setOutput(ps);
 		} catch (Exception e) {
 			log(-1, "%s: redirect STDOUT: %s", getName(), e.getMessage());
@@ -523,7 +530,9 @@ public class JRubyScriptRunner implements IScriptRunner {
 		try {
 			PipedOutputStream pout = new PipedOutputStream(pin[1]);
 			PrintStream ps = new PrintStream(pout, true);
-			System.setErr(ps);
+      if (!Settings.systemRedirected) {
+        System.setErr(ps);
+      }
 			interpreter.setError(ps);
 		} catch (Exception e) {
 			log(-1, "%s: redirect STDERR: %s", getName(), e.getMessage());

@@ -136,6 +136,7 @@ public class Settings {
 
 	public static Map<String, IDESupport> ideSupporter = new HashMap<String, IDESupport>();
 	public static Map<String, IScriptRunner> scriptRunner = new HashMap<String, IScriptRunner>();
+  public static boolean systemRedirected = false;
 	private static List<String> supportedRunner = new ArrayList<String>();
 	public static Map<String, String> EndingTypes = new HashMap<String, String>();
 	public static Map<String, String> TypeEndings = new HashMap<String, String>();
@@ -296,7 +297,7 @@ public class Settings {
 			while (rIterator.hasNext()) {
 				IScriptRunner current = rIterator.next();
 				String name = current.getName();
-				if (!name.startsWith("Not")) {
+				if (name != null && !name.startsWith("Not")) {
 					scriptRunner.put(name, current);
 				}
 			}

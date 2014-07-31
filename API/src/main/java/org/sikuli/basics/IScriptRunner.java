@@ -68,7 +68,7 @@ public interface IScriptRunner {
    * Gets the name of the ScriptRunner. Should be unique. This value is needed to distinguish
    * between different ScriptRunners.
    *
-   * @return Name to identify the ScriptRunner
+   * @return Name to identify the ScriptRunner or null if not available
    */
   public String getName();
 
