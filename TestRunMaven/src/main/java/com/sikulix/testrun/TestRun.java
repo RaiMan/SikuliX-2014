@@ -11,13 +11,14 @@ public class TestRun
 				Debug.setDebugLevel(3);
 				//Sikulix.init();
 				Debug.test("setting logger");
-				Debug.setLogger(new TestRun());
+				Debug.setLoggerNoPrefix(new TestRun());
 				Debug.test("setting logger all redirect");
 				Debug.setLoggerAll("info");
 				Debug.test("testing redirection");
 				Debug.info("test redirection info");
-				Debug.action("test redirection info");
-				Debug.error("test redirection info");
+				Debug.action("test redirection action");
+				Debug.error("test redirection error");
+				Debug.log("test redirection debug");
         Debug.test( "SikuliX 2014 TestRun: end" );
     }
 
