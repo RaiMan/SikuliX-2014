@@ -30,6 +30,21 @@
     </dependency>
     <dependency>
       <groupId>com.sikulix</groupId>
+      <artifactId>sikulixlibswin</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixlibsmac</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixlibslux</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sikulix</groupId>
       <artifactId>sikulixjrubyaddons</artifactId>
       <version>${project.version}</version>
     </dependency>
