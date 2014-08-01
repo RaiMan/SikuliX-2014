@@ -145,9 +145,9 @@
 	</profiles>
 
 	<modules>
-		<module>LibsLux</module>
-		<module>LibsMac</module>
-		<module>LibsWin</module>
+		<module>Libslux</module>
+		<module>Libsmac</module>
+		<module>Libswin</module>
 		<module>API</module>
 		<module>APIFat</module>
 		<module>Jygments4SikuliX</module>
