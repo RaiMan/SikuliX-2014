@@ -47,10 +47,10 @@ public class Debug {
 	private static String privateLoggerInfoName = "";
 	private static Method privateLoggerAction = null;
 	private static String privateLoggerActionName = "";
-	private static Method privateLoggerDebug = null;
-	private static String privateLoggerDebugName = "";
 	private static Method privateLoggerError = null;
 	private static String privateLoggerErrorName = "";
+	private static Method privateLoggerDebug = null;
+	private static String privateLoggerDebugName = "";
 
 	private static PrintStream redirectedOut = null, redirectedErr = null;
 
@@ -93,8 +93,8 @@ public class Debug {
 			boolean success = true;
 			success &= setLoggerInfo(mAll);
 			success &= setLoggerAction(mAll);
-			success &= setLoggerDebug(mAll);
 			success &= setLoggerError(mAll);
+			success &= setLoggerDebug(mAll);
 			return success;
 		} else {
 			error("Debug: setLoggerAll: no logger specified yet");
@@ -148,28 +148,6 @@ public class Debug {
 	}
 
 	/**
-	 * specify the target method for redirection of Sikuli's debug messages [debug]<br>
-	 * must be the name of an instance method of the previously defined logger and<br>
-	 * must accept exactly one string parameter, that contains the info message
-	 * @param mDebug name of the method where the message should be sent
-	 * @return true if the method is available false otherwise
-	 */
-	public static boolean setLoggerDebug(String mDebug) {
-		if (privateLogger != null) {
-			try {
-				privateLoggerDebug = privateLogger.getClass().getMethod(mDebug, new Class[]{String.class});
-				privateLoggerDebugName = mDebug;
-				return true;
-			} catch (Exception e) {
-				return false;
-			}
-		} else {
-			error("Debug: setLoggerDebug: no logger specified yet");
-		}
-		return false;
-	}
-
-	/**
 	 * specify the target method for redirection of Sikuli's error messages [error]<br>
 	 * must be the name of an instance method of the previously defined logger and<br>
 	 * must accept exactly one string parameter, that contains the info message
@@ -181,6 +159,28 @@ public class Debug {
 			try {
 				privateLoggerError = privateLogger.getClass().getMethod(mError, new Class[]{String.class});
 				privateLoggerErrorName = mError;
+				return true;
+			} catch (Exception e) {
+				return false;
+			}
+		} else {
+			error("Debug: setLoggerError: no logger specified yet");
+		}
+		return false;
+	}
+
+	/**
+	 * specify the target method for redirection of Sikuli's error messages [error]<br>
+	 * must be the name of an instance method of the previously defined logger and<br>
+	 * must accept exactly one string parameter, that contains the info message
+	 * @param mDebug name of the method where the message should be sent
+	 * @return true if the method is available false otherwise
+	 */
+	public static boolean setLoggerDebug(String mDebug) {
+		if (privateLogger != null) {
+			try {
+				privateLoggerDebug = privateLogger.getClass().getMethod(mDebug, new Class[]{String.class});
+				privateLoggerDebugName = mDebug;
 				return true;
 			} catch (Exception e) {
 				return false;
@@ -510,8 +510,7 @@ public class Debug {
       }
 			if (level > -99 && privateLogger != null && privateLoggerDebug != null) {
 				try {
-					privateLoggerDebug.invoke(privateLogger,
-									new Object[]{sout});
+					privateLoggerDebug.invoke(privateLogger, new Object[]{sout});
 					return;
 				} catch (Exception e) {
 					Debug.error("calling logger.%s failed - resetting to default: %s\n",
