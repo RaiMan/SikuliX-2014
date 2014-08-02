@@ -1,6 +1,6 @@
 require 'java'
 
-module SikuliX4Ruby
+module Sikulix
   class Platform
     def self.check_and_require
       begin

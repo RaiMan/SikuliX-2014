@@ -64,7 +64,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 	private final static String SCRIPT_HEADER
 					= "# coding: utf-8\n"
 					+ "require 'Lib/sikulix'\n"
-					+ "include SikuliX4Ruby\n";
+					+ "include Sikulix\n";
 
 	private static ArrayList<String> codeBefore = null;
 	private static ArrayList<String> codeAfter = null;

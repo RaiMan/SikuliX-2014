@@ -54,7 +54,7 @@ It is possible:
 
     ```ruby
     require 'sikulix'
-    include SikuliX4Ruby
+    include Sikulix
 
     # place your code here
 
@@ -63,7 +63,7 @@ It is possible:
 
 ## Special for Ruby
 
-* After 'include SikuliX4Ruby' it is possible to use “undotted” methods. E.g. click(), exists(), etc in global context.
+* After 'include Sikulix' it is possible to use “undotted” methods. E.g. click(), exists(), etc in global context.
 * Registration of hot-keys:
 
     ```ruby

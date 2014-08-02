@@ -4,11 +4,11 @@
 require 'java'
 
 # Classes and methods for using SikuliX
-module SikuliX4Ruby
+module Sikulix
   private
 
   # 'private' for avoiding of unexpected effects when
-  #   'include SikuliX4Ruby' is used.
+  #   'include Sikulix' is used.
 
   java_import org.sikuli.basics.Sikulix
   java_import org.sikuli.script.Screen
@@ -78,11 +78,11 @@ module SikuliX4Ruby
   # Dynamic method definition for several cases of invocation
   def self.dynamic_def(name, &block)
     # using as:
-    #   include SikuliX4Ruby
+    #   include Sikulix
     #   some_method(...)
     define_method(name, &block)
     # using as:
-    #   SikuliX4Rub::some_method(...)
+    #   Sikulix::some_method(...)
     define_singleton_method(name, &block)
 
     # private method to avoid of attachment to all subclasses
@@ -166,7 +166,7 @@ module SikuliX4Ruby
     end
   end
 
-  # Generate static methods in SikuliX4Ruby context
+  # Generate static methods in Sikulix context
   # for possible "undotted" methods.
   [$SIKULI_SCREEN, Sikulix].each do |obj|
     mtype = (obj.class == Class ? :java_class_methods : :java_instance_methods)
@@ -232,7 +232,7 @@ end
 ## Region/Screen or SikuliX classes.
 # def self.method_missing(name, *args, &block)
 #
-#  if (method = SikuliX4Ruby::UNDOTTED_METHODS[name])
+#  if (method = Sikulix::UNDOTTED_METHODS[name])
 #    begin
 #      ret = method.call(*args, &block)
 #      # Dynamic methods that throw a native Java-exception,
@@ -240,7 +240,7 @@ end
 #      # Object.send(:define_method, name){ |*args| method.call(*args) }
 #      return ret
 #    rescue NativeException => e
-#      raise StandardError, "SikuliX4Ruby: Problem (#{e})\n" \
+#      raise StandardError, "Sikulix: Problem (#{e})\n" \
 #        "with undotted method: #{name} (#{args})"
 #    end
 #  else
