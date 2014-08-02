@@ -262,21 +262,21 @@ public class Settings {
     return String.format("%s/%s/%s", SikuliVersionLong, SikuliSystemVersion, SikuliJavaVersion);
   }
 
-  public static void getStatus() {
-    log(lvl, "***** Information Dump *****");
-    log(lvl, "*** SystemInfo\n%s", getSystemInfo());
+  public static void getStatus(int level) {
+    log(level, "***** Information Dump *****");
+    log(level, "*** SystemInfo\n%s", getSystemInfo());
     System.getProperties().list(System.out);
-    log(lvl, "*** System Environment");
+    log(level, "*** System Environment");
     for (String key : System.getenv().keySet()) {
       System.out.println(String.format("%s = %s", key, System.getenv(key)));
     }
-    log(lvl, "*** Java Class Path");
+    log(level, "*** Java Class Path");
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     URL[] urls = sysLoader.getURLs();
     for (int i = 0; i < urls.length; i++) {
       System.out.println(String.format("%d: %s", i, urls[i]));
     }
-    log(lvl, "***** Information Dump ***** end *****");
+    log(level, "***** Information Dump ***** end *****");
   }
 
 	public static void initScriptingSupport() {
