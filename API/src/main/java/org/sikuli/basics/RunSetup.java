@@ -375,6 +375,7 @@ public class RunSetup {
 		}
 		workDir = workDir.substring(1);
 		if (!runningfromJar) {
+      String currentJar = workDir;
 			String newWorkDir = (new File(uhome, "SikuliX/Setup")).getAbsolutePath();
       if (!popAsk("... not running from sikuli-setup.jar: \n" + workDir + runningJar
               + "\n... using as download folder\n" + newWorkDir)) {
@@ -382,9 +383,10 @@ public class RunSetup {
       }
       workDir = newWorkDir;
 			(new File(workDir)).mkdirs();
+      
 		}
 
-		if (logToFile) {
+		if (!runningfromJar && logToFile) {
 			logfile = (new File(workDir, localLogfile)).getAbsolutePath();
 			if (!Debug.setLogFile(logfile)) {
 				popError(workDir + "\n... folder we are running in must be user writeable! \n"
@@ -402,93 +404,96 @@ public class RunSetup {
     if (logToFile) {
       Settings.getStatus(lvl);
     }
+		//</editor-fold>
 
-		if (test || runningfromJar) {
-			String projectDir;
-			if ("classes".equals(runningJar) || runningJar.endsWith("-plain.jar")) {
-				localSetup = runningJar;
-				projectDir = new File(workDir).getParentFile().getParentFile().getAbsolutePath();
-				if (!noSetup && !popAsk("Setup seems to be running in Maven project structure\n"
-								+ projectDir + " --- Continue?")) {
-					System.exit(0);
-				}
-				File fDownloads = new File(workDir, "Downloads");
-				Debug.log(3, "projectDir: " + projectDir);
-				File jythonJar = new File(Settings.SikuliJython);
-				File jrubyJar = new File(Settings.SikuliJRuby);
-				boolean doit = true;
-				if (new File(workDir, "Downloads").exists()) {
-					FileManager.deleteFileOrFolder(new File(workDir, "Downloads").getAbsolutePath(), null);
-				}
-				FileManager.deleteFileOrFolder(workDir, new FileManager.fileFilter() {
-					@Override
-					public boolean accept(File entry) {
-						if (entry.isDirectory()) {
-							return true;
-						}
-						return !entry.getName().startsWith("sikulix");
-					}
-				});
-				String ideFat = "sikulix-complete-" + Settings.SikuliProjectVersion + "-ide-fat.jar";
-				File fIDEFat = new File(projectDir, "IDEFat/target/" + ideFat);
-				if (!fIDEFat.exists()) {
-					Debug.log(3, "missing: " + fIDEFat.getAbsolutePath());
-					doit = false;
-				}
-				if (!jythonJar.exists()) {
-					Debug.log(3, "missing: " + jythonJar.getAbsolutePath());
-					doit = false;
-				}
-				if (!jrubyJar.exists()) {
-					Debug.log(3, "missing " + jrubyJar.getAbsolutePath());
-					doit = false;
-				}
-				String jrubyAddons =  "sikulixjrubyaddons-" + Settings.SikuliProjectVersion + "-plain.jar";
-				File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
-				if (!fJRubyAddOns.exists()) {
-					Debug.log(3, "missing: " + fJRubyAddOns.getAbsolutePath());
-					doit = false;
-				}
-				if (doit) {
-					fDownloads.mkdir();
-					try {
-						FileManager.xcopyAll(fIDEFat.getAbsolutePath(),
-										new File(fDownloads, downloadIDE).getAbsolutePath());
-						FileManager.xcopyAll(jythonJar.getAbsolutePath(),
-										new File(fDownloads, downloadJython).getAbsolutePath());
-						FileManager.xcopyAll(jrubyJar.getAbsolutePath(),
-										new File(fDownloads, downloadJRuby).getAbsolutePath());
-						FileManager.xcopyAll(fJRubyAddOns.getAbsolutePath(),
-										new File(fDownloads, downloadJRubyAddOns).getAbsolutePath());
-						String fname = new File(projectDir, "Remote/target/"
-										+ "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
-						FileManager.xcopyAll(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
-						fname = new File(projectDir, "Tesseract/target/"
-										+ Settings.SikuliProjectVersion + downloadTessSuffix).getAbsolutePath();
-						FileManager.xcopyAll(fname, new File(fDownloads, downloadTess).getAbsolutePath());
-						fname = new File(projectDir, "MacApp/target/"
-										+ Settings.SikuliProjectVersion + downloadMacAppSuffix).getAbsolutePath();
-						FileManager.xcopyAll(fname, new File(fDownloads, downloadMacApp).getAbsolutePath());
-					} catch (Exception ex) {
-						doit = false;
-					}
-				}
-				if (noSetup) {
-					if (noSetupSilent && doit) {
-						Debug.log(3, "Copying jars to Downloads should have succeeded");
-					}
-					System.exit(0);
-				}
-				if (!doit) {
-					popError("Some artifacts are missing or could not be copied.\n"
-									+ "Check folder " + fDownloads + "\n"
-									+ "Run (mvn clean install) in project and try again");
-					System.exit(0);
-				}
-			}
-		}
+    //<editor-fold defaultstate="collapsed" desc="creating local setup folder">
+    if (test || runningfromJar) {
+      String projectDir;
+      if ("classes".equals(runningJar) || runningJar.endsWith("-plain.jar")) {
+        localSetup = runningJar;
+        projectDir = new File(workDir).getParentFile().getParentFile().getAbsolutePath();
+        if (!noSetup && !popAsk("Setup seems to be running in Maven project structure\n"
+                + projectDir + " --- Continue?")) {
+          System.exit(0);
+        }
+        File fDownloads = new File(workDir, "Downloads");
+        Debug.log(3, "projectDir: " + projectDir);
+        File jythonJar = new File(Settings.SikuliJython);
+        File jrubyJar = new File(Settings.SikuliJRuby);
+        boolean doit = true;
+        if (new File(workDir, "Downloads").exists()) {
+          FileManager.deleteFileOrFolder(new File(workDir, "Downloads").getAbsolutePath(), null);
+        }
+        FileManager.deleteFileOrFolder(workDir, new FileManager.fileFilter() {
+          @Override
+          public boolean accept(File entry) {
+            if (entry.isDirectory()) {
+              return true;
+            }
+            return !entry.getName().startsWith("sikulix");
+          }
+        });
+        String ideFat = "sikulix-complete-" + Settings.SikuliProjectVersion + "-ide-fat.jar";
+        File fIDEFat = new File(projectDir, "IDEFat/target/" + ideFat);
+        if (!fIDEFat.exists()) {
+          Debug.log(3, "missing: " + fIDEFat.getAbsolutePath());
+          doit = false;
+        }
+        if (!jythonJar.exists()) {
+          Debug.log(3, "missing: " + jythonJar.getAbsolutePath());
+          doit = false;
+        }
+        if (!jrubyJar.exists()) {
+          Debug.log(3, "missing " + jrubyJar.getAbsolutePath());
+          doit = false;
+        }
+        String jrubyAddons =  "sikulixjrubyaddons-" + Settings.SikuliProjectVersion + "-plain.jar";
+        File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
+        if (!fJRubyAddOns.exists()) {
+          Debug.log(3, "missing: " + fJRubyAddOns.getAbsolutePath());
+          doit = false;
+        }
+        if (doit) {
+          fDownloads.mkdir();
+          try {
+            FileManager.xcopyAll(fIDEFat.getAbsolutePath(),
+                    new File(fDownloads, downloadIDE).getAbsolutePath());
+            FileManager.xcopyAll(jythonJar.getAbsolutePath(),
+                    new File(fDownloads, downloadJython).getAbsolutePath());
+            FileManager.xcopyAll(jrubyJar.getAbsolutePath(),
+                    new File(fDownloads, downloadJRuby).getAbsolutePath());
+            FileManager.xcopyAll(fJRubyAddOns.getAbsolutePath(),
+                    new File(fDownloads, downloadJRubyAddOns).getAbsolutePath());
+            String fname = new File(projectDir, "Remote/target/"
+                    + "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
+            FileManager.xcopyAll(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
+            fname = new File(projectDir, "Tesseract/target/"
+                    + Settings.SikuliProjectVersion + downloadTessSuffix).getAbsolutePath();
+            FileManager.xcopyAll(fname, new File(fDownloads, downloadTess).getAbsolutePath());
+            fname = new File(projectDir, "MacApp/target/"
+                    + Settings.SikuliProjectVersion + downloadMacAppSuffix).getAbsolutePath();
+            FileManager.xcopyAll(fname, new File(fDownloads, downloadMacApp).getAbsolutePath());
+          } catch (Exception ex) {
+            doit = false;
+          }
+        }
+        if (noSetup) {
+          if (noSetupSilent && doit) {
+            Debug.log(3, "Copying jars to Downloads should have succeeded");
+          }
+          System.exit(0);
+        }
+        if (!doit) {
+          popError("Some artifacts are missing or could not be copied.\n"
+                  + "Check folder " + fDownloads + "\n"
+                  + "Run (mvn clean install) in project and try again");
+          System.exit(0);
+        }
+      }
+    }
+//</editor-fold>
 
-		log1(lvl, "Setup in: %s using: %s", workDir, (runningJar.contains("classes") ? "Development Project" : runningJar));
+    log1(lvl, "Setup in: %s using: %s", workDir, (runningJar.contains("classes") ? "Development Project" : runningJar));
 		log1(lvl, "SikuliX Setup Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
 
 		File localJarIDE = new File(workDir, localIDE);
@@ -496,7 +501,6 @@ public class RunSetup {
 		File localMacFolder = new File(workDir, folderMacApp);
 
     //TODO Windows 8 HKLM/SOFTWARE/JavaSoft add Prefs ????
-		//</editor-fold>
 
 		//<editor-fold defaultstate="collapsed" desc="checking update/beta">
 		if (!runningUpdate && !isUpdateSetup) {
