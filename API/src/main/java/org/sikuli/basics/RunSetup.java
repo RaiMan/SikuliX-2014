@@ -60,7 +60,8 @@ public class RunSetup {
 	private static String localMacAppIDE = "SikuliX-IDE.app/Contents/sikulix.jar";
 	private static String folderMacApp = "SikuliX-IDE.app";
 	private static String folderMacAppContent = folderMacApp + "/Contents";
-	private static String localSetup = "sikulixsetup-" + version + ".jar";
+  private static String setupName = "sikulixsetup-" + version;
+	private static String localSetup =  setupName + ".jar";
 	private static String localUpdate = "sikulixupdate";
 	private static String localTess = "sikulixtessdata.jar";
 	private static String localRServer = "sikulixremoteserver.jar";
@@ -375,7 +376,7 @@ public class RunSetup {
 		}
 		workDir = workDir.substring(1);
 		if (!runningfromJar) {
-      String currentJar = workDir;
+      File currentJarParentPath = new File(workDir);
 			String newWorkDir = (new File(uhome, "SikuliX/Setup")).getAbsolutePath();
       if (!popAsk("... not running from sikuli-setup.jar: \n" + workDir + runningJar
               + "\n... using as download folder\n" + newWorkDir)) {
@@ -383,7 +384,13 @@ public class RunSetup {
       }
       workDir = newWorkDir;
 			(new File(workDir)).mkdirs();
-      
+      if ("classes".equals(runningJar)) {
+        File pathAPIFat = currentJarParentPath.getParentFile().getParentFile();
+        String from = new File(new File(pathAPIFat, "APIFat/target"), 
+                localJava.replace(".jar","-complete-" + version + "-plain.jar")).getAbsolutePath();
+        String to = new File(workDir, localSetup).getAbsolutePath();
+        FileManager.xcopyAll(from, to);
+      }
 		}
 
 		if (!runningfromJar && logToFile) {
