@@ -82,6 +82,17 @@
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
 			</resource>
+      <resource>
+        <directory>
+          ../JRubyGem/lib/sikulix
+        </directory>
+        <includes>
+          <include>
+            sikulix*
+          </include>
+        </includes>
+        <targetPath>Lib</targetPath>
+      </resource>
 		</resources>
     <plugins>
       <plugin>
