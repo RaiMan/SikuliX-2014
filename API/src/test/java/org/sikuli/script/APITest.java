@@ -55,24 +55,30 @@ public class APITest {
   }
 
 	@Test
+	@Ignore
 	public void addingPrivateLogger() {
 		Debug.test("addingPrivateLogger");
 		Debug.info("this should be visible as info message");
-		Debug.info("this should be visible as info message");
-		Debug.info("this should be visible as info message");
+		Debug.action("this should be visible as action log message");
+		Debug.log("this should be visible as debug message");
+		Debug.error("this should be visible as error message");
+		boolean success = true;
 		Debug.setLogger(new APITest());
-		Assert.assertTrue(Debug.setLoggerInfo("info"));
+		success &= Debug.setLoggerAll("info");
+		Assert.assertTrue(success);
 	}
 
 	@Test
+	@Ignore
 	public void usingPrivateLoggerInfo() {
 		Debug.test("usingPrivateLogger");
 		Debug.info("test message info");
+		Debug.action("test message action log");
+		Debug.error("test message error");
 		Assert.assertTrue(true);
 	}
 
 	public void info(String msg) {
-		Debug.test("myLogger.info " + msg);
-//			System.out.println("FromLoggerInfo: " + msg);
+		System.out.println("[TEST] myLogger.info: " + msg);
 	}
 }
