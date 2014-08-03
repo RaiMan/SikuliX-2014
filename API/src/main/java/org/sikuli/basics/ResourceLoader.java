@@ -189,7 +189,7 @@ public class ResourceLoader {
 				if (jarPath.contains("API")) {
 					log(-1, "The jar in use was not built with setup!\n"
 									+ "We might be running from local Maven repository?\n" + jarPath);
-					jarName = "API";
+          jarName = "API";          
 					libsJarName = "Libs" + Settings.getShortOS();
 					tessJarName = "Tesseract";
 				}

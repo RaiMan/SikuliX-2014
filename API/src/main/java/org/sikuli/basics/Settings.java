@@ -49,6 +49,9 @@ public class Settings {
 
 	private static String me = "Settings";
 	private static int lvl = 3;
+  public static boolean runningSetupInValidContext = false;
+  public static String runningSetupInContext = null;
+  static String runningSetupWithJar = null;
 
 	private static void log(int level, String message, Object... args) {
 		Debug.logx(level, level < 0 ? "error" : "debug",
