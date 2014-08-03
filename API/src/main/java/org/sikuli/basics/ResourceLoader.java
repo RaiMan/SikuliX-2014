@@ -606,7 +606,6 @@ public class ResourceLoader {
     return dir;
   }
 
-  //<editor-fold defaultstate="collapsed" desc="overwritten">
   /**
    * {@inheritDoc}
    * @param res what to export
@@ -648,7 +647,11 @@ public class ResourceLoader {
         source = e[0];
         if (pre != null) {
           parts = source.split(tok);
-          targetName = suf + parts[1];
+          if (parts.length == 2) {
+            targetName = suf + parts[1];
+          } else {
+            targetName = suf;
+          }
           targetFile = new File(targetPath, targetName);
         } else {
           targetFile = new File(targetPath, source);
@@ -875,7 +878,6 @@ public class ResourceLoader {
     log(lvl, "Now loaded: %s from: %s", libname, lib);
     mem = memx;
   }
-  //</editor-fold>
 
   private File extractLibs(String targetDir, String libSource) {
     String memx = mem;
