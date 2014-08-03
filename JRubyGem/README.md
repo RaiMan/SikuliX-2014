@@ -2,27 +2,28 @@ Sikuli JRubyGem 2014 (version 1.1.x)
 ===
 
 Implements the Ruby gem for using sikulix.<br />
-(Requires SIKULIXAPI_JAR with full path of `sikulixapi.jar`)
+(Requires environment variable SIKULIXAPI_JAR <br />with full path to `sikulixapi.jar` version 1.1.0-Beta4+)
 
 ## Where to get
 It is possible:
 
-* install sikulix from http://rubygems.org
-* download sukulix.gem from https://launchpad.net/sikuli/+download
-* build it from sources using mvn or gem.
+* to download `sikulix` from http://rubygems.org/sikulix
+* build it from sources using `mvn` or `gem`.
   Run in this path
 
   ```
   mvn
   ```
 
-  Or run
+  Or run (needs a valid JRuby/gem environment)
 
   ```
-  gem build sikulix.gemspec
+  jgem build sikulix.gemspec
   ```
 
 ## Install
+
+needs a valid JRuby/gem environment
 
 * Install from rubygems:
 
@@ -39,7 +40,7 @@ It is possible:
 ## How to use
 
 ### Prerequisits
-* Download [sikulix-setup](https://launchpad.net/sikuli) and install Pack 2 ('I want to develop in Java,JRuby....')
+* Download [sikulix-setup](https://launchpad.net/sikuli/sikulix/1.1.0) and install Pack 2 ('I want to develop in Java,JRuby....')<br />Until availability of a stable version you might download the [nightly build](http://nightly.sikuli.de) 
 * Download and install [JRuby](http://jruby.org/)
 
 ### Running scripts
