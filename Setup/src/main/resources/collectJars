@@ -17,9 +17,10 @@ fi
 
 echo ----- SikuliX collecting jars in $base
 if [ -e $dist ]; then
-  rm -f -R $dist
+  rm -f *.jar
+  rm -f -R $dist/Downloads
 fi
-mkdir $dist
+mkdir $dist/Downloads
 if [ -e $target ]; then
   rm -f -R $target
 fi
