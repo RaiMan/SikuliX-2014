@@ -9,9 +9,9 @@ if [ "$sbase" == "" ]; then
   target=$base/SikuliX-Setup
 else
   echo ----- running on Jenkins
-  source=$sbase/API/target
+  source=$sbase/APIFat/target
 	dist=$sbase/Setup/target
-  target=$jbase/Setup
+  target=$jbase/SikuliX-Setup
   isjenkins=true
 fi
 
