@@ -40,16 +40,16 @@ needs a valid JRuby/gem environment
 ## How to use
 
 ### Prerequisits
-* Download [sikulix-setup](https://launchpad.net/sikuli/sikulix/1.1.0) and install Pack 2 ('I want to develop in Java,JRuby....')<br />Until availability of a stable version you might download the [nightly build](http://nightly.sikuli.de) 
+* Download [sikulixsetup.jar](https://launchpad.net/sikuli/sikulix/1.1.0) and install Pack 2 ('I want to develop in Java,JRuby....')<br />**Until availability** of a stable version 1.1.0-Beta4<br />you might download a ready to use `sikulixapi-1.1.0-Beta4.jar` from [nightly build](http://nightly.sikuli.de)
 * Download and install [JRuby](http://jruby.org/)
 
 ### Running scripts
 
-* Set SIKULIXAPI_JAR environment variable to sikulixapi.jar with full path
+* Set SIKULIXAPI_JAR environment variable to sikulixapi.jar with full path<br />examples:
 
   ```
-  Windows: set SIKULIXAPI_JAR=c:\...\...\..\sikulixapi.jar
-  Linux: export SIKULIXAPI_JAR=/.../.../../sikulixapi.jar
+  Windows: set SIKULIXAPI_JAR=c:\...\...\..\sikulixapi-1.1.0-Beta4.jar
+  Mac/Linux: export SIKULIXAPI_JAR=/.../.../../sikulixapi-1.1.0-Beta4.jar
   ```
 * Create ruby script that includes following strings
 
