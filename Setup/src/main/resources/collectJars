@@ -3,46 +3,49 @@ base=`pwd`
 echo -
 echo ---
 
-
 if [ "$sbase" == "" ]; then
 	source=$base/APIFat/target
-	dist=$base/SikuliX-Setup
+	dist=$base/Setup/target
+  target=$base/SikuliX-Setup
 else
   echo ----- running on Jenkins
-  source=$sbase/APIFat/target
-	dist=$jbase/SikuliX-Setup
+  source=$sbase/API/target
+	dist=$sbase/Setup/target
+  target=$jbase/Setup
   isjenkins=true
 fi
 
 echo ----- SikuliX collecting jars in $base
-
 if [ -e $dist ]; then
   rm -f -R $dist
 fi
 mkdir $dist
-mkdir $dist/Downloads
+if [ -e $target ]; then
+  rm -f -R $target
+fi
+mkdir $target
+mkdir $target/Downloads
 
 # ----------- Setup
 echo ----- collecting jars
 apijar=`ls $source/*-plain.jar`
 pversion=`java -jar $apijar pversion`
 java -jar $apijar noSetup
-echo ----- content of $source
-ls -l $source
-ls -l $source/Downloads
+echo ----- content of $dist
+ls -l $dist
+ls -l $dist/Downloads
 
 # ----------- Setup
 echo ----- copy Setup
-cp $apijar $dist/sikulixsetup-$pversion.jar
-cp $apijar $dist/sikulixapi-$pversion.jar
+cp $dist/*.jar $target/
 
 # ----------- Jars
 echo ----- copy Jars
-cp $source/Downloads/* $dist/Downloads
+cp $dist/Downloads/* $target/Downloads/
 
-echo ----------- final content of $dist
-ls -l $dist
-ls -l $dist/Downloads
+echo ----------- final content of $target
+ls -l $target
+ls -l $target/Downloads
 echo ----------- SikuliX collectjars end -----------
 if [ "$isjenkins" == "" ]; then
 	echo -
@@ -50,7 +53,7 @@ if [ "$isjenkins" == "" ]; then
 	echo ----
 	echo ------
 	echo -------- If it looks like success -----------
-	echo ... move the folder $dist
+	echo ... move the folder $target
 	echo to where you want
 	echo and name it as you like
 	echo and run setup, to get your wanted packages.

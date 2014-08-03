@@ -203,7 +203,7 @@ public class Sikulix {
             + "If you do not have any idea about the error cause or solution, run again\n"
             + "with a Debug level of 3. You might paste the output to the Q&A board.", n);
     if (runningSetup) {
-      RunSetup.popError("Something serious happened! Sikuli not useable!\n"
+      popError("Something serious happened! Sikuli not useable!\n"
               + "Check the error log at " + Debug.logfile);
       System.exit(0);
     }
@@ -228,7 +228,7 @@ public class Sikulix {
     Iterator<IScriptRunner> scriptRunnerIterator = loader.iterator();
     while (scriptRunnerIterator.hasNext()) {
       IScriptRunner currentRunner = scriptRunnerIterator.next();
-      if (currentRunner.getName().startsWith("Not")) {
+      if (currentRunner.getName() == null || currentRunner.getName().startsWith("Not")) {
         continue;
       }
       if ((name != null && currentRunner.getName().toLowerCase().equals(name.toLowerCase()))

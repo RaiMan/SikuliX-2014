@@ -16,6 +16,8 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URI;
+import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -29,7 +31,8 @@ import javax.swing.border.LineBorder;
 
 public class RunSetup {
 
-	private static boolean runningUpdate = false;
+  private static String downloadedFiles;
+  private static boolean runningUpdate = false;
 	private static boolean isUpdateSetup = false;
 	private static boolean runningfromJar = true;
 	private static boolean noSetup = false;
@@ -72,7 +75,12 @@ public class RunSetup {
 	private static String localLogfile;
 	private static SetUpSelect winSU;
 	private static JFrame winSetup;
-	private static boolean getIDE, getJython, getJRuby, getJava, getTess, getRServer;
+	private static boolean getIDE, getJython, getJava;
+  private static boolean getRServer = false;
+	private static boolean forAllSystems = false;
+	private static boolean getTess = false;
+  private static boolean getJRuby = false;
+  private static boolean getJRubyAddOns = false;
 	private static String localJar;
 	private static boolean test = false;
 	private static boolean isUpdate = false;
@@ -84,16 +92,13 @@ public class RunSetup {
 	private static String mem = "...";
 	private static int lvl = 2;
 	private static String msg;
-	private static boolean forAllSystems = false;
 	private static boolean shouldPackLibs = true;
 	private static long start;
 	private static boolean runningSetup = false;
 	private static boolean generallyDoUpdate = false;
-	public static String timestampBuilt = Settings.SikuliVersionBuild;
-  private static boolean shouldrun;
+	private static String timestampBuilt = Settings.SikuliVersionBuild;
   private static int optionsSize;
-  private static boolean getJRubyAddOns;
-  private static boolean logToFile = false;
+  private static boolean logToFile = true;
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
@@ -143,9 +148,8 @@ public class RunSetup {
 
 		options.addAll(Arrays.asList(args));
     optionsSize = options.size();
-    shouldrun = 0 < optionsSize;
 
-		//<editor-fold defaultstate="collapsed" desc="options special">
+		//<editor-fold defaultstate="collapsed" desc="options return version">
 		if (args.length > 0 && "build".equals(args[0])) {
 			System.out.println(Settings.SikuliVersionBuild);
 			System.exit(0);
@@ -180,51 +184,42 @@ public class RunSetup {
 			System.out.println(updateVersion);
 			System.exit(0);
 		}
+    //</editor-fold>
 
-		if (args.length > 0 && "test".equals(args[0])) {
-			test = true;
-			options.remove(0);
-		}
-
-		if (options.size() > 0 && "runningSetup".equals(options.get(0))) {
-			runningSetup = true;
-			options.remove(0);
-		}
-
-		if (options.size() > 0 && "update".equals(options.get(0))) {
-			runningUpdate = true;
-			options.remove(0);
-		}
-
-		if (options.size() > 0 && "updateSetup".equals(options.get(0))) {
-			isUpdateSetup = true;
-			options.remove(0);
-		}
-
-		if (options.size() > 0 && "noSetup".equals(options.get(0))) {
-			noSetup = true;
-			options.remove(0);
-		}
-
-		if (options.size() > 0 && "noSetupSilent".equals(options.get(0))) {
-			noSetup = true;
-			noSetupSilent = true;
-			options.remove(0);
-		}
-
-		if (options.size() > 0 && "showDebug".equals(options.get(0))) {
-			noSetupSilent = true;
-			options.remove(0);
-		}
-
-		runningJar = FileManager.getJarName();
-
-//**API** sikulixapi.jar should not be runnable without defined options
-		if (shouldrun) {
-      if (options.size() == optionsSize && runningJar.contains("sikulixapi")) {
-        System.exit(0);
+    //<editor-fold defaultstate="collapsed" desc="other options">
+    if (args.length > 0 && "test".equals(args[0])) {
+      test = true;
+      options.remove(0);
+      if (options.isEmpty()) {
+        getIDE = true;
+        getJython = true;
+        getJava = true;
+      } else {
+        if ("jruby".equals(options.get(0))) {
+          options.remove(0);
+          getIDE = true;
+          getJRuby = true;
+        }
       }
-		}
+    }
+    
+    if (options.size() > 0 && "noSetup".equals(options.get(0))) {
+      noSetup = true;
+      options.remove(0);
+    }
+    
+    if (options.size() > 0 && "update".equals(options.get(0))) {
+      runningUpdate = true;
+      options.remove(0);
+    }
+    
+    if (options.size() > 0 && "updateSetup".equals(options.get(0))) {
+      isUpdateSetup = true;
+      options.remove(0);
+    }
+    //</editor-fold>
+    
+		runningJar = FileManager.getJarName();
 
 		if (runningJar.isEmpty()) {
 			popError("error accessing jar - terminating");
@@ -240,8 +235,6 @@ public class RunSetup {
 			localLogfile = "SikuliX-" + version + "-SetupLog.txt";
 		}
     
-    //</editor-fold>
-
 		//<editor-fold defaultstate="collapsed" desc="option makeJar">
 		if (options.size() > 0 && "keyboardsetup".equals(options.get(0).toLowerCase())) {
 			String dir = System.getProperty("user.dir");
@@ -357,12 +350,12 @@ public class RunSetup {
 			}
 			System.exit(0);
 		}
+    //</editor-fold>
 
 		if (options.size() > 0) {
 			log(-1, "invalid command line options - terminating");
 			System.exit(0);
 		}
-    //</editor-fold>
 
 		//<editor-fold defaultstate="collapsed" desc="general preps">
 		Settings.runningSetup = true;
@@ -377,25 +370,36 @@ public class RunSetup {
 		workDir = workDir.substring(1);
     
     if (!runningfromJar || runningJar.endsWith("-plain.jar")) {
-      log(3, "have to create Setup folder before running setup");
+      if (noSetup) {
+        log(3, "creating Setup folder - not running setup");
+      } else {
+        log(3, "have to create Setup folder before running setup");
+      }
       if (!createSetupFolder("")) {
         log(-1, "createSetupFolder: did not work- terminating");
         System.exit(1);
       }
-      runningfromJar = false;
+      if (noSetup) {
+        System.exit(0);
+      }
       Settings.runningSetupInValidContext = true;
       Settings.runningSetupInContext = workDir;
       Settings.runningSetupWithJar = localJar;
+      logToFile = false;
     }
 
-		if (!runningfromJar && logToFile) {
+//**API** sikulixapi.jar should not be runnable without defined options
+    if (!Settings.runningSetupInValidContext && runningJar.contains("sikulixapi")) {
+      System.exit(0);
+    }
+
+		if (logToFile) {
 			logfile = (new File(workDir, localLogfile)).getAbsolutePath();
 			if (!Debug.setLogFile(logfile)) {
 				popError(workDir + "\n... folder we are running in must be user writeable! \n"
 								+ "please correct the problem and start again.");
 				System.exit(0);
 			}
-      logToFile = true;
 		}
 
 		if (args.length > 0) {
@@ -585,180 +589,180 @@ public class RunSetup {
     //</editor-fold>
 
 		//<editor-fold defaultstate="collapsed" desc="option setup preps display options">
-		String proxyMsg = "";
-		if (!isUpdateSetup) {
-			popInfo("Please read carefully before proceeding!!");
-			winSetup = new JFrame("SikuliX-Setup");
-			Border rpb = new LineBorder(Color.YELLOW, 8);
-			winSetup.getRootPane().setBorder(rpb);
-			Container winCP = winSetup.getContentPane();
-			winCP.setLayout(new BorderLayout());
-			winSU = new SetUpSelect();
-			winCP.add(winSU, BorderLayout.CENTER);
-			winSU.option2.setSelected(true);
-			winSetup.pack();
-			winSetup.setLocationRelativeTo(null);
-			winSetup.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-			winSetup.setVisible(true);
+    String proxyMsg = "";
+    if (!test) {
+      getIDE = false;
+      getJython = false;
+      getJava = false;
+    }
+    if (!test) {
+      if (!isUpdateSetup) {
+        popInfo("Please read carefully before proceeding!!");
+        winSetup = new JFrame("SikuliX-Setup");
+        Border rpb = new LineBorder(Color.YELLOW, 8);
+        winSetup.getRootPane().setBorder(rpb);
+        Container winCP = winSetup.getContentPane();
+        winCP.setLayout(new BorderLayout());
+        winSU = new SetUpSelect();
+        winCP.add(winSU, BorderLayout.CENTER);
+        winSU.option2.setSelected(true);
+        winSetup.pack();
+        winSetup.setLocationRelativeTo(null);
+        winSetup.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        winSetup.setVisible(true);
 
-			//setup version basic
-			winSU.suVersion.setText(Settings.getVersionShort() + "   (" + Settings.SikuliVersionBuild + ")");
+        //setup version basic
+        winSU.suVersion.setText(Settings.getVersionShort() + "   (" + Settings.SikuliVersionBuild + ")");
 
-			// running system
-			Settings.getOS();
-			msg = Settings.osName + " " + Settings.getOSVersion();
-			winSU.suSystem.setText(msg);
-			log1(lvl, "RunningSystem: " + msg);
+        // running system
+        Settings.getOS();
+        msg = Settings.osName + " " + Settings.getOSVersion();
+        winSU.suSystem.setText(msg);
+        log1(lvl, "RunningSystem: " + msg);
 
-			// folder running in
-			winSU.suFolder.setText(workDir);
-			log1(lvl, "parent of jar/classes: %s", workDir);
+        // folder running in
+        winSU.suFolder.setText(workDir);
+        log1(lvl, "parent of jar/classes: %s", workDir);
 
-			// running Java
-			String osarch = System.getProperty("os.arch");
-			msg = "Java " + Settings.JavaVersion + " (" + osarch + ") " + Settings.JREVersion;
-			winSU.suJava.setText(msg);
-			log1(lvl, "RunningJava: " + msg);
+        // running Java
+        String osarch = System.getProperty("os.arch");
+        msg = "Java " + Settings.JavaVersion + " (" + osarch + ") " + Settings.JREVersion;
+        winSU.suJava.setText(msg);
+        log1(lvl, "RunningJava: " + msg);
 
-			String pName = prefs.get("ProxyName", "");
-			String pPort = prefs.get("ProxyPort", "");
-			if (!pName.isEmpty() && !pPort.isEmpty()) {
-				prefsHaveProxy = true;
-				winSU.pName.setText(pName);
-				winSU.pPort.setText(pPort);
-			}
+        String pName = prefs.get("ProxyName", "");
+        String pPort = prefs.get("ProxyPort", "");
+        if (!pName.isEmpty() && !pPort.isEmpty()) {
+          prefsHaveProxy = true;
+          winSU.pName.setText(pName);
+          winSU.pPort.setText(pPort);
+        }
 
-			getIDE = false;
-			getJython = false;
-			getJRuby = false;
-			getJava = false;
-			getTess = false;
-
-			winSU.addPropertyChangeListener("background", new PropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent pce) {
-					winSetup.setVisible(false);
-				}
-			});
-
-			while (true) {
-				if (winSU.getBackground() == Color.YELLOW) {
-					break;
-				}
-				try {
-					Thread.sleep(1000);
-				} catch (InterruptedException ex) {
-				}
-			}
-      
-			pName = winSU.pName.getText();
-			pPort = winSU.pPort.getText();
-			if (!pName.isEmpty() && !pPort.isEmpty()) {
-				if (FileManager.setProxy(pName, pPort)) {
-					log1(lvl, "Requested to run with proxy: %s ", Settings.proxy);
-					proxyMsg = "... using proxy: " + Settings.proxy;
-				}
-			} else if (prefsHaveProxy) {
-				prefs.put("ProxyName", "");
-				prefs.put("ProxyPort", "");
-			}
-			Settings.proxyChecked = true;
-		}
-
-		File fPrefs = new File(workDir, "SikuliPrefs.txt");
-		prefs.exportPrefs(fPrefs.getAbsolutePath());
-		BufferedReader pInp = null;
-		try {
-			pInp = new BufferedReader(new FileReader(fPrefs));
-			String line;
-			while (null != (line = pInp.readLine())) {
-				if (!line.contains("entry")) {
-					continue;
-				}
-				log0(lvl, "Prefs: " + line.trim());
-			}
-			pInp.close();
-		} catch (Exception ex) {
-		}
-		FileManager.deleteFileOrFolder(fPrefs.getAbsolutePath());
-    //</editor-fold>
-
-		//<editor-fold defaultstate="collapsed" desc="option setup: download">
-		if (!isUpdateSetup) {
-			if (winSU.option1.isSelected()) {
-				getIDE = true;
-				if (winSU.option2.isSelected()) {
-					getJython = true;
-				}
-				if (winSU.option3.isSelected()) {
-					getJRuby = true;
-          getJRubyAddOns = false;
-          if (winSU.option8.isSelected()) {
-            getJRubyAddOns = false;
+        winSU.addPropertyChangeListener("background", new PropertyChangeListener() {
+          @Override
+          public void propertyChange(PropertyChangeEvent pce) {
+            winSetup.setVisible(false);
           }
-				}
-				if (!getJython && !getJRuby) {
-					getIDE = false;
-				}
-			}
-			if (winSU.option4.isSelected()) {
-				getJava = true;
-			}
-			if (winSU.option5.isSelected()) {
-				if (Settings.isLinux()) {
-					popInfo("You selected option 3 (Tesseract support)\n"
-									+ "On Linux this does not make sense, since it\n"
-									+ "is your responsibility to setup Tesseract on your own.\n"
-									+ "This option will be ignored.");
-				} else {
-					getTess = true;
-				}
-			}
-			if (winSU.option6.isSelected()) {
-				forAllSystems = true;
-			}
-			if (winSU.option7.isSelected()) {
-				getRServer = true;
-			}
+        });
 
-			if (((getTess || forAllSystems) && !(getIDE || getJava))) {
-				popError("You only selected Option 3 or 4 !\n"
-								+ "This is currently not supported.\n"
-								+ "Please start allover again with valid options.\n");
-				terminate("");
-			}
-			msg = "The following file(s) will be downloaded to\n"
-							+ workDir + "\n";
-		} else {
-			msg = "The following packages will be updated\n";
-			if (Settings.proxy != null) {
-				msg += "... using proxy: " + Settings.proxy + "\n";
-			}
-			if (new File(workDir, localIDE).exists()) {
-				getIDE = true;
-				msg += "Pack 1: " + localIDE + "\n";
-			}
-			if (new File(workDir, localJava).exists()) {
-				getJava = true;
-				msg += "Pack 2: " + localJava + "\n";
-			}
-			if (new File(workDir, localRServer).exists()) {
-				getRServer = true;
-				msg += localRServer + "\n";
-			}
-			if (new File(workDir, localTess).exists()) {
-				getTess = true;
-				msg += "\n... with Tesseract OCR support\n\n";
-			}
-			if (popAsk("It cannot be detected, wether your current jars\n"
-							+ "have been setup for all systems (option 4).\n"
-							+ "Click YES if you want this option now\n"
-							+ "Click NO to run normal setup for current system")) {
-				forAllSystems = true;
-			}
-		}
+        while (true) {
+          if (winSU.getBackground() == Color.YELLOW) {
+            break;
+          }
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException ex) {
+          }
+        }
 
-		String downloadedFiles = "";
+        pName = winSU.pName.getText();
+        pPort = winSU.pPort.getText();
+        if (!pName.isEmpty() && !pPort.isEmpty()) {
+          if (FileManager.setProxy(pName, pPort)) {
+            log1(lvl, "Requested to run with proxy: %s ", Settings.proxy);
+            proxyMsg = "... using proxy: " + Settings.proxy;
+          }
+        } else if (prefsHaveProxy) {
+          prefs.put("ProxyName", "");
+          prefs.put("ProxyPort", "");
+        }
+        Settings.proxyChecked = true;
+      }
+
+      File fPrefs = new File(workDir, "SikuliPrefs.txt");
+      prefs.exportPrefs(fPrefs.getAbsolutePath());
+      BufferedReader pInp = null;
+      try {
+        pInp = new BufferedReader(new FileReader(fPrefs));
+        String line;
+        while (null != (line = pInp.readLine())) {
+          if (!line.contains("entry")) {
+            continue;
+          }
+          if (logToFile) {
+            log(lvl, "Prefs: " + line.trim());
+          }
+        }
+        pInp.close();
+      } catch (Exception ex) {
+      }
+      FileManager.deleteFileOrFolder(fPrefs.getAbsolutePath());
+
+      if (!isUpdateSetup) {
+        if (winSU.option1.isSelected()) {
+          getIDE = true;
+          if (winSU.option2.isSelected()) {
+            getJython = true;
+          }
+          if (winSU.option3.isSelected()) {
+            getJRuby = true;
+            if (winSU.option8.isSelected()) {
+              getJRubyAddOns = false;
+            }
+          }
+          if (!getJython && !getJRuby) {
+            getIDE = false;
+          }
+        }
+        if (winSU.option4.isSelected()) {
+          getJava = true;
+        }
+        if (winSU.option5.isSelected()) {
+          if (Settings.isLinux()) {
+            popInfo("You selected option 3 (Tesseract support)\n"
+                    + "On Linux this does not make sense, since it\n"
+                    + "is your responsibility to setup Tesseract on your own.\n"
+                    + "This option will be ignored.");
+          } else {
+            getTess = true;
+          }
+        }
+        if (winSU.option6.isSelected()) {
+          forAllSystems = true;
+        }
+        if (winSU.option7.isSelected()) {
+          getRServer = true;
+        }
+
+        if (((getTess || forAllSystems) && !(getIDE || getJava))) {
+          popError("You only selected Option 3 or 4 !\n"
+                  + "This is currently not supported.\n"
+                  + "Please start allover again with valid options.\n");
+          terminate("");
+        }
+        msg = "The following file(s) will be downloaded to\n"
+                + workDir + "\n";
+      } else {
+        msg = "The following packages will be updated\n";
+        if (Settings.proxy != null) {
+          msg += "... using proxy: " + Settings.proxy + "\n";
+        }
+        if (new File(workDir, localIDE).exists()) {
+          getIDE = true;
+          msg += "Pack 1: " + localIDE + "\n";
+        }
+        if (new File(workDir, localJava).exists()) {
+          getJava = true;
+          msg += "Pack 2: " + localJava + "\n";
+        }
+        if (new File(workDir, localRServer).exists()) {
+          getRServer = true;
+          msg += localRServer + "\n";
+        }
+        if (new File(workDir, localTess).exists()) {
+          getTess = true;
+          msg += "\n... with Tesseract OCR support\n\n";
+        }
+        if (popAsk("It cannot be detected, wether your current jars\n"
+                + "have been setup for all systems (option 4).\n"
+                + "Click YES if you want this option now\n"
+                + "Click NO to run normal setup for current system")) {
+          forAllSystems = true;
+        }
+      }
+    }
+
+		downloadedFiles = "";
 		if (!isUpdateSetup) {
 			if (getIDE || getJava || getRServer) {
 
@@ -766,22 +770,22 @@ public class RunSetup {
 					msg += proxyMsg + "\n";
 				}
 				if (getIDE) {
-					downloadedFiles += downloadIDE + " - ";
+					downloadedFiles += downloadIDE + " ";
 					msg += "\n--- Package 1 ---\n" + downloadIDE + " (IDE/Scripting)";
 					if (getJython) {
-						downloadedFiles += downloadJython + " - ";
+						downloadedFiles += downloadJython + " ";
 						msg += "\n - with Jython";
 					}
 					if (getJRuby) {
-						downloadedFiles += downloadJRuby + " - ";
+						downloadedFiles += downloadJRuby + " ";
               msg += "\n - with JRuby";
             if (getJRubyAddOns) {
-              downloadedFiles += downloadJRubyAddOns + " - ";
+              downloadedFiles += downloadJRubyAddOns + " ";
               msg += " incl. AddOns";
             }
 					}
 //					if (Settings.isMac()) {
-//            downloadedFiles += downloadMacApp + " - ";
+//            downloadedFiles += downloadMacApp + " ";
 //						msg += "\n" + downloadMacApp + " (Mac-App)";
 //					}
 				}
@@ -791,11 +795,11 @@ public class RunSetup {
 					}
 					msg += "\n--- Additions ---";
 					if (getTess) {
-						downloadedFiles += downloadTess + " - ";
+						downloadedFiles += downloadTess + " ";
 						msg += "\n" + downloadTess + " (Tesseract)";
 					}
 					if (getRServer) {
-						downloadedFiles += downloadRServer + " - ";
+						downloadedFiles += downloadRServer + " ";
 						msg += "\n" + downloadRServer + " (RemoteServer)";
 					}
 				}
@@ -825,9 +829,7 @@ public class RunSetup {
 		String dlDir = fDLDir.getAbsolutePath();
 		if (getIDE) {
 			localJar = new File(workDir, localIDE).getAbsolutePath();
-			if (!test) {
-				dlOK = download(Settings.downloadBaseDir, dlDir, downloadIDE, localJar, "IDE/Scripting");
-			}
+      dlOK = download(Settings.downloadBaseDir, dlDir, downloadIDE, localJar, "IDE/Scripting");
 			downloadOK &= dlOK;
 //			if (Settings.isMac()) {
 //				targetJar = new File(workDir, localMacApp).getAbsolutePath();
@@ -844,43 +846,35 @@ public class RunSetup {
 		}
 		if (getJython) {
 			targetJar = new File(workDir, localJython).getAbsolutePath();
-			if (!test) {
-				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJython, targetJar, "Jython");
-			}
+      downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJython, targetJar, "Jython");
 			downloadOK &= dlOK;
 		}
 		if (getJRuby) {
 			targetJar = new File(workDir, localJRuby).getAbsolutePath();
-			if (!test) {
-				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJRuby, targetJar, "JRuby");
-			}
+      downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJRuby, targetJar, "JRuby");
 			downloadOK &= dlOK;
 			if (downloadOK && getJRubyAddOns) {
 				targetJar = new File(workDir, localJRubyAddOns).getAbsolutePath();
-				if (!test) {
-					downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJRubyAddOns, targetJar, "JRubyAddOns");
-				}
+        downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJRubyAddOns, targetJar, "JRubyAddOns");
 				downloadOK &= dlOK;
 			}
 		}
 		if (getTess) {
 			targetJar = new File(workDir, localTess).getAbsolutePath();
-			if (!test) {
-				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadTess, targetJar, "Tesseract");
-			}
+      downloadOK = download(Settings.downloadBaseDir, dlDir, downloadTess, targetJar, "Tesseract");
 			downloadOK &= dlOK;
 		}
 		if (getRServer) {
 			targetJar = new File(workDir, localRServer).getAbsolutePath();
-			if (!test) {
-				downloadOK = download(Settings.downloadBaseDir, dlDir, downloadRServer, targetJar, "RemoteServer");
-			}
+      downloadOK = download(Settings.downloadBaseDir, dlDir, downloadRServer, targetJar, "RemoteServer");
 			downloadOK &= dlOK;
 		}
-		log1(lvl, "Download ended");
-		log1(lvl, "Downloads for selected options:\n" + downloadedFiles);
-		log1(lvl, "Download page: " + Settings.downloadBaseDirWeb);
-		if (!test && !downloadOK) {
+    if (!downloadedFiles.isEmpty()) {
+      log1(lvl, "Download ended");
+      log1(lvl, "Downloads for selected options:\n" + downloadedFiles);
+      log1(lvl, "Download page: " + Settings.downloadBaseDirWeb);
+    }
+		if (!downloadOK) {
 			popError("Some of the downloads did not complete successfully.\n"
 							+ "Check the logfile for possible error causes.\n\n"
 							+ "If you think, setup's inline download is blocked somehow on,\n"
@@ -895,11 +889,7 @@ public class RunSetup {
 		}
     //</editor-fold>
 
-		//<editor-fold defaultstate="collapsed" desc="option setup: add native stuff">
-		if (test && !popAsk("add native stuff --- proceed?")) {
-			System.exit(0);
-		}
-
+		//<editor-fold defaultstate="collapsed" desc="option setup: add needed stuff">
 		if (!getIDE && !getJava) {
 			log1(lvl, "Nothing else to do");
 			System.exit(0);
@@ -912,6 +902,9 @@ public class RunSetup {
 							+ "Click NO to pack the bundled libs to the jars.")) {
 				shouldPackLibs = false;
 			}
+      if (test) {
+        shouldPackLibs = true;
+      }
 		}
 
 		boolean success = true;
@@ -948,7 +941,7 @@ public class RunSetup {
 		};
 
 		String[] jarsList = new String[]{null, null, null, null, null, null};
-		String localTemp = "sikuli-temp.jar";
+		String localTemp = "sikulixtemp.jar";
 		splash = showSplash("Now adding needed stuff to selected jars.", "please wait - may take some seconds ...");
 
 		jarsList[1] = (new File(workDir, localSetup)).getAbsolutePath();
@@ -1052,10 +1045,7 @@ public class RunSetup {
 		if (folderLibs.exists()) {
 			FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
 		}
-
-		if (runningfromJar) {
-			folderLibs.mkdirs();
-		}
+		folderLibs.mkdirs();
 
 		if (loader.check(Settings.SIKULI_LIB)) {
 			closeSplash(splash);
@@ -1064,30 +1054,40 @@ public class RunSetup {
 		} else {
 			closeSplash(splash);
 			popError("Something serious happened! Sikuli not useable!\n"
-							+ "Check the error log at " + logfile);
+							+ "Check the error log at " + (logfile == null ? "printout" : logfile));
 			terminate("Setting up environment did not work");
 		}
 
-		if (getJava) {
+    URL uTess = null;
+    if (getJava) {
 			log1(lvl, "Trying to run functional test: JAVA-API");
 			splash = showSplash("Trying to run functional test(s)", "Java-API: org.sikuli.script.Sikulix.testSetup()");
 			if (!Sikulix.addToClasspath(localJarJava.getAbsolutePath())) {
 				closeSplash(splash);
 				log0(-1, "Java-API test: ");
 				popError("Something serious happened! Sikuli not useable!\n"
-								+ "Check the error log at " + logfile);
-				terminate("Functional test JAVA-API did not work");
+								+ "Check the error log at " + (logfile == null ? "printout" : logfile));
+				terminate("Functional test JAVA-API did not work", 1);
 			}
 			try {
 				log0(lvl, "trying to run org.sikuli.script.Sikulix.testSetup()");
 				loader.setItIsJython(); // export Lib folder
 				if (getTess) {
-					ResourceLoader.get().exportTessdata(true); // export tessdata folder
+          try {
+            uTess = (new URI("file", localJarJava.getAbsolutePath(), null)).toURL();
+          } catch (Exception ex){ }
+          ResourceLoader.get().exportTessdata(uTess);
+          getTess = false;
 				}
 				Class sysclass = URLClassLoader.class;
 				Class SikuliCL = sysclass.forName("org.sikuli.script.Sikulix");
 				log0(lvl, "class found: " + SikuliCL.toString());
-				Method method = SikuliCL.getDeclaredMethod("testSetup", new Class[0]);
+        Method method = null;
+        if (test) {
+          method = SikuliCL.getDeclaredMethod("testSetupSilent", new Class[0]);
+        } else {
+          method = SikuliCL.getDeclaredMethod("testSetup", new Class[0]);
+        }
 				log0(lvl, "getMethod: " + method.toString());
 				method.setAccessible(true);
 				closeSplash(splash);
@@ -1100,27 +1100,33 @@ public class RunSetup {
 				closeSplash(splash);
 				log0(-1, ex.getMessage());
 				popError("Something serious happened! Sikuli not useable!\n"
-								+ "Check the error log at " + logfile);
-				terminate("Functional test Java-API did not work");
+								+ "Check the error log at " + (logfile == null ? "printout" : logfile));
+				terminate("Functional test Java-API did not work", 1);
 			}
 		}
 		if (getIDE) {
-			log1(lvl, "Trying to run functional test: running script statements via SikuliScript");
-			splash = showSplash("Trying to run functional test: Scripting", "running script statements via SikuliScript");
 			if (!Sikulix.addToClasspath(localJarIDE.getAbsolutePath())) {
 				closeSplash(splash);
 				popError("Something serious happened! Sikuli not useable!\n"
-								+ "Check the error log at " + logfile);
-				terminate("Functional test Java-API did not work");
+								+ "Check the error log at " + (logfile == null ? "printout" : logfile));
+				terminate("Functional test IDE did not work", 1);
 			}
-			if (getTess) {
-        ResourceLoader.get().exportTessdata(true);
-			}
-			String testSetupSuccess = "Setup: Sikuli Jython seems to work! Have fun!";
+      if (getTess) {
+        try {
+          uTess = (new URI("file", localJarIDE.getAbsolutePath(), null)).toURL();
+        } catch (Exception ex){ }
+        ResourceLoader.get().exportTessdata(uTess);
+      }
+      String testMethod = test ? "print" : "popup";
+      String testSetupSuccess;
 			if (getJython) {
-				log1(lvl, "trying to run a test using SikuliScript with Jython");
-				try {
-					String testargs[] = new String[]{"-testSetup", "jython", "popup(\"" + testSetupSuccess + "\")"};
+        log1(lvl, "Jython: Trying to run functional test: running script statements via SikuliScript");
+        splash = showSplash("Jython: Trying to run functional test: Scripting", 
+                "running script statements via SikuliScript");
+  			testSetupSuccess = "Setup: Sikuli Jython seems to work! Have fun!";
+				try {       
+					String testargs[] = new String[]{"-testSetup", "jython", 
+            testMethod + "(\"" + testSetupSuccess + "\")"};
 					closeSplash(splash);
 					SikuliScript.runscript(testargs);
 					if (null == testargs[0]) {
@@ -1130,18 +1136,19 @@ public class RunSetup {
 					closeSplash(splash);
 					log0(-1, ex.getMessage());
 					popError("Something serious happened! Sikuli not useable!\n"
-									+ "Check the error log at " + logfile);
-					terminate("Functional test Jython did not work");
+									+ "Check the error log at " + (logfile == null ? "printout" : logfile));
+					terminate("Functional test Jython did not work", 1);
 				}
 			}
 			if (getJRuby) {
-				if (getJython) {
-					splash = showSplash("Trying to run functional test: Scripting", "running script statements via SikuliScript");
-				}
+        testMethod = test ? "puts" : "popup";
+        log1(lvl, "JRuby: Trying to run functional test: running script statements via SikuliScript");
+        splash = showSplash("JRuby: Trying to run functional test: Scripting", 
+                "running script statements via SikuliScript");
 				testSetupSuccess = "Setup: Sikuli JRuby seems to work! Have fun!";
-				log1(lvl, "trying to run a test using SikuliScript with JRuby");
 				try {
-					String testargs[] = new String[]{"-testSetup", "jruby", "popup(\"" + testSetupSuccess + "\")"};
+					String testargs[] = new String[]{"-testSetup", "jruby", 
+            testMethod + "(\"" + testSetupSuccess + "\")"};
 					closeSplash(splash);
 					SikuliScript.runscript(testargs);
 					if (null == testargs[0]) {
@@ -1149,22 +1156,16 @@ public class RunSetup {
 					}
 				} catch (Exception ex) {
 					closeSplash(splash);
-					log0(-1, ex.getMessage());
+					log0(-1, "content of returned error's (%s) message:\n%s", ex, ex.getMessage());
 					popError("Something serious happened! Sikuli not useable!\n"
-									+ "Check the error log at " + logfile);
-					terminate("Functional test JRuby did not work");
+									+ "Check the error log at " + (logfile == null ? "printout" : logfile));
+					terminate("Functional test JRuby did not work", 1);
 				}
 			}
 		}
 
-		if (!runningfromJar) {
-			(new File(uhome, "SikuliX/libs")).renameTo(folderLibs);
-			if ((new File(uhome, "SikuliX/Lib")).exists()) {
-				(new File(uhome, "SikuliX/Lib")).renameTo(new File(workDir, "Lib"));
-			}
-		}
-
-		splash = showSplash("Setup seems to have ended successfully!", "Detailed information see: " + logfile);
+		splash = showSplash("Setup seems to have ended successfully!", 
+            "Detailed information see: " + (logfile == null ? "printout" : logfile));
 		start += 2000;
 
 		closeSplash(splash);
@@ -1304,7 +1305,7 @@ public class RunSetup {
 		return success;
 	}
 
-	public static boolean isRunningUpdate() {
+	private static boolean isRunningUpdate() {
 		return runningUpdate;
 	}
 
@@ -1428,7 +1429,7 @@ public class RunSetup {
 		backUpExists = true;
 	}
 
-	public static void helpOption(int option) {
+	protected static void helpOption(int option) {
 		String m;
 		String om = "";
 		m = "\n-------------------- Some Information on this option, that might "
@@ -1528,27 +1529,50 @@ public class RunSetup {
 		popInfo("asking for option " + option + ": " + om + "\n" + m);
 	}
 
-	public static void popError(String msg) {
-		log1(-1, "popError:\n--------------------\n" + msg + "\n--------------------");
-		Sikulix.popError(msg, "SikuliX-Setup: having problems ...");
+  private static String packMessage(String msg) {
+    msg = msg.replace("\n\n", "\n");
+    msg = msg.replace("\n\n", "\n");
+    if (msg.startsWith("\n")) {
+      msg = msg.substring(1);
+    }
+    if (msg.endsWith("\n")) {
+      msg = msg.substring(0, msg.length() - 1);
+    }
+    return "--------------------\n" + msg + "\n--------------------";
+  }
+ 
+	private static void popError(String msg) {
+		log1(3, "\npopError: " + packMessage(msg));
+		if (!test) {
+      Sikulix.popError(msg, "SikuliX-Setup: having problems ...");
+    }
 	}
 
-	public static void popInfo(String msg) {
-    log1(lvl, "popInfo:\n--------------------\n" + msg + "\n--------------------");
-		Sikulix.popup(msg, "SikuliX-Setup: info ...");
+	private static void popInfo(String msg) {
+    log1(3, "\npopInfo: " + packMessage(msg));
+		if (!test) Sikulix.popup(msg, "SikuliX-Setup: info ...");
 	}
 
-	public static boolean popAsk(String msg) {
-    log1(lvl, "popAsk:\n--------------------\n" + msg + "\n--------------------");
+	private static boolean popAsk(String msg) {
+    log1(3, "\npopAsk: " + packMessage(msg));
+    if (test) {
+      return true;
+    }
 		return Sikulix.popAsk(msg, "SikuliX-Setup: question ...");
 	}
 
-	public static JFrame showSplash(String title, String msg) {
+	private static JFrame showSplash(String title, String msg) {
+    if (test) {
+      return null;
+    }
 		start = (new Date()).getTime();
 		return new MultiFrame(new String[]{"splash", "# " + title, "#... " + msg});
 	}
 
-	public static void closeSplash(JFrame splash) {
+	private static void closeSplash(JFrame splash) {
+    if (splash == null) {
+      return;
+    }
 		long elapsed = (new Date()).getTime() - start;
 		if (elapsed < 3000) {
 			try {
@@ -1586,6 +1610,9 @@ public class RunSetup {
 							+ downloaded.getAbsolutePath() + "\n" + ex.getMessage());
 		}
 		log(lvl, "Copied from Downloads: " + item);
+    if (!shouldDownload) {
+      downloadedFiles = downloadedFiles.replace(item + " ", "");
+    }
 		return true;
 	}
 
@@ -1597,15 +1624,24 @@ public class RunSetup {
 		System.exit(0);
 	}
 
-	private static void terminate(String msg) {
+  private static void prepTerminate(String msg) {
 		if (msg.isEmpty()) {
 			restore(true);
 		} else {
 			log1(-1, msg);
 			log1(-1, "... terminated abnormally :-(");
 			popError("Something serious happened! Sikuli not useable!\n"
-							+ "Check the error log at " + logfile);
+							+ "Check the error log at " + (logfile == null ? "printout" : logfile));
 		}
+  }
+  
+  private static void terminate(String msg) {
+    prepTerminate(msg);
 		System.exit(0);
+	}
+
+  private static void terminate(String msg, int ret) {
+    prepTerminate(msg);
+		System.exit(ret);
 	}
 }

@@ -412,11 +412,20 @@ public class ResourceLoader {
     //<editor-fold defaultstate="collapsed" desc="libs dir finally invalid">
     if (libPath == null) {
       log(-1, "No valid libs path available until now!");
+      File jarPathLibs = null;
 
 			if (libPath == null && jarParentPath != null) {
-        if (jarPath.endsWith(".jar") && libsURL == null) {
-          log(-2, "Please wait! Trying to extract libs to jar parent folder: " + jarParentPath);
-          File jarPathLibs = extractLibs((new File(jarParentPath)).getAbsolutePath(), libSource);
+        if (jarPath.endsWith(".jar") && libsURL == null) {        
+          log(-2, "Please wait! Trying to extract libs to jar parent folder: \n" + jarParentPath);
+          jarPathLibs = extractLibs((new File(jarParentPath)).getAbsolutePath(), libSource);
+          if (jarPathLibs == null) {
+            log(-1, "not possible!");
+          } else {
+            libPath = jarPathLibs.getAbsolutePath();
+          }
+        } else if (Settings.runningSetupInValidContext) {
+          log(-2, "Please wait! Trying to extract libs to working folder: \n" + jarParentPath);
+          jarPathLibs = extractLibs(Settings.runningSetupInContext, libSource);
           if (jarPathLibs == null) {
             log(-1, "not possible!");
           } else {
@@ -425,7 +434,7 @@ public class ResourceLoader {
         }
       }
       if (libPath == null && userSikuli != null) {
-        log(-2, "Please wait! Trying to extract libs to user home: " + userSikuli);
+        log(-2, "Please wait! Trying to extract libs to user home: \n" + userSikuli);
         File userhomeLibs = extractLibs((new File(userSikuli)).getAbsolutePath(), libSource);
         if (userhomeLibs == null) {
           log(-1, "not possible!");
@@ -601,46 +610,48 @@ public class ResourceLoader {
   /**
    * {@inheritDoc}
    * @param res what to export
-   * @param target target folder
+   * @param targetPath target folder
    * @return success
    */
-  public boolean export(String res, String target) {
+  public boolean export(String res, String targetPath) {
     String memx = mem;
     mem = "export";
-    log(lvl, "Trying to access package for exporting: %s\nto: %s", res, target);
-    String resOrg = res;
+    log(lvl, "Trying to access package for exporting: %s\nto: %s", res, targetPath);
     boolean fastReturn = false;
-    int prefix = 1 + resOrg.indexOf("#");
-    if (prefix > 0) {
-      res = res.replace("#", "/");
+    String pre = null, suf = "", tok = "";
+    String[] parts;
+    if (res.indexOf("#") != -1) {
+      tok = res.replace("#", "/");
+      parts = res.split("#");
+      if (parts.length > 2) {
+        log(-1, "export: invalid resource: %s", res);
+        return false;
+      }
+      pre = parts[0];
+      suf = parts[1];
       fastReturn = true;
     }
-    if (!extractingFromJar) {
-      prefix += jarPath.length();
-      if (Settings.isWindows()) {
-        prefix -= 1;
-      }
-    }
     URL currentURL = jarURL;
-    int lenOriginalURL = currentURL.toString().length();
-//TODO special export cases from jars not on class path
-    if (res.contains("tessdata") && tessURL != null) {
+    if (tok.contains("tessdata") && tessURL != null) {
       currentURL = tessURL;
-      prefix += currentURL.toString().length() - lenOriginalURL;
     }
-    List<String[]> entries = makePackageFileList(currentURL, res, true);
+    List<String[]> entries = makePackageFileList(currentURL, tok, true);
     if (entries == null || entries.isEmpty()) {
       return false;
     }
-    String targetName = null;
+    String targetName = null, source = null;
     File targetFile;
-    long targetDate;
+    long targetDate, entryDate;
     for (String[] e : entries) {
       try {
-        if (prefix > 0) {
-          targetFile = new File(target, e[0].substring(prefix));
+        entryDate = Long.valueOf(e[1]);
+        source = e[0];
+        if (pre != null) {
+          parts = source.split(tok);
+          targetName = suf + parts[1];
+          targetFile = new File(targetPath, targetName);
         } else {
-          targetFile = new File(target, e[0]);
+          targetFile = new File(targetPath, source);
         }
         if (targetFile.exists()) {
           targetDate = targetFile.lastModified();
@@ -648,11 +659,11 @@ public class ResourceLoader {
           targetDate = 0;
           targetFile.getParentFile().mkdirs();
         }
-        if (targetDate == 0 || targetDate < Long.valueOf(e[1])) {
-          extractResource(e[0], targetFile, extractingFromJar);
-          log(lvl + 2, "is from: %s (%d)", e[1], targetDate);
+        if (targetDate == 0 || targetDate < entryDate) {
+          extractResource(source, targetFile, extractingFromJar);
+          log(lvl + 1, "is from: %s (%d)", entryDate, targetDate);
         } else {
-          log(lvl + 2, "already in place: " + targetName);
+          log(lvl + 1, "already in place: " + targetName);
           if (fastReturn) {
             return true;
           }
@@ -697,16 +708,19 @@ public class ResourceLoader {
       itIsJython = true;
   }
 
-  public void exportTessdata(boolean overwrite) {
+  public void exportTessdata(URL uTess) {
     if (tessURL == null) {
-      log(-1, "exportTessdata: no valid Tessdata.jar available");
+      if (uTess == null) {
+        log(lvl, "exportTessdata: no valid Tessdata.jar available until now");
+      } else {
+        tessURL = uTess;
+      }
     }
-    if (overwrite) {
-
-    }
-    if (!new File(Settings.OcrDataPath, "tessdata").exists()) {
-      log(lvl, "Trying to extract tessdata folder since it does not exist yet.");
-      export("META-INF/libs#tessdata", libPath);
+    log(lvl, "exportTessdata from: %s", (tessURL == null ? "deferred" : tessURL.getPath()));
+    FileManager.deleteFileOrFolder(new File(Settings.OcrDataPath, "tessdata").getAbsolutePath());
+    log(lvl, "Trying to extract tessdata folder since it does not exist yet.");
+    if (!export("META-INF/libs#tessdata", libPath)) {
+      log(-1, "exportTessdata: nothing exported --- text features will not work");
     }
   }
 
@@ -889,9 +903,9 @@ public class ResourceLoader {
         }
         if (targetDate == 0 || targetDate < Long.valueOf(e[1])) {
           extractResource(e[0], targetFile, extractingFromJar);
-          log(lvl + 2, "is from: %s (%d)", e[1], targetDate);
+          log(lvl + 1, "is from: %s (%d)", e[1], targetDate);
         } else {
-          log(lvl + 2, "already in place: " + targetName);
+          log(lvl + 1, "already in place: " + targetName);
         }
       } catch (IOException ex) {
         log(lvl, "IO-problem extracting: %s\n%s", targetName, ex.getMessage());
@@ -989,8 +1003,8 @@ public class ResourceLoader {
     if (!outputfile.getParentFile().exists()) {
       outputfile.getParentFile().mkdirs();
     }
-    log0(lvl + 2, "Extracting resource from: " + resourcename);
-    log0(lvl + 2, "Extracting to: " + outputfile.getAbsolutePath());
+    log0(lvl + 1, "Extracting resource from: " + resourcename);
+    log0(lvl + 1, "Extracting to: " + outputfile.getAbsolutePath());
     copyResource(in, outputfile);
     return outputfile;
   }

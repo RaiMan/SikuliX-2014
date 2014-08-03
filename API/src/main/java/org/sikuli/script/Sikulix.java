@@ -156,21 +156,38 @@ public class Sikulix {
   }
 
   /**
-   * INTERNAL USE:
- used in setup: tests basic Sikulix features
+   * INTERNAL USE: used in setup: tests basic Sikulix features
    *
    * @return success
    */
   public static boolean testSetup() {
+    return doTestSetup(false);
+  }
+  
+  /**
+   * INTERNAL USE: used in setup: tests basic Sikulix features
+   *
+   * @return success
+   */
+  public static boolean testSetupSilent() {
+    return doTestSetup(true);
+  }
+  
+  private static boolean doTestSetup(boolean silent) {
     Region r = Region.create(0, 0, 100, 100);
     Image img = new Image(r.getScreen().capture(r).getImage());
     Pattern p = new Pattern(img);
     Finder f = new Finder(img);
     if (null != f.find(p) && f.hasNext()) {
-      org.sikuli.basics.Sikulix.popup("Hallo from SkuliX-API.testSetup\nSikuli seems to be working!\n\nHave fun!");
+      if (!silent) {
+        org.sikuli.basics.Sikulix.popup("Hallo from Sikulix.testSetup\n"
+                + "Java Sikuli seems to be working!\n\nHave fun!");
+      } else {
+        System.out.println("[info] RunSetup: Sikulix.testSetup: Java Sikuli seems to be working!");
+      }
       return true;
     }
-    return false;
+    return false;    
   }
 
   /**

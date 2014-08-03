@@ -101,7 +101,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.sikuli.script.SikuliX</mainClass>
+              <mainClass>org.sikuli.script.Sikulix</mainClass>
             </manifest>
           </archive>
         </configuration>
