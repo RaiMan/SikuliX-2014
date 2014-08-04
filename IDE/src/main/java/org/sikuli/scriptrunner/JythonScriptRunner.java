@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.python.core.PyInstance;
 import org.python.core.PyList;
 import org.python.util.PythonInterpreter;
 import org.python.util.jython;
@@ -527,9 +528,20 @@ public class JythonScriptRunner implements IScriptRunner {
 		} else if ("createRegionForWith".equals(action)) {
 			args[0] = createRegionForWith(args[0]);
 			return true;
+		} else if ("checkCallback".equals(action)) {
+			args[0] = checkCallback(args);
+			return true;
 		} else {
 			return false;
 		}
+	}
+
+	private Object checkCallback(Object[] args) {
+		PyInstance inst = (PyInstance) args[0];
+		String mName = (String) args[1];
+		String type = (String) args[2];
+		Debug.log(3, "Jython: checkCallback: inst: %s, mName: %s, type: %s", inst, mName, type);
+		return null;
 	}
 
 //TODO revise the before/after concept (to support IDE reruns)

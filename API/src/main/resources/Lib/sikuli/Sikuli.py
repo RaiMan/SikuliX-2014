@@ -4,7 +4,7 @@
 
 from __future__ import with_statement
 from org.sikuli.basics import Debug
-Debug.log(3, "Jython: sikuli: Sikuli: entering")
+Debug.log(3, "Jython: sikuli: Sikuli: starting init")
 import time
 import __builtin__
 import __main__
@@ -13,7 +13,7 @@ import sys
 import os
 import inspect
 
-Debug.log(3, "Jython: sikuli: Sikuli: constants")
+Debug.log(4, "Jython: sikuli: Sikuli: constants")
 import org.sikuli.script.FindFailed as FindFailed
 from org.sikuli.script.FindFailedResponse import *
 from org.sikuli.script.Constants import *
@@ -21,60 +21,60 @@ import org.sikuli.script.Button as Button
 from org.sikuli.script.Button import WHEEL_UP, WHEEL_DOWN
 from org.sikuli.basics import OS
 
-Debug.log(3, "Jython: sikuli: Sikuli: import Region")
+Debug.log(4, "Jython: sikuli: Sikuli: import Region")
 from org.sikuli.script import Region as JRegion
 from Region import *
 from org.sikuli.script import Observing
 
-Debug.log(3, "Jython: sikuli: Sikuli: import Screen")
+Debug.log(4, "Jython: sikuli: Sikuli: import Screen")
 from org.sikuli.script import Screen as JScreen
 from Screen import *
 
-Debug.log(3, "Jython: sikuli: Sikuli: Env.addHotkey")
+Debug.log(4, "Jython: sikuli: Sikuli: Env.addHotkey")
 from Env import *
 
-Debug.log(3, "Jython: sikuli: Sikuli: import Match")
+Debug.log(4, "Jython: sikuli: Sikuli: import Match")
 from org.sikuli.script import Match
-Debug.log(3, "Jython: sikuli: Sikuli: import Pattern")
+Debug.log(4, "Jython: sikuli: Sikuli: import Pattern")
 from org.sikuli.script import Pattern
-Debug.log(3, "Jython: sikuli: Sikuli: import Location")
+Debug.log(4, "Jython: sikuli: Sikuli: import Location")
 from org.sikuli.script import Location
-Debug.log(3, "Jython: sikuli: Sikuli: import ScreenUnion")
+Debug.log(4, "Jython: sikuli: Sikuli: import ScreenUnion")
 from org.sikuli.script import ScreenUnion
-Debug.log(3, "Jython: sikuli: Sikuli: import Finder")
+Debug.log(4, "Jython: sikuli: Sikuli: import Finder")
 from org.sikuli.script import Finder
 from org.sikuli.script import ImageFinder
 from org.sikuli.script import ImageFind
 
-Debug.log(3, "Jython: sikuli: Sikuli: import Image")
+Debug.log(4, "Jython: sikuli: Sikuli: import Image")
 from org.sikuli.script import Image
 from org.sikuli.script import ImageGroup
 
-Debug.log(3, "Jython: sikuli: Sikuli: import ImagePath")
+Debug.log(4, "Jython: sikuli: Sikuli: import ImagePath")
 from org.sikuli.script import ImagePath
 
-Debug.log(3, "Jython: sikuli: Sikuli: import App")
+Debug.log(4, "Jython: sikuli: Sikuli: import App")
 from org.sikuli.script import App
-Debug.log(3, "Jython: sikuli: Sikuli: import KeyBoard/Mouse")
+Debug.log(4, "Jython: sikuli: Sikuli: import KeyBoard/Mouse")
 from org.sikuli.script import Key
 from org.sikuli.script import KeyModifier
 from org.sikuli.script.KeyModifier import KEY_CTRL, KEY_SHIFT, KEY_META, KEY_CMD, KEY_WIN, KEY_ALT
 from org.sikuli.script import Mouse
 from org.sikuli.script import Keys
 
-Debug.log(3, "Jython: sikuli: Sikuli: import from Basics")
+Debug.log(4, "Jython: sikuli: Sikuli: import from Basics")
 from org.sikuli.basics import Settings
 from org.sikuli.basics import ExtensionManager
 
-Debug.log(3, "Jython: sikuli: Sikuli: import from compare")
+Debug.log(4, "Jython: sikuli: Sikuli: import from compare")
 from org.sikuli.script.compare import DistanceComparator
 from org.sikuli.script.compare import VerticalComparator
 from org.sikuli.script.compare import HorizontalComparator
 
-Debug.log(3, "Jython: sikuli: Sikuli: init SikuliImporter")
+Debug.log(4, "Jython: sikuli: Sikuli: init SikuliImporter")
 import SikuliImporter
 
-Debug.log(3, "Jython: sikuli: Sikuli: import Sikulix")
+Debug.log(4, "Jython: sikuli: Sikuli: import Sikulix")
 from org.sikuli.basics import SikuliScript
 from org.sikuli.basics import Sikulix
 
@@ -435,4 +435,5 @@ def _exposeAllMethods(anyObject, saved, theGlobals, exclude_list):
 ############### set SCREEN as primary screen at startup ################
 use()
 ALL = JScreen.all()
+Debug.log(3, "Jython: sikuli: Sikuli: ending init")
 

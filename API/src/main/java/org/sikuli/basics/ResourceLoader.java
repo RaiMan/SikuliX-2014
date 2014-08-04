@@ -189,7 +189,7 @@ public class ResourceLoader {
 				if (jarPath.contains("API")) {
 					log(-1, "The jar in use was not built with setup!\n"
 									+ "We might be running from local Maven repository?\n" + jarPath);
-          jarName = "API";          
+          jarName = "API";
 					libsJarName = "Libs" + Settings.getShortOS();
 					tessJarName = "Tesseract";
 				}
@@ -415,7 +415,7 @@ public class ResourceLoader {
       File jarPathLibs = null;
 
 			if (libPath == null && jarParentPath != null) {
-        if (jarPath.endsWith(".jar") && libsURL == null) {        
+        if (jarPath.endsWith(".jar") && libsURL == null) {
           log(-2, "Please wait! Trying to extract libs to jar parent folder: \n" + jarParentPath);
           jarPathLibs = extractLibs((new File(jarParentPath)).getAbsolutePath(), libSource);
           if (jarPathLibs == null) {
@@ -875,7 +875,7 @@ public class ResourceLoader {
       popError("Problem with SikuliX libs folder - see error log");
       Sikulix.terminate(110);
     }
-    log(lvl, "Now loaded: %s from: %s", libname, lib);
+    log(lvl, "Now loaded: %s from: \n%s", libname, lib);
     mem = memx;
   }
 
