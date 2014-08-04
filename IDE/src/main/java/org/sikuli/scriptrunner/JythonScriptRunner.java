@@ -19,6 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.python.core.PyInstance;
 import org.python.core.PyList;
+import org.python.core.PyObject;
+import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 import org.python.util.jython;
 import org.sikuli.basics.Debug;
@@ -529,19 +531,45 @@ public class JythonScriptRunner implements IScriptRunner {
 			args[0] = createRegionForWith(args[0]);
 			return true;
 		} else if ("checkCallback".equals(action)) {
-			args[0] = checkCallback(args);
-			return true;
+			return checkCallback(args);
+		} else if ("runCallback".equals(action)) {
+			return runCallback(args);
 		} else {
 			return false;
 		}
 	}
 
-	private Object checkCallback(Object[] args) {
+	private boolean checkCallback(Object[] args) {
 		PyInstance inst = (PyInstance) args[0];
 		String mName = (String) args[1];
 		String type = (String) args[2];
-		Debug.log(3, "Jython: checkCallback: inst: %s, mName: %s, type: %s", inst, mName, type);
-		return null;
+		log(lvl, "checkCallback: inst: %s, mName: %s, type: %s", inst, mName, type);
+		PyObject method = inst.__getattr__(mName);
+		if (method == null || !method.getClass().getName().contains("PyMethod")) {
+			log(lvl, "checkCallback: not found: %s", mName);
+			return false;
+		}
+		return true;
+	}
+
+	private boolean runCallback(Object[] args) {
+		PyInstance inst = (PyInstance) args[0];
+		String mName = (String) args[1];
+		String msg = (String) args[2];
+		log(lvl, "runCallback: inst: %s, mName: %s, msg: %s", inst, mName, msg);
+		PyObject method = inst.__getattr__(mName);
+		if (method == null || !method.getClass().getName().contains("PyMethod")) {
+			log(lvl, "runCallback: not found: %s", mName);
+			return false;
+		}
+		try {
+			PyString pmsg = new PyString(msg);
+			inst.invoke(mName, pmsg);
+		} catch (Exception ex) {
+			log(-1, "runCallback: invoke: %s", ex.getMessage());
+			return false;
+		}
+		return true;
 	}
 
 //TODO revise the before/after concept (to support IDE reruns)
