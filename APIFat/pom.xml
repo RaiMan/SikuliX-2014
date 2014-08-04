@@ -72,6 +72,25 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.3.1</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <executable>java</executable>
+					<arguments>
+						<argument>-jar</argument>
+						<argument>target/sikulixapi-complete-${project.version}-plain.jar</argument>
+					</arguments>
+        </configuration>
+ 			</plugin>
 		</plugins>
 	</build>
 </project>
