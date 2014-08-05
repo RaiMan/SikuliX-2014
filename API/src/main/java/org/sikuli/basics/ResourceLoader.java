@@ -717,7 +717,7 @@ public class ResourceLoader {
         tessURL = uTess;
       }
     }
-    log(lvl, "exportTessdata from: %s", (tessURL == null ? "deferred" : tessURL.getPath()));
+    log(lvl, "exportTessdata from: %s", (tessURL == null ? "deferred" : FileManager.slashify(tessURL.getPath(), false)));
     FileManager.deleteFileOrFolder(new File(Settings.OcrDataPath, "tessdata").getAbsolutePath());
     log(lvl, "Trying to extract tessdata folder since it does not exist yet.");
     if (!export("META-INF/libs#tessdata", libPath)) {
@@ -924,7 +924,7 @@ public class ResourceLoader {
       try {
         ZipInputStream zip = new ZipInputStream(jar.openStream());
         ZipEntry ze;
-        log(lvl, "from: " + jar.toString());
+        log(lvl, "from: %s", FileManager.slashify(jar.getPath(), false));
         while ((ze = zip.getNextEntry()) != null) {
           String entryName = ze.getName();
           if (entryName.startsWith(path)

@@ -597,31 +597,29 @@ public class FileManager {
   }
 
   public static String slashify(String path, Boolean isDirectory) {
-    String p;
-    if (path == null) {
-      p = "";
-    } else {
-      p = path;
+    if (path != null) {
+      if (path.contains("%")) {
+        try {
+          path = URLDecoder.decode(path, "UTF-8");
+        } catch (UnsupportedEncodingException ex) {
+        }
+      }
       if (File.separatorChar != '/') {
-        p = p.replace(File.separatorChar, '/');
+        path = path.replace(File.separatorChar, '/');
       }
       if (isDirectory != null) {
         if (isDirectory) {
-          if (!p.endsWith("/")) {
-            p = p + "/";
+          if (!path.endsWith("/")) {
+            path = path + "/";
           }
-        } else if (p.endsWith("/")) {
-          p = p.substring(0, p.length() - 1);
+        } else if (path.endsWith("/")) {
+          path = path.substring(0, path.length() - 1);
         }
       }
+      return path;
+    } else {
+      return "";
     }
-    if (p.contains("%")) {
-      try {
-        return URLDecoder.decode(p, "UTF-8");
-      } catch (UnsupportedEncodingException ex) {
-      }
-    }
-    return p;
   }
 
   /**
