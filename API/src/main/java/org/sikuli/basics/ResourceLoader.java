@@ -379,8 +379,6 @@ public class ResourceLoader {
       }
     }
 
-    initDone = true;
-
     if (libsDir == null && libPath != null) {
       log(lvl, "libs dir is empty, has wrong content or is outdated");
       log(lvl, "Trying to extract libs to: " + libPath);
@@ -403,7 +401,6 @@ public class ResourceLoader {
       if (extractLibs(dir.getParent(), libSource) == null) {
         log(-1, "... not possible!");
         libPath = null;
-        initDone = false;
       } else {
         libsDir = checkLibsDir(libPath);
       }
@@ -478,6 +475,7 @@ public class ResourceLoader {
         Settings.OcrDataPath = "/usr/local/share";
       }
     }
+    
 		initDone = true;
     return libsDir != null;
   }
