@@ -435,17 +435,17 @@ public class Debug {
 				String msg = String.format(prefix + message, args);
 				if (isJython) {
 					success = Sikulix.getRunner().doSomethingSpecial("runCallback", new Object[]{privateLogger, pln, msg});
-				}
-				if (isJRuby) {
+				} else if (isJRuby) {
 					success = false;
-				}
-				try {
-					plf.invoke(privateLogger,
-									new Object[]{msg});
-					return true;
-				} catch (Exception e) {
-					error = ": " + e.getMessage();
-					success = false;
+				} else {
+					try {
+						plf.invoke(privateLogger,
+										new Object[]{msg});
+						return true;
+					} catch (Exception e) {
+						error = ": " + e.getMessage();
+						success = false;
+					}
 				}
 				if (!success) {
 					Debug.error("calling (%s) logger.%s failed - resetting to default%s", type, pln, error);
@@ -461,7 +461,7 @@ public class Debug {
 				}
 			}
 		}
-		return false;
+		return success;
 	}
 	/**
    * Sikuli messages from actions like click, ...<br> switch on/off: Settings.ActionLogs
