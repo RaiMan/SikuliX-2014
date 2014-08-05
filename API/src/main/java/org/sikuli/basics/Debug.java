@@ -45,6 +45,9 @@ public class Debug {
 
 	private static Object privateLogger = null;
 	private static boolean privateLoggerPrefixAll = true;
+	private static Method privateLoggerUser = null;
+	private static String privateLoggerUserName = "";
+	private static String privateLoggerUserPrefix = "";
 	private static Method privateLoggerInfo = null;
 	private static String privateLoggerInfoName = "";
 	private static final String infoPrefix = "info";
@@ -136,6 +139,7 @@ public class Debug {
 			success &= setLoggerAction(mAll);
 			success &= setLoggerError(mAll);
 			success &= setLoggerDebug(mAll);
+			success &= setLoggerUser(mAll);
 			return success;
 		}
 		return false;
@@ -181,6 +185,12 @@ public class Debug {
 				}
 				privateLoggerDebugName = mName;
 				return true;
+			} else if (type == CallbackType.USER) {
+				if ( !isJython && !isJRuby ) {
+					privateLoggerUser = privateLogger.getClass().getMethod(mName, new Class[]{String.class});
+				}
+				privateLoggerUserName = mName;
+				return true;
 			} else {
 				return false;
 			}
@@ -188,6 +198,22 @@ public class Debug {
 			error("Debug: setLoggerInfo: redirecting to %s failed: \n%s", mName, e.getMessage());
 		}
 		return false;
+	}
+
+	/**
+	 * specify the target method for redirection of Sikuli's user log messages [user]<br>
+	 * must be the name of an instance method of the previously defined logger and<br>
+	 * must accept exactly one string parameter, that contains the info message
+	 * @param mUser name of the method where the message should be sent
+	 * <br>reset to default logging by either null or empty string
+	 * @return true if the method is available false otherwise
+	 */
+	public static boolean setLoggerUser(String mUser) {
+		if (mUser == null || mUser.isEmpty()) {
+			privateLoggerUserName = "";
+			return true;
+		}
+		return doSetLoggerCallback(mUser, CallbackType.USER);
 	}
 
 	/**
@@ -408,7 +434,7 @@ public class Debug {
     }
   }
 
-	private static boolean doRedirect(CallbackType type, String message, Object... args) {
+	private static boolean doRedirect(CallbackType type, String pre, String message, Object... args) {
 		boolean success = false;
 		String error = "";
 		if (privateLogger != null) {
@@ -427,12 +453,23 @@ public class Debug {
 				plf = privateLoggerError;
 				pln = privateLoggerErrorName;
 			} else if (type == CallbackType.DEBUG && !privateLoggerDebugName.isEmpty()) {
-				prefix = privateLoggerPrefixAll ? privateLoggerDebugPrefix : "";
+				prefix = privateLoggerPrefixAll ?
+								(privateLoggerDebugPrefix.isEmpty() ? pre : privateLoggerDebugPrefix) : "";
 				plf = privateLoggerDebug;
 				pln = privateLoggerDebugName;
+			} else if (type == CallbackType.USER && !privateLoggerUserName.isEmpty()) {
+				prefix = privateLoggerPrefixAll ?
+									(privateLoggerUserPrefix.isEmpty() ? pre : privateLoggerUserPrefix) : "";
+				plf = privateLoggerUser;
+				pln = privateLoggerUserName;
 			}
 			if (!pln.isEmpty()) {
-				String msg = String.format(prefix + message, args);
+				String msg = null;
+				if (args == null) {
+					msg = prefix + message;
+				} else {
+					msg = String.format(prefix + message, args);
+				}
 				if (isJython) {
 					success = Sikulix.getRunner().doSomethingSpecial("runCallback", new Object[]{privateLogger, pln, msg});
 				} else if (isJRuby) {
@@ -457,6 +494,8 @@ public class Debug {
 						privateLoggerErrorName = "";
 					} else if (type == CallbackType.DEBUG) {
 						privateLoggerDebugName = "";
+					} else if (type == CallbackType.USER) {
+						privateLoggerUserName = "";
 					}
 				}
 			}
@@ -471,7 +510,7 @@ public class Debug {
    */
   public static void action(String message, Object... args) {
     if (Settings.ActionLogs) {
-			if (doRedirect(CallbackType.ACTION, message, args)) {
+			if (doRedirect(CallbackType.ACTION, "", message, args)) {
 				return;
 			}
       log(-1, actionPrefix, message, args);
@@ -497,7 +536,7 @@ public class Debug {
    */
   public static void info(String message, Object... args) {
     if (Settings.InfoLogs) {
-			if (doRedirect(CallbackType.INFO, message, args)) {
+			if (doRedirect(CallbackType.INFO, "", message, args)) {
 				return;
 			}
       log(-1, infoPrefix, message, args);
@@ -511,7 +550,7 @@ public class Debug {
    * @param args to use with format string
    */
 	public static void error(String message, Object... args) {
-		if (doRedirect(CallbackType.ERROR, message, args)) {
+		if (doRedirect(CallbackType.ERROR, "", message, args)) {
 			return;
 		}
 		log(-1, errorPrefix, message, args);
@@ -599,7 +638,12 @@ public class Debug {
       }
 			prefix = "[" + prefix + stime + "] ";
       sout = String.format(message, args);
-			if (level > -99 && doRedirect(CallbackType.DEBUG, message, args)) {
+			if (level > -99) {
+				doRedirect(CallbackType.DEBUG, prefix, sout, null);
+				return;
+			}
+			if (level == -99) {
+				doRedirect(CallbackType.USER, prefix, sout, null);
 				return;
 			}
 			if (level == -99 && printoutuser != null) {
@@ -740,6 +784,6 @@ public class Debug {
   }
 
 	private static enum CallbackType {
-		INFO, ACTION, ERROR, DEBUG;
+		INFO, ACTION, ERROR, DEBUG, USER;
 	}
 }
