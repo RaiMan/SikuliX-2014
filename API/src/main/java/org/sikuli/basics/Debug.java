@@ -639,12 +639,14 @@ public class Debug {
 			prefix = "[" + prefix + stime + "] ";
       sout = String.format(message, args);
 			if (level > -99) {
-				doRedirect(CallbackType.DEBUG, prefix, sout, null);
-				return;
+				if (doRedirect(CallbackType.DEBUG, prefix, sout, null)) {
+          return;
+        }
 			}
 			if (level == -99) {
-				doRedirect(CallbackType.USER, prefix, sout, null);
-				return;
+				if (doRedirect(CallbackType.USER, prefix, sout, null)) {
+          return;
+        }
 			}
 			if (level == -99 && printoutuser != null) {
         printoutuser.print(prefix + sout);
