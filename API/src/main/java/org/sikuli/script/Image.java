@@ -79,8 +79,8 @@ public class Image {
 
   private static List<Image> images = Collections.synchronizedList(new ArrayList<Image>());
   private static List<Image> imagePurgeList = Collections.synchronizedList(new ArrayList<Image>());
-  private static List<String> imageNamePurgeList = Collections.synchronizedList(new ArrayList<String>());
-  private static Map<String, Image> imageFiles = Collections.synchronizedMap(new HashMap<String, Image>());
+  private static List<URL> imageNamePurgeList = Collections.synchronizedList(new ArrayList<URL>());
+  private static Map<URL, Image> imageFiles = Collections.synchronizedMap(new HashMap<URL, Image>());
   private static Map<String, URL> imageNames = Collections.synchronizedMap(new HashMap<String, URL>());
   private static int KB = 1024;
   private static int MB = KB * KB;
@@ -174,10 +174,11 @@ public class Image {
    * @param silent true: suppress some error messages
    * @return this
    */
-  private static Image get(String fName, boolean silent) {
+	private static Image get(String fName, boolean silent) {
     if (fName == null || fName.isEmpty()) {
       return null;
     }
+		//fName = FileManager.normFile(fName);
     boolean absoluteFileName = false;
     boolean existsFileName = true;
     Image img = null;
@@ -204,18 +205,20 @@ public class Image {
           fURL = ImagePath.find(fileName);
         }
         if (fURL != null) {
-          img = imageFiles.get(fURL.toString());
+          img = imageFiles.get(fURL);
         }
       }
     }
     if (img == null) {
       img = new Image(fileName, fURL, silent);
       img.setIsAbsolute(absoluteFileName);
-    }
+    } else {
+			log(3, "from cache: %s", img.fileURL);
+		}
     return img;
   }
 
- private Image(String fname, URL fURL) {
+	private Image(String fname, URL fURL) {
     init(fname, fURL, true);
   }
 
@@ -256,16 +259,15 @@ public class Image {
         bimg = ImageIO.read(fileURL);
       } catch (Exception e) {
         if (!beSilent) {
-          log(-1, "could not be loaded from " + filepath);
+          log(-1, "could not be loaded: %s", filepath);
         }
 				filepath = null;
         return null;
       }
       if (imageName != null) {
-        imageFiles.put(fileURL.toString(), this);
+        imageFiles.put(fileURL, this);
         imageNames.put(imageName, fileURL);
-        log(lvl, "added to image list: %s \nwith URL: %s",
-                imageName, fileURL);
+        log(lvl, "added: %s", fileURL);
         bwidth = bimg.getWidth();
         bheight = bimg.getHeight();
         bsize = bimg.getData().getDataBuffer().getSize();
@@ -276,11 +278,12 @@ public class Image {
           currentMemory -= first.bsize;
         }
         images.add(this);
-        log(lvl, "loaded %s (%d KB of %d MB (%d / %d %%) (%d))", imageName, (int) (bsize / KB),
-                (int) (maxMemory / MB), images.size(), (int) (100 * currentMemory / maxMemory),
-                (int) (currentMemory / KB));
+        log(lvl, "loaded %s (%d KB) (KB %d # %d %% %d of %d MB)",
+								new File(imageName).getName(), getKB(),
+                (int) (currentMemory / KB), images.size(),
+								(int) (100 * currentMemory / maxMemory), (int) (maxMemory / MB));
       } else {
-        log(-1, "ImageName invalid! not cached!");
+        log(-1, "invalid! not cached!");
       }
     }
     return bimg;
@@ -449,31 +452,31 @@ public class Image {
    * @param bundlePath absolute path
    */
   public static void purge(String bundlePath) {
-    if (imageFiles.isEmpty()) {
+    if (imageFiles.isEmpty() || ImagePath.getPaths().get(0) == null) {
       return;
     }
     URL pathURL = FileManager.makeURL(bundlePath);
-    if (!ImagePath.getPaths().get(0).pathURL.toExternalForm().equals(pathURL.toExternalForm())) {
+    if (!ImagePath.getPaths().get(0).pathURL.equals(pathURL)) {
       log(-1, "purge: not current bundlepath: " + pathURL);
       return;
     }
     purge(pathURL);
   }
 
-  protected static synchronized void purge(URL pathURL) {
+  public static synchronized void purge(URL pathURL) {
     String pathStr = pathURL.toString();
-    String imgURL;
+    URL imgURL;
     Image img;
     log(lvl, "purge: " + pathStr);
-    Iterator<Map.Entry<String, Image>> it = imageFiles.entrySet().iterator();
-    Map.Entry<String, Image> entry;
+    Iterator<Map.Entry<URL, Image>> it = imageFiles.entrySet().iterator();
+    Map.Entry<URL, Image> entry;
     Iterator<Image> bit;
     imagePurgeList.clear();
     imageNamePurgeList.clear();
     while (it.hasNext()) {
       entry = it.next();
       imgURL = entry.getKey();
-      if (imgURL.startsWith(pathStr)) {
+      if (imgURL.toString().startsWith(pathStr)) {
         log(lvl, "purge: entry: " + imgURL.toString());
         imagePurgeList.add(entry.getValue());
         imageNamePurgeList.add(entry.getKey());
@@ -515,18 +518,19 @@ public class Image {
     log(0, "--- start of Image dump ---");
     ImagePath.printPaths();
     log(0, "ImageFiles entries: %d", imageFiles.size());
-    Iterator<Map.Entry<String, Image>> it = imageFiles.entrySet().iterator();
-    Map.Entry<String, Image> entry;
+    Iterator<Map.Entry<URL, Image>> it = imageFiles.entrySet().iterator();
+    Map.Entry<URL, Image> entry;
     while (it.hasNext()) {
       entry = it.next();
-      log(lvl, entry.getKey());
+      log(0, entry.getKey().toString());
     }
     log(0, "ImageNames entries: %d", imageNames.size());
     Iterator<Map.Entry<String, URL>> nit = imageNames.entrySet().iterator();
     Map.Entry<String, URL> name;
     while (nit.hasNext()) {
       name = nit.next();
-      log(lvl, "%s (%s)", name.getKey(), name.getValue());
+      log(0, "%s %d KB (%s)", new File(name.getKey()).getName(),
+							imageFiles.get(name.getValue()).getKB(), name.getValue());
     }
     log(0, "Cache state: Max %d MB (entries: %d  used: %d %% %d KB)",
             (int) (maxMemory / MB), images.size(),
@@ -658,6 +662,10 @@ public class Image {
   public Dimension getSize() {
     return new Dimension(bwidth, bheight);
   }
+
+	private int getKB() {
+		return (int) bsize / KB;
+	}
 
   /**
    * if the image was already found before

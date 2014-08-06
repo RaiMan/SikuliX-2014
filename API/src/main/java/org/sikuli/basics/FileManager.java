@@ -616,6 +616,9 @@ public class FileManager {
           path = path.substring(0, path.length() - 1);
         }
       }
+			if (path.startsWith("./")) {
+				path = path.substring(2);
+			}
       return path;
     } else {
       return "";
@@ -734,7 +737,7 @@ public class FileManager {
 
   public static URL makeURL(String fName, String type) {
     try {
-      return new URL(type, null, fName);
+      return new URL(type, null, slashify(fName, false));
     } catch (MalformedURLException ex) {
       return null;
     }
@@ -742,15 +745,15 @@ public class FileManager {
 
   public static URL makeURL(URL path, String fName) {
     try {
-      return new URL(path, fName);
+      return new URL(path, slashify(fName, false));
     } catch (MalformedURLException ex) {
       return null;
     }
   }
 
-  public static URL getURLForContentFromURL(URL path, String fname) {
+  public static URL getURLForContentFromURL(URL path, String fName) {
     String type = path.getProtocol();
-    URL u = makeURL(path.getPath() + fname, path.getProtocol());
+    URL u = makeURL(new File(path.getPath(), slashify(fName, false)).getPath(), path.getProtocol());
     try {
       u.getContent();
       return u;
