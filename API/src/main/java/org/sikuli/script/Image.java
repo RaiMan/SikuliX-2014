@@ -95,7 +95,7 @@ public class Image {
   private boolean imageIsPattern = false;
 	private boolean imageIsBundled = false;
   private boolean beSilent = false;
-  private String filepath = null;
+  private String xfilepath = null;
   private URL fileURL = null;
   private BufferedImage bimg = null;
   private Pattern pattern = null;
@@ -178,7 +178,7 @@ public class Image {
     if (fName == null || fName.isEmpty()) {
       return null;
     }
-		//fName = FileManager.normFile(fName);
+		fName = FileManager.slashify(fName, false);
     boolean absoluteFileName = false;
     boolean existsFileName = true;
     Image img = null;
@@ -241,7 +241,7 @@ public class Image {
       log(-1, "URL not supported: " + fileURL);
       return;
     }
-		if (Settings.BundlePath != null) {
+		if (ImagePath.getCurrentBundle() != 0) {
 			String ip = new File(filepath).getParent();
 			String sp = new File(Settings.BundlePath).getAbsolutePath();
 			imageIsBundled = ip.equals(sp);
@@ -254,14 +254,15 @@ public class Image {
   }
 
   private BufferedImage loadImage() {
-    if (filepath != null) {
+    if (fileURL != null) {
       try {
         bimg = ImageIO.read(fileURL);
       } catch (Exception e) {
         if (!beSilent) {
-          log(-1, "could not be loaded: %s", filepath);
+          log(-1, "could not be loaded: %s", fileURL);
         }
-				filepath = null;
+				fileURL = null;
+        filepath = null;
         return null;
       }
       if (imageName != null) {

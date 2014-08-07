@@ -737,7 +737,7 @@ public class FileManager {
 
   public static URL makeURL(String fName, String type) {
     try {
-      return new URL(type, null, slashify(fName, false));
+      return new URL(type, null, fName);
     } catch (MalformedURLException ex) {
       return null;
     }

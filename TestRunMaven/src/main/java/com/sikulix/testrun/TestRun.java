@@ -14,7 +14,7 @@ public class TestRun {
     Debug.setDebugLevel(0);
     Screen s = Sikulix.init();
     //TextRecognizer.getInstance();
-		String imgN = "./target/classes/images/images.sikuli/sikulilogo.png";
+		String imgN = "./target/classes/images/images.sikuli/image.png";
 		URL dir = FileManager.makeURL("./target/classes/images/images.sikuli");
 		Debug.test("URL: %s", FileManager.makeURL("./target/classes/images/images.sikuli"));
     Debug.setDebugLevel(3);
