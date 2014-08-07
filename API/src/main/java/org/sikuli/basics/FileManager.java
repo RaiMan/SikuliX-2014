@@ -625,6 +625,10 @@ public class FileManager {
     }
   }
 
+	public static String normalize(String filename) {
+		return slashify(filename, false);
+	}
+
   /**
    * Retrieves the actual script file<br> - from a folder script.sikuli<br>
    * - from a folder script (no extension) (script.sikuli is used, if exists)<br> - from a file
@@ -737,6 +741,9 @@ public class FileManager {
 
   public static URL makeURL(String fName, String type) {
     try {
+			if ("file".equals(type)) {
+				fName = new File(normalize(fName)).getAbsolutePath();
+			}
       return new URL(type, null, fName);
     } catch (MalformedURLException ex) {
       return null;
@@ -745,6 +752,9 @@ public class FileManager {
 
   public static URL makeURL(URL path, String fName) {
     try {
+			if ("file".equals(path.getProtocol())) {
+				return new URL("file", null, new File(path.getPath(), fName).getAbsolutePath());
+			}
       return new URL(path, slashify(fName, false));
     } catch (MalformedURLException ex) {
       return null;

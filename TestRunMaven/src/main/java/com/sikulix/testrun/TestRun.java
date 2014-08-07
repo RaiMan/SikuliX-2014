@@ -18,9 +18,12 @@ public class TestRun {
 		URL dir = FileManager.makeURL("./target/classes/images/images.sikuli");
 		Debug.test("URL: %s", FileManager.makeURL("./target/classes/images/images.sikuli"));
     Debug.setDebugLevel(3);
+		Debug.test("***** 1st image");
 		Image img = Image.create(imgN);
+		Debug.test("***** 2nd image");
 		img = Image.create(imgN);
 		Image.dump();
+		Debug.test("***** purge");
 		Image.purge(dir);
 		System.exit(1);
   }

@@ -179,12 +179,6 @@ public class SikuliIDE extends JFrame {
 
     Settings.initScriptingSupport();
 
-//    for (String e : args) {
-//      splashArgs[3] += e + " ";
-//    }
-//    splashArgs[3] = splashArgs[3].trim();
-//    splash = new MultiFrame(splashArgs);
-
     CommandArgs cmdArgs = new CommandArgs("IDE");
     cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
 
@@ -232,7 +226,6 @@ public class SikuliIDE extends JFrame {
       log(lvl, "requested to load: " + loadScript);
       if (loadScript[0].endsWith(".skl")) {
         log(lvl, "Switching to SikuliScript to run " + loadScript);
-        splash.dispose();
         SikuliScript.runscript(args);
       }
     }
@@ -241,7 +234,6 @@ public class SikuliIDE extends JFrame {
             || cmdLine.hasOption(CommandArgsEnum.TEST.shortname())
             || cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
       log(lvl, "Switching to SikuliScript with option -r, -t or -i");
-      splash.dispose();
       SikuliScript.runscript(args);
     }
 
@@ -2044,7 +2036,7 @@ public class SikuliIDE extends JFrame {
 						addScriptCode(srunner);
 						srunners[0] = srunner;
 						try {
-							ImagePath.resetBundlePath(path.getAbsolutePath());
+							ImagePath.reset(path.getAbsolutePath());
 							String tabtitle = _mainPane.getTitleAt(_mainPane.getSelectedIndex());
 							if (tabtitle.startsWith("*")) {
 								tabtitle = tabtitle.substring(1);

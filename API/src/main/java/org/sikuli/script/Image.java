@@ -90,21 +90,21 @@ public class Image {
   private final static String isBImg = "__BufferedImage__";
 
   private String imageName = null;
-  private boolean imageIsText = false;
+  private URL fileURL = null;
+  private BufferedImage bimg = null;
+  private Pattern pattern = null;
+  private ImageGroup group = null;
+
+	private boolean imageIsText = false;
   private boolean imageIsAbsolute = false;
   private boolean imageIsPattern = false;
 	private boolean imageIsBundled = false;
   private boolean beSilent = false;
-  private String xfilepath = null;
-  private URL fileURL = null;
-  private BufferedImage bimg = null;
-  private Pattern pattern = null;
   private long bsize = 0;
   private int bwidth = -1;
   private int bheight = -1;
   private Rectangle lastSeen = null;
   private double lastScore = 0.0;
-  private ImageGroup group = null;
 
   /**
    * to support a raster over the image
@@ -188,7 +188,6 @@ public class Image {
       log(-1, "not a valid image type: " + fName);
       fileName = fName;
     } else {
-      fileName = FileManager.slashify(fileName, false);
       File imgFile = new File(fileName);
       if (imgFile.isAbsolute()) {
         if (imgFile.exists()) {
@@ -232,22 +231,9 @@ public class Image {
       return;
     }
     fileURL = fURL;
-    if ("file".equals(fileURL.getProtocol())) {
-      filepath = fileURL.getPath();
-    } else if ("jar".equals(fileURL.getProtocol())) {
-      filepath = imageFromJar;
-    } else {
-      //TODO support for http image urls
-      log(-1, "URL not supported: " + fileURL);
-      return;
-    }
-		if (ImagePath.getCurrentBundle() != 0) {
-			String ip = new File(filepath).getParent();
-			String sp = new File(Settings.BundlePath).getAbsolutePath();
-			imageIsBundled = ip.equals(sp);
-			if (imageIsBundled) {
-				imageName = new File(imageName).getName();
-			}
+		if (ImagePath.isImageBundled(fURL)) {
+			imageIsBundled = true;
+			imageName = new File(imageName).getName();
 		}
 		beSilent = silent;
     loadImage();
@@ -262,7 +248,6 @@ public class Image {
           log(-1, "could not be loaded: %s", fileURL);
         }
 				fileURL = null;
-        filepath = null;
         return null;
       }
       if (imageName != null) {
@@ -416,9 +401,8 @@ public class Image {
     if (name == null) {
       imageName = isBImg;
     } else {
-      imageName = "BImg:" + name;
+      imageName = "BImg::" + name;
     }
-    filepath = isBImg;
     bimg = img;
     bwidth = bimg.getWidth();
     bheight = bimg.getHeight();
@@ -465,10 +449,9 @@ public class Image {
   }
 
   public static synchronized void purge(URL pathURL) {
-    String pathStr = pathURL.toString();
     URL imgURL;
     Image img;
-    log(lvl, "purge: " + pathStr);
+    log(lvl, "purge: prefix: %s", pathURL.getPath());
     Iterator<Map.Entry<URL, Image>> it = imageFiles.entrySet().iterator();
     Map.Entry<URL, Image> entry;
     Iterator<Image> bit;
@@ -477,8 +460,8 @@ public class Image {
     while (it.hasNext()) {
       entry = it.next();
       imgURL = entry.getKey();
-      if (imgURL.toString().startsWith(pathStr)) {
-        log(lvl, "purge: entry: " + imgURL.toString());
+      if (imgURL.toString().startsWith(pathURL.toString())) {
+        log(lvl + 1, "purge: URL: %s", imgURL.toString());
         imagePurgeList.add(entry.getValue());
         imageNamePurgeList.add(entry.getKey());
         it.remove();
@@ -490,7 +473,7 @@ public class Image {
         img = bit.next();
         if (imagePurgeList.contains(img)) {
           bit.remove();
-          log(lvl, "purge: bimg: " + img);
+          log(lvl + 1, "purge: bimg: %s", img);
           currentMemory -= img.bsize;
         }
       }
@@ -500,7 +483,8 @@ public class Image {
       Map.Entry<String, URL> name;
       while (nit.hasNext()) {
         name = nit.next();
-        if (imageNamePurgeList.remove(name.getValue().toString())) {
+        if (imageNamePurgeList.remove(name.getValue())) {
+          log(lvl + 1, "purge: name: %s", name.getKey());
           nit.remove();
         }
       }
@@ -517,7 +501,7 @@ public class Image {
    */
   public static void dump() {
     log(0, "--- start of Image dump ---");
-    ImagePath.printPaths();
+    ImagePath.dump();
     log(0, "ImageFiles entries: %d", imageFiles.size());
     Iterator<Map.Entry<URL, Image>> it = imageFiles.entrySet().iterator();
     Map.Entry<URL, Image> entry;
@@ -571,7 +555,7 @@ public class Image {
    * @return true if lodable or is an in memory image
    */
   public boolean isValid() {
-    return filepath != null;
+    return fileURL != null;
   }
 
 	/**
@@ -632,10 +616,10 @@ public class Image {
    * image
    */
   public String getFilename() {
-    if (fileURL != null && !"file".equals(fileURL.getProtocol())) {
-      return null;
+    if (fileURL != null && "file".equals(fileURL.getProtocol())) {
+      return fileURL.getPath();
     }
-    return filepath;
+    return null;
   }
 
   /**
@@ -645,10 +629,10 @@ public class Image {
    */
   public BufferedImage get() {
     if (bimg != null) {
-      if (!filepath.equals(isBImg)) {
-        log(lvl + 1, "getImage from cache: %s\n%s", imageName, (fileURL == null ? filepath : fileURL));
-      } else {
+      if (fileURL == null) {
         log(lvl + 1, "getImage inMemory: %s", imageName);
+      } else {
+        log(lvl + 1, "getImage from cache: %s", imageName);
       }
       return bimg;
     } else {

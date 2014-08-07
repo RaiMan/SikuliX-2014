@@ -110,7 +110,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			_indentationLogic = null;
 		}
 
-//TODO should know, that scripttype not changed here to avoid unnecessary new setups    
+//TODO should know, that scripttype not changed here to avoid unnecessary new setups
 		if (scrType != null) {
 			sikuliContentType = scrType;
 			editorKit = new SikuliEditorKit();
@@ -389,7 +389,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 				continue;
 			}
 			if (t.getType() == TokenType.String_Doc) {
-				cleanBundleCheckComments(pbundle, lexer, 
+				cleanBundleCheckComments(pbundle, lexer,
                 t.getValue().substring(3, t.getValue().length() - 3), usedImages);
 				continue;
 			}
@@ -542,7 +542,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	public String getCurrentSrcDir() {
 		if (_srcBundlePath != null) {
 			if (_editingFile == null || _srcBundleTemp) {
-				return null;
+				return FileManager.normalize(_srcBundlePath);
 			} else {
 				return _editingFile.getParent();
 			}
