@@ -393,7 +393,7 @@ public class App {
    }
 
    /**
-    * Enumeration for the transfert type property in MIME types (InputStream, CharBuffer, etc.)
+    * Enumeration for the transferScriptt type property in MIME types (InputStream, CharBuffer, etc.)
     */
    public static class TransferType {
       private Class dataClass;

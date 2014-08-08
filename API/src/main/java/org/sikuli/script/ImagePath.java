@@ -366,7 +366,7 @@ public class ImagePath {
    * @return true on success, false ozherwise
    */
   private static boolean remove(URL pURL) {
-    if (bundlePath.equals(pURL)) {
+    if (bundlePath != null && bundlePath.equals(pURL)) {
       Image.purge(pURL);
       bundlePath = null;
       Settings.BundlePath = null;

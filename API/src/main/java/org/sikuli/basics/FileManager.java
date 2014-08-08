@@ -336,13 +336,21 @@ public class FileManager {
 
   public static void deleteTempDir(String path) {
     if (!deleteFileOrFolder(path)) {
-      log0(-1, "tempdir delete not possible: %s", path);
-    } else {
-      log0(lvl, "tempdir delete: %s", path);
+      log0(-1, "deleteTempDir: not possible");
     }
   }
 
-  public static boolean deleteFileOrFolder(String path, fileFilter filter) {
+  public static boolean deleteFileOrFolder(String path, FileFilter filter) {
+		log0(lvl, "deleteFileOrFolder: %s%s", (filter == null ? "" : "filtered: "), path);
+    return doDeleteFileOrFolder(path, filter);
+	}
+
+    public static boolean deleteFileOrFolder(String path) {
+		log0(lvl, "deleteFileOrFolder: %s", path);
+    return doDeleteFileOrFolder(path, null);
+  }
+
+	private static boolean doDeleteFileOrFolder(String path, FileFilter filter) {
     File entry = new File(path);
     File f;
     String[] entries;
@@ -356,7 +364,7 @@ public class FileManager {
           continue;
         }
         if (f.isDirectory()) {
-          if (!deleteFileOrFolder(f.getAbsolutePath())) {
+          if (!doDeleteFileOrFolder(f.getAbsolutePath(), filter)) {
             return false;
           }
         } else {
@@ -379,10 +387,6 @@ public class FileManager {
       }
     }
     return true;
-  }
-
-  public static boolean deleteFileOrFolder(String path) {
-    return deleteFileOrFolder(path, null);
   }
 
   public static File createTempFile(String suffix) {
@@ -445,76 +449,78 @@ public class FileManager {
     zis.close();
   }
 
-  public static void xcopy(String src, String dest, String saveAsCurrent) throws IOException {
-    File fSrc = new File(src);
-    File fDest = new File(dest);
-    if (fSrc.getAbsolutePath().equals(fDest.getAbsolutePath())) {
-      return;
-    }
-    if (fSrc.isDirectory()) {
-      if (!fDest.exists()) {
-        fDest.mkdir();
-      }
-      String[] children = fSrc.list();
-      for (String child : children) {
-        if (saveAsCurrent != null && (child.endsWith(".py") || child.endsWith(".html"))
-                && child.startsWith(saveAsCurrent + ".")) {
-          log0(lvl, "xcopy: SaveAs: deleting %s", child);
-          continue;
-        } else if (child.endsWith("$py.class")) {
-          continue;
-        }
-        xcopy(src + File.separator + child, dest + File.separator + child, null);
-      }
-    } else {
-      if (fDest.isDirectory()) {
-        dest += File.separator + fSrc.getName();
-      }
-      InputStream in = new FileInputStream(src);
-      OutputStream out = new FileOutputStream(dest);
-      // Copy the bits from instream to outstream
-      byte[] buf = new byte[1024];
-      int len;
-      while ((len = in.read(buf)) > 0) {
-        out.write(buf, 0, len);
-      }
-      in.close();
-      out.close();
-    }
-  }
+	public static boolean transferScript(String src, String dest) {
+		log0(lvl, "transfer: %s\nto: %s", src, dest);
+		FileFilter filter = new FileFilter() {
+			@Override
+			public boolean accept(File entry) {
+				if (entry.getName().endsWith(".html")) {
+					return false;
+				} else if (entry.getName().endsWith(".$py.class")) {
+					return false;
+				} else {
+					for (String ending : Settings.EndingTypes.keySet()) {
+						if (entry.getName().endsWith("." + ending)) {
+							return false;
+						}
+					}
+				}
+				return true;
+			}
+		};
+		try {
+			xcopy(src, dest, filter);
+		} catch (IOException ex) {
+			log0(-1, "transfer: IOError: %s", ex.getMessage(), src, dest);
+			return false;
+		}
+		log0(lvl, "transfer: completed");
+		return true;
+	}
 
-  public static void xcopyAll(String src, String dest) throws IOException {
-    File fSrc = new File(src);
-    File fDest = new File(dest);
+  public static void xcopy(String src, String dest) throws IOException {
+		doXcopy(new File(src), new File(dest), null);
+	}
+
+  public static void xcopy(String src, String dest, FileFilter filter) throws IOException {
+		doXcopy(new File(src), new File(dest), filter);
+	}
+
+  private static void doXcopy(File fSrc, File fDest, FileFilter filter) throws IOException {
     if (fSrc.getAbsolutePath().equals(fDest.getAbsolutePath())) {
       return;
     }
     if (fSrc.isDirectory()) {
-      if (!fDest.exists()) {
-        fDest.mkdirs();
-      }
-      String[] children = fSrc.list();
-      for (String child : children) {
-        if (child.equals(fDest.getName())) {
-          continue;
-        }
-        xcopyAll(src + File.separator + child, dest + File.separator + child);
-      }
-    } else {
-      if (fDest.isDirectory()) {
-        dest += File.separator + fSrc.getName();
-      }
-      InputStream in = new FileInputStream(src);
-      OutputStream out = new FileOutputStream(dest);
-      // Copy the bits from instream to outstream
-      byte[] buf = new byte[1024];
-      int len;
-      while ((len = in.read(buf)) > 0) {
-        out.write(buf, 0, len);
-      }
-      in.close();
-      out.close();
-    }
+			if (filter == null || filter.accept(fSrc)) {
+				if (!fDest.exists()) {
+					fDest.mkdirs();
+				}
+				String[] children = fSrc.list();
+				for (String child : children) {
+					if (child.equals(fDest.getName())) {
+						continue;
+					}
+					doXcopy(new File(fSrc, child), new File(fDest, child), filter);
+
+				}
+			}
+		} else {
+			if (filter == null || filter.accept(fSrc)) {
+				if (fDest.isDirectory()) {
+					fDest = new File(fDest, fSrc.getName());
+				}
+				InputStream in = new FileInputStream(fSrc);
+				OutputStream out = new FileOutputStream(fDest);
+				// Copy the bits from instream to outstream
+				byte[] buf = new byte[1024];
+				int len;
+				while ((len = in.read(buf)) > 0) {
+					out.write(buf, 0, len);
+				}
+				in.close();
+				out.close();
+			}
+		}
   }
 
   /**
@@ -536,7 +542,7 @@ public class FileManager {
       newName = getAltFilename(newName);
       fDest = new File(dest, newName);
     }
-    FileManager.xcopy(src, fDest.getAbsolutePath(), null);
+    xcopy(src, fDest.getAbsolutePath());
     if (fDest.exists()) {
       return fDest;
     }
@@ -1187,7 +1193,7 @@ public class FileManager {
     public boolean accept(ZipEntry entry);
   }
 
-  public interface fileFilter {
+  public interface FileFilter {
     public boolean accept(File entry);
   }
 

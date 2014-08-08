@@ -202,23 +202,23 @@ public class RunSetup {
         }
       }
     }
-    
+
     if (options.size() > 0 && "noSetup".equals(options.get(0))) {
       noSetup = true;
       options.remove(0);
     }
-    
+
     if (options.size() > 0 && "update".equals(options.get(0))) {
       runningUpdate = true;
       options.remove(0);
     }
-    
+
     if (options.size() > 0 && "updateSetup".equals(options.get(0))) {
       isUpdateSetup = true;
       options.remove(0);
     }
     //</editor-fold>
-    
+
 		runningJar = FileManager.getJarName();
 
 		if (runningJar.isEmpty()) {
@@ -234,7 +234,7 @@ public class RunSetup {
 		} else {
 			localLogfile = "SikuliX-" + version + "-SetupLog.txt";
 		}
-    
+
 		//<editor-fold defaultstate="collapsed" desc="option makeJar">
 		if (options.size() > 0 && "keyboardsetup".equals(options.get(0).toLowerCase())) {
 			String dir = System.getProperty("user.dir");
@@ -316,7 +316,7 @@ public class RunSetup {
 					} else {
 						String jarBack = jarName.substring(0, jarName.length() - 4) + "-backup.jar";
 						try {
-							FileManager.xcopy(jarName, jarBack, "");
+							FileManager.xcopy(jarName, jarBack);
 						} catch (IOException ex) {
 							log(-1, "could not create backUp - terminating");
 							System.exit(0);
@@ -368,7 +368,7 @@ public class RunSetup {
 			runningfromJar = false;
 		}
 		workDir = workDir.substring(1);
-    
+
     if (!runningfromJar || runningJar.endsWith("-plain.jar")) {
       if (noSetup) {
         log(3, "creating Setup folder - not running setup");
@@ -407,7 +407,7 @@ public class RunSetup {
 		} else {
 			log1(lvl, "... starting with no args given");
 		}
-    
+
     if (logToFile) {
       Settings.getStatus(lvl);
     }
@@ -998,7 +998,7 @@ public class RunSetup {
 //			success &= FileManager.buildJar(targetJar, jarsList, null, null, libsFilter);
 //		}
 		closeSplash(splash);
-    
+
 		ResourceLoader loader = ResourceLoader.get();
 		if (success && (getIDE)) {
 			log1(lvl, "exporting commandfiles");
@@ -1121,11 +1121,11 @@ public class RunSetup {
       String testSetupSuccess;
 			if (getJython) {
         log1(lvl, "Jython: Trying to run functional test: running script statements via SikuliScript");
-        splash = showSplash("Jython: Trying to run functional test: Scripting", 
+        splash = showSplash("Jython: Trying to run functional test: Scripting",
                 "running script statements via SikuliScript");
   			testSetupSuccess = "Setup: Sikuli Jython seems to work! Have fun!";
-				try {       
-					String testargs[] = new String[]{"-testSetup", "jython", 
+				try {
+					String testargs[] = new String[]{"-testSetup", "jython",
             testMethod + "(\"" + testSetupSuccess + "\")"};
 					closeSplash(splash);
 					SikuliScript.runscript(testargs);
@@ -1143,11 +1143,11 @@ public class RunSetup {
 			if (getJRuby) {
         testMethod = test ? "puts" : "popup";
         log1(lvl, "JRuby: Trying to run functional test: running script statements via SikuliScript");
-        splash = showSplash("JRuby: Trying to run functional test: Scripting", 
+        splash = showSplash("JRuby: Trying to run functional test: Scripting",
                 "running script statements via SikuliScript");
 				testSetupSuccess = "Setup: Sikuli JRuby seems to work! Have fun!";
 				try {
-					String testargs[] = new String[]{"-testSetup", "jruby", 
+					String testargs[] = new String[]{"-testSetup", "jruby",
             testMethod + "(\"" + testSetupSuccess + "\")"};
 					closeSplash(splash);
 					SikuliScript.runscript(testargs);
@@ -1164,7 +1164,7 @@ public class RunSetup {
 			}
 		}
 
-		splash = showSplash("Setup seems to have ended successfully!", 
+		splash = showSplash("Setup seems to have ended successfully!",
             "Detailed information see: " + (logfile == null ? "printout" : logfile));
 		start += 2000;
 
@@ -1176,7 +1176,7 @@ public class RunSetup {
 
 		System.exit(0);
 	}
-  
+
   private static boolean createSetupFolder(String path) {
     String projectDir = null, targetDir = null;
     boolean success = true;
@@ -1208,7 +1208,7 @@ public class RunSetup {
         log(-1, "createSetupFolder: Setup folder or %s missing", apijar.getAbsolutePath());
         return false;
       }
- 
+
       File jythonJar = new File(Settings.SikuliJython);
       File jrubyJar = new File(Settings.SikuliJRuby);
       String ideFat = "sikulix-complete-" + Settings.SikuliProjectVersion + "-ide-fat.jar";
@@ -1231,7 +1231,7 @@ public class RunSetup {
         Debug.log(3, "createSetupFolder: missing: " + fJRubyAddOns.getAbsolutePath());
         success = false;
       }
-      if (success) {     
+      if (success) {
         File fDownloads = new File(targetDir, "Downloads");
         if (new File(targetDir, "Downloads").exists()) {
           FileManager.deleteFileOrFolder(new File(targetDir, "Downloads").getAbsolutePath(), null);
@@ -1240,31 +1240,31 @@ public class RunSetup {
         String fname = null;
         try {
           fname = apijar.getAbsolutePath();
-          FileManager.xcopyAll(fname,
+          FileManager.xcopy(fname,
                   new File(targetDir, localSetup).getAbsolutePath());
-          FileManager.xcopyAll(fname, new File(targetDir, 
+          FileManager.xcopy(fname, new File(targetDir,
                   localJava.replace(".jar", "-" + version + ".jar")).getAbsolutePath());
           fname = fIDEFat.getAbsolutePath();
-          FileManager.xcopyAll(fname,
+          FileManager.xcopy(fname,
                   new File(fDownloads, downloadIDE).getAbsolutePath());
           fname = jythonJar.getAbsolutePath();
-          FileManager.xcopyAll(fname,
+          FileManager.xcopy(fname,
                   new File(fDownloads, downloadJython).getAbsolutePath());
           fname = jrubyJar.getAbsolutePath();
-          FileManager.xcopyAll(fname,
+          FileManager.xcopy(fname,
                   new File(fDownloads, downloadJRuby).getAbsolutePath());
           fname = fJRubyAddOns.getAbsolutePath();
-          FileManager.xcopyAll(fname,
+          FileManager.xcopy(fname,
                   new File(fDownloads, downloadJRubyAddOns).getAbsolutePath());
           fname = new File(projectDir, "Remote/target/"
                   + "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
-          FileManager.xcopyAll(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
+          FileManager.xcopy(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
           fname = new File(projectDir, "Tesseract/target/"
                   + Settings.SikuliProjectVersion + downloadTessSuffix).getAbsolutePath();
-          FileManager.xcopyAll(fname, new File(fDownloads, downloadTess).getAbsolutePath());
+          FileManager.xcopy(fname, new File(fDownloads, downloadTess).getAbsolutePath());
           fname = new File(projectDir, "MacApp/target/"
                   + Settings.SikuliProjectVersion + downloadMacAppSuffix).getAbsolutePath();
-          FileManager.xcopyAll(fname, new File(fDownloads, downloadMacApp).getAbsolutePath());
+          FileManager.xcopy(fname, new File(fDownloads, downloadMacApp).getAbsolutePath());
         } catch (Exception ex) {
           log(-1, "createSetupFolder: copying files did not work: %s", fname);
           success = false;
@@ -1287,7 +1287,7 @@ public class RunSetup {
 			if (!success) {
 				log1(-1, "rename temp to " + target + " --- trying copy");
 				try {
-					FileManager.xcopy(new File(workDir, temp).getAbsolutePath(), target, null);
+					FileManager.xcopy(new File(workDir, temp).getAbsolutePath(), target);
 					success = new File(target).exists();
 					if (success) {
 						FileManager.deleteFileOrFolder(new File(workDir, temp).getAbsolutePath());
@@ -1393,19 +1393,19 @@ public class RunSetup {
 		}
 		splash = showSplash("Now creating backup and cleaning setup folder", "please wait - may take some seconds ...");
 		String backup = fBackup.getAbsolutePath();
-		FileManager.deleteFileOrFolder(backup, new FileManager.fileFilter() {
+		FileManager.deleteFileOrFolder(backup, new FileManager.FileFilter() {
 			@Override
 			public boolean accept(File entry) {
 				return true;
 			}
 		});
 		try {
-			FileManager.xcopyAll(workDir, backup);
+			FileManager.xcopy(workDir, backup);
 		} catch (IOException ex) {
 			popError("Reset: Not possible to backup:\n" + ex.getMessage());
 			terminate("Reset: Not possible to backup:\n" + ex.getMessage());
 		}
-		FileManager.deleteFileOrFolder(workDir, new FileManager.fileFilter() {
+		FileManager.deleteFileOrFolder(workDir, new FileManager.FileFilter() {
 			@Override
 			public boolean accept(File entry) {
 				if (entry.getName().startsWith("run")) {
@@ -1540,7 +1540,7 @@ public class RunSetup {
     }
     return "--------------------\n" + msg + "\n--------------------";
   }
- 
+
 	private static void popError(String msg) {
 		log1(3, "\npopError: " + packMessage(msg));
 		if (!test) {
@@ -1604,7 +1604,7 @@ public class RunSetup {
 			}
 		}
 		try {
-			FileManager.xcopy(downloaded.getAbsolutePath(), jar, null);
+			FileManager.xcopy(downloaded.getAbsolutePath(), jar);
 		} catch (IOException ex) {
 			terminate("Unable to copy from Downloads: "
 							+ downloaded.getAbsolutePath() + "\n" + ex.getMessage());
@@ -1634,7 +1634,7 @@ public class RunSetup {
 							+ "Check the error log at " + (logfile == null ? "printout" : logfile));
 		}
   }
-  
+
   private static void terminate(String msg) {
     prepTerminate(msg);
 		System.exit(0);

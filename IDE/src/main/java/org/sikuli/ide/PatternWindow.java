@@ -211,8 +211,7 @@ public class PatternWindow extends JFrame {
 				}
 			}
 			try {
-				FileManager.xcopy(oldFilename, filename, null);
-        (new File(oldFilename)).delete();
+				FileManager.xcopy(oldFilename, filename);
 				_imgBtn.setFilename(filename);
 			} catch (IOException ioe) {
 				Debug.error("renaming failed: " + oldFilename + " " + filename);

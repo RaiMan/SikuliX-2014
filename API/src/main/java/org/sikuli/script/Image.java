@@ -451,7 +451,7 @@ public class Image {
   public static synchronized void purge(URL pathURL) {
     URL imgURL;
     Image img;
-    log(lvl, "purge: prefix: %s", pathURL.getPath());
+    log(lvl, "purge: ImagePath: %s", pathURL.getPath());
     Iterator<Map.Entry<URL, Image>> it = imageFiles.entrySet().iterator();
     Map.Entry<URL, Image> entry;
     Iterator<Image> bit;
@@ -489,11 +489,12 @@ public class Image {
         }
       }
     }
-    log(lvl, "After Purge (%d): Max %d MB (%d / %d %%) (%d))",
-            imagePurgeList.size(), (int) (maxMemory / MB), images.size(),
-            (int) (100 * currentMemory / maxMemory), (int) (currentMemory / KB));
-    imagePurgeList.clear();
-    imageNamePurgeList.clear();
+		if (imagePurgeList.size() > 0) {
+			log(lvl, "After Purge (%d): Max %d MB (%d / %d %%) (%d))",
+							imagePurgeList.size(), (int) (maxMemory / MB), images.size(),
+							(int) (100 * currentMemory / maxMemory), (int) (currentMemory / KB));
+	    imagePurgeList.clear();
+		}
   }
 
   /**

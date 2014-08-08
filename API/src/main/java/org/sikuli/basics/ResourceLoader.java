@@ -383,7 +383,7 @@ public class ResourceLoader {
       log(lvl, "libs dir is empty, has wrong content or is outdated");
       log(lvl, "Trying to extract libs to: " + libPath);
       if (!FileManager.deleteFileOrFolder(libPath,
-              new FileManager.fileFilter() {
+              new FileManager.FileFilter() {
                 @Override
                 public boolean accept(File entry) {
                   if (entry.getPath().contains("tessdata")) {
@@ -454,7 +454,7 @@ public class ResourceLoader {
         log(lvl, "Trying to use provided library at: " + libsLinux.getAbsolutePath());
         try {
           FileManager.xcopy(libsLinux.getAbsolutePath(),
-                  new File(libPath, "libVisionProxy.so").getAbsolutePath(), null);
+                  new File(libPath, "libVisionProxy.so").getAbsolutePath());
         } catch (IOException ex) {
           log(-1, "... did not work: " + ex.getMessage());
           popError("Provided libVisionProxy not useable - see error log");
@@ -475,7 +475,7 @@ public class ResourceLoader {
         Settings.OcrDataPath = "/usr/local/share";
       }
     }
-    
+
 		initDone = true;
     return libsDir != null;
   }

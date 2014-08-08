@@ -51,6 +51,7 @@ import org.sikuli.basics.ResourceLoader;
 import org.sikuli.basics.SikuliScript;
 import org.sikuli.basics.Sikulix;
 import org.sikuli.script.Key;
+import sun.security.x509.X500Name;
 
 public class SikuliIDE extends JFrame {
 
@@ -452,9 +453,9 @@ public class SikuliIDE extends JFrame {
         if (action == WARNING_DO_NOTHING) {
           if (quitting) {
             codePane.setDirty(false);
-            if (codePane.isSourceBundleTemp()) {
-              FileManager.deleteTempDir(codePane.getSrcBundle());
-            }
+//            if (codePane.isSourceBundleTemp()) {
+//              FileManager.deleteTempDir(codePane.getSrcBundle());
+//            }
           }
           if (codePane.getCurrentFilename() == null) {
             continue;
@@ -889,6 +890,7 @@ public class SikuliIDE extends JFrame {
     }
 
     public void doQuit(ActionEvent ae) {
+			log(lvl, "doQuit requested");
       SikuliIDE ide = SikuliIDE.getInstance();
       if (!doBeforeQuit()) {
         return;
@@ -1028,26 +1030,29 @@ public class SikuliIDE extends JFrame {
         ACCESSING_AS_FOLDER = false;
       }
       String fname = null;
+      EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
+			String orgName = codePane.getCurrentShortFilename();
+			log(lvl, "doSaveAs requested: %s", orgName);
       try {
-        EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
         fname = codePane.saveAsFile(accessingAsFile);
         if (fname != null) {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
-        }
+        } else {
+	        log(-1, "doSaveAs: %s not completed", orgName);
+				}
       } catch (IOException eio) {
-        log(-1, "Problem when trying to save %s\nError: %s",
-                fname, eio.getMessage());
+        log(-1, "doSaveAs: %s Error: %s", orgName, eio.getMessage());
       }
     }
 
     public void doSaveAsFolder(ActionEvent ae) {
-      Debug.log(3, "IDE: doSaveAsFolder requested");
+      log(lvl, "doSaveAsFolder requested");
       ACCESSING_AS_FOLDER = true;
       doSaveAs(ae);
     }
 
     public void doSaveAll(ActionEvent ae) {
-      Debug.log(3, "IDE: doSaveAll requested");
+			log(lvl, "doSaveAll requested");
       if (!checkDirtyPanes()) {
         return;
       }
@@ -1055,9 +1060,11 @@ public class SikuliIDE extends JFrame {
     }
 
     public void doExport(ActionEvent ae) {
+			EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
+			String orgName = codePane.getCurrentShortFilename();
+			log(lvl, "doExport requested: %s", orgName);
       String fname = null;
       try {
-        EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
         fname = codePane.exportAsZip();
       } catch (Exception ex) {
         log(-1, "Problem when trying to save %s\nError: %s",
@@ -1066,11 +1073,13 @@ public class SikuliIDE extends JFrame {
     }
 
     public void doCloseTab(ActionEvent ae) {
-      EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
       if (ae == null) {
         _mainPane.remove(_mainPane.getSelectedIndex());
         return;
       }
+      EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
+			String orgName = codePane.getCurrentShortFilename();
+			log(lvl, "doCloseTab requested: %s", orgName);
       try {
         if (codePane.close()) {
           _mainPane.remove(_mainPane.getSelectedIndex());
