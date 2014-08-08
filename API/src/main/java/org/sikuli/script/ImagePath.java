@@ -351,7 +351,7 @@ public class ImagePath {
    * remove entry with given path (same as given with add)
    *
    * @param path relative or absolute path
-   * @return true on success, false ozherwise
+   * @return true on success, false otherwise
    */
   public static boolean remove(String path) {
     return remove(makePathURL(FileManager.normalize(path), null).pathURL);
@@ -365,14 +365,16 @@ public class ImagePath {
    * @param pURL a valid URL (not checked)
    * @return true on success, false ozherwise
    */
-  public static boolean remove(URL pURL) {
-		if (imagePaths.size() < 2) {
-			return false;
-		}
+  private static boolean remove(URL pURL) {
+    if (bundlePath.equals(pURL)) {
+      Image.purge(pURL);
+      bundlePath = null;
+      Settings.BundlePath = null;
+      imagePaths.set(0, null);
+    }
     Iterator<PathEntry> it = imagePaths.subList(1, imagePaths.size()).iterator();
     PathEntry p, p0;
     p0 = imagePaths.get(0);
-    boolean success = false;
     while (it.hasNext()) {
       p = it.next();
       if (!p.equals(pURL)) {
@@ -380,9 +382,8 @@ public class ImagePath {
       }
       it.remove();
       Image.purge(p.pathURL);
-      success = true;
     }
-    return success;
+    return true;
   }
 
   /**
