@@ -3715,8 +3715,8 @@ public class Region {
           modText = modText.replace("Meta", modWindows);
         }
       }
-      Debug.action(modText + "TYPE \"" + showText + "\"");
-      log(lvl, modText + "TYPE \"" + showText + "\"");
+      Debug.action("%s TYPE \"%s\"", modText, showText);
+      log(lvl, "%s TYPE \"%s\"", modText, showText);
       IRobot r = getRobotForRegion();
       int pause = 20 + (Settings.TypeDelay > 1 ? 1000 : (int) (Settings.TypeDelay * 1000));
       Settings.TypeDelay = 0.0;
