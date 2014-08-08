@@ -381,6 +381,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		Lexer lexer = getLexer();
 		Iterable<Token> tokens = lexer.getTokens(scriptText);
 		List<String> usedImages = new ArrayList<String>();
+    usedImages.add(" ");
 		boolean inString = false;
 		String current;
 		for (Token t : tokens) {
@@ -405,9 +406,6 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 				continue;
 			}
 			cleanBundleIsImageUsed(pbundle, current, usedImages);
-		}
-		if (usedImages.isEmpty()) {
-			return;
 		}
 		FileManager.deleteNotUsedImages(bundle, usedImages);
 	}
