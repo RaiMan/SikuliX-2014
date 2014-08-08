@@ -51,7 +51,6 @@ import org.sikuli.basics.ResourceLoader;
 import org.sikuli.basics.SikuliScript;
 import org.sikuli.basics.Sikulix;
 import org.sikuli.script.Key;
-import sun.security.x509.X500Name;
 
 public class SikuliIDE extends JFrame {
 
@@ -772,7 +771,9 @@ public class SikuliIDE extends JFrame {
       }
     }
   }
-
+  
+  private static JMenu recentMenu = null;
+  
   //<editor-fold defaultstate="collapsed" desc="Init FileMenu">
   private void initFileMenu() throws NoSuchMethodException {
     JMenuItem jmi;
@@ -794,6 +795,10 @@ public class SikuliIDE extends JFrame {
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, scMask),
             new FileAction(FileAction.OPEN)));
     jmi.setName("OPEN");
+
+    recentMenu = new JMenu(_I("menuRecent"));
+
+//    _fileMenu.add(recentMenu);
 
     if (Settings.isMac() && !Settings.handlesMacBundles) {
       _fileMenu.add(createMenuItem("Open folder.sikuli ...",
@@ -861,6 +866,7 @@ public class SikuliIDE extends JFrame {
     static final String NEW = "doNew";
     static final String INSERT = "doInsert";
     static final String OPEN = "doLoad";
+    static final String RECENT = "doRecent";
     static final String OPEN_FOLDER = "doLoadFolder";
     static final String SAVE = "doSave";
     static final String SAVE_AS = "doSaveAs";
@@ -870,6 +876,7 @@ public class SikuliIDE extends JFrame {
     static final String CLOSE_TAB = "doCloseTab";
     static final String PREFERENCES = "doPreferences";
     static final String QUIT = "doQuit";
+    static final String ENTRY = "doRecent";
     private int targetTab = -1;
 
     public FileAction() {
@@ -966,6 +973,7 @@ public class SikuliIDE extends JFrame {
         }
         if (fname != null) {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
+          doRecentAdd(fname);
         } else {
           if (ae != null) {
             doCloseTab(null);
@@ -976,6 +984,20 @@ public class SikuliIDE extends JFrame {
         log(-1, "Problem when trying to load %s\nError: %s",
                 fname, eio.getMessage());
       }
+    }
+ 
+    private void doRecentAdd(String fname) {
+      log(3, "doRecentAdd: %s", fname);
+//      try {
+//        recentMenu.add(createMenuItem(new File(fname).getName(),
+//                null,
+//                new FileAction(FileAction.ENTRY)));
+//      } catch (NoSuchMethodException ex) {
+//      }
+    }
+    
+    public void doRecent(ActionEvent ae) {
+      log(3, "doRecent: menuOpenRecent");
     }
 
     public void doLoadFolder(ActionEvent ae) {
@@ -1242,6 +1264,17 @@ public class SikuliIDE extends JFrame {
       SikuliIDE ide = SikuliIDE.getInstance();
       EditorPane pane = ide.getCurrentCodePane();
       (new SikuliEditorKit.DeindentAction()).actionPerformed(pane);
+    }
+  }
+  
+  class OpenRecent extends MenuAction {
+    
+    public OpenRecent() {
+      super();
+    }
+    
+    public void openRecent(ActionEvent ae) {
+      log(lvl, "openRecent: %s", ae.getActionCommand());
     }
   }
 
