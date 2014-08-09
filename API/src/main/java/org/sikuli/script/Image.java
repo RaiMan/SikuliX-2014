@@ -105,8 +105,11 @@ public class Image {
   private int bheight = -1;
   private Rectangle lastSeen = null;
   private double lastScore = 0.0;
+  private float similarity = (float) Settings.MinSimilarity;
+  private Location offset = new Location(0, 0);
+  private int waitAfter = 0;
 
-  /**
+	/**
    * to support a raster over the image
    */
   private int rows = 0;
@@ -322,23 +325,39 @@ public class Image {
     } else if (obj instanceof Image) {
       return (Image) obj;
     }  else if (obj instanceof Pattern) {
-      return new Image((Pattern) obj);
+      return Image.create((Pattern) obj);
     }
     return new Image();
   }
 
-  private Image(Pattern p) {
-    pattern = p;
-    imageIsPattern = true;
-    setLastSeen(p.getImage().getLastSeen(), p.getImage().getLastSeenScore());
+
+	private static Image create(Pattern p) {
+		Image img;
+		if (p.isImagePattern()) {
+			img = new Image();
+		} else {
+			img = p.getImage();
+		}
+    img.pattern = p;
+		img.similarity = p.getSimilar();
+		img.offset = p.getTargetOffset();
+		img.waitAfter = p.getTimeAfter();
+    img.imageIsPattern = true;
+    img.setLastSeen(p.getImage().getLastSeen(), p.getImage().getLastSeenScore());
+		return img;
   }
 
 	/**
 	 * get the Pattern, the image was created from
-	 * @return Pattern or null
+	 * @return the equivalent Pattern or a new Pattern from this image
 	 */
 	public Pattern getPattern() {
-    return pattern;
+		if (isPattern()) {
+			Pattern p = new Pattern();
+			return p;
+		} else {
+			return new Pattern(this);
+		}
   }
 
 	/**
@@ -348,9 +367,6 @@ public class Image {
 	public Image getImage() {
     if (isValid()) {
       return this;
-    }
-    if (pattern != null) {
-      return pattern.getImage();
     }
     return null;
   }
@@ -398,14 +414,15 @@ public class Image {
    * @param name descriptive name
    */
   public Image(BufferedImage img, String name) {
-    if (name == null) {
-      imageName = isBImg;
-    } else {
-      imageName = "BImg::" + name;
+    imageName = isBImg;
+    if (name != null) {
+      imageName += name;
     }
     bimg = img;
     bwidth = bimg.getWidth();
     bheight = bimg.getHeight();
+		log(lvl, "BufferedImage: (%d, %d)%s", bwidth, bheight,
+						(name == null ? "" : " with name: " + name));
   }
 
   /**
@@ -551,21 +568,32 @@ public class Image {
   }
 
   /**
-   * check whether image is available
+   * check whether image is available for Finder.find()<br>
+	 * This is for backward compatibility<br>
+	 * The new ImageFinder uses isUsable()
    *
-   * @return true if lodable or is an in memory image
+   * @return true if lodable from file or is an in memory image
    */
   public boolean isValid() {
-    return fileURL != null;
+    return fileURL != null || imageName.contains(isBImg);
   }
 
 	/**
-	 * INTERNAL USE: TODO: should be made obsolete
+	 * checks, wether the Image can be used with the new ImageFinder
 	 * @return true/false
 	 */
 	public boolean isUseable() {
     return isValid() || imageIsPattern;
   }
+
+	/**
+	 * true if this image contains pattern aspects<br>
+	 * only useable with the new ImageFinder
+	 * @return
+	 */
+	public boolean isPattern() {
+		return imageIsPattern;
+	}
 
 	/**
 	 * INTERNAL USE: image is contained in a bundle (.sikuli)
@@ -619,8 +647,9 @@ public class Image {
   public String getFilename() {
     if (fileURL != null && "file".equals(fileURL.getProtocol())) {
       return fileURL.getPath();
-    }
-    return null;
+    } else {
+			return imageName;
+		}
   }
 
   /**

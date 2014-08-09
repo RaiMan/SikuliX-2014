@@ -39,6 +39,13 @@ public class Finder implements Iterator<Match> {
     FileManager.loadLibrary("VisionProxy");
   }
 
+  private static String me = "Finder";
+  private static int lvl = 3;
+
+  private static void log(int level, String message, Object... args) {
+    Debug.logx(level, "", me + ": " + message, args);
+  }
+
   /**
    * Just to force library initialization
    */
@@ -100,10 +107,11 @@ public class Finder implements Iterator<Match> {
   /**
 	 * Finder constructor for special use from an Image
 	 *
-	 * @param simg Image
+	 * @param img Image
 	 */
-	public Finder(Image simg) {
-    _findInput.setSource(Image.convertBufferedImageToMat(simg.get()));
+	public Finder(Image img) {
+		log(lvl, "Image: %s", img);
+    _findInput.setSource(Image.convertBufferedImageToMat(img.get()));
   }
 
 	private void initScreenFinder(ScreenImage simg, Region region) {
