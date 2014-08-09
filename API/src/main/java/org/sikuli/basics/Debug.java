@@ -10,6 +10,7 @@ import java.io.FileNotFoundException;
 import java.io.PrintStream;
 import java.lang.reflect.Method;
 import java.text.DateFormat;
+import java.util.Arrays;
 import java.util.Date;
 
 /**
@@ -563,6 +564,11 @@ public class Debug {
    * @param args to use with format string
    */
   public static void test(String message, Object... args) {
+		if (message.contains("#returned#")) {
+			message = message.replace("#returned#", "returned: " +
+							((Boolean) args[0] ? "true" : "false"));
+			args = Arrays.copyOfRange(args, 1, args.length);
+		}
     log(-1, "test", message, args);
   }
 
