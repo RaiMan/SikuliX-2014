@@ -529,8 +529,26 @@ public class Sikulix {
   public static String run(String cmdline) {
     return run(new String[]{cmdline});
   }
-  
+
   public static String run(String[] cmd) {
     return ResourceLoader.get().runcmd(cmd);
+  }
+
+	  /**
+   * INTERNAL USE: used in setup: tests basic Sikulix features
+   *
+   * @return success
+   */
+  public static boolean testSetupJython() {
+    return org.sikuli.script.Sikulix.testSetup("Jython scripting");
+  }
+
+	  /**
+   * INTERNAL USE: used in setup: tests basic Sikulix features
+   *
+   * @return success
+   */
+  public static boolean testSetupJRuby() {
+    return org.sikuli.script.Sikulix.testSetup("JRuby scripting");
   }
 }

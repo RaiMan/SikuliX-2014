@@ -1117,16 +1117,18 @@ public class RunSetup {
         } catch (Exception ex){ }
         ResourceLoader.get().exportTessdata(uTess);
       }
-      String testMethod = test ? "print" : "popup";
-      String testSetupSuccess;
+      String testMethod;
 			if (getJython) {
-        log1(lvl, "Jython: Trying to run functional test: running script statements via SikuliScript");
-        splash = showSplash("Jython: Trying to run functional test: Scripting",
-                "running script statements via SikuliScript");
-  			testSetupSuccess = "Setup: Sikuli Jython seems to work! Have fun!";
+				if (test) {
+					testMethod = "print \"testSetup: Jython: success\"";
+				} else {
+					testMethod = "Sikulix.testSetupJython()";
+				}
+				log1(lvl, "Jython: Trying to run functional test: running script statements via SikuliScript");
+        splash = showSplash("Jython Scripting: Trying to run functional test",
+                "Running script statements via SikuliScript");
 				try {
-					String testargs[] = new String[]{"-testSetup", "jython",
-            testMethod + "(\"" + testSetupSuccess + "\")"};
+					String testargs[] = new String[]{"-testSetup", "jython", testMethod};
 					closeSplash(splash);
 					SikuliScript.runscript(testargs);
 					if (null == testargs[0]) {
@@ -1141,14 +1143,16 @@ public class RunSetup {
 				}
 			}
 			if (getJRuby) {
-        testMethod = test ? "puts" : "popup";
+				if (test) {
+					testMethod = "print \"testSetup: JRuby: success\"";
+				} else {
+					testMethod = "Sikulix.testSetupJRuby()";
+				}
         log1(lvl, "JRuby: Trying to run functional test: running script statements via SikuliScript");
-        splash = showSplash("JRuby: Trying to run functional test: Scripting",
-                "running script statements via SikuliScript");
-				testSetupSuccess = "Setup: Sikuli JRuby seems to work! Have fun!";
+        splash = showSplash("JRuby Scripting: Trying to run functional test",
+                "Running script statements via SikuliScript");
 				try {
-					String testargs[] = new String[]{"-testSetup", "jruby",
-            testMethod + "(\"" + testSetupSuccess + "\")"};
+					String testargs[] = new String[]{"-testSetup", "jruby", testMethod};
 					closeSplash(splash);
 					SikuliScript.runscript(testargs);
 					if (null == testargs[0]) {

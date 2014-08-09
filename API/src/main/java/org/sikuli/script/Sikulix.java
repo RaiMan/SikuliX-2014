@@ -161,33 +161,45 @@ public class Sikulix {
    * @return success
    */
   public static boolean testSetup() {
-    return doTestSetup(false);
+    return doTestSetup("Java API", false);
   }
-  
+
+  /**
+   * INTERNAL USE: used in setup: tests basic Sikulix features
+   *
+   * @return success
+   */
+  public static boolean testSetup(String src) {
+    return doTestSetup(src, false);
+  }
+
   /**
    * INTERNAL USE: used in setup: tests basic Sikulix features
    *
    * @return success
    */
   public static boolean testSetupSilent() {
-    return doTestSetup(true);
+    return doTestSetup("Java API", true);
   }
-  
-  private static boolean doTestSetup(boolean silent) {
+
+  private static boolean doTestSetup(String testSetupSource, boolean silent) {
     Region r = Region.create(0, 0, 100, 100);
     Image img = new Image(r.getScreen().capture(r).getImage());
     Pattern p = new Pattern(img);
     Finder f = new Finder(img);
-    if (null != f.find(p) && f.hasNext()) {
+		Debug.log(3, "testSetup: Finder setup %s", (null == f.find(p) ? "did not work" : "worked"));
+    if (f.hasNext()) {
       if (!silent) {
-        org.sikuli.basics.Sikulix.popup("Hallo from Sikulix.testSetup\n"
-                + "Java Sikuli seems to be working!\n\nHave fun!");
+        org.sikuli.basics.Sikulix.popup("Hallo from Sikulix.testSetup: " + testSetupSource + "\n"
+                + "SikuliX seems to be working!\n\nHave fun!");
+				Debug.log(3, "testSetup: Finder.find: worked");
       } else {
         System.out.println("[info] RunSetup: Sikulix.testSetup: Java Sikuli seems to be working!");
       }
       return true;
     }
-    return false;    
+		Debug.log(3, "testSetup: Finder.find: did not work");
+    return false;
   }
 
   /**
@@ -246,7 +258,7 @@ public class Sikulix {
       Debug.log(loglevel, "***** Classpath dump ***** end");
     }
   }
-  
+
   public static boolean isOnClasspath(String artefact) {
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     URL[] urls = sysLoader.getURLs();
