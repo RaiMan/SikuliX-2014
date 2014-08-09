@@ -773,6 +773,9 @@ public class SikuliIDE extends JFrame {
   }
   
   private static JMenu recentMenu = null;
+  private static Map<String, String> recentProjects = new HashMap<String, String>();
+  private static java.util.List<String> recentProjectsMenu = new ArrayList<String>();
+  private static int recentMax = 10;
   
   //<editor-fold defaultstate="collapsed" desc="Init FileMenu">
   private void initFileMenu() throws NoSuchMethodException {
@@ -797,8 +800,10 @@ public class SikuliIDE extends JFrame {
     jmi.setName("OPEN");
 
     recentMenu = new JMenu(_I("menuRecent"));
-
-//    _fileMenu.add(recentMenu);
+    
+    if (Settings.experimental) {
+      _fileMenu.add(recentMenu);
+    }
 
     if (Settings.isMac() && !Settings.handlesMacBundles) {
       _fileMenu.add(createMenuItem("Open folder.sikuli ...",
@@ -986,18 +991,34 @@ public class SikuliIDE extends JFrame {
       }
     }
  
-    private void doRecentAdd(String fname) {
-      log(3, "doRecentAdd: %s", fname);
-//      try {
-//        recentMenu.add(createMenuItem(new File(fname).getName(),
-//                null,
-//                new FileAction(FileAction.ENTRY)));
-//      } catch (NoSuchMethodException ex) {
-//      }
+    private void doRecentAdd(String fPath) {
+      if (Settings.experimental) {
+        log(3, "doRecentAdd: %s", fPath);
+        String fName = new File(fPath).getName();
+        if (recentProjectsMenu.contains(fName)) {
+          recentProjectsMenu.remove(fName);
+        } else {
+          recentProjects.put(fName, fPath);
+          if (recentProjectsMenu.size() == recentMax) {
+            String fObsolete = recentProjectsMenu.remove(recentMax - 1);
+            recentProjects.remove(fObsolete);
+          }
+        }
+        recentProjectsMenu.add(0, fName);
+        recentMenu.removeAll();
+        for (String entry : recentProjectsMenu) {
+          try {
+            recentMenu.add(createMenuItem(entry,
+                    null,
+                    new FileAction(FileAction.ENTRY)));
+          } catch (NoSuchMethodException ex) {
+          }
+        }
+      }
     }
     
     public void doRecent(ActionEvent ae) {
-      log(3, "doRecent: menuOpenRecent");
+      log(3, "doRecent: menuOpenRecent: %s", ae.getActionCommand());
     }
 
     public void doLoadFolder(ActionEvent ae) {
