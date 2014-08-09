@@ -50,12 +50,8 @@ public class Pattern {
    * @param img Image
    */
   public Pattern(Image img) {
-		img = new Image();
-		if (img.isPattern()) {
-			similarity = img.getPattern().similarity;
-			offset.x = img.getPattern().offset.x;
-			offset.y = img.getPattern().offset.y;
-		}
+		image = img.create(img);
+    image.setIsPattern(false);
 		imagePattern = true;
   }
 

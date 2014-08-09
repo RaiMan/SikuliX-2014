@@ -89,27 +89,234 @@ public class Image {
   private static String imageFromJar = "__FROM_JAR__";
   private final static String isBImg = "__BufferedImage__";
 
+//<editor-fold defaultstate="collapsed" desc="imageName">
   private String imageName = null;
-  private URL fileURL = null;
-  private BufferedImage bimg = null;
-  private Pattern pattern = null;
-  private ImageGroup group = null;
+  
+  public String getImageName() {
+    return imageName;
+  }
+  
+  public void setImageName(String imageName) {
+    this.imageName = imageName;
+  }
+  
+//</editor-fold>
 
-	private boolean imageIsText = false;
-  private boolean imageIsAbsolute = false;
-  private boolean imageIsPattern = false;
-	private boolean imageIsBundled = false;
-  private boolean beSilent = false;
+//<editor-fold defaultstate="collapsed" desc="fileURL">
+  private URL fileURL = null;
+  
+  public URL getFileURL() {
+    return fileURL;
+  }
+  
+  public void setFileURL(URL fileURL) {
+    this.fileURL = fileURL;
+  }
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="bimg">
+  private BufferedImage bimg = null;
+  
+  public BufferedImage getBimg() {
+    return bimg;
+  }
+  
+  public void setBimg(BufferedImage bimg) {
+    this.bimg = bimg;
+    if (bimg != null) {
+      bwidth = bimg.getWidth();
+      bheight = bimg.getHeight();
+      bsize = bimg.getData().getDataBuffer().getSize();
+    } else {
+      bsize = 0;
+      bwidth = -1;
+      bheight = -1;
+    }
+  }
+  
   private long bsize = 0;
   private int bwidth = -1;
   private int bheight = -1;
+//</editor-fold>
+
+  private ImageGroup group = null;
+
+//<editor-fold defaultstate="collapsed" desc="isText">
+  private boolean imageIsText = false;
+  
+  /**
+   *
+   * @return true if the given image name did not give a valid image so it might
+   * be text to search
+   */
+  protected boolean isText() {
+    return imageIsText;
+  }
+  
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="isAbsolute">
+  private boolean imageIsAbsolute = false;
+  /**
+   *
+   * @return true if image was given with absolute filepath
+   */
+  public boolean isAbsolute() {
+    return imageIsAbsolute;
+  }
+  
+  protected void setIsAbsolute(boolean val) {
+    imageIsAbsolute = val;
+  }
+  
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="isBundled">
+  private boolean imageIsBundled = false;
+
+  /**
+   * mark this image as being contained in a bundle
+   * @param imageIsBundled
+   */
+  public void setIsBundled(boolean imageIsBundled) {
+    this.imageIsBundled = imageIsBundled;
+  }
+  
+  /**
+   * INTERNAL USE: image is contained in a bundle (.sikuli)
+   * @return true/false
+   */
+  public boolean isBundled() {
+    return imageIsBundled;
+  }
+  
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="isPattern">
+  private boolean imageIsPattern = false;
+  
+  /**
+   * true if this image contains pattern aspects<br>
+   * only useable with the new ImageFinder
+   * @return
+   */
+  public boolean isPattern() {
+    return imageIsPattern;
+  }
+  
+  public void setIsPattern(boolean imageIsPattern) {
+    this.imageIsPattern = imageIsPattern;
+  }
+  
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="waitAfter">
+  private int waitAfter;
+  
+  /**
+   * Get the value of waitAfter
+   *
+   * @return the value of waitAfter
+   */
+  public int getWaitAfter() {
+    return waitAfter;
+  }
+  
+  /**
+   * Set the value of waitAfter
+   *
+   * @param waitAfter new value of waitAfter
+   */
+  public void setWaitAfter(int waitAfter) {
+    this.waitAfter = waitAfter;
+  }
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="offset">
+  private Location offset = new Location(0, 0);
+  
+  /**
+   * Get the value of offset
+   *
+   * @return the value of offset
+   */
+  public Location getOffset() {
+    return offset;
+  }
+  
+  /**
+   * Set the value of offset
+   *
+   * @param offset new value of offset
+   */
+  public void setOffset(Location offset) {
+    this.offset = offset;
+  }
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="similarity">
+  private float similarity = (float) Settings.MinSimilarity;
+  
+  /**
+   * Get the value of similarity
+   *
+   * @return the value of similarity
+   */
+  public float getSimilarity() {
+    return similarity;
+  }
+  
+  /**
+   * Set the value of similarity
+   *
+   * @param similarity new value of similarity
+   */
+  public void setSimilarity(float similarity) {
+    this.similarity = similarity;
+  }
+  
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="lastSeen">
   private Rectangle lastSeen = null;
   private double lastScore = 0.0;
-  private float similarity = (float) Settings.MinSimilarity;
-  private Location offset = new Location(0, 0);
-  private int waitAfter = 0;
+  
+  /**
+   * if the image was already found before
+   *
+   * @return the rectangle where it was found
+   */
+  public Rectangle getLastSeen() {
+    return lastSeen;
+  }
 
-	/**
+  /**
+   * if the image was already found before
+   *
+   * @return the similarity score
+   */
+  public double getLastSeenScore() {
+    return lastScore;
+  }
+
+  /**
+   * Internal Use: set the last seen info after a find
+   *
+   * @param lastSeen Match
+   * @param sim SimilarityScore
+   */
+  protected void setLastSeen(Rectangle lastSeen, double sim) {
+    this.lastSeen = lastSeen;
+    this.lastScore = sim;
+    if (group != null) {
+      group.addImageFacts(this, lastSeen, sim);
+    }
+  }
+//</editor-fold>
+
+  private boolean beSilent = false;
+
+  /**
    * to support a raster over the image
    */
   private int rows = 0;
@@ -129,6 +336,29 @@ public class Image {
 
   private Image() {
   }
+  
+  private Image copy() {
+    Image imgTarget = new Image();
+    imgTarget.setImageName(imageName);
+    imgTarget.setFileURL(fileURL);
+    imgTarget.setBimg(bimg);
+    imgTarget.setGroup(group);
+    imgTarget.setIsAbsolute(imageIsAbsolute);
+    imgTarget.setIsText(imageIsText);
+    imgTarget.setIsBundled(imageIsBundled);
+    imgTarget.setLastSeen(getLastSeen(), getLastSeenScore());
+    if (isPattern()) {
+      imgTarget.setSimilarity(similarity);
+      imgTarget.setOffset(offset);
+      imgTarget.setWaitAfter(waitAfter);
+      imgTarget.setIsPattern(true);
+    }
+    return imgTarget;
+  }
+  
+  public Image create(Image imgSrc) {
+    return imgSrc.copy();
+  }
 
   /**
    * create a new image from a filename <br>
@@ -146,6 +376,20 @@ public class Image {
   public static Image create(String fName) {
     Image img = get(fName, false);
     return createImageValidate(img, true);
+  }
+
+  /**
+   * create a new Image with Pattern aspects from an existing Pattern
+   * @param p a Pattern
+   * @return the new Image
+   */
+  public static Image create(Pattern p) {
+    Image img = p.getImage().copy();
+    img.setIsPattern(true);
+    img.setSimilarity(p.getSimilar());
+    img.setOffset(p.getTargetOffset());
+    img.setWaitAfter(p.getTimeAfter());
+		return img;
   }
 
   /**
@@ -328,23 +572,6 @@ public class Image {
       return Image.create((Pattern) obj);
     }
     return new Image();
-  }
-
-
-	private static Image create(Pattern p) {
-		Image img;
-		if (p.isImagePattern()) {
-			img = new Image();
-		} else {
-			img = p.getImage();
-		}
-    img.pattern = p;
-		img.similarity = p.getSimilar();
-		img.offset = p.getTargetOffset();
-		img.waitAfter = p.getTimeAfter();
-    img.imageIsPattern = true;
-    img.setLastSeen(p.getImage().getLastSeen(), p.getImage().getLastSeenScore());
-		return img;
   }
 
 	/**
@@ -586,44 +813,6 @@ public class Image {
     return isValid() || imageIsPattern;
   }
 
-	/**
-	 * true if this image contains pattern aspects<br>
-	 * only useable with the new ImageFinder
-	 * @return
-	 */
-	public boolean isPattern() {
-		return imageIsPattern;
-	}
-
-	/**
-	 * INTERNAL USE: image is contained in a bundle (.sikuli)
-	 * @return true/false
-	 */
-	public boolean isBundled() {
-		return imageIsBundled;
-	}
-
-  /**
-   *
-   * @return true if image was given with absolute filepath
-   */
-  public boolean isAbsolute() {
-    return imageIsAbsolute;
-  }
-
-  protected void setIsAbsolute(boolean val) {
-    imageIsAbsolute = val;
-  }
-
-  /**
-   *
-   * @return true if the given image name did not give a valid image so it might
-   * be text to search
-   */
-  protected boolean isText() {
-    return imageIsText;
-  }
-
   /**
    * wether this image's name should be taken as text
    * @param val
@@ -681,38 +870,6 @@ public class Image {
 	private int getKB() {
 		return (int) bsize / KB;
 	}
-
-  /**
-   * if the image was already found before
-   *
-   * @return the rectangle where it was found
-   */
-  public Rectangle getLastSeen() {
-    return lastSeen;
-  }
-
-  /**
-   * if the image was already found before
-   *
-   * @return the similarity score
-   */
-  public double getLastSeenScore() {
-    return lastScore;
-  }
-
-  /**
-   * Internal Use: set the last seen info after a find
-   *
-   * @param lastSeen Match
-   * @param sim SimilarityScore
-   */
-  protected void setLastSeen(Rectangle lastSeen, double sim) {
-    this.lastSeen = lastSeen;
-    this.lastScore = sim;
-    if (group != null) {
-      group.addImageFacts(this, lastSeen, sim);
-    }
-  }
 
   /**
    *

@@ -187,18 +187,18 @@ public class Sikulix {
     Image img = new Image(r.getScreen().capture(r).getImage());
     Pattern p = new Pattern(img);
     Finder f = new Finder(img);
-		Debug.log(3, "testSetup: Finder setup %s", (null == f.find(p) ? "did not work" : "worked"));
+    Debug.log(3, "testSetup: Finder setup %s", (null == f.find(p) ? "did not work" : "worked"));
     if (f.hasNext()) {
       if (!silent) {
         org.sikuli.basics.Sikulix.popup("Hallo from Sikulix.testSetup: " + testSetupSource + "\n"
                 + "SikuliX seems to be working!\n\nHave fun!");
-				Debug.log(3, "testSetup: Finder.find: worked");
+        Debug.log(3, "testSetup: Finder.find: worked");
       } else {
         System.out.println("[info] RunSetup: Sikulix.testSetup: Java Sikuli seems to be working!");
       }
       return true;
     }
-		Debug.log(3, "testSetup: Finder.find: did not work");
+    Debug.log(3, "testSetup: Finder.find: did not work");
     return false;
   }
 
