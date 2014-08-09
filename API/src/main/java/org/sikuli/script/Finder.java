@@ -207,11 +207,7 @@ public class Finder implements Iterator<Match> {
       _cur_result_i = 0;
       return img.getFilename();
     } else if (img.isUseable()) {
-      if (img.getPattern() !=null) {
-        return find(img.getPattern());
-      } else {
-        return null;
-      }
+      return find(new Pattern(img));
     } else {
       return null;
     }

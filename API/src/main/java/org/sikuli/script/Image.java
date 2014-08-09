@@ -96,21 +96,24 @@ public class Image {
     return imageName;
   }
   
-  public void setImageName(String imageName) {
+  public Image setImageName(String imageName) {
     this.imageName = imageName;
+    return this;
   }
   
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="fileURL">
   private URL fileURL = null;
+  private String imageAsFile = null;
   
   public URL getFileURL() {
     return fileURL;
   }
   
-  public void setFileURL(URL fileURL) {
+  public Image setFileURL(URL fileURL) {
     this.fileURL = fileURL;
+    return this;
   }
 //</editor-fold>
 
@@ -121,7 +124,7 @@ public class Image {
     return bimg;
   }
   
-  public void setBimg(BufferedImage bimg) {
+  public Image setBimg(BufferedImage bimg) {
     this.bimg = bimg;
     if (bimg != null) {
       bwidth = bimg.getWidth();
@@ -132,6 +135,7 @@ public class Image {
       bwidth = -1;
       bheight = -1;
     }
+    return this;
   }
   
   private long bsize = 0;
@@ -149,10 +153,18 @@ public class Image {
    * @return true if the given image name did not give a valid image so it might
    * be text to search
    */
-  protected boolean isText() {
+  public boolean isText() {
     return imageIsText;
   }
-  
+
+  /**
+   * wether this image's name should be taken as text
+   * @param val
+   */
+  public Image setIsText(boolean val) {
+    imageIsText = val;
+    return this;
+  } 
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="isAbsolute">
@@ -165,8 +177,9 @@ public class Image {
     return imageIsAbsolute;
   }
   
-  protected void setIsAbsolute(boolean val) {
+  public Image setIsAbsolute(boolean val) {
     imageIsAbsolute = val;
+    return this;
   }
   
 //</editor-fold>
@@ -178,8 +191,9 @@ public class Image {
    * mark this image as being contained in a bundle
    * @param imageIsBundled
    */
-  public void setIsBundled(boolean imageIsBundled) {
+  public Image setIsBundled(boolean imageIsBundled) {
     this.imageIsBundled = imageIsBundled;
+    return this;
   }
   
   /**
@@ -204,8 +218,9 @@ public class Image {
     return imageIsPattern;
   }
   
-  public void setIsPattern(boolean imageIsPattern) {
+  public Image setIsPattern(boolean imageIsPattern) {
     this.imageIsPattern = imageIsPattern;
+    return this;
   }
   
 //</editor-fold>
@@ -227,8 +242,9 @@ public class Image {
    *
    * @param waitAfter new value of waitAfter
    */
-  public void setWaitAfter(int waitAfter) {
+  public Image setWaitAfter(int waitAfter) {
     this.waitAfter = waitAfter;
+    return this;
   }
 //</editor-fold>
 
@@ -249,8 +265,9 @@ public class Image {
    *
    * @param offset new value of offset
    */
-  public void setOffset(Location offset) {
+  public Image setOffset(Location offset) {
     this.offset = offset;
+    return this;
   }
 //</editor-fold>
   
@@ -271,8 +288,9 @@ public class Image {
    *
    * @param similarity new value of similarity
    */
-  public void setSimilarity(float similarity) {
+  public Image setSimilarity(float similarity) {
     this.similarity = similarity;
+    return this;
   }
   
 //</editor-fold>
@@ -305,12 +323,13 @@ public class Image {
    * @param lastSeen Match
    * @param sim SimilarityScore
    */
-  protected void setLastSeen(Rectangle lastSeen, double sim) {
+  protected Image setLastSeen(Rectangle lastSeen, double sim) {
     this.lastSeen = lastSeen;
     this.lastScore = sim;
     if (group != null) {
       group.addImageFacts(this, lastSeen, sim);
     }
+    return this;
   }
 //</editor-fold>
 
@@ -337,6 +356,28 @@ public class Image {
   private Image() {
   }
   
+	private Image(String fname, URL fURL) {
+    init(fname, fURL, true);
+  }
+
+  private Image(String fname, URL fURL, boolean silent) {
+    init(fname, fURL, silent);
+  }
+
+	private void init(String fileName, URL fURL, boolean silent) {
+    imageName = fileName;
+    if (imageName.isEmpty() || fURL == null) {
+      return;
+    }
+    fileURL = fURL;
+		if (ImagePath.isImageBundled(fURL)) {
+			imageIsBundled = true;
+			imageName = new File(imageName).getName();
+		}
+		beSilent = silent;
+    loadImage();
+  }
+
   private Image copy() {
     Image imgTarget = new Image();
     imgTarget.setImageName(imageName);
@@ -356,7 +397,12 @@ public class Image {
     return imgTarget;
   }
   
-  public Image create(Image imgSrc) {
+  /**
+   * create a new Image as copy of the given Image
+   * @param imgSrc given Image
+   * @return new Image
+   */
+  public static Image create(Image imgSrc) {
     return imgSrc.copy();
   }
 
@@ -377,7 +423,7 @@ public class Image {
     Image img = get(fName, false);
     return createImageValidate(img, true);
   }
-
+  
   /**
    * create a new Image with Pattern aspects from an existing Pattern
    * @param p a Pattern
@@ -393,6 +439,41 @@ public class Image {
   }
 
   /**
+   * create a new image from the given url <br>
+   * file ending .png is added if missing <br>
+   * filename: ...url-path.../name[.png] is loaded from the url and and cached
+   * <br>
+   * already loaded image with same url is reused (reference) and taken from
+   * cache
+   *
+   * @param url image file URL
+   * @return the image
+   */
+  public static Image create(URL url) {
+    Image img = get(url);
+    if (img == null) {
+      img = new Image(url);
+    }
+    return createImageValidate(img, true);
+  }
+
+	/**
+	 * create new Image from
+	 * @param obj String, Pattern or other Image
+	 * @return Image
+	 */
+	protected static Image createFromObject(Object obj) {
+    if (obj instanceof String) {
+      return create((String) obj);
+    } else if (obj instanceof Image) {
+      return (Image) obj;
+    }  else if (obj instanceof Pattern) {
+      return Image.create((Pattern) obj);
+    }
+    return new Image();
+  }
+
+  /**
    * FOR INTERNAL USE: from IDE - suppresses load error message
    *
    * @param fName image filename
@@ -402,6 +483,40 @@ public class Image {
     Image img = get(fName, true);
     return createImageValidate(img, false);
   }
+
+  private static Image createImageValidate(Image img, boolean verbose) {
+    if (img == null) {
+      log(-1, "Image not valid, creating empty Image");
+      return new Image("", null);
+    }
+    if (!img.isValid()) {
+      if (Settings.OcrTextSearch) {
+        img.setIsText(true);
+      } else {
+        if (verbose) {
+					log(-1, "Image not valid, but TextSearch is switched off!");
+				}
+      }
+    }
+    return img;
+  }
+  
+	/**
+	 * stores the image as PNG file in the standard temp folder
+	 * with a created filename (sikuli-image-#unique-random#.png)
+	 * if not yet stored before
+	 *
+	 * @return absolute path to stored file
+	 */
+	public String asFile() {
+    if (imageAsFile == null) {
+      if (bimg != null) {
+       imageAsFile = FileManager.saveTmpImage(bimg);
+      }
+    }
+    return imageAsFile;
+  }
+
 
   /**
    * FOR INTERNAL USE: see get(String, boolean)
@@ -464,28 +579,6 @@ public class Image {
     return img;
   }
 
-	private Image(String fname, URL fURL) {
-    init(fname, fURL, true);
-  }
-
-  private Image(String fname, URL fURL, boolean silent) {
-    init(fname, fURL, silent);
-  }
-
-	private void init(String fileName, URL fURL, boolean silent) {
-    imageName = fileName;
-    if (imageName.isEmpty() || fURL == null) {
-      return;
-    }
-    fileURL = fURL;
-		if (ImagePath.isImageBundled(fURL)) {
-			imageIsBundled = true;
-			imageName = new File(imageName).getName();
-		}
-		beSilent = silent;
-    loadImage();
-  }
-
   private BufferedImage loadImage() {
     if (fileURL != null) {
       try {
@@ -520,82 +613,6 @@ public class Image {
       }
     }
     return bimg;
-  }
-
-  private static Image createImageValidate(Image img, boolean verbose) {
-    if (img == null) {
-      log(-1, "Image not valid, creating empty Image");
-      return new Image("", null);
-    }
-    if (!img.isValid()) {
-      if (Settings.OcrTextSearch) {
-        img.setIsText(true);
-      } else {
-        if (verbose) {
-					log(-1, "Image not valid, but TextSearch is switched off!");
-				}
-      }
-    }
-    return img;
-  }
-
-  /**
-   * create a new image from the given url <br>
-   * file ending .png is added if missing <br>
-   * filename: ...url-path.../name[.png] is loaded from the url and and cached
-   * <br>
-   * already loaded image with same url is reused (reference) and taken from
-   * cache
-   *
-   * @param url image file URL
-   * @return the image
-   */
-  public static Image create(URL url) {
-    Image img = get(url);
-    if (img == null) {
-      img = new Image(url);
-    }
-    return createImageValidate(img, true);
-  }
-
-	/**
-	 * create new Image from
-	 * @param obj String, Pattern or other Image
-	 * @return Image
-	 */
-	protected static Image createFromObject(Object obj) {
-    if (obj instanceof String) {
-      return create((String) obj);
-    } else if (obj instanceof Image) {
-      return (Image) obj;
-    }  else if (obj instanceof Pattern) {
-      return Image.create((Pattern) obj);
-    }
-    return new Image();
-  }
-
-	/**
-	 * get the Pattern, the image was created from
-	 * @return the equivalent Pattern or a new Pattern from this image
-	 */
-	public Pattern getPattern() {
-		if (isPattern()) {
-			Pattern p = new Pattern();
-			return p;
-		} else {
-			return new Pattern(this);
-		}
-  }
-
-	/**
-	 * INTERNAL USE: TODO: should be made obsolete
-	 * @return Image
-	 */
-	public Image getImage() {
-    if (isValid()) {
-      return this;
-    }
-    return null;
   }
 
   protected static Image get(URL imgURL) {
@@ -811,14 +828,6 @@ public class Image {
 	 */
 	public boolean isUseable() {
     return isValid() || imageIsPattern;
-  }
-
-  /**
-   * wether this image's name should be taken as text
-   * @param val
-   */
-  protected void setIsText(boolean val) {
-    imageIsText = val;
   }
 
   /**

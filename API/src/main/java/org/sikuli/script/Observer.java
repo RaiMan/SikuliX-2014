@@ -194,7 +194,7 @@ public class Observer {
         if (observedRegion.contains(r)) {
           lastSearchTime = (new Date()).getTime();
           Finder f = new Finder(new Screen().capture(r), r);
-          f.find(new Pattern(img.getImage()).similar(Settings.CheckLastSeenSimilar));
+          f.find(new Pattern(img).similar(Settings.CheckLastSeenSimilar));
           if (f.hasNext()) {
             log(lvl + 1, "checkLastSeen: still there");
             match = new Match(new Region(img.getLastSeen()), img.getLastSeenScore());
