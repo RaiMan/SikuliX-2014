@@ -187,8 +187,25 @@ public class Sikulix {
     Image img = new Image(r.getScreen().capture(r).getImage());
     Pattern p = new Pattern(img);
     Finder f = new Finder(img);
-    Debug.log(3, "testSetup: Finder setup %s", (null == f.find(p) ? "did not work" : "worked"));
-    if (f.hasNext()) {
+    boolean success = (null != f.find(p));
+    Debug.log(3, "testSetup: Finder setup with image %s", (!success ? "did not work" : "worked"));
+    if (success &= f.hasNext()) {
+      success = (null != f.find(img.asFile()));
+      Debug.log(3, "testSetup: Finder setup with image file %s", (!success ? "did not work" : "worked"));
+      success &= f.hasNext();
+      String screenFind = "Screen.find(imagefile)";
+      try {
+        ((Screen) r.getScreen()).find(img.asFile());
+        Debug.log(3, "testSetup: %s worked", screenFind);
+        screenFind = "repeated Screen.find(imagefile)";
+        ((Screen) r.getScreen()).find(img.asFile());
+        Debug.log(3, "testSetup: %s worked", screenFind);
+      } catch (Exception ex) {
+        Debug.log(3, "testSetup: %s did not work", screenFind);
+        success = false;
+      }
+    }
+    if (success) {
       if (!silent) {
         org.sikuli.basics.Sikulix.popup("Hallo from Sikulix.testSetup: " + testSetupSource + "\n"
                 + "SikuliX seems to be working!\n\nHave fun!");
@@ -198,7 +215,7 @@ public class Sikulix {
       }
       return true;
     }
-    Debug.log(3, "testSetup: Finder.find: did not work");
+    Debug.log(3, "testSetup: last Screen/Finder.find: did not work");
     return false;
   }
 
