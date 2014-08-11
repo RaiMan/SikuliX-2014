@@ -27,7 +27,9 @@ import java.util.prefs.Preferences;
  */
 public class Settings {
 
-	public static int SikuliVersionMajor;
+  public static boolean experimental = false;
+
+  public static int SikuliVersionMajor;
 	public static int SikuliVersionMinor;
 	public static int SikuliVersionSub;
 	public static int SikuliVersionBetaN;
@@ -52,7 +54,6 @@ public class Settings {
   public static boolean runningSetupInValidContext = false;
   public static String runningSetupInContext = null;
   static String runningSetupWithJar = null;
-  public static boolean experimental = false;
 
 	private static void log(int level, String message, Object... args) {
 		Debug.logx(level, level < 0 ? "error" : "debug",

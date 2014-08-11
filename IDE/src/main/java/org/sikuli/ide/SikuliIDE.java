@@ -776,6 +776,7 @@ public class SikuliIDE extends JFrame {
   private static Map<String, String> recentProjects = new HashMap<String, String>();
   private static java.util.List<String> recentProjectsMenu = new ArrayList<String>();
   private static int recentMax = 10;
+  private static int recentMaxMax = recentMax + 10;
   
   //<editor-fold defaultstate="collapsed" desc="Init FileMenu">
   private void initFileMenu() throws NoSuchMethodException {
@@ -978,20 +979,21 @@ public class SikuliIDE extends JFrame {
         }
         if (fname != null) {
           SikuliIDE.getInstance().setCurrentFileTabTitle(fname);
-          doRecentAdd(fname);
         } else {
           if (ae != null) {
             doCloseTab(null);
           }
           _mainPane.setSelectedIndex(alreadyOpenedTab);
         }
+        doRecentAdd(SikuliIDE.getInstance().getCurrentCodePane());
       } catch (IOException eio) {
         log(-1, "Problem when trying to load %s\nError: %s",
                 fname, eio.getMessage());
       }
     }
  
-    private void doRecentAdd(String fPath) {
+    private void doRecentAdd(EditorPane codePane ) {
+      String fPath = new File(codePane.getSrcBundle()).getAbsolutePath();
       if (Settings.experimental) {
         log(3, "doRecentAdd: %s", fPath);
         String fName = new File(fPath).getName();
@@ -999,14 +1001,17 @@ public class SikuliIDE extends JFrame {
           recentProjectsMenu.remove(fName);
         } else {
           recentProjects.put(fName, fPath);
-          if (recentProjectsMenu.size() == recentMax) {
+          if (recentProjectsMenu.size() == recentMaxMax) {
             String fObsolete = recentProjectsMenu.remove(recentMax - 1);
             recentProjects.remove(fObsolete);
           }
         }
         recentProjectsMenu.add(0, fName);
         recentMenu.removeAll();
-        for (String entry : recentProjectsMenu) {
+        for (String entry : recentProjectsMenu.subList(1, recentProjectsMenu.size())) {
+          if (isAlreadyOpen(recentProjects.get(entry)) > -1) {
+            continue;
+          }
           try {
             recentMenu.add(createMenuItem(entry,
                     null,
