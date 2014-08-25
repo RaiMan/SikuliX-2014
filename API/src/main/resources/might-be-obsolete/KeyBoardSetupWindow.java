@@ -1,8 +1,9 @@
+package org.sikuli.script;
+
 /*
  * To change this template, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.sikuli.basics;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
