@@ -4,9 +4,6 @@
 1.1.0-Beta4 is under development
 -----------------
 
----- paused till end of August due to vacation ----
------------------
-
 The Maven GroupID for the project is switched to **com.sikulix** (package names remain org.sikuli....)
 
 The structure is reduced to 3 main packages:
