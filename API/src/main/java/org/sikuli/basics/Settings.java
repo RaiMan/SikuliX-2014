@@ -12,14 +12,8 @@ import java.net.InetAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Properties;
-import java.util.ServiceLoader;
 import java.util.prefs.Preferences;
 
 /**
@@ -57,7 +51,7 @@ public class Settings {
 
   public static boolean runningSetupInValidContext = false;
   public static String runningSetupInContext = null;
-  static String runningSetupWithJar = null;
+  public static String runningSetupWithJar = null;
 
 	public static int breakPoint = 0;
 	public static boolean handlesMacBundles = true;
