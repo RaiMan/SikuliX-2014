@@ -21,8 +21,7 @@ import org.sikuli.basics.CommandArgs;
 import org.sikuli.basics.CommandArgsEnum;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.IDESupport;
-import org.sikuli.basics.IScriptRunner;
+import org.sikuli.idesupport.IIDESupport;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Sikulix;
 
@@ -41,7 +40,6 @@ public class ScriptRunner {
   private static File imagePath;
   private static Boolean runAsTest;
 
-	public static Map<String, IDESupport> ideSupporter = new HashMap<String, IDESupport>();
 	public static Map<String, IScriptRunner> scriptRunner = new HashMap<String, IScriptRunner>();
 	private static List<String> supportedRunner = new ArrayList<String>();
   public static boolean systemRedirected = false;
@@ -70,17 +68,6 @@ public class ScriptRunner {
       EndingTypes.put("txt", CPLAIN);
       for (String k : EndingTypes.keySet()) {
         TypeEndings.put(EndingTypes.get(k), k);
-      }
-      ServiceLoader<IDESupport> sloader = ServiceLoader.load(IDESupport.class);
-      Iterator<IDESupport> supIterator = sloader.iterator();
-      while (supIterator.hasNext()) {
-        IDESupport current = supIterator.next();
-        try {
-          for (String ending : current.getEndings()) {
-            ideSupporter.put(ending, current);
-          }
-        } catch (Exception ex) {
-        }
       }
       ServiceLoader<IScriptRunner> rloader = ServiceLoader.load(IScriptRunner.class);
       Iterator<IScriptRunner> rIterator = rloader.iterator();
@@ -345,11 +332,11 @@ public class ScriptRunner {
   public static IScriptRunner getRunner() {
     return runner;
   }
-  
+
   public static boolean doSomethingSpecial(String action, Object[] args) {
     if (runner == null) {
       return false;
-    }   
+    }
     return runner.doSomethingSpecial(action, args);
   }
 

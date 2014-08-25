@@ -13,7 +13,6 @@ import java.io.*;
 import javax.imageio.*;
 import javax.swing.*;
 import javax.swing.event.*;
-import org.sikuli.basics.LoadingSpinner;
 import org.sikuli.basics.Debug;
 import org.sikuli.script.Finder;
 import org.sikuli.script.Location;

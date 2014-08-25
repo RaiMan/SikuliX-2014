@@ -39,17 +39,17 @@ import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.IScriptRunner;
+import org.sikuli.scriptrunner.IScriptRunner;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
-import org.sikuli.basics.AutoUpdater;
 import org.sikuli.basics.CommandArgsEnum;
-import org.sikuli.basics.IDESupport;
+import org.sikuli.idesupport.IIDESupport;
 import org.sikuli.script.ImagePath;
 import org.sikuli.basics.MultiFrame;
 import org.sikuli.basics.ResourceLoader;
 import org.sikuli.scriptrunner.ScriptRunner;
 import org.sikuli.basics.Sikulix;
+import org.sikuli.idesupport.IDESupport;
 import org.sikuli.script.Key;
 
 public class SikuliIDE extends JFrame {
@@ -133,8 +133,8 @@ public class SikuliIDE extends JFrame {
     return getInstance(null);
   }
 
-  public static IDESupport getIDESupport(String ending) {
-    return ScriptRunner.ideSupporter.get(ending);
+  public static IIDESupport getIDESupport(String ending) {
+    return IDESupport.ideSupporter.get(ending);
   }
 
   public static String _I(String key, Object... args) {
@@ -191,6 +191,7 @@ public class SikuliIDE extends JFrame {
     start = (new Date()).getTime();
 
     ScriptRunner.initScriptingSupport();
+		IDESupport.initIDESupport();
 
     CommandArgs cmdArgs = new CommandArgs("IDE");
     cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
@@ -483,7 +484,7 @@ public class SikuliIDE extends JFrame {
     PreferencesUser.getInstance().setIdeSession(sbuf.toString());
     return true;
   }
-  
+
   private void restoreSession() {
     String session_str = prefs.getIdeSession();
     String[] filenames = null;
@@ -526,7 +527,7 @@ public class SikuliIDE extends JFrame {
       }
     }
   }
-  
+
   public boolean restoreScriptFromSession(String file) {
     (new FileAction()).doNew(null);
     getCurrentCodePane().loadFile(file);
@@ -766,13 +767,13 @@ public class SikuliIDE extends JFrame {
       }
     }
   }
-  
+
   private static JMenu recentMenu = null;
   private static Map<String, String> recentProjects = new HashMap<String, String>();
   private static java.util.List<String> recentProjectsMenu = new ArrayList<String>();
   private static int recentMax = 10;
   private static int recentMaxMax = recentMax + 10;
-  
+
   //<editor-fold defaultstate="collapsed" desc="Init FileMenu">
   private void initFileMenu() throws NoSuchMethodException {
     JMenuItem jmi;
@@ -796,7 +797,7 @@ public class SikuliIDE extends JFrame {
     jmi.setName("OPEN");
 
     recentMenu = new JMenu(_I("menuRecent"));
-    
+
     if (Settings.experimental) {
       _fileMenu.add(recentMenu);
     }
@@ -986,7 +987,7 @@ public class SikuliIDE extends JFrame {
                 fname, eio.getMessage());
       }
     }
- 
+
     private void doRecentAdd(EditorPane codePane ) {
       String fPath = new File(codePane.getSrcBundle()).getAbsolutePath();
       if (Settings.experimental) {
@@ -1016,7 +1017,7 @@ public class SikuliIDE extends JFrame {
         }
       }
     }
-    
+
     public void doRecent(ActionEvent ae) {
       log(3, "doRecent: menuOpenRecent: %s", ae.getActionCommand());
     }
@@ -1287,13 +1288,13 @@ public class SikuliIDE extends JFrame {
       (new SikuliEditorKit.DeindentAction()).actionPerformed(pane);
     }
   }
-  
+
   class OpenRecent extends MenuAction {
-    
+
     public OpenRecent() {
       super();
     }
-    
+
     public void openRecent(ActionEvent ae) {
       log(lvl, "openRecent: %s", ae.getActionCommand());
     }

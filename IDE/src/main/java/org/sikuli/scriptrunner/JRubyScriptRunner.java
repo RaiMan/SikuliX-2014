@@ -8,7 +8,6 @@ package org.sikuli.scriptrunner;
 
 //import java.io.File;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.IScriptRunner;
 
 import java.io.File;
 import java.io.BufferedReader;

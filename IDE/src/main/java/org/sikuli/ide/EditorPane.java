@@ -29,7 +29,7 @@ import javax.swing.text.*;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.IndentationLogic;
+import org.sikuli.idesupport.IIndentationLogic;
 import org.sikuli.script.Location;
 import org.sikuli.basics.Sikulix;
 import org.sikuli.script.Image;
@@ -70,7 +70,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   private EditorCurrentLineHighlighter _highlighter = null;
 	private EditorUndoManager _undo = null;
 	// TODO: move to SikuliDocument ????
-	private IndentationLogic _indentationLogic = null;
+	private IIndentationLogic _indentationLogic = null;
 
   private boolean hasErrorHighlight = false;
 
@@ -209,7 +209,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		return _undo;
 	}
 
-	public IndentationLogic getIndentationLogic() {
+	public IIndentationLogic getIndentationLogic() {
 		return _indentationLogic;
 	}
 

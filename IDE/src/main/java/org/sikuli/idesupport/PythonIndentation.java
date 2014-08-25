@@ -15,7 +15,6 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyledDocument;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.IndentationLogic;
 
 /**
  * Implements the logic for giving hints about the (correct) indentation of new
@@ -57,7 +56,7 @@ import org.sikuli.basics.IndentationLogic;
  * <li>long strings
  * </ul>
  */
-public class PythonIndentation implements IndentationLogic {
+public class PythonIndentation implements IIndentationLogic {
 
    public static final int PARENTHESIS_INDENTATION_TABSTOPS = 2;
    public static final int NESTED_PARENTHESIS_INDENTATION_TABSTOPS = 1;

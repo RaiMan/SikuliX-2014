@@ -4,7 +4,7 @@
  *
  * modified RaiMan 2012
  */
-package org.sikuli.basics;
+package org.sikuli.scriptrunner;
 
 import java.io.File;
 

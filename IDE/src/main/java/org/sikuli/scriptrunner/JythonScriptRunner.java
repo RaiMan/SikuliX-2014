@@ -25,7 +25,6 @@ import org.python.util.PythonInterpreter;
 import org.python.util.jython;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.IScriptRunner;
 import org.sikuli.basics.Settings;
 
 /**

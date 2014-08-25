@@ -4,7 +4,7 @@
  *
  * modified RaiMan 2013
  */
-package org.sikuli.basics;
+package org.sikuli.ide;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -12,6 +12,9 @@ import java.io.*;
 import java.net.*;
 import javax.swing.*;
 import javax.swing.event.*;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
+import org.sikuli.basics.Settings;
 
 
 public class AutoUpdater {

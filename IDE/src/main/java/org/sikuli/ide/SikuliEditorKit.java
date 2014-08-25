@@ -14,7 +14,7 @@ import java.util.Map;
 import javax.swing.*;
 import javax.swing.text.*;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.IndentationLogic;
+import org.sikuli.idesupport.IIndentationLogic;
 
 public class SikuliEditorKit extends StyledEditorKit {
 
@@ -45,7 +45,7 @@ public class SikuliEditorKit extends StyledEditorKit {
   
 	public static class InsertTabAction extends TextAction {
 
-		private IndentationLogic indentationLogic;
+		private IIndentationLogic indentationLogic;
 
 		public InsertTabAction() {
 			super(insertTabAction);
@@ -102,7 +102,7 @@ public class SikuliEditorKit extends StyledEditorKit {
 	public static class DeindentAction extends TextAction {
 //TODO dedent not working consistently on last line (no last empty line)
 
-		private IndentationLogic indentationLogic;
+		private IIndentationLogic indentationLogic;
 		private Segment segLine;
 
 		public DeindentAction() {
@@ -181,7 +181,7 @@ public class SikuliEditorKit extends StyledEditorKit {
 
 	public static class InsertBreakAction extends TextAction {
 
-		private IndentationLogic indentationLogic;
+		private IIndentationLogic indentationLogic;
 
 		public InsertBreakAction() {
 			super(insertBreakAction);
@@ -296,7 +296,7 @@ public class SikuliEditorKit extends StyledEditorKit {
 		}
 
 		private void analyseDocument(Document document, int lineNum,
-						IndentationLogic indentationLogic) throws BadLocationException {
+						IIndentationLogic indentationLogic) throws BadLocationException {
 			Element map = document.getDefaultRootElement();
 			int endPos = map.getElement(lineNum).getEndOffset();
 			indentationLogic.reset();

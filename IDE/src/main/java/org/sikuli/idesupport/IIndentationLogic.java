@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.sikuli.basics;
+package org.sikuli.idesupport;
 
 import javax.swing.text.BadLocationException;
 import javax.swing.text.StyledDocument;
@@ -12,7 +12,7 @@ import javax.swing.text.StyledDocument;
  *
  * @author rhocke
  */
-public interface IndentationLogic {
+public interface IIndentationLogic {
 
 	public void setTabWidth(int tabwidth);
 

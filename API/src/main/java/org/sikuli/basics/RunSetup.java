@@ -439,38 +439,38 @@ public class RunSetup {
 					userTerminated("Do not run setup again");
 				}
 				//<editor-fold defaultstate="collapsed" desc="update - currently deactivated">
-				String ask2 = "Click YES to get info on updates or betas.\n"
-								+ "or click NO to terminate setup now.";
-				if (generallyDoUpdate && popAsk(ask2)) {
-					splash = showSplash("Checking for update or beta versions! (you have " + version + ")",
-									"please wait - may take some seconds ...");
-					AutoUpdater au = new AutoUpdater();
-					avail = au.checkUpdate();
-					closeSplash(splash);
-					if (avail > 0) {
-						if (avail == AutoUpdater.BETA || avail == AutoUpdater.SOMEBETA) {
-							someUpdate = true;
-							uVersion = au.getBetaVersion();
-							if (popAsk("Version " + uVersion + " is available\n" + msgFooter)) {
-								isBeta = true;
-							}
-						}
-						if (avail > AutoUpdater.FINAL) {
-							avail -= AutoUpdater.SOMEBETA;
-						}
-						if (avail > 0 && avail != AutoUpdater.BETA) {
-							someUpdate = true;
-							if (popAsk(au.whatUpdate + "\n" + msgFooter)) {
-								isUpdate = true;
-								uVersion = au.getVersionNumber();
-							}
-						}
-					}
-					if (!someUpdate) {
-						popInfo("No suitable update or beta available");
-						userTerminated("No suitable update or beta available");
-					}
-				}
+//				String ask2 = "Click YES to get info on updates or betas.\n"
+//								+ "or click NO to terminate setup now.";
+//				if (generallyDoUpdate && popAsk(ask2)) {
+//					splash = showSplash("Checking for update or beta versions! (you have " + version + ")",
+//									"please wait - may take some seconds ...");
+//					AutoUpdater au = new AutoUpdater();
+//					avail = au.checkUpdate();
+//					closeSplash(splash);
+//					if (avail > 0) {
+//						if (avail == AutoUpdater.BETA || avail == AutoUpdater.SOMEBETA) {
+//							someUpdate = true;
+//							uVersion = au.getBetaVersion();
+//							if (popAsk("Version " + uVersion + " is available\n" + msgFooter)) {
+//								isBeta = true;
+//							}
+//						}
+//						if (avail > AutoUpdater.FINAL) {
+//							avail -= AutoUpdater.SOMEBETA;
+//						}
+//						if (avail > 0 && avail != AutoUpdater.BETA) {
+//							someUpdate = true;
+//							if (popAsk(au.whatUpdate + "\n" + msgFooter)) {
+//								isUpdate = true;
+//								uVersion = au.getVersionNumber();
+//							}
+//						}
+//					}
+//					if (!someUpdate) {
+//						popInfo("No suitable update or beta available");
+//						userTerminated("No suitable update or beta available");
+//					}
+//				}
 				//</editor-fold>
 				if (!isBeta && !isUpdate) {
 					reset(-1);

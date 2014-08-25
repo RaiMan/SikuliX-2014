@@ -4,7 +4,7 @@
  *
  * modified RaiMan 2013
  */
-package org.sikuli.basics;
+package org.sikuli.ide;
 
 import java.awt.image.*;
 import java.util.Date;

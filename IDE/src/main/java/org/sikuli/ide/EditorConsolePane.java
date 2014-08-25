@@ -29,7 +29,7 @@ import javax.swing.text.*;
 import javax.swing.text.html.*;
 import javax.swing.JMenuItem;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.IScriptRunner;
+import org.sikuli.scriptrunner.IScriptRunner;
 import org.sikuli.basics.Settings;
 import org.sikuli.scriptrunner.ScriptRunner;
 

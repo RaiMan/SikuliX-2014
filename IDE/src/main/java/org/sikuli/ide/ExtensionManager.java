@@ -4,14 +4,17 @@
  *
  * modified RaiMan 2013
  */
-package org.sikuli.basics;
+package org.sikuli.ide;
 
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.basics.FileManager;
+import org.sikuli.basics.Settings;
 import org.sikuli.basics.Settings;
 
 public class ExtensionManager {

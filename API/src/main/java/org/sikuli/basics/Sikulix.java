@@ -47,7 +47,6 @@ public class Sikulix {
   }
   //</editor-fold>
 
-  private static IScriptRunner runner;
   private static final String ScriptSikuliXCL = "org.sikuli.script.Sikulix";
   private static final String ScriptKeyCL = "org.sikuli.script.Key";
   private static Class ScriptCl, KeyCl;
