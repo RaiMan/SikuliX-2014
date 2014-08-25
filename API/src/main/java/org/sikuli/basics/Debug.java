@@ -97,6 +97,7 @@ public class Debug {
 	public static void setLogger(Object logger) {
 		if (!doSetLogger(logger)) return;
 		privateLoggerPrefixAll = true;
+    logx(3, "Debug: setLogger %s", logger);
 	}
 
 	/**
@@ -114,7 +115,7 @@ public class Debug {
 		isJython = className.contains("org.python");
 		isJRuby = className.contains("org.jruby");
 		if ( isJRuby ) {
-			logx(3, "", "Debug: setLogger: given instance's class: %s", className);
+			logx(3, "Debug: setLogger: given instance's class: %s", className);
 			error("setLogger: not yet supported in JRuby script");
 			loggerRedirectSupported=false;
 			success = false;
@@ -131,16 +132,17 @@ public class Debug {
 	 * @return true if the method is available false otherwise	 */
 	public static boolean setLoggerAll(String mAll) {
 		if (!loggerRedirectSupported) {
-			logx(3, "","Debug: setLoggerAll: logger redirect not supported");
+			logx(3, "Debug: setLoggerAll: logger redirect not supported");
 			return false;
 		}
 		if (privateLogger != null) {
+      logx(3, "Debug.setLoggerAll: %s", mAll);
 			boolean success = true;
+			success &= setLoggerUser(mAll);
 			success &= setLoggerInfo(mAll);
 			success &= setLoggerAction(mAll);
 			success &= setLoggerError(mAll);
 			success &= setLoggerDebug(mAll);
-			success &= setLoggerUser(mAll);
 			return success;
 		}
 		return false;
@@ -152,12 +154,12 @@ public class Debug {
 			return false;
 		}
 		if (!loggerRedirectSupported) {
-			logx(3, "", "Debug: setLogger: %s (%s) logger redirect not supported", mName, type);
+			logx(3, "Debug: setLogger: %s (%s) logger redirect not supported", mName, type);
 		}
 		if (isJython) {
 			Object[] args = new Object[]{privateLogger, mName, type.toString()};
-			if (!Sikulix.getRunner().doSomethingSpecial("checkCallback", args)) {
-				logx(3, "", "Debug: setLogger: Jython: checkCallback returned: %s", args[0]);
+			if (!checkCallback(args)) {
+				logx(3, "Debug: setLogger: Jython: checkCallback returned: %s", args[0]);
 				return false;
 			}
 		}
@@ -201,7 +203,28 @@ public class Debug {
 		return false;
 	}
 
-	/**
+  private static boolean checkCallback(Object[] args) {
+    return runnerDoSomethingSpecial("checkCallback", args);
+  }
+  
+  private static boolean runCallback(String pln, String msg) {
+    return runnerDoSomethingSpecial("runLoggerCallback", new Object[]{privateLogger, pln, msg});
+  }
+  
+  private static boolean runnerDoSomethingSpecial(String action, Object[] args) {   
+    try {
+      Class ScriptRunner = Class.forName("org.sikuli.scriptrunner.ScriptRunner");
+      Method doSomethingSpecial = ScriptRunner.getMethod("doSomethingSpecial", 
+              new Class[]{String.class, Object[].class});
+      Object ret = doSomethingSpecial.invoke(ScriptRunner, new Object[]{action, args});
+      return (Boolean) ret;
+    } catch (Exception ex) {
+      log(-100, "Debug.runnerDoSomethingSpecial: Fatal Error 999: could not be run!");
+      System.exit(999);
+    }    
+    return false;
+  }
+  /**
 	 * specify the target method for redirection of Sikuli's user log messages [user]<br>
 	 * must be the name of an instance method of the previously defined logger and<br>
 	 * must accept exactly one string parameter, that contains the info message
@@ -472,7 +495,7 @@ public class Debug {
 					msg = String.format(prefix + message, args);
 				}
 				if (isJython) {
-					success = Sikulix.getRunner().doSomethingSpecial("runCallback", new Object[]{privateLogger, pln, msg});
+					success = runCallback(pln, msg);
 				} else if (isJRuby) {
 					success = false;
 				} else {
@@ -624,8 +647,8 @@ public class Debug {
 	 * @param message text or format string
 	 * @param args for use with format string
 	 */
-	public static void logx(int level, String prefix, String message, Object... args) {
-    if (level == -1) {
+	public static void logx(int level, String message, Object... args) {
+    if (level == -1 || level == -100) {
       log(level, errorPrefix, message, args);
     } else if (level == -2) {
       log(level, actionPrefix, message, args);
@@ -664,7 +687,7 @@ public class Debug {
         System.out.print(prefix + sout);
         System.out.println();
       }
-			if (level == -1 || level > 2) {
+			if (level == -1 || level == -100 || level > 2) {
 				out(prefix + sout);
 			}
     }
