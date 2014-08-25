@@ -18,7 +18,6 @@ import javax.swing.ImageIcon;
 
 
 public class Server {
-  public static int logLevel = 0;
   private static final String key = "KEY";
   private static final String kType = "TYPE";
   private static final String mouse = "MOUSE";
@@ -44,14 +43,14 @@ public class Server {
   private static boolean isHandling = false;
   private static boolean shouldStop = false;
   
-  public static void log(int lvl, String message, Object... args) {
+  private static int logLevel = 0;
+  private static void log(int lvl, String message, Object... args) {
     if (lvl < 0 || lvl >= logLevel) {
       System.out.println((lvl < 0 ? "[error] " : "[info] ") + 
               String.format("ScreenRemoteServer: " + message, args));
     }
   }
-
-  public static void log(String message, Object... args) {
+  private static void log(String message, Object... args) {
     log(0, message, args);
   }
   

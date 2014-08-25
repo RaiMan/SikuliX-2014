@@ -25,11 +25,11 @@ import org.sikuli.natives.Vision;
  */
 public class Observer {
 
-  private static String me = "Observer";
+  private static String me = "Observer: ";
   private static int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
-    Debug.logx(level, "", me + ": " + message, args);
+    Debug.logx(level, me + message, args);
   }
 
   protected enum State {

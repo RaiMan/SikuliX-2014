@@ -25,10 +25,10 @@ import org.sikuli.basics.Settings;
  */
 public class Mouse {
 
-  private static String me = "Mouse";
+  private static String me = "Mouse: ";
   private static final int lvl = 3;
   private static void log(int level, String message, Object... args) {
-    Debug.logx(level, "", me + ": " + message, args);
+    Debug.logx(level, me + message, args);
   }
 
   private static Mouse mouse = null;

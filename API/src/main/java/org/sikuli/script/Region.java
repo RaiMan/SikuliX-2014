@@ -24,11 +24,11 @@ import edu.unh.iol.dlc.VNCScreen;
  */
 public class Region {
 
-  private static String me = "Region";
+  private static String me = "Region: ";
   private static int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
-    Debug.logx(level, "", me + ": " + message, args);
+    Debug.logx(level, me + message, args);
   }
 
   /**

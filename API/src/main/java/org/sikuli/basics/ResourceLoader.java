@@ -35,11 +35,11 @@ public class ResourceLoader {
   private int lvl = 3;
 
   private void log(int level, String message, Object... args) {
-    Debug.logx(level, "", me + ": " + mem + ": " + message, args);
+    Debug.logx(level, me + ": " + mem + ": " + message, args);
   }
 
   private void log0(int level, String message, Object... args) {
-    Debug.logx(level, "", me + ": " + message, args);
+    Debug.logx(level, me + ": " + message, args);
   }
   //</editor-fold>
 

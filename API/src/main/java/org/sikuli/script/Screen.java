@@ -28,11 +28,10 @@ import org.sikuli.basics.FileManager;
  */
 public class Screen extends Region implements EventObserver, IScreen {
 
-  private static String me = "Screen";
+  private static String me = "Screen: ";
   private static int lvl = 3;
-
   private static void log(int level, String message, Object... args) {
-    Debug.logx(level, "", me + ": " + message, args);
+    Debug.logx(level, me + message, args);
   }
 
   protected static GraphicsEnvironment genv = null;

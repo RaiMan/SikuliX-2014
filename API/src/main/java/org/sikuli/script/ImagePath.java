@@ -32,11 +32,11 @@ import org.sikuli.basics.Settings;
  */
 public class ImagePath {
 
-  private static final String me = "ImagePath";
+  private static final String me = "ImagePath: ";
   private static final int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
-    Debug.logx(level, "", me + ": " + message, args);
+    Debug.logx(level, me + message, args);
   }
 
   /**

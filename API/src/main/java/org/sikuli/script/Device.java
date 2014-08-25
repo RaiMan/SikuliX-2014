@@ -18,11 +18,10 @@ import org.sikuli.basics.Debug;
  */
 public class Device {
 
-  private static String me = "Device";
+  private static String me = "Device: ";
   private static final int lvl = 3;
-
   private static void log(int level, String message, Object... args) {
-    Debug.logx(level, "", me + ": " + message, args);
+    Debug.logx(level, me + message, args);
   }
 
   private Object device = null;

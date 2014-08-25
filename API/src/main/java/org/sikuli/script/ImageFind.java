@@ -29,11 +29,11 @@ import org.sikuli.basics.Settings;
  */
 public class ImageFind implements Iterator<Match>{
 
-  private static String me = "ImageFind";
+  private static String me = "ImageFind: ";
   private static int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
-    Debug.logx(level, "", me + ": " + message, args);
+    Debug.logx(level, me + message, args);
   }
 
   private ImageFinder owner = null;

@@ -43,7 +43,7 @@ public class RobotRemote implements IRobot {
   private int numberScreens = 0;
 
   private static void log(int level, String message, Object... args) {
-    Debug.logx(level, "", "RobotRemote: " + message, args);
+    Debug.logx(level, "RobotRemote: " + message, args);
   }
 
   private static void log(String message, Object... args) {

@@ -53,11 +53,11 @@ public class FileManager {
   private static int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
-    Debug.logx(level, "", me + ": " + mem + ": " + message, args);
+    Debug.logx(level, me + ": " + mem + ": " + message, args);
   }
 
   private static void log0(int level, String message, Object... args) {
-    Debug.logx(level, "", me + ": " + message, args);
+    Debug.logx(level, me + ": " + message, args);
   }
   //</editor-fold>
 
@@ -449,35 +449,6 @@ public class FileManager {
     zis.close();
   }
 
-	public static boolean transferScript(String src, String dest) {
-		log0(lvl, "transfer: %s\nto: %s", src, dest);
-		FileFilter filter = new FileFilter() {
-			@Override
-			public boolean accept(File entry) {
-				if (entry.getName().endsWith(".html")) {
-					return false;
-				} else if (entry.getName().endsWith(".$py.class")) {
-					return false;
-				} else {
-					for (String ending : Settings.EndingTypes.keySet()) {
-						if (entry.getName().endsWith("." + ending)) {
-							return false;
-						}
-					}
-				}
-				return true;
-			}
-		};
-		try {
-			xcopy(src, dest, filter);
-		} catch (IOException ex) {
-			log0(-1, "transfer: IOError: %s", ex.getMessage(), src, dest);
-			return false;
-		}
-		log0(lvl, "transfer: completed");
-		return true;
-	}
-
   public static void xcopy(String src, String dest) throws IOException {
 		doXcopy(new File(src), new File(dest), null);
 	}
@@ -634,99 +605,6 @@ public class FileManager {
 	public static String normalize(String filename) {
 		return slashify(filename, false);
 	}
-
-  /**
-   * Retrieves the actual script file<br> - from a folder script.sikuli<br>
-   * - from a folder script (no extension) (script.sikuli is used, if exists)<br> - from a file
-   * script.skl or script.zip (after unzipping to temp)<br> - from a jar script.jar (after
-   * preparing as extension)<br>
-   *
-   * @param scriptName one of the above.
-	 * @param runner a valid runner if any
-	 * @param args special use
-   * @return The file containing the actual script.
-   */
-  public static File getScriptFile(File scriptName, IScriptRunner runner, String[] args) {
-    if (scriptName == null) {
-      return null;
-    }
-    String script;
-    String scriptType;
-    File scriptFile = null;
-    if (scriptName.getPath().contains("..")) {
-      //TODO accept double-dot pathnames
-      log0(-1, "Sorry, scriptnames with dot or double-dot path elements are not supported: %s", scriptName.getPath());
-      if (CommandArgs.isIDE()) return null;
-      Sikulix.terminate(0);
-    }
-    int pos = scriptName.getName().lastIndexOf(".");
-    if (pos == -1) {
-      script = scriptName.getName();
-      scriptType = "sikuli";
-      scriptName = new File(scriptName.getAbsolutePath() + ".sikuli");
-    } else {
-      script = scriptName.getName().substring(0, pos);
-      scriptType = scriptName.getName().substring(pos + 1);
-    }
-    if (!scriptName.exists()) {
-      log0(-1, "Not a valid Sikuli script: " + scriptName.getAbsolutePath());
-      if (CommandArgs.isIDE()) return null;
-      Sikulix.terminate(0);
-    }
-    if ("skl".equals(scriptType) || "zip".equals(scriptType)) {
-      //TODO unzip to temp and run from there
-      return null; // until ready
-    }
-    if ("sikuli".equals(scriptType)) {
-      if (runner == null) {
-        // check for script.xxx inside folder
-        File[] content = scriptName.listFiles(new FileFilterScript(script + "."));
-        if (content == null || content.length == 0) {
-          log0(-1, "Script %s \n has no script file %s.xxx", scriptName, script);
-          if (args == null) {
-            return null;
-          } else {
-            Sikulix.terminate(0);
-          }
-        }
-//TODO should be possible,to have more than one script type in one .sikuli
-        String[] supported = new String[] {"py", "rb"};
-        String runType = "py";
-        for (File f : content) {
-          for (String suffix : supported) {
-            if (!f.getName().endsWith("." + suffix)) continue;
-            scriptFile = f;
-            runType = suffix;
-            break;
-          }
-          if (scriptFile != null) {
-            break;
-          }
-        }
-        runner = Sikulix.getScriptRunner(null, runType, args);
-        if (runner == null) {
-          scriptFile = null;
-        }
-      }
-      if (scriptFile == null && runner != null) {
-        // try with fileending
-        scriptFile = (new File(scriptName, script + "." + runner.getFileEndings()[0])).getAbsoluteFile();
-        if (!scriptFile.exists() || scriptFile.isDirectory()) {
-          // try without fileending
-          scriptFile = new File(scriptName, script);
-          if (!scriptFile.exists() || scriptFile.isDirectory()) {
-            log0(-1, "No runnable script found in %s", scriptFile.getAbsolutePath());
-            return null;
-          }
-        }
-      }
-    }
-    if ("jar".equals(scriptType)) {
-      //TODO try to load and run as extension
-      return null; // until ready
-    }
-    return scriptFile;
-  }
 
   /**
    * Returns the directory that contains the images used by the ScriptRunner.
@@ -942,17 +820,6 @@ public class FileManager {
 	public static boolean isBundle(String dir) {
 		return dir.endsWith(".sikuli");
 	}
-
-  private static class FileFilterScript implements FilenameFilter {
-    private String _check;
-    public FileFilterScript(String check) {
-      _check = check;
-    }
-    @Override
-    public boolean accept(File dir, String fileName) {
-      return fileName.startsWith(_check);
-    }
-  }
 
 //  public static IResourceLoader getNativeLoader(String name, String[] args) {
 //    if (nativeLoader != null) {

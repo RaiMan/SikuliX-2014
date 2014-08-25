@@ -43,11 +43,10 @@ import org.sikuli.script.Sikulix;
  */
 public class VNCScreen extends Region implements EventObserver, IScreen {
 	
-	private static String me = "VNCScreen";
+	private static String me = "VNCScreen: ";
 	private static int lvl = 3;
-	
 	private static void log(int level, String message, Object... args) {
-		Debug.logx(level, "", me + ": " + message, args);
+		Debug.logx(level, me + message, args);
 	}
 	
 	protected static int _primaryScreen = -1;

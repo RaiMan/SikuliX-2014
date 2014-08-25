@@ -20,7 +20,7 @@ import org.sikuli.basics.FileManager;
  * that allows to redirect the actions to a remote screen/keyboard/mouse
  * in conjunction with the package SikuliX-Remote running on the remote system
  */
-public class ScreenRemote extends Screen implements IScreen{
+public class ScreenRemote extends Screen implements IScreen {
 
   private ObjectInputStream in = null;
   private OutputStreamWriter out;
@@ -34,7 +34,7 @@ public class ScreenRemote extends Screen implements IScreen{
   private int curID;
 
   private static void log(int level, String message, Object... args) {
-    Debug.logx(level, "", "ScreenRemote: " + message, args);
+    Debug.logx(level, "ScreenRemote: " + message, args);
   }
 
   private static void log(String message, Object... args) {

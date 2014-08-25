@@ -102,13 +102,11 @@ public class RunSetup {
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
-		Debug.logx(level, level < 0 ? "error" : "debug",
-						me + ": " + mem + ": " + message, args);
+		Debug.logx(level, me + ": " + mem + ": " + message, args);
 	}
 
 	private static void log0(int level, String message, Object... args) {
-		Debug.logx(level, level < 0 ? "error" : "debug",
-						me + ": " + message, args);
+		Debug.logx(level, me + ": " + message, args);
 	}
 
 	private static void log1(int level, String message, Object... args) {
@@ -119,8 +117,7 @@ public class RunSetup {
 		} else {
 			sout = "[" + prefix + "] " + message;
 		}
-		Debug.logx(level, level < 0 ? "error" : "debug",
-						me + ": " + message, args);
+		Debug.logx(level, me + ": " + message, args);
     if (logToFile) {
       System.out.println(sout);
     }
@@ -1130,7 +1127,7 @@ public class RunSetup {
 				try {
 					String testargs[] = new String[]{"-testSetup", "jython", testMethod};
 					closeSplash(splash);
-					SikuliScript.runscript(testargs);
+//					SikuliScript.runscript(testargs);
 					if (null == testargs[0]) {
 						throw new Exception("testSetup ran with problems");
 					}
@@ -1154,7 +1151,7 @@ public class RunSetup {
 				try {
 					String testargs[] = new String[]{"-testSetup", "jruby", testMethod};
 					closeSplash(splash);
-					SikuliScript.runscript(testargs);
+//					SikuliScript.runscript(testargs);
 					if (null == testargs[0]) {
 						throw new Exception("testSetup ran with problems");
 					}
