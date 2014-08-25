@@ -209,7 +209,7 @@ public class Sikulix {
     callScriptEndMethod("cleanUp", n);
   }
 
-  protected static boolean addToClasspath(String jar) {
+  public static boolean addToClasspath(String jar) {
     log0(lvl, "add to classpath: " + jar);
 		File jarFile = new File(jar);
 		if (!jarFile.exists()) {

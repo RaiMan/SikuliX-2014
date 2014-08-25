@@ -4,7 +4,7 @@
  *
  * RaiMan 2013
  */
-package org.sikuli.basics;
+package org.sikuli.setup;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -28,6 +28,13 @@ import java.util.zip.ZipEntry;
 import javax.swing.JFrame;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
+import org.sikuli.basics.MultiFrame;
+import org.sikuli.basics.PreferencesUser;
+import org.sikuli.basics.ResourceLoader;
+import org.sikuli.basics.Settings;
+import org.sikuli.basics.Sikulix;
 
 public class RunSetup {
 
