@@ -75,7 +75,6 @@ Debug.log(4, "Jython: sikuli: Sikuli: init SikuliImporter")
 import SikuliImporter
 
 Debug.log(4, "Jython: sikuli: Sikuli: import Sikulix")
-from org.sikuli.basics import SikuliScript
 from org.sikuli.basics import Sikulix
 
 ##
@@ -353,11 +352,6 @@ def exit(code=0):
 # @return Returns the output from the executed command.
 def run(cmd):
     return Sikulix.run(cmd)
-
-##
-# display some help in interactive mode
-def shelp():
-    SikuliScript.shelp()
 
 ##
 # helper functions, that can be used when sorting lists of regions

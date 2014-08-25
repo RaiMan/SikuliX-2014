@@ -41,10 +41,8 @@ public class JRubyScriptRunner implements IScriptRunner {
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static final String me = "JRubyScriptRunner: ";
 	private int lvl = 3;
-
 	private void log(int level, String message, Object... args) {
-		Debug.logx(level, level < 0 ? "error" : "debug",
-						me + message, args);
+		Debug.logx(level,	me + message, args);
 	}
 	//</editor-fold>
 
@@ -145,7 +143,6 @@ public class JRubyScriptRunner implements IScriptRunner {
                 + "print \"Hello, this is your interactive Sikuli (rules for interactive Ruby apply)\\n"
                 + "use the UP/DOWN arrow keys to walk through the input history\\n"
                 + "help()<enter> will output some basic Ruby information\\n"
-                + "shelp()<enter> will output some basic Sikuli information\\n"
                 + "... use ctrl-d to end the session\"\n"
                 + "IRB.start(__FILE__)\n"
             };
@@ -191,7 +188,7 @@ public class JRubyScriptRunner implements IScriptRunner {
     } catch (ClassNotFoundException ex) {
       return null;
     }
-		return Settings.RRUBY;
+		return ScriptRunner.RRUBY;
 	}
 
 	@Override
@@ -519,7 +516,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 		try {
 			PipedOutputStream pout = new PipedOutputStream(pin[0]);
 			PrintStream ps = new PrintStream(pout, true);
-      if (!Settings.systemRedirected) {
+      if (!ScriptRunner.systemRedirected) {
         System.setOut(ps);
       }
 			interpreter.setOutput(ps);
@@ -530,7 +527,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 		try {
 			PipedOutputStream pout = new PipedOutputStream(pin[1]);
 			PrintStream ps = new PrintStream(pout, true);
-      if (!Settings.systemRedirected) {
+      if (!ScriptRunner.systemRedirected) {
         System.setErr(ps);
       }
 			interpreter.setError(ps);

@@ -16,9 +16,7 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
-import java.util.ServiceLoader;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
@@ -39,16 +37,13 @@ public class Sikulix {
   private static String me = "SikuliX";
   private static String mem = "...";
   private static int lvl = 3;
-  private static String msg;
 
   private static void log(int level, String message, Object... args) {
-    Debug.logx(level, level < 0 ? "error" : "debug",
-            me + ": " + mem + ": " + message, args);
+    Debug.logx(level, me + ": " + mem + ": " + message, args);
   }
 
   private static void log0(int level, String message, Object... args) {
-    Debug.logx(level, level < 0 ? "error" : "debug",
-            me + ": " + message, args);
+    Debug.logx(level, me + ": " + message, args);
   }
   //</editor-fold>
 
@@ -213,56 +208,6 @@ public class Sikulix {
 
   public static void cleanUp(int n) {
     callScriptEndMethod("cleanUp", n);
-  }
-
-  /**
-   * Finds a ScriptRunner implementation to execute the script.
-   *
-   * @param name Name of the ScriptRunner, might be null (then type is used)
-   * @param ending fileending of script to run
-   * @return first ScriptRunner with matching name or file ending, null if none found
-   */
-  public static IScriptRunner getScriptRunner(String name, String ending, String[] args) {
-    runner = null;
-    ServiceLoader<IScriptRunner> loader = ServiceLoader.load(IScriptRunner.class);
-    Iterator<IScriptRunner> scriptRunnerIterator = loader.iterator();
-    while (scriptRunnerIterator.hasNext()) {
-      IScriptRunner currentRunner = scriptRunnerIterator.next();
-      if (currentRunner.getName() == null || currentRunner.getName().startsWith("Not")) {
-        continue;
-      }
-      if ((name != null && currentRunner.getName().toLowerCase().equals(name.toLowerCase()))
-              || (ending != null && currentRunner.hasFileEnding(ending) != null)) {
-        runner = currentRunner;
-        runner.init(args);
-        break;
-      }
-    }
-    if (name != null && runner == null) {
-      if (args != null && args.length == 1 && "convertSrcToHtml".equals(args[0])) {
-        return null;
-      }
-      if (name != null) {
-        Debug.error("Fatal error 121: Could not load script runner with name: %s", name);
-        Sikulix.terminate(121);
-      } else if (ending != null) {
-        Debug.error("Fatal error 120: Could not load script runner for ending: %s", ending);
-        Sikulix.terminate(120);
-      } else {
-        Debug.error("Fatal error 122: While loading script runner with name=%s and ending= %s", name, ending);
-        Sikulix.terminate(122);
-      }
-    }
-    return runner;
-  }
-
-  public static IScriptRunner setRunner(IScriptRunner _runner) {
-    runner = _runner;
-    return runner;
-  }
-
-  public static IScriptRunner getRunner() {
-    return runner;
   }
 
   protected static boolean addToClasspath(String jar) {

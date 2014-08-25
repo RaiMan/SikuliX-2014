@@ -35,12 +35,9 @@ public class JythonScriptRunner implements IScriptRunner {
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static final String me = "JythonScriptRunner: ";
-//  private String mem = "...";
 	private int lvl = 3;
-
 	private void log(int level, String message, Object... args) {
-		Debug.logx(level, level < 0 ? "error" : "debug",
-						me + message, args);
+		Debug.logx(level,	me + message, args);
 	}
 	//</editor-fold>
 
@@ -401,7 +398,6 @@ public class JythonScriptRunner implements IScriptRunner {
 			+ "print \"Hello, this is your interactive Sikuli (rules for interactive Python apply)\\n"
 			+ "use the UP/DOWN arrow keys to walk through the input history\\n"
 			+ "help()<enter> will output some basic Python information\\n"
-			+ "shelp()<enter> will output some basic Sikuli information\\n"
 			+ "... use ctrl-d to end the session\""};
 		if (argv != null && argv.length > 0) {
 			jy_args = new String[argv.length + iargs.length];
@@ -448,7 +444,7 @@ public class JythonScriptRunner implements IScriptRunner {
     } catch (ClassNotFoundException ex) {
       return null;
     }
-		return Settings.RPYTHON;
+		return ScriptRunner.RPYTHON;
 	}
 
 	/**
@@ -532,6 +528,8 @@ public class JythonScriptRunner implements IScriptRunner {
 			return true;
 		} else if ("checkCallback".equals(action)) {
 			return checkCallback(args);
+		} else if ("runLoggerCallback".equals(action)) {
+			return runLoggerCallback(args);
 		} else if ("runCallback".equals(action)) {
 			return runCallback(args);
 		} else {
@@ -542,28 +540,44 @@ public class JythonScriptRunner implements IScriptRunner {
 	private boolean checkCallback(Object[] args) {
 		PyInstance inst = (PyInstance) args[0];
 		String mName = (String) args[1];
-		String type = (String) args[2];
-		log(lvl, "checkCallback: inst: %s, mName: %s, type: %s", inst, mName, type);
 		PyObject method = inst.__getattr__(mName);
 		if (method == null || !method.getClass().getName().contains("PyMethod")) {
-			log(lvl, "checkCallback: not found: %s", mName);
+  		log(-100, "checkCallback: Object: %s, Method not found: %s", inst, mName);
 			return false;
 		}
 		return true;
 	}
 
-	private boolean runCallback(Object[] args) {
+	private boolean runLoggerCallback(Object[] args) {
 		PyInstance inst = (PyInstance) args[0];
 		String mName = (String) args[1];
 		String msg = (String) args[2];
-		log(lvl, "runCallback: inst: %s, mName: %s, msg: %s", inst, mName, msg);
 		PyObject method = inst.__getattr__(mName);
 		if (method == null || !method.getClass().getName().contains("PyMethod")) {
-			log(lvl, "runCallback: not found: %s", mName);
+  		log(-100, "runLoggerCallback: Object: %s, Method not found: %s", inst, mName);
 			return false;
 		}
 		try {
 			PyString pmsg = new PyString(msg);
+			inst.invoke(mName, pmsg);
+		} catch (Exception ex) {
+			log(-100, "runLoggerCallback: invoke: %s", ex.getMessage());
+			return false;
+		}
+		return true;
+	}
+
+//TODO implement generalized callback
+  private boolean runCallback(Object[] args) {
+		PyInstance inst = (PyInstance) args[0];
+		String mName = (String) args[1];
+		PyObject method = inst.__getattr__(mName);
+		if (method == null || !method.getClass().getName().contains("PyMethod")) {
+  		log(-1, "runCallback: Object: %s, Method not found: %s", inst, mName);
+			return false;
+		}
+		try {
+			PyString pmsg = new PyString("not yet supported");
 			inst.invoke(mName, pmsg);
 		} catch (Exception ex) {
 			log(-1, "runCallback: invoke: %s", ex.getMessage());
@@ -663,7 +677,7 @@ public class JythonScriptRunner implements IScriptRunner {
 		try {
 			PipedOutputStream pout = new PipedOutputStream(pin[0]);
 			PrintStream ps = new PrintStream(pout, true);
-      if (!Settings.systemRedirected) {
+      if (!ScriptRunner.systemRedirected) {
   			System.setOut(ps);
       }
 			py.setOut(ps);
@@ -674,7 +688,7 @@ public class JythonScriptRunner implements IScriptRunner {
 		try {
 			PipedOutputStream eout = new PipedOutputStream(pin[1]);
 			PrintStream eps = new PrintStream(eout, true);
-      if (!Settings.systemRedirected) {
+      if (!ScriptRunner.systemRedirected) {
         System.setErr(eps);
       }
 			py.setErr(eps);
