@@ -12,7 +12,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
-import org.sikuli.basics.CommandArgs;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.HotkeyManager;
@@ -150,9 +149,6 @@ public class Sikulix {
     Screen.getPrimaryScreen().getRobot().keyUp();
     //TODO what about remote screen sessions????
     HotkeyManager.reset();
-    if (CommandArgs.isIDE()) {
-      //TODO reset selected options to defaults
-    }
   }
 
   /**

@@ -27,7 +27,6 @@ import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXSearchField;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
-import org.sikuli.basics.CommandArgs;
 import org.sikuli.script.EventObserver;
 import org.sikuli.script.EventSubject;
 import org.sikuli.basics.HotkeyEvent;
@@ -42,7 +41,6 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.scriptrunner.IScriptRunner;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
-import org.sikuli.basics.CommandArgsEnum;
 import org.sikuli.idesupport.IIDESupport;
 import org.sikuli.script.ImagePath;
 import org.sikuli.basics.MultiFrame;
@@ -100,7 +98,9 @@ public class SikuliIDE extends JFrame {
   //private UnitTestRunner _testRunner;
   private static CommandLine cmdLine;
   private static String cmdValue;
-  private static String[] loadScript = null;
+  private static String[] loadScripts = null;
+  private static String[] runScripts = null;
+  private static String[] testScripts = null;
   private static SikuliIDE sikulixIDE = null;
   private boolean _inited = false;
   private static boolean runMe = false;
@@ -236,10 +236,10 @@ public class SikuliIDE extends JFrame {
     }
 
     if (cmdLine.hasOption(CommandArgsEnum.LOAD.shortname())) {
-      loadScript = cmdLine.getOptionValues(CommandArgsEnum.LOAD.longname());
-      log(lvl, "requested to load: " + loadScript);
-      if (loadScript[0].endsWith(".skl")) {
-        log(lvl, "Switching to SikuliScript to run " + loadScript);
+      loadScripts = cmdLine.getOptionValues(CommandArgsEnum.LOAD.longname());
+      log(lvl, "requested to load: " + loadScripts);
+      if (loadScripts[0].endsWith(".skl")) {
+        log(lvl, "Switching to ScriptRunner to run " + loadScripts[0]);
         ScriptRunner.runscript(args);
       }
     }
@@ -247,7 +247,7 @@ public class SikuliIDE extends JFrame {
     if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname())
             || cmdLine.hasOption(CommandArgsEnum.TEST.shortname())
             || cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
-      log(lvl, "Switching to SikuliScript with option -r, -t or -i");
+      log(lvl, "Switching to ScriptRunner with option -r, -t or -i");
       ScriptRunner.runscript(args);
     }
 
@@ -488,7 +488,7 @@ public class SikuliIDE extends JFrame {
   private void restoreSession() {
     String session_str = prefs.getIdeSession();
     String[] filenames = null;
-    if (session_str == null && loadScript == null) {
+    if (session_str == null && loadScripts == null) {
       return;
     }
     filenames = session_str.split(";");
@@ -504,24 +504,24 @@ public class SikuliIDE extends JFrame {
         }
       }
     }
-    if (loadScript == null) {
+    if (loadScripts == null) {
       return;
     }
     int ao;
-    for (int i = 0; i < loadScript.length; i++) {
-      if (loadScript[i].isEmpty()) {
+    for (int i = 0; i < loadScripts.length; i++) {
+      if (loadScripts[i].isEmpty()) {
         continue;
       }
-      File f = new File(loadScript[i]);
+      File f = new File(loadScripts[i]);
       if (f.exists()) {
-        if (restoreScriptFromSession(loadScript[i])) {
+        if (restoreScriptFromSession(loadScripts[i])) {
           ao = isAlreadyOpen(getCurrentCodePane().getCurrentSrcDir());
           if (ao < 0) {
             restoredScripts += 1;
-            Debug.log(3, "preload script at %d: " + loadScript[i], restoredScripts + 1);
+            Debug.log(3, "preload script at %d: " + loadScripts[i], restoredScripts + 1);
           } else {
             tabPane.remove(ao);
-            Debug.log(3, "preload session script at %d: " + loadScript[i], restoredScripts + 1);
+            Debug.log(3, "preload session script at %d: " + loadScripts[i], restoredScripts + 1);
           }
         }
       }

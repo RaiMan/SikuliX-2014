@@ -11,7 +11,6 @@ import javax.swing.*;
 
 import com.explodingpixels.macwidgets.plaf.EmphasizedLabelUI;
 import java.util.Date;
-import org.sikuli.basics.RunSetup;
 import org.sikuli.basics.Settings;
 
 class SikuliIDEStatusBar extends JPanel {
