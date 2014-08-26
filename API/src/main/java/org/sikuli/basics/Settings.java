@@ -15,6 +15,7 @@ import java.net.URLClassLoader;
 import java.util.Date;
 import java.util.Properties;
 import java.util.prefs.Preferences;
+import org.sikuli.script.Sikulix;
 
 /**
  * This is the container for all

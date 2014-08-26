@@ -9,10 +9,9 @@ import javax.swing.JMenu;
 import javax.swing.JMenuItem;
 import javax.swing.JPopupMenu;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.Settings;
-import org.sikuli.basics.Sikulix;
 import org.sikuli.script.Image;
 import org.sikuli.script.ImagePath;
+import org.sikuli.script.Sikulix;
 import org.sikuli.scriptrunner.ScriptRunner;
 
 public class SikuliIDEPopUpMenu extends JPopupMenu {
@@ -32,7 +31,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
   private EditorPane refEditorPane = null;
   public static final String POP_LINE = "POP_LINE";
   private EditorLineNumberView refLineNumberView = null;
-  
+
   private static String[] selOptionsType = null;
 
   private MouseEvent mouseTrigger;
@@ -195,7 +194,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
     static final String RUN = "doRun";
     static final String RUN_SLOW = "doRunSlow";
     static final String RESET = "doReset";
-    
+
     public PopTabAction() {
       super();
     }

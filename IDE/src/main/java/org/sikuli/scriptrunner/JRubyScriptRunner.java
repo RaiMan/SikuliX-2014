@@ -27,13 +27,13 @@ import java.util.List;
 
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
-import org.sikuli.basics.Sikulix;
 
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.javasupport.JavaEmbedUtils.EvalUnit;
 import org.jruby.CompatVersion;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.RubyInstanceConfig.CompileMode;
+import org.sikuli.script.Sikulix;
 
 public class JRubyScriptRunner implements IScriptRunner {
 

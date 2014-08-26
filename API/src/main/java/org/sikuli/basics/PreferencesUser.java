@@ -17,6 +17,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.prefs.Preferences;
+import org.sikuli.script.Sikulix;
 
 public class PreferencesUser {
 
@@ -52,11 +53,11 @@ public class PreferencesUser {
 	private PreferencesUser() {
 		Debug.log(2, "init user preferences");
 	}
-  
+
   public boolean exportPrefs(String path) {
     try {
       FileOutputStream pout = new FileOutputStream(new File(path));              ;
-      pref.exportSubtree(pout); 
+      pref.exportSubtree(pout);
       pout.close();
     } catch (Exception ex) {
       Debug.error("UserPrefs: export: did not work\n" + ex.getMessage());
@@ -67,7 +68,7 @@ public class PreferencesUser {
 
   public boolean importPrefs(String path) {
     try {
-      Preferences.importPreferences(new FileInputStream(new File(path))); 
+      Preferences.importPreferences(new FileInputStream(new File(path)));
     } catch (Exception ex) {
       Debug.error("UserPrefs: import: did not work\n" + ex.getMessage());
       return false;

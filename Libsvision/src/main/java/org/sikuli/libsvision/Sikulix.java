@@ -4,7 +4,7 @@
  *
  * modified RaiMan
  */
-package org.sikuli.libs;
+package org.sikuli.libsvision;
 
 /**
  * This package contains the sources and the prebuilt native (C++) modules,
@@ -21,7 +21,7 @@ public class Sikulix {
 	 * @param args whatever
 	 */
 	public static void main(String[] args) {
-		System.out.println("sikulixlibs - org.sikuli.libs.Sikuli: nothing to do here. more info in javadocs.");
+		System.out.println("sikulixlibsvision - org.sikuli.libsvision.Sikulix: nothing to do here. more info in javadocs.");
 	}
 
 }

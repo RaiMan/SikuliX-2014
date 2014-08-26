@@ -42,22 +42,22 @@ import org.sikuli.script.Sikulix;
  * control the VNC connection.
  */
 public class VNCScreen extends Region implements EventObserver, IScreen {
-	
+
 	private static String me = "VNCScreen: ";
 	private static int lvl = 3;
 	private static void log(int level, String message, Object... args) {
 		Debug.logx(level, me + message, args);
 	}
-	
+
 	protected static int _primaryScreen = -1;
-	
+
 	protected static Framebuffer[] _gdev;
 	protected static Rectangle[] gdevsBounds;
 	protected static ConnectionController _genv = null;
 	protected static VNCScreen[] screens;
 	private static VNCRobot[] mouseRobot;
 	private static int waitForScreenshot = 300;
-	
+
 	protected Framebuffer _curGD;
 	protected int _curID = 0;
 	protected int oldID = 0;
@@ -66,58 +66,58 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 	protected OverlayCapturePrompt prompt;
 	private ScreenImage lastScreenImage = null;
 	private String promptMsg = "Select a region on the screen";
-	
-//Screen Methods**************************************************************/	
-	
+
+//Screen Methods**************************************************************/
+
 	static{
 		FileManager.loadLibrary("VisionProxy");
 	    initScreens(false);
 	}
-	
+
 	private static void initScreens(boolean reset) {
 
 		log(lvl+1, "initScreens: entry");
 		if (_genv != null && !reset) {
 			return;
 		}
-		    
+
 		_genv = ConnectionController.getActiveController(0);
 		if(_genv == null){
 			Debug.error("Did not find any active ConnectionControllers.  " +
 					"Cannot use VNCScreen without a ConnectionController instance.");
-			Sikulix.endFatal(999);
+			Sikulix.terminate(999);
 		}
 		_gdev = (Framebuffer[])_genv.getScreenDevices();
-		
+
 		gdevsBounds = new Rectangle[_gdev.length];
 		screens = new VNCScreen[_gdev.length];
-		
+
 		if (_gdev.length == 0) {
 			Debug.error("VNCScreen: initScreens: GraphicsEnvironment has no screens");
-			Sikulix.endFatal(999);
+			Sikulix.terminate(999);
 		}
 
 		_primaryScreen = -1;
 
 		for (int i = 0; i < getNumberScreens(); i++) {
 			gdevsBounds[i] = _gdev[i].getDefaultConfiguration().getBounds();
-			
+
 			if (gdevsBounds[i].contains(new Point(0, 0))) {
 				if (_primaryScreen < 0) {
 					_primaryScreen = i;
 					log(lvl, "initScreens: ScreenDevice %d contains (0,0) --- will be used as primary", i);
-				} 
+				}
 				else {
 					log(lvl, "initScreens: ScreenDevice %d too contains (0,0)!", i);
 				}
 			}
 		}
-		
+
 		if (_primaryScreen < 0) {
 			Debug.log("Screen: initScreens: no ScreenDevice contains (0,0) --- using first ScreenDevice as primary");
 			_primaryScreen = 0;
 		}
-		
+
 		log(lvl+1, "initScreens: after GD evaluation");
 		for (int i = 0; i < screens.length; i++) {
 			screens[i] = new VNCScreen(i, true);
@@ -125,19 +125,19 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 		}
 		try {
 			log(lvl+1, "initScreens: getting mouseRobot");
-			
+
 			mouseRobot = new VNCRobot[screens.length];
-			
+
 			for(int i = 0; i < screens.length; i++){
 				mouseRobot[i] = new VNCRobot(_gdev[i]);
 				mouseRobot[i].setAutoDelay(10);
 			}
-		} 
+		}
 		catch (AWTException e) {
 			Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
-			Sikulix.endFatal(999);
+			Sikulix.terminate(999);
 		}
-		
+
 		if (!reset) {
 			log(lvl - 1, "initScreens: basic initialization (%d VNCScreen(s) found)", _gdev.length);
 			log(lvl, "*** monitor configuration (primary: %d) ***", _primaryScreen);
@@ -146,7 +146,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 			}
 			log(lvl, "*** end monitor configuration ***");
 		}
-		
+
 		//im not sure if this is valid for VNCScreens yet,
 		//with multiple normal screens there is only one mouse
 		//but with VNCScreens there is a separate mouse for each
@@ -164,7 +164,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 				if (!lc.equals(lcn)) {
 					log(lvl, "*** multimonitor click check: %s center: (%d, %d) --- NOT OK:  (%d, %d)",
 							s.toStringShort(), lc.x, lc.y, lcn.x, lcn.y);
-				} 
+				}
 				else {
 					log(lvl, "*** checking: %s center: (%d, %d) --- OK", s.toStringShort(), lc.x, lc.y);
 				}
@@ -173,19 +173,19 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 			Settings.MoveMouseDelay = mmd;
 		}
 	}
-	
+
 	protected static VNCRobot getMouseRobot(){
 		return mouseRobot[0];
 	}
-	
+
 	public static ScreenUnion all() {
 		return new ScreenUnion();
 	}
-	
+
 	public static int getNumberScreens(){
 	    return _gdev.length;
 	}
-	
+
 	private static int getValidID(int id) {
 		if (id < 0 || id >= _gdev.length) {
 			Debug.error("VNCScreen: invalid screen id %d - using primary screen", id);
@@ -198,12 +198,12 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 		return _primaryScreen;
 	}
 
-	
+
 	public static VNCScreen getPrimaryScreen() {
 		return screens[_primaryScreen];
 	}
 
-	
+
 	public static VNCScreen getScreen(int id) {
 		return screens[getValidID(id)];
 	}
@@ -215,7 +215,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 	public static IRobot getRobot(int id) {
 		return getScreen(id).getRobot();
 	}
-	
+
 	public static void showMonitors() {
 		Debug.info("*** monitor configuration [ %s VNCScreen(s)] ***", VNCScreen.getNumberScreens());
 		Debug.info("*** Primary is VNCScreen %d", _primaryScreen);
@@ -238,21 +238,21 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 	    }
 	    Debug.error("*** end new monitor configuration ***");
 	}
-	
+
 	public VNCScreen() {
 		super();
 		_curID = _primaryScreen;
 		initScreen();
 		super.initScreen(this);
 	}
-	
+
 	public VNCScreen(int id){
 		super();
 		//this needs to be called because while with a normal screen it
 		//is not expected that a new one will be connected during the normal
 		//operation of the program, a VNCScreen can be arbitratily connected and
 		//disconnected so _gdev needs to be updated to a new size
-		initScreens(true); 
+		initScreens(true);
 	    if(id < 0 || id >= _gdev.length) {
 	    	throw new IllegalArgumentException("VNCScreen ID " + id + " not in valid range " +
 	    			"(between 0 and " + (_gdev.length - 1));
@@ -261,20 +261,20 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 	    initScreen();
 		super.initScreen(this);
 	}
-	
+
 	public VNCScreen(int id, boolean b) {
 		super();
 		_curID = id;
 		initScreen();
 		super.initScreen(this);
 	}
-	
+
 	public VNCScreen(boolean isScreenUnion) {
 		super();
 		initScreen();
 		super.initScreen(this);
 	}
-	
+
 	private void initScreen() {
 		setOtherScreen();
 		_curGD = _gdev[_curID];
@@ -283,37 +283,37 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 			y = (int) bounds.getY();
 			w = (int) bounds.getWidth();
 			h = (int) bounds.getHeight();
-			
+
 		try {
 			robot = new VNCRobot(_curGD);
 			robot.setAutoDelay(10);
-		} 
+		}
 		catch (AWTException e) {
 			Debug.error("Can't initialize Java Robot on VNCScreen " + _curID + ": " + e.getMessage());
 			robot = null;
 		}
 	}
-	
+
 	public void setAsScreenUnion() {
 		oldID = _curID;
 		_curID = -1;
 	}
-	
+
 	public void setAsScreen() {
 		_curID = oldID;
 	}
-	
+
 	@Override
 	public void initScreen(IScreen scr){
 		updateSelf();
 	}
-	
+
 	@Override
 	public IScreen getScreen(){
 		return this;
 	}
-	
-	
+
+
 	@Override
 	protected Region setScreen(IScreen s) {
 		throw new UnsupportedOperationException("The setScreen() method cannot be called from a VNCScreen object.");
@@ -322,7 +322,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 	protected boolean useFullscreen() {
 		return false;
 	}
-	
+
 	@Override
 	public int getID() {
 		return _curID;
@@ -346,7 +346,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 	public Rectangle getBounds() {
 		return gdevsBounds[_curID];
 	}
-	
+
 	public Region newRegion(Location loc, int width, int height) {
 		//return Region.create(loc.copyTo(this), width, height);
 		return new Region(loc.x, loc.y, width, height, loc.getScreen());
@@ -356,7 +356,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 	public ScreenImage getLastScreenImageFromScreen() {
 		return lastScreenImage;
 	}
-	
+
 	public Location newLocation(Location loc) {
 		return loc.setOtherScreen(this);
 	}
@@ -365,7 +365,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 	public ScreenImage capture() {
 		return capture(getRect());
 	}
-	
+
 	@Override
 	public ScreenImage capture(int x, int y, int w, int h) {
 		Rectangle rect = newRegion(new Location(x, y), w, h).getRect();
@@ -384,31 +384,31 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 	public ScreenImage capture(Region reg) {
 		return capture(reg.getRect());
 	}
-	
+
 	public ScreenImage userCapture() {
 		return userCapture(promptMsg);
 	}
-	
+
 	@Override
 	public ScreenImage userCapture(final String msg) {
 		waitPrompt = true;
 		Thread th = new Thread() {
-			
+
 			@Override
 			public void run() {
 				if ("".equals(msg)) {
 					prompt = new OverlayCapturePrompt(null, VNCScreen.this);
 					prompt.prompt(promptMsg);
-				} 
+				}
 				else {
 					prompt = new OverlayCapturePrompt(VNCScreen.this, VNCScreen.this);
 					prompt.prompt(msg);
 				}
 			}
 		};
-		
+
 		th.start();
-		
+
 		try {
 			int count = 0;
 			while (waitPrompt) {
@@ -417,21 +417,21 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 					return null;
 				}
 			}
-		} 
+		}
 		catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		
+
 		ScreenImage ret = prompt.getSelection();
 		lastScreenImage = ret;
 		prompt.close();
 		return ret;
 	}
-	
+
 	public Region selectRegion() {
 		return selectRegion("Select a region on the screen");
 	}
-	
+
 	public Region selectRegion(final String msg) {
 		ScreenImage sim = userCapture(msg);
 		if (sim == null) {
@@ -441,54 +441,54 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 		return Region.create((int) r.getX(), (int) r.getY(),
 				(int) r.getWidth(), (int) r.getHeight());
 	}
-	
+
 	@Override
 	public void update(EventSubject s) {
 		waitPrompt = false;
 	}
-	
+
 	@Override
 	public void showTarget(Location loc) {
 		showTarget(loc, Settings.SlowMotionDelay);
 	}
-	
+
 	protected void showTarget(Location loc, double secs) {
 		if (Settings.isShowActions()) {
 			ScreenHighlighter overlay = new ScreenHighlighter(this, null);
 			overlay.showTarget(loc, (float) secs);
 		}
 	}
-	
+
 	@Override
 	public boolean isOtherScreen(){
 		return otherScreen;
 	}
-	
+
 	@Override
 	public Rectangle getRect(){
 		return new Rectangle(x, y, w, h);
 	}
-	
+
 	@Override
 	public int getX(){
 		return (int) getBounds().getX();
 	}
-	
+
 	@Override
 	public int getY(){
 		return (int) getBounds().getY();
 	}
-	
+
 	@Override
 	public int getW(){
 		return (int) getBounds().getWidth();
 	}
-	
+
 	@Override
 	public int getH(){
 		return (int) getBounds().getHeight();
 	}
-	
+
 	@Override
 	public String toString() {
 		Rectangle r = getBounds();
@@ -497,7 +497,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 				(int) r.getWidth(), (int) r.getHeight(),
 				getThrowException() ? "Y" : "N", getAutoWaitTimeout());
 	}
-	
+
 	@Override
 	public String toStringShort(){
 		Rectangle r = getBounds();

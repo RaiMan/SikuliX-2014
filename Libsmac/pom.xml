@@ -29,7 +29,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.sikuli.libs.Sikulix</mainClass>
+							<mainClass>org.sikuli.libsmac.Sikulix</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

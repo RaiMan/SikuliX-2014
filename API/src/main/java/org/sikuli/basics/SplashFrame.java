@@ -6,6 +6,7 @@ package org.sikuli.basics;
 
 import java.awt.Color;
 import java.awt.Container;
+import java.util.Date;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -15,18 +16,61 @@ import javax.swing.JSeparator;
  *
  * @author rhocke
  */
-public class MultiFrame extends JFrame {
+public class SplashFrame extends JFrame {
+
+  private static JFrame splash = null;
+  private static long start = 0;
+
+  public static void displaySplash(String[] args) {
+    if (args == null) {
+      if (splash != null) {
+        splash.dispose();
+      }
+      if (start > 0) {
+        Debug.log(3, "Sikuli-Script startup: " + ((new Date()).getTime() - start));
+        start = 0;
+      }
+      return;
+    }
+    if (args.length > 0 && (args[0].contains("-testSetup") || args[0].startsWith("-i"))) {
+      start = (new Date()).getTime();
+      String[] splashArgs = new String[]{
+        "splash", "#", "#" + Settings.SikuliVersionScript, "", "#", "#... starting - please wait ..."};
+      for (String e : args) {
+        splashArgs[3] += e + " ";
+      }
+      splashArgs[3] = splashArgs[3].trim();
+      splash = new SplashFrame(splashArgs);
+    }
+  }
+
+  public static void displaySplashFirstTime(String[] args) {
+    if (args == null) {
+      if (splash != null) {
+        splash.dispose();
+      }
+      if (start > 0) {
+        Debug.log(3, "Sikuli-IDE environment setup: " + ((new Date()).getTime() - start));
+        start = 0;
+      }
+      return;
+    }
+    start = (new Date()).getTime();
+    String[] splashArgs = new String[]{
+      "splash", "#", "#" + Settings.SikuliVersionIDE, "", "#", "#... setting up environement - please wait ..."};
+    splash = new SplashFrame(splashArgs);
+  }
 
   private JLabel lbl, txt;
   private Container pane;
   private int proSize;
   private int fw, fh;
 
-  public MultiFrame(String type) {
+  public SplashFrame(String type) {
     init(new String[]{type});
   }
-  
-  public MultiFrame(String[] args) {
+
+  public SplashFrame(String[] args) {
     init(args);
   }
   private void init(String[] args) {
@@ -47,7 +91,7 @@ public class MultiFrame extends JFrame {
       fw = 350;
       fh = 80;
     }
-    
+
     if ("splash".equals(args[0])) {
       pane.setLayout(new BoxLayout(pane, BoxLayout.Y_AXIS));
       pane.setBackground(Color.yellow);
@@ -69,7 +113,7 @@ public class MultiFrame extends JFrame {
       for (int i = 1; i < n; i++) {
         e = args[i];
         if (e.startsWith("#")) {
-          if (e.length() > 1) { 
+          if (e.length() > 1) {
             lbls[nlbl] = new JLabel(e.substring(1));
             lbls[nlbl].setAlignmentX(CENTER_ALIGNMENT);
             pane.add(lbls[nlbl]);
@@ -108,7 +152,7 @@ public class MultiFrame extends JFrame {
     }
     repaint();
   }
-  
+
   public void closeAfter(int secs) {
     try {
       Thread.sleep(secs*1000);

@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
+import org.sikuli.script.Key;
 
 /**
  * Singleton class to bind hotkeys to hotkey listeners
@@ -160,7 +161,7 @@ public abstract class HotkeyManager {
    * @return true if success. false otherwise.
    */
   public boolean addHotkey(String key, int modifiers, HotkeyListener callback) {
-    int[] keyCodes = Sikulix.callKeyToJavaKeyCodeMethod(key.toLowerCase());
+    int[] keyCodes = Key.toJavaKeyCode(key.toLowerCase());
     int keyCode = keyCodes[0];
     return installHotkey(keyCode, modifiers, callback, "");
   }
@@ -238,7 +239,7 @@ public abstract class HotkeyManager {
    * @return true if success. false otherwise.
    */
   public boolean removeHotkey(String key, int modifiers) {
-    int[] keyCodes = Sikulix.callKeyToJavaKeyCodeMethod(key.toLowerCase());
+    int[] keyCodes = Key.toJavaKeyCode(key.toLowerCase());
     int keyCode = keyCodes[0];
     return uninstallHotkey(keyCode, modifiers, "");
   }

@@ -12,13 +12,13 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.sikulix</groupId>
-	<artifactId>sikulixlibswin</artifactId>
+	<artifactId>sikulixlibsvision</artifactId>
 	<version>1.1.0-Beta4-SNAPSHOT</version>
 
 	<packaging>jar</packaging>
 
-	<name>SikuliX Java API Libs</name>
-	<description>supporting native libraries for Windows</description>
+	<name>SikuliX Java API Libs Linux</name>
+	<description>supporting native libraries for Linux</description>
 	<url>http://www.sikulix.com</url>
 
 	<licenses>
@@ -49,14 +49,6 @@
     </repository>
   </distributionManagement>
 
-	<dependencies>
-		<dependency>
-			<groupId>com.sikulix</groupId>
-			<artifactId>sikulixlibsvision</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	</dependencies>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<timestamp>${maven.build.timestamp}</timestamp>
@@ -71,7 +63,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.sikuli.libswin.Sikulix</mainClass>
+							<mainClass>org.sikuli.libsvision.Sikulix</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

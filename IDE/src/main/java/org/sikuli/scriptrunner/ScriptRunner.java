@@ -21,9 +21,10 @@ import org.sikuli.ide.CommandArgs;
 import org.sikuli.ide.CommandArgsEnum;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.idesupport.IIDESupport;
 import org.sikuli.basics.Settings;
-import org.sikuli.basics.Sikulix;
+//import org.sikuli.basics.SikulixUtil;
+import org.sikuli.script.ImagePath;
+import org.sikuli.script.Sikulix;
 
 /**
  * Contains the run class
@@ -121,7 +122,7 @@ public class ScriptRunner {
 
     initScriptingSupport();
 
-//    Sikulix.displaySplash(args);
+//    SikulixUtil.displaySplash(args);
 
     if (args != null && args.length > 1 && args[0].startsWith("-testSetup")) {
       runner = getScriptRunner(args[1], null, args);
@@ -260,7 +261,7 @@ public class ScriptRunner {
       if (imagePath == null) {
         imagePath = FileManager.resolveImagePath(script);
       }
-      Sikulix.callImagePathSetBundlePath(imagePath.getAbsolutePath());
+      ImagePath.setBundlePath(imagePath.getAbsolutePath());
       log(lvl, "Trying to run script: " + script.getAbsolutePath());
       int exitCode = runAsTest
               ? runner.runTest(script, imagePath, cmdArgs.getUserArgs(), null)
@@ -363,7 +364,7 @@ public class ScriptRunner {
       if (CommandArgs.isIDE()) {
         return null;
       }
-      Sikulix.terminate(0);
+      Sikulix.terminate(999);
     }
     int pos = scriptName.getName().lastIndexOf(".");
     if (pos == -1) {
@@ -379,7 +380,7 @@ public class ScriptRunner {
       if (CommandArgs.isIDE()) {
         return null;
       }
-      Sikulix.terminate(0);
+      Sikulix.terminate(999);
     }
     if ("skl".equals(scriptType) || "zip".equals(scriptType)) {
       //TODO unzip to temp and run from there
@@ -393,7 +394,7 @@ public class ScriptRunner {
           if (args == null) {
             return null;
           } else {
-            Sikulix.terminate(0);
+            Sikulix.terminate(999);
           }
         }
         String[] supported = new String[]{"py", "rb"};

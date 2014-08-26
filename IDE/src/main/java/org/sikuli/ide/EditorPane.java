@@ -31,9 +31,9 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.idesupport.IIndentationLogic;
 import org.sikuli.script.Location;
-import org.sikuli.basics.Sikulix;
 import org.sikuli.script.Image;
 import org.sikuli.script.ImagePath;
+import org.sikuli.script.Sikulix;
 import org.sikuli.scriptrunner.ScriptRunner;
 import org.sikuli.syntaxhighlight.ResolutionException;
 import org.sikuli.syntaxhighlight.grammar.Lexer;
@@ -59,8 +59,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   private boolean scriptIsTemp = false;
 
   private boolean scriptIsDirty = false;
-  private DirtyHandler dirtyHandler;  
-  
+  private DirtyHandler dirtyHandler;
+
   private File _editingFile;
 //	private String scriptType = null;
 	private String _srcBundlePath = null;
@@ -633,7 +633,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	}
 
 //</editor-fold>
-  
+
 	//<editor-fold defaultstate="collapsed" desc="fill pane content">
 	@Override
 	public void read(Reader in, Object desc) throws IOException {
@@ -680,7 +680,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	}
 
 	//</editor-fold>
-  
+
 	//<editor-fold defaultstate="collapsed" desc="Caret handling">
 //TODO not used
 	@Override
@@ -1219,7 +1219,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		}
 	}
 //</editor-fold>
-  
+
 	//<editor-fold defaultstate="collapsed" desc="currently not used">
 	private String _tabString = "   ";
 

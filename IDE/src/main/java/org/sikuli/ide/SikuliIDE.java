@@ -17,7 +17,13 @@ import java.io.*;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
+//import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -43,12 +49,12 @@ import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
 import org.sikuli.idesupport.IIDESupport;
 import org.sikuli.script.ImagePath;
-import org.sikuli.basics.MultiFrame;
+import org.sikuli.basics.SplashFrame;
 import org.sikuli.basics.ResourceLoader;
 import org.sikuli.scriptrunner.ScriptRunner;
-import org.sikuli.basics.Sikulix;
 import org.sikuli.idesupport.IDESupport;
 import org.sikuli.script.Key;
+import org.sikuli.script.Sikulix;
 
 public class SikuliIDE extends JFrame {
 
@@ -176,7 +182,7 @@ public class SikuliIDE extends JFrame {
     });
 
     if (System.getProperty("sikuli.FromCommandLine") == null) {
-      String[] userOptions = Sikulix.collectOptions("IDE", args);
+      String[] userOptions = collectOptions("IDE", args);
       if (userOptions == null) {
         System.exit(0);
       }
@@ -258,14 +264,14 @@ public class SikuliIDE extends JFrame {
       isRunningFile = new FileOutputStream(isRunning);
       if (null == isRunningFile.getChannel().tryLock()) {
         splashArgs[5] = "Terminating on FatalError: IDE already running";
-        splash = new MultiFrame(splashArgs);
+        splash = new SplashFrame(splashArgs);
         log(-1, splashArgs[5]);
         Sikulix.pause(3);
         System.exit(1);
       }
     } catch (Exception ex) {
       splashArgs[5] = "Terminating on FatalError: cannot access IDE lock ";
-      splash = new MultiFrame(splashArgs);
+      splash = new SplashFrame(splashArgs);
       log(-1, splashArgs[5] + "\n" + isRunning.getAbsolutePath());
       Sikulix.pause(3);
       System.exit(1);
@@ -438,7 +444,7 @@ public class SikuliIDE extends JFrame {
   }
   //</editor-fold>
 
-//<editor-fold defaultstate="collapsed" desc="save / restore session">
+	//<editor-fold defaultstate="collapsed" desc="save / restore session">
   private boolean saveSession(int action, boolean quitting) {
     int nTab = tabPane.getTabCount();
     StringBuilder sbuf = new StringBuilder();
@@ -540,6 +546,7 @@ public class SikuliIDE extends JFrame {
     return false;
   }
 //</editor-fold>
+
   //<editor-fold defaultstate="collapsed" desc="Support SikuliIDE">
   public JMenu getFileMenu() {
     return _fileMenu;
@@ -711,6 +718,50 @@ public class SikuliIDE extends JFrame {
             + "\n\nBuild: " + Settings.SikuliVersionBuild;
     JOptionPane.showMessageDialog(this, info,
             "Sikuli About", JOptionPane.PLAIN_MESSAGE);
+  }
+
+  private static String[] collectOptions(String type, String[] args) {
+    List<String> resArgs = new ArrayList<String>();
+    if (args != null) {
+      resArgs.addAll(Arrays.asList(args));
+    }
+    String msg = "-----------------------   You might set some options    -----------------------";
+    msg += "\n\n";
+    msg += "-r name       ---   Run script name: foo[.sikuli] or foo.skl (no IDE window)";
+    msg += "\n";
+    msg += "-u [file]        ---   Write user log messages to file (default: <WorkingFolder>/UserLog.txt )";
+    msg += "\n";
+    msg += "-f [file]         ---   Write Sikuli log messages to file (default: <WorkingFolder>/SikuliLog.txt)";
+    msg += "\n";
+    msg += "-d n             ---   Set a higher level n for Sikuli's debug messages (default: 0)";
+    msg += "\n";
+    msg += "-- …more…         All space delimited entries after -- go to sys.argv";
+    msg += "\n                           \"<some text>\" makes one parameter (may contain intermediate blanks)";
+    msg += "\n\n";
+    msg += "-------------------------------------------------------------------------";
+    msg += "\n";
+    msg += "-d                Special debugging option in case of mysterious errors:";
+    msg += "\n";
+    msg += "                    Debug level is set to 3 and debug output goes to <WorkingFolder>/SikuliLog.txt";
+    msg += "\n";
+    msg += "                    Content might be used to ask questions or report bugs";
+    msg += "\n";
+    msg += "-------------------------------------------------------------------------";
+    msg += "\n";
+    msg += "                    Just click OK to start IDE with no options - defaults will be used";
+
+    String ret = JOptionPane.showInputDialog(null, msg, "SikuliX: collect runtime options",
+            JOptionPane.QUESTION_MESSAGE);
+
+    if (ret == null) {
+      return null;
+    }
+    log(3, "collectOptions: returned [" + ret + "]");
+    if (!ret.isEmpty()) {
+      System.setProperty("sikuli.SIKULI_COMMAND", ret);
+      resArgs.addAll(Arrays.asList(ret.split(" +")));
+    }
+    return resArgs.toArray(new String[0]);
   }
   //</editor-fold>
 
@@ -914,7 +965,6 @@ public class SikuliIDE extends JFrame {
         }
       }
       Sikulix.cleanUp(0);
-      HotkeyManager.getInstance().cleanUp();
       System.exit(0);
     }
 
@@ -2062,7 +2112,7 @@ public class SikuliIDE extends JFrame {
 			SikuliIDE.getStatusbar().resetMessage();
 			ide.setVisible(false);
 			if (ide.firstRun) {
-//        Sikulix.displaySplashFirstTime(new String[0]);
+//        SikulixUtil.displaySplashFirstTime(new String[0]);
 				ide.firstRun = false;
 			}
 			ide.setIsRunningScript(true);

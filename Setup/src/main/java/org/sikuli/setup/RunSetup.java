@@ -30,11 +30,11 @@ import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.MultiFrame;
+import org.sikuli.basics.SplashFrame;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.ResourceLoader;
 import org.sikuli.basics.Settings;
-import org.sikuli.basics.Sikulix;
+import org.sikuli.script.Sikulix;
 
 public class RunSetup {
 
@@ -227,7 +227,7 @@ public class RunSetup {
 
 		if (runningJar.isEmpty()) {
 			popError("error accessing jar - terminating");
-			System.exit(0);
+			System.exit(999);
 		}
 		if (runningJar.startsWith("sikulixupdate")) {
 			runningUpdate = true;
@@ -240,33 +240,6 @@ public class RunSetup {
 		}
 
 		//<editor-fold defaultstate="collapsed" desc="option makeJar">
-		if (options.size() > 0 && "keyboardsetup".equals(options.get(0).toLowerCase())) {
-			String dir = System.getProperty("user.dir");
-			String jar = "sikulixapi.jar";
-			File jf = new File(dir, jar);
-			if (jf.exists()) {
-				Sikulix.addToClasspath(jf.getAbsolutePath());
-				jf = null;
-			}
-			if (jf != null) {
-				jar = "sikulix.jar";
-				jf = new File(dir, jar);
-				if (jf.exists()) {
-					Sikulix.addToClasspath(jf.getAbsolutePath());
-					jf = null;
-				}
-			}
-			if (jf != null) {
-				Debug.error("no suitable jar found");
-				System.exit(0);
-			}
-			Settings.ActionLogs = false;
-			Settings.InfoLogs = false;
-			Debug.setDebugLevel(3);
-			Sikulix.callKeyBoardSetup();
-			System.exit(0);
-		}
-
 		String baseDir = null;
 		if (options.size() > 0 && options.get(0).equals("makeJar")) {
 			options.remove(0);
@@ -357,8 +330,8 @@ public class RunSetup {
     //</editor-fold>
 
 		if (options.size() > 0) {
-			log(-1, "invalid command line options - terminating");
-			System.exit(0);
+			popError("invalid command line options - terminating");
+			System.exit(999);
 		}
 
 		//<editor-fold defaultstate="collapsed" desc="general preps">
@@ -923,17 +896,21 @@ public class RunSetup {
 					return true;
 				} else if (Settings.isWindows()) {
 					if (entry.getName().startsWith("META-INF/libs/mac")
-									|| entry.getName().startsWith("META-INF/libs/linux")) {
+									|| entry.getName().startsWith("META-INF/libs/linux")
+									|| entry.getName().startsWith("jxgrabkey")) {
 						return false;
 					}
 				} else if (Settings.isMac()) {
 					if (entry.getName().startsWith("META-INF/libs/windows")
-									|| entry.getName().startsWith("META-INF/libs/linux")) {
+									|| entry.getName().startsWith("META-INF/libs/linux")
+									|| entry.getName().startsWith("com.melloware.jintellitype")
+									|| entry.getName().startsWith("jxgrabkey")) {
 						return false;
 					}
 				} else if (Settings.isLinux()) {
 					if (entry.getName().startsWith("META-INF/libs/windows")
-									|| entry.getName().startsWith("META-INF/libs/mac")) {
+									|| entry.getName().startsWith("META-INF/libs/mac")
+									|| entry.getName().startsWith("com.melloware.jintellitype")) {
 						return false;
 					}
 					if (!shouldPackLibs && entry.getName().contains("VisionProxy")) {
@@ -994,8 +971,8 @@ public class RunSetup {
 
 //		if (Settings.isMac() && getIDE && success) {
 //			closeSplash(splash);
-//			log0(lvl, "preparing Mac app as Sikulix-IDE.app");
-//			splash = showSplash("Now preparing Mac app Sikulix-IDE.app.", "please wait - may take some seconds ...");
+//			log0(lvl, "preparing Mac app as SikulixUtil-IDE.app");
+//			splash = showSplash("Now preparing Mac app SikulixUtil-IDE.app.", "please wait - may take some seconds ...");
 //			forAllSystems = false;
 //			targetJar = (new File(workDir, localMacAppIDE)).getAbsolutePath();
 //			jarsList = new String[]{(new File(workDir, localIDE)).getAbsolutePath()};
@@ -1134,7 +1111,7 @@ public class RunSetup {
 				try {
 					String testargs[] = new String[]{"-testSetup", "jython", testMethod};
 					closeSplash(splash);
-//					SikuliScript.runscript(testargs);
+					runScriptTest(testargs);
 					if (null == testargs[0]) {
 						throw new Exception("testSetup ran with problems");
 					}
@@ -1158,7 +1135,7 @@ public class RunSetup {
 				try {
 					String testargs[] = new String[]{"-testSetup", "jruby", testMethod};
 					closeSplash(splash);
-//					SikuliScript.runscript(testargs);
+					runScriptTest(testargs);
 					if (null == testargs[0]) {
 						throw new Exception("testSetup ran with problems");
 					}
@@ -1185,11 +1162,15 @@ public class RunSetup {
 		System.exit(0);
 	}
 
+	private static void runScriptTest(String[] testargs) {
+
+	}
+
   private static boolean createSetupFolder(String path) {
     String projectDir = null, targetDir = null;
     boolean success = true;
     boolean doit = true;
-    File apijar = null;
+    File setupjar = null;
     if (path.isEmpty()) {
       if ("classes".equals(runningJar) || runningJar.endsWith("-plain.jar")) {
         projectDir = new File(workDir).getParentFile().getParentFile().getAbsolutePath();
@@ -1197,23 +1178,26 @@ public class RunSetup {
         success = false;
       }
       if (success) {
-        apijar = new File(new File(projectDir, "APIFat/target"),
-                localJava.replace(".jar", "-complete-" + version + "-plain.jar"));
-        if (!apijar.exists()) {
+        setupjar = new File(new File(projectDir, "Setup/target"),
+                localSetup.replace(".jar", "-plain.jar"));
+        if (!setupjar.exists()) {
           success = false;
         }
       }
       if (success) {
         if (new File(projectDir, "Setup").exists()) {
-          File ftargetDir = new File(projectDir, "Setup/target");
-          ftargetDir.mkdir();
+          File ftargetDir = new File(projectDir, "Setup/target/Setup");
+					if (ftargetDir.exists()) {
+						FileManager.deleteFileOrFolder(ftargetDir.getAbsolutePath());
+					}
+          ftargetDir.mkdirs();
           targetDir = ftargetDir.getAbsolutePath();
         } else {
           success = false;
         }
       }
       if (!success) {
-        log(-1, "createSetupFolder: Setup folder or %s missing", apijar.getAbsolutePath());
+        log(-1, "createSetupFolder: Setup folder or %s missing", setupjar.getAbsolutePath());
         return false;
       }
 
@@ -1247,11 +1231,9 @@ public class RunSetup {
         fDownloads.mkdir();
         String fname = null;
         try {
-          fname = apijar.getAbsolutePath();
+          fname = setupjar.getAbsolutePath();
           FileManager.xcopy(fname,
                   new File(targetDir, localSetup).getAbsolutePath());
-          FileManager.xcopy(fname, new File(targetDir,
-                  localJava.replace(".jar", "-" + version + ".jar")).getAbsolutePath());
           fname = fIDEFat.getAbsolutePath();
           FileManager.xcopy(fname,
                   new File(fDownloads, downloadIDE).getAbsolutePath());
@@ -1574,7 +1556,7 @@ public class RunSetup {
       return null;
     }
 		start = (new Date()).getTime();
-		return new MultiFrame(new String[]{"splash", "# " + title, "#... " + msg});
+		return new SplashFrame(new String[]{"splash", "# " + title, "#... " + msg});
 	}
 
 	private static void closeSplash(JFrame splash) {
@@ -1603,7 +1585,7 @@ public class RunSetup {
 			}
 		}
 		if (shouldDownload) {
-			JFrame progress = new MultiFrame("download");
+			JFrame progress = new SplashFrame("download");
 			String fname = FileManager.downloadURL(sDir + item, tDir, progress);
 			progress.dispose();
 			if (null == fname) {

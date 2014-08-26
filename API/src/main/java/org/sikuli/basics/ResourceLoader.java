@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import org.sikuli.script.Sikulix;
 
 public class ResourceLoader {
 //implements IResourceLoader {
@@ -216,9 +217,9 @@ public class ResourceLoader {
 					}
 				}
 				if (libsURL == null) {
-					popError("Terminating: The jar was not built with setup nor "
+					log(-1, "Terminating: The jar was not built with setup nor "
 									+ "can the libs be exported from classpath!\n" + jarPath);
-					System.exit(1);
+					Sikulix.terminate(999);
 				}
 			}
 
@@ -243,7 +244,7 @@ public class ResourceLoader {
       if (Settings.isMac()) {
         if (!osarch.contains("64")) {
           log(-1, "Mac: only 64-Bit supported");
-          Sikulix.terminate(0);
+          Sikulix.terminate(999);
         }
         libSource = String.format(libSource64, "mac");
         checkFileName = checkFileNameMac;
@@ -393,7 +394,6 @@ public class ResourceLoader {
                 }
               })) {
         log(-1, "Fatal Error 102: not possible to empty libs dir");
-        popError("Problem with SikuliX libs folder - see error log");
         Sikulix.terminate(102);
       }
       File dir = (new File(libPath));
@@ -442,7 +442,6 @@ public class ResourceLoader {
       libsDir = checkLibsDir(libPath);
       if (libPath == null || libsDir == null) {
         log(-1, "Fatal Error 103: No valid native libraries folder available - giving up!");
-        popError("Problem with SikuliX libs folder - see error log");
         Sikulix.terminate(103);
       }
     }
@@ -457,8 +456,7 @@ public class ResourceLoader {
                   new File(libPath, "libVisionProxy.so").getAbsolutePath());
         } catch (IOException ex) {
           log(-1, "... did not work: " + ex.getMessage());
-          popError("Provided libVisionProxy not useable - see error log");
-          Sikulix.terminate(0);
+          Sikulix.terminate(999);
         }
       }
     }
@@ -541,18 +539,18 @@ public class ResourceLoader {
         log(lvl, "Running on Windows - checking system path!");
         String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
         if (syspath == null) {
-          Sikulix.terminate(1);
+          Sikulix.terminate(999);
         } else {
           path = (new File(path).getAbsolutePath()).replaceAll("/", "\\");
           if (!syspath.toUpperCase().contains(path.toUpperCase())) {
             if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", path + ";" + syspath)) {
-              Sikulix.terminate(1);
+              Sikulix.terminate(999);
             }
             log(lvl, "Added libs dir to path: " + path);
             syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
             if (!syspath.toUpperCase().contains(path.toUpperCase())) {
               log(-1, "Adding to path did not work:\n%s", syspath);
-              System.exit(1);
+              Sikulix.terminate(999);
             }
             log(lvl, syspath.substring(0, Math.min(path.length()+50, syspath.length())) + "...");
           }
@@ -577,9 +575,6 @@ public class ResourceLoader {
                 log(lvl + 1, "copied to libs: jawt.dll");
               } catch (IOException ex) {
                 log(-1, "Fatal error 107: problem copying " + lib + "\n" + ex.getMessage());
-                popError("Trying to add jawt.dll from Java at\n"
-                        + javahome + " to SikuliX libs folder ..."
-                        + "... but did not work - see error log");
                 Sikulix.terminate(107);
               }
             }
@@ -834,7 +829,6 @@ public class ResourceLoader {
     log(lvl + 1, libname);
     if (libPath == null) {
       log(-1, "Fatal Error 108: No libs directory available");
-      popError("Problem with SikuliX libs folder - see error log");
       Sikulix.terminate(108);
     }
     String mappedlib = System.mapLibraryName(libname);
@@ -847,7 +841,6 @@ public class ResourceLoader {
     if (!new File(lib).exists()) {
       if (!Settings.isLinux()) {
         log(-1, "Fatal Error 109: not found: " + lib);
-        popError("Problem with SikuliX libs folder - see error log");
         Sikulix.terminate(109);
       } else {
         lib = mappedlib;
@@ -870,7 +863,6 @@ public class ResourceLoader {
           return;
         }
       }
-      popError("Problem with SikuliX libs folder - see error log");
       Sikulix.terminate(110);
     }
     log(lvl, "Now loaded: %s from: \n%s", libname, lib);
@@ -1080,11 +1072,4 @@ public class ResourceLoader {
       out.write(tmp, 0, len);
     }
   }
-
-	private void popError(String msg) {
-		log0(-1, msg);
-		if (!runningSikulixapi) {
-			Sikulix.popError(msg, "ResourceLoader: having problems ...");
-		}
-	}
 }

@@ -42,12 +42,20 @@
 		<url>git@github.com:RaiMan/SikuliX-2014.git</url>
 	</scm>
 
-  <distributionManagement>
-    <repository>
-      <id>sikulix.deploy</id>
-      <url>${sikulix.deploy.target}</url>
-    </repository>
-  </distributionManagement>
+	<distributionManagement>
+		<repository>
+			<id>sikulix.deploy</id>
+			<url>${sikulix.deploy.target}</url>
+		</repository>
+	</distributionManagement>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.sikulix</groupId>
+			<artifactId>sikulixlibsvision</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -63,7 +71,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.sikuli.script.SikuliX</mainClass>
+							<mainClass>org.sikuli.libslux.Sikulix</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -105,20 +113,20 @@
 					</execution>
 				</executions>
 			</plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-gpg-plugin</artifactId>
-        <version>1.5</version>
-        <executions>
-          <execution>
-            <id>sign-artifacts</id>
-            <phase>verify</phase>
-            <goals>
-              <goal>sign</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-gpg-plugin</artifactId>
+				<version>1.5</version>
+				<executions>
+					<execution>
+						<id>sign-artifacts</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>sign</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 </project>

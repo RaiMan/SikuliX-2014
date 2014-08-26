@@ -1,20 +1,31 @@
 /*
- * Copyright 2010-2014, Sikuli.org, Sikulix.com
+ * Copyright 2010-2014, Sikuli.org, SikulixUtil.com
  * Released under the MIT License.
  *
  * modified RaiMan
  */
 package org.sikuli.script;
 
+import java.awt.Dimension;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSource;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPasswordField;
+import javax.swing.JScrollPane;
+import javax.swing.JTextArea;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.HotkeyManager;
+import org.sikuli.basics.ResourceLoader;
 import org.sikuli.basics.Settings;
 
 /**
@@ -22,37 +33,69 @@ import org.sikuli.basics.Settings;
  */
 public class Sikulix {
 
-  private static final String me = "SikuliX: ";
+  private static final String me = "Sikulix: ";
 	private static boolean runningHeadless = false;
+
+  private static int lvl = 3;
+  private static void log(int level, String message, Object... args) {
+    Debug.logx(level, me + message, args);
+  }
+
+  private static boolean runningFromJar;
+  private static String jarPath;
+  private static String jarParentPath;
 
 	static {
 		if (GraphicsEnvironment.isHeadless()) {
 			runningHeadless = true;
 		}
+    CodeSource codeSrc = Sikulix.class.getProtectionDomain().getCodeSource();
+    if (codeSrc != null && codeSrc.getLocation() != null) {
+      URL jarURL = codeSrc.getLocation();
+      jarPath = FileManager.slashify(new File(jarURL.getPath()).getAbsolutePath(), false);
+      jarParentPath = (new File(jarPath)).getParent();
+      if (jarPath.endsWith(".jar")) {
+        runningFromJar = true;
+      } else {
+        jarPath += "/";
+      }
+    }
 	}
+
+  public static boolean isRunningFromJar() {
+    return runningFromJar;
+  }
+
+  public static String getJarPath() {
+    return jarPath;
+  }
+
+  public static String getJarParentPath() {
+    return jarParentPath;
+  }
 
   private static boolean runningSikulixapi = false;
 
   /**
-   * Get the value of runningSikulixapi
+   * Get the value of runningSikulixUtilapi
    *
-   * @return the value of runningSikulixapi
+   * @return the value of runningSikulixUtilapi
    */
   public static boolean isRunningSikulixapi() {
     return runningSikulixapi;
   }
 
   /**
-   * Set the value of runningSikulixapi
+   * Set the value of runningSikulixUtilapi
    *
-   * @param runningSikulixapi new value of runningSikulixapi
+   * @param runningAPI new value of runningSikulixUtilapi
    */
-  public static void setRunningSikulixapi(boolean runningSikulixapi) {
-    runningSikulixapi = runningSikulixapi;
+  public static void setRunningSikulixapi(boolean runningAPI) {
+    runningSikulixapi = runningAPI;
   }
 
 	public static void main(String[] args) {
-		Debug.test(me + "main: nothing to do (yet)");
+		log(lvl, "running main: nothing to do (yet)");
 	}
 
   /**
@@ -84,7 +127,7 @@ public class Sikulix {
    * @param n
    */
   public static void endNormal(int n) {
-    Debug.log(0, me + "endNormal: %d", n);
+    log(lvl, "endNormal: %d", n);
     cleanUp(n);
     System.exit(n);
   }
@@ -97,7 +140,7 @@ public class Sikulix {
    * @param n returncode
    */
   public static void endWarning(int n) {
-    Debug.log(0, me + "endWarning: %d", n);
+    log(lvl, "endWarning: %d", n);
     cleanUp(n);
     System.exit(n);
   }
@@ -110,26 +153,27 @@ public class Sikulix {
    * @param n
    */
   public static void endError(int n) {
-    Debug.log(0, me + "endError: %d", n);
+    log(lvl, "endError: %d", n);
     cleanUp(n);
     System.exit(n);
   }
 
-  /**
-   * INTERNAL USE:
-   * convenience function: runs {@link #cleanUp(int)},
-   * prints a message (numbered) fatal error and terminates with returncode
-   *
-   * @param n
-   */
-  public static void endFatal(int n) {
-    Debug.error("Terminating SikuliX after a fatal error"
-            + (n == 0 ? "" : "(%d)")
-            + "! Sorry, but it makes no sense to continue!\n"
+  public static void terminate(int n) {
+    if (Settings.runningSetup) {
+      popError(String.format(
+						"***** Terminating SikuliX Setup after a fatal error"
+            + (n == 0 ? "*****\n" : " %d *****\n")
+						+	"SikuliX is not useable!\n"
+            + "Check the error log at " + Debug.logfile, n));
+    } else {
+	    Debug.error("***** Terminating SikuliX after a fatal error"
+            + (n == 0 ? "*****\n" : " %d *****\n")
+            + "It makes no sense to continue!\n"
             + "If you do not have any idea about the error cause or solution, run again\n"
             + "with a Debug level of 3. You might paste the output to the Q&A board.", n);
-    cleanUp(n);
-    System.exit(n);
+	    cleanUp(0);
+		}
+    System.exit(1);
   }
 
   /**
@@ -141,7 +185,7 @@ public class Sikulix {
    * @param n returncode
    */
   public static void cleanUp(int n) {
-    Debug.log(3, me + "API cleanUp: %d", n);
+    log(lvl, "cleanUp: %d", n);
     ScreenHighlighter.closeAll();
     Observing.cleanUp();
     Mouse.reset();
@@ -152,7 +196,7 @@ public class Sikulix {
   }
 
   /**
-   * INTERNAL USE: used in setup: tests basic Sikulix features
+   * INTERNAL USE: used in setup: tests basic SikulixUtil features
    *
    * @return success
    */
@@ -161,7 +205,7 @@ public class Sikulix {
   }
 
   /**
-   * INTERNAL USE: used in setup: tests basic Sikulix features
+   * INTERNAL USE: used in setup: tests basic SikulixUtil features
    *
    * @return success
    */
@@ -170,7 +214,7 @@ public class Sikulix {
   }
 
   /**
-   * INTERNAL USE: used in setup: tests basic Sikulix features
+   * INTERNAL USE: used in setup: tests basic SikulixUtil features
    *
    * @return success
    */
@@ -184,34 +228,34 @@ public class Sikulix {
     Pattern p = new Pattern(img);
     Finder f = new Finder(img);
     boolean success = (null != f.find(p));
-    Debug.log(3, "testSetup: Finder setup with image %s", (!success ? "did not work" : "worked"));
+    log(lvl, "testSetup: Finder setup with image %s", (!success ? "did not work" : "worked"));
     if (success &= f.hasNext()) {
       success = (null != f.find(img.asFile()));
-      Debug.log(3, "testSetup: Finder setup with image file %s", (!success ? "did not work" : "worked"));
+      log(lvl, "testSetup: Finder setup with image file %s", (!success ? "did not work" : "worked"));
       success &= f.hasNext();
       String screenFind = "Screen.find(imagefile)";
       try {
         ((Screen) r.getScreen()).find(img.asFile());
-        Debug.log(3, "testSetup: %s worked", screenFind);
+        log(lvl, "testSetup: %s worked", screenFind);
         screenFind = "repeated Screen.find(imagefile)";
         ((Screen) r.getScreen()).find(img.asFile());
-        Debug.log(3, "testSetup: %s worked", screenFind);
+        log(lvl, "testSetup: %s worked", screenFind);
       } catch (Exception ex) {
-        Debug.log(3, "testSetup: %s did not work", screenFind);
+        log(lvl, "testSetup: %s did not work", screenFind);
         success = false;
       }
     }
     if (success) {
       if (!silent) {
-        org.sikuli.basics.Sikulix.popup("Hallo from Sikulix.testSetup: " + testSetupSource + "\n"
+        popup("Hallo from Sikulix.testSetup: " + testSetupSource + "\n"
                 + "SikuliX seems to be working!\n\nHave fun!");
-        Debug.log(3, "testSetup: Finder.find: worked");
+        log(lvl, "testSetup: Finder.find: worked");
       } else {
         System.out.println("[info] RunSetup: Sikulix.testSetup: Java Sikuli seems to be working!");
       }
       return true;
     }
-    Debug.log(3, "testSetup: last Screen/Finder.find: did not work");
+    log(lvl, "testSetup: last Screen/Finder.find: did not work");
     return false;
   }
 
@@ -222,18 +266,20 @@ public class Sikulix {
    * @return success
    */
   public static boolean addToClasspath(String jar) {
-    return addToClasspath(jar, 0);
-  }
-
-  private static boolean addToClasspath(String jar, int loglevel) {
+    log(lvl, "addToClasspath: " + jar);
+		File jarFile = new File(jar);
+		if (!jarFile.exists()) {
+			log(-1, "does not exist - not added");
+			return false;
+		}
     Method method;
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     URL[] urls = sysLoader.getURLs();
-    Debug.log(loglevel, "add to classpath: " + jar);
-    dumpClasspath(false, loglevel + 1 );
+    log(lvl, "add to classpath: " + jar);
+    dumpClasspath(false, lvl + 1 );
     Class sysclass = URLClassLoader.class;
     try {
-      jar = FileManager.slashify(new File(jar).getAbsolutePath(), false);
+      jar = FileManager.slashify(jarFile.getAbsolutePath(), false);
       if (Settings.isWindows()) {
         jar = "/" + jar;
       }
@@ -242,12 +288,11 @@ public class Sikulix {
       method.setAccessible(true);
       method.invoke(sysLoader, new Object[]{u});
     } catch (Exception ex) {
-      Debug.error("Did not work: %s", ex.getMessage());
+      log(-1, "Did not work: %s", ex.getMessage());
       return false;
     }
-    urls = sysLoader.getURLs();
-    Debug.log(loglevel + 1, "after adding to classpath");
-    dumpClasspath(false, loglevel + 1 );
+    log(lvl + 1, "after adding to classpath");
+    dumpClasspath(false, lvl + 1 );
     return true;
   }
 
@@ -262,13 +307,13 @@ public class Sikulix {
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     URL[] urls = sysLoader.getURLs();
     if (verbose) {
-      Debug.log(loglevel, "***** Classpath dump *****");
+      log(loglevel, "***** Classpath dump *****");
     }
     for (int i = 0; i < urls.length; i++) {
-      Debug.log(loglevel, "%d: %s", i, urls[i]);
+      log(loglevel, "%d: %s", i, urls[i]);
     }
     if (verbose) {
-      Debug.log(loglevel, "***** Classpath dump ***** end");
+      log(loglevel, "***** Classpath dump ***** end");
     }
   }
 
@@ -282,4 +327,195 @@ public class Sikulix {
     }
     return false;
   }
+
+	public static String run(String cmdline) {
+		return run(new String[]{cmdline});
+	}
+
+	public static String run(String[] cmd) {
+		return ResourceLoader.get().runcmd(cmd);
+	}
+
+	public static void popError(String message) {
+		popup(message, "Sikuli");
+	}
+
+	public static void popError(String message, String title) {
+		JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+	}
+
+	/**
+	 * request user's input as one line of text <br>
+	 * with hidden = true: <br>
+	 * the dialog works as password input (input text hidden a s bullets) <br>
+	 * take care to destroy the return value as soon as possible (internally security is granted)
+	 * @param msg
+	 * @param preset
+	 * @param title
+	 * @param hidden
+	 * @return
+	 */
+	public static String input(String msg, String preset, String title, boolean hidden) {
+		if (!hidden) {
+			if ("".equals(title)) {
+				title = "Sikuli input request";
+			}
+			return (String) JOptionPane.showInputDialog(null, msg, title, JOptionPane.PLAIN_MESSAGE, null, null, preset);
+		} else {
+			preset = "";
+			JTextArea tm = new JTextArea(msg);
+			tm.setColumns(20);
+			tm.setLineWrap(true);
+			tm.setWrapStyleWord(true);
+			tm.setEditable(false);
+			tm.setBackground(new JLabel().getBackground());
+			JPasswordField pw = new JPasswordField(preset);
+			JPanel pnl = new JPanel();
+			pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
+			pnl.add(pw);
+			pnl.add(Box.createVerticalStrut(10));
+			pnl.add(tm);
+			if (0 == JOptionPane.showConfirmDialog(null, pnl, title, JOptionPane.OK_CANCEL_OPTION)) {
+				char[] pwc = pw.getPassword();
+				String pwr = "";
+				for (int i = 0; i < pwc.length; i++) {
+					pwr = pwr + pwc[i];
+					pwc[i] = 0;
+				}
+				return pwr;
+			} else {
+				return "";
+			}
+		}
+	}
+
+	public static String input(String msg, String title, boolean hidden) {
+		return input(msg, "", title, hidden);
+	}
+
+	public static String input(String msg, boolean hidden) {
+		return input(msg, "", "", hidden);
+	}
+
+	public static String input(String msg, String preset, String title) {
+		return input(msg, preset, title, false);
+	}
+
+	public static String input(String msg, String preset) {
+		return input(msg, preset, "", false);
+	}
+
+	public static String input(String msg) {
+		return input(msg, "", "", false);
+	}
+
+	public static boolean popAsk(String msg) {
+		return popAsk(msg, null);
+	}
+
+	public static boolean popAsk(String msg, String title) {
+		if (title == null) {
+			title = "... something to decide!";
+		}
+		int ret = JOptionPane.showConfirmDialog(null, msg, title, JOptionPane.YES_NO_OPTION);
+		if (ret == JOptionPane.CLOSED_OPTION || ret == JOptionPane.NO_OPTION) {
+			return false;
+		}
+		return true;
+	}
+
+	public static void popup(String message) {
+		popup(message, "Sikuli");
+	}
+
+	public static void popup(String message, String title) {
+		JOptionPane.showMessageDialog(null, message, title, JOptionPane.PLAIN_MESSAGE);
+	}
+
+	public static String popSelect(String msg, String[] options, String preset) {
+		return popSelect(msg, null, options, preset);
+	}
+
+	public static String popSelect(String msg, String[] options) {
+		return popSelect(msg, null, options, options[0]);
+	}
+
+	public static String popSelect(String msg, String title, String[] options) {
+		return popSelect(msg, title, options, options[0]);
+	}
+
+	public static String popSelect(String msg, String title, String[] options, String preset) {
+		if (title == null) {
+			title = "... something to select!";
+		}
+		return (String) JOptionPane.showInputDialog(null, msg, title, JOptionPane.PLAIN_MESSAGE, null, options, preset);
+	}
+
+	/**
+	 * Shows a dialog request to enter text in a multiline text field <br>
+	 * Though not all text might be visible, everything entered is delivered with the returned text <br>
+	 * The main purpose for this feature is to allow pasting text from somewhere preserving line breaks <br>
+	 * @param msg the message to display.
+	 * @param title the title for the dialog (default: Sikuli input request)
+	 * @param lines the maximum number of lines visible in the text field (default 9)
+	 * @param width the maximum number of characters visible in one line (default 20)
+	 * @return The user's input including the line breaks.
+	 */
+	public static String inputText(String msg, String title, int lines, int width) {
+		width = Math.max(20, width);
+		lines = Math.max(9, lines);
+		if ("".equals(title)) {
+			title = "Sikuli input request";
+		}
+		JTextArea ta = new JTextArea("");
+		int w = width * ta.getFontMetrics(ta.getFont()).charWidth('m');
+		int h = (int) (lines * ta.getFontMetrics(ta.getFont()).getHeight());
+		ta.setPreferredSize(new Dimension(w, h));
+		ta.setMaximumSize(new Dimension(w, 2 * h));
+		JScrollPane sp = new JScrollPane(ta);
+		sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+		JTextArea tm = new JTextArea(msg);
+		tm.setColumns(width);
+		tm.setLineWrap(true);
+		tm.setWrapStyleWord(true);
+		tm.setEditable(false);
+		tm.setBackground(new JLabel().getBackground());
+		JPanel pnl = new JPanel();
+		pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
+		pnl.add(sp);
+		pnl.add(Box.createVerticalStrut(10));
+		pnl.add(tm);
+		pnl.add(Box.createVerticalStrut(10));
+		if (0 == JOptionPane.showConfirmDialog(null, pnl, title, JOptionPane.OK_CANCEL_OPTION)) {
+			return ta.getText();
+		} else {
+			return "";
+		}
+	}
+
+	public static void pause(int time) {
+		try {
+			Thread.sleep(time * 1000);
+		} catch (InterruptedException ex) {
+		}
+	}
+
+	public static boolean importPrefs(String path) {
+		return true;
+	}
+
+	public static String arrayToString(String[] args) {
+		String ret = "";
+		for (String s : args) {
+			if (s.contains(" ")) {
+				s = "\"" + s + "\"";
+			}
+			ret += s + " ";
+		}
+		return ret;
+	}
+
+	public static boolean exportPrefs(String path) {
+		return true;
+	}
 }

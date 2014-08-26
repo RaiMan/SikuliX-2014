@@ -1,10 +1,10 @@
 /*
- * Copyright 2010-2014, Sikuli.org, SikuliX.com
+ * Copyright 2010-2014, Sikuli.org, sikulix.com
  * Released under the MIT License.
  *
  * modified RaiMan
  */
-package org.sikuli.libs;
+package org.sikuli.libswin;
 
 /**
  * This package contains the sources and the prebuilt native (C++) modules,
@@ -21,7 +21,7 @@ public class Sikulix {
 	 * @param args whatever
 	 */
 	public static void main(String[] args) {
-		System.out.println("sikulixlibs - org.sikuli.libs.Sikuli: nothing to do here. more info in javadocs.");
+		System.out.println("sikulixlibswin - org.sikuli.libswin.Sikulix: nothing to do here. more info in javadocs.");
 	}
 
 }

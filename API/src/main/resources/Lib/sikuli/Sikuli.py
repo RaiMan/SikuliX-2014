@@ -64,7 +64,7 @@ from org.sikuli.script import Keys
 
 Debug.log(4, "Jython: sikuli: Sikuli: import from Basics")
 from org.sikuli.basics import Settings
-from org.sikuli.basics import ExtensionManager
+from org.sikuli.ide import ExtensionManager
 
 Debug.log(4, "Jython: sikuli: Sikuli: import from compare")
 from org.sikuli.script.compare import DistanceComparator
@@ -75,7 +75,7 @@ Debug.log(4, "Jython: sikuli: Sikuli: init SikuliImporter")
 import SikuliImporter
 
 Debug.log(4, "Jython: sikuli: Sikuli: import Sikulix")
-from org.sikuli.basics import Sikulix
+from org.sikuli.script import Sikulix
 
 ##
 # some support for handling unicode and strings

@@ -4,10 +4,10 @@ set base=%~dp0
 
 set %version%=${sikuli.usedversion}
 
-set source=%base%APIFat\target
-set apijar=%source%\sikulixapi-complete-%version%-plain.jar
+set source=%base%Setup\target
+set setupjar=%source%\sikulixsetup-%version%-plain.jar
 
-if exist "%apijar%" goto CANRUN
+if exist "%setupjar%" goto CANRUN
   echo ----- EROR ----- run collectjars.bat in target/classes
 goto FINALLY
 
@@ -26,13 +26,13 @@ md %dist%\Downloads
 echo ----------------- SourceBase %base%
 
 echo --- collecting jars
-java -jar %apijar% noSetup
+java -jar %setupjar% noSetup
 echo --- content of %source%
 dir %source%
 dir %source%\Downloads
 
 echo --- copy Setup
-copy %apijar% %dist%\sikulixsetup-%version%.jar
+copy %setupjar% %dist%\sikulixsetup-%version%.jar
 
 echo --- copy Jars
 copy %source%\Downloads\* %dist%\Downloads

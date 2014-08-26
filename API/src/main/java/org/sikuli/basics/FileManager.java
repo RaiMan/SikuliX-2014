@@ -41,6 +41,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import org.sikuli.script.Sikulix;
 
 /**
  * INTERNAL USE: Support for accessing files and other ressources
@@ -62,12 +63,12 @@ public class FileManager {
   //</editor-fold>
 
   static final int DOWNLOAD_BUFFER_SIZE = 153600;
-  private static MultiFrame _progress = null;
+  private static SplashFrame _progress = null;
   private static final String EXECUTABLE = "#executable";
 
   /**
    * System.load() the given library module <br>
- from standard places (folder libs or Sikulix/libs) in the following order<br>
+ from standard places (folder libs or SikulixUtil/libs) in the following order<br>
    * 1. -Dsikuli.Home=<br> 2. Environement SIKULIX_HOME<br>
    * 3. parent folder of sikuli-script.jar (or main jar)<br>
    * 4. folder user's home (user.home)<br>
@@ -276,7 +277,7 @@ public class FileManager {
   }
 
   public static String downloadURL(String url, String localPath, JFrame progress) {
-    _progress = (MultiFrame) progress;
+    _progress = (SplashFrame) progress;
     return downloadURL(url, localPath);
   }
 
@@ -838,7 +839,7 @@ public class FileManager {
 //    }
 //    if (nl == null) {
 //      log0(-1, "Fatal error 121: Could not load any NativeLoader!");
-//      Sikulix.terminate(121);
+//      (121);
 //    } else {
 //      nativeLoader = nl;
 //    }

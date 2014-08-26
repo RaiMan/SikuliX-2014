@@ -26,6 +26,7 @@ import org.python.util.jython;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
+import org.sikuli.script.Sikulix;
 
 /**
  * Executes Sikuliscripts written in Python/Jython.
@@ -95,7 +96,7 @@ public class JythonScriptRunner implements IScriptRunner {
 	 */
 	@Override
 	public void init(String[] param) {
-		String jarPath = getJarPath();
+		String jarPath = Sikulix.getJarPath();
 		sikuliLibPath = new File(jarPath, "Lib").getAbsolutePath();
 		if (!jarPath.isEmpty() && jarPath.endsWith(".jar") && sikuliLibPath.contains("sikulix")) {
 			if (System.getProperty("python.path") == null) {
@@ -109,15 +110,6 @@ public class JythonScriptRunner implements IScriptRunner {
 								+ "Current python.path: " + pp);
 			}
 		}
-	}
-
-	private String getJarPath() {
-		CodeSource codeSrc = org.sikuli.basics.Sikulix.class.getProtectionDomain().getCodeSource();
-		if (codeSrc	!= null && codeSrc.getLocation() != null) {
-			URL jarURL = codeSrc.getLocation();
-			return FileManager.slashify(new File(jarURL.getPath()).getAbsolutePath(), false);
-		}
-		return "";
 	}
 
 	/**

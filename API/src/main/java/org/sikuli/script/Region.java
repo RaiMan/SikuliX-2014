@@ -2373,7 +2373,7 @@ public class Region {
         }
       } else {
         log(-1, "doFind: invalid parameter: %s", ptn);
-        Sikulix.endFatal(1);
+        Sikulix.terminate(999);
       }
       if (repeating != null) {
         repeating._finder = f;
@@ -2468,7 +2468,7 @@ public class Region {
         }
       } else {
         log(-1, "doFind: invalid parameter: %s", ptn);
-        Sikulix.endFatal(1);
+        Sikulix.terminate(999);
       }
       if (repeating != null) {
         repeating._finder = f;

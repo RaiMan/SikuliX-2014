@@ -2,10 +2,10 @@
 				 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
 	<!--
-	* Copyright 2010-2013, Sikuli.org
+	* Copyright 2010-2014, Sikuli.org, sikulix.com
 	* Released under the MIT License.
 	*
-	* RaiMan 2013
+	* RaiMan 2014
 	-->
 
 	<parent>
@@ -18,7 +18,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.sikulix</groupId>
-	<artifactId>sikulixlibswin</artifactId>
+	<artifactId>sikulixlibsvision</artifactId>
 	<version>1.1.0-Beta4</version>
 
 	<build>
@@ -29,7 +29,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.sikuli.libswin.Sikulix</mainClass>
+							<mainClass>org.sikuli.libsvision.Sikulix</mainClass>
 						</manifest>
 					</archive>
 				</configuration>

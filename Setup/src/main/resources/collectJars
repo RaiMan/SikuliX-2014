@@ -4,13 +4,13 @@ echo -
 echo ---
 
 if [ "$sbase" == "" ]; then
-	source=$base/APIFat/target
-	dist=$base/Setup/target
+	source=$base/Setup/target
+	dist=$base/Setup/target/Setup
   target=$base/SikuliX-Setup
 else
   echo ----- running on Jenkins
-  source=$sbase/APIFat/target
-	dist=$sbase/Setup/target
+  source=$sbase/Setup/target
+	dist=$sbase/Setup/target/Setup
   target=$jbase/SikuliX-Setup
   isjenkins=true
 fi
@@ -29,9 +29,9 @@ mkdir $target/Downloads
 
 # ----------- Setup
 echo ----- collecting jars
-apijar=`ls $source/*-plain.jar`
-pversion=`java -jar $apijar pversion`
-java -jar $apijar noSetup
+setupjar=`ls $source/*-plain.jar`
+pversion=`java -jar $setupjar pversion`
+java -jar $setupjar noSetup
 echo ----- content of $dist
 ls -l $dist
 ls -l $dist/Downloads
