@@ -223,7 +223,7 @@ public class RunSetup {
     }
     //</editor-fold>
 
-		runningJar = FileManager.getJarName();
+		runningJar = FileManager.getJarName(RunSetup.class);
 
 		if (runningJar.isEmpty()) {
 			popError("error accessing jar - terminating");

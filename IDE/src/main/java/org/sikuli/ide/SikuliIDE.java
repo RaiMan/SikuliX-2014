@@ -14,10 +14,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.io.*;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.net.URL;
-//import java.util.*;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -71,7 +70,6 @@ public class SikuliIDE extends JFrame {
   final static int WARNING_ACCEPTED = 1;
   final static int WARNING_DO_NOTHING = 0;
   final static int IS_SAVE_ALL = 3;
-  private static NativeSupport nativeSupport;
   private Dimension _windowSize = null;
   private Point _windowLocation = null;
   private int commandBarHeight = 800;
@@ -122,21 +120,16 @@ public class SikuliIDE extends JFrame {
 
   static {
   }
-  
+
   private SikuliIDE() {
     super("SikuliX-IDE");
   }
 
-  public static synchronized SikuliIDE getInstance(String args[]) {
+  public static synchronized SikuliIDE getInstance() {
     if (sikulixIDE == null) {
       sikulixIDE = new SikuliIDE();
-      sikulixIDE.initSikuliIDE(args);
     }
     return sikulixIDE;
-  }
-
-  public static synchronized SikuliIDE getInstance() {
-    return getInstance(null);
   }
 
   public static IIDESupport getIDESupport(String ending) {
@@ -281,35 +274,70 @@ public class SikuliIDE extends JFrame {
     Settings.showJavaInfo();
     Settings.printArgs();
 
-    initNativeSupport();
+		if (Settings.isMac()) {
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "SikuliX-u8zIDE");
+		}
+
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-      //UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
+      //TODO UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
     } catch (Exception e) {
       log(-1, "Problem loading UIManager!\nError: %s", e.getMessage());
     }
 
-    if (nativeSupport != null) {
-      nativeSupport.initApp(Debug.getDebugLevel() > 2 ? true : false);
-      try {
-        Thread.sleep(1000);
-      } catch (InterruptedException ie) {
-      }
-    }
-    SikuliIDE.getInstance(args);
+		SikuliIDE.getInstance().initNativeSupport();
+
+    SikuliIDE.getInstance().initSikuliIDE(args);
   }
 
-  //<editor-fold defaultstate="collapsed" desc="IDE setup and general">
+  private void initNativeSupport() {
+		log(lvl, "initNativeSupport: starting");
+		Class comAppleEawtApplication = null;
+		Method m = null;
+		Object inst = null;
+    try {
+				Class sysclass = URLClassLoader.class;
+				comAppleEawtApplication = sysclass.forName("com.apple.eawt.Application");
+				m = comAppleEawtApplication.getDeclaredMethod("getApplication", null);
+				inst = m.invoke(null, null);
+				m = inst.getClass().getMethod("setAboutHandler", new Class[]{Object.class});
+//				m.invoke(inst, new Object[]{this});
+//      Application.getApplication().setAboutHandler(this);
+//      Application.getApplication().setPreferencesHandler(this);
+//      Application.getApplication().setQuitHandler(this);
+    } catch (Exception ex) {
+			log(lvl, "initNativeSupport: error: %s", ex.getMessage());
+			System.exit(1);
+    }
+		log(lvl, "initNativeSupport: success");
+		System.exit(1);
+  }
+
+	public void handleAbout(Object evt) {
+    SikuliIDE.getInstance().doAbout();
+  }
+
+  public void handlePreferences(Object evt) {
+    SikuliIDE.getInstance().showPreferencesWindow();
+  }
+
+  public void handleQuitRequestWith(Object evt, Object resp) {
+	// handleQuitRequestWith(AppEvent.QuitEvent evt, QuitResponse resp)
+		if (!SikuliIDE.getInstance().quit()) {
+//      resp.cancelQuit();
+    } else {
+//      resp.performQuit();
+    }
+  }
+
+	//<editor-fold defaultstate="collapsed" desc="IDE setup and general">
   private void initSikuliIDE(String[] args) {
     prefs = PreferencesUser.getInstance();
     if (prefs.getUserType() < 0) {
       prefs.setUserType(PreferencesUser.NEWBEE);
       prefs.setIdeSession("");
       prefs.setDefaults(prefs.getUserType());
-    }
-
-    if (nativeSupport != null) {
-      nativeSupport.initIDE(this);
     }
 
     ResourceLoader.get().check(Settings.SIKULI_LIB);
@@ -412,36 +440,6 @@ public class SikuliIDE extends JFrame {
     super.setTitle(SikuliIDESettings.SikuliVersion + " - " + title);
   }
 
-  static private void initNativeSupport() {
-//TODO IDE native Support
-//    String jb = FileManager.getJarName();
-//    ClassPool pool  = ClassPool.getDefault();
-//    try {
-//      pool.appendClassPath(jb);
-//      pool.find("resources.NativeSupportMac");
-//      CtClass nsm = pool.get("resources.NativeSupportMac");
-//      nativeSupport = (NativeSupport) nsm.toClass().newInstance();
-//    } catch (Exception ex) {
-//      log(-1, "JavAssist: problem:%s", ex.getMessage());
-//    }
-    String os = "unknown";
-    if (Settings.isWindows()) {
-      os = "Windows";
-    } else if (Settings.isMac()) {
-      os = "Mac";
-    } else if (Settings.isLinux()) {
-      os = "Linux";
-    }
-    String className = "org.sikuli.ide.NativeSupport" + os;
-    try {
-      Class c = Class.forName(className);
-      Constructor constr = c.getConstructor();
-      nativeSupport = (NativeSupport) constr.newInstance();
-      log(lvl, "Native support found for " + os);
-    } catch (Exception e) {
-      log(lvl, "No native support for %s (%s)", os, e.getMessage());
-    }
-  }
   //</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="save / restore session">
@@ -827,11 +825,15 @@ public class SikuliIDE extends JFrame {
 
   //<editor-fold defaultstate="collapsed" desc="Init FileMenu">
   private void initFileMenu() throws NoSuchMethodException {
-    JMenuItem jmi;
+		boolean showAbout = true;
+		boolean showPrefs = true;
+		boolean showQuit = true;
+
+		JMenuItem jmi;
     int scMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     _fileMenu.setMnemonic(java.awt.event.KeyEvent.VK_F);
 
-    if (!Settings.isMac()) {
+    if (showAbout) {
       _fileMenu.add(createMenuItem("About SikuliX",
               KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, scMask),
               new FileAction(FileAction.ABOUT)));
@@ -895,14 +897,14 @@ public class SikuliIDE extends JFrame {
             new FileAction(FileAction.CLOSE_TAB)));
     jmi.setName("CLOSE_TAB");
 
-    if (!Settings.isMac()) {
+    if (showPrefs) {
       _fileMenu.addSeparator();
       _fileMenu.add(createMenuItem(_I("menuFilePreferences"),
               KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_P, scMask),
               new FileAction(FileAction.PREFERENCES)));
     }
 
-    if (!Settings.isMac()) {
+    if (showQuit) {
       _fileMenu.addSeparator();
       _fileMenu.add(createMenuItem(_I("menuFileQuit"),
               null, new FileAction(FileAction.QUIT)));
@@ -1278,7 +1280,7 @@ public class SikuliIDE extends JFrame {
               new FindAction(FindAction.FIND_PREV)));
       _editMenu.add(findMenu);
     }
-    
+
     _editMenu.addSeparator();
     _editMenu.add(createMenuItem(_I("menuEditIndent"),
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_TAB, 0),
@@ -1990,12 +1992,12 @@ public class SikuliIDE extends JFrame {
     _btnRunViz = new ButtonRunViz();
     toolbar.add(_btnRunViz);
     toolbar.add(Box.createHorizontalGlue());
-    
-//TODO get it working for OSX 10.10     
+
+//TODO get it working for OSX 10.10
     if (!Settings.isMac10()) {
       toolbar.add(createSearchField());
     }
-    
+
     toolbar.add(Box.createRigidArea(new Dimension(7, 0)));
     toolbar.setFloatable(false);
     //toolbar.setMargin(new Insets(0, 0, 0, 5));

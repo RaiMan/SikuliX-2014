@@ -101,6 +101,15 @@
 				</dependency>
 		-->
 		<dependency>
+			<!--
+		  Javassist (Java Programming Assistant) makes Java bytecode manipulation simple.
+			http://www.csg.ci.i.u-tokyo.ac.jp/~chiba/javassist/
+			-->
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.18.1-GA</version>
+		</dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<version>4.10</version>

@@ -15,7 +15,7 @@ else
   isjenkins=true
 fi
 
-echo ----- SikuliX collecting jars in $base
+echo ----- SikuliX collecting jars in $dist
 if [ -e $dist ]; then
   rm -f *.jar
   rm -f -R $dist/Downloads

@@ -861,12 +861,20 @@ public class FileManager {
     return RunningFromJar + jarParentPath;
   }
 
-  public static String getJarName() {
-    CodeSource src = FileManager.class.getProtectionDomain().getCodeSource();
+  public static String getJarPath(Class cname) {
+    CodeSource src = cname.getProtectionDomain().getCodeSource();
     if (src.getLocation() != null) {
-      return new File(src.getLocation().getPath()).getName();
+      return new File(src.getLocation().getPath()).getAbsolutePath();
     }
     return "";
+  }
+
+  public static String getJarName(Class cname) {
+		String jp = getJarPath(cname);
+		if (jp.isEmpty()) {
+			return "";
+		}
+		return new File(jp).getName();
   }
 
   public static boolean writeStringToFile(String text, String path) {
