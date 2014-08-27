@@ -122,7 +122,7 @@ public class SikuliIDE extends JFrame {
 
   static {
   }
-
+  
   private SikuliIDE() {
     super("SikuliX-IDE");
   }
@@ -1261,21 +1261,24 @@ public class SikuliIDE extends JFrame {
     _editMenu.add(createMenuItem(_I("menuEditSelectAll"),
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, scMask),
             new EditAction(EditAction.SELECT_ALL)));
-    _editMenu.addSeparator();
 
-    JMenu findMenu = new JMenu(_I("menuFind"));
-    _findHelper = new FindAction();
-    findMenu.setMnemonic(KeyEvent.VK_F);
-    findMenu.add(createMenuItem(_I("menuFindFind"),
-            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, scMask),
-            new FindAction(FindAction.FIND)));
-    findMenu.add(createMenuItem(_I("menuFindFindNext"),
-            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, scMask),
-            new FindAction(FindAction.FIND_NEXT)));
-    findMenu.add(createMenuItem(_I("menuFindFindPrev"),
-            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, scMask | InputEvent.SHIFT_MASK),
-            new FindAction(FindAction.FIND_PREV)));
-    _editMenu.add(findMenu);
+    if (!Settings.isMac10()) {
+      _editMenu.addSeparator();
+      JMenu findMenu = new JMenu(_I("menuFind"));
+      _findHelper = new FindAction();
+      findMenu.setMnemonic(KeyEvent.VK_F);
+      findMenu.add(createMenuItem(_I("menuFindFind"),
+              KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, scMask),
+              new FindAction(FindAction.FIND)));
+      findMenu.add(createMenuItem(_I("menuFindFindNext"),
+              KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, scMask),
+              new FindAction(FindAction.FIND_NEXT)));
+      findMenu.add(createMenuItem(_I("menuFindFindPrev"),
+              KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, scMask | InputEvent.SHIFT_MASK),
+              new FindAction(FindAction.FIND_PREV)));
+      _editMenu.add(findMenu);
+    }
+    
     _editMenu.addSeparator();
     _editMenu.add(createMenuItem(_I("menuEditIndent"),
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_TAB, 0),
@@ -1987,7 +1990,12 @@ public class SikuliIDE extends JFrame {
     _btnRunViz = new ButtonRunViz();
     toolbar.add(_btnRunViz);
     toolbar.add(Box.createHorizontalGlue());
-    toolbar.add(createSearchField());
+    
+//TODO get it working for OSX 10.10     
+    if (!Settings.isMac10()) {
+      toolbar.add(createSearchField());
+    }
+    
     toolbar.add(Box.createRigidArea(new Dimension(7, 0)));
     toolbar.setFloatable(false);
     //toolbar.setMargin(new Insets(0, 0, 0, 5));

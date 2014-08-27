@@ -429,6 +429,13 @@ public class Settings {
 	public static boolean isMac() {
 		return getOS() == ISMAC;
 	}
+  
+  public static boolean isMac10() {
+    if (isMac() && "10.10".equals(Settings.getOSVersion())) {
+      return true;
+    }
+    return false;
+  }
 
 	public static String getShortOS() {
 		if (isWindows()) {
