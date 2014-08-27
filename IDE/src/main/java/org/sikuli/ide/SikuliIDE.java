@@ -14,7 +14,9 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.awt.event.*;
 import java.io.*;
+import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
@@ -55,7 +57,7 @@ import org.sikuli.idesupport.IDESupport;
 import org.sikuli.script.Key;
 import org.sikuli.script.Sikulix;
 
-public class SikuliIDE extends JFrame {
+public class SikuliIDE extends JFrame implements InvocationHandler {
 
   private static String me = "IDE: ";
   private static int lvl = 3;
@@ -117,6 +119,9 @@ public class SikuliIDE extends JFrame {
   private static long start;
   private static File isRunning = null;
   private static FileOutputStream isRunningFile = null;
+  private boolean showAbout = true;
+  private boolean showPrefs = true;
+  private boolean showQuit = true;
 
   static {
   }
@@ -293,42 +298,62 @@ public class SikuliIDE extends JFrame {
 
   private void initNativeSupport() {
 		log(lvl, "initNativeSupport: starting");
-		Class comAppleEawtApplication = null;
-		Method m = null;
-		Object inst = null;
     try {
-				Class sysclass = URLClassLoader.class;
-				comAppleEawtApplication = sysclass.forName("com.apple.eawt.Application");
-				m = comAppleEawtApplication.getDeclaredMethod("getApplication", null);
-				inst = m.invoke(null, null);
-				m = inst.getClass().getMethod("setAboutHandler", new Class[]{Object.class});
-//				m.invoke(inst, new Object[]{this});
-//      Application.getApplication().setAboutHandler(this);
-//      Application.getApplication().setPreferencesHandler(this);
-//      Application.getApplication().setQuitHandler(this);
+//      com.apple.eawt.QuitResponse
+      Class sysclass = URLClassLoader.class;
+      Class comAppleEawtApplication = sysclass.forName("com.apple.eawt.Application");
+      Method mGetApplication = comAppleEawtApplication.getDeclaredMethod("getApplication", null);
+      Object instApplication = mGetApplication.invoke(null, null);
+
+      Class clAboutHandler = sysclass.forName("com.apple.eawt.AboutHandler");
+      Class clPreferencesHandler = sysclass.forName("com.apple.eawt.PreferencesHandler");
+      Class clQuitHandler = sysclass.forName("com.apple.eawt.QuitHandler");
+
+      Object appHandler = Proxy.newProxyInstance(
+                                  comAppleEawtApplication.getClassLoader(),
+                                  new Class[] { clAboutHandler, clPreferencesHandler, clQuitHandler },
+                                  this);
+      Method m = comAppleEawtApplication.getMethod("setAboutHandler", new Class[]{clAboutHandler});
+			m.invoke(instApplication, new Object[]{appHandler});
+      showAbout = false;
+      m = comAppleEawtApplication.getMethod("setPreferencesHandler", new Class[]{clPreferencesHandler});
+			m.invoke(instApplication, new Object[]{appHandler});
+      showPrefs = false;
+      m = comAppleEawtApplication.getMethod("setQuitHandler", new Class[]{clQuitHandler});
+			m.invoke(instApplication, new Object[]{appHandler});
+      showQuit = false;
     } catch (Exception ex) {
-			log(lvl, "initNativeSupport: error: %s", ex.getMessage());
-			System.exit(1);
+      log(lvl, "initNativeSupport: error: %s", ex.getMessage());
+      System.exit(1);
     }
 		log(lvl, "initNativeSupport: success");
-		System.exit(1);
   }
-
-	public void handleAbout(Object evt) {
-    SikuliIDE.getInstance().doAbout();
-  }
-
-  public void handlePreferences(Object evt) {
-    SikuliIDE.getInstance().showPreferencesWindow();
-  }
-
-  public void handleQuitRequestWith(Object evt, Object resp) {
-	// handleQuitRequestWith(AppEvent.QuitEvent evt, QuitResponse resp)
-		if (!SikuliIDE.getInstance().quit()) {
-//      resp.cancelQuit();
-    } else {
-//      resp.performQuit();
+  
+  @Override
+  public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+    String mName = method.getName();
+    if ("handleAbout".equals(mName)) {
+      SikuliIDE.getInstance().doAbout();        
+    } else if ("handlePreferences".equals(mName)) {
+      SikuliIDE.getInstance().showPreferencesWindow();
+    } else if ("handleQuitRequestWith".equals(mName)) {
+      try {
+        Class sysclass = URLClassLoader.class;
+        Class comAppleEawtQuitResponse = sysclass.forName("com.apple.eawt.QuitResponse");
+        Method mCancelQuit = comAppleEawtQuitResponse.getMethod("cancelQuit", null);
+        Method mPerformQuit = comAppleEawtQuitResponse.getMethod("performQuit", null);
+        Object resp = args[1];
+        if (!SikuliIDE.getInstance().quit()) {
+          mCancelQuit.invoke(resp, null);
+        } else {
+          mPerformQuit.invoke(resp, null);
+        }
+      } catch (Exception ex) {
+        log(lvl, "NativeSupport: Quit: error: %s", ex.getMessage());
+        System.exit(1);
+      }
     }
+    return new Object();
   }
 
 	//<editor-fold defaultstate="collapsed" desc="IDE setup and general">
@@ -825,10 +850,6 @@ public class SikuliIDE extends JFrame {
 
   //<editor-fold defaultstate="collapsed" desc="Init FileMenu">
   private void initFileMenu() throws NoSuchMethodException {
-		boolean showAbout = true;
-		boolean showPrefs = true;
-		boolean showQuit = true;
-
 		JMenuItem jmi;
     int scMask = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
     _fileMenu.setMnemonic(java.awt.event.KeyEvent.VK_F);
