@@ -340,13 +340,10 @@ public class RunSetup {
 		Debug.setDebugLevel(3);
 
 		uhome = System.getProperty("user.home");
-		workDir = FileManager.getJarParentFolder();
-		if (workDir.startsWith("N")) {
-			runningfromJar = false;
-		}
-		workDir = workDir.substring(1);
-
-    if (!runningfromJar || runningJar.endsWith("-plain.jar")) {
+		runningJar = FileManager.getJarPath(RunSetup.class);
+    workDir = new File(runningJar).getParent();
+  
+    if (!runningJar.endsWith(".jar") || runningJar.endsWith("-plain.jar")) {
       if (noSetup) {
         log(3, "creating Setup folder - not running setup");
       } else {
@@ -363,11 +360,6 @@ public class RunSetup {
       Settings.runningSetupInContext = workDir;
       Settings.runningSetupWithJar = localJar;
       logToFile = false;
-    }
-
-//**API** sikulixapi.jar should not be runnable without defined options
-    if (!Settings.runningSetupInValidContext && runningJar.contains("sikulixapi")) {
-      System.exit(0);
     }
 
 		if (logToFile) {
@@ -1172,7 +1164,7 @@ public class RunSetup {
     boolean doit = true;
     File setupjar = null;
     if (path.isEmpty()) {
-      if ("classes".equals(runningJar) || runningJar.endsWith("-plain.jar")) {
+      if (runningJar.endsWith("classes") || runningJar.endsWith("-plain.jar")) {
         projectDir = new File(workDir).getParentFile().getParentFile().getAbsolutePath();
       } else {
         success = false;
