@@ -342,7 +342,7 @@ public class RunSetup {
 		uhome = System.getProperty("user.home");
 		runningJar = FileManager.getJarPath(RunSetup.class);
     workDir = new File(runningJar).getParent();
-  
+
     if (!runningJar.endsWith(".jar") || runningJar.endsWith("-plain.jar")) {
       if (noSetup) {
         log(3, "creating Setup folder - not running setup");
@@ -1095,7 +1095,7 @@ public class RunSetup {
 				if (test) {
 					testMethod = "print \"testSetup: Jython: success\"";
 				} else {
-					testMethod = "Sikulix.testSetupJython()";
+					testMethod = "Sikulix.testSetup(\"Jython Scripting\")";
 				}
 				log1(lvl, "Jython: Trying to run functional test: running script statements via SikuliScript");
         splash = showSplash("Jython Scripting: Trying to run functional test",
@@ -1119,7 +1119,7 @@ public class RunSetup {
 				if (test) {
 					testMethod = "print \"testSetup: JRuby: success\"";
 				} else {
-					testMethod = "Sikulix.testSetupJRuby()";
+					testMethod = "Sikulix.testSetup(\"JRuby Scripting\")";
 				}
         log1(lvl, "JRuby: Trying to run functional test: running script statements via SikuliScript");
         splash = showSplash("JRuby Scripting: Trying to run functional test",
@@ -1155,7 +1155,15 @@ public class RunSetup {
 	}
 
 	private static void runScriptTest(String[] testargs) {
-
+		try {
+      Class sysclass = URLClassLoader.class;
+      Class scriptRunner = sysclass.forName("org.sikuli.scriptrunner.ScriptRunner");
+      Method mGetApplication = scriptRunner.getDeclaredMethod("runscript",
+							new Class[]{String[].class});
+      mGetApplication.invoke(null, new Object[]{testargs});
+    } catch (Exception ex) {
+      log(lvl, "runScriptTest: error: %s", ex.getMessage());
+    }
 	}
 
   private static boolean createSetupFolder(String path) {

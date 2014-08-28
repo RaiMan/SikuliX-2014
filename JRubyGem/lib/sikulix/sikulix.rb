@@ -10,7 +10,7 @@ module Sikulix
   # 'private' for avoiding of unexpected effects when
   #   'include Sikulix' is used.
 
-  java_import org.sikuli.basics.Sikulix
+  java_import org.sikuli.script.Sikulix
   java_import org.sikuli.script.Screen
   java_import org.sikuli.script.Region
   java_import org.sikuli.script.ScreenUnion
@@ -46,8 +46,6 @@ module Sikulix
   java_import org.sikuli.script.compare.DistanceComparator
   java_import org.sikuli.script.compare.VerticalComparator
   java_import org.sikuli.script.compare.HorizontalComparator
-
-  java_import org.sikuli.basics.SikuliScript
 
   java_import org.sikuli.basics.Debug
 
@@ -174,11 +172,6 @@ module Sikulix
       obj_meth = obj.method(name)
       dynamic_def(name) { |*args, &block| obj_meth.call(*args, &block) }
     end
-  end
-
-  # Display some help in interactive mode.
-  def shelp
-    SikuliScript.shelp
   end
 
   # TODO: check it after Env Java-class refactoring

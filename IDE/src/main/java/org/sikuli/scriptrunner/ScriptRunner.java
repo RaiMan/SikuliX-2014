@@ -22,7 +22,6 @@ import org.sikuli.ide.CommandArgsEnum;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
-//import org.sikuli.basics.SikulixUtil;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.Sikulix;
 
