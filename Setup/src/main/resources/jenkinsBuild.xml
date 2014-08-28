@@ -36,8 +36,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<exclude.nativelayer.mac>NativeSupportMac.java</exclude.nativelayer.mac>
-		<exclude.nativelayer.null>NativeSupportForNothing</exclude.nativelayer.null>
 		<sikuli.jartype>plain.xml</sikuli.jartype>
 		<sikuli.jarname>${project.version}</sikuli.jarname>
 		<sikulixvmaj>1</sikulixvmaj>
@@ -108,43 +106,8 @@
 		</dependency>
 	</dependencies>
 
-	<profiles>
-		<profile>
-			<id>Windows</id>
-			<activation>
-				<os>
-					<family>windows</family>
-				</os>
-			</activation>
-			<properties>
-				<exclude.nativelayer>${exclude.nativelayer.mac}</exclude.nativelayer>
-			</properties>
-		</profile>
-		<profile>
-			<id>Unix</id>
-			<activation>
-				<os>
-					<family>unix</family>
-				</os>
-			</activation>
-			<properties>
-				<exclude.nativelayer>${exclude.nativelayer.mac}</exclude.nativelayer>
-			</properties>
-		</profile>
-		<profile>
-			<id>Mac</id>
-			<activation>
-				<os>
-					<family>mac</family>
-				</os>
-			</activation>
-			<properties>
-				<exclude.nativelayer>${exclude.nativelayer.null}</exclude.nativelayer>
-			</properties>
-		</profile>
-	</profiles>
-
 	<modules>
+		<module>Libsvision</module>
 		<module>Libslux</module>
 		<module>Libsmac</module>
 		<module>Libswin</module>
@@ -190,14 +153,5 @@
 			<!--      <url>https://github.com/RaiMan/SikuliX-Maven-Repo/raw/master/snapshots</url>-->
 			<url>file:/Users/rhocke/SikuliX/SikuliX-Maven-Repo/raw/master/snapshots</url>
 		</snapshotRepository>
-
-		<!-- after getting access to https://oss.sonatype.org/ as described in
-		https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
-		use this: -->
-		<!--
-		<repository>
-				<id>sonatype.releases</id>
-				<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository> -->
 	</distributionManagement>
 </project>
