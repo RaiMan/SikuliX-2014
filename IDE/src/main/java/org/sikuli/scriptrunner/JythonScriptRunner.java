@@ -42,13 +42,13 @@ public class JythonScriptRunner implements IScriptRunner {
 	/**
 	 * The PythonInterpreter instance
 	 */
-	private static PythonInterpreter interpreter = null;
-	private static int savedpathlen = 0;
+	private PythonInterpreter interpreter = null;
+	private int savedpathlen = 0;
 	private static final String COMPILE_ONLY = "# COMPILE ONLY";
 	/**
 	 * sys.argv for the jython script
 	 */
-	private static ArrayList<String> sysargv = null;
+	private ArrayList<String> sysargv = null;
 	/**
 	 * The header commands, that are executed before every script
 	 */
@@ -62,8 +62,8 @@ public class JythonScriptRunner implements IScriptRunner {
 		"setShowActions(False)"
 	};
 
-	private static ArrayList<String> codeBefore = null;
-	private static ArrayList<String> codeAfter = null;
+	private ArrayList<String> codeBefore = null;
+	private ArrayList<String> codeAfter = null;
 	/**
 	 * CommandLine args
 	 */
@@ -85,7 +85,7 @@ public class JythonScriptRunner implements IScriptRunner {
 					= JythonScriptRunner.class.getResourceAsStream("/scripts/sikuli2html.py");
 	static String pyConverter
 					= FileManager.convertStreamToString(SikuliToHtmlConverter);
-	private static String sikuliLibPath;
+	private String sikuliLibPath;
 
 	/**
 	 * {@inheritDoc}

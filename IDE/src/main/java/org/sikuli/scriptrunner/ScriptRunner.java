@@ -15,6 +15,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import org.apache.commons.cli.CommandLine;
 import org.sikuli.ide.CommandArgs;
@@ -62,6 +63,7 @@ public class ScriptRunner {
   private static boolean isRunningInteractive = false;
 
   public static void initScriptingSupport() {
+		log(lvl, "initScriptingSupport: enter");
     if (scriptRunner.isEmpty()) {
       EndingTypes.put("py", CPYTHON);
       EndingTypes.put("rb", CRUBY);
@@ -72,10 +74,17 @@ public class ScriptRunner {
       ServiceLoader<IScriptRunner> rloader = ServiceLoader.load(IScriptRunner.class);
       Iterator<IScriptRunner> rIterator = rloader.iterator();
       while (rIterator.hasNext()) {
-        IScriptRunner current = rIterator.next();
+				IScriptRunner current = null;
+				try {
+					current = rIterator.next();
+				} catch (ServiceConfigurationError e) {
+					log(lvl, "initScriptingSupport: warning: %s", e.getMessage());
+					continue;
+				}
         String name = current.getName();
         if (name != null && !name.startsWith("Not")) {
           scriptRunner.put(name, current);
+					log(lvl, "initScriptingSupport: added: %s", name);
         }
       }
     }
@@ -94,6 +103,7 @@ public class ScriptRunner {
         }
       }
     }
+		log(lvl, "initScriptingSupport: exit with defaultrunner: %s (%s)", RDEFAULT, EDEFAULT);
   }
 
   public static boolean hasTypeRunner(String type) {

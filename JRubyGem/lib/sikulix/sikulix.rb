@@ -41,7 +41,7 @@ module Sikulix
   java_import org.sikuli.script.Keys
 
   java_import org.sikuli.basics.Settings
-  java_import org.sikuli.basics.ExtensionManager
+  java_import org.sikuli.ide.ExtensionManager
 
   java_import org.sikuli.script.compare.DistanceComparator
   java_import org.sikuli.script.compare.VerticalComparator

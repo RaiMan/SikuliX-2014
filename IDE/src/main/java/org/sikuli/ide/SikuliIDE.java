@@ -194,15 +194,23 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     start = (new Date()).getTime();
 
-    ScriptRunner.initScriptingSupport();
-		IDESupport.initIDESupport();
-
     CommandArgs cmdArgs = new CommandArgs("IDE");
     cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
 
     if (cmdLine == null) {
       Debug.error("Did not find any valid option on command line!");
       System.exit(1);
+    }
+
+    if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
+      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
+      if (cmdValue == null) {
+        Debug.setDebugLevel(3);
+        Debug.setLogFile("");
+        Settings.LogTime = true;
+      } else {
+        Debug.setDebugLevel(cmdValue);
+      }
     }
 
     if (cmdLine.hasOption("h")) {
@@ -228,16 +236,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       }
     }
 
-    if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
-      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
-      if (cmdValue == null) {
-        Debug.setDebugLevel(3);
-        Debug.setLogFile("");
-        Settings.LogTime = true;
-      } else {
-        Debug.setDebugLevel(cmdValue);
-      }
-    }
+		ScriptRunner.initScriptingSupport();
+		IDESupport.initIDESupport();
 
     if (cmdLine.hasOption(CommandArgsEnum.LOAD.shortname())) {
       loadScripts = cmdLine.getOptionValues(CommandArgsEnum.LOAD.longname());
@@ -297,6 +297,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   private void initNativeSupport() {
+		if (!Settings.isMac()) {
+			return;
+		}
 		log(lvl, "initNativeSupport: starting");
     try {
 //      com.apple.eawt.QuitResponse
@@ -328,12 +331,12 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
 		log(lvl, "initNativeSupport: success");
   }
-  
+
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     String mName = method.getName();
     if ("handleAbout".equals(mName)) {
-      SikuliIDE.getInstance().doAbout();        
+      SikuliIDE.getInstance().doAbout();
     } else if ("handlePreferences".equals(mName)) {
       SikuliIDE.getInstance().showPreferencesWindow();
     } else if ("handleQuitRequestWith".equals(mName)) {
