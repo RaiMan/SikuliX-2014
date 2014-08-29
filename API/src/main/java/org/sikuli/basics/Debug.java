@@ -206,22 +206,22 @@ public class Debug {
   private static boolean checkCallback(Object[] args) {
     return runnerDoSomethingSpecial("checkCallback", args);
   }
-  
+
   private static boolean runCallback(String pln, String msg) {
     return runnerDoSomethingSpecial("runLoggerCallback", new Object[]{privateLogger, pln, msg});
   }
-  
-  private static boolean runnerDoSomethingSpecial(String action, Object[] args) {   
+
+  private static boolean runnerDoSomethingSpecial(String action, Object[] args) {
     try {
       Class ScriptRunner = Class.forName("org.sikuli.scriptrunner.ScriptRunner");
-      Method doSomethingSpecial = ScriptRunner.getMethod("doSomethingSpecial", 
+      Method doSomethingSpecial = ScriptRunner.getMethod("doSomethingSpecial",
               new Class[]{String.class, Object[].class});
       Object ret = doSomethingSpecial.invoke(ScriptRunner, new Object[]{action, args});
       return (Boolean) ret;
     } catch (Exception ex) {
       log(-100, "Debug.runnerDoSomethingSpecial: Fatal Error 999: could not be run!");
       System.exit(999);
-    }    
+    }
     return false;
   }
   /**
@@ -643,7 +643,6 @@ public class Debug {
 	/**
 	 * INTERNAL USE: special debug messages
 	 * @param level value
-	 * @param prefix not used
 	 * @param message text or format string
 	 * @param args for use with format string
 	 */
