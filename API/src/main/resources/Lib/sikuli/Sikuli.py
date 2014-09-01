@@ -7,7 +7,7 @@ from org.sikuli.basics import Debug
 Debug.log(3, "Jython: sikuli: Sikuli: starting init")
 import time
 import __builtin__
-import __main__
+#import __main__
 import types
 import sys
 import os
@@ -64,7 +64,7 @@ from org.sikuli.script import Keys
 
 Debug.log(4, "Jython: sikuli: Sikuli: import from Basics")
 from org.sikuli.basics import Settings
-from org.sikuli.ide import ExtensionManager
+from org.sikuli.basics import ExtensionManager
 
 Debug.log(4, "Jython: sikuli: Sikuli: import from compare")
 from org.sikuli.script.compare import DistanceComparator
@@ -78,7 +78,10 @@ Debug.log(4, "Jython: sikuli: Sikuli: import Sikulix")
 from org.sikuli.script import Sikulix
 
 Debug.log(4, "Jython: sikuli: Sikuli: import ScriptRunner")
-from org.sikuli.scriptrunner import ScriptRunner
+try:
+	from org.sikuli.scriptrunner import ScriptRunner
+except:
+  pass
 
 ##
 # some support for handling unicode and strings
