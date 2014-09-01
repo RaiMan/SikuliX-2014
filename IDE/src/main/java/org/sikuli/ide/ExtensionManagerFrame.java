@@ -28,6 +28,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import org.json.simple.JSONValue;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.Settings;
 import org.sikuli.basics.Settings;
 
 public class ExtensionManagerFrame extends JFrame {

@@ -4,7 +4,7 @@
  *
  * modified RaiMan 2013
  */
-package org.sikuli.ide;
+package org.sikuli.basics;
 
 import java.io.*;
 import java.net.URL;

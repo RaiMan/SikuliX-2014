@@ -22,9 +22,11 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 import javax.swing.border.EtchedBorder;
-import org.sikuli.ide.SikuliIDEI18N;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.ExtensionManager;
 import org.sikuli.basics.Settings;
+import org.sikuli.ide.SikuliIDEI18N;
+import org.sikuli.ide.SikuliIDEI18N;
 
 class ExtensionItem extends JPanel implements ActionListener {
 
