@@ -105,8 +105,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   private static CommandLine cmdLine;
   private static String cmdValue;
   private static String[] loadScripts = null;
-  private static String[] runScripts = null;
-  private static String[] testScripts = null;
   private static SikuliIDE sikulixIDE = null;
   private boolean _inited = false;
   private static boolean runMe = false;
@@ -161,8 +159,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
 //TODO run only one windowed instance of IDE
   public static void main(String[] args) {
-    String[] splashArgs = new String[]{
-      "splash", "#", "#" + Settings.SikuliVersionIDE, "", "#", "#... starting - please wait ..."};
 
     Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
@@ -179,18 +175,18 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         }
     });
 
-    if (System.getProperty("sikuli.FromCommandLine") == null) {
-      String[] userOptions = collectOptions("IDE", args);
-      if (userOptions == null) {
-        System.exit(0);
-      }
-      if (userOptions.length > 0) {
-        for (String e : userOptions) {
-          log(lvl, "arg: " + e);
-        }
-        args = userOptions;
-      }
-    }
+//    if (System.getProperty("sikuli.FromCommandLine") == null) {
+//      String[] userOptions = collectOptions("IDE", args);
+//      if (userOptions == null) {
+//        System.exit(0);
+//      }
+//      if (userOptions.length > 0) {
+//        for (String e : userOptions) {
+//          log(lvl, "arg: " + e);
+//        }
+//        args = userOptions;
+//      }
+//    }
 
     start = (new Date()).getTime();
 
@@ -241,11 +237,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     if (cmdLine.hasOption(CommandArgsEnum.LOAD.shortname())) {
       loadScripts = cmdLine.getOptionValues(CommandArgsEnum.LOAD.longname());
-      log(lvl, "requested to load: " + loadScripts);
-      if (loadScripts[0].endsWith(".skl")) {
-        log(lvl, "Switching to ScriptRunner to run " + loadScripts[0]);
-        ScriptRunner.runscript(args);
-      }
+      log(lvl, "requested to load: %s", loadScripts);
     }
 
     if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname())
@@ -261,27 +253,22 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       isRunning.createNewFile();
       isRunningFile = new FileOutputStream(isRunning);
       if (null == isRunningFile.getChannel().tryLock()) {
-        splashArgs[5] = "Terminating on FatalError: IDE already running";
-        splash = new SplashFrame(splashArgs);
-        log(-1, splashArgs[5]);
-        Sikulix.pause(3);
+        Sikulix.popError("Terminating on FatalError: IDE already running");
         System.exit(1);
       }
     } catch (Exception ex) {
-      splashArgs[5] = "Terminating on FatalError: cannot access IDE lock ";
-      splash = new SplashFrame(splashArgs);
-      log(-1, splashArgs[5] + "\n" + isRunning.getAbsolutePath());
-      Sikulix.pause(3);
+      Sikulix.popError("Terminating on FatalError: cannot access IDE lock");
       System.exit(1);
     }
 
+    Settings.isRunningIDE = true;
     Settings.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
     Settings.showJavaInfo();
     Settings.printArgs();
 
 		if (Settings.isMac()) {
 			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "SikuliX-u8zIDE");
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "SikuliX-IDE");
 		}
 
     try {
@@ -326,7 +313,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 			m.invoke(instApplication, new Object[]{appHandler});
       showQuit = false;
     } catch (Exception ex) {
-      log(lvl, "initNativeSupport: error: %s", ex.getMessage());
+      String em = String.format("initNativeSupport: Mac: error:\n%s", ex.getMessage());
+      log(-1, em);
+      Sikulix.popError(em, "IDE has problems ...");
       System.exit(1);
     }
 		log(lvl, "initNativeSupport: success");
@@ -374,7 +363,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     _windowLocation = prefs.getIdeLocation();
     Screen m = (Screen) (new Location(_windowLocation)).getScreen();
     if (m == null) {
-      Debug.error("IDE: remembered window not valid - going to primary screen");
+      String em = "Remembered window not valid.\nGoing to primary screen";
+      log(-1, em);
+      Sikulix.popError(em, "IDE has problems ...");
       m = Screen.getPrimaryScreen();
       _windowSize.width = 0;
     }
@@ -2146,7 +2137,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 			SikuliIDE.getStatusbar().resetMessage();
 			ide.setVisible(false);
 			if (ide.firstRun) {
-//        SikulixUtil.displaySplashFirstTime(new String[0]);
 				ide.firstRun = false;
 			}
 			ide.setIsRunningScript(true);
@@ -2156,7 +2146,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 				public void run() {
 					EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
 					File tmpFile;
-					tmpFile = FileManager.createTempFile(ScriptRunner.TypeEndings.get(codePane.getSikuliContentType()));
+					tmpFile = FileManager.createTempFile(ScriptRunner.typeEndings.get(codePane.getSikuliContentType()));
 					if (tmpFile == null) {
 						return;
 					}
@@ -2166,19 +2156,14 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 														new FileOutputStream(tmpFile),
 														"UTF8"));
 						codePane.write(bw);
-						//SikuliIDE.getInstance().setVisible(false);
 						_console.clear();
 						resetErrorMark();
-//            runScript(tmpFile, codePane);
 						File path = new File(SikuliIDE.getInstance().getCurrentBundlePath());
 						File parent = path.getParentFile();
-						//TODO implement alternative script types
-						String runnerType = null;
 						String cType = codePane.getContentType();
-						runnerType = cType.equals(ScriptRunner.CPYTHON) ? ScriptRunner.RPYTHON : ScriptRunner.RRUBY;
-						IScriptRunner srunner = ScriptRunner.getScriptRunner(runnerType, null, Settings.getArgs());
+						IScriptRunner srunner = ScriptRunner.getRunner(null, cType);
 						if (srunner == null) {
-							Debug.error("Could not load a script runner for: %s (%s)", cType, runnerType);
+							Debug.error("Could not load a script runner for: %s", cType);
 							return;
 						}
 						addScriptCode(srunner);

@@ -125,13 +125,6 @@ public class CommandArgs {
             CommandArgsEnum.SPLASH.longname(), false, CommandArgsEnum.SPLASH.description());
 
     _options.addOption(
-            OptionBuilder.withLongOpt(CommandArgsEnum.LOAD.longname())
-            .withDescription(CommandArgsEnum.LOAD.description())
-            .hasOptionalArgs()
-            .withArgName(CommandArgsEnum.LOAD.argname())
-            .create(CommandArgsEnum.LOAD.shortname().charAt(0)));
-
-    _options.addOption(
             OptionBuilder.withLongOpt(CommandArgsEnum.INTERACTIVE.longname())
             .hasOptionalArg()
             .withArgName(CommandArgsEnum.INTERACTIVE.argname())
@@ -139,17 +132,24 @@ public class CommandArgs {
             .create(CommandArgsEnum.INTERACTIVE.shortname().charAt(0)));
 
     _options.addOption(
+            OptionBuilder.withLongOpt(CommandArgsEnum.LOAD.longname())
+            .withDescription(CommandArgsEnum.LOAD.description())
+            .hasOptionalArgs()
+            .withArgName(CommandArgsEnum.LOAD.argname())
+            .create(CommandArgsEnum.LOAD.shortname().charAt(0)));
+
+    _options.addOption(
             OptionBuilder.withLongOpt(CommandArgsEnum.TEST.longname())
-            .hasOptionalArg()
-            .withArgName(CommandArgsEnum.TEST.argname())
             .withDescription(CommandArgsEnum.TEST.description())
+            .hasOptionalArgs()
+            .withArgName(CommandArgsEnum.TEST.argname())
             .create(CommandArgsEnum.TEST.shortname().charAt(0)));
 
     _options.addOption(
             OptionBuilder.withLongOpt(CommandArgsEnum.RUN.longname())
-            .hasOptionalArg()
-            .withArgName(CommandArgsEnum.RUN.argname())
             .withDescription(CommandArgsEnum.RUN.description())
+            .hasOptionalArgs()
+            .withArgName(CommandArgsEnum.RUN.argname())
             .create(CommandArgsEnum.RUN.shortname().charAt(0)));
   }
 
@@ -159,10 +159,9 @@ public class CommandArgs {
   public void printHelp() {
     HelpFormatter formatter = new HelpFormatter();
     formatter.printHelp(80, "\n",
-        "----- Running SikuliX-IDE or SikuliX-Script "
-      + "-------------",
+        "----- Running SikuliX " + "-------------",
       _options,
-        "-----\n<foobar.sikuli>\n"
+        "-----\n<foobar.sikuli> (.sikuli might be omitted, is assumed)\n"
       + "path relative to current working directory or absolute path\n"
       + "though deprecated: so called executables .skl can be used too\n"
       + "------\nanything after --\nor after something beginning with --\n"

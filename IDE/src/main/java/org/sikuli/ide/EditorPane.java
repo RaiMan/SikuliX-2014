@@ -34,6 +34,7 @@ import org.sikuli.script.Location;
 import org.sikuli.script.Image;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.Sikulix;
+import org.sikuli.scriptrunner.IScriptRunner;
 import org.sikuli.scriptrunner.ScriptRunner;
 import org.sikuli.syntaxhighlight.ResolutionException;
 import org.sikuli.syntaxhighlight.grammar.Lexer;
@@ -259,7 +260,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		filename = FileManager.slashify(filename, false);
 		setSrcBundle(filename + "/");
 		File script = new File(filename);
-		_editingFile = ScriptRunner.getScriptFile(script, null, null);
+		_editingFile = ScriptRunner.getScriptFile(script, null);
 		if (_editingFile != null) {
 			scriptType = _editingFile.getAbsolutePath().substring(_editingFile.getAbsolutePath().lastIndexOf(".") + 1);
 			initBeforeLoad(scriptType);
@@ -353,7 +354,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			_srcBundleTemp = false;
 		}
 		setSrcBundle(bundlePath);
-		_editingFile = createSourceFile(bundlePath, "." + ScriptRunner.TypeEndings.get(sikuliContentType));
+		_editingFile = createSourceFile(bundlePath, "." + ScriptRunner.typeEndings.get(sikuliContentType));
 		writeSrcFile();
 		reparse();
 	}
@@ -598,9 +599,9 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 //TODO convertSrcToHtml has to be completely revised
 	private void convertSrcToHtml(String bundle) {
-		if (null != ScriptRunner.getScriptRunner("jython", null, new String[]{"convertSrcToHtml"})) {
-			ScriptRunner.getScriptRunner("jython", null, null).doSomethingSpecial("convertSrcToHtml",
-							new String[]{bundle});
+    IScriptRunner runner = ScriptRunner.getRunner(null, "jython");
+		if (runner != null) {
+			runner.doSomethingSpecial("convertSrcToHtml",	new String[]{bundle});
 		}
 	}
 

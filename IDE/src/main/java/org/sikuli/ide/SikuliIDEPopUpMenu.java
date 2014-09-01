@@ -209,7 +209,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 			String error = "";
 			EditorPane cp = SikuliIDE.getInstance().getCurrentCodePane();
       if (selOptionsType == null) {
-        Set<String> types = ScriptRunner.TypeEndings.keySet();
+        Set<String> types = ScriptRunner.typeEndings.keySet();
         selOptionsType = new String[types.size()];
         int i = 0;
         for (String e : types) {
@@ -231,7 +231,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 				SikuliIDE.getStatusbar().setCurrentContentType(currentType);
 				return;
 			}
-			String targetEnding = ScriptRunner.TypeEndings.get(targetType);
+			String targetEnding = ScriptRunner.typeEndings.get(targetType);
 			if (cp.reparseBefore() != null) {
 				if (!cp.reparseCheckContent()) {
 					if (!Sikulix.popAsk(String.format(

@@ -86,6 +86,7 @@ public class JythonScriptRunner implements IScriptRunner {
 	static String pyConverter
 					= FileManager.convertStreamToString(SikuliToHtmlConverter);
 	private String sikuliLibPath;
+  private boolean isReady = false;
 
 	/**
 	 * {@inheritDoc}
@@ -94,6 +95,9 @@ public class JythonScriptRunner implements IScriptRunner {
 	 */
 	@Override
 	public void init(String[] param) {
+    if (isReady) {
+      return;
+    }
 		String jarPath = Sikulix.getJarPath();
 		sikuliLibPath = new File(jarPath, "Lib").getAbsolutePath();
 		if (!jarPath.isEmpty() && jarPath.endsWith(".jar") && sikuliLibPath.contains("sikulix")) {
@@ -108,6 +112,7 @@ public class JythonScriptRunner implements IScriptRunner {
 								+ "Current python.path: " + pp);
 			}
 		}
+    isReady = true;
 	}
 
 	/**
@@ -126,23 +131,29 @@ public class JythonScriptRunner implements IScriptRunner {
 			fillSysArgv(null, null);
 			createPythonInterpreter();
 			executeScriptHeader(new String[0]);
-			//SikuliX.displaySplash(null);
-			return runPython(null, argv, null);
+      log(lvl, "runPython: running statements");
+      try {
+      for (String e : argv) {
+        interpreter.exec(e);
+      }
+      } catch (Exception ex) {
+        log(-1, "runPython: raised: %s", ex.getMessage());
+        return -1;
+      }
+			return 0;
 		}
 		pyFile = new File(pyFile.getAbsolutePath());
 		fillSysArgv(pyFile, argv);
 		createPythonInterpreter();
 		if (forIDE == null) {
 			executeScriptHeader(new String[]{
-				pyFile.getParentFile().getAbsolutePath(),
-				pyFile.getParentFile().getParentFile().getAbsolutePath()});
+				pyFile.getParent(),
+				pyFile.getParentFile().getParent()});
 		} else {
 			executeScriptHeader(new String[]{
 				forIDE[0]});
 		}
 		int exitCode = 0;
-		//SikuliX.displaySplashFirstTime(null);
-		//SikuliX.displaySplash(null);
 		if (forIDE == null) {
 			exitCode = runPython(pyFile, null, new String[]{pyFile.getParentFile().getAbsolutePath()});
 		} else {
@@ -156,65 +167,57 @@ public class JythonScriptRunner implements IScriptRunner {
 		return exitCode;
 	}
 
-	private int runPython(File pyFile, String[] stmts, String[] scriptPaths) {
-		int exitCode = 0;
-		String stmt = "";
-		boolean fromIDE = false;
-		try {
-			if (null == pyFile) {
-				log(lvl, "runPython: running statements");
-				for (String e : stmts) {
-					stmt = e;
-					interpreter.exec(stmt);
-				}
-			} else {
-				if (scriptPaths != null) {
+  private int runPython(File pyFile, String[] stmts, String[] scriptPaths) {
+    int exitCode = 0;
+    String stmt = "";
+    boolean fromIDE = false;
+    try {
+      if (scriptPaths != null) {
 // TODO implement compile only
-					if (scriptPaths[0].toUpperCase().equals(COMPILE_ONLY)) {
-						log(lvl, "runPython: running COMPILE_ONLY");
-						interpreter.compile(pyFile.getAbsolutePath());
-					} else {
-						if (scriptPaths.length > 1) {
-							String scr = FileManager.slashify(scriptPaths[0], true) + scriptPaths[1] + ".sikuli";
-							log(lvl, "runPython: running script from IDE: \n" + scr);
-							fromIDE = true;
-							interpreter.exec("sys.argv[0] = \""
-											+ scr + "\"");
-						} else {
-							log(lvl, "runPython: running script: \n" + scriptPaths[0]);
-							interpreter.exec("sys.argv[0] = \"" + scriptPaths[0] + "\"");
-						}
-						interpreter.execfile(pyFile.getAbsolutePath());
-					}
-				} else {
-					log(-1, "runPython: invalid arguments");
-					exitCode = -1;
-				}
-			}
-		} catch (Exception e) {
-			java.util.regex.Pattern p
-							= java.util.regex.Pattern.compile("SystemExit: ([0-9]+)");
-			Matcher matcher = p.matcher(e.toString());
+        if (scriptPaths[0].toUpperCase().equals(COMPILE_ONLY)) {
+          log(lvl, "runPython: running COMPILE_ONLY");
+          interpreter.compile(pyFile.getAbsolutePath());
+        } else {
+          if (scriptPaths.length > 1) {
+            String scr = FileManager.slashify(scriptPaths[0], true) + scriptPaths[1] + ".sikuli";
+            log(lvl, "runPython: running script from IDE: \n" + scr);
+            fromIDE = true;
+            interpreter.exec("sys.argv[0] = \""
+                    + scr + "\"");
+          } else {
+            log(lvl, "runPython: running script: \n" + scriptPaths[0]);
+            interpreter.exec("sys.argv[0] = \"" + scriptPaths[0] + "\"");
+          }
+          interpreter.execfile(pyFile.getAbsolutePath());
+        }
+      } else {
+        log(-1, "runPython: invalid arguments");
+        exitCode = -1;
+      }
+    } catch (Exception e) {
+      java.util.regex.Pattern p
+              = java.util.regex.Pattern.compile("SystemExit: ([0-9]+)");
+      Matcher matcher = p.matcher(e.toString());
 //TODO error stop I18N
-			if (matcher.find()) {
-				exitCode = Integer.parseInt(matcher.group(1));
-				Debug.info("Exit code: " + exitCode);
-			} else {
-				//log(-1,_I("msgStopped"));
-				if (null != pyFile) {
-					exitCode = findErrorSource(e, pyFile.getAbsolutePath(), scriptPaths);
-				} else {
-					Debug.error("runPython: Python exception: %s with %s", e.getMessage(), stmt);
-				}
-				if (fromIDE) {
-					exitCode *= -1;
-				} else {
-					exitCode = 1;
-				}
-			}
-		}
-		return exitCode;
-	}
+      if (matcher.find()) {
+        exitCode = Integer.parseInt(matcher.group(1));
+        Debug.info("Exit code: " + exitCode);
+      } else {
+        //log(-1,_I("msgStopped"));
+        if (null != pyFile) {
+          exitCode = findErrorSource(e, pyFile.getAbsolutePath(), scriptPaths);
+        } else {
+          Debug.error("runPython: Python exception: %s with %s", e.getMessage(), stmt);
+        }
+        if (fromIDE) {
+          exitCode *= -1;
+        } else {
+          exitCode = 1;
+        }
+      }
+    }
+    return exitCode;
+  }
 
 	private int findErrorSource(Throwable thr, String filename, String[] forIDE) {
 		String err = thr.toString();
@@ -495,7 +498,7 @@ public class JythonScriptRunner implements IScriptRunner {
 		}
 	}
 
-	public PythonInterpreter getPythonInterpreter() {
+	private PythonInterpreter getPythonInterpreter() {
 		if (interpreter == null) {
 			sysargv = new ArrayList<String>();
 			sysargv.add("--???--");

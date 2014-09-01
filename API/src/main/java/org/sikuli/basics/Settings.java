@@ -53,6 +53,7 @@ public class Settings {
   public static boolean runningSetupInValidContext = false;
   public static String runningSetupInContext = null;
   public static String runningSetupWithJar = null;
+  public static boolean isRunningIDE = false;
 
 	public static int breakPoint = 0;
 	public static boolean handlesMacBundles = true;

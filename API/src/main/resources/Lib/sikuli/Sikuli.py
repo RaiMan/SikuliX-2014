@@ -77,6 +77,9 @@ import SikuliImporter
 Debug.log(4, "Jython: sikuli: Sikuli: import Sikulix")
 from org.sikuli.script import Sikulix
 
+Debug.log(4, "Jython: sikuli: Sikuli: import ScriptRunner")
+from org.sikuli.scriptrunner import ScriptRunner
+
 ##
 # some support for handling unicode and strings
 #
