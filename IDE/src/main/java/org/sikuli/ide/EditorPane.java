@@ -260,7 +260,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		filename = FileManager.slashify(filename, false);
 		setSrcBundle(filename + "/");
 		File script = new File(filename);
-		_editingFile = ScriptRunner.getScriptFile(script, null);
+		_editingFile = ScriptRunner.getScriptFile(script);
 		if (_editingFile != null) {
 			scriptType = _editingFile.getAbsolutePath().substring(_editingFile.getAbsolutePath().lastIndexOf(".") + 1);
 			initBeforeLoad(scriptType);

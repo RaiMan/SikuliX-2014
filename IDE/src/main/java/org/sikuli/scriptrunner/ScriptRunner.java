@@ -54,10 +54,10 @@ public class ScriptRunner {
 	public static String TypeCommentDefault = "# This script uses %s " + TypeCommentToken + "\n";
 
   private static boolean isRunningInteractive = false;
-  
+
   private static String[] runScripts = null;
   private static String[] testScripts = null;
-  
+
   private static boolean isReady = false;
 
 
@@ -132,7 +132,7 @@ public class ScriptRunner {
    * INTERNAL USE: run scripts when sikulix.jar is used on commandline with args -r, -t or -i<br>
    * If you want to use it the args content must be according to the Sikulix command line parameter rules<br>
    * use run(script, args) to run one script from a script or Java program
-   * @param args parameters given on commandline 
+   * @param args parameters given on commandline
    */
   public static void runscript(String[] args) {
 
@@ -267,7 +267,7 @@ public class ScriptRunner {
       System.exit(1);
     }
   }
-    
+
   /**
    * run a script at scriptPath (.sikuli or .skl)
    * @param scriptPath absolute or relative to working folder
@@ -277,7 +277,7 @@ public class ScriptRunner {
   public static int run(String scriptPath, String[] args) {
     runAsTest = false;
     initScriptingSupport();
-    return new RunBox(false).executeScript(scriptPath, args);
+    return new RunBox(runAsTest).executeScript(scriptPath, args);
   }
 
   /**
@@ -297,7 +297,7 @@ public class ScriptRunner {
         if (script.endsWith(suffix)) {
           ending = suffix;
           break;
-        }        
+        }
       }
     } else if (type != null) {
       currentRunner = scriptRunner.get(type);
@@ -320,86 +320,6 @@ public class ScriptRunner {
       }
     }
     return currentRunner;
-  }
-
-  /**
-   * Retrieves the actual script file<br> - from a folder script.sikuli<br>
-   * - from a folder script (no extension) (script.sikuli is used, if exists)<br> - from a file
-   * script.skl or script.zip (after unzipping to temp)<br> - from a jar script.jar (after
-   * preparing as extension)<br>
-   *
-   * @param scriptProject one of the above.
-   * @param args special use
-   * @return The file containing the actual script.
-   */
-  public static File getScriptFile(File scriptProject, String[] args) {
-    if (scriptProject == null) {
-      return null;
-    }
-    String script;
-    String scriptType;
-    File scriptFile = null;
-    if (scriptProject.getPath().contains("..")) {
-      log(-1, "Sorry, script paths with double-dot path elements are not supported: %s", scriptProject.getPath());
-      return null;
-    }
-    int pos = scriptProject.getName().lastIndexOf(".");
-    if (pos == -1) {
-      script = scriptProject.getName();
-      scriptType = "sikuli";
-      scriptProject = new File(scriptProject.getAbsolutePath() + ".sikuli");
-    } else {
-      script = scriptProject.getName().substring(0, pos);
-      scriptType = scriptProject.getName().substring(pos + 1);
-    }
-    if (!scriptProject.exists()) {
-      log(-1, "Not a valid Sikuli script: " + scriptProject.getAbsolutePath());
-      return null;
-    }
-    if ("skl".equals(scriptType) || "zip".equals(scriptType)) {
-      String sklPath = FileManager.unzipSKL(scriptProject.getAbsolutePath());
-      if (sklPath == null) {
-        log(-1, me + "not possible to make .skl runnable!");
-        return null;
-      }
-    } else if ("sikuli".equals(scriptType)) {
-      File[] content = scriptProject.listFiles(new FileFilterScript(script + "."));
-      if (content == null || content.length == 0) {
-        log(-1, "Script %s \n has no script file %s.xxx", scriptProject, script);
-        return null;
-      }
-      String runType = null;
-      for (File f : content) {
-        for (String suffix : EndingTypes.keySet()) {
-          if (!f.getName().endsWith("." + suffix)) {
-            continue;
-          }
-          scriptFile = f;
-          runType = suffix;
-          break;
-        }
-        if (scriptFile != null) {
-          break;
-        }
-      }
-      if (ScriptRunner.getRunner(null, runType) == null) {
-        scriptFile = null;
-      }
-      if (scriptFile == null && runType == null) {
-        scriptFile = new File(scriptProject, script + "." + EDEFAULT).getAbsoluteFile();
-        if (!scriptFile.exists() || scriptFile.isDirectory()) {
-          scriptFile = new File(scriptProject, script);
-          if (!scriptFile.exists() || scriptFile.isDirectory()) {
-            log(-1, "No runnable script found in %s", scriptFile.getAbsolutePath());
-            return null;
-          }
-        }
-      }
-    } else if ("jar".equals(scriptType)) {
-      //TODO try to load and run as extension
-      return null; // until ready
-    }
-    return scriptFile;
   }
 
   public static boolean transferScript(String src, String dest) {
@@ -431,6 +351,27 @@ public class ScriptRunner {
     return true;
   }
 
+	private static String unzipSKL(String fileName) {
+		File file;
+		file = new File(fileName);
+		if (!file.exists()) {
+			log(-1, "unzipSKL: file not found: %s", fileName);
+		}
+		String name = file.getName();
+		name = name.substring(0, name.lastIndexOf('.'));
+		File tmpDir = FileManager.createTempDir();
+		File sikuliDir = new File(tmpDir + File.separator + name + ".sikuli");
+		sikuliDir.mkdir();
+		sikuliDir.deleteOnExit();
+		try {
+			FileManager.unzip(fileName, sikuliDir.getAbsolutePath());
+			return sikuliDir.getAbsolutePath();
+		} catch (IOException e) {
+			log(-1, "unzipSKL: not possible for: %s\n%s", fileName, e.getMessage());
+			return null;
+		}
+	}
+
   private static class FileFilterScript implements FilenameFilter {
     private String _check;
     public FileFilterScript(String check) {
@@ -441,11 +382,13 @@ public class ScriptRunner {
       return fileName.startsWith(_check);
     }
   }
-  
+
   private static class RunBox {
-    
+
     boolean asTest = false;
-    
+
+		File scriptProject;
+
     private RunBox(boolean isTest) {
       asTest = isTest;
     }
@@ -453,7 +396,7 @@ public class ScriptRunner {
     private int executeScript(String givenScriptName, String[] args) {
       int exitCode;
       if (givenScriptName.endsWith(".skl")) {
-        givenScriptName = FileManager.unzipSKL(givenScriptName);
+        givenScriptName = ScriptRunner.unzipSKL(givenScriptName);
         if (givenScriptName == null) {
           log(-1, me + "not possible to make .skl runnable!");
           return -9999;
@@ -461,7 +404,7 @@ public class ScriptRunner {
       }
       log(lvl, "givenScriptName: " + givenScriptName);
       File sf = new File(givenScriptName);
-      File script = getScriptFile(sf, args);
+      File script = getScriptFile(sf);
       if (script == null) {
         return -9999;
       }
@@ -476,7 +419,78 @@ public class ScriptRunner {
       currentRunner.close();
       return exitCode;
     }
+
+		private static File getScriptFile(File scrProject) {
+			if (scrProject == null) {
+				return null;
+			}
+			if (scrProject.getPath().contains("..")) {
+				ScriptRunner.log(-1, "Sorry, project paths with double-dot path elements are not supported: /n%s", scrProject.getPath());
+				return null;
+			}
+
+			String script;
+			String scriptType = "";
+			File scriptFile = null;
+			String sklPath = null;
+
+			if (scrProject.getName().endsWith(".skl") || scrProject.getName().endsWith(".skl")) {
+				sklPath = ScriptRunner.unzipSKL(scrProject.getAbsolutePath());
+				if (sklPath == null) {
+					return null;
+				}
+				scriptType = "sikuli-zipped";
+				scrProject = new File(sklPath);
+			}
+			int pos = scrProject.getName().lastIndexOf(".");
+			if (pos == -1) {
+				script = scrProject.getName();
+				scriptType = "sikuli-plain";
+				scrProject = new File(scrProject.getAbsolutePath() + ".sikuli");
+			} else {
+				script = scrProject.getName().substring(0, pos);
+				scriptType = scrProject.getName().substring(pos + 1);
+			}
+			if (!scrProject.exists()) {
+				ScriptRunner.log(-1, "Not a valid Sikuli script project: " + scrProject.getAbsolutePath());
+				return null;
+			}
+			if (scriptType.startsWith("sikuli")) {
+				File[] content = scrProject.listFiles(new FileFilterScript(script + "."));
+				if (content == null || content.length == 0) {
+					ScriptRunner.log(-1, "Script project %s \n has no script file %s.xxx", scrProject, script);
+					return null;
+				}
+				String runType = null;
+				for (File f : content) {
+					for (String suffix : ScriptRunner.EndingTypes.keySet()) {
+						if (!f.getName().endsWith("." + suffix)) {
+							continue;
+						}
+						scriptFile = f;
+						runType = suffix;
+						break;
+					}
+					if (scriptFile != null) {
+						break;
+					}
+				}
+				if (ScriptRunner.getRunner(null, runType) == null) {
+					log(-1, "No script supported by available runners in project %s", scrProject);
+					return null;
+				}
+			} else if ("jar".equals(scriptType)) {
+				ScriptRunner.log(-1, "Sorry, script projects as jar-files are not yet supported;");
+				//TODO try to load and run as extension
+				return null; // until ready
+			}
+			return scriptFile;
+		}
   }
+
+	public static File getScriptFile(File scriptProject) {
+		return new RunBox(false).getScriptFile(scriptProject);
+	}
 }
 
 

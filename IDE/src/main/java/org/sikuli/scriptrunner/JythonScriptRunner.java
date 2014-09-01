@@ -23,7 +23,6 @@ import org.python.util.PythonInterpreter;
 import org.python.util.jython;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.Settings;
 import org.sikuli.script.Sikulix;
 
 /**
@@ -48,7 +47,7 @@ public class JythonScriptRunner implements IScriptRunner {
 	/**
 	 * sys.argv for the jython script
 	 */
-	private ArrayList<String> sysargv = null;
+	private ArrayList<String> sysargv = new ArrayList<String>();
 	/**
 	 * The header commands, that are executed before every script
 	 */
@@ -85,7 +84,7 @@ public class JythonScriptRunner implements IScriptRunner {
 					= JythonScriptRunner.class.getResourceAsStream("/scripts/sikuli2html.py");
 	static String pyConverter
 					= FileManager.convertStreamToString(SikuliToHtmlConverter);
-	private String sikuliLibPath;
+	private String sikuliLibPath = null;
   private boolean isReady = false;
 
 	/**
@@ -99,19 +98,34 @@ public class JythonScriptRunner implements IScriptRunner {
       return;
     }
 		String jarPath = Sikulix.getJarPath();
-		sikuliLibPath = new File(jarPath, "Lib").getAbsolutePath();
-		if (!jarPath.isEmpty() && jarPath.endsWith(".jar") && sikuliLibPath.contains("sikulix")) {
-			if (System.getProperty("python.path") == null) {
-				System.setProperty("python.path", sikuliLibPath);
-				log(lvl, "init: python.path hack: \n" + System.getProperty("python.path"));
-				return;
-			}
-			String pp = System.getProperty("python.path");
-			if (pp != null && !pp.isEmpty() && !FileManager.pathEquals(pp, sikuliLibPath)) {
-				log(-1, "init: Not running from jar and Python path not empty: Sikuli might not work!\n"
-								+ "Current python.path: " + pp);
+		if (!jarPath.isEmpty()) {
+			sikuliLibPath = new File(jarPath, "Lib").getAbsolutePath();
+			String sikuliPy = "sikuli/__init__.py";
+			if (Sikulix.isRunningFromJar()) {
+				if (!FileManager.checkJarContent(jarPath, "Lib/" + sikuliPy)) {
+					sikuliLibPath = null;
+				}
+			} else {
+				if (!new File(sikuliLibPath, sikuliPy).exists()) {
+					sikuliLibPath = null;
+				}
 			}
 		}
+		if (sikuliLibPath != null) {
+			if (System.getProperty("python.path") == null) {
+				System.setProperty("python.path", sikuliLibPath);
+				log(lvl, "init: setting environment python.path: \n" + System.getProperty("python.path"));
+			} else {
+				String pp = System.getProperty("python.path");
+				if (pp != null && !pp.isEmpty() && !FileManager.pathEquals(pp, sikuliLibPath)) {
+					log(-1, "init: Not running from jar and Python path not empty: Sikuli might not work!\n"
+									+ "Current python.path: " + pp);
+				}
+			}
+		} else {
+			log(-1, "init: could not find sikuli.py in %s", jarPath);
+		}
+		getInterpreter();
     isReady = true;
 	}
 
@@ -128,9 +142,7 @@ public class JythonScriptRunner implements IScriptRunner {
 	public int runScript(File pyFile, File imagePath, String[] argv, String[] forIDE) {
 		if (null == pyFile) {
 			//run the Python statements from argv (special for setup functional test)
-			fillSysArgv(null, null);
-			createPythonInterpreter();
-			executeScriptHeader(new String[0]);
+			executeScriptHeader(null);
       log(lvl, "runPython: running statements");
       try {
       for (String e : argv) {
@@ -144,7 +156,6 @@ public class JythonScriptRunner implements IScriptRunner {
 		}
 		pyFile = new File(pyFile.getAbsolutePath());
 		fillSysArgv(pyFile, argv);
-		createPythonInterpreter();
 		if (forIDE == null) {
 			executeScriptHeader(new String[]{
 				pyFile.getParent(),
@@ -381,9 +392,6 @@ public class JythonScriptRunner implements IScriptRunner {
 	 */
 	@Override
 	public int runInteractive(String[] argv) {
-
-		fillSysArgv(null, argv);
-
 		String[] jy_args = null;
 		String[] iargs = {"-i", "-c",
 			"from sikuli import *; SikuliScript.runningInteractive(); use(); "
@@ -487,23 +495,11 @@ public class JythonScriptRunner implements IScriptRunner {
 		}
 	}
 
-	/**
-	 * Initializes the PythonInterpreter and creates an instance.
-	 */
-	private void createPythonInterpreter() {
-//TODO create a specific PythonPath (sys.path)
+	private PythonInterpreter getInterpreter() {
 		if (interpreter == null) {
+			sysargv.add("");
 			PythonInterpreter.initialize(System.getProperties(), null, sysargv.toArray(new String[0]));
 			interpreter = new PythonInterpreter();
-		}
-	}
-
-	private PythonInterpreter getPythonInterpreter() {
-		if (interpreter == null) {
-			sysargv = new ArrayList<String>();
-			sysargv.add("--???--");
-			sysargv.addAll(Arrays.asList(Settings.getArgs()));
-			createPythonInterpreter();
 		}
 		return interpreter;
 	}
@@ -616,16 +612,25 @@ public class JythonScriptRunner implements IScriptRunner {
 	 */
 	private void executeScriptHeader(String[] syspaths) {
 // TODO implement compile only
-		if (syspaths.length > 0 && syspaths[0].toUpperCase().equals(COMPILE_ONLY)) {
+		if (syspaths != null && syspaths.length > 0 &&
+						syspaths[0].toUpperCase().equals(COMPILE_ONLY)) {
 			return;
 		}
 		PyList jypath = interpreter.getSystemState().path;
-		if (!FileManager.pathEquals((String) jypath.get(0), sikuliLibPath)) {
-			log(lvl, "executeScriptHeader: adding SikuliX Lib path to sys.path\n" + sikuliLibPath);
-			int jypathLength = jypath.__len__();
+		int jypathLength = jypath.__len__();
+		boolean contained = false;
+		for (int i = 0; i < jypathLength; i++) {
+			if (FileManager.pathEquals((String) jypath.get(0), sikuliLibPath)) {
+				contained = true;
+				break;
+			}
+		}
+		if (!contained) {
+			log(lvl, "executeScriptHeader: adding Jython Lib path to sys.path\n" + sikuliLibPath);
 			String[] jypathNew = new String[jypathLength + 1];
-			jypathNew[0] = sikuliLibPath;
-			for (int i = 0; i < jypathLength; i++) {
+			jypathNew[0] = (String) jypath.get(0);
+			log(lvl + 1, "executeScriptHeader: before: 0: %s", jypath.get(0));
+			for (int i = 1; i < jypathLength; i++) {
 				log(lvl + 1, "executeScriptHeader: before: %d: %s", i, jypath.get(i));
 				jypathNew[i + 1] = (String) jypath.get(i);
 			}
@@ -649,9 +654,13 @@ public class JythonScriptRunner implements IScriptRunner {
 			log(lvl + 1, p.toString());
 		}
 		log(lvl + 1, "executeScriptHeader: at entry: --- end ---");
-		for (String syspath : syspaths) {
-			jypath.add(FileManager.slashify(syspath, false));
+
+		if (syspaths != null) {
+			for (String syspath : syspaths) {
+				jypath.add(FileManager.slashify(syspath, false));
+			}
 		}
+
 		for (String line : SCRIPT_HEADER) {
 			log(lvl + 1, "executeScriptHeader: PyInit: %s", line);
 			interpreter.exec(line);
@@ -664,7 +673,7 @@ public class JythonScriptRunner implements IScriptRunner {
 	}
 
 	private boolean doRedirect(PipedInputStream[] pin) {
-		PythonInterpreter py = getPythonInterpreter();
+		PythonInterpreter py = getInterpreter();
 		Debug.saveRedirected(System.out, System.err);
 		try {
 			PipedOutputStream pout = new PipedOutputStream(pin[0]);

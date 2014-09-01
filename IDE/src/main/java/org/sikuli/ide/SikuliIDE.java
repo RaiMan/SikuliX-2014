@@ -232,9 +232,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       }
     }
 
-		ScriptRunner.initScriptingSupport();
-		IDESupport.initIDESupport();
-
     if (cmdLine.hasOption(CommandArgsEnum.LOAD.shortname())) {
       loadScripts = cmdLine.getOptionValues(CommandArgsEnum.LOAD.longname());
       log(lvl, "requested to load: %s", loadScripts);
@@ -278,6 +275,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       log(-1, "Problem loading UIManager!\nError: %s", e.getMessage());
     }
 
+		ScriptRunner.initScriptingSupport();
+		IDESupport.initIDESupport();
 		SikuliIDE.getInstance().initNativeSupport();
 
     SikuliIDE.getInstance().initSikuliIDE(args);

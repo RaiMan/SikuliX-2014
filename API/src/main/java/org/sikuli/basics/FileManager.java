@@ -298,27 +298,6 @@ public class FileManager {
     return true;
   }
 
-  public static String unzipSKL(String fileName) {
-    File file;
-    try {
-      file = new File(fileName);
-      if (!file.exists()) {
-        throw new IOException(fileName + ": No such file");
-      }
-      String name = file.getName();
-      name = name.substring(0, name.lastIndexOf('.'));
-      File tmpDir = createTempDir();
-      File sikuliDir = new File(tmpDir + File.separator + name + ".sikuli");
-      sikuliDir.mkdir();
-      sikuliDir.deleteOnExit();
-      unzip(fileName, sikuliDir.getAbsolutePath());
-      return sikuliDir.getAbsolutePath();
-    } catch (IOException e) {
-      System.err.println(e.getMessage());
-      return null;
-    }
-  }
-
   public static File createTempDir() {
     Random rand = new Random();
     int randomInt = 1 + rand.nextInt();
@@ -626,8 +605,15 @@ public class FileManager {
 
   public static URL makeURL(String fName, String type) {
     try {
-			if ("file".equals(type)) {
-				fName = new File(normalize(fName)).getAbsolutePath();
+			fName = new File(normalize(fName)).getAbsolutePath();
+			if ("jar".equals(type)) {
+				if (!fName.contains("!/")) {
+					fName += "!/";
+				}
+				if (!fName.contains("://" )) {
+					fName = "file://" + fName;
+				}
+				return new URL("jar:" + fName);
 			}
       return new URL(type, null, fName);
     } catch (MalformedURLException ex) {
@@ -639,6 +625,13 @@ public class FileManager {
     try {
 			if ("file".equals(path.getProtocol())) {
 				return new URL("file", null, new File(path.getPath(), fName).getAbsolutePath());
+			} else if ("jar".equals(path.getProtocol())) {
+				String jp = path.getPath();
+				if (!jp.contains("!/")) {
+					jp += "!/";
+				}
+				String jpu = "jar:" + jp + fName;
+				return new URL(jpu);
 			}
       return new URL(path, slashify(fName, false));
     } catch (MalformedURLException ex) {
@@ -656,6 +649,21 @@ public class FileManager {
       return null;
     }
   }
+
+	public static boolean checkJarContent(String jarPath, String jarContent) {
+		URL jpu = makeURL(jarPath, "jar");
+		if (jpu != null && jarContent != null) {
+			jpu = makeURL(jpu, jarContent);
+		}
+		if (jpu != null) {
+			try {
+			  jpu.getContent();
+				return true;
+			} catch (IOException ex) {
+			}
+		}
+		return false;
+	}
 
   public static int getPort(String p) {
     int port;
