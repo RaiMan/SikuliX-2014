@@ -2158,8 +2158,11 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 						codePane.write(bw);
 						_console.clear();
 						resetErrorMark();
+						String parent = null;
 						File path = new File(SikuliIDE.getInstance().getCurrentBundlePath());
-						File parent = path.getParentFile();
+						if (path != null) {
+							parent = path.getParent();
+						}
 						String cType = codePane.getContentType();
 						IScriptRunner srunner = ScriptRunner.getRunner(null, cType);
 						if (srunner == null) {
@@ -2175,7 +2178,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 								tabtitle = tabtitle.substring(1);
 							}
 							int ret = srunner.runScript(tmpFile, path, Settings.getArgs(),
-											new String[]{parent.getAbsolutePath(), tabtitle});
+											new String[]{parent, tabtitle});
 							addErrorMark(ret);
 							srunner.close();
 							srunners[0] = null;
