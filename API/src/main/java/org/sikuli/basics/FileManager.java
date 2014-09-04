@@ -583,7 +583,7 @@ public class FileManager {
   }
 
 	public static String normalize(String filename) {
-		return slashify(filename, false);
+		return slashify(new File(slashify(filename, false)).getAbsolutePath(), false);
 	}
 
   /**
@@ -605,14 +605,14 @@ public class FileManager {
 
   public static URL makeURL(String fName, String type) {
     try {
-			fName = new File(normalize(fName)).getAbsolutePath();
+			fName = normalize(fName);
 			if ("jar".equals(type)) {
 				if (!fName.contains("!/")) {
 					fName += "!/";
 				}
-				if (!fName.contains("://" )) {
-					fName = "file://" + fName;
-				}
+				if (!fName.startsWith("file://")) {
+          fName = new URL("file", null, fName).toString();
+        }
 				return new URL("jar:" + fName);
 			}
       return new URL(type, null, fName);
@@ -660,6 +660,7 @@ public class FileManager {
 			  jpu.getContent();
 				return true;
 			} catch (IOException ex) {
+        ex.getMessage();
 			}
 		}
 		return false;
