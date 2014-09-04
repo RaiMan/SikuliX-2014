@@ -139,7 +139,7 @@ public class Settings {
 			UserName = System.getProperty("user.name");
 		}
 
-		BaseTempPath = new File(System.getProperty("java.io.tmpdir"), UserName).getAbsolutePath();
+		BaseTempPath = new File(System.getProperty("java.io.tmpdir"), "Sikulix").getAbsolutePath();
 
 		// TODO check existence of an extension repository
 		SikuliRepo = null;
@@ -430,7 +430,7 @@ public class Settings {
 	public static boolean isMac() {
 		return getOS() == ISMAC;
 	}
-  
+
   public static boolean isMac10() {
     if (isMac() && "10.10".equals(Settings.getOSVersion())) {
       return true;

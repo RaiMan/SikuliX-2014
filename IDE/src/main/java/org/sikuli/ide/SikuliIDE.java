@@ -461,13 +461,17 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   //</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="save / restore session">
-  private boolean saveSession(int action, boolean quitting) {
+	public EditorPane getPaneAtIndex(int index) {
+		JScrollPane scrPane = (JScrollPane) tabPane.getComponentAt(index);
+		EditorPane codePane = (EditorPane) scrPane.getViewport().getView();
+		return codePane;
+	}
+	private boolean saveSession(int action, boolean quitting) {
     int nTab = tabPane.getTabCount();
     StringBuilder sbuf = new StringBuilder();
     for (int tabIndex = 0; tabIndex < nTab; tabIndex++) {
       try {
-        JScrollPane scrPane = (JScrollPane) tabPane.getComponentAt(tabIndex);
-        EditorPane codePane = (EditorPane) scrPane.getViewport().getView();
+        EditorPane codePane = getPaneAtIndex(tabIndex);
         if (action == WARNING_DO_NOTHING) {
           if (quitting) {
             codePane.setDirty(false);
@@ -989,7 +993,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
 
     public void doNew(ActionEvent ae) {
-      doNew(ae, -1).initBeforeLoad(null);
+      EditorPane ep = doNew(ae, -1);
+			ep.getSrcBundle();
+			ep.initBeforeLoad(null);
     }
 
     public EditorPane doNew(ActionEvent ae, int tabIndex) {
@@ -1008,7 +1014,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         tabPane.addTab(_I("tabUntitled"), scrPane, 0);
         tabPane.setSelectedIndex(0);
       }
-      codePane.getSrcBundle();
+//      codePane.getSrcBundle();
       codePane.requestFocus();
       return codePane;
     }
@@ -1026,8 +1032,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       alreadyOpenedTab = tabPane.getSelectedIndex();
       String fname = tabPane.getLastClosed();
       try {
-        doNew(null, targetTab);
-        EditorPane codePane = getCurrentCodePane();
+        EditorPane codePane = doNew(null, targetTab);
         if (ae != null || fname == null) {
           codePane.isSourceBundleTemp();
           fname = codePane.loadFile(accessingAsFile);
@@ -2130,7 +2135,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 		public void runCurrentScript() {
 			SikuliIDE.getStatusbar().setMessage("... PLEASE WAIT ... checking IDE state before running script");
 			SikuliIDE ide = SikuliIDE.getInstance();
-			if (ideIsRunningScript || !ide.doBeforeRun()) {
+			if (ideIsRunningScript || ide.getCurrentCodePane().getDocument().getLength() == 0 || !ide.doBeforeRun()) {
 				return;
 			}
 			SikuliIDE.getStatusbar().resetMessage();
@@ -2144,26 +2149,28 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 				@Override
 				public void run() {
 					EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
-					File tmpFile;
-					tmpFile = FileManager.createTempFile(ScriptRunner.typeEndings.get(codePane.getSikuliContentType()));
-					if (tmpFile == null) {
-						log(-1, "runCurrentScript: temp file for running not available");
-						return;
-					}
+					String cType = codePane.getContentType();
+					File tmpFile = null;
 					try {
-						BufferedWriter bw = new BufferedWriter(
-										new OutputStreamWriter(
-														new FileOutputStream(tmpFile),
-														"UTF8"));
-						codePane.write(bw);
+						if (codePane.isDirty()) {
+							tmpFile = FileManager.createTempFile(ScriptRunner.typeEndings.get(cType));
+							if (tmpFile == null) {
+								log(-1, "runCurrentScript: temp file for running not available");
+								return;
+							}
+							BufferedWriter bw = new BufferedWriter(
+											new OutputStreamWriter(
+															new FileOutputStream(tmpFile),
+															"UTF8"));
+							codePane.write(bw);
+						}
 						_console.clear();
 						resetErrorMark();
 						String parent = null;
 						File path = new File(SikuliIDE.getInstance().getCurrentBundlePath());
-						if (path != null) {
+						if (path != null && !codePane.isSourceBundleTemp()) {
 							parent = path.getParent();
 						}
-						String cType = codePane.getContentType();
 						IScriptRunner srunner = ScriptRunner.getRunner(null, cType);
 						if (srunner == null) {
 							log(-1, "runCurrentScript: Could not load a script runner for: %s", cType);
@@ -2188,6 +2195,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 							throw e;
 						}
 					} catch (Exception e) {
+						e.getMessage();
 					} finally {
 						SikuliIDE.getInstance().setIsRunningScript(false);
 						SikuliIDE.getInstance().setVisible(true);

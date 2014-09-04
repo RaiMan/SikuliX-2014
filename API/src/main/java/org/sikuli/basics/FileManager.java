@@ -376,7 +376,7 @@ public class FileManager {
   public static File createTempFile(String suffix, String path) {
     String temp1 = "sikuli-";
     String temp2 = "." + suffix;
-    File fpath = null;
+    File fpath = new File(Settings.BaseTempPath);
     if (path != null) {
       fpath = new File(path);
     }
@@ -583,6 +583,10 @@ public class FileManager {
   }
 
 	public static String normalize(String filename) {
+		return slashify(filename, false);
+	}
+
+	public static String normalizeAbsolute(String filename) {
 		return slashify(new File(slashify(filename, false)).getAbsolutePath(), false);
 	}
 
@@ -605,7 +609,7 @@ public class FileManager {
 
   public static URL makeURL(String fName, String type) {
     try {
-			fName = normalize(fName);
+			fName = normalizeAbsolute(fName);
 			if ("jar".equals(type)) {
 				if (!fName.contains("!/")) {
 					fName += "!/";

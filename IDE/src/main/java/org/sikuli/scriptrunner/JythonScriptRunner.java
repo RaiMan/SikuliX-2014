@@ -86,6 +86,8 @@ public class JythonScriptRunner implements IScriptRunner {
 					= FileManager.convertStreamToString(SikuliToHtmlConverter);
 	private String sikuliLibPath = null;
   private boolean isReady = false;
+	private boolean isCompileOnly = false;
+	private boolean isFromIDE = false;
 
 	/**
 	 * {@inheritDoc}
@@ -154,6 +156,10 @@ public class JythonScriptRunner implements IScriptRunner {
       }
 			return 0;
 		}
+		isFromIDE = ! (forIDE == null);
+		if (isFromIDE && forIDE.length > 1 && forIDE[0] != null ) {
+			isCompileOnly = forIDE[0].toUpperCase().equals(COMPILE_ONLY);
+		}
 		pyFile = new File(pyFile.getAbsolutePath());
 		fillSysArgv(pyFile, argv);
 		if (forIDE == null) {
@@ -161,14 +167,13 @@ public class JythonScriptRunner implements IScriptRunner {
 				pyFile.getParent(),
 				pyFile.getParentFile().getParent()});
 		} else {
-			executeScriptHeader(new String[]{
-				forIDE[0]});
+			executeScriptHeader(new String[]{forIDE[0]});
 		}
 		int exitCode = 0;
-		if (forIDE == null) {
-			exitCode = runPython(pyFile, null, new String[]{pyFile.getParentFile().getAbsolutePath()});
-		} else {
+		if (isFromIDE) {
 			exitCode = runPython(pyFile, null, forIDE);
+		} else {
+			exitCode = runPython(pyFile, null, new String[]{pyFile.getParentFile().getAbsolutePath()});
 		}
 		log(lvl + 1, "runScript: at exit: path:");
 		for (Object p : interpreter.getSystemState().path.toArray()) {
@@ -181,18 +186,16 @@ public class JythonScriptRunner implements IScriptRunner {
   private int runPython(File pyFile, String[] stmts, String[] scriptPaths) {
     int exitCode = 0;
     String stmt = "";
-    boolean fromIDE = false;
     try {
       if (scriptPaths != null) {
 // TODO implement compile only
-        if (scriptPaths[0].toUpperCase().equals(COMPILE_ONLY)) {
+        if (isCompileOnly) {
           log(lvl, "runPython: running COMPILE_ONLY");
           interpreter.compile(pyFile.getAbsolutePath());
         } else {
           if (scriptPaths.length > 1) {
             String scr = FileManager.slashify(scriptPaths[0], true) + scriptPaths[1] + ".sikuli";
             log(lvl, "runPython: running script from IDE: \n" + scr);
-            fromIDE = true;
             interpreter.exec("sys.argv[0] = \""
                     + scr + "\"");
           } else {
@@ -220,7 +223,7 @@ public class JythonScriptRunner implements IScriptRunner {
         } else {
           Debug.error("runPython: Python exception: %s with %s", e.getMessage(), stmt);
         }
-        if (fromIDE) {
+        if (isFromIDE) {
           exitCode *= -1;
         } else {
           exitCode = 1;
@@ -612,8 +615,7 @@ public class JythonScriptRunner implements IScriptRunner {
 	 */
 	private void executeScriptHeader(String[] syspaths) {
 // TODO implement compile only
-		if (syspaths != null && syspaths.length > 0 &&
-						syspaths[0].toUpperCase().equals(COMPILE_ONLY)) {
+		if (isCompileOnly) {
 			return;
 		}
 		PyList jypath = interpreter.getSystemState().path;

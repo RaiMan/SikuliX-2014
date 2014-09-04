@@ -831,7 +831,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		if (e.getEndOffset() - e.getStartOffset() == 1) {
 			return null;
 		}
-		File temp = FileManager.createTempFile("reparse", Settings.BaseTempPath);
+		File temp = FileManager.createTempFile("reparse");
 		try {
 			writeFile(temp.getAbsolutePath());
 			return temp;
