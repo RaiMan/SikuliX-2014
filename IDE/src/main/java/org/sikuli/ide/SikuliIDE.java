@@ -2147,6 +2147,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 					File tmpFile;
 					tmpFile = FileManager.createTempFile(ScriptRunner.typeEndings.get(codePane.getSikuliContentType()));
 					if (tmpFile == null) {
+						log(-1, "runCurrentScript: temp file for running not available");
 						return;
 					}
 					try {
@@ -2162,7 +2163,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 						String cType = codePane.getContentType();
 						IScriptRunner srunner = ScriptRunner.getRunner(null, cType);
 						if (srunner == null) {
-							Debug.error("Could not load a script runner for: %s", cType);
+							log(-1, "runCurrentScript: Could not load a script runner for: %s", cType);
 							return;
 						}
 						addScriptCode(srunner);
@@ -2195,9 +2196,10 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 			_runningThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
 				@Override
 				public void uncaughtException(Thread t, Throwable e) {
-					Debug.error("Jython UncaughtExceptionHandler: trying to cleanup.\n%s", e.getMessage());
+					log(-1, "Jython UncaughtExceptionHandler: trying to cleanup.\n%s", e.getMessage());
 					if (srunners[0] != null) {
 						srunners[0].close();
+						srunners[0] = null;
 					}
 					SikuliIDE.getInstance().setIsRunningScript(false);
 					SikuliIDE.getInstance().setVisible(true);
@@ -2266,9 +2268,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
   }
 
-  public String getCurrentBundlePath() {
+   protected String getCurrentBundlePath() {
     EditorPane pane = getCurrentCodePane();
-    return pane.getSrcBundle();
+    return pane.getBundlePath();
   }
 
   private JComponent createSearchField() {
