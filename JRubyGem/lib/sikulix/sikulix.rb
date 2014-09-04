@@ -41,13 +41,18 @@ module Sikulix
   java_import org.sikuli.script.Keys
 
   java_import org.sikuli.basics.Settings
-  java_import org.sikuli.ide.ExtensionManager
+  java_import org.sikuli.basics.ExtensionManager
 
   java_import org.sikuli.script.compare.DistanceComparator
   java_import org.sikuli.script.compare.VerticalComparator
   java_import org.sikuli.script.compare.HorizontalComparator
 
   java_import org.sikuli.basics.Debug
+
+	begin
+	  java_import org.sikuli.scriptrunner.ScriptRunner
+	rescue
+  end
 
   #
   # This method generates a wrapper for Java Native exception processing
