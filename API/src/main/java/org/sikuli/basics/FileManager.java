@@ -309,7 +309,7 @@ public class FileManager {
 
     tempDir.deleteOnExit();
 
-    log0(lvl, "tempdir create: %s", tempDir);
+    log0(lvl, "tempdir create:\n%s", tempDir);
 
     return tempDir;
   }
@@ -321,7 +321,7 @@ public class FileManager {
   }
 
   public static boolean deleteFileOrFolder(String path, FileFilter filter) {
-		log0(lvl, "deleteFileOrFolder: %s%s", (filter == null ? "" : "filtered: "), path);
+		log0(lvl, "deleteFileOrFolder: %s\n%s", (filter == null ? "" : "filtered: "), path);
     return doDeleteFileOrFolder(path, filter);
 	}
 
@@ -383,7 +383,7 @@ public class FileManager {
     try {
       File temp = File.createTempFile(temp1, temp2, fpath);
       temp.deleteOnExit();
-      log0(lvl, "tempfile create: %s", temp.getAbsolutePath());
+      log0(lvl, "tempfile create:\n%s", temp.getAbsolutePath());
       return temp;
     } catch (IOException ex) {
       log0(-1, "createTempFile: IOException: %s", fpath + File.pathSeparator + temp1 + "12....56" + temp2);
