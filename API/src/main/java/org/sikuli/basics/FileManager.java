@@ -828,7 +828,6 @@ public class FileManager {
       Debug.log(4, "cleanTemp: " + f.getName());
       FileManager.deleteFileOrFolder(f.getAbsolutePath());
     }
-    FileManager.deleteFileOrFolder(Settings.BaseTempPath);
   }
 
 	public static boolean isBundle(String dir) {
