@@ -236,7 +236,6 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	}
   //</editor-fold>
 
-	//<editor-fold defaultstate="collapsed" desc="file handling">
 	public String loadFile(boolean accessingAsFile) throws IOException {
 		File file = new SikuliIDEFileChooser(sikuliIDE, accessingAsFile).load();
 		if (file == null) {
@@ -265,9 +264,11 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			scriptType = _editingFile.getAbsolutePath().substring(_editingFile.getAbsolutePath().lastIndexOf(".") + 1);
 			initBeforeLoad(scriptType);
 			try {
-				this.read(new BufferedReader(new InputStreamReader(
-								new FileInputStream(_editingFile), "UTF8")), null);
+				if (!readScript(_editingFile)) {
+					_editingFile = null;
+				}
 			} catch (Exception ex) {
+				log(-1, "read returned %s", ex.getMessage());
 				_editingFile = null;
 			}
 			updateDocumentListeners("loadFile");
@@ -277,6 +278,28 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		if (_editingFile == null) {
 			_srcBundlePath = null;
 		}
+	}
+
+	private boolean readScript(Object script) throws Exception {
+		InputStreamReader isr = null;
+		if (script instanceof String) {
+			isr = new InputStreamReader(new ByteArrayInputStream(((String) script).getBytes("UTF8")));
+		} else if (script instanceof File) {
+			isr = new InputStreamReader(new FileInputStream((File) script), "UTF8");
+		} else {
+			log(-1, "readScript: not supported %s as %s", script, script.getClass());
+		}
+		this.read(new BufferedReader(isr), null);
+		return false;
+	}
+
+	@Override
+	public void read(Reader in, Object desc) throws IOException {
+		super.read(in, desc);
+		Document doc = getDocument();
+		Element root = doc.getDefaultRootElement();
+		parse(root);
+		setCaretPosition(0);
 	}
 
 	public boolean hasEditingFile() {
@@ -638,18 +661,6 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		return Image.createThumbNail(filename);
 	}
 
-//</editor-fold>
-
-	//<editor-fold defaultstate="collapsed" desc="fill pane content">
-	@Override
-	public void read(Reader in, Object desc) throws IOException {
-		super.read(in, desc);
-		Document doc = getDocument();
-		Element root = doc.getDefaultRootElement();
-		parse(root);
-		setCaretPosition(0);
-	}
-  //</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="Dirty handling">
 	public boolean isDirty() {
