@@ -2164,8 +2164,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 					} catch (Exception e) {
 						e.getMessage();
 					} finally {
-						setIsRunningScript(false);
-						setVisible(true);
+						sikulixIDE.setIsRunningScript(false);
+						sikulixIDE.setVisible(true);
 						_runningThread = null;
 						Sikulix.cleanUp(0);
 					}
@@ -2179,8 +2179,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 						srunners[0].close();
 						srunners[0] = null;
 					}
-					setIsRunningScript(false);
-					setVisible(true);
+					sikulixIDE.setIsRunningScript(false);
+					sikulixIDE.setVisible(true);
 					_runningThread = null;
 					Sikulix.cleanUp(0);
 				}
