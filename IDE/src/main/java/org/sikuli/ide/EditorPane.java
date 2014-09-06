@@ -263,34 +263,36 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		if (_editingFile != null) {
 			scriptType = _editingFile.getAbsolutePath().substring(_editingFile.getAbsolutePath().lastIndexOf(".") + 1);
 			initBeforeLoad(scriptType);
-			try {
-				if (!readScript(_editingFile)) {
-					_editingFile = null;
-				}
-			} catch (Exception ex) {
-				log(-1, "read returned %s", ex.getMessage());
-				_editingFile = null;
-			}
+      if (!readScript(_editingFile)) {
+        _editingFile = null;
+      }
 			updateDocumentListeners("loadFile");
 			setDirty(false);
-			_srcBundleTemp = false;
 		}
 		if (_editingFile == null) {
 			_srcBundlePath = null;
-		}
+		} else {
+			_srcBundleTemp = false;
+    }
 	}
 
-	private boolean readScript(Object script) throws Exception {
-		InputStreamReader isr = null;
-		if (script instanceof String) {
-			isr = new InputStreamReader(new ByteArrayInputStream(((String) script).getBytes("UTF8")));
-		} else if (script instanceof File) {
-			isr = new InputStreamReader(new FileInputStream((File) script), "UTF8");
-		} else {
-			log(-1, "readScript: not supported %s as %s", script, script.getClass());
-		}
-		this.read(new BufferedReader(isr), null);
-		return false;
+	private boolean readScript(Object script) {
+		InputStreamReader isr;
+    try {
+      if (script instanceof String) {
+        isr = new InputStreamReader(new ByteArrayInputStream(((String) script).getBytes("UTF8")));
+      } else if (script instanceof File) {
+        isr = new InputStreamReader(new FileInputStream((File) script), "UTF8");
+      } else {
+        log(-1, "readScript: not supported %s as %s", script, script.getClass());
+        return false;
+      }
+      this.read(new BufferedReader(isr), null);
+    } catch (Exception ex) {
+      log(-1, "read returned %s", ex.getMessage());
+      return false;
+    }
+		return true;
 	}
 
 	@Override
@@ -546,7 +548,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 					return false;
 				}
 			} else {
-				sikuliIDE.getTabPane().resetLastClosed();
+//				sikuliIDE.getTabPane().resetLastClosed();
 			}
 			setDirty(false);
 		}
@@ -821,64 +823,22 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 	//<editor-fold defaultstate="collapsed" desc="replace text patterns with image buttons">
 	public boolean reparse() {
-		File temp = null;
-		Element e = this.getDocument().getDefaultRootElement();
-		if (e.getEndOffset() - e.getStartOffset() == 1) {
-			return true;
-		}
-		temp = reparseBefore();
-		if (temp != null) {
-			boolean result = reparseAfter(temp);
-			if (result) {
-				updateDocumentListeners("reparse");
-				return true;
-			}
-		}
+    String paneContent = this.getText();
+    if (paneContent.length() < 7) {
+      return true;
+    }
+    if (readScript(paneContent)) {
+      updateDocumentListeners("reparse");
+      return true;
+    }
 		return false;
 	}
 
-	public File reparseBefore() {
-		Element e = this.getDocument().getDefaultRootElement();
-		if (e.getEndOffset() - e.getStartOffset() == 1) {
-			return null;
-		}
-		File temp = FileManager.createTempFile("reparse");
-		try {
-			writeFile(temp.getAbsolutePath());
-			return temp;
-		} catch (IOException ex) {
-		}
-		return null;
-	}
-
+//TODO not clear what this is for LOL (SikuliIDEPopUpMenu.doSetType)
 	public boolean reparseCheckContent() {
-		Element e = this.getDocument().getDefaultRootElement();
-		String txt;
-		if (e.getElementCount() > 2) {
-			return false;
-		} else if (e.getElement(1).getEndOffset() - e.getElement(1).getStartOffset() > 1) {
-			return false;
-		} else {
-			int is = e.getElement(0).getStartOffset();
-			int ie = e.getElement(0).getEndOffset();
-			try {
-				txt = e.getElement(0).getDocument().getText(is, ie - 1);
-				if (txt.endsWith(ScriptRunner.TypeCommentToken)) {
-					return true;
-				}
-			} catch (BadLocationException ex) {
-				return false;
-			}
-		}
-		return false;
-	}
-
-	public boolean reparseAfter(File temp) {
-		try {
-			this.read(new BufferedReader(new InputStreamReader(new FileInputStream(temp), "UTF8")), null);
-			return true;
-		} catch (IOException ex) {
-		}
+    if (this.getText().contains(ScriptRunner.TypeCommentToken)) {
+      return true;
+    }
 		return false;
 	}
 
