@@ -6,15 +6,23 @@
  */
 package org.sikuli.scriptrunner;
 
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.net.InetAddress;
+import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Scanner;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
+import javax.swing.ImageIcon;
 import org.apache.commons.cli.CommandLine;
 import org.sikuli.ide.CommandArgs;
 import org.sikuli.ide.CommandArgsEnum;
@@ -59,8 +67,212 @@ public class ScriptRunner {
   private static String[] testScripts = null;
 
   private static boolean isReady = false;
+  
+  private static ServerSocket server = null;
+  private static boolean isHandling = false;
+  private static boolean shouldStop = false;
+  private static ObjectOutputStream out = null;
+  private static Scanner in = null;
+  private static int runnerID = -1;
+  private static Map<String, RemoteRunner> remoteRunners = new HashMap<String, RemoteRunner>();
+  
+  public static void startRemoteRunner(String[] args) {
+    int port = getPort(args.length > 0 ? args[0] : null);
+    try {
+      try {
+        if (port > 0) {
+          server = new ServerSocket(port);
+        }
+      } catch (Exception ex) {
+        log(-1, "Remote: at start: " + ex.getMessage());
+      }
+      if (server == null) {
+        log(-1, "Remote: could not be started on port: " + (args.length > 0 ? args[0] : null));
+        System.exit(1);
+      }
+      while (true) {
+        log(lvl, "Remote: now waiting on port: %d at %s", port, InetAddress.getLocalHost().getHostAddress());
+        Socket socket = server.accept();
+        out = new ObjectOutputStream(socket.getOutputStream());
+        in = new Scanner(socket.getInputStream());
+        HandleClient client = new HandleClient(socket);
+        isHandling = true;
+        while (true) {
+          if (socket.isClosed()) {
+            shouldStop = client.getShouldStop();
+            break;
+          }
+          try {
+            Thread.sleep(1000);
+          } catch (InterruptedException ex) {
+          }
+        }
+        if (shouldStop) {
+          break;
+        }
+      }
+    } catch (Exception e) {
+    }
+    if (!isHandling) {
+      log(-1, "Remote: start handling not possible: " + port);
+    }
+    log(lvl, "Remote: now stopped on port: " + port);
+  }
 
+  private static int getPort(String p) {
+    int port;
+    int pDefault = 50000;
+    if (p != null) {
+      try {
+        port = Integer.parseInt(p);
+      } catch (NumberFormatException ex) {
+        return -1;
+      }
+    } else {
+      return pDefault;
+    }
+    if (port < 1024) {
+      port += pDefault;
+    }
+    return port;
+  }
 
+  private static class HandleClient implements Runnable {
+
+    private volatile boolean keepRunning;
+    Thread thread;
+    Socket socket;
+    Boolean shouldStop = false;
+
+    public HandleClient(Socket sock) {
+      init(sock);
+    }
+    
+    private void init(Socket sock) {
+      socket = sock;
+      if (in == null || out == null) {
+        ScriptRunner.log(-1, "communication not established");
+        System.exit(1);
+      }
+      thread = new Thread(this, "HandleClient");
+      keepRunning = true;
+      thread.start();
+    }
+    
+    public boolean getShouldStop() {
+      return shouldStop;
+    }
+
+    @Override
+    public void run() {
+      String e;
+      ScriptRunner.log(lvl,"now handling client: " + socket);
+      while (keepRunning) {
+        try {
+          e = in.nextLine();
+          if (e != null) {
+            ScriptRunner.log(lvl,"processing: " + e);
+            if (e.contains("EXIT")) {
+              stopRunning();
+              in.close();
+              out.close();
+              if (e.contains("STOP")) {
+                ScriptRunner.log(lvl,"stop server requested");
+                shouldStop = true;
+              }
+              return;
+            }
+            if (e.toLowerCase().startsWith("run")) {
+              int retVal = runScript(e);
+              send((new Integer(retVal)));
+            } else if (e.toLowerCase().startsWith("system")) {
+              getSystem();
+            } 
+          }
+        } catch (Exception ex) {
+          ScriptRunner.log(-1, "Exception while processing\n" + ex.getMessage());
+          stopRunning();
+        }
+      }
+      try {
+        Thread.sleep(100);
+      } catch (InterruptedException ex) {
+        stopRunning();
+      }
+    }
+    
+    private void getSystem() {
+      String os = System.getProperty("os.name").toLowerCase();
+      if (os.startsWith("mac")) {
+        os = "MAC";
+      } else if (os.startsWith("windows")) {
+        os = "WINDOWS";
+      } else if (os.startsWith("linux")) {
+        os = "LINUX";
+      } else {
+        os = "NOTSUPPORTED";
+      }
+      GraphicsEnvironment genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      GraphicsDevice[] gdevs = genv.getScreenDevices();
+      send(os + " " + gdevs.length);
+    }
+    
+    private int runScript(String command) {
+      return 0;
+    }
+    
+    private void send(Object o) {
+      try {
+        out.writeObject(o);
+        out.flush();
+        if (o instanceof ImageIcon) {
+          ScriptRunner.log(lvl,"returned: Image(%dx%d)", 
+                  ((ImageIcon) o).getIconWidth(), ((ImageIcon) o).getIconHeight());          
+        } else {
+          ScriptRunner.log(lvl,"returned: "  + o);
+        }
+      } catch (IOException ex) {
+        ScriptRunner.log(-1, "send: writeObject: Exception: " + ex.getMessage());
+      }
+    }
+
+    public void stopRunning() {
+      ScriptRunner.log(lvl,"stop client handling requested");
+      try {
+        socket.close();
+      } catch (IOException ex) {
+        ScriptRunner.log(-1, "fatal: socket not closeable");
+        System.exit(1);
+      }
+      keepRunning = false;
+    }
+  }
+  
+  public static String getRemoteRunner(String adr, String p) {
+    RemoteRunner rr = new RemoteRunner(adr, p);
+    String rname = null;
+    if (rr.isValid()) {
+      rname = getNextRunnerName();
+      remoteRunners.put(rname, rr);
+    } else {
+      log(-1, "getRemoteRunner: adr(%s) port(%s) not available");
+    }
+    return rname;
+  }
+  
+  static synchronized String getNextRunnerName() {
+    return String.format("remoterunner%d", runnerID++);
+  }
+  
+  public int runRemote(String rname, String script, String[] args) {
+    RemoteRunner rr = remoteRunners.get(rname);
+    if (rr == null) {
+      log(-1, "runRemote: RemortRunner(%s) not available");
+      return rr.runRemote(args);
+    }
+    return 0;
+  }
+    
   public static void initScriptingSupport() {
     if (isReady) {
       return;
