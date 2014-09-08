@@ -37,6 +37,14 @@ public class Match extends Region implements Comparable<Match> {
     lastSearchTime = stime;
   }
 
+	/**
+	 *
+	 * @return this Match's actual waiting time from last successful find
+	 */
+	public long getTime() {
+		return lastFindTime;
+	}
+
   /**
    * create a copy of Match object<br>
    * to e.g. set another TargetOffset for same match
@@ -201,7 +209,7 @@ public class Match extends Region implements Comparable<Match> {
   public String getText() {
     return ocrText;
   }
-	
+
   @Override
   public int compareTo(Match m) {
     if (simScore != m.simScore) {
