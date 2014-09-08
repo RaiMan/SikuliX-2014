@@ -1,4 +1,4 @@
-# Copyright 2010-2013, Sikuli.org
+# Copyright 2010-2014, Sikuli.org
 # Released under the MIT License.
 from org.sikuli.basics import HotkeyListener
 from org.sikuli.basics import HotkeyManager

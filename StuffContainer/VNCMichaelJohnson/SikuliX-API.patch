@@ -3894,7 +3894,7 @@ index 3e2a8c8..812b4f4 100644
 +++ b/API/src/main/java/org/sikuli/script/Region.java
 @@ -1,58 +1,60 @@
  /*
-  * Copyright 2010-2014, Sikuli.org, SikuliX.com
+  * Copyright 2010-2014, Sikuli.org, sikulix.com
   * Released under the MIT License.
   *
   * modified RaiMan

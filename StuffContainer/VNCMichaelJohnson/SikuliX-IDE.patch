@@ -5,7 +5,7 @@ index 3b0d88f..7ff0935
 --- a/IDE/src/main/java/org/sikuli/ide/PatternPaneTargetOffset.java
 +++ b/IDE/src/main/java/org/sikuli/ide/PatternPaneTargetOffset.java
 @@ -2,40 +2,41 @@
-  * Copyright 2010-2013, Sikuli.org
+  * Copyright 2010-2014, Sikuli.org
   * Released under the MIT License.
   *
   * modified RaiMan 2013

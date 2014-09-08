@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014, Sikuli.org, SikuliX.com
+ * Copyright 2010-2014, Sikuli.org, sikulix.com
  * Released under the MIT License.
  *
  * modified RaiMan
@@ -7,8 +7,9 @@
 package org.sikuli.libslux;
 
 /**
- * This package contains the sources and the prebuilt native (C++) modules,
- * <br>needed to access systemspecific features as well as the OpenCV and Tesseract packages.
+ * This package contains prebuilt native (C++) module libVisionProxy.so
+ * <br>needed to access the OpenCV and Tesseract packages.
+ * <br>the sources can be found in the package sikulixlibvision
  * <br>For Windows and Mac, the libs are ready to use (exported at runtime)
  * <br>For Linux some prerequisites are needed - look into the docs
  */
