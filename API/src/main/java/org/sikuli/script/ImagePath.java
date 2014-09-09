@@ -81,7 +81,7 @@ public class ImagePath {
 			if (pathURL == null) {
 				return false;
 			}
-			return "file".equals(pathURL.getProtocol());
+			return "jar".equals(pathURL.getProtocol());
 		}
 
 		public boolean exists() {
@@ -101,7 +101,12 @@ public class ImagePath {
 					if (pathURL.equals((URL) other)) {
 						return true;
 					}
-				}
+				} else if (other instanceof String) {
+          if (isFile()) {
+            return FileManager.pathEquals(pathURL.getPath(), (String) other);
+          }
+          return false;
+        }
 				return false;
 			}
 			if (pathURL.equals(((PathEntry) other).pathURL)) {
@@ -175,12 +180,16 @@ public class ImagePath {
     log(lvl, "end of list ----------------------------");
   }
 
-	public static boolean isImageBundled(URL fURL) {
+  private static boolean bundleEquals(Object path) {
+    if (bundlePath != null) {
+      return bundlePath.equals(path);
+    }
+    return false;
+  }
+  
+  public static boolean isImageBundled(URL fURL) {
 		if ("file".equals(fURL.getProtocol())) {
-			String fPath = new File(fURL.getPath()).getParent();
-			if (bundlePath != null && bundlePath.equals(new PathEntry(fPath,null))) {
-				return true;
-			}
+  		return bundleEquals(new File(fURL.getPath()).getParent());
 		}
 		return false;
 	}
@@ -366,7 +375,7 @@ public class ImagePath {
    * @return true on success, false ozherwise
    */
   private static boolean remove(URL pURL) {
-    if (bundlePath != null && bundlePath.equals(pURL)) {
+    if (bundleEquals(pURL)) {
       Image.purge(pURL);
       bundlePath = null;
       Settings.BundlePath = null;
@@ -394,6 +403,9 @@ public class ImagePath {
    * @return true on success, false otherwise
    */
   public static boolean reset(String path) {
+    if (bundleEquals(path)) {
+      return true;
+    }
     reset();
     return setBundlePath(path);
   }
@@ -437,13 +449,13 @@ public class ImagePath {
 			path = makePathURL(FileManager.normalize(bPath), null);
 		}
 		if (path != null && path.isFile()) {
-			if (bundlePath != null && bundlePath.equals(path)) {
+      if (bundleEquals(path)) {
 				return true;
 			}
 			if (path.exists()) {
 				imagePaths.set(0, path);
 				Settings.BundlePath = path.getPath();
-				ImagePath.bundlePath = path;
+				bundlePath = path;
 				log(3, "new BundlePath: " + path);
 				return true;
 			}

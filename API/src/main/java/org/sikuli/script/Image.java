@@ -374,7 +374,7 @@ public class Image {
 			imageName = new File(imageName).getName();
 		}
 		beSilent = silent;
-    loadImage();
+    load();
   }
 
   private Image copy() {
@@ -540,45 +540,34 @@ public class Image {
       return null;
     }
 		fName = FileManager.slashify(fName, false);
-    boolean absoluteFileName = false;
-    boolean existsFileName = true;
     Image img = null;
     URL fURL = null;
     String fileName = Settings.getValidImageFilename(fName);
     if (fileName.isEmpty()) {
       log(-1, "not a valid image type: " + fName);
       fileName = fName;
+    }
+    File imgFile = new File(fileName);
+    if (imgFile.isAbsolute()) {
+      if (imgFile.exists()) {
+        fURL = FileManager.makeURL(fileName);
+      }
     } else {
-      File imgFile = new File(fileName);
-      if (imgFile.isAbsolute()) {
-        if (imgFile.exists()) {
-					absoluteFileName = true;
-          fURL = FileManager.makeURL(fileName);
-          imageNames.put(fileName, fURL);
-        } else {
-          existsFileName = false;
-        }
-      }
-      if (existsFileName) {
-        fURL = imageNames.get(fileName);
-        if (fURL == null) {
-          fURL = ImagePath.find(fileName);
-        }
-        if (fURL != null) {
-          img = imageFiles.get(fURL);
-        }
-      }
+      fURL = ImagePath.find(fileName);
+    }
+    if (fURL != null) {
+      img = imageFiles.get(fURL);
     }
     if (img == null) {
       img = new Image(fileName, fURL, silent);
-      img.setIsAbsolute(absoluteFileName);
+      img.setIsAbsolute(imgFile.isAbsolute());
     } else {
 			log(3, "from cache: %s", img.fileURL);
 		}
     return img;
   }
 
-  private BufferedImage loadImage() {
+  private BufferedImage load() {
     if (fileURL != null) {
       try {
         bimg = ImageIO.read(fileURL);
@@ -863,7 +852,7 @@ public class Image {
       }
       return bimg;
     } else {
-      return loadImage();
+      return load();
     }
   }
 
