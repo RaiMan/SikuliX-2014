@@ -2117,20 +2117,22 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 				public void run() {
 					EditorPane codePane = getCurrentCodePane();
 					String cType = codePane.getContentType();
-					File tmpFile = null;
+					File scriptFile = null;
 					try {
 						if (codePane.isDirty()) {
-							tmpFile = FileManager.createTempFile(ScriptRunner.typeEndings.get(cType));
-							if (tmpFile == null) {
+							scriptFile = FileManager.createTempFile(ScriptRunner.typeEndings.get(cType));
+							if (scriptFile == null) {
 								log(-1, "runCurrentScript: temp file for running not available");
 								return;
 							}
 							BufferedWriter bw = new BufferedWriter(
 											new OutputStreamWriter(
-															new FileOutputStream(tmpFile),
+															new FileOutputStream(scriptFile),
 															"UTF8"));
 							codePane.write(bw);
-						}
+						} else {
+              scriptFile = codePane.getCurrentFile();
+            }
 						_console.clear();
 						resetErrorMark();
 						String parent = null;
@@ -2151,7 +2153,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 							if (tabtitle.startsWith("*")) {
 								tabtitle = tabtitle.substring(1);
 							}
-							int ret = srunner.runScript(tmpFile, path, Settings.getArgs(),
+							int ret = srunner.runScript(scriptFile, path, Settings.getArgs(),
 											new String[]{parent, tabtitle});
 							addErrorMark(ret);
 							srunner.close();
