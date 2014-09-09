@@ -46,8 +46,8 @@ echo ----- copy Setup APIFat
 apijar=`ls $apifat/*-plain.jar`
 cp $dist/*.jar $target/
 cp $apijar $target/sikulixapi-$pversion.jar
-cp $apidocs/*.javadoc.jar $target
-cp $apidocs/*.sources.jar $target
+cp $apidocs/*-javadoc.jar $target
+cp $apidocs/*-sources.jar $target
 
 # ----------- Jars
 echo ----- copy Download Jars
