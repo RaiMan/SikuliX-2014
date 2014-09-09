@@ -553,10 +553,16 @@ public class Image {
         fURL = FileManager.makeURL(fileName);
       }
     } else {
-      fURL = ImagePath.find(fileName);
+      fURL = imageNames.get(fileName);
+      if (fURL == null) {
+        fURL = ImagePath.find(fileName);
+      }
     }
     if (fURL != null) {
       img = imageFiles.get(fURL);
+      if (img != null) {
+        imageNames.putIfAbsent(img.imageName, fURL);
+      }
     }
     if (img == null) {
       img = new Image(fileName, fURL, silent);
@@ -690,7 +696,7 @@ public class Image {
       return;
     }
     URL pathURL = FileManager.makeURL(bundlePath);
-    if (!ImagePath.getPaths().get(0).pathURL.equals(pathURL)) {
+    if (!ImagePath.getPaths().get(0).equals(pathURL)) {
       log(-1, "purge: not current bundlepath: " + pathURL);
       return;
     }
@@ -705,14 +711,12 @@ public class Image {
     Map.Entry<URL, Image> entry;
     Iterator<Image> bit;
     imagePurgeList.clear();
-    imageNamePurgeList.clear();
     while (it.hasNext()) {
       entry = it.next();
       imgURL = entry.getKey();
       if (imgURL.toString().startsWith(pathURL.toString())) {
         log(lvl + 1, "purge: URL: %s", imgURL.toString());
         imagePurgeList.add(entry.getValue());
-        imageNamePurgeList.add(entry.getKey());
         it.remove();
       }
     }
@@ -727,23 +731,11 @@ public class Image {
         }
       }
     }
-    if (!imageNamePurgeList.isEmpty()) {
-      Iterator<Map.Entry<String, URL>> nit = imageNames.entrySet().iterator();
-      Map.Entry<String, URL> name;
-      while (nit.hasNext()) {
-        name = nit.next();
-        if (imageNamePurgeList.remove(name.getValue())) {
-          log(lvl + 1, "purge: name: %s", name.getKey());
-          nit.remove();
-        }
-      }
-    }
-		if (imagePurgeList.size() > 0) {
-			log(lvl, "After Purge (%d): Max %d MB (%d / %d %%) (%d))",
-							imagePurgeList.size(), (int) (maxMemory / MB), images.size(),
-							(int) (100 * currentMemory / maxMemory), (int) (currentMemory / KB));
-	    imagePurgeList.clear();
-		}
+    clearImageNames();
+  }
+  
+  public static synchronized void clearImageNames() {
+    imageNames.clear();
   }
 
   /**

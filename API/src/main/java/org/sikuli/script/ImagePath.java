@@ -452,6 +452,7 @@ public class ImagePath {
       if (bundleEquals(path)) {
 				return true;
 			}
+      Image.clearImageNames();
 			if (path.exists()) {
 				imagePaths.set(0, path);
 				Settings.BundlePath = path.getPath();
