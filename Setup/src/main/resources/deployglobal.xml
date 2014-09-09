@@ -18,6 +18,7 @@
 	<packaging>pom</packaging>
 
 	<modules>
+		<module>Libsvision</module>
 		<module>Libswin</module>
 		<module>Libsmac</module>
 		<module>Libslux</module>
