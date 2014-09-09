@@ -381,12 +381,14 @@ public class FileManager {
       fpath = new File(path);
     }
     try {
+      fpath.mkdirs();
       File temp = File.createTempFile(temp1, temp2, fpath);
       temp.deleteOnExit();
       log0(lvl, "tempfile create:\n%s", temp.getAbsolutePath());
       return temp;
     } catch (IOException ex) {
-      log0(-1, "createTempFile: IOException: %s", fpath + File.pathSeparator + temp1 + "12....56" + temp2);
+      log0(-1, "createTempFile: IOException: %s\n%s", ex.getMessage(),
+              fpath + File.separator + temp1 + "12....56" + temp2);
       return null;
     }
   }
