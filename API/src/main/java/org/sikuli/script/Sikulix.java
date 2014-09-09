@@ -499,6 +499,13 @@ public class Sikulix {
 		}
 	}
 
+	public static void pause(float time) {
+		try {
+			Thread.sleep((int) (time * 1000));
+		} catch (InterruptedException ex) {
+		}
+	}
+
 	public static boolean importPrefs(String path) {
 		return true;
 	}

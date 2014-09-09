@@ -651,14 +651,6 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		return null;
 	}
 
-	public File getFileInBundle(String filename) {
-		String fullpath = Image.create(filename).getFilename();
-		if (fullpath != null) {
-			return new File(fullpath);
-		}
-		return null;
-	}
-
 	public Image getImageInBundle(String filename) {
 		return Image.createThumbNail(filename);
 	}

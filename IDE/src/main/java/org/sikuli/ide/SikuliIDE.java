@@ -107,7 +107,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   private int alreadyOpenedTab = -1;
   private PreferencesUser prefs;
   private boolean ACCESSING_AS_FOLDER = false;
-  private boolean firstRun = true;
   private static long start;
   private static File isRunning = null;
   private static FileOutputStream isRunningFile = null;
@@ -2107,9 +2106,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 			}
 			SikuliIDE.getStatusbar().resetMessage();
 			sikulixIDE.setVisible(false);
-			if (sikulixIDE.firstRun) {
-				sikulixIDE.firstRun = false;
-			}
+      Sikulix.pause(0.1f);
 			sikulixIDE.setIsRunningScript(true);
 			final IScriptRunner[] srunners = new IScriptRunner[] {null};
 			_runningThread = new Thread() {
