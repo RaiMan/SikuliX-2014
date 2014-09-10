@@ -4,14 +4,8 @@
 1.1.0 final is under development
 -----------------
 
-The Maven GroupID for the project is switched to **com.sikulix** (package names remain org.sikuli....)
+The Maven GroupID for the project now is **com.sikulix** (package names remain org.sikuli....)
 
-The structure is reduced to 3 main packages:
- - API: now contains Basics, Natives and OpenCV4Sikuli (gets sikulixapi.jar)
- - IDE: unchanged (gets sikulix.jar)
- - 3 LibsXxx: everything related to native stuff including the prebuilt libraries (gets sikulixlibsxxx.jar)
-
-The other packages are mostly unchanged.
 <hr>
 **sikulixapi.jar is half way up to Maven Central -- SNAPSHOTS available on OSSRH**<br>
 
@@ -27,7 +21,7 @@ available versions:<br>
 1.1.0-Beta4-SNAPSHOT (state of the respective target)<br>
 1.1.0-SNAPSHOT (the latest version towards final)
 
-find a **usage example** in [module TestRunMaven](https://github.com/RaiMan/SikuliX-2014/tree/master/TestRunMaven)
+find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/SikuliX-2014/tree/master/TestRunMaven)
 
 <hr>
 **If you want to test the head of developement without the need to build from sources:** <br>
@@ -59,9 +53,9 @@ This Maven multi-module setup contains everything ...
 **Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) (work in progress)**
 
 **Tools I use for developement:** <br />
-IDE with Maven support: [NetBeans 7.4](https://netbeans.org) (using Java 7 on all systems)<br />
+IDE with Maven support: [NetBeans 7.4/8.0](https://netbeans.org) (using Java 7 and 8)<br />
 GitHub support: [SourceTree]() (Mac + Windows)<br />
-CI Service: [Travis CI](http://travis-ci.com) <br />
+CI Service: [Travis CI](http://travis-ci.com) (not yet used)<br />
 Doc Service: [Read the Docs](https://readthedocs.org)<br />
 Main WebSite Service: [Weebly](http://www.weebly.com)<br />
 Private complementing Websites: [Host Europe](https://www.hosteurope.de)
@@ -75,24 +69,22 @@ Each folder (module) in this repo is a Maven project by itself with its own POM,
 
 **--- The top level modules (representing the Sikuli features) ---**
 
-**Module API**
+Module API
+---
+
+**package org.sikuli.script** 
 
 The Java implementation comprising the API to access the top elements (Screen, Region, Pattern, Match, Image, ...) and their methods allowing to search for images and to act on points and matches simulating mouse and keyboard.
 
 The ready-to-use package `sikulixapi.jar` provides this API for Java programming and any Java aware scripting languages.
-<br>**this is the candidate for MavenCentral**
 
-**Basics** (now contained in API)
+**package org.sikuli.basics** 
 
 Implements basic utility and helper features used in the top level packages (basic file and folder handling, download features, jar access and handling, export of native libraries, parameter and preferences handling, update and extension handling, ...) and hence it is contained in all packages.
 
-As a special feature it comprises the `sikulixsetup.jar`, which is run after download to build the wanted SikuliX packages and make them ready-to-use on the specific system (Windows, Mac or Linux).
+**package org.sikuli.natives** 
 
-**Natives** (now contained in API)
-
-Contains the Java sources interface classes (JNI based, mainly SWIG generated) and the C++ sources providing the implementation of the OpenCV and Tesseract usage and the implementation of some system specific features (HotKeyHandling, App class support,...).
-
-A maven based build workflow for the native libraries (libVisionProxy, lib...Util and hotky support on Mac) is available in the module Libs, which is also the target module for the prebuilt libraries finally bundled with the top level packages.
+Contains the Java sources interface classes (JNI based, mainly SWIG generated) providing the implementation of the OpenCV and Tesseract usage and the implementation of some system specific features (HotKeyHandling, App class support,...).
 
 **OpenCV4SikuliX** (now contained in API)
 
@@ -100,20 +92,20 @@ Sikuli's image search is based on features of [OpenCV](http://opencv.org). Start
 
 This module contains a specially configured Java/JNI OpenCV package (built using the standard OpenCV configure/make workflow) for use with the OpenCV features currently needed by Sikuli (core, imgproc, feature2d and highgui). The corresponding native library pack (currently Mac only) is contained in the module Libs.
 
-With the availability of the final version 1.1.0 the implementation of the OpenCV usage will be moved completely to the Java level. Until then the existing implementation in C++ is activated in the standard. The usage of the new implementation (in the new classes ImageFinder and ImageFind) can be switched on optinally for testing and developement.
+With the availability of the final version 1.1.0 the implementation of the OpenCV usage will be moved completely to the Java level. Until then the existing implementation in C++ is activated in the standard. The usage of the new implementation (in the new classes ImageFinder and ImageFind) can be switched on optionally for testing and developement.
 
 For Windows and Mac the native packages will again be pre-built and ready-to-use. For Linux there will be advices and scripts available to get the needed libraries ready.
 
 For more information on preparation and usage of the new OpenCV Java API [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-and-use-the-new-OpenCV-Java-API)
 
-**Modules LibsWin, LibsMac, LibsLux**
+Modules LibsWin, LibsMac, LibsLux
+---
 
 The prebuilt native libraries for Windows, Mac and Linux (partially).<br />
-(gets `sikulixlibsxxx.jar` and is contained in `sikulixsetup.jar`)
+(gets `sikulixlibsxxx.jar` and are contained in `sikulixsetup.jar`)
 
-<br><br>`sikulixlibsxxx.jar` **are candidates for MavenCentral**
-
-**Module IDE**
+Module IDE
+---
 
 Implements a GUI using Java, that allows to edit and run Sikuli scripts (currently Jython and JRuby are supported). It is an easy to use IDE focusing on the handling of the screenshots and images used in the typical Sikuli workflows.
 
