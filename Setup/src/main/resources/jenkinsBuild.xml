@@ -12,7 +12,12 @@
 
 	<groupId>com.sikulix</groupId>
 	<artifactId>SikuliX-2014</artifactId>
-	<version>1.1.0-Beta4</version>
+	<version>1.1.0</version>
+
+	<!-- to globally change the pom version:
+	mvn versions:set -DnewVersion=1.1.0
+	reminder: property sikuli.usedversion
+	-->
 
 	<packaging>pom</packaging>
 
@@ -41,15 +46,15 @@
 		<sikulixvmaj>1</sikulixvmaj>
 		<sikulixvmin>1</sikulixvmin>
 		<sikulixvsub>0</sikulixvsub>
-		<sikulixbeta>4</sikulixbeta>
+		<sikulixbeta>0</sikulixbeta>
 		<!--   this decides, where setup downloads from   -->
 		<!--		<sikulixdev>release</sikulixdev>-->
 		<sikulixdev>development</sikulixdev>
 		<!-- TODO: find better solution for beta / non-beta -->
-		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}-Beta${sikulixbeta}</sikuli.usedversion>
 		<!--
-		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
+		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}-Beta${sikulixbeta}</sikuli.usedversion>
 		-->
+		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
 		<sikuli.minorversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.minorversion>
 		<sikulixjythonversion>2.7-b2</sikulixjythonversion>
 		<sikulixjrubyversion>1.7.13</sikulixjrubyversion>
@@ -98,6 +103,15 @@
 					<version>1.0.13</version>
 				</dependency>
 		-->
+		<!--
+		Javassist (Java Programming Assistant) makes Java bytecode manipulation simple.
+		http://www.csg.ci.i.u-tokyo.ac.jp/~chiba/javassist/
+		-->
+<!--		<dependency>
+			<groupId>org.javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.18.1-GA</version>
+		</dependency>-->
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -134,24 +148,10 @@
 				<configuration>
 					<source>1.6</source>
 					<target>1.6</target>
+<!--					might be needed for compiling with Java 8 -->
+<!--					<compilerArgument>-XDignore.symbol.file=true</compilerArgument>-->
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
-
-	<distributionManagement>
-		<!-- for now use this repositories below.
-		 Must be a git repository, that you have access to!
-		-->
-		<repository>
-			<id>sikulix.releases</id>
-			<!--      <url>https://github.com/RaiMan/SikuliX-Maven-Repo/raw/master/releases</url>-->
-			<url>file:/Users/rhocke/SikuliX/SikuliX-Maven-Repo/raw/master/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>sikulix.shapshots</id>
-			<!--      <url>https://github.com/RaiMan/SikuliX-Maven-Repo/raw/master/snapshots</url>-->
-			<url>file:/Users/rhocke/SikuliX/SikuliX-Maven-Repo/raw/master/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
 </project>
