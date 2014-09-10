@@ -1,6 +1,15 @@
 Sikuli JRubyGem 2014 (version 1.1.x)
 ===
 
+<hr>
+**TAKE CARE:**<br>
+**the latest version 1.1.0.2 on rubygems**<br>
+**cannot be used with 1.1.0-Beta4 and later**<br>
+Until fixed, you can download a compatible version 1.1.0.3 from here:<br>
+https://dl.dropboxusercontent.com/u/42895525/SikuliX-1.1/sikulix-1.1.0.3.gem
+<br>install it locally according to the infos below
+<hr>
+
 Implements the Ruby gem for using the SikuliX Java API in JRuby scripts.<br />
 (Requires environment variable SIKULIXAPI_JAR <br />with full path to `sikulixapi.jar` version 1.1.0-Beta4+)
 
