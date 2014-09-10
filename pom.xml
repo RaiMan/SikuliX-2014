@@ -14,6 +14,11 @@
 	<artifactId>SikuliX-2014</artifactId>
 	<version>1.1.0</version>
 
+	<!-- to globally change the pom version:
+	mvn versions:set -DnewVersion=1.1.0
+	reminder: property sikuli.usedversion
+	-->
+
 	<packaging>pom</packaging>
 
 	<url>http://www.sikuli.org</url>
@@ -46,10 +51,10 @@
 		<!--		<sikulixdev>release</sikulixdev>-->
 		<sikulixdev>development</sikulixdev>
 		<!-- TODO: find better solution for beta / non-beta -->
-		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}-Beta${sikulixbeta}</sikuli.usedversion>
 		<!--
-		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
+		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}-Beta${sikulixbeta}</sikuli.usedversion>
 		-->
+		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
 		<sikuli.minorversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.minorversion>
 		<sikulixjythonversion>2.7-b2</sikulixjythonversion>
 		<sikulixjrubyversion>1.7.13</sikulixjrubyversion>
