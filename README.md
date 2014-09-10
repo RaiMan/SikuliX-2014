@@ -106,6 +106,10 @@ Implements a GUI using Java, that allows to edit and run Sikuli scripts (current
 The package `sikulix.jar` is the top level package containing all other options (hence the follow up of `sikuli-ide.jar` known from former releases).
 
 After setup this package `sikulix.jar` contains the selected scripting interpreter(s) (Jython and/or JRuby), thus allowing to run Sikuli scripts out of the box from the commandline and providing interactive Sikuli aware scripting shells (hence it includes the functionality known from the `sikuli-script.jar` of former Sikuli(X) releases and is used the same way).
+
+In all cases the Jython and JRuby jar packages are loaded from MavenCentral if needed.
+
+If you want to experiment with the special JRuby support (rSpec, cucumber, ...) you have to look into the modules JRubyAddOns and JRubyGem. Both have to be built manually if needed (not contained in the local developement build).
 <hr/>
 
 **--- The helper/utility modules (intended for internal and/or developement use only) ---**
@@ -118,16 +122,6 @@ It produces the fat jar `sikulixsetup.jar` being the root downloadable artefact.
 
 The prebuilt native libraries for Windows, Mac and Linux (partially).<br />
 (gets `sikulixlibsxxx.jar` and are contained in `sikulixsetup.jar`)
-
-**Module Jython**
-
-Implements Jython support for the IDE and for running scripts using Python as scripting language.<br />
-(contained in package sikulix.jar)
-
-**Module JRuby**
-
-Implements JRuby support for the IDE and for running scripts using Ruby as scripting language.<br />
-(optionally contained in package sikulix.jar)
 
 **Module Tesseract4SikuliX**
 
@@ -150,10 +144,6 @@ This is an adaption of the work [Jygments](https://code.google.com/p/jygments/) 
 Currently as a convenience the standard tessdata folder needed for using Tesseract 3.0.<br />
 (will be downloaded on request during a Sikuli setup)
 
-**Module MacApp**
-
-A template Sikuli-IDE.app, that is downloaded on request and made ready-to-use during Sikuli setup.
-
 **Modules ...Fat**
 
 Existing for IDE, API, Jython and JRuby. These build so called fat jars, that contain all needed dependency jars and are only intended for the build/setup process.
@@ -162,6 +152,10 @@ Existing for IDE, API, Jython and JRuby. These build so called fat jars, that co
 
 The source files for the textual documentation (built with PythonSphinx based on .rst files) and a ready-to-use HTML version as well as a HTML version of the JavaDocs of the main public Java API.<br />
 (is downloaded and made ready-to-use-locally during Sikuli setup)
+
+**Module TestRunMaven**
+
+A sample implementation of a Maven project, that loads the sikulixapi.jar from MavenCentral (currently still OSSRH).
 
 <hr/>
 
