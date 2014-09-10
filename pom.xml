@@ -148,29 +148,4 @@
 			</plugin>
 		</plugins>
 	</build>
-
-	<distributionManagement>
-		<!-- for now use this repositories below.
-		 Must be a git repository, that you have access to!
-		-->
-		<repository>
-			<id>sikulix.releases</id>
-			<!--      <url>https://github.com/RaiMan/SikuliX-Maven-Repo/raw/master/releases</url>-->
-			<url>file:/Users/rhocke/SikuliX/SikuliX-Maven-Repo/raw/master/releases</url>
-		</repository>
-		<snapshotRepository>
-			<id>sikulix.shapshots</id>
-			<!--      <url>https://github.com/RaiMan/SikuliX-Maven-Repo/raw/master/snapshots</url>-->
-			<url>file:/Users/rhocke/SikuliX/SikuliX-Maven-Repo/raw/master/snapshots</url>
-		</snapshotRepository>
-
-		<!-- after getting access to https://oss.sonatype.org/ as described in
-		https://docs.sonatype.org/display/Repository/Sonatype+OSS+Maven+Repository+Usage+Guide
-		use this: -->
-		<!--
-		<repository>
-				<id>sonatype.releases</id>
-				<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository> -->
-	</distributionManagement>
 </project>
