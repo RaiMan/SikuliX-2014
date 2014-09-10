@@ -12,7 +12,7 @@
 	<parent>
 		<groupId>com.sikulix</groupId>
 		<artifactId>SikuliX-2014</artifactId>
-		<version>1.1.0-Beta4</version>
+		<version>1.1.0</version>
 		<relativePath>../</relativePath>
 	</parent>
 
@@ -20,7 +20,7 @@
 
 	<groupId>com.sikulix</groupId>
 	<artifactId>sikulix</artifactId>
-	<version>1.1.0-Beta4</version>
+	<version>1.1.0</version>
 
 	<dependencies>
 		<dependency>
@@ -66,7 +66,7 @@
 		<dependency>
 			<groupId>com.sikulix</groupId>
 			<artifactId>sikulixjygments</artifactId>
-			<version>1.1.0-Beta4</version>
+			<version>1.1.0</version>
 		</dependency>
     <dependency>
       <groupId>org.swinglabs</groupId>
