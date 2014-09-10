@@ -69,7 +69,7 @@ Each folder (module) in this repo is a Maven project by itself with its own POM,
 
 **--- The top level modules (representing the Sikuli features) ---**
 
-Module API
+Module API (sikulixapi.jar)
 ---
 
 **package org.sikuli.script** 
@@ -98,13 +98,7 @@ For Windows and Mac the native packages will again be pre-built and ready-to-use
 
 For more information on preparation and usage of the new OpenCV Java API [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-and-use-the-new-OpenCV-Java-API)
 
-Modules LibsWin, LibsMac, LibsLux
----
-
-The prebuilt native libraries for Windows, Mac and Linux (partially).<br />
-(gets `sikulixlibsxxx.jar` and are contained in `sikulixsetup.jar`)
-
-Module IDE
+Module IDE (sikulix.jar)
 ---
 
 Implements a GUI using Java, that allows to edit and run Sikuli scripts (currently Jython and JRuby are supported). It is an easy to use IDE focusing on the handling of the screenshots and images used in the typical Sikuli workflows.
@@ -114,11 +108,16 @@ The package `sikulix.jar` is the top level package containing all other options 
 After setup this package `sikulix.jar` contains the selected scripting interpreter(s) (Jython and/or JRuby), thus allowing to run Sikuli scripts out of the box from the commandline and providing interactive Sikuli aware scripting shells (hence it includes the functionality known from the `sikuli-script.jar` of former Sikuli(X) releases and is used the same way).
 <hr/>
 
-**--- The helper/utility modules (intended for internal use only) ---**
+**--- The helper/utility modules (intended for internal and/or developement use only) ---**
 
 **Module Setup**
 
 It produces the fat jar `sikulixsetup.jar` being the root downloadable artefact. It is needed to setup the SikuliX packages to be used on the local systems. Though the preferred setup is to let setup download the needed stuff on the fly, there is the possibility to run setup completely local/offline after having downloaded the needed stuff manually ([look here ...](http://www.sikulix.com/quickstart.html#qs2)) 
+
+**Modules LibsWin, LibsMac, LibsLux**
+
+The prebuilt native libraries for Windows, Mac and Linux (partially).<br />
+(gets `sikulixlibsxxx.jar` and are contained in `sikulixsetup.jar`)
 
 **Module Jython**
 
