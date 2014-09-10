@@ -7,7 +7,7 @@ Implements the Ruby gem for using the SikuliX Java API in JRuby scripts.<br />
 ## Where to get
 It is possible:
 
-* to download `sikulix` from http://rubygems.org/sikulix
+* to download `sikulix` from http://rubygems.org/gems/sikulix
 * build it from sources using `mvn` or `gem`.
   Run in this path
 
