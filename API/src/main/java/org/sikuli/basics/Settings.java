@@ -236,21 +236,21 @@ public class Settings {
     return String.format("%s/%s/%s", SikuliVersionLong, SikuliSystemVersion, SikuliJavaVersion);
   }
 
-  public static void getStatus(int level) {
-    log(level, "***** Information Dump *****");
-    log(level, "*** SystemInfo\n%s", getSystemInfo());
+  public static void getStatus() {
+    System.out.println("***** Information Dump *****");
+    System.out.println(String.format("*** SystemInfo\n%s", getSystemInfo()));
     System.getProperties().list(System.out);
-    log(level, "*** System Environment");
+    System.out.println("*** System Environment");
     for (String key : System.getenv().keySet()) {
       System.out.println(String.format("%s = %s", key, System.getenv(key)));
     }
-    log(level, "*** Java Class Path");
+    System.out.println("*** Java Class Path");
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     URL[] urls = sysLoader.getURLs();
     for (int i = 0; i < urls.length; i++) {
       System.out.println(String.format("%d: %s", i, urls[i]));
     }
-    log(level, "***** Information Dump ***** end *****");
+    System.out.println("***** Information Dump ***** end *****");
   }
 
   public static String getValidImageFilename(String fname) {

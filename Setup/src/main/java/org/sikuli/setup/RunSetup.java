@@ -106,6 +106,7 @@ public class RunSetup {
 	private static String timestampBuilt = Settings.SikuliVersionBuild;
   private static int optionsSize;
   private static boolean logToFile = true;
+	private static boolean hasOptions = false;
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
@@ -206,6 +207,43 @@ public class RunSetup {
         }
       }
     }
+
+    if (args.length > 0 && "options".equals(args[0])) {
+      options.remove(0);
+			if (!options.isEmpty()) {
+				for (String val : options) {
+					if (val.contains("1.1")) {
+						hasOptions = true;
+						getIDE = true;
+						getJython = true;
+					} else if (val.contains("1.2")) {
+						hasOptions = true;
+						getIDE = true;
+						getJRuby = true;
+					} else if (val.contains("1.3")) {
+						hasOptions = true;
+						getJRuby = true;
+						getJRubyAddOns = true;
+					} else if (val.contains("2")) {
+						hasOptions = true;
+						getJava = true;
+					} else if (val.contains("3")) {
+						hasOptions = true;
+						getTess = true;
+					} else if (val.contains("4")) {
+						hasOptions = true;
+						forAllSystems = true;
+					} else if (val.contains("5")) {
+						hasOptions = true;
+						getRServer = true;
+					}
+				}
+				options.clear();
+				if (hasOptions) {
+					test = true;
+				}
+			}
+		}
 
     if (options.size() > 0 && "noSetup".equals(options.get(0))) {
       noSetup = true;
@@ -344,22 +382,25 @@ public class RunSetup {
     workDir = new File(runningJar).getParent();
 
     if (!runningJar.endsWith(".jar") || runningJar.endsWith("-plain.jar")) {
-      if (noSetup) {
-        log(3, "creating Setup folder - not running setup");
-      } else {
-        log(3, "have to create Setup folder before running setup");
-      }
-      if (!createSetupFolder("")) {
-        log(-1, "createSetupFolder: did not work- terminating");
-        System.exit(1);
-      }
-      if (noSetup) {
-        System.exit(0);
-      }
+			if (!hasOptions) {
+				if (noSetup) {
+					log(3, "creating Setup folder - not running setup");
+				} else {
+					log(3, "have to create Setup folder before running setup");
+				}
+				if (!createSetupFolder("")) {
+					log(-1, "createSetupFolder: did not work- terminating");
+					System.exit(1);
+				}
+				if (noSetup) {
+					System.exit(0);
+				}
+				logToFile = false;
+			} else {
+				workDir += "/Setup";
+			}
       Settings.runningSetupInValidContext = true;
-      Settings.runningSetupInContext = workDir;
-      Settings.runningSetupWithJar = localJar;
-      logToFile = false;
+			Settings.runningSetupInContext = workDir;
     }
 
 		if (logToFile) {
@@ -377,12 +418,12 @@ public class RunSetup {
 			log1(lvl, "... starting with no args given");
 		}
 
-    if (logToFile) {
-      Settings.getStatus(lvl);
+    if (logToFile && !hasOptions) {
+      Settings.getStatus();
     }
 //</editor-fold>
 
-    log1(lvl, "Setup in: %s using: %s", workDir, (runningJar.contains("classes") ? "Development Project" : runningJar));
+    log1(lvl, "Setup in: %s\nusing: %s", workDir, (runningJar.contains("classes") ? "Development Project" : runningJar));
 		log1(lvl, "SikuliX Setup Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
 
 		File localJarIDE = new File(workDir, localIDE);
@@ -1364,6 +1405,9 @@ public class RunSetup {
 	}
 
 	private static void reset(int type) {
+		if (hasOptions) {
+			return;
+		}
 		log1(3, "requested to reset: " + workDir);
 		String message = "";
 		if (type <= 0) {
