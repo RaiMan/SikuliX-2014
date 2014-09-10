@@ -560,8 +560,8 @@ public class Image {
     }
     if (fURL != null) {
       img = imageFiles.get(fURL);
-      if (img != null) {
-        imageNames.putIfAbsent(img.imageName, fURL);
+      if (img != null && null == imageNames.get(img.imageName)) {
+        imageNames.put(img.imageName, fURL);
       }
     }
     if (img == null) {
