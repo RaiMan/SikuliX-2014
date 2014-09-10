@@ -86,7 +86,7 @@ Implements basic utility and helper features used in the top level packages (bas
 
 Contains the Java sources interface classes (JNI based, mainly SWIG generated) providing the implementation of the OpenCV and Tesseract usage and the implementation of some system specific features (HotKeyHandling, App class support,...).
 
-**OpenCV4SikuliX** (now contained in API)
+**package org.opencv. ...** 
 
 Sikuli's image search is based on features of [OpenCV](http://opencv.org). Starting with version 2.4.6 OpenCV provides a self-contained JNI interface to the OpenCV native libraries, allowing to use OpenCV features directly in Java (and hence making C++ programming obsolete for this).
 
@@ -188,8 +188,6 @@ In the root directory of the repo run <br />
 which builds all modules and installs the artifacts into your local Maven repository.
 
 **Be aware** This mandatory first step will add "tons" of additional stuff from Maven Central repository to your local Maven repository, especially when you are a first time Maven user.
-
-If you want jars containing the sources of the respective modules and/or containing the javadocs you can use the following profile switches: `mvn clean install -PwithSource,withDocs` (but locally, there might not be much sense in that ;-)
 
 More details for Maven aspects you can find [here ...](https://github.com/RaiMan/SikuliX-2014/wiki/More-information-related-to-the-Maven-aspects-in-this-project)
 
