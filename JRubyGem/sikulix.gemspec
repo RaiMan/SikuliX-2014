@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.name        = 'sikulix'
-  s.version     = '1.1.0.2'
-  s.date        = '2014-07-03'
+  s.version     = '1.1.0.3'
+  s.date        = '2014-09-10'
   s.summary     = 'Sikulix gem'
   s.description = 'A wrapper over SikuliX java lib (sikulixapi.jar)'
   s.authors     = ['Roman S Samarev', 'Raimund Hocke']
