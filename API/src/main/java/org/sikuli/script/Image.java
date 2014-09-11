@@ -90,26 +90,26 @@ public class Image {
 
 //<editor-fold defaultstate="collapsed" desc="imageName">
   private String imageName = null;
-  
+
   public String getImageName() {
     return imageName;
   }
-  
+
   public Image setImageName(String imageName) {
     this.imageName = imageName;
     return this;
   }
-  
+
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="fileURL">
   private URL fileURL = null;
   private String imageAsFile = null;
-  
+
   public URL getFileURL() {
     return fileURL;
   }
-  
+
   public Image setFileURL(URL fileURL) {
     this.fileURL = fileURL;
     return this;
@@ -118,11 +118,11 @@ public class Image {
 
 //<editor-fold defaultstate="collapsed" desc="bimg">
   private BufferedImage bimg = null;
-  
+
   public BufferedImage getBimg() {
     return bimg;
   }
-  
+
   public Image setBimg(BufferedImage bimg) {
     this.bimg = bimg;
     if (bimg != null) {
@@ -136,7 +136,7 @@ public class Image {
     }
     return this;
   }
-  
+
   private long bsize = 0;
   private int bwidth = -1;
   private int bheight = -1;
@@ -146,7 +146,7 @@ public class Image {
 
 //<editor-fold defaultstate="collapsed" desc="isText">
   private boolean imageIsText = false;
-  
+
   /**
    *
    * @return true if the given image name did not give a valid image so it might
@@ -163,7 +163,7 @@ public class Image {
   public Image setIsText(boolean val) {
     imageIsText = val;
     return this;
-  } 
+  }
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="isAbsolute">
@@ -175,12 +175,12 @@ public class Image {
   public boolean isAbsolute() {
     return imageIsAbsolute;
   }
-  
+
   public Image setIsAbsolute(boolean val) {
     imageIsAbsolute = val;
     return this;
   }
-  
+
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="isBundled">
@@ -194,7 +194,7 @@ public class Image {
     this.imageIsBundled = imageIsBundled;
     return this;
   }
-  
+
   /**
    * INTERNAL USE: image is contained in a bundle (.sikuli)
    * @return true/false
@@ -202,12 +202,12 @@ public class Image {
   public boolean isBundled() {
     return imageIsBundled;
   }
-  
+
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="isPattern">
   private boolean imageIsPattern = false;
-  
+
   /**
    * true if this image contains pattern aspects<br>
    * only useable with the new ImageFinder
@@ -216,17 +216,17 @@ public class Image {
   public boolean isPattern() {
     return imageIsPattern;
   }
-  
+
   public Image setIsPattern(boolean imageIsPattern) {
     this.imageIsPattern = imageIsPattern;
     return this;
   }
-  
+
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="waitAfter">
   private int waitAfter;
-  
+
   /**
    * Get the value of waitAfter
    *
@@ -235,7 +235,7 @@ public class Image {
   public int getWaitAfter() {
     return waitAfter;
   }
-  
+
   /**
    * Set the value of waitAfter
    *
@@ -249,7 +249,7 @@ public class Image {
 
 //<editor-fold defaultstate="collapsed" desc="offset">
   private Location offset = new Location(0, 0);
-  
+
   /**
    * Get the value of offset
    *
@@ -258,7 +258,7 @@ public class Image {
   public Location getOffset() {
     return offset;
   }
-  
+
   /**
    * Set the value of offset
    *
@@ -269,10 +269,10 @@ public class Image {
     return this;
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="similarity">
   private float similarity = (float) Settings.MinSimilarity;
-  
+
   /**
    * Get the value of similarity
    *
@@ -281,7 +281,7 @@ public class Image {
   public float getSimilarity() {
     return similarity;
   }
-  
+
   /**
    * Set the value of similarity
    *
@@ -291,13 +291,13 @@ public class Image {
     this.similarity = similarity;
     return this;
   }
-  
+
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="lastSeen">
   private Rectangle lastSeen = null;
   private double lastScore = 0.0;
-  
+
   /**
    * if the image was already found before
    *
@@ -354,7 +354,7 @@ public class Image {
 
   private Image() {
   }
-  
+
 	private Image(String fname, URL fURL) {
     init(fname, fURL, true);
   }
@@ -395,7 +395,7 @@ public class Image {
     }
     return imgTarget;
   }
-  
+
   /**
    * create a new Image as copy of the given Image
    * @param imgSrc given Image
@@ -422,7 +422,7 @@ public class Image {
     Image img = get(fName, false);
     return createImageValidate(img, true);
   }
-  
+
   /**
    * create a new Image with Pattern aspects from an existing Pattern
    * @param p a Pattern
@@ -499,7 +499,7 @@ public class Image {
     }
     return img;
   }
-  
+
 	/**
 	 * stores the image as PNG file in the standard temp folder
 	 * with a created filename (sikuli-image-#unique-random#.png)
@@ -733,7 +733,7 @@ public class Image {
     }
     clearImageNames();
   }
-  
+
   public static synchronized void clearImageNames() {
     imageNames.clear();
   }
@@ -1175,4 +1175,53 @@ public class Image {
         g2.dispose();
         return tmp;
     }
+
+	/**
+	 * find an image in another image
+	 * @param img
+	 * @return a Match or null
+	 */
+	public Match find(Image img) {
+		log(-1, "find: not implemented yet");
+		return null;
+	}
+
+	/**
+	 * find all images in another image
+	 * @param img
+	 * @return Match or null
+	 */
+	public Iterator<Match> findAll(Image img) {
+		log(-1, "findAll: not implemented yet");
+		return null;
+	}
+
+	/**
+	 * OCR-read the text from the image
+	 * @return the text or null
+	 */
+	public String text() {
+//TODO: use Tess4J here already??
+    if (Settings.OcrTextRead) {
+      TextRecognizer tr = TextRecognizer.getInstance();
+      if (tr == null) {
+        Debug.error("text: text recognition is now switched off");
+        return null;
+      }
+      String textRead = tr.recognize(this.get());
+      log(lvl, "text: #(" + textRead + ")#");
+      return textRead;
+    }
+    Debug.error("text: text recognition is currently switched off");
+		return null;
+	}
+
+	/**
+	 * convenience method: get text from given image file
+	 * @param imgFile
+	 * @return the text or null
+	 */
+	public static String text(String imgFile) {
+		return create(imgFile).text();
+	}
 }
