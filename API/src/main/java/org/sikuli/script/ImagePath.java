@@ -186,7 +186,7 @@ public class ImagePath {
     }
     return false;
   }
-  
+
   public static boolean isImageBundled(URL fURL) {
 		if ("file".equals(fURL.getProtocol())) {
   		return bundleEquals(new File(fURL.getPath()).getParent());
@@ -314,7 +314,7 @@ public class ImagePath {
    */
   public static boolean add(String mainPath, String altPath) {
 		mainPath = FileManager.normalize(mainPath);
-		mainPath = FileManager.normalize(altPath);
+		altPath = FileManager.normalize(altPath);
     PathEntry path = makePathURL(mainPath, altPath);
     if (path != null) {
       if (hasPath(path) < 0) {
