@@ -15,6 +15,7 @@ import org.sikuli.script.ScreenImage;
 import org.sikuli.script.ScreenUnion;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.script.Sikulix;
 
 public class PatternWindow extends JFrame {
 
@@ -197,6 +198,10 @@ public class PatternWindow extends JFrame {
 		boolean tempDirty = isDirty();
 		if (paneNaming.isDirty()) {
 			String filename = paneNaming.getAbsolutePath();
+			if (filename.contains("%")) {
+				Debug.error("%s\n%% in filename replaced with _", filename);
+				filename = filename.replace("%", "_");
+			}
 			String oldFilename = _imgBtn.getFilename();
 			if (FileManager.exists(filename)) {
 				String name = FileManager.getName(filename);
