@@ -906,9 +906,12 @@ public class RunSetup {
 		}
 
 		if (Settings.isLinux()) {
-			if (popAsk("If you have provided your own builds\n"
-							+ "of the native libraries in the system paths:\n"
-							+ "Click YES if you did (be sure, they are there)\n"
+			File linuxLibsDir = new File(workDir, "libs");
+			linuxLibsDir.mkdir();
+			if (popAsk("If you have prepared your own libVisionProxy.so,\n"
+							+ "then place a copy of it into the folder libs at:\n"
+							+  linuxLibsDir.getAbsolutePath() + "\n"
+							+ "Click YES if you have (be sure, it is there)\n"
 							+ "Click NO to pack the bundled libs to the jars.")) {
 				shouldPackLibs = false;
 			}
