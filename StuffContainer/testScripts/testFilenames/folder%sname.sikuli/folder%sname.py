@@ -1,1 +1,1 @@
-popup("hello from filenametest")
+popup("hello from filename%stest")
