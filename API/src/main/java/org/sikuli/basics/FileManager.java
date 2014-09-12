@@ -805,7 +805,7 @@ public class FileManager {
 					}
 				})) {
 			if (!usedImages.contains(image.getName())) {
-				Debug.log(3, "FileManager: delete not used: %s", image);
+				Debug.log(3, "FileManager: delete not used: %s", image.getName());
 				image.delete();
 			}
 		}

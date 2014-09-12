@@ -405,13 +405,16 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			(new File(snameDir, sname)).delete();
 		}
 		if (PreferencesUser.getInstance().getAtSaveCleanBundle()) {
-			cleanBundle(getSrcBundle());
+      if (!sikuliContentType.equals(ScriptRunner.CPYTHON)) {
+        log(lvl, "delete-not-used-images for %s using Python string syntax", sikuliContentType);
+      }
+      cleanBundle(getSrcBundle());
 		}
 		setDirty(false);
 	}
 
 	private void cleanBundle(String bundle) {
-    log(3, "cleanBundle: for %s", bundle);
+    log(3, "cleanBundle: for \n%s", bundle);
     String pbundle = FileManager.slashify(bundle, false);
     if (! (new File(pbundle).isDirectory())) {
       log(-1, "cleanBundle: no directory/folder");
@@ -424,6 +427,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     usedImages.add(" ");
 		boolean inString = false;
 		String current;
+    String[] possibleImage = new String[] {""};
+    String[] stringType = new String[] {""};
 		for (Token t : tokens) {
 			current = t.getValue();
 			if (t.getType() == TokenType.Comment) {
@@ -436,37 +441,53 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 				continue;
 			}
 			if (!inString) {
-				if (!current.isEmpty() && "'\"".contains(current)) {
-					inString = true;
-				}
+        inString = cleanBundleStringHandling(current, inString, possibleImage, stringType);
 				continue;
 			}
-			if (!current.isEmpty() && "'\"".contains(current)) {
+			if (!cleanBundleStringHandling(current, inString, possibleImage, stringType)) {
 				inString = false;
+  			cleanBundleIsImageUsed(pbundle, possibleImage[0], usedImages);
 				continue;
 			}
-			cleanBundleIsImageUsed(pbundle, current, usedImages);
 		}
 		FileManager.deleteNotUsedImages(bundle, usedImages);
 	}
+  
+  private boolean cleanBundleStringHandling(String current, boolean inString, 
+          String[] possibleImage, String[] stringType) {
+			if (!inString) {
+				if (!current.isEmpty() && (current.contains("\"") || current.contains("'"))) {
+          possibleImage[0] = "";
+          stringType[0] = current.substring(current.length()-1, current.length());
+					return true;
+				}
+			}
+			if (!current.isEmpty() && "'\"".contains(current) && stringType[0].equals(current)) {
+				return false;
+			}
+      if (inString) {
+        possibleImage[0] += current;
+      }
+      return inString;
+  }
 
 	private void cleanBundleCheckComments(String pbundle, Lexer lexer, String comment, List<String> usedImages) {
 		Iterable<Token> tokens = lexer.getTokens(comment);
 		boolean inString = false;
 		String current;
+    String[] possibleImage = new String[] {""};
+    String[] stringType = new String[] {""};
 		for (Token t : tokens) {
 			current = t.getValue();
 			if (!inString) {
-				if ("'\"".contains(current)) {
-					inString = true;
-				}
+        inString = cleanBundleStringHandling(current, inString, possibleImage, stringType);
 				continue;
 			}
-			if ("'\"".contains(current)) {
+			if (!cleanBundleStringHandling(current, inString, possibleImage, stringType)) {
 				inString = false;
+  			cleanBundleIsImageUsed(pbundle, possibleImage[0], usedImages);
 				continue;
 			}
-			cleanBundleIsImageUsed(pbundle, current, usedImages);
 		}
 	}
 
@@ -478,7 +499,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
         if (fimg.contains(pbundle)) {
           img = new File(fimg).getName();
         } else {
-          log(lvl, "save: used image ignored: %s", img);
+          log(lvl, "save: used image ignored: \n%s", img);
           return;
         }
 			}
@@ -502,7 +523,6 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		} catch (ResolutionException ex) {
 			return null;
 		}
-
 	}
 
 	public String exportAsZip() throws IOException, FileNotFoundException {
