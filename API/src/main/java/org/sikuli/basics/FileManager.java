@@ -560,7 +560,8 @@ public class FileManager {
       if (path.contains("%")) {
         try {
           path = URLDecoder.decode(path, "UTF-8");
-        } catch (UnsupportedEncodingException ex) {
+        } catch (Exception ex) {
+					log0(lvl, "slashify: decoding problem with %s\nwarning: filename might not be useable.", path);
         }
       }
       if (File.separatorChar != '/') {

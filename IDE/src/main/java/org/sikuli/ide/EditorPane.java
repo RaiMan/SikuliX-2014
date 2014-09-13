@@ -452,8 +452,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		}
 		FileManager.deleteNotUsedImages(bundle, usedImages);
 	}
-  
-  private boolean cleanBundleStringHandling(String current, boolean inString, 
+
+  private boolean cleanBundleStringHandling(String current, boolean inString,
           String[] possibleImage, String[] stringType) {
 			if (!inString) {
 				if (!current.isEmpty() && (current.contains("\"") || current.contains("'"))) {
@@ -496,14 +496,11 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		if (img.endsWith(".png") || img.endsWith(".jpg") || img.endsWith(".jpeg")) {
       fimg = FileManager.slashify(img, false);
 			if (fimg.contains("/")) {
-        if (fimg.contains(pbundle)) {
-          img = new File(fimg).getName();
-        } else {
-          log(lvl, "save: used image ignored: \n%s", img);
+        if (!fimg.contains(pbundle)) {
           return;
         }
+				img = new File(fimg).getName();
 			}
-			log(lvl, "save: used image: %s", img);
 			if (!usedImages.contains(img)) {
 				usedImages.add(img);
 			}
