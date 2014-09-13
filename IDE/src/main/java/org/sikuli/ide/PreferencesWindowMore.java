@@ -35,11 +35,6 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
 		prefMoreRunSave.setSelected(prefs.getPrefMoreRunSave());
 //TODO: implement prefMoreHighlight
 		prefMoreHighlight.setSelected(prefs.getPrefMoreHighlight());
-//TODO: implement prefMoreImages
-		prefMoreImages.setSelected(prefs.getPrefMoreImages());
-		if (! prefs.getPrefMoreImagesPath().isEmpty()) {
-			prefMoreImagesPath.setText(prefs.getPrefMoreImagesPath());
-		}
 		prefMoreMessage.setSelected(prefs.getPrefMoreMessage() == PreferencesUser.HORIZONTAL);
 //TODO: command bar as menu
 		prefMoreCommand.setSelected(prefs.getPrefMoreCommandBar());
@@ -78,15 +73,10 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
     prefMoreClean = new javax.swing.JCheckBox();
     prefMoreLblRun = new javax.swing.JLabel();
     prefMoreRunSave = new javax.swing.JCheckBox();
-    prefMoreLblImages = new javax.swing.JLabel();
-    prefMoreImages = new javax.swing.JCheckBox();
-    prefMoreImagesPath = new javax.swing.JTextField();
     prefMoreHighlight = new javax.swing.JCheckBox();
     jSeparator1 = new javax.swing.JSeparator();
     jSeparator2 = new javax.swing.JSeparator();
     jSeparator3 = new javax.swing.JSeparator();
-    jSeparator4 = new javax.swing.JSeparator();
-    prefMoreLblTitle = new javax.swing.JLabel();
     jSeparator5 = new javax.swing.JSeparator();
     prefMoreBtnOk = new javax.swing.JButton();
     prefMoreLblLayout = new javax.swing.JLabel();
@@ -159,36 +149,12 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
       }
     });
 
-    prefMoreLblImages.setText("Where to store images?");
-
-    prefMoreImages.setText("use a global Repository *");
-    prefMoreImages.setToolTipText("... restart needed"); // NOI18N
-    prefMoreImages.addChangeListener(new javax.swing.event.ChangeListener() {
-      public void stateChanged(javax.swing.event.ChangeEvent evt) {
-        prefMoreImagesStateChanged(evt);
-      }
-    });
-
-    prefMoreImagesPath.setText("PathToRepository (absolute or relative to bundle path)");
-    prefMoreImagesPath.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        prefMoreImagesPathActionPerformed(evt);
-      }
-    });
-    prefMoreImagesPath.addKeyListener(new java.awt.event.KeyAdapter() {
-      public void keyTyped(java.awt.event.KeyEvent evt) {
-        prefMoreImagesPathKeyTyped(evt);
-      }
-    });
-
     prefMoreHighlight.setText("always highlight");
     prefMoreHighlight.addChangeListener(new javax.swing.event.ChangeListener() {
       public void stateChanged(javax.swing.event.ChangeEvent evt) {
         prefMoreHighlightStateChanged(evt);
       }
     });
-
-    prefMoreLblTitle.setText("Preferences: more options ...");
 
     prefMoreBtnOk.setText("Save");
     prefMoreBtnOk.addActionListener(new java.awt.event.ActionListener() {
@@ -289,9 +255,6 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
         .add(6, 6, 6)
         .add(jSeparator5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 564, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
       .add(layout.createSequentialGroup()
-        .add(192, 192, 192)
-        .add(prefMoreLblTitle))
-      .add(layout.createSequentialGroup()
         .add(26, 26, 26)
         .add(prefMoreLblTitle1))
       .add(layout.createSequentialGroup()
@@ -315,17 +278,6 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
         .add(78, 78, 78)
         .add(prefMoreHighlight))
       .add(jSeparator3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 570, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-      .add(layout.createSequentialGroup()
-        .add(32, 32, 32)
-        .add(prefMoreLblImages)
-        .add(30, 30, 30)
-        .add(prefMoreImages))
-      .add(layout.createSequentialGroup()
-        .add(32, 32, 32)
-        .add(prefMoreImagesPath, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 538, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
-      .add(layout.createSequentialGroup()
-        .add(6, 6, 6)
-        .add(jSeparator4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 564, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE))
       .add(layout.createSequentialGroup()
         .add(32, 32, 32)
         .add(prefMoreLblLayout)
@@ -384,8 +336,6 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
       .add(layout.createSequentialGroup()
         .add(jSeparator5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         .add(6, 6, 6)
-        .add(prefMoreLblTitle)
-        .add(12, 12, 12)
         .add(prefMoreLblTitle1)
         .add(6, 6, 6)
         .add(jSeparator1, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
@@ -407,17 +357,7 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
           .add(prefMoreHighlight))
         .add(5, 5, 5)
         .add(jSeparator3, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-        .add(3, 3, 3)
-        .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
-          .add(layout.createSequentialGroup()
-            .add(4, 4, 4)
-            .add(prefMoreLblImages))
-          .add(prefMoreImages))
-        .add(6, 6, 6)
-        .add(prefMoreImagesPath, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-        .add(6, 6, 6)
-        .add(jSeparator4, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-        .add(6, 6, 6)
+        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
           .add(layout.createSequentialGroup()
             .add(4, 4, 4)
@@ -426,7 +366,7 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
           .add(prefMoreCommand))
         .add(6, 6, 6)
         .add(jSeparator6, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-        .add(12, 12, 12)
+        .add(6, 6, 6)
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
           .add(layout.createSequentialGroup()
             .add(4, 4, 4)
@@ -434,16 +374,16 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
           .add(prefMoreLogActions)
           .add(prefMoreLogInfo)
           .add(prefMoreLogDebug))
-        .add(12, 12, 12)
+        .add(6, 6, 6)
         .add(jSeparator7, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-        .add(12, 12, 12)
+        .add(6, 6, 6)
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.LEADING)
           .add(layout.createSequentialGroup()
             .add(4, 4, 4)
             .add(prefMoreLblText))
           .add(prefMoreTextSearch)
           .add(prefMoreTextOCR))
-        .add(12, 12, 12)
+        .add(6, 6, 6)
         .add(jSeparator8, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
         .add(6, 6, 6)
         .add(prefMoreScripter)
@@ -455,9 +395,9 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
           .add(prefMorePlainText))
         .add(6, 6, 6)
         .add(jSeparator10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-        .add(6, 6, 6)
+        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
         .add(prefMoreBtnOk)
-        .add(6, 6, 6)
+        .add(0, 0, 0)
         .add(prefMoreLblStatus))
     );
   }// </editor-fold>//GEN-END:initComponents
@@ -492,7 +432,6 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
 		prefs.setAtSaveCleanBundle(isSelected(prefMoreClean));
 		prefs.setPrefMoreRunSave(isSelected(prefMoreRunSave));
 		prefs.setPrefMoreHighlight(isSelected(prefMoreHighlight));
-		prefs.setPrefMoreImages(isSelected(prefMoreImages));
 		prefs.setPrefMoreMessage(isSelected(prefMoreMessage) ? PreferencesUser.HORIZONTAL : PreferencesUser.VERTICAL);
 		prefs.setPrefMoreCommandBar(isSelected(prefMoreCommand));
 		prefs.setPrefMoreLogActions(isSelected(prefMoreLogActions));
@@ -503,9 +442,6 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
 		prefs.setPrefMoreImageThumbs(isSelected(prefMoreImageThumbs));
 		prefs.setPrefMorePlainText(isSelected(prefMorePlainText));
 		prefs.setUserType(isSelected(prefMoreScripter)?PreferencesUser.SCRIPTER:PreferencesUser.SIKULI_USER);
-		if (! prefMoreImagesPath.getText().startsWith("PathToRepository")) {
-			prefs.setPrefMoreImagesPath(prefMoreImagesPath.getText());
-		}
 		setStatus(msg, true);
 	}
 
@@ -528,10 +464,6 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
   private void prefMoreRunSaveStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_prefMoreRunSaveStateChanged
 		isSelected(prefMoreRunSave);
   }//GEN-LAST:event_prefMoreRunSaveStateChanged
-
-  private void prefMoreImagesStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_prefMoreImagesStateChanged
-		isSelected(prefMoreImages);
-  }//GEN-LAST:event_prefMoreImagesStateChanged
 
   private void prefMoreScripterStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_prefMoreScripterStateChanged
     if (isSelected(prefMoreScripter)) {
@@ -581,10 +513,6 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
 		isSelected(prefMoreCommand);
   }//GEN-LAST:event_prefMoreCommandStateChanged
 
-  private void prefMoreImagesPathKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_prefMoreImagesPathKeyTyped
-    // TODO add your handling code here:
-  }//GEN-LAST:event_prefMoreImagesPathKeyTyped
-
   private void prefMoreTextSearchStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_prefMoreTextSearchStateChanged
 		isSelected(prefMoreTextSearch);
   }//GEN-LAST:event_prefMoreTextSearchStateChanged
@@ -592,10 +520,6 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
   private void prefMoreTextOCRStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_prefMoreTextOCRStateChanged
 		isSelected(prefMoreTextOCR);
   }//GEN-LAST:event_prefMoreTextOCRStateChanged
-
-  private void prefMoreImagesPathActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_prefMoreImagesPathActionPerformed
-    // TODO add your handling code here:
-  }//GEN-LAST:event_prefMoreImagesPathActionPerformed
 
   private void prefMoreThumbsStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_prefMoreThumbsStateChanged
 		isSelected(prefMoreImageThumbs);
@@ -618,7 +542,6 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
   private javax.swing.JSeparator jSeparator10;
   private javax.swing.JSeparator jSeparator2;
   private javax.swing.JSeparator jSeparator3;
-  private javax.swing.JSeparator jSeparator4;
   private javax.swing.JSeparator jSeparator5;
   private javax.swing.JSeparator jSeparator6;
   private javax.swing.JSeparator jSeparator7;
@@ -632,16 +555,12 @@ public class PreferencesWindowMore extends javax.swing.JPanel {
   private javax.swing.JCheckBox prefMoreHTML;
   private javax.swing.JCheckBox prefMoreHighlight;
   private javax.swing.JCheckBox prefMoreImageThumbs;
-  private javax.swing.JCheckBox prefMoreImages;
-  private javax.swing.JTextField prefMoreImagesPath;
-  private javax.swing.JLabel prefMoreLblImages;
   private javax.swing.JLabel prefMoreLblLayout;
   private javax.swing.JLabel prefMoreLblLogsOld;
   private javax.swing.JLabel prefMoreLblRun;
   private javax.swing.JLabel prefMoreLblSave;
   private javax.swing.JLabel prefMoreLblStatus;
   private javax.swing.JLabel prefMoreLblText;
-  private javax.swing.JLabel prefMoreLblTitle;
   private javax.swing.JLabel prefMoreLblTitle1;
   private javax.swing.JCheckBox prefMoreLogActions;
   private javax.swing.JCheckBox prefMoreLogDebug;

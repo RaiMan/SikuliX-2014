@@ -72,10 +72,6 @@
               <Component id="jSeparator5" min="-2" pref="564" max="-2" attributes="0"/>
           </Group>
           <Group type="102" attributes="0">
-              <EmptySpace min="192" pref="192" max="-2" attributes="0"/>
-              <Component id="prefMoreLblTitle" min="-2" max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" attributes="0">
               <EmptySpace min="26" pref="26" max="-2" attributes="0"/>
               <Component id="prefMoreLblTitle1" min="-2" max="-2" attributes="0"/>
           </Group>
@@ -104,20 +100,6 @@
               <Component id="prefMoreHighlight" min="-2" max="-2" attributes="0"/>
           </Group>
           <Component id="jSeparator3" min="-2" pref="570" max="-2" attributes="0"/>
-          <Group type="102" attributes="0">
-              <EmptySpace min="32" pref="32" max="-2" attributes="0"/>
-              <Component id="prefMoreLblImages" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="30" pref="30" max="-2" attributes="0"/>
-              <Component id="prefMoreImages" min="-2" max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" attributes="0">
-              <EmptySpace min="32" pref="32" max="-2" attributes="0"/>
-              <Component id="prefMoreImagesPath" min="-2" pref="538" max="-2" attributes="0"/>
-          </Group>
-          <Group type="102" attributes="0">
-              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-              <Component id="jSeparator4" min="-2" pref="564" max="-2" attributes="0"/>
-          </Group>
           <Group type="102" attributes="0">
               <EmptySpace min="32" pref="32" max="-2" attributes="0"/>
               <Component id="prefMoreLblLayout" min="-2" max="-2" attributes="0"/>
@@ -188,9 +170,7 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" attributes="0">
               <Component id="jSeparator5" min="-2" pref="10" max="-2" attributes="0"/>
-              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-              <Component id="prefMoreLblTitle" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
               <Component id="prefMoreLblTitle1" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
               <Component id="jSeparator1" min="-2" pref="10" max="-2" attributes="0"/>
@@ -216,21 +196,9 @@
               </Group>
               <EmptySpace min="5" pref="5" max="-2" attributes="0"/>
               <Component id="jSeparator3" min="-2" pref="10" max="-2" attributes="0"/>
-              <EmptySpace min="3" pref="3" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
-                      <Component id="prefMoreLblImages" min="-2" max="-2" attributes="0"/>
-                  </Group>
-                  <Component id="prefMoreImages" min="-2" max="-2" attributes="0"/>
-              </Group>
-              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-              <Component id="prefMoreImagesPath" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-              <Component id="jSeparator4" min="-2" pref="10" max="-2" attributes="0"/>
-              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
-              <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
                       <Component id="prefMoreLblLayout" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -239,9 +207,9 @@
               </Group>
               <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
               <Component id="jSeparator6" min="-2" pref="10" max="-2" attributes="0"/>
-              <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
                       <Component id="prefMoreLblLogsOld" min="-2" max="-2" attributes="0"/>
                   </Group>
@@ -249,18 +217,18 @@
                   <Component id="prefMoreLogInfo" min="-2" max="-2" attributes="0"/>
                   <Component id="prefMoreLogDebug" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
               <Component id="jSeparator7" min="-2" pref="10" max="-2" attributes="0"/>
-              <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
+                  <Group type="102" alignment="0" attributes="0">
                       <EmptySpace min="4" pref="4" max="-2" attributes="0"/>
                       <Component id="prefMoreLblText" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <Component id="prefMoreTextSearch" min="-2" max="-2" attributes="0"/>
                   <Component id="prefMoreTextOCR" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace min="12" pref="12" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
               <Component id="jSeparator8" min="-2" pref="10" max="-2" attributes="0"/>
               <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
               <Component id="prefMoreScripter" min="-2" max="-2" attributes="0"/>
@@ -273,9 +241,9 @@
               </Group>
               <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
               <Component id="jSeparator10" min="-2" pref="10" max="-2" attributes="0"/>
-              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="prefMoreBtnOk" min="-2" max="-2" attributes="0"/>
-              <EmptySpace min="6" pref="6" max="-2" attributes="0"/>
+              <EmptySpace min="0" pref="0" max="-2" attributes="0"/>
               <Component id="prefMoreLblStatus" min="-2" max="-2" attributes="0"/>
           </Group>
       </Group>
@@ -319,29 +287,6 @@
         <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="prefMoreRunSaveStateChanged"/>
       </Events>
     </Component>
-    <Component class="javax.swing.JLabel" name="prefMoreLblImages">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Where to store images?"/>
-      </Properties>
-    </Component>
-    <Component class="javax.swing.JCheckBox" name="prefMoreImages">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="use a global Repository *"/>
-        <Property name="toolTipText" type="java.lang.String" value="... restart needed" noResource="true"/>
-      </Properties>
-      <Events>
-        <EventHandler event="stateChanged" listener="javax.swing.event.ChangeListener" parameters="javax.swing.event.ChangeEvent" handler="prefMoreImagesStateChanged"/>
-      </Events>
-    </Component>
-    <Component class="javax.swing.JTextField" name="prefMoreImagesPath">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="PathToRepository (absolute or relative to bundle path)"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="prefMoreImagesPathActionPerformed"/>
-        <EventHandler event="keyTyped" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="prefMoreImagesPathKeyTyped"/>
-      </Events>
-    </Component>
     <Component class="javax.swing.JCheckBox" name="prefMoreHighlight">
       <Properties>
         <Property name="text" type="java.lang.String" value="always highlight"/>
@@ -355,13 +300,6 @@
     <Component class="javax.swing.JSeparator" name="jSeparator2">
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator3">
-    </Component>
-    <Component class="javax.swing.JSeparator" name="jSeparator4">
-    </Component>
-    <Component class="javax.swing.JLabel" name="prefMoreLblTitle">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Preferences: more options ..."/>
-      </Properties>
     </Component>
     <Component class="javax.swing.JSeparator" name="jSeparator5">
     </Component>
