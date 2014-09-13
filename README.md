@@ -1,4 +1,4 @@
-[![RaiMan's Stuff](https://raw.github.com/RaiMan/SikuliX-2014-Docs/master/src/main/resources/docs/source/RaiManStuff64.png)](http://www.sikuli.org) SikuliX-2014 (the repo for version 1.1.0)
+[![RaiMan's Stuff](https://raw.github.com/RaiMan/SikuliX-2014-Docs/master/src/main/resources/docs/source/RaiManStuff64.png)](http://www.sikuli.org) SikuliX-2014 (version 1.1.0)
 ============
 
 1.1.0 final is under development
@@ -22,6 +22,8 @@ available versions:<br>
 1.1.0-SNAPSHOT (the latest version towards final)
 
 find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/SikuliX-2014/tree/master/TestRunMaven)
+
+**You might also visit the WIKI**
 
 <hr>
 **If you want to test the head of developement without the need to build from sources:** <br>
