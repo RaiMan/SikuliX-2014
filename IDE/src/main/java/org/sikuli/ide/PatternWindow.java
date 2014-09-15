@@ -241,7 +241,7 @@ public class PatternWindow extends JFrame {
 				FileManager.xcopy(oldFilename, filename);
 				_imgBtn.setFilename(filename);
 			} catch (IOException ioe) {
-				Debug.error("renaming failed: old: %s \nnew: %s\n%s", 
+				Debug.error("renaming failed: old: %s \nnew: %s\n%s",
                 oldFilename, filename, ioe.getMessage());
         return;
 			}
@@ -259,7 +259,7 @@ public class PatternWindow extends JFrame {
 			_imgBtn.repaint();
 		}
 	}
-  
+
   private boolean revertImageRename() {
     try {
       FileManager.xcopy(fileOverwrittenNew, fileOverwrittenOld);
@@ -283,7 +283,7 @@ public class PatternWindow extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			actionPerformedUpdates(_parent);
-      currentPane.reparse(me, me, isFileOverwritten);
+      currentPane.reparse(fileOverwrittenOld, fileOverwrittenNew, isFileOverwritten);
 			_imgBtn.getWindow().close();
 			_parent.dispose();
 			currentPane.setDirty(setDirty(false));

@@ -732,10 +732,9 @@ public class Image {
     }
     clearImageNames();
   }
-  
+
   public static void unCacheBundledImage(String imgFileName) {
-    String bundlePath = ImagePath.getBundlePath();
-    URL imgURL = FileManager.makeURL(new File(bundlePath, imgFileName).getAbsolutePath());
+    URL imgURL = FileManager.makeURL(new File(imgFileName).getAbsolutePath());
     unCacheImage(imgURL);
   }
 
