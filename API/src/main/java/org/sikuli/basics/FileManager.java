@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 import java.util.jar.JarOutputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -790,7 +791,10 @@ public class FileManager {
     }
   }
 
-	public static void deleteNotUsedImages(String bundle, List<String> usedImages) {
+	public static void deleteNotUsedImages(String bundle, Set<String> usedImages) {
+		if (usedImages.isEmpty()) {
+			return;
+		}
 		File scriptFolder = new File(bundle);
 		if (!scriptFolder.isDirectory()) {
 			return;
