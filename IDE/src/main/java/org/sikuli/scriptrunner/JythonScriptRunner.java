@@ -619,6 +619,7 @@ public class JythonScriptRunner implements IScriptRunner {
 			return;
 		}
 		PyList jypath = interpreter.getSystemState().path;
+		PyList jyargv = interpreter.getSystemState().argv;
 		int jypathLength = jypath.__len__();
 		boolean contained = false;
 		for (int i = 0; i < jypathLength; i++) {
@@ -671,6 +672,11 @@ public class JythonScriptRunner implements IScriptRunner {
 			for (String line : codeBefore) {
 				interpreter.exec(line);
 			}
+		}
+
+		jyargv.clear();
+		for (String item : sysargv) {
+			jyargv.add(item);
 		}
 	}
 
