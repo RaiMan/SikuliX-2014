@@ -831,6 +831,15 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	//</editor-fold>
 
 	//<editor-fold defaultstate="collapsed" desc="replace text patterns with image buttons">
+  public boolean reparse(String oldName, String newName, boolean fileOverWritten) {
+    boolean success;
+    if (fileOverWritten) {
+      Image.unCacheBundledImage(newName);
+    }
+    success = reparse();
+    return success;
+  }
+  
 	public boolean reparse() {
     String paneContent = this.getText();
     if (paneContent.length() < 7) {

@@ -6,16 +6,25 @@
  */
 package org.sikuli.ide;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Window;
 import java.awt.event.*;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import org.sikuli.script.Location;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.script.ScreenUnion;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.script.Sikulix;
 
 public class PatternWindow extends JFrame {
 
@@ -31,8 +40,12 @@ public class PatternWindow extends JFrame {
 	private static final int tabMax = 3;
 	private ScreenImage _simg;
 	private boolean dirty;
+  private EditorPane currentPane;
+  boolean isFileOverwritten = false;
+  String fileOverwrittenOld;
+  String fileOverwrittenNew;
 
-	static String _I(String key, Object... args) {
+  static String _I(String key, Object... args) {
 		return SikuliIDEI18N._I(key, args);
 	}
 
@@ -82,6 +95,7 @@ public class PatternWindow extends JFrame {
       Debug.error(me + "Problem while setting up pattern pane\n%s", e.getMessage());
 		}
 		setDirty(false);
+    currentPane = SikuliIDE.getInstance().getCurrentCodePane();
 		setVisible(true);
 	}
 
@@ -214,13 +228,22 @@ public class PatternWindow extends JFrame {
 				if (ret != JOptionPane.YES_OPTION) {
 					return;
 				}
+        if (isFileOverwritten) {
+          if (!revertImageRename()) {
+            return;
+          }
+        }
+        isFileOverwritten = true;
+        fileOverwrittenOld = oldFilename;
+        fileOverwrittenNew = filename;
 			}
 			try {
 				FileManager.xcopy(oldFilename, filename);
 				_imgBtn.setFilename(filename);
 			} catch (IOException ioe) {
-				Debug.error("renaming failed: " + oldFilename + " " + filename);
-				Debug.error(ioe.getMessage());
+				Debug.error("renaming failed: old: %s \nnew: %s\n%s", 
+                oldFilename, filename, ioe.getMessage());
+        return;
 			}
 			paneNaming.updateFilename();
 			addDirty(true);
@@ -236,6 +259,18 @@ public class PatternWindow extends JFrame {
 			_imgBtn.repaint();
 		}
 	}
+  
+  private boolean revertImageRename() {
+    try {
+      FileManager.xcopy(fileOverwrittenNew, fileOverwrittenOld);
+      _imgBtn.setFilename(fileOverwrittenOld);
+    } catch (IOException ioe) {
+      Debug.error("revert renaming failed: new: %s \nold: %s\n%s",
+              fileOverwrittenNew, fileOverwrittenOld, ioe.getMessage());
+      return false;
+    }
+    return true;
+  }
 
 	class ActionOK implements ActionListener {
 
@@ -248,9 +283,10 @@ public class PatternWindow extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			actionPerformedUpdates(_parent);
+      currentPane.reparse(me, me, isFileOverwritten);
 			_imgBtn.getWindow().close();
 			_parent.dispose();
-			SikuliIDE.getInstance().getCurrentCodePane().setDirty(setDirty(false));
+			currentPane.setDirty(setDirty(false));
 		}
 	}
 
@@ -281,6 +317,9 @@ public class PatternWindow extends JFrame {
 		public void actionPerformed(ActionEvent e) {
 			if (isDirty()) {
 				_imgBtn.resetParameters();
+        if (isFileOverwritten) {
+          revertImageRename();
+        }
 			}
 			_imgBtn.getWindow().close();
 			_parent.dispose();

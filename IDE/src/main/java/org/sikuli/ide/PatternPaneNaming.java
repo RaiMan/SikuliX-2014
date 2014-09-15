@@ -114,13 +114,19 @@ public class PatternPaneNaming extends JPanel {
 	private String getFilenameWithoutExt(File f) {
 		String name = f.getName();
 		int pos = name.lastIndexOf('.');
-		return name.substring(0, pos);
+    if (pos > 0) {
+      return name.substring(0, pos);
+    }
+    return name;
 	}
 
 	private String getFileExt(File f) {
 		String name = f.getName();
 		int pos = name.lastIndexOf('.');
-		return name.substring(pos);
+    if (pos > 0) {
+      return name.substring(pos);
+    }
+    return "";
 	}
 
 	public static String getFilenameFromImage(BufferedImage img) {

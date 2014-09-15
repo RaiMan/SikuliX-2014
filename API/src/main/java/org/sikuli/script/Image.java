@@ -709,7 +709,6 @@ public class Image {
     log(lvl, "purge: ImagePath: %s", pathURL.getPath());
     Iterator<Map.Entry<URL, Image>> it = imageFiles.entrySet().iterator();
     Map.Entry<URL, Image> entry;
-    Iterator<Image> bit;
     imagePurgeList.clear();
     while (it.hasNext()) {
       entry = it.next();
@@ -721,7 +720,7 @@ public class Image {
       }
     }
     if (!imagePurgeList.isEmpty()) {
-      bit = images.iterator();
+      Iterator<Image> bit = images.iterator();
       while (bit.hasNext()) {
         img = bit.next();
         if (imagePurgeList.contains(img)) {
@@ -732,6 +731,21 @@ public class Image {
       }
     }
     clearImageNames();
+  }
+  
+  public static void unCacheBundledImage(String imgFileName) {
+    String bundlePath = ImagePath.getBundlePath();
+    URL imgURL = FileManager.makeURL(new File(bundlePath, imgFileName).getAbsolutePath());
+    unCacheImage(imgURL);
+  }
+
+  public static void unCacheImage(URL imgURL) {
+    Image img = imageFiles.get(imgURL);
+    if (img == null) {
+      return;
+    }
+    img.bimg = null;
+    images.remove(img);
   }
 
   public static synchronized void clearImageNames() {
