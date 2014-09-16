@@ -40,7 +40,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
   private MouseEvent mouseTrigger;
   private int menuCount = 0;
   private Map<String, Integer> menus = new HashMap<String, Integer>();
-  
+
   /**
    * Get the value of isValidMenu
    *
@@ -117,10 +117,10 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
   private JMenuItem createMenuItem(String name, ActionListener listener) {
     return createMenuItem(new JMenuItem(name), listener);
   }
-  
+
   private void createMenuSeperator() {
     menuCount++;
-    addSeparator();    
+    addSeparator();
   }
 
   private void setMenuText(int index, String text) {
@@ -266,7 +266,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 			SikuliIDE.getStatusbar().setCurrentContentType(targetType);
 			Debug.log(3, msg);
 		}
-    
+
     public void doMoveTab(ActionEvent ae) throws NoSuchMethodException {
       if (ae.getActionCommand().contains("Insert")) {
         log(lvl, "doMoveTab: entered at insert");
@@ -300,13 +300,13 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       }
       resetMenuAfterMoveTab();
     }
-    
+
     private void resetMenuAfterMoveTab() {
       setMenuText(menus.get(MOVE_TAB), "Move Tab");
       setMenuText(menus.get(OPENL), "Open left");
       refTab.resetLastClosed();
     }
-    
+
     public void doDuplicate(ActionEvent ae) throws NoSuchMethodException {
       log(lvl, "doDuplicate: entered");
       EditorPane ep = SikuliIDE.getInstance().getCurrentCodePane();
@@ -375,6 +375,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
       Image.dump();
       ImagePath.reset();
       Image.dump();
+			SikuliIDE.getInstance().getCurrentCodePane().reparse();
   }
 	}
 
