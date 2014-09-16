@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -33,7 +32,6 @@ import java.net.UnknownHostException;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.jar.JarOutputStream;
@@ -592,6 +590,14 @@ public class FileManager {
 
 	public static String normalizeAbsolute(String filename) {
 		return slashify(new File(slashify(filename, false)).getAbsolutePath(), false);
+	}
+
+	public static boolean isFilenameDotted(String name) {
+		String nameParent = new File(name).getParent();
+		if (nameParent != null) {
+			return true;
+		}
+		return false;
 	}
 
   /**
