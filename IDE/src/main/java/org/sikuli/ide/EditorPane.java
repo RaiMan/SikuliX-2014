@@ -12,6 +12,7 @@ import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.HashMap;
@@ -436,12 +437,12 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			current = t.getValue();
 			if (t.getType() == TokenType.Comment) {
 				innerText = t.getValue().substring(1);
-				parseforImagesWalk(pbundle, lexer, innerText, t.getPos(), images);
+				parseforImagesWalk(pbundle, lexer, innerText, t.getPos() + 1, images);
 				continue;
 			}
 			if (t.getType() == TokenType.String_Doc) {
 				innerText = t.getValue().substring(3, t.getValue().length() - 3);
-				parseforImagesWalk(pbundle, lexer, innerText, t.getPos(), images);
+				parseforImagesWalk(pbundle, lexer, innerText, t.getPos() + 3, images);
 				continue;
 			}
 			if (!inString) {
@@ -830,15 +831,26 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     oldName = new File(oldName).getName();
     List<Integer> poss = images.get(oldName);
     if (images.containsKey(oldName) && poss.size() > 0) {
-      poss.sort(new Comparator<Integer>() {
+      Collections.sort(poss, new Comparator<Integer>() {
         @Override
         public int compare(Integer o1, Integer o2) {
           if (o1 > o2) return -1;
           return 1;
         }
       });
+			reparseRenameImages(poss, oldName, new File(newName).getName());
     }
 		return reparse();
+	}
+
+	private boolean reparseRenameImages(List<Integer> poss, String oldName, String newName) {
+		StringBuilder text = new StringBuilder(getText());
+		int lenOld = oldName.length();
+		for (int pos : poss) {
+			text.replace(pos - lenOld, pos, newName);
+		}
+		setText(text.toString());
+		return true;
 	}
 
 	public boolean reparse() {
