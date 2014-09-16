@@ -283,6 +283,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 //      fireIDEFileMenu("SAVE");
       boolean success = refTab.fireCloseTab(mouseTrigger, refTab.getSelectedIndex());
       if (success && refTab.getLastClosed() != null) {
+				refTab.isLastClosedByMove = true;
         setMenuText(menus.get(MOVE_TAB), "Insert Right");
         setMenuText(menus.get(OPENL), "Insert Left");
         log(lvl, "doMoveTab: preparation success");
@@ -292,7 +293,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
     }
 
     private void checkAndResetMoveTab() throws NoSuchMethodException {
-      if (refTab.getLastClosed() != null) {
+      if (refTab.isLastClosedByMove) {
         log (-1, "doMoveTab: is prepared and will be aborted");
         int currentTab = refTab.getSelectedIndex();
         doLoad(refTab.getSelectedIndex()+1);

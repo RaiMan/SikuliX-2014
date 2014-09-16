@@ -58,6 +58,7 @@ public class CloseableTabbedPane extends JTabbedPane implements MouseListener,
   private Icon pressedCloseIcon = SikuliIDE.getIconResource("/icons/close-pressed.gif");
   private SikuliIDEPopUpMenu popMenuTab = null;
   private String lastClosed = null;
+	public boolean isLastClosedByMove = false;
 
   /**
    * Creates a new instance of
@@ -375,7 +376,7 @@ public class CloseableTabbedPane extends JTabbedPane implements MouseListener,
     }
     return closeit;
   }
-  
+
   public void setLastClosed(String bundle) {
     lastClosed = bundle;
   }
@@ -386,6 +387,7 @@ public class CloseableTabbedPane extends JTabbedPane implements MouseListener,
 
   public void resetLastClosed() {
     lastClosed = null;
+		isLastClosedByMove = false;
   }
 
   /**
