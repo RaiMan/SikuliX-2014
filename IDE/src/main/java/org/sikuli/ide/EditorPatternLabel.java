@@ -130,7 +130,7 @@ public class EditorPatternLabel extends EditorRegionLabel {
   private void setFileNames(String givenName) {
     Image img = pane.getImageInBundle(givenName);
     if (img.isValid()) {
-      if (isFromCapture || !img.isAbsolute()) {
+      if (isFromCapture || !img.isAbsolute() || img.isBundled()) {
         image = img;
         imgFile = img.getFilename();
         imgName = img.getName();
