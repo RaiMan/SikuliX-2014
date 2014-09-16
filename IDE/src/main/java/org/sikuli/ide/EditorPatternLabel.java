@@ -130,7 +130,8 @@ public class EditorPatternLabel extends EditorRegionLabel {
 
 	private void setFileNames(String givenName) {
 		lblText = null;
-		if (FileManager.isFilenameDotted(givenName)) {
+		if (!new File(givenName).isAbsolute()
+						&& FileManager.isFilenameDotted(givenName)) {
 			return;
 		}
 		Image img = pane.getImageInBundle(givenName);

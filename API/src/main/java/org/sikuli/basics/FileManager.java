@@ -594,7 +594,7 @@ public class FileManager {
 
 	public static boolean isFilenameDotted(String name) {
 		String nameParent = new File(name).getParent();
-		if (nameParent != null) {
+		if (nameParent != null && nameParent.contains(".")) {
 			return true;
 		}
 		return false;
