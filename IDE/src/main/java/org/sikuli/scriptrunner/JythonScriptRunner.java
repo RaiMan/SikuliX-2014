@@ -116,7 +116,7 @@ public class JythonScriptRunner implements IScriptRunner {
 		if (sikuliLibPath != null) {
 			if (System.getProperty("python.path") == null) {
 				System.setProperty("python.path", sikuliLibPath);
-				log(lvl, "init: setting environment python.path: \n" + System.getProperty("python.path"));
+				log(lvl, "init: setting java environment python.path: \n" + System.getProperty("python.path"));
 			} else {
 				String pp = System.getProperty("python.path");
 				if (pp != null && !pp.isEmpty() && !FileManager.pathEquals(pp, sikuliLibPath)) {
@@ -622,17 +622,10 @@ public class JythonScriptRunner implements IScriptRunner {
 		PyList jyargv = interpreter.getSystemState().argv;
 		int jypathLength = jypath.__len__();
 		boolean contained = false;
-		String pyPath = System.getenv("PYTHONPATH");
-		if (!new File(pyPath).exists()) {
-			pyPath = null;
-		}
-		boolean pycontained = false;
+
 		for (int i = 0; i < jypathLength; i++) {
 			if (!contained && FileManager.pathEquals((String) jypath.get(i), sikuliLibPath)) {
 				contained = true;
-			} else if (pyPath != null &&
-							!pycontained && FileManager.pathEquals((String) jypath.get(i), pyPath)) {
-				pycontained = true;
 			}
 		}
 		if (!contained) {
@@ -652,9 +645,23 @@ public class JythonScriptRunner implements IScriptRunner {
 				log(lvl + 1, "executeScriptHeader: after: %d: %s", i, jypath.get(i));
 			}
 		}
-		if (pyPath != null && !pycontained) {
-			jypath.add(pyPath);
+
+		String pyPath = System.getenv("PYTHONPATH");
+		String[] pyPaths = null;
+		if (pyPath != null) {
+			if (pyPath.contains(File.pathSeparator)) {
+				pyPaths = pyPath.split(File.pathSeparator);
+			} else {
+				pyPaths = new String[]{pyPath};
+			}
 		}
+		if (pyPaths != null) {
+			for (String p : pyPaths) {
+				log(lvl, "executeBefore: adding PYTHONPATH: %s", p);
+				jypath.add(pyPath);
+			}
+		}
+		
 		if (savedpathlen == 0) {
 			savedpathlen = interpreter.getSystemState().path.size();
 			log(lvl + 1, "executeScriptHeader: saved sys.path: %d", savedpathlen);
