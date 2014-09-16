@@ -798,9 +798,6 @@ public class FileManager {
   }
 
 	public static void deleteNotUsedImages(String bundle, Set<String> usedImages) {
-		if (usedImages.isEmpty()) {
-			return;
-		}
 		File scriptFolder = new File(bundle);
 		if (!scriptFolder.isDirectory()) {
 			return;
