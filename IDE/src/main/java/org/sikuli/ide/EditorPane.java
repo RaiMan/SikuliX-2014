@@ -12,6 +12,7 @@ import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.HashMap;
 import java.util.Locale;
@@ -415,7 +416,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 	private Map<String, List<Integer>> parseforImages() {
 		String pbundle = FileManager.slashify(getSrcBundle(), false);
-		log(3, "parseImageRename: for \n%s", pbundle);
+		log(3, "parseforImages: in \n%s", pbundle);
 		String scriptText = getText();
 		Lexer lexer = getLexer();
 		Map<String, List<Integer>> images = new HashMap<String, List<Integer>>();
@@ -825,8 +826,19 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		if (fileOverWritten) {
 			Image.unCacheBundledImage(newName);
 		}
-		success = reparse();
-		return success;
+    Map<String,List<Integer>> images = parseforImages();
+    oldName = new File(oldName).getName();
+    List<Integer> poss = images.get(oldName);
+    if (images.containsKey(oldName) && poss.size() > 0) {
+      poss.sort(new Comparator<Integer>() {
+        @Override
+        public int compare(Integer o1, Integer o2) {
+          if (o1 > o2) return -1;
+          return 1;
+        }
+      });
+    }
+		return reparse();
 	}
 
 	public boolean reparse() {
