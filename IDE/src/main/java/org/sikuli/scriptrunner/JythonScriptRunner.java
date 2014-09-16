@@ -622,10 +622,17 @@ public class JythonScriptRunner implements IScriptRunner {
 		PyList jyargv = interpreter.getSystemState().argv;
 		int jypathLength = jypath.__len__();
 		boolean contained = false;
+		String pyPath = System.getenv("PYTHONPATH");
+		if (!new File(pyPath).exists()) {
+			pyPath = null;
+		}
+		boolean pycontained = false;
 		for (int i = 0; i < jypathLength; i++) {
-			if (FileManager.pathEquals((String) jypath.get(0), sikuliLibPath)) {
+			if (!contained && FileManager.pathEquals((String) jypath.get(i), sikuliLibPath)) {
 				contained = true;
-				break;
+			} else if (pyPath != null &&
+							!pycontained && FileManager.pathEquals((String) jypath.get(i), pyPath)) {
+				pycontained = true;
 			}
 		}
 		if (!contained) {
@@ -644,6 +651,9 @@ public class JythonScriptRunner implements IScriptRunner {
 			for (int i = 0; i < jypathNew.length; i++) {
 				log(lvl + 1, "executeScriptHeader: after: %d: %s", i, jypath.get(i));
 			}
+		}
+		if (pyPath != null && !pycontained) {
+			jypath.add(pyPath);
 		}
 		if (savedpathlen == 0) {
 			savedpathlen = interpreter.getSystemState().path.size();
