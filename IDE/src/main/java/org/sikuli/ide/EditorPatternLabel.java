@@ -23,6 +23,7 @@ import javax.swing.JLabel;
 import javax.swing.border.Border;
 import javax.swing.text.Element;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
 import org.sikuli.script.Image;
 import org.sikuli.script.Location;
 
@@ -127,22 +128,23 @@ public class EditorPatternLabel extends EditorRegionLabel {
     return false;
   }
 
-  private void setFileNames(String givenName) {
-    Image img = pane.getImageInBundle(givenName);
-    if (img.isValid()) {
-      if (isFromCapture || !img.isAbsolute()) {
-        image = img;
-        imgFile = img.getFilename();
-        imgName = img.getName();
-        imgNameShort = imgName.replaceFirst(".png", "").replaceFirst(".jpg", "");
-        lblText = imgNameShort;
-      } else {
-        lblText = null;
-      }
-    } else {
-      lblText = null;
-    }
-  }
+	private void setFileNames(String givenName) {
+		lblText = null;
+		if (!new File(givenName).isAbsolute()
+						&& FileManager.isFilenameDotted(givenName)) {
+			return;
+		}
+		Image img = pane.getImageInBundle(givenName);
+		if (img.isValid()) {
+			if (isFromCapture || !img.isAbsolute() || img.isBundled()) {
+				image = img;
+				imgFile = img.getFilename();
+				imgName = img.getName();
+				imgNameShort = imgName.replaceFirst(".png", "").replaceFirst(".jpg", "");
+				lblText = imgNameShort;
+			}
+		}
+	}
 
   public boolean isOnImagePath() {
     return onImagePath;

@@ -42,8 +42,8 @@ public class PatternWindow extends JFrame {
 	private boolean dirty;
   private EditorPane currentPane;
   boolean isFileOverwritten = false;
-  String fileOverwrittenOld;
-  String fileOverwrittenNew;
+  String fileRenameOld;
+  String fileRenameNew;
 
   static String _I(String key, Object... args) {
 		return SikuliIDEI18N._I(key, args);
@@ -234,15 +234,16 @@ public class PatternWindow extends JFrame {
           }
         }
         isFileOverwritten = true;
-        fileOverwrittenOld = oldFilename;
-        fileOverwrittenNew = filename;
 			}
 			try {
 				FileManager.xcopy(oldFilename, filename);
 				_imgBtn.setFilename(filename);
+        fileRenameOld = oldFilename;
+        fileRenameNew = filename;
 			} catch (IOException ioe) {
 				Debug.error("renaming failed: old: %s \nnew: %s\n%s",
                 oldFilename, filename, ioe.getMessage());
+				isFileOverwritten = false;
         return;
 			}
 			paneNaming.updateFilename();
@@ -262,11 +263,11 @@ public class PatternWindow extends JFrame {
 
   private boolean revertImageRename() {
     try {
-      FileManager.xcopy(fileOverwrittenNew, fileOverwrittenOld);
-      _imgBtn.setFilename(fileOverwrittenOld);
+      FileManager.xcopy(fileRenameNew, fileRenameOld);
+      _imgBtn.setFilename(fileRenameOld);
     } catch (IOException ioe) {
       Debug.error("revert renaming failed: new: %s \nold: %s\n%s",
-              fileOverwrittenNew, fileOverwrittenOld, ioe.getMessage());
+              fileRenameNew, fileRenameOld, ioe.getMessage());
       return false;
     }
     return true;
@@ -283,7 +284,9 @@ public class PatternWindow extends JFrame {
 		@Override
 		public void actionPerformed(ActionEvent e) {
 			actionPerformedUpdates(_parent);
-      currentPane.reparse(fileOverwrittenOld, fileOverwrittenNew, isFileOverwritten);
+			if (fileRenameOld != null) {
+				currentPane.reparse(fileRenameOld, fileRenameNew, isFileOverwritten);
+			}
 			_imgBtn.getWindow().close();
 			_parent.dispose();
 			currentPane.setDirty(setDirty(false));
