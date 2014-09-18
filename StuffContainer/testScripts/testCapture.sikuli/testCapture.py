@@ -1,0 +1,1 @@
+print find(capture(0,0,100,100))
