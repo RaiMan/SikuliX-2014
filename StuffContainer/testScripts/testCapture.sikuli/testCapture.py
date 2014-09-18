@@ -1,1 +1,5 @@
-print find(capture(0,0,100,100))
+img = Pattern("img.png").exact()
+m = get(Region.NW).find(img)
+m.exists(img, 0)
+m1 = m.right(10).right(m.w)
+m1.exists(img, 0)
