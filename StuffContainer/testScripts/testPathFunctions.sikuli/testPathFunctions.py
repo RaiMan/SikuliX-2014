@@ -1,0 +1,7 @@
+print "parent:", getParentPath()
+print "bundle:", getBundlePath()
+print "parent/:", makeFolder(getParentPath())
+print "bundle/:", makeFolder(getBundlePath())
+#print inputText("enter some lines\nof information")
+print select("select", "", ("one", "two", "three"))
+exit()
