@@ -134,7 +134,7 @@ def load(jar):
 # append the given path sys.path if not yet contained
 #
 def addImportPath(path):
-    addModPath(path)
+    _addModPath(path)
 
 ##
 # append the given path image path list if not yet contained
@@ -165,36 +165,74 @@ def resetImagePath(path = None):
 ##
 # Sets the path for searching images in all Sikuli Script methods. <br/>
 # Sikuli IDE sets this to the path of the bundle of source code (.sikuli)
-# automatically. If you write Sikuli scripts by the Sikuli IDE, you should
-# not call this method.
+# automatically. If you write Sikuli scripts using Sikuli IDE, you should
+# know what you are doing.
 #
 def setBundlePath(path):
     ImagePath.setBundlePath(path)
 
 ##
-# return the current bundlepath (usually the folder .sikuli) or None if no bundlepath is defined
+# return the current bundlepath (usually the folder .sikuli) 
+# or None if no bundlepath is defined
+# no trailing path sep
 #
 def getBundlePath():
     return ImagePath.getBundlePath()
 
 ##
+# return the current bundlepath (usually the folder .sikuli) 
+# or None if no bundlepath is defined
+# with a trailing path separator (for string concatenation)
+#
+def getBundleFolder():
+    path = ImagePath.getBundlePath()
+    if not path: return None
+    return path + Settings.getFilePathSeperator();
+
+##
 # return the parent folder of the current bundlepath
 # (usually the folder containing the current script folder.sikuli)
 # or None if no bundlepath is defined
+# no trailing path sep
 #
 def getParentPath():
-    return ImagePath.getBundleParentPath();
+    path = ImagePath.getBundlePath()
+    if not path: return None
+    return os.path.dirname(makePath(getBundlePath()));
 
 ##
-# make a valid path by joining the two paths (path2 might be a list)
+# return the parent folder of the current bundlepath
+# (usually the folder containing the current script folder.sikuli)
+# or None if no bundlepath is defined
+# no trailing path sep
 #
-def makePath(path1, path2):
-  if (not isinstance(path2, List)):
-      path = os.path.join(path1, path2)
-  else:
-      path = path1
-      for p in path2:
-          path = os.path.join(path, p)
+def getParentFolder():
+    path = getParentPath()
+    if not path: return None
+    return path + Settings.getFilePathSeperator();
+
+##
+# make a valid path by by using os.path.join() with the given elements
+# always without a trailing path separator
+#
+def makePath(*paths):
+  if len(paths) == 0: return None
+  path = paths[0]
+  if len(paths) > 1: 
+    for p in paths[1:]:
+      path = os.path.join(path, p)
+  if path[-1] == Settings.getFilePathSeperator():
+    return os.path.dirname(path)
+  return path
+
+##
+# make a valid path by by using os.path.join() with the given elements
+# with a trailing path separator (for string concatenation)
+#
+def makeFolder(*paths):
+  path = makePath(*paths)
+  if not path: return None
+  path = path + Settings.getFilePathSeperator()
   return path
 
 ##
@@ -222,6 +260,7 @@ def input(msg="", default="", title="", hidden=False):
     if (hidden):
       default = ""
     return Sikulix.input(msg, default, title, hidden)
+
 ##
 # Shows a dialog request to enter text in a multiline text field
 # Though not all text might be visible, everything entered is delivered with the returned text
@@ -232,7 +271,18 @@ def input(msg="", default="", title="", hidden=False):
 # @param width the maximum number of characters visible in one line (default 20)
 # @return The user's input including the line breaks.
 def inputText(msg="", title="", lines=0, width=0):
-    return Sikulix.input(msg, title, width, lines)
+    return Sikulix.inputText(msg, title, width, lines)
+
+def select(msg="", title="", options=(), default=None):
+    if len(options) == 0:
+        return ""
+    if default:
+        if not __builtin__.type(default) is types.StringType:
+            try:
+                default = options[default]
+            except:
+                default = None
+    return Sikulix.popSelect(msg, title, options, default)
 
 def capture(*args):
     scr = ScreenUnion()
@@ -393,7 +443,7 @@ def distanceComparator(x, y=None):
 ##
 ################## internal use only ###########################################
 #
-def addModPath(path):
+def _addModPath(path):
     if path[-1] == Settings.getFilePathSeperator():
         path = path[:-1]
     if not path in sys.path:

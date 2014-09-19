@@ -336,7 +336,7 @@ public class Sikulix {
 	}
 
 	public static void popError(String message) {
-		popup(message, "Sikuli");
+		popError(message, "Sikuli");
 	}
 
 	public static void popError(String message, String title) {
@@ -436,17 +436,29 @@ public class Sikulix {
 	}
 
 	public static String popSelect(String msg, String[] options) {
+    if (options.length == 0) {
+      return "";
+    }
 		return popSelect(msg, null, options, options[0]);
 	}
 
 	public static String popSelect(String msg, String title, String[] options) {
+    if (options.length == 0) {
+      return "";
+    }
 		return popSelect(msg, title, options, options[0]);
 	}
 
 	public static String popSelect(String msg, String title, String[] options, String preset) {
-		if (title == null) {
+		if (title == null || "".equals(title)) {
 			title = "... something to select!";
 		}
+    if (options.length == 0) {
+      return "";
+    }
+    if (preset == null) {
+      preset = options[0];
+    }
 		return (String) JOptionPane.showInputDialog(null, msg, title, JOptionPane.PLAIN_MESSAGE, null, options, preset);
 	}
 
