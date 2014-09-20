@@ -2,7 +2,6 @@ print getParentPath()
 print makePath(getBundlePath())
 print makeFolder(getParentPath())
 print getBundlePath()
-exit()
 #switchApp("Safari")
 ta = "abc"
 tu1 = "тест" 
