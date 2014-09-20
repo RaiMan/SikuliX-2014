@@ -78,6 +78,7 @@ Debug.log(4, "Jython: sikuli: Sikuli: import Sikulix")
 from org.sikuli.script import Sikulix
 
 Debug.log(4, "Jython: sikuli: Sikuli: import ScriptRunner")
+
 try:
 	from org.sikuli.scriptrunner import ScriptRunner
 except:
@@ -130,7 +131,7 @@ def load(jar):
         return True
     return False
 
-##
+## ----------------------------------------------------------------------
 # append the given path sys.path if not yet contained
 #
 def addImportPath(path):
@@ -162,7 +163,7 @@ def resetImagePath(path = None):
       path = getBundlePath();
     ImagePath.reset(path)
 
-##
+## ----------------------------------------------------------------------
 # Sets the path for searching images in all Sikuli Script methods. <br/>
 # Sikuli IDE sets this to the path of the bundle of source code (.sikuli)
 # automatically. If you write Sikuli scripts using Sikuli IDE, you should
@@ -235,18 +236,32 @@ def makeFolder(*paths):
   path = path + Settings.getFilePathSeperator()
   return path
 
-##
+## ----------------------------------------------------------------------
 # Sikuli shows actions (click, dragDrop, ... etc.) if this flag is set to <i>True</i>.
 # The default setting is <i>False</i>.
 #
 def setShowActions(flag):
     Settings.setShowActions(flag)
 
-##
+## ----------------------------------------------------------------------
 # Shows a message dialog containing the given message.
 # @param msg The given message string.
-def popup(msg, title="Sikuli"):
+# @param title gets the window title.
+def popup(msg, title="Sikuli Info"):
     Sikulix.popup(msg, title)
+
+# Show error popup (special icon) containing the given message.
+# @param msg The given message string.
+# @param title gets the window title.
+def popError(msg, title="Sikuli Error"):
+    Sikulix.popError(msg, title)
+
+# Show a popup containing the given message asking for yes or no
+# @param msg The given message string.
+# @param title gets the window title.
+# @return True if answered Yes, else False
+def popAsk(msg, title="Sikuli Decision"):
+    return Sikulix.popAsk(msg, title)
 
 ##
 # Shows a question-message dialog requesting input from the user.
@@ -256,7 +271,7 @@ def popup(msg, title="Sikuli"):
 # @param hidden =true makes the dialog run as a password input (input hidden with bullets)
 # @return The user's input string.
 #
-def input(msg="", default="", title="", hidden=False):
+def input(msg="", default="", title="Sikuli Input", hidden=False):
     if (hidden):
       default = ""
     return Sikulix.input(msg, default, title, hidden)
@@ -270,10 +285,14 @@ def input(msg="", default="", title="", hidden=False):
 # @param lines the maximum number of lines visible in the text field (default 9)
 # @param width the maximum number of characters visible in one line (default 20)
 # @return The user's input including the line breaks.
-def inputText(msg="", title="", lines=0, width=0):
+def inputText(msg="", title="Sikuli Text", lines=0, width=0):
     return Sikulix.inputText(msg, title, width, lines)
 
-def select(msg="", title="", options=(), default=None):
+##
+# Shows a dialog requesting to select an entry from the drop down list
+# @param msg the message to display.
+# @param title the title for the dialog
+def select(msg="", title="Sikuli Select", options=(), default=None):
     if len(options) == 0:
         return ""
     if default:
@@ -284,6 +303,7 @@ def select(msg="", title="", options=(), default=None):
                 default = None
     return Sikulix.popSelect(msg, title, options, default)
 
+## ----------------------------------------------------------------------
 def capture(*args):
     scr = ScreenUnion()
     if len(args) == 0:
@@ -317,7 +337,7 @@ def selectRegion(msg=None):
     else:
         return None
 
-##
+## ----------------------------------------------------------------------
 # set the default screen to given or primary screen
 #
 # TODO where else to remember an opened remote screen?
@@ -355,7 +375,7 @@ def useRemote(adr, port = 0):
   else:
     return None
 
-##
+## ----------------------------------------------------------------------
 # Switches the frontmost application to the given application.
 # If the given application is not running, it will be launched by openApp()
 # automatically. <br/>
@@ -386,6 +406,7 @@ def closeApp(app):
 def sleep(sec):
     time.sleep(sec)
 
+## ----------------------------------------------------------------------
 def reset():
   JScreen.resetMonitors();
   use();
@@ -402,7 +423,7 @@ def exit(code=0):
     Sikulix.cleanUp(code)
     sys.exit(code)
 
-##
+## ----------------------------------------------------------------------
 # Runs the given string command.
 # @param msg The given string command.
 # @return Returns the output from the executed command.

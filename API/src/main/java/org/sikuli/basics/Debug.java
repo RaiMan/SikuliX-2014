@@ -32,8 +32,7 @@ import java.util.Date;
  */
 public class Debug {
 
-  private static final int DEFAULT_LEVEL = 1;
-  private static int DEBUG_LEVEL = DEFAULT_LEVEL;
+  private static int DEBUG_LEVEL = 0;
 	private static boolean loggerRedirectSupported = true;
   private long _beginTime = 0;
   private String _message;
@@ -125,7 +124,7 @@ public class Debug {
 	}
 
 	/**
-	 * sets the redirection for all message types info, action, error and debug
+	 * sets the redirection for all message types user, info, action, error and debug
 	 * must be the name of an instance method of the previously defined logger and<br>
 	 * must accept exactly one string parameter, that contains the message text
 	 * @param mAll name of the method where the message should be sent
@@ -289,7 +288,7 @@ public class Debug {
 	}
 
 	/**
-	 * specify the target method for redirection of Sikuli's error messages [error]<br>
+	 * specify the target method for redirection of Sikuli's debug messages [debug]<br>
 	 * must be the name of an instance method of the previously defined logger and<br>
 	 * must accept exactly one string parameter, that contains the info message
 	 * @param mDebug name of the method where the message should be sent
@@ -418,12 +417,7 @@ public class Debug {
    * @return default level
    */
   public static int setDebugLevel() {
-    setDebugLevel(DEFAULT_LEVEL);
-    if (DEBUG_LEVEL > 0) {
-      Settings.DebugLogs = true;
-    } else {
-      Settings.DebugLogs = false;
-    }
+    setDebugLevel(0);
     return DEBUG_LEVEL;
   }
 
@@ -440,7 +434,15 @@ public class Debug {
       Settings.DebugLogs = false;
     }
   }
-
+  
+  public static void on(int level) {
+    setDebugLevel(level);
+  }
+  
+  public static void off() {
+    setDebugLevel(0);
+  }
+  
   /**
    * set debug level to given number value as string (ignored if invalid)
    *
@@ -603,7 +605,7 @@ public class Debug {
    * @param args to use with format string
    */
   public static void log(String message, Object... args) {
-    log(DEFAULT_LEVEL, message, args);
+    log(0, message, args);
   }
 
   /**
@@ -660,7 +662,7 @@ public class Debug {
 //TODO replace the hack -99 to filter user logs
     String sout;
     String stime = "";
-    if (isEnabled(level)) {
+    if (level <= DEBUG_LEVEL) {
       if (Settings.LogTime && level != -99) {
         stime = String.format(" (%s)", df.format(new Date()));
       }
@@ -690,14 +692,6 @@ public class Debug {
 				out(prefix + sout);
 			}
     }
-  }
-
-  private static boolean isEnabled(int level) {
-    return level <= DEBUG_LEVEL;
-  }
-
-  private static boolean isEnabled() {
-    return isEnabled(DEFAULT_LEVEL);
   }
 
   /**
