@@ -292,7 +292,7 @@ def inputText(msg="", title="Sikuli Text", lines=0, width=0):
 # Shows a dialog requesting to select an entry from the drop down list
 # @param msg the message to display.
 # @param title the title for the dialog
-def select(msg="", title="Sikuli Select", options=(), default=None):
+def select(msg="", title="Sikuli Selection", options=(), default=None):
     if len(options) == 0:
         return ""
     if default:
