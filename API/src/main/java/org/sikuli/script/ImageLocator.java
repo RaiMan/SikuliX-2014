@@ -60,7 +60,7 @@ public class ImageLocator {
    */
   @Deprecated
   public static String[] getImagePath() {
-    return ImagePath.getImagePath();
+    return ImagePath.get();
   }
 
   /**

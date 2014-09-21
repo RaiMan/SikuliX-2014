@@ -148,13 +148,20 @@ public class ImagePath {
   }
 
   /**
-   * a convenience for the scripting level
+   * the path list as string array
    *
    * @return an array of the file path's currently in the path list
    */
-  public static String[] getImagePath() {
-    String[] paths = new String[getCount()];
+  public static String[] get() {
     int i = 0;
+    for (PathEntry p : imagePaths) {
+      if (p == null) {
+        continue;
+      }
+      i++;
+    }
+    String[] paths = new String[i];
+    i = 0;
     for (PathEntry p : imagePaths) {
       if (p == null) {
         continue;

@@ -147,7 +147,7 @@ def addImagePath(path):
 # return the current image path list
 #
 def getImagePath():
-    return [e.pathGiven for e in ImagePath.getPaths() if e]
+    return [e for e in ImagePath.get()]
 
 ##
 # remove the given path from the image path
