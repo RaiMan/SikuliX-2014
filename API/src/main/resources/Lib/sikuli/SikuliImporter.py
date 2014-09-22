@@ -55,7 +55,7 @@ class SikuliImporter:
             else:
               if _debug(): print "SikuliLoader.load_module: ImagePath not added:", self.path
               return None
-            Sikuli.addModPath(self.path)
+            Sikuli._addModPath(self.path)
             return self._load_module(module_name)
 
     def _find_module(self, module_name, fullpath):
