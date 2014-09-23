@@ -2175,7 +2175,28 @@ public class Region {
     return lastMatch;
   }
 
-  /**
+//TODO 1.2.0 Region.compare as time optimized Region.exists
+	/**
+	 * time optimized Region.exists, when image-size == region-size<br>
+	 * 1.1.x: just using exists(img, 0), sizes not checked
+	 * @param img image file name
+	 * @return the match or null if not equal
+	 */
+		public Match compare(String img) {
+		return compare(Image.create(img));
+	}
+
+	/**
+	 * time optimized Region.exists, when image-size == region-size<br>
+	 * 1.1.x: just using exists(img, 0), sizes not checked
+	 * @param img Image object
+	 * @return the match or null if not equal
+	 */
+	public Match compare(Image img) {
+		return exists(img, 0);
+	}
+
+	/**
    * Check if target exists (with the default autoWaitTimeout)
    *
 	 * @param <PSI> Pattern, String or Image
