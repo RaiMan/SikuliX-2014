@@ -31,6 +31,9 @@ public class App {
 
 	static Map<String, String> imps = new HashMap<String, String>();
 
+	static List<String> options = new ArrayList<String>();
+	static boolean isOptionsValid = false;
+
 	static {
 		imps.put("U", "0");
 		imps.put("W", "1");
@@ -40,10 +43,36 @@ public class App {
 		imps.put("C", "5");
 	}
 
-	public static void main(String[] args) throws Exception {
-		if (args.length > 0) {
-			todo = args[0];
+	private static String nextArg(String[] args) {
+		if (!isOptionsValid) {
+			if(args.length == 0) {
+				return notodo;
+			}
+			options.addAll(Arrays.asList(args));
+			isOptionsValid = true;
 		}
+		if (options.isEmpty()) {
+			return null;
+		}
+		String next = options.get(0);
+		options.remove(0);
+		return next;
+	}
+
+	private static String nextArg() {
+		return nextArg(new String[]{});
+	}
+
+	private static String nextArg(String preset) {
+		String next = nextArg();
+		if (next == null) {
+			return preset;
+		}
+		return next;
+	}
+
+	public static void main(String[] args) throws Exception {
+		todo = nextArg(args);
 		if ("tess".equals(todo)) {
 			start = "http://tesseract-ocr.googlecode.com/files/";
 			sourceUrlString="http://code.google.com/p/tesseract-ocr/downloads/list";
@@ -55,7 +84,7 @@ public class App {
 			Map<String, String> bugs = new HashMap<String, String>();
 			String vers = lp110;
 			String vfor = "1.1.0";
-			if (args.length > 1) {
+			if (null != nextArg()) {
 				vers = lp120;
 				vfor = "1.2.0";
 			}
@@ -86,17 +115,23 @@ public class App {
 			}
 		}
 		if ("dump".equals(todo)) {
-			if (args.length < 2) {
-				todo = notodo;
-			} else {
+			String url = nextArg();
+			if (url == null) {
 				todo = notodo;
 			}
+			displaySegments(new Source(new URL(url)));
 		}
 		if (todo == notodo) {
 			p("Nothing to do");
 			System.exit(1);
 		}
 		System.exit(1);
+	}
+
+	private static void displaySegments(Source source) {
+		for (Segment segment : source.getAllElements()) {
+			displaySegment(segment);
+		}
 	}
 
 	private static void displaySegments(Source source, String elem) {
