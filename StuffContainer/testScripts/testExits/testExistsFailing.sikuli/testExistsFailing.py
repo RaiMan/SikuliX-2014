@@ -1,14 +1,26 @@
+# some base image to start with
 base = find("1411456264567.png")
+
+#create a small image
 m = base.getCenter().grow(50)
 small = Pattern(capture(m)).exact()
-l1 = m.getCenter().offset(285, 250)
-m1 = l1.grow(570, 500)
+
+# create a medium image
+m1 = grow(m.getTopLeft(), 0, 0, 570, 500)
 medium = Pattern(capture(m1)).exact()
+
+#create the large image
 m2 = Region(SCREEN)
 large = Pattern(capture(m2)).exact()
-switchApp("Finder")
+
+# hide the stuff
+if Settings.isWindows():
+  switchApp("SourceTree")
+else:
+  switchApp("Finder")
 wait(1)
 
+# try to find
 for i in range(2):
   exists(small, 0)
   print "small:", getLastTime()
