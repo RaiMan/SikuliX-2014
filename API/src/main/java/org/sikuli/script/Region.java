@@ -92,6 +92,14 @@ public class Region {
   private long lastSearchTime;
   private long lastFindTime;
 
+	/**
+	 * in case of not found the total wait time
+	 * @return the duration of the last find op
+	 */
+	public long getLastTime() {
+		return lastFindTime;
+	}
+
   /**
    * the area constants for use with get()
    */
