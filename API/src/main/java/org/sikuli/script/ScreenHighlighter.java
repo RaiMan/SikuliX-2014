@@ -64,7 +64,7 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
             }
             try {
               _targetColor = new Color(cR, cG, cB);
-            } catch (IllegalArgumentException ex) {             
+            } catch (IllegalArgumentException ex) {
             }
           }
         } else {
@@ -171,10 +171,8 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
     }
     _borderOnly = true;
     Region r;
-    if (_native_transparent) {
-      r = r_;
-    } else {
-      r = r_.grow(3);
+    r = r_.grow(3);
+    if (!_native_transparent) {
       captureScreen(r.x, r.y, r.w, r.h);
     }
     setLocation(r.x, r.y);
