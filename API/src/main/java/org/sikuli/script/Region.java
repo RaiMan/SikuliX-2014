@@ -314,6 +314,14 @@ public class Region {
     }
     return rect;
   }
+
+	/**
+	 * Check wether thie Region is contained by any of the available screens
+	 * @return true if yes, false otherwise
+	 */
+	public boolean isValid() {
+		return scr != null;
+	}
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Constructors to be used with Jython">
@@ -1583,16 +1591,19 @@ public class Region {
     return Region.create(r.x, r.y, r.width, r.height, scr);
   }
 
-  /**
-   * select the specified part of the region.
+  //</editor-fold>
+
+  //<editor-fold defaultstate="collapsed" desc="parts of a Region">
+	/**
+	 * select the specified part of the region.
 	 *
-   * <br>Constants for the top parts of a region (Usage: Region.CONSTANT)<br>
+	 * <br>Constants for the top parts of a region (Usage: Region.CONSTANT)<br>
 	 * shown in brackets: possible shortcuts for the part constant<br>
 	 * NORTH (NH, TH) - upper half <br>
-   * NORTH_WEST (NW, TL) - left third in upper third <br>
+	 * NORTH_WEST (NW, TL) - left third in upper third <br>
 	 * NORTH_MID (NM, TM) - middle third in upper third <br>
-   * NORTH_EAST (NE, TR) - right third in upper third <br>
-   * ... similar for the other directions: <br>
+	 * NORTH_EAST (NE, TR) - right third in upper third <br>
+	 * ... similar for the other directions: <br>
 	 * right side: EAST (Ex, Rx)<br>
 	 * bottom part: SOUTH (Sx, Bx) <br>
 	 * left side: WEST (Wx, Lx)<br>
@@ -1604,10 +1615,10 @@ public class Region {
 	 * LL bottom left quarter<br>
 	 * <br>
 	 * specials for the center parts:<br>
-   * MID_VERTICAL (MV, CV) half of width vertically centered <br>
-   * MID_HORIZONTAL (MH, CH) half of height horizontally centered <br>
-   * MID_BIG (M2, C2) half of width / half of height centered <br>
-   * MID_THIRD (MM, CC) third of width / third of height centered <br>
+	 * MID_VERTICAL (MV, CV) half of width vertically centered <br>
+	 * MID_HORIZONTAL (MH, CH) half of height horizontally centered <br>
+	 * MID_BIG (M2, C2) half of width / half of height centered <br>
+	 * MID_THIRD (MM, CC) third of width / third of height centered <br>
 	 * <br>
 	 * Based on the scheme behind these constants there is another possible usage:<br>
 	 * specify part as e 3 digit integer
@@ -1627,22 +1638,22 @@ public class Region {
 	 * <br>
 	 * If you need only one row in one column with x rows or
 	 * only one column in one row with x columns you can use {@link #getRow(int, int) getRow} or {@link #getCol(int, int) getCol}
-   * @param part the part to get (Region.PART long or short)
-   * @return new region
-   */
-  public Region get(int part) {
-    return Region.create(getRectangle(getRect(), part));
-  }
+	 * @param part the part to get (Region.PART long or short)
+	 * @return new region
+	 */
+	public Region get(int part) {
+		return Region.create(getRectangle(getRect(), part));
+	}
 
-	static public Rectangle getRectangle(Rectangle rect, int part) {
+	protected static Rectangle getRectangle(Rectangle rect, int part) {
 		if (part < 200 || part > 999) {
 			return rect;
 		}
 		Region r = Region.create(rect);
-    int pTyp = (int) (part / 100);
-    int pPos = part - pTyp * 100;
+		int pTyp = (int) (part / 100);
+		int pPos = part - pTyp * 100;
 		int pRow = (int) (pPos / 10);
-    int pCol = pPos - pRow * 10;
+		int pCol = pPos - pRow * 10;
 		r.setRaster(pTyp, pTyp);
 		if (pTyp == 3) {
 			// NW = 300, NORTH_WEST = NW;
@@ -1685,122 +1696,131 @@ public class Region {
 		return rect;
 	}
 
-  /**
-   * store info: this region is divided vertically into n even rows <br>
-   * a preparation for using getRow()
-   *
-   * @param n number of rows
-   * @return the top row
-   */
-  public Region setRows(int n) {
-    return setRaster(n, 0);
-  }
+	/**
+	 * store info: this region is divided vertically into n even rows <br>
+	 * a preparation for using getRow()
+	 *
+	 * @param n number of rows
+	 * @return the top row
+	 */
+	public Region setRows(int n) {
+		return setRaster(n, 0);
+	}
 
-  /**
-   * store info: this region is divided horizontally into n even columns <br>
-   * a preparation for using getCol()
-   *
-   * @param n number of columns
-   * @return the leftmost column
-   */
-  public Region setCols(int n) {
-    return setRaster(0, n);
-  }
+	/**
+	 * store info: this region is divided horizontally into n even columns <br>
+	 * a preparation for using getCol()
+	 *
+	 * @param n number of columns
+	 * @return the leftmost column
+	 */
+	public Region setCols(int n) {
+		return setRaster(0, n);
+	}
 
 	/**
 	 *
 	 * @return the number of rows or null
 	 */
 	public int getRows() {
-    return rows;
-  }
+		return rows;
+	}
 
 	/**
 	 *
 	 * @return the row height or 0
 	 */
 	public int getRowH() {
-    return rowH;
-  }
+		return rowH;
+	}
 
 	/**
 	 *
 	 * @return the number of columns or 0
 	 */
 	public int getCols() {
-    return cols;
-  }
+		return cols;
+	}
 
 	/**
 	 *
 	 * @return the columnwidth or 0
 	 */
 	public int getColW() {
-    return colW;
-  }
+		return colW;
+	}
 
-  /**
-   * store info: this region is divided into a raster of even cells <br>
-   * a preparation for using getCell()<br>
-   * @param r number of rows
-   * @param c number of columns
-   * @return the topleft cell
-   */
-  public Region setRaster(int r, int c) {
-    rows = Math.max(r, h);
-    cols = Math.max(c, w);
-    if (r > 0) {
-      rowH = (int) (h / r);
-      rowHd = h - r * rowH;
-    }
-    if (c > 0) {
-      colW = (int) (w / c);
-      colWd = w - c * colW;
-    }
-    return getCell(0, 0);
-  }
+	/**
+	 * Can be used to check, wether the Region currently has a valid raster
+	 * @return true if it has a valid raster (either getCols or getRows or both would return > 0)
+	 * false otherwise
+	 */
+	public boolean isRasterValid() {
+		return (rows > 0 || cols > 0);
+	}
 
-  /**
-   * get the specified row counting from 0, if rows or raster are setup negative counts reverse from the end (last = -1)
-   * values outside range are 0 or last respectively
-   *
-   * @param r row number
-   * @return the row as new region or the region itself, if no rows are setup
-   */
-  public Region getRow(int r) {
-    if (rows == 0) {
-      return this;
-    }
-    if (r < 0) {
-      r = rows + r;
-    }
-    r = Math.max(0, r);
-    r = Math.min(r, rows - 1);
-    return Region.create(x, y + r * rowH, w, rowH);
-  }
+	/**
+	 * store info: this region is divided into a raster of even cells <br>
+	 * a preparation for using getCell()<br>
+	 * @param r number of rows
+	 * @param c number of columns
+	 * @return the topleft cell
+	 */
+	public Region setRaster(int r, int c) {
+		rows = Math.max(r, h);
+		cols = Math.max(c, w);
+		if (r > 0) {
+			rowH = (int) (h / r);
+			rowHd = h - r * rowH;
+		}
+		if (c > 0) {
+			colW = (int) (w / c);
+			colWd = w - c * colW;
+		}
+		return getCell(0, 0);
+	}
+
+	/**
+	 * get the specified row counting from 0, if rows or raster are setup negative counts reverse from the end (last = -1)
+	 * values outside range are 0 or last respectively
+	 *
+	 * @param r row number
+	 * @return the row as new region or the region itself, if no rows are setup
+	 */
+	public Region getRow(int r) {
+		if (rows == 0) {
+			return this;
+		}
+		if (r < 0) {
+			r = rows + r;
+		}
+		r = Math.max(0, r);
+		r = Math.min(r, rows - 1);
+		return Region.create(x, y + r * rowH, w, rowH);
+	}
 
 	public Region getRow(int r, int n) {
 		return this;
 	}
 
-  /**
-   * get the specified column counting from 0, if columns or raster are setup negative counts reverse from the end (last
-   * = -1) values outside range are 0 or last respectively
-   *
-   * @param c column number
-   * @return the column as new region or the region itself, if no columns are setup
-   */
-  public Region getCol(int c) {
-    if (cols == 0) {
-      return this;
-    }
-    if (c < 0) {
-      c = cols + c;
-    }
-    c = Math.max(0, c);
-    c = Math.min(c, cols - 1);
-    return Region.create(x + c * colW, y, colW, h);
-  }
+	/**
+	 * get the specified column counting from 0, if columns or raster are setup negative counts reverse from the end (last
+	 * = -1) values outside range are 0 or last respectively
+	 *
+	 * @param c column number
+	 * @return the column as new region or the region itself, if no columns are setup
+	 */
+	public Region getCol(int c) {
+		if (cols == 0) {
+			return this;
+		}
+		if (c < 0) {
+			c = cols + c;
+		}
+		c = Math.max(0, c);
+		c = Math.min(c, cols - 1);
+		return Region.create(x + c * colW, y, colW, h);
+	}
 
 	/**
 	 * divide the region in n columns and select column c as new Region
@@ -1815,37 +1835,37 @@ public class Region {
 	}
 
 
-  /**
-   * get the specified cell counting from (0, 0), if a raster is setup <br>
-   * negative counts reverse from the end (last = -1) values outside range are 0 or last respectively
-   *
+	/**
+	 * get the specified cell counting from (0, 0), if a raster is setup <br>
+	 * negative counts reverse from the end (last = -1) values outside range are 0 or last respectively
+	 *
 	 * @param r row number
-   * @param c column number
-   * @return the cell as new region or the region itself, if no raster is setup
-   */
-  public Region getCell(int r, int c) {
-    if (rows == 0) {
-      return getCol(c);
-    }
-    if (cols == 0) {
-      return getRow(r);
-    }
-    if (rows == 0 && cols == 0) {
-      return this;
-    }
-    if (r < 0) {
-      r = rows - r;
-    }
-    if (c < 0) {
-      c = cols - c;
-    }
-    r = Math.max(0, r);
-    r = Math.min(r, rows - 1);
-    c = Math.max(0, c);
-    c = Math.min(c, cols - 1);
-    return Region.create(x + c * colW, y + r * rowH, colW, rowH);
-  }
-  //</editor-fold>
+	 * @param c column number
+	 * @return the cell as new region or the region itself, if no raster is setup
+	 */
+	public Region getCell(int r, int c) {
+		if (rows == 0) {
+			return getCol(c);
+		}
+		if (cols == 0) {
+			return getRow(r);
+		}
+		if (rows == 0 && cols == 0) {
+			return this;
+		}
+		if (r < 0) {
+			r = rows - r;
+		}
+		if (c < 0) {
+			c = cols - c;
+		}
+		r = Math.max(0, r);
+		r = Math.min(r, rows - 1);
+		c = Math.max(0, c);
+		c = Math.min(c, cols - 1);
+		return Region.create(x + c * colW, y + r * rowH, colW, rowH);
+	}
+//</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="highlight">
   protected void updateSelf() {
