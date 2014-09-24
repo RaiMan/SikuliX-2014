@@ -915,7 +915,7 @@ public class Image {
    * @return the sub image
    */
   public Image getSub(int part) {
-    Rectangle r = Region.getRectangle(0, 0, getSize().width, getSize().height, part);
+    Rectangle r = Region.getRectangle(new Rectangle(0, 0, getSize().width, getSize().height), part);
     return getSub(r.x, r.y, r.width, r.height);
   }
 
