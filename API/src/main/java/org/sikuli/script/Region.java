@@ -1752,7 +1752,7 @@ public class Region {
 
 	/**
 	 * Can be used to check, wether the Region currently has a valid raster
-	 * @return true if it has a valid raster (either getCols or getRows or both would return > 0)
+	 * @return true if it has a valid raster (either getCols or getRows or both would return &gt; 0)
 	 * false otherwise
 	 */
 	public boolean isRasterValid() {
