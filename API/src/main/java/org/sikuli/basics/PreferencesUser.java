@@ -76,6 +76,23 @@ public class PreferencesUser {
     return true;
   }
 
+	public void remove(String key) {
+		pref.remove(key);
+	}
+
+	public void removeAll(String prefix) {
+		try {
+			for (String item : pref.keys()) {
+				if (!item.startsWith(prefix)) {
+					continue;
+				}
+				pref.remove(item);
+			}
+		} catch (Exception ex) {
+			Debug.error("Prefs.removeAll: prefix (%s) did not work", prefix);
+		}
+	}
+
 	public void addPreferenceChangeListener(PreferenceChangeListener pcl) {
 		pref.addPreferenceChangeListener(pcl);
 	}
