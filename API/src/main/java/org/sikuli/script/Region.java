@@ -3447,6 +3447,20 @@ public class Region {
     return Mouse.move(loc, this);
   }
 
+	/**
+	 * move the mouse from the current position to the offset position given by the parameters
+	 * @param xoff horizontal offset (&lt; 0 left, &gt; 0 right)
+	 * @param yoff vertical offset (&lt; 0 up, &gt; 0 down)
+	 * @return
+	 */
+	public int mouseMove(int xoff, int yoff) {
+		try {
+			return mouseMove(Mouse.at().offset(xoff, yoff));
+		} catch (Exception ex) {
+			return 0;
+		}
+	}
+
   /**
    * Move the wheel at the current mouse position<br> the given steps in the given direction: <br >Button.WHEEL_DOWN,
    * Button.WHEEL_UP
