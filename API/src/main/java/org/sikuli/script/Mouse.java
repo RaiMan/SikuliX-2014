@@ -65,7 +65,7 @@ public class Mouse {
     }
     return mouse;
   }
-  
+
   protected static boolean use() {
     return get().device.use(null);
   }
@@ -290,6 +290,16 @@ public class Mouse {
    */
   public static int move(Location loc) {
     return move(loc, null);
+  }
+
+	/**
+	 * move the mouse from the current position to the offset position given by the parameters
+	 * @param xoff horizontal offset (&lt; 0 left, &gt; 0 right)
+	 * @param yoff vertical offset (&lt; 0 up, &gt; 0 down)
+   * @return 1 for success, 0 otherwise
+	 */
+  public static int move(int xoff, int yoff) {
+    return move(at().offset(xoff, yoff));
   }
 
   protected static int move(Location loc, Region region) {
