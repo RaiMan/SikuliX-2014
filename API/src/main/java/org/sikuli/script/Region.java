@@ -1321,7 +1321,7 @@ public class Region {
   }
 
   /**
-   * create a region enlarged 50 pixels on each side
+   * create a region enlarged Settings.DefaultPadding pixels on each side
    *
    * @return the new region
    * @deprecated to be like AWT Rectangle API use grow() instead
@@ -1341,6 +1341,16 @@ public class Region {
   @Deprecated
   public Region nearby(int range) {
     return grow(range, range);
+  }
+
+  /**
+   * create a region enlarged range pixels on each side
+   *
+   * @param range the margin to be added around
+   * @return the new region
+   */
+  public Region grow() {
+    return grow(Settings.DefaultPadding, Settings.DefaultPadding);
   }
 
   /**
