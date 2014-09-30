@@ -1344,9 +1344,8 @@ public class Region {
   }
 
   /**
-   * create a region enlarged range pixels on each side
+   * create a region enlarged n pixels on each side (n = Settings.DefaultPadding = 50 default)
    *
-   * @param range the margin to be added around
    * @return the new region
    */
   public Region grow() {

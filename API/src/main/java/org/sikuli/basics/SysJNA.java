@@ -62,6 +62,7 @@ public class SysJNA {
      *
      * @param name of the environment variable
      * @param value of the environment variable
+     * @return success
      */
     public static boolean setEnvironmentVariable(String name, String value) {
       if (!SetEnvironmentVariableW(Pointer.pointerToWideCString(name), Pointer.pointerToWideCString(value))) {
