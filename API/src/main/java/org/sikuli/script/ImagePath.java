@@ -174,8 +174,8 @@ public class ImagePath {
   /**
    * print the list of path entries
    */
-  public static void dump() {
-    log(0, "ImagePath has %d entries (valid %d)", imagePaths.size(), getCount());
+  public static void dump(int lvl) {
+    log(lvl, "ImagePath has %d entries (valid %d)", imagePaths.size(), getCount());
     log(lvl, "start of list ----------------------------");
     for (PathEntry p : imagePaths) {
       if (p == null) {
@@ -245,7 +245,7 @@ public class ImagePath {
       }
       if (fURL == null) {
         log(-1, "find: not on image path: " + fname);
-        dump();
+        dump(lvl);
       }
 	    return fURL;
     }

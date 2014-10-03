@@ -589,10 +589,10 @@ public class Image {
         bwidth = bimg.getWidth();
         bheight = bimg.getHeight();
         bsize = bimg.getData().getDataBuffer().getSize();
+        Image first;
         if (Settings.ImageCache > 0) {
           maxMemory = Settings.ImageCache * MB;
           currentMemory += bsize;
-          Image first;
           while (images.size() > 0 && currentMemory > maxMemory) {
             first = images.remove(0);
             currentMemory -= first.bsize;
@@ -602,6 +602,8 @@ public class Image {
                   new File(imageName).getName(), getKB(),
                   (int) (currentMemory / KB), images.size(),
                   (int) (100 * currentMemory / maxMemory), (int) (maxMemory / MB));
+        } else if (currentMemory > 0) {
+          images.clear();
         }
       } else {
         log(-1, "invalid! not cached! %s", fileURL);
@@ -609,7 +611,7 @@ public class Image {
     }
     return bimg;
   }
-
+  
   protected static Image get(URL imgURL) {
     return imageFiles.get(imgURL.toString());
   }
@@ -753,30 +755,47 @@ public class Image {
   }
 
   /**
-   * Print the current state of the cache, verbosity depends on debug level
+   * Print the current state of the cache
    */
   public static void dump() {
-    log(0, "--- start of Image dump ---");
-    ImagePath.dump();
-    log(0, "ImageFiles entries: %d", imageFiles.size());
+    dump(0);
+  }
+
+  /**
+   * Print the current state of the cache, verbosity depends on debug level
+   * @param lvl debug level used here
+   */
+  public static void dump(int lvl) {
+    log(lvl, "--- start of Image dump ---");
+    ImagePath.dump(lvl);
+    log(lvl, "ImageFiles entries: %d", imageFiles.size());
     Iterator<Map.Entry<URL, Image>> it = imageFiles.entrySet().iterator();
     Map.Entry<URL, Image> entry;
     while (it.hasNext()) {
       entry = it.next();
-      log(0, entry.getKey().toString());
+      log(lvl, entry.getKey().toString());
     }
-    log(0, "ImageNames entries: %d", imageNames.size());
+    log(lvl, "ImageNames entries: %d", imageNames.size());
     Iterator<Map.Entry<String, URL>> nit = imageNames.entrySet().iterator();
     Map.Entry<String, URL> name;
     while (nit.hasNext()) {
       name = nit.next();
-      log(0, "%s %d KB (%s)", new File(name.getKey()).getName(),
+      log(lvl, "%s %d KB (%s)", new File(name.getKey()).getName(),
 							imageFiles.get(name.getValue()).getKB(), name.getValue());
     }
-    log(0, "Cache state: Max %d MB (entries: %d  used: %d %% %d KB)",
+    log(lvl, "Cache state: Max %d MB (entries: %d  used: %d %% %d KB)",
             (int) (maxMemory / MB), images.size(),
             (int) (100 * currentMemory / maxMemory), (int) (currentMemory / KB));
-    log(0, "--- end of Image dump ---");
+    log(lvl, "--- end of Image dump ---");
+  }
+  
+  /**
+   * clears all caches (should only be needed for debugging)
+   */
+  public static void reset() {
+    images.clear();
+    imageNames.clear();
+    imageFiles.clear();
   }
 
   /**
