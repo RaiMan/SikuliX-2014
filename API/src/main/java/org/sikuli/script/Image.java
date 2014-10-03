@@ -78,14 +78,12 @@ public class Image {
 
   private static List<Image> images = Collections.synchronizedList(new ArrayList<Image>());
   private static List<Image> imagePurgeList = Collections.synchronizedList(new ArrayList<Image>());
-  private static List<URL> imageNamePurgeList = Collections.synchronizedList(new ArrayList<URL>());
   private static Map<URL, Image> imageFiles = Collections.synchronizedMap(new HashMap<URL, Image>());
   private static Map<String, URL> imageNames = Collections.synchronizedMap(new HashMap<String, URL>());
   private static int KB = 1024;
   private static int MB = KB * KB;
-  private static int maxMemory = 64 * MB;
+  private static int maxMemory = Settings.ImageCache * MB;
   private static int currentMemory;
-  private static String imageFromJar = "__FROM_JAR__";
   private final static String isBImg = "__BufferedImage__";
 
 //<editor-fold defaultstate="collapsed" desc="imageName">
@@ -591,19 +589,22 @@ public class Image {
         bwidth = bimg.getWidth();
         bheight = bimg.getHeight();
         bsize = bimg.getData().getDataBuffer().getSize();
-        currentMemory += bsize;
-        Image first;
-        while (images.size() > 0 && currentMemory > maxMemory) {
-          first = images.remove(0);
-          currentMemory -= first.bsize;
+        if (Settings.ImageCache > 0) {
+          maxMemory = Settings.ImageCache * MB;
+          currentMemory += bsize;
+          Image first;
+          while (images.size() > 0 && currentMemory > maxMemory) {
+            first = images.remove(0);
+            currentMemory -= first.bsize;
+          }
+          images.add(this);
+          log(lvl, "loaded %s (%d KB) (KB %d # %d %% %d of %d MB)",
+                  new File(imageName).getName(), getKB(),
+                  (int) (currentMemory / KB), images.size(),
+                  (int) (100 * currentMemory / maxMemory), (int) (maxMemory / MB));
         }
-        images.add(this);
-        log(lvl, "loaded %s (%d KB) (KB %d # %d %% %d of %d MB)",
-								new File(imageName).getName(), getKB(),
-                (int) (currentMemory / KB), images.size(),
-								(int) (100 * currentMemory / maxMemory), (int) (maxMemory / MB));
       } else {
-        log(-1, "invalid! not cached!");
+        log(-1, "invalid! not cached! %s", fileURL);
       }
     }
     return bimg;
