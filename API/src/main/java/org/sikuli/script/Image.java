@@ -692,7 +692,7 @@ public class Image {
    * INTERNAL USE: IDE: to get rid of cache entries at script save, close or
    * save as
    *
-   * @param bundlePath absolute path
+   * @param bundlePath absolute path for an image set in this folder
    */
   public static void purge(String bundlePath) {
     if (imageFiles.isEmpty() || ImagePath.getPaths().get(0) == null) {
@@ -706,7 +706,7 @@ public class Image {
     purge(pathURL);
   }
 
-  public static synchronized void purge(URL pathURL) {
+  protected static synchronized void purge(URL pathURL) {
     URL imgURL;
     Image img;
     log(lvl, "purge: ImagePath: %s", pathURL.getPath());
@@ -736,11 +736,19 @@ public class Image {
     clearImageNames();
   }
 
+  /**
+   * purge the given image file's in memory image data and remove it from cache.
+   * @param imgFileName an absolute filename
+   */
   public static void unCacheBundledImage(String imgFileName) {
     URL imgURL = FileManager.makeURL(new File(imgFileName).getAbsolutePath());
     unCacheImage(imgURL);
   }
 
+  /**
+   * purge the given image's in memory image data and remove it from cache.
+   * @param imgURL URL of an image file
+   */
   public static void unCacheImage(URL imgURL) {
     Image img = imageFiles.get(imgURL);
     if (img == null) {
@@ -750,7 +758,7 @@ public class Image {
     images.remove(img);
   }
 
-  public static synchronized void clearImageNames() {
+  public static void clearImageNames() {
     imageNames.clear();
   }
 
@@ -894,7 +902,7 @@ public class Image {
 	}
 
   /**
-   *
+   * resize the loaded image with factor using Graphics2D.drawImage
    * @param factor resize factor
    * @return a new BufferedImage resized (width*factor, height*factor)
    */
