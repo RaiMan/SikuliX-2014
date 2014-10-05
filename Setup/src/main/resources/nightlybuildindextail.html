@@ -1,5 +1,8 @@
-<h4>Build: 2014-09-27</h4>
+<h4>Build: 2014-10-05</h4>
+changed: managing ImageCache is per Settings.setImageCache(n), which sets the max. in-memory-images to n MB (start value 64). 0 will switch off caching and clear the cache immediately.<br>
+completely revised image loading and caching.<br>
 added: a feature to store key-value-pairs in the persistent preferences storage, so they can be retrieved in a future SikuliX session<br>
+... details see javadocs Sikulix.prefStore, ...load, ...remove<br>
 added: Region.isValid to check, wether a Region can access a screen<br>
 added: Region.mouseMove(x,y) and Mose.move(x,y): both move the mouse from it's current position to the given offset
 <h4>Build: 2014-09-25</h4>
