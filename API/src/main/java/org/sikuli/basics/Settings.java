@@ -15,6 +15,7 @@ import java.net.URLClassLoader;
 import java.util.Date;
 import java.util.Properties;
 import java.util.prefs.Preferences;
+import org.sikuli.script.Image;
 import org.sikuli.script.Sikulix;
 
 /**
@@ -287,7 +288,17 @@ public class Settings {
 	public static boolean CheckLastSeen = true;
 	public static float CheckLastSeenSimilar = 0.95f;
 	public static boolean UseImageFinder = false;
-  public static int ImageCache = 64;
+
+  private static int ImageCache = 64;
+  public static void setImageCache(int max) {
+    if (ImageCache > max) {
+      Image.clearCache(max);
+    }
+    ImageCache = max;
+  }
+  public static int getImageCache() {
+    return ImageCache;
+  }
 
 	public static double DelayBeforeDrop = 0.3;
 	public static double DelayAfterDrag = 0.3;

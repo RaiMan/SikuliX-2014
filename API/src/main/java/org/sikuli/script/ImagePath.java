@@ -176,7 +176,6 @@ public class ImagePath {
    */
   public static void dump(int lvl) {
     log(lvl, "ImagePath has %d entries (valid %d)", imagePaths.size(), getCount());
-    log(lvl, "start of list ----------------------------");
     for (PathEntry p : imagePaths) {
       if (p == null) {
         log(lvl, "Path: NULL");
@@ -184,7 +183,6 @@ public class ImagePath {
         log(lvl, "Path: given: %s\nis: %s", p.path, p.getPath());
       }
     }
-    log(lvl, "end of list ----------------------------");
   }
 
   private static boolean bundleEquals(Object path) {
@@ -459,7 +457,7 @@ public class ImagePath {
       if (bundleEquals(path)) {
 				return true;
 			}
-      Image.clearImageNames();
+      Image.purge(bundlePath);
 			if (path.exists()) {
 				imagePaths.set(0, path);
 				Settings.BundlePath = path.getPath();
