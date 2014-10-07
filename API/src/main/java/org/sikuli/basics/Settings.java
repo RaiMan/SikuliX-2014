@@ -49,8 +49,10 @@ public class Settings {
 	private static final String dlProdLink2 = "/+download/";
 	// used for download of development versions (nightly builds)
 	private static final String dlDevLink = "http://nightly.sikuli.de/";
-	private static final String dlMavenLink = "http://search.maven.org/remotecontent?filepath=";
-
+	private static final String dlMavenRelease = "http://search.maven.org/remotecontent?filepath=";
+	private static final String dlMavenSnapshot = "https://oss.sonatype.org/content/groups/public/com/sikulix/";
+	private static final String dlMavenSnapshotPath = "1.1.0-SNAPSHOT";
+	private static final String dlMavenSnapshotXML = "maven-metadata.xml";
   public static boolean runningSetupInValidContext = false;
   public static String runningSetupInContext = null;
   public static String runningSetupWithJar = null;
@@ -213,6 +215,12 @@ public class Settings {
         osn = "Linux";
       }
 
+			if ("release".equals(svt)) {
+        
+      } else {
+        
+      }
+      
 			SikuliLocalRepo = prop.getProperty("sikulixlocalrepo");
 			SikuliJythonVersion = prop.getProperty("sikulixvjython");
 			SikuliJython=SikuliLocalRepo + "/org/Python/jython-standalone/" +
@@ -238,7 +246,7 @@ public class Settings {
   }
 
   public static void getStatus() {
-    System.out.println("***** Information Dump *****");
+    System.out.println("***** System Information Dump *****");
     System.out.println(String.format("*** SystemInfo\n%s", getSystemInfo()));
     System.getProperties().list(System.out);
     System.out.println("*** System Environment");
@@ -251,7 +259,7 @@ public class Settings {
     for (int i = 0; i < urls.length; i++) {
       System.out.println(String.format("%d: %s", i, urls[i]));
     }
-    System.out.println("***** Information Dump ***** end *****");
+    System.out.println("***** System Information Dump ***** end *****");
   }
 
   public static String getValidImageFilename(String fname) {

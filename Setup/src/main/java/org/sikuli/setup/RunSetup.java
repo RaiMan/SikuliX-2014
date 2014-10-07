@@ -54,6 +54,8 @@ public class RunSetup {
 	private static String majorversion = Settings.getVersionShort().substring(0,3);
 	private static String updateVersion;
 	private static String downloadSetup;
+  private static String downloadMavenSnapshot = "";
+  private static String downloadMavenRelease = "";
 	private static String downloadIDE = version + "-1.jar";
 	private static String downloadJava = version + "-2.jar";
 	private static String downloadRServer = version + "-3.jar";
