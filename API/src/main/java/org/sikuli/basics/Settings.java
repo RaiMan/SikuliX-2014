@@ -216,11 +216,11 @@ public class Settings {
       }
 
 			if ("release".equals(svt)) {
-        
+
       } else {
-        
+
       }
-      
+
 			SikuliLocalRepo = prop.getProperty("sikulixlocalrepo");
 			SikuliJythonVersion = prop.getProperty("sikulixvjython");
 			SikuliJython=SikuliLocalRepo + "/org/Python/jython-standalone/" +
@@ -298,7 +298,14 @@ public class Settings {
 	public static boolean UseImageFinder = false;
 
   private static int ImageCache = 64;
-  public static void setImageCache(int max) {
+
+	/**
+	 * set the maximum to be used for the {@link Image} cache
+	 * <br>the start up value is 64 (meaning MB)
+	 * <br>using 0 switches off caching and clears the cache in that moment
+	 * @param max cache size in MB
+	 */
+	public static void setImageCache(int max) {
     if (ImageCache > max) {
       Image.clearCache(max);
     }

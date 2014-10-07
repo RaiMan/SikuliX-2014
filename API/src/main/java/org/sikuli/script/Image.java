@@ -40,8 +40,9 @@ import org.sikuli.natives.Vision;
 
 /**
  * This class hides the complexity behind image names given as string.
- * <br>It's companion is {@link ImagePath} that maintains a list of places, where images are
- * stored.<br>
+ * <br>Image does not have public nor protected constructors: use create()
+ * <br>It's companion is {@link ImagePath} that maintains a list of places, where image files are
+ * loaded from.<br>
  * Another companion {@link ImageGroup} will allow to look at images in a folder as a
  * group.<br>
  * An Image object:<br>
@@ -56,13 +57,11 @@ import org.sikuli.natives.Vision;
  * engine <br>
  *
  * This class maintains<br>
- * - a list of all images ever loaded in this session with there source
+ * - a list of all images ever loaded in this session with their source
  * reference and a ref to the image object<br>
  * - a list of all images currently having their content in memory (buffered
  * image) (managed as a configurable cache)<br>
- *
- * Image does not have public nor protected constructors: use create()
- *
+ * The caching can be configured using {@link Settings.setImageCache(int)}
  */
 public class Image {
 
@@ -401,7 +400,7 @@ public class Image {
           images.add(this);
           log(lvl, "cached: %s (%d KB) (# %d KB %d -- %d %% of %d MB)",
                   imageName, getKB(),
-                  images.size(), (int) (currentMemory / KB), 
+                  images.size(), (int) (currentMemory / KB),
                   (int) (100 * currentMemory / maxMemory), (int) (maxMemory / MB));
         }
       } else {
@@ -410,7 +409,7 @@ public class Image {
     }
     return bImage;
   }
-  
+
   public static void clearCache(int maxSize) {
     Image first;
     while (images.size() > 0 && currentMemory > maxSize) {
@@ -424,7 +423,7 @@ public class Image {
       currentMemory = Math.max(0, currentMemory);
     }
   }
-  
+
   private Image copy() {
     Image imgTarget = new Image();
     imgTarget.setImageName(imageName);
@@ -727,7 +726,7 @@ public class Image {
     }
     purge(path.pathURL);
   }
-  
+
   protected static synchronized void purge(URL pathURL) {
     List<Image> imagePurgeList = new ArrayList<Image>();
     List<String> imageNamePurgeList = new ArrayList<String>();
@@ -824,7 +823,7 @@ public class Image {
     }
     log(lvl, "--- end of Image dump ---");
   }
-  
+
   /**
    * clears all caches (should only be needed for debugging)
    */
