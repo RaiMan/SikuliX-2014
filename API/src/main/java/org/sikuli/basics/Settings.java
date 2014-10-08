@@ -101,6 +101,7 @@ public class Settings {
 	public static String SikuliVersionIDE;
 	public static String SikuliVersionScript;
 	public static String SikuliJythonVersion;
+	public static String SikuliJythonMaven;
 	public static String SikuliJython;
 	public static String SikuliJRubyVersion;
 	public static String SikuliJRuby;
@@ -213,8 +214,9 @@ public class Settings {
 
 			SikuliLocalRepo = prop.getProperty("sikulixlocalrepo");
 			SikuliJythonVersion = prop.getProperty("sikulixvjython");
-			SikuliJython=SikuliLocalRepo + "/org/Python/jython-standalone/" +
+			SikuliJythonMaven = "/org/Python/jython-standalone/" +
 							 SikuliJythonVersion + "/jython-standalone-" + SikuliJythonVersion + ".jar";
+			SikuliJython=SikuliLocalRepo + SikuliJythonMaven;
 			SikuliJRubyVersion = prop.getProperty("sikulixvjruby");
 			SikuliJRuby=SikuliLocalRepo + "/org/JRuby/jruby-complete/" +
 							 SikuliJRubyVersion + "/jruby-complete-" + SikuliJRubyVersion + ".jar";

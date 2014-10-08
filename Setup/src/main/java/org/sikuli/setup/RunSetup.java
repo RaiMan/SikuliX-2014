@@ -266,7 +266,7 @@ public class RunSetup {
 
     if (options.size() > 0 && "maven".equals(options.get(0))) {
       options.remove(0);
-			String theJar = getJarFromMaven("sikulixlibsmac");
+			String theJar = getSikulixJarFromMaven("sikulixlibsmac", "/Users/rhocke/Downloads");
 			download(theJar, "/Users/rhocke/Downloads", null, null, null);
 			System.exit(1);
     }
@@ -1691,7 +1691,7 @@ public class RunSetup {
 		return true;
 	}
 
-	private static String getJarFromMaven(String src) {
+	private static String getSikulixJarFromMaven(String src, String target) {
 		boolean develop = !Settings.isVersionRelease();
 		String mPath = "";
 		String xml;
@@ -1699,11 +1699,12 @@ public class RunSetup {
 		String timeStamp = "";
 		String buildNumber = "";
 		String mJar = "";
+		String sikulixMavenGroup = "com/sikulix/";
 		if (develop) {
-			String dlMavenSnapshot = "https://oss.sonatype.org/content/groups/public/com/sikulix/";
+			String dlMavenSnapshot = "https://oss.sonatype.org/content/groups/public/";
 			String dlMavenSnapshotPath = version + "-SNAPSHOT";
 			String dlMavenSnapshotXML = "maven-metadata.xml";
-			mPath = String.format("%s%s/%s/", dlMavenSnapshot, src, dlMavenSnapshotPath);
+			mPath = String.format("%s%s%s/%s/", dlMavenSnapshot, sikulixMavenGroup, src, dlMavenSnapshotPath);
 			xml = mPath + dlMavenSnapshotXML;
 			xmlContent = FileManager.downloadURLtoString(xml);
 			Matcher m = Pattern.compile("<timestamp>(.*?)</timestamp>").matcher(xmlContent);
@@ -1721,10 +1722,19 @@ public class RunSetup {
 				log(-1, "Maven download: could not get timestamp or buildnumber from:"
 								+ "\n%s\nwith content:\n", xml, xmlContent);
 			}
+			download(mPath + mJar, target, null, null, null);
+			return mPath + mJar;
 		} else {
-			String dlMavenRelease = "";
+			mPath = String.format("%s%s/%s/", sikulixMavenGroup, src, version);
+			mJar = String.format("%s-%s.jar", src, version);
+			return getJarFromMaven(mPath + mJar, target);
 		}
-		return mPath + mJar;
+	}
+
+	private static String getJarFromMaven(String src, String target) {
+		String dlMavenRelease = "http://repo1.maven.org/maven2/";
+  	download(dlMavenRelease + src, target, null, null, null);
+		return dlMavenRelease + src;
 	}
 
 	private static void userTerminated(String msg) {
