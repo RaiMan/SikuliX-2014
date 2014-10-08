@@ -29,12 +29,16 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
+import java.nio.charset.StandardCharsets;
 import java.security.CodeSource;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
 import java.util.Set;
 import java.util.jar.JarOutputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -205,9 +209,9 @@ public class FileManager {
           _progress.setProDone(0);
           _progress.setVisible(true);
         }
+				InputStream reader = null;
         try {
           FileOutputStream writer = new FileOutputStream(fullpath);
-          InputStream reader;
           if (getProxy() != null) {
             reader = url.openConnection(getProxy()).getInputStream();
           } else {
@@ -232,14 +236,20 @@ public class FileManager {
               chunk = (new Date()).getTime();
             }
           }
-          reader.close();
           writer.close();
           log0(lvl, "downloaded %d KB to %s", (int) (totalBytesRead / 1024), targetPath);
           log0(lvl, "download time: %d", (int) (((new Date()).getTime() - begin_t) / 1000));
         } catch (Exception ex) {
           log0(-1, "problems while downloading\n" + ex.getMessage());
           targetPath = null;
-        }
+        } finally {
+					if (reader != null) {
+						try {
+							reader.close();
+						} catch (IOException ex) {
+						}
+					}
+				}
       }
       if (_progress != null) {
         if (targetPath == null) {
@@ -278,6 +288,52 @@ public class FileManager {
   public static String downloadURL(String url, String localPath, JFrame progress) {
     _progress = (SplashFrame) progress;
     return downloadURL(url, localPath);
+  }
+
+  public static String downloadURLtoString(String src) {
+    URL url = null;
+    try {
+      url = new URL(src);
+    } catch (MalformedURLException ex) {
+      log0(-1, "download: bad URL: " + src);
+      return null;
+    }
+    String[] path = url.getPath().split("/");
+    String filename = path[path.length - 1];
+    String target = "";
+    int srcLength = 0;
+    int srcLengthKB = -1;
+		int totalBytesRead = 0;
+		srcLength = tryGetFileSize(url);
+		if (srcLength > 0) {
+			srcLengthKB = (int) (srcLength / 1024);
+			log0(lvl, "Downloading %s having %d KB", filename, srcLengthKB);
+			InputStream reader = null;
+			try {
+				if (getProxy() != null) {
+					reader = url.openConnection(getProxy()).getInputStream();
+				} else {
+					reader = url.openConnection().getInputStream();
+				}
+          byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
+          int bytesRead = 0;
+		      while ((bytesRead = reader.read(buffer)) > 0) {
+            totalBytesRead += bytesRead;
+						target += (new String(Arrays.copyOfRange(buffer, 0, bytesRead), StandardCharsets.UTF_8));
+          }
+			} catch (Exception ex) {
+				log0(-1, "problems while downloading\n" + ex.getMessage());
+				target= null;
+			} finally {
+				if (reader != null) {
+					try {
+						reader.close();
+					} catch (IOException ex) {
+					}
+				}
+			}
+    }
+    return target;
   }
 
   /**
@@ -962,7 +1018,7 @@ public class FileManager {
         BufferedInputStream bin = new BufferedInputStream(new FileInputStream(jars[i]));
         ZipInputStream zin = new ZipInputStream(bin);
         for (ZipEntry zipentry = zin.getNextEntry(); zipentry != null; zipentry = zin.getNextEntry()) {
-          if (filter == null || filter.accept(zipentry)) {
+          if (filter == null || filter.accept(zipentry, jars[i])) {
             if (!done.contains(zipentry.getName())) {
               jout.putNextEntry(zipentry);
               if (!zipentry.isDirectory()) {
@@ -1088,7 +1144,7 @@ public class FileManager {
   }
 
   public interface JarFileFilter {
-    public boolean accept(ZipEntry entry);
+    public boolean accept(ZipEntry entry, String jarname);
   }
 
   public interface FileFilter {
