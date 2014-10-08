@@ -15,6 +15,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.net.URI;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
@@ -51,6 +52,7 @@ public class ResourceLoader {
   private CodeSource codeSrc;
   private String jarParentPath = null;
   private String jarPath = null;
+	private URL apiJarURL = null;
   private URL jarURL = null;
   private URL libsURL = null;
   private URL tessURL = null;
@@ -137,6 +139,13 @@ public class ResourceLoader {
     return resourceLoader;
   }
 
+	public void setApiJarURL(String pURL) {
+		try {
+			apiJarURL = (new URI("file", pURL, null)).toURL();
+		} catch (Exception ex) {
+		}
+	}
+
 //  public void init(String[] args) {
 //    //Debug.log(lvl, "%s: %s: init", me, loaderName);
 //  }
@@ -160,8 +169,9 @@ public class ResourceLoader {
   }
 
   /**
-   * {@inheritDoc}
-   * @param what check type
+	 * check the availability of the native libraries and export
+   * @param what check type (currently only Settings.SIKULI_LIB)
+	 * @return true on success, false otherwise
    */
   public boolean check(String what) {
     mem = "check";
@@ -461,10 +471,10 @@ public class ResourceLoader {
       }
     }
 
-    if (itIsJython) {
-      export("Lib/sikuli", libsDir.getParent());
-      itIsJython = false;
-    }
+//    if (itIsJython) {
+//      export("Lib/sikuli", libsDir.getParent());
+//      itIsJython = false;
+//    }
 
     if (Settings.OcrDataPath == null && System.getProperty("sikuli.DoNotExport") == null) {
       if (Settings.isWindows() || Settings.isMac()) {
@@ -600,7 +610,6 @@ public class ResourceLoader {
   }
 
   /**
-   * {@inheritDoc}
    * @param res what to export
    * @param targetPath target folder
    * @return success
@@ -610,7 +619,7 @@ public class ResourceLoader {
     mem = "export";
     log(lvl, "Trying to access package for exporting: %s\nto: %s", res, targetPath);
     boolean fastReturn = false;
-    String pre = null, suf = "", tok = "";
+    String pre = null, suf = "", tok = res;
     String[] parts;
     if (res.indexOf("#") != -1) {
       tok = res.replace("#", "/");
@@ -619,13 +628,20 @@ public class ResourceLoader {
         log(-1, "export: invalid resource: %s", res);
         return false;
       }
-      pre = parts[0];
-      suf = parts[1];
-      fastReturn = true;
+			if (parts[0].isEmpty()) {
+				pre = parts[0];
+				suf = parts[1];
+				fastReturn = true;
+				log(lvl + 1, "export with #: %s (%s)-(%s) as %s", res, pre, suf, tok);
+			}
     }
     URL currentURL = jarURL;
     if (tok.contains("tessdata") && tessURL != null) {
       currentURL = tessURL;
+    }
+    if (tok.contains("Lib") && extractingFromJar && apiJarURL != null) {
+      currentURL = apiJarURL;
+			tok = "Lib";
     }
     List<String[]> entries = makePackageFileList(currentURL, tok, true);
     if (entries == null || entries.isEmpty()) {
@@ -657,7 +673,7 @@ public class ResourceLoader {
         }
         if (targetDate == 0 || targetDate < entryDate) {
           extractResource(source, targetFile, extractingFromJar);
-          log(lvl + 1, "is from: %s (%d)", entryDate, targetDate);
+          log(lvl + 1, "is dated: %s (%d)", entryDate, targetDate);
         } else {
           log(lvl + 1, "already in place: " + targetName);
           if (fastReturn) {
@@ -672,33 +688,6 @@ public class ResourceLoader {
     }
     return true;
   }
-
-//  /**
-//   * {@inheritDoc}
-//   * @param args what to do
-//   */
-//  public void install(String[] args) {
-//    mem = "install";
-//    log(lvl, "entered");
-//    //extractLibs(args[0]);
-//  }
-
-//  public boolean doSomethingSpecial(String action, Object[] args) {
-//    if ("loadLib".equals(action)) {
-//      loadLib((String) args[0]);
-//      return true;
-//    } else if ("runcmd".equals(action)) {
-//      String retval = runcmd((String[]) args);
-//      args[0] = retval;
-//      return true;
-//    } else if ("checkLibsDir".equals(action)) {
-//      return (libsDir != null);
-//    } else if ("exportTessdata".equals(action)) {
-//      return true;
-//    } else {
-//      return false;
-//    }
-//  }
 
   public void setItIsJython() {
       itIsJython = true;
@@ -791,20 +780,6 @@ public class ResourceLoader {
     mem = memx;
     return result;
   }
-
-  /**
-   * {@inheritDoc}
-   */
-//  public String getName() {
-//    return loaderName;
-//  }
-
-  /**
-   * {@inheritDoc}
-   */
-//  public String getResourceTypes() {
-//    return Settings.SIKULI_LIB;
-//  }
 
   /**
    * make sure, a native library is available and loaded
@@ -910,6 +885,9 @@ public class ResourceLoader {
   }
 
   private List<String[]> makePackageFileList(URL jar, String path, boolean deep) {
+		if (path.startsWith("/")) {
+			path = path.substring(1);
+		}
     List<String[]> fList = new ArrayList<String[]>();
     int iFile = 0;
     if (extractingFromJar) {
