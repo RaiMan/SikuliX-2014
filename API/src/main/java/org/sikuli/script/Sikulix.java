@@ -348,13 +348,13 @@ public class Sikulix {
 	/**
 	 * request user's input as one line of text <br>
 	 * with hidden = true: <br>
-	 * the dialog works as password input (input text hidden a s bullets) <br>
-	 * take care to destroy the return value as soon as possible (internally security is granted)
+	 * the dialog works as password input (input text hidden as bullets) <br>
+	 * take care to destroy the return value as soon as possible (internally the password is deleted on return)
 	 * @param msg
 	 * @param preset
 	 * @param title
 	 * @param hidden
-	 * @return
+	 * @return the text entered
 	 */
 	public static String input(String msg, String preset, String title, boolean hidden) {
 		if (!hidden) {

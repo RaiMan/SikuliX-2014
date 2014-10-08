@@ -783,7 +783,7 @@ public class Region {
    * Sets a new Screen for this region.
    *
    * @param scr the containing screen object
-	 * @return
+	 * @return the region itself
    */
   protected Region setScreen(IScreen scr) {
     initScreen(scr);
@@ -794,7 +794,7 @@ public class Region {
    * Sets a new Screen for this region.
    *
    * @param id the containing screen object's id
-	 * @return
+	 * @return the region itself
    */
   protected Region setScreen(int id) {
     return setScreen(Screen.getScreen(id));
@@ -3460,7 +3460,7 @@ public class Region {
 	 * move the mouse from the current position to the offset position given by the parameters
 	 * @param xoff horizontal offset (&lt; 0 left, &gt; 0 right)
 	 * @param yoff vertical offset (&lt; 0 up, &gt; 0 down)
-	 * @return
+   * @return 1 if possible, 0 otherwise
 	 */
 	public int mouseMove(int xoff, int yoff) {
 		try {

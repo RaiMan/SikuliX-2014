@@ -61,7 +61,7 @@ import org.sikuli.natives.Vision;
  * reference and a ref to the image object<br>
  * - a list of all images currently having their content in memory (buffered
  * image) (managed as a configurable cache)<br>
- * The caching can be configured using {@link Settings.setImageCache(int)}
+ * The caching can be configured using {@link Settings#setImageCache(int)}
  */
 public class Image {
 
@@ -202,7 +202,7 @@ public class Image {
   /**
    * true if this image contains pattern aspects<br>
    * only useable with the new ImageFinder
-   * @return
+   * @return true if yes, false otherwise
    */
   public boolean isPattern() {
     return imageIsPattern;
