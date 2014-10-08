@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
 import javax.swing.JFrame;
@@ -109,6 +110,7 @@ public class RunSetup {
   private static int optionsSize;
   private static boolean logToFile = true;
 	private static boolean hasOptions = false;
+	private static int logLevel = 3;
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
@@ -261,6 +263,23 @@ public class RunSetup {
       isUpdateSetup = true;
       options.remove(0);
     }
+
+    if (options.size() > 0 && "maven".equals(options.get(0))) {
+      options.remove(0);
+			String theJar = getJarFromMaven("sikulixlibsmac");
+			download(theJar, "/Users/rhocke/Downloads", null, null, null);
+			System.exit(1);
+    }
+
+    if (options.size() > 1 && "log".equals(options.get(0))) {
+      options.remove(0);
+			String log = options.remove(0);
+			try {
+				logLevel = Integer.decode(log);
+			} catch (NumberFormatException numberFormatException) {
+			}
+    }
+
     //</editor-fold>
 
 		runningJar = FileManager.getJarName(RunSetup.class);
@@ -377,7 +396,7 @@ public class RunSetup {
 		//<editor-fold defaultstate="collapsed" desc="general preps">
 		Settings.runningSetup = true;
 		Settings.LogTime = true;
-		Debug.setDebugLevel(3);
+		Debug.setDebugLevel(logLevel);
 
 		uhome = System.getProperty("user.home");
 		runningJar = FileManager.getJarPath(RunSetup.class);
@@ -386,9 +405,9 @@ public class RunSetup {
     if (!runningJar.endsWith(".jar") || runningJar.endsWith("-plain.jar")) {
 			if (!hasOptions) {
 				if (noSetup) {
-					log(3, "creating Setup folder - not running setup");
+					log(lvl, "creating Setup folder - not running setup");
 				} else {
-					log(3, "have to create Setup folder before running setup");
+					log(lvl, "have to create Setup folder before running setup");
 				}
 				if (!createSetupFolder("")) {
 					log(-1, "createSetupFolder: did not work- terminating");
@@ -925,7 +944,7 @@ public class RunSetup {
 		boolean success = true;
 		FileManager.JarFileFilter libsFilter = new FileManager.JarFileFilter() {
 			@Override
-			public boolean accept(ZipEntry entry) {
+			public boolean accept(ZipEntry entry, String jarname) {
 				if (forAllSystems) {
 					if (!shouldPackLibs && entry.getName().startsWith("META-INF/libs/linux")
 									&& entry.getName().contains("VisionProxy")) {
@@ -1088,16 +1107,17 @@ public class RunSetup {
 								+ "Check the error log at " + (logfile == null ? "printout" : logfile));
 				terminate("Functional test JAVA-API did not work", 1);
 			}
+			ResourceLoader.get().setApiJarURL(localJarJava.getAbsolutePath());
 			try {
 				log0(lvl, "trying to run org.sikuli.script.Sikulix.testSetup()");
-				loader.setItIsJython(); // export Lib folder
 				if (getTess) {
           try {
             uTess = (new URI("file", localJarJava.getAbsolutePath(), null)).toURL();
           } catch (Exception ex){ }
-          ResourceLoader.get().exportTessdata(uTess);
+          loader.exportTessdata(uTess);
           getTess = false;
 				}
+				loader.export("#Lib", workDir);
 				Class sysclass = URLClassLoader.class;
 				Class SikuliCL = sysclass.forName("org.sikuli.script.Sikulix");
 				log0(lvl, "class found: " + SikuliCL.toString());
@@ -1256,17 +1276,17 @@ public class RunSetup {
         success = false;
       }
       if (!jythonJar.exists()) {
-        Debug.log(3, "createSetupFolder: missing: " + jythonJar.getAbsolutePath());
+        Debug.log(lvl, "createSetupFolder: missing: " + jythonJar.getAbsolutePath());
         success = false;
       }
       if (!jrubyJar.exists()) {
-        Debug.log(3, "createSetupFolder: missing " + jrubyJar.getAbsolutePath());
+        Debug.log(lvl, "createSetupFolder: missing " + jrubyJar.getAbsolutePath());
         success = false;
       }
       String jrubyAddons = "sikulixjrubyaddons-" + Settings.SikuliProjectVersion + "-plain.jar";
       File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
       if (!fJRubyAddOns.exists()) {
-        Debug.log(3, "createSetupFolder: missing: " + fJRubyAddOns.getAbsolutePath());
+        Debug.log(lvl, "createSetupFolder: missing: " + fJRubyAddOns.getAbsolutePath());
         success = false;
       }
       if (success) {
@@ -1624,6 +1644,22 @@ public class RunSetup {
 
 	private static boolean download(String sDir, String tDir, String item, String jar, String itemName) {
 		boolean shouldDownload = true;
+		String dlSource;
+		if (item == null) {
+			item = sDir.split("/")[-1];
+			dlSource = sDir;
+		} else {
+			if (!sDir.endsWith("/")) {
+				sDir += "/";
+			}
+			dlSource = sDir + item;
+		}
+		if (jar == null) {
+			jar = item;
+		}
+		if (itemName == null) {
+			itemName = item;
+		}
 		File downloaded = new File(tDir, item);
 		if (downloaded.exists()) {
 			if (popAsk("In your Setup/Downloads folder you already have: " + itemName + "\n"
@@ -1635,7 +1671,7 @@ public class RunSetup {
 		}
 		if (shouldDownload) {
 			JFrame progress = new SplashFrame("download");
-			String fname = FileManager.downloadURL(sDir + item, tDir, progress);
+			String fname = FileManager.downloadURL(dlSource, tDir, progress);
 			progress.dispose();
 			if (null == fname) {
 				log1(-1, "Fatal error 001: not able to download: %s", item);
@@ -1653,6 +1689,42 @@ public class RunSetup {
       downloadedFiles = downloadedFiles.replace(item + " ", "");
     }
 		return true;
+	}
+
+	private static String getJarFromMaven(String src) {
+		boolean develop = !Settings.isVersionRelease();
+		String mPath = "";
+		String xml;
+		String xmlContent;
+		String timeStamp = "";
+		String buildNumber = "";
+		String mJar = "";
+		if (develop) {
+			String dlMavenSnapshot = "https://oss.sonatype.org/content/groups/public/com/sikulix/";
+			String dlMavenSnapshotPath = version + "-SNAPSHOT";
+			String dlMavenSnapshotXML = "maven-metadata.xml";
+			mPath = String.format("%s%s/%s/", dlMavenSnapshot, src, dlMavenSnapshotPath);
+			xml = mPath + dlMavenSnapshotXML;
+			xmlContent = FileManager.downloadURLtoString(xml);
+			Matcher m = Pattern.compile("<timestamp>(.*?)</timestamp>").matcher(xmlContent);
+			if (m.find()) {
+				timeStamp = m.group(1);
+				m = Pattern.compile("<buildNumber>(.*?)</buildNumber>").matcher(xmlContent);
+				if (m.find()) {
+					buildNumber = m.group(1);
+				}
+			}
+			if (!timeStamp.isEmpty() && !buildNumber.isEmpty()) {
+				mJar = String.format("%s-%s-%s-%s.jar", src, version, timeStamp, buildNumber);
+				log(lvl, "getMavenJar: %s", mJar);
+			} else {
+				log(-1, "Maven download: could not get timestamp or buildnumber from:"
+								+ "\n%s\nwith content:\n", xml, xmlContent);
+			}
+		} else {
+			String dlMavenRelease = "";
+		}
+		return mPath + mJar;
 	}
 
 	private static void userTerminated(String msg) {

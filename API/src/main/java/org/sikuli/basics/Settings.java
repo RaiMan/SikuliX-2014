@@ -49,10 +49,6 @@ public class Settings {
 	private static final String dlProdLink2 = "/+download/";
 	// used for download of development versions (nightly builds)
 	private static final String dlDevLink = "http://nightly.sikuli.de/";
-	private static final String dlMavenRelease = "http://search.maven.org/remotecontent?filepath=";
-	private static final String dlMavenSnapshot = "https://oss.sonatype.org/content/groups/public/com/sikulix/";
-	private static final String dlMavenSnapshotPath = "1.1.0-SNAPSHOT";
-	private static final String dlMavenSnapshotXML = "maven-metadata.xml";
   public static boolean runningSetupInValidContext = false;
   public static String runningSetupInContext = null;
   public static String runningSetupWithJar = null;
@@ -215,12 +211,6 @@ public class Settings {
         osn = "Linux";
       }
 
-			if ("release".equals(svt)) {
-
-      } else {
-
-      }
-
 			SikuliLocalRepo = prop.getProperty("sikulixlocalrepo");
 			SikuliJythonVersion = prop.getProperty("sikulixvjython");
 			SikuliJython=SikuliLocalRepo + "/org/Python/jython-standalone/" +
@@ -239,6 +229,10 @@ public class Settings {
 			Debug.error("Settings: load version file %s did not work", svf);
 			Sikulix.terminate(999);
 		}
+	}
+
+	public static boolean isVersionRelease() {
+		return SikuliVersionType.isEmpty();
 	}
 
   public static String getSystemInfo() {
