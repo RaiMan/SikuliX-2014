@@ -37,8 +37,6 @@ import java.util.Date;
 import java.util.Random;
 import java.util.Set;
 import java.util.jar.JarOutputStream;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
