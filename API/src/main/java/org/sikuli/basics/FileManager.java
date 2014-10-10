@@ -177,8 +177,8 @@ public class FileManager {
     String[] path = url.getPath().split("/");
     String filename = path[path.length - 1];
     String targetPath = null;
-    int srcLength = 0;
-    int srcLengthKB = -1;
+    int srcLength = 1;
+    int srcLengthKB = 0;
     int done;
     int totalBytesRead = 0;
     File fullpath = new File(localPath);
@@ -299,8 +299,8 @@ public class FileManager {
     String[] path = url.getPath().split("/");
     String filename = path[path.length - 1];
     String target = "";
-    int srcLength = 0;
-    int srcLengthKB = -1;
+    int srcLength = 1;
+    int srcLengthKB = 0;
 		int totalBytesRead = 0;
 		srcLength = tryGetFileSize(url);
 		if (srcLength > 0) {

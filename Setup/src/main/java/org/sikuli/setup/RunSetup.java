@@ -60,8 +60,8 @@ public class RunSetup {
 	private static String downloadIDE = version + "-1.jar";
 	private static String downloadJava = version + "-2.jar";
 	private static String downloadRServer = version + "-3.jar";
-	private static String downloadJython = version + "-4.jar";
-	private static String downloadJRuby = version + "-5.jar";
+	private static String downloadJython = new File(Settings.SikuliJythonMaven).getName();
+	private static String downloadJRuby = new File(Settings.SikuliJRubyMaven).getName();
 	private static String downloadJRubyAddOns = version + "-6.jar";
 	private static String downloadMacAppSuffix = "-9.jar";
 	private static String downloadMacApp = minorversion + downloadMacAppSuffix;
@@ -262,13 +262,6 @@ public class RunSetup {
     if (options.size() > 0 && "updateSetup".equals(options.get(0))) {
       isUpdateSetup = true;
       options.remove(0);
-    }
-
-    if (options.size() > 0 && "maven".equals(options.get(0))) {
-      options.remove(0);
-			String theJar = getSikulixJarFromMaven("sikulixlibsmac", "/Users/rhocke/Downloads");
-			download(theJar, "/Users/rhocke/Downloads", null, null, null);
-			System.exit(1);
     }
 
     if (options.size() > 1 && "log".equals(options.get(0))) {
@@ -877,7 +870,7 @@ public class RunSetup {
 		}
 		if (getJython) {
 			targetJar = new File(workDir, localJython).getAbsolutePath();
-      downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJython, targetJar, "Jython");
+      downloadOK = getJarFromMaven(Settings.SikuliJythonMaven, dlDir, targetJar, "Jython");
 			downloadOK &= dlOK;
 		}
 		if (getJRuby) {
@@ -908,7 +901,7 @@ public class RunSetup {
 		if (!downloadOK) {
 			popError("Some of the downloads did not complete successfully.\n"
 							+ "Check the logfile for possible error causes.\n\n"
-							+ "If you think, setup's inline download is blocked somehow on,\n"
+							+ "If you think, setup's inline download is blocked somehow on\n"
 							+ "your system, you might download the appropriate raw packages manually\n"
 							+ "into the folder Downloads in the setup folder and run setup again.\n\n"
 							+ "download page: " + Settings.downloadBaseDirWeb + "\n"
@@ -1267,18 +1260,26 @@ public class RunSetup {
         return false;
       }
 
-      File jythonJar = new File(Settings.SikuliJython);
-      File jrubyJar = new File(Settings.SikuliJRuby);
-      String ideFat = "sikulix-complete-" + Settings.SikuliProjectVersion + "-ide-fat.jar";
-      File fIDEFat = new File(projectDir, "IDEFat/target/" + ideFat);
-      if (!fIDEFat.exists()) {
-        log(-1, "createSetupFolder: missing: " + fIDEFat.getAbsolutePath());
-        success = false;
-      }
+			File fIDEFat = getProjectJarFile(projectDir,
+							"IDEFat", "sikulix-complete-", "-ide-fat.jar");
+			success = fIDEFat != null;
+			File fLibsmac = getProjectJarFile(projectDir,
+							"Libsmac", "sikulixlibsmac-", ".jar");
+			success = fLibsmac != null;
+			File fLibswin = getProjectJarFile(projectDir,
+							"Libswin", "sikulixlibswin-", ".jar");
+			success = fLibswin != null;
+			File fLibslux = getProjectJarFile(projectDir,
+							"Libslux", "sikulixlibslux-", ".jar");
+			success = fLibslux != null;
+
+			File jythonJar = new File(Settings.SikuliJython);
       if (!jythonJar.exists()) {
         Debug.log(lvl, "createSetupFolder: missing: " + jythonJar.getAbsolutePath());
         success = false;
       }
+
+			File jrubyJar = new File(Settings.SikuliJRuby);
       if (!jrubyJar.exists()) {
         Debug.log(lvl, "createSetupFolder: missing " + jrubyJar.getAbsolutePath());
         success = false;
@@ -1303,6 +1304,16 @@ public class RunSetup {
           fname = fIDEFat.getAbsolutePath();
           FileManager.xcopy(fname,
                   new File(fDownloads, downloadIDE).getAbsolutePath());
+
+					// copy the library jars
+					String fshort;
+					for (File fEntry : new File[]{fLibsmac, fLibswin, fLibslux}) {
+	          fname = fEntry.getAbsolutePath();
+						fshort = fEntry.getName();
+	          FileManager.xcopy(fname,
+                  new File(fDownloads, fshort).getAbsolutePath());
+					}
+
           fname = jythonJar.getAbsolutePath();
           FileManager.xcopy(fname,
                   new File(fDownloads, downloadJython).getAbsolutePath());
@@ -1332,6 +1343,17 @@ public class RunSetup {
     }
     return success;
   }
+
+	private static File getProjectJarFile(String project, String jarFileDir, String jarFilePre, String jarFileSuf) {
+			String jarFileName = jarFilePre + Settings.SikuliProjectVersion + jarFileSuf;
+      File fJarFile = new File(project, jarFileDir + "/target/" + jarFileName);
+      if (!fJarFile.exists()) {
+        log(-1, "createSetupFolder: missing: " + fJarFile.getAbsolutePath());
+				return null;
+      } else {
+				return fJarFile;
+			}
+	}
 
 	private static boolean handleTempAfter(String temp, String target) {
 		boolean success = true;
@@ -1646,7 +1668,8 @@ public class RunSetup {
 		boolean shouldDownload = true;
 		String dlSource;
 		if (item == null) {
-			item = sDir.split("/")[-1];
+			String[] items = sDir.split("/");
+			item = items[items.length - 1];
 			dlSource = sDir;
 		} else {
 			if (!sDir.endsWith("/")) {
@@ -1691,7 +1714,8 @@ public class RunSetup {
 		return true;
 	}
 
-	private static String getSikulixJarFromMaven(String src, String target) {
+	private static boolean getSikulixJarFromMaven(String src, String targetDir,
+										String targetJar, String itemName) {
 		boolean develop = !Settings.isVersionRelease();
 		String mPath = "";
 		String xml;
@@ -1701,10 +1725,10 @@ public class RunSetup {
 		String mJar = "";
 		String sikulixMavenGroup = "com/sikulix/";
 		if (develop) {
-			String dlMavenSnapshot = "https://oss.sonatype.org/content/groups/public/";
 			String dlMavenSnapshotPath = version + "-SNAPSHOT";
 			String dlMavenSnapshotXML = "maven-metadata.xml";
-			mPath = String.format("%s%s%s/%s/", dlMavenSnapshot, sikulixMavenGroup, src, dlMavenSnapshotPath);
+			String dlMavenSnapshotPrefix = String.format("%s%s/%s/", sikulixMavenGroup, src, dlMavenSnapshotPath);
+			mPath = Settings.dlMavenSnapshot + dlMavenSnapshotPrefix;
 			xml = mPath + dlMavenSnapshotXML;
 			xmlContent = FileManager.downloadURLtoString(xml);
 			Matcher m = Pattern.compile("<timestamp>(.*?)</timestamp>").matcher(xmlContent);
@@ -1722,19 +1746,17 @@ public class RunSetup {
 				log(-1, "Maven download: could not get timestamp or buildnumber from:"
 								+ "\n%s\nwith content:\n", xml, xmlContent);
 			}
-			download(mPath + mJar, target, null, null, null);
-			return mPath + mJar;
+				return download(mPath + mJar, targetDir, null, targetJar, itemName);
 		} else {
 			mPath = String.format("%s%s/%s/", sikulixMavenGroup, src, version);
 			mJar = String.format("%s-%s.jar", src, version);
-			return getJarFromMaven(mPath + mJar, target);
+			return getJarFromMaven(mPath + mJar, targetDir, targetJar, itemName);
 		}
 	}
 
-	private static String getJarFromMaven(String src, String target) {
-		String dlMavenRelease = "http://repo1.maven.org/maven2/";
-  	download(dlMavenRelease + src, target, null, null, null);
-		return dlMavenRelease + src;
+	private static boolean getJarFromMaven(String src, String target,
+										String targetJar, String itemName) {
+  	return download(Settings.dlMavenRelease + src, target, null, targetJar, itemName);
 	}
 
 	private static void userTerminated(String msg) {

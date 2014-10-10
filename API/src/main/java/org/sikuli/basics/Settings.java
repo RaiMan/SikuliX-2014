@@ -102,9 +102,14 @@ public class Settings {
 	public static String SikuliVersionScript;
 	public static String SikuliJythonVersion;
 	public static String SikuliJythonMaven;
+	public static String SikuliJRubyMaven;
 	public static String SikuliJython;
 	public static String SikuliJRubyVersion;
 	public static String SikuliJRuby;
+	public static String dlMavenRelease = "https://repo1.maven.org/maven2/";
+	public static	String dlMavenSnapshot = "https://oss.sonatype.org/content/groups/public/";
+
+
 	//TODO needed ???
 	public static final String libOpenCV = "libopencv_java248";
 
@@ -212,14 +217,15 @@ public class Settings {
         osn = "Linux";
       }
 
-			SikuliLocalRepo = prop.getProperty("sikulixlocalrepo");
+			SikuliLocalRepo = FileManager.slashify(prop.getProperty("sikulixlocalrepo"), true);
 			SikuliJythonVersion = prop.getProperty("sikulixvjython");
-			SikuliJythonMaven = "/org/Python/jython-standalone/" +
+			SikuliJythonMaven = "org/python/jython-standalone/" +
 							 SikuliJythonVersion + "/jython-standalone-" + SikuliJythonVersion + ".jar";
-			SikuliJython=SikuliLocalRepo + SikuliJythonMaven;
+			SikuliJython = SikuliLocalRepo + SikuliJythonMaven;
 			SikuliJRubyVersion = prop.getProperty("sikulixvjruby");
-			SikuliJRuby=SikuliLocalRepo + "/org/JRuby/jruby-complete/" +
+			SikuliJRubyMaven = "org/jruby/jruby-complete/" +
 							 SikuliJRubyVersion + "/jruby-complete-" + SikuliJRubyVersion + ".jar";
+			SikuliJRuby = SikuliLocalRepo + SikuliJRubyMaven;
 
       SikuliSystemVersion = osn + System.getProperty("os.version");
       SikuliJavaVersion = "Java" + JavaVersion + "(" + JavaArch + ")" + JREVersion;
