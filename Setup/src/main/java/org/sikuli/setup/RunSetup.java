@@ -875,7 +875,7 @@ public class RunSetup {
 		}
 		if (getJRuby) {
 			targetJar = new File(workDir, localJRuby).getAbsolutePath();
-      downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJRuby, targetJar, "JRuby");
+      downloadOK = getJarFromMaven(Settings.SikuliJRubyMaven, dlDir, targetJar, "JRuby");
 			downloadOK &= dlOK;
 			if (downloadOK && getJRubyAddOns) {
 				targetJar = new File(workDir, localJRubyAddOns).getAbsolutePath();

@@ -628,12 +628,15 @@ public class ResourceLoader {
         log(-1, "export: invalid resource: %s", res);
         return false;
       }
-			if (parts[0].isEmpty()) {
+			if (!parts[0].isEmpty()) {
 				pre = parts[0];
 				suf = parts[1];
-				fastReturn = true;
-				log(lvl + 1, "export with #: %s (%s)-(%s) as %s", res, pre, suf, tok);
-			}
+			} else if (!parts[1].isEmpty()) {
+        pre = "";
+        suf = parts[1];
+      }
+			fastReturn = true;
+			log(lvl, "export with #: %s (%s)-(%s) as %s", res, pre, suf, tok);
     }
     URL currentURL = jarURL;
     if (tok.contains("tessdata") && tessURL != null) {

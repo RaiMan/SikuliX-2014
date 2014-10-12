@@ -102,10 +102,10 @@ public class Settings {
 	public static String SikuliVersionScript;
 	public static String SikuliJythonVersion;
 	public static String SikuliJythonMaven;
-	public static String SikuliJRubyMaven;
 	public static String SikuliJython;
 	public static String SikuliJRubyVersion;
 	public static String SikuliJRuby;
+	public static String SikuliJRubyMaven;
 	public static String dlMavenRelease = "https://repo1.maven.org/maven2/";
 	public static	String dlMavenSnapshot = "https://oss.sonatype.org/content/groups/public/";
 
