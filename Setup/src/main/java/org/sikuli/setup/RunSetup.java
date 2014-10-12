@@ -1263,26 +1263,31 @@ public class RunSetup {
 			File fIDEFat = getProjectJarFile(projectDir,
 							"IDEFat", "sikulix-complete-", "-ide-fat.jar");
 			success = fIDEFat != null;
-			File fLibsmac = getProjectJarFile(projectDir,
-							"Libsmac", "sikulixlibsmac-", ".jar");
-			success = fLibsmac != null;
-			File fLibswin = getProjectJarFile(projectDir,
-							"Libswin", "sikulixlibswin-", ".jar");
-			success = fLibswin != null;
-			File fLibslux = getProjectJarFile(projectDir,
-							"Libslux", "sikulixlibslux-", ".jar");
-			success = fLibslux != null;
+      File fLibsmac, fLibswin, fLibslux, jythonJar, jrubyJar;
+      if (!noSetup) {
+        fLibsmac = getProjectJarFile(projectDir,
+                "Libsmac", "sikulixlibsmac-", ".jar");
+        success = fLibsmac != null;
+        fLibswin = getProjectJarFile(projectDir,
+                "Libswin", "sikulixlibswin-", ".jar");
+        success = fLibswin != null;
+        fLibslux = getProjectJarFile(projectDir,
+                "Libslux", "sikulixlibslux-", ".jar");
+        success = fLibslux != null;
 
-			File jythonJar = new File(Settings.SikuliJython);
-      if (!jythonJar.exists()) {
-        Debug.log(lvl, "createSetupFolder: missing: " + jythonJar.getAbsolutePath());
-        success = false;
-      }
+        jythonJar = new File(Settings.SikuliJython);
+        if (!jythonJar.exists()) {
+          Debug.log(lvl, "createSetupFolder: missing: " + jythonJar.getAbsolutePath());
+          success = false;
+        }
 
-			File jrubyJar = new File(Settings.SikuliJRuby);
-      if (!jrubyJar.exists()) {
-        Debug.log(lvl, "createSetupFolder: missing " + jrubyJar.getAbsolutePath());
-        success = false;
+        jrubyJar = new File(Settings.SikuliJRuby);
+        if (!jrubyJar.exists()) {
+          Debug.log(lvl, "createSetupFolder: missing " + jrubyJar.getAbsolutePath());
+          success = false;
+        }
+      } else {
+        fLibsmac = fLibswin = fLibslux = jythonJar = jrubyJar = null;
       }
       String jrubyAddons = "sikulixjrubyaddons-" + Settings.SikuliProjectVersion + "-plain.jar";
       File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
@@ -1306,20 +1311,22 @@ public class RunSetup {
                   new File(fDownloads, downloadIDE).getAbsolutePath());
 
 					// copy the library jars
-					String fshort;
-					for (File fEntry : new File[]{fLibsmac, fLibswin, fLibslux}) {
-	          fname = fEntry.getAbsolutePath();
-						fshort = fEntry.getName();
-	          FileManager.xcopy(fname,
-                  new File(fDownloads, fshort).getAbsolutePath());
-					}
+          if (!noSetup) {
+            String fshort;
+            for (File fEntry : new File[]{fLibsmac, fLibswin, fLibslux}) {
+              fname = fEntry.getAbsolutePath();
+              fshort = fEntry.getName();
+              FileManager.xcopy(fname,
+                    new File(fDownloads, fshort).getAbsolutePath());
+            }
 
-          fname = jythonJar.getAbsolutePath();
-          FileManager.xcopy(fname,
-                  new File(fDownloads, downloadJython).getAbsolutePath());
-          fname = jrubyJar.getAbsolutePath();
-          FileManager.xcopy(fname,
-                  new File(fDownloads, downloadJRuby).getAbsolutePath());
+            fname = jythonJar.getAbsolutePath();
+            FileManager.xcopy(fname,
+                    new File(fDownloads, downloadJython).getAbsolutePath());
+            fname = jrubyJar.getAbsolutePath();
+            FileManager.xcopy(fname,
+                    new File(fDownloads, downloadJRuby).getAbsolutePath());
+          }
           fname = fJRubyAddOns.getAbsolutePath();
           FileManager.xcopy(fname,
                   new File(fDownloads, downloadJRubyAddOns).getAbsolutePath());
