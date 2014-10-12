@@ -44,7 +44,7 @@ public class TextRecognizer {
       path = FileManager.slashify(Settings.OcrDataPath, true);
       fpath = new File(path, "tessdata");
       if (!fpath.exists()) {
-        ResourceLoader.get().exportTessdata(null);
+        ResourceLoader.get().export("META-INF#libs/tessdata/", fpath.getAbsolutePath());
       }
       if (!fpath.exists()) {
         Debug.error("TextRecognizer not working: tessdata folder not found at %s", path);
