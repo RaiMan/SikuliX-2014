@@ -188,7 +188,7 @@ public class ResourceLoader {
     if (initDone) {
       return true;
     }
-    
+
     if (libPath == null || libsDir == null) {
       libPath = null;
       libsDir = null;
@@ -643,13 +643,17 @@ public class ResourceLoader {
         log(-1, "export: invalid resource: %s", res);
         return false;
       }
-			if (!parts[0].isEmpty()) {
-				pre = parts[0];
-				suf = parts[1];
-			} else if (!parts[1].isEmpty()) {
-        pre = "";
-        suf = parts[1];
-      }
+      if (parts.length > 1) {
+				if (!parts[0].isEmpty()) {
+					pre = parts[0];
+					suf = parts[1];
+				} else if (!parts[1].isEmpty()) {
+					pre = "";
+					suf = parts[1];
+				}
+			} else {
+				pre = tok;
+			}
 			fastReturn = true;
 			log(lvl, "export with #: %s (%s)-(%s) as %s", res, pre, suf, tok);
     }

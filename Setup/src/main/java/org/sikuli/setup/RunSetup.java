@@ -29,6 +29,8 @@ import java.util.zip.ZipEntry;
 import javax.swing.JFrame;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
+import org.rauschig.jarchivelib.Archiver;
+import org.rauschig.jarchivelib.ArchiverFactory;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.SplashFrame;
@@ -873,6 +875,8 @@ public class RunSetup {
 		}
 
 		// downloading
+		ResourceLoader loader = ResourceLoader.get();
+		String localTemp = "sikulixtemp.jar";
 		String[] jarsList = new String[]{
 			null, // ide
 			null, // api
@@ -885,6 +889,7 @@ public class RunSetup {
 			null  // liblux
 		};
 		localJar = null;
+		File fTargetJar;
 		String targetJar;
 		boolean downloadOK = true;
 		boolean dlOK = true;
@@ -942,9 +947,29 @@ public class RunSetup {
 			}
 		}
 		if (getTess) {
+			String langTess = "eng";
 			targetJar = new File(workDir, localTess).getAbsolutePath();
-      downloadOK = download(Settings.downloadBaseDir, dlDir, downloadTess, targetJar, "Tesseract");
-//			downloadOK &= download(Settings.tessData.get("eng"), dlDir, null, null, null);
+      downloadOK &= download(Settings.downloadBaseDir, dlDir, downloadTess, targetJar, "Tesseract");
+			downloadOK &= download(Settings.tessData.get(langTess), dlDir, null, null, null);
+			Archiver archiver = ArchiverFactory.createArchiver("tar", "gz");
+			archiver.extract(new File(dlDir, "tesseract-ocr-3.02.eng.tar.gz"), new File(dlDir));
+			File fTess = new File(dlDir, "tesseract-ocr/tessdata");
+			if (!fTess.exists()) {
+				log1(-1, "Download: tessdata: version: eng - did not work");
+				downloadOK = false;
+			}
+			File fTessData = new File(dlDir, "tessdata-" + langTess);
+			fTessData.mkdirs();
+			FileManager.xcopy(fTess.getAbsolutePath(), fTessData.getAbsolutePath());
+			FileManager.deleteFileOrFolder(fTess.getParent());
+			loader.export(runningJarURL, "tessdata#", fTessData.getAbsolutePath());
+			fTargetJar = (new File(dlDir, localTemp));
+			targetJar = fTargetJar.getAbsolutePath();
+			String tessJar = new File(dlDir, downloadTess).getAbsolutePath();
+			downloadOK &= FileManager.buildJar(targetJar, new String[]{tessJar},
+							new String[]{fTessData.getAbsolutePath()},
+							new String[]{"META-INF/libs/tessdata"}, null);
+			downloadOK &= handleTempAfter(targetJar, new File(workDir, localTess).getAbsolutePath());
 		}
 		if (getRServer) {
 			targetJar = new File(workDir, localRServer).getAbsolutePath();
@@ -1029,7 +1054,6 @@ public class RunSetup {
 			}
 		};
 
-		String localTemp = "sikulixtemp.jar";
 		splash = showSplash("Now adding needed stuff to selected jars.", "please wait - may take some seconds ...");
 
 		jarsList[1] = (new File(workDir, localAPI)).getAbsolutePath();
@@ -1043,7 +1067,7 @@ public class RunSetup {
 			localJar = (new File(workDir, localAPI)).getAbsolutePath();
 			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
 			success &= FileManager.buildJar(targetJar, jarsList, null, null, libsFilter);
-			success &= handleTempAfter(localTemp, localJar);
+			success &= handleTempAfter(targetJar, localJar);
 		}
 
 		if (success && getIDE) {
@@ -1061,7 +1085,7 @@ public class RunSetup {
 			}
 			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
 			success &= FileManager.buildJar(targetJar, jarsList, null, null, libsFilter);
-			success &= handleTempAfter(localTemp, localJar);
+			success &= handleTempAfter(targetJar, localJar);
 		}
 
     for (int i = (getAPI ? 2 : 1); i < jarsList.length; i++) {
@@ -1071,7 +1095,6 @@ public class RunSetup {
     }
 		closeSplash(splash);
 
-		ResourceLoader loader = ResourceLoader.get();
     if (success && getIDE) {
       log1(lvl, "exporting commandfiles");
       splash = showSplash("Now exporting commandfiles.", "please wait - may take some seconds ...");
@@ -1385,15 +1408,15 @@ public class RunSetup {
 		FileManager.deleteFileOrFolder(target);
 		success &= !new File(target).exists();
 		if (success) {
-			success &= (new File(workDir, temp)).renameTo(new File(target));
+			success &= (new File(temp)).renameTo(new File(target));
 			if (!success) {
 				log1(lvl, "rename did not work --- trying copy");
 				try {
-					FileManager.xcopy(new File(workDir, temp).getAbsolutePath(), target);
+					FileManager.xcopy(new File(temp).getAbsolutePath(), target);
 					success = new File(target).exists();
 					if (success) {
-						FileManager.deleteFileOrFolder(new File(workDir, temp).getAbsolutePath());
-						success = !new File(workDir, temp).exists();
+						FileManager.deleteFileOrFolder(new File( temp).getAbsolutePath());
+						success = !new File( temp).exists();
 					}
 				} catch (IOException ex) {
 					success &= false;

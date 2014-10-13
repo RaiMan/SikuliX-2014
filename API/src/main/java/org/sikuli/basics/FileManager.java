@@ -97,7 +97,7 @@ public class FileManager {
       conn.getInputStream();
       return conn.getContentLength();
     } catch (Exception ex) {
-      log0(-1, "Download: getFileSize: not accessible:\n" + ex.getMessage());
+//      log0(-1, "Download: getFileSize: not accessible:\n" + ex.getMessage());
       return -1;
     } finally {
       conn.disconnect();
@@ -195,61 +195,65 @@ public class FileManager {
     }
     if (fullpath != null) {
       srcLength = tryGetFileSize(url);
-			if (srcLength < 0) srcLength = 1;
+			if (srcLength < 0) {
+				srcLength = 0;
+			}
+      srcLengthKB = (int) (srcLength / 1024);
       if (srcLength > 0) {
-        srcLengthKB = (int) (srcLength / 1024);
-        fullpath = new File(localPath, filename);
-        targetPath = fullpath.getAbsolutePath();
         log0(lvl, "Downloading %s having %d KB", filename, srcLengthKB);
-        done = 0;
-        if (_progress != null) {
-          _progress.setProFile(filename);
-          _progress.setProSize(srcLengthKB);
-          _progress.setProDone(0);
-          _progress.setVisible(true);
-        }
-				InputStream reader = null;
-        try {
-          FileOutputStream writer = new FileOutputStream(fullpath);
-          if (getProxy() != null) {
-            reader = url.openConnection(getProxy()).getInputStream();
-          } else {
-            reader = url.openConnection().getInputStream();
-          }
-          byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
-          int bytesRead = 0;
-          long begin_t = (new Date()).getTime();
-          long chunk = (new Date()).getTime();
-          while ((bytesRead = reader.read(buffer)) > 0) {
-            writer.write(buffer, 0, bytesRead);
-            totalBytesRead += bytesRead;
-            if (srcLength > 0) {
-              done = (int) ((totalBytesRead / (double) srcLength) * 100);
-            } else {
-              done = (int) (totalBytesRead / 1024);
-            }
-            if (((new Date()).getTime() - chunk) > 1000) {
-              if (_progress != null) {
-                _progress.setProDone(done);
-              }
-              chunk = (new Date()).getTime();
-            }
-          }
-          writer.close();
-          log0(lvl, "downloaded %d KB to %s", (int) (totalBytesRead / 1024), targetPath);
-          log0(lvl, "download time: %d", (int) (((new Date()).getTime() - begin_t) / 1000));
-        } catch (Exception ex) {
-          log0(-1, "problems while downloading\n" + ex.getMessage());
-          targetPath = null;
-        } finally {
-					if (reader != null) {
-						try {
-							reader.close();
-						} catch (IOException ex) {
+			} else {
+        log0(lvl, "Downloading %s with unknown size", filename);
+			}
+			fullpath = new File(localPath, filename);
+			targetPath = fullpath.getAbsolutePath();
+			done = 0;
+			if (_progress != null) {
+				_progress.setProFile(filename);
+				_progress.setProSize(srcLengthKB);
+				_progress.setProDone(0);
+				_progress.setVisible(true);
+			}
+			InputStream reader = null;
+			try {
+				FileOutputStream writer = new FileOutputStream(fullpath);
+				if (getProxy() != null) {
+					reader = url.openConnection(getProxy()).getInputStream();
+				} else {
+					reader = url.openConnection().getInputStream();
+				}
+				byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
+				int bytesRead = 0;
+				long begin_t = (new Date()).getTime();
+				long chunk = (new Date()).getTime();
+				while ((bytesRead = reader.read(buffer)) > 0) {
+					writer.write(buffer, 0, bytesRead);
+					totalBytesRead += bytesRead;
+					if (srcLength > 0) {
+						done = (int) ((totalBytesRead / (double) srcLength) * 100);
+					} else {
+						done = (int) (totalBytesRead / 1024);
+					}
+					if (((new Date()).getTime() - chunk) > 1000) {
+						if (_progress != null) {
+							_progress.setProDone(done);
 						}
+						chunk = (new Date()).getTime();
 					}
 				}
-      }
+				writer.close();
+				log0(lvl, "downloaded %d KB to %s", (int) (totalBytesRead / 1024), targetPath);
+				log0(lvl, "download time: %d", (int) (((new Date()).getTime() - begin_t) / 1000));
+			} catch (Exception ex) {
+				log0(-1, "problems while downloading\n" + ex.getMessage());
+				targetPath = null;
+			} finally {
+				if (reader != null) {
+					try {
+						reader.close();
+					} catch (IOException ex) {
+					}
+				}
+			}
       if (_progress != null) {
         if (targetPath == null) {
           _progress.setProDone(-1);
