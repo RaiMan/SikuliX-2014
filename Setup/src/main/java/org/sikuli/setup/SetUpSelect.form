@@ -159,8 +159,8 @@
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="jLabel5" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
-              <Component id="jSeparator5" min="-2" pref="10" max="-2" attributes="0"/>
-              <EmptySpace type="separate" max="-2" attributes="0"/>
+              <Component id="jSeparator5" min="-2" pref="22" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="3" attributes="0">
                   <Component id="option1" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="ask1" alignment="3" min="-2" max="-2" attributes="0"/>
@@ -437,7 +437,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="option2">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Python (Jython) (default)"/>
+        <Property name="text" type="java.lang.String" value="1. Python (Jython) (default)"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="option2ActionPerformed"/>
@@ -448,7 +448,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="option3">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Ruby (JRuby) "/>
+        <Property name="text" type="java.lang.String" value="2. Ruby (JRuby) "/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="option3ActionPerformed"/>
@@ -459,7 +459,7 @@
     </Component>
     <Component class="javax.swing.JCheckBox" name="option8">
       <Properties>
-        <Property name="text" type="java.lang.String" value="JRuby AddOns (rspec, cucumber, ...)"/>
+        <Property name="text" type="java.lang.String" value="3. JRuby AddOns (rspec, cucumber, ...)"/>
       </Properties>
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="option8ActionPerformed"/>

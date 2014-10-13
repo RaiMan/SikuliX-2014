@@ -176,21 +176,21 @@ public class SetUpSelect extends javax.swing.JPanel {
 
     jLabel9.setText("I want to use as scripting language: ");
 
-    option2.setText("Python (Jython) (default)");
+    option2.setText("1. Python (Jython) (default)");
     option2.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         option2ActionPerformed(evt);
       }
     });
 
-    option3.setText("Ruby (JRuby) ");
+    option3.setText("2. Ruby (JRuby) ");
     option3.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         option3ActionPerformed(evt);
       }
     });
 
-    option8.setText("JRuby AddOns (rspec, cucumber, ...)");
+    option8.setText("3. JRuby AddOns (rspec, cucumber, ...)");
     option8.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         option8ActionPerformed(evt);
@@ -309,8 +309,8 @@ public class SetUpSelect extends javax.swing.JPanel {
         .add(18, 18, 18)
         .add(jLabel5)
         .add(18, 18, 18)
-        .add(jSeparator5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 10, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
-        .add(18, 18, 18)
+        .add(jSeparator5, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE, 22, org.jdesktop.layout.GroupLayout.PREFERRED_SIZE)
+        .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED)
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
           .add(option1)
           .add(ask1))
