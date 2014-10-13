@@ -59,7 +59,7 @@ public class RunSetup {
   private static String downloadMavenSnapshot = "";
   private static String downloadMavenRelease = "";
 	private static String downloadIDE = version + "-1.jar";
-	private static String downloadJava = version + "-2.jar";
+	private static String downloadAPI = version + "-2.jar";
 	private static String downloadRServer = version + "-3.jar";
 	private static String downloadJython = new File(Settings.SikuliJythonMaven).getName();
 	private static String downloadJRuby = new File(Settings.SikuliJRubyMaven).getName();
@@ -68,7 +68,7 @@ public class RunSetup {
 	private static String downloadMacApp = minorversion + downloadMacAppSuffix;
 	private static String downloadTessSuffix = "-8.jar";
 	private static String downloadTess = minorversion + downloadTessSuffix;
-	private static String localJava = "sikulixapi.jar";
+	private static String localAPI = "sikulixapi.jar";
 	private static String localIDE = "sikulix.jar";
 	private static String localMacApp = "sikulixmacapp.jar";
 	private static String localMacAppIDE = "SikuliX-IDE.app/Contents/sikulix.jar";
@@ -466,7 +466,7 @@ public class RunSetup {
 		log1(lvl, "SikuliX Setup Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
 
 		File localJarIDE = new File(workDir, localIDE);
-		File localJarJava = new File(workDir, localJava);
+		File localJarJava = new File(workDir, localAPI);
 		File localMacFolder = new File(workDir, folderMacApp);
 
     //TODO Windows 8 HKLM/SOFTWARE/JavaSoft add Prefs ????
@@ -790,9 +790,9 @@ public class RunSetup {
           getIDE = true;
           msg += "Pack 1: " + localIDE + "\n";
         }
-        if (new File(workDir, localJava).exists()) {
+        if (new File(workDir, localAPI).exists()) {
           getAPI = true;
-          msg += "Pack 2: " + localJava + "\n";
+          msg += "Pack 2: " + localAPI + "\n";
         }
         if (new File(workDir, localRServer).exists()) {
           getRServer = true;
@@ -837,6 +837,10 @@ public class RunSetup {
 //            downloadedFiles += downloadMacApp + " ";
 //						msg += "\n" + downloadMacApp + " (Mac-App)";
 //					}
+				}
+				if (getIDE) {
+					downloadedFiles += downloadAPI + " ";
+					msg += "\n--- Package 2 ---\n" + downloadAPI + " (Java API)";
 				}
 				if (getTess || getRServer) {
 					if (getIDE || getAPI) {
@@ -905,9 +909,9 @@ public class RunSetup {
       downloadOK &= getSikulixJarFromMaven(libsLux, dlDir, null, libsLux);
     }
     if (getIDE || getAPI) {
-      jarsList[1] = new File(workDir, apiJarName + ".jar").getAbsolutePath();
-      downloadOK &= getSikulixJarFromMaven(apiJarName, dlDir, null, apiJarName);
-    }
+			localJar = new File(workDir, localAPI).getAbsolutePath();
+      downloadOK &= download(Settings.downloadBaseDir, dlDir, downloadAPI, localJar, "Java API");
+		}
 		if (getIDE) {
 			localJar = new File(workDir, localIDE).getAbsolutePath();
       dlOK = download(Settings.downloadBaseDir, dlDir, downloadIDE, localJar, "IDE/Scripting");
@@ -1028,14 +1032,15 @@ public class RunSetup {
 		String localTemp = "sikulixtemp.jar";
 		splash = showSplash("Now adding needed stuff to selected jars.", "please wait - may take some seconds ...");
 
-//		jarsList[1] = (new File(workDir, localSetup)).getAbsolutePath();
+		jarsList[1] = (new File(workDir, localAPI)).getAbsolutePath();
+
 		if (getTess) {
 			jarsList[2] = (new File(workDir, localTess)).getAbsolutePath();
 		}
 
 		if (success && getAPI) {
 			log1(lvl, "adding needed stuff to sikulixapi.jar");
-			localJar = (new File(workDir, localJava)).getAbsolutePath();
+			localJar = (new File(workDir, localAPI)).getAbsolutePath();
 			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
 			success &= FileManager.buildJar(targetJar, jarsList, null, null, libsFilter);
 			success &= handleTempAfter(localTemp, localJar);
@@ -1262,20 +1267,23 @@ public class RunSetup {
         return false;
       }
 
-			File fIDEFat = getProjectJarFile(projectDir,
-							"IDEFat", "sikulix-complete", "-ide-fat.jar");
-			success = fIDEFat != null;
+			File fIDEPlus = getProjectJarFile(projectDir,
+							"IDEPlus", "sikulix-plus", "-ide-fat.jar");
+			success &= fIDEPlus != null;
+			File fAPIPlus = getProjectJarFile(projectDir,
+							"APIPlus", "sikulixapi-plus", "-plain.jar");
+			success &= fAPIPlus != null;
       File fLibsmac, fLibswin, fLibslux, jythonJar, jrubyJar;
-      if (!noSetup) {
+      if (success && !noSetup) {
         fLibsmac = getProjectJarFile(projectDir,
                 "Libsmac", libsMac, ".jar");
-        success = fLibsmac != null;
+        success &= fLibsmac != null;
         fLibswin = getProjectJarFile(projectDir,
                 "Libswin", libsWin, ".jar");
-        success = fLibswin != null;
+        success &= fLibswin != null;
         fLibslux = getProjectJarFile(projectDir,
                 "Libslux", libsLux, ".jar");
-        success = fLibslux != null;
+        success &= fLibslux != null;
 
         jythonJar = new File(Settings.SikuliJython);
         if (!jythonJar.exists()) {
@@ -1308,9 +1316,12 @@ public class RunSetup {
           fname = setupjar.getAbsolutePath();
           FileManager.xcopy(fname,
                   new File(targetDir, localSetup).getAbsolutePath());
-          fname = fIDEFat.getAbsolutePath();
+          fname = fIDEPlus.getAbsolutePath();
           FileManager.xcopy(fname,
                   new File(fDownloads, downloadIDE).getAbsolutePath());
+          fname = fAPIPlus.getAbsolutePath();
+          FileManager.xcopy(fname,
+                  new File(fDownloads, downloadAPI).getAbsolutePath());
 
 					// copy the library jars
           if (!noSetup) {
@@ -1438,9 +1449,9 @@ public class RunSetup {
 			log0(lvl, "restoring from backup " + localIDE);
 			new File(backup, localIDE).renameTo(new File(workDir, localIDE));
 		}
-		if (new File(backup, localJava).exists() && !new File(workDir, localJava).exists()) {
-			log0(lvl, "restoring from backup " + localJava);
-			new File(backup, localJava).renameTo(new File(workDir, localJava));
+		if (new File(backup, localAPI).exists() && !new File(workDir, localAPI).exists()) {
+			log0(lvl, "restoring from backup " + localAPI);
+			new File(backup, localAPI).renameTo(new File(workDir, localAPI));
 		}
 		if (new File(backup, localTess).exists() && !new File(workDir, localTess).exists()) {
 			log0(lvl, "restoring from backup " + localTess);

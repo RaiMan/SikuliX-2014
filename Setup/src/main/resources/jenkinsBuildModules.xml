@@ -4,12 +4,13 @@
 		<module>Libsmac</module>
 		<module>Libswin</module>
 		<module>API</module>
+		<module>APIPlus</module>
 		<module>APIFat</module>
 		<module>JRubyAddOns</module>
 		<module>JRubyGem</module>
 		<module>Jygments4SikuliX</module>
 		<module>IDE</module>
-		<module>IDEFat</module>
+		<module>IDEPlus</module>
 		<module>Setup</module>
 		<module>MacApp</module>
 		<module>Tesseract</module>
