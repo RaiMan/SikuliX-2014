@@ -13,6 +13,8 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.prefs.Preferences;
 import org.sikuli.script.Image;
@@ -109,6 +111,7 @@ public class Settings {
 	public static String dlMavenRelease = "https://repo1.maven.org/maven2/";
 	public static	String dlMavenSnapshot = "https://oss.sonatype.org/content/groups/public/";
 
+	public static Map<String, String> tessData = new HashMap<String, String>();
 
 	//TODO needed ???
 	public static final String libOpenCV = "libopencv_java248";
@@ -237,6 +240,7 @@ public class Settings {
 			Debug.error("Settings: load version file %s did not work", svf);
 			Sikulix.terminate(999);
 		}
+		tessData.put("eng", "http://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz");
 	}
 
 	public static boolean isVersionRelease() {

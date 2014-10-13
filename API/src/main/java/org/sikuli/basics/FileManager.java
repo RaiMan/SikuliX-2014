@@ -195,6 +195,7 @@ public class FileManager {
     }
     if (fullpath != null) {
       srcLength = tryGetFileSize(url);
+			if (srcLength < 0) srcLength = 1;
       if (srcLength > 0) {
         srcLengthKB = (int) (srcLength / 1024);
         fullpath = new File(localPath, filename);

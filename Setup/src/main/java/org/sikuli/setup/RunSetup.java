@@ -16,7 +16,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
@@ -158,7 +157,7 @@ public class RunSetup {
       log(-1, "Fatal Error 101: Not possible to accessjar file for RunSetup.class");
       Sikulix.terminate(101);
     }
-    
+
     if (Settings.SikuliVersionBetaN > 0 && Settings.SikuliVersionBetaN < 99) {
 			updateVersion = String.format("%d.%d.%d-Beta%d",
 							Settings.SikuliVersionMajor, Settings.SikuliVersionMinor, Settings.SikuliVersionSub,
@@ -870,7 +869,17 @@ public class RunSetup {
 		}
 
 		// downloading
-		String[] jarsList = new String[]{null, null, null, null, null, null, null, null, null};
+		String[] jarsList = new String[]{
+			null, // ide
+			null, // api
+			null, // tess
+			null, // jython
+			null, // jruby
+			null, // jruby+
+			null, // libwin
+			null, // libmac
+			null  // liblux
+		};
 		localJar = null;
 		String targetJar;
 		boolean downloadOK = true;
@@ -895,9 +904,9 @@ public class RunSetup {
       jarsList[8] = new File(workDir, libsLux + ".jar").getAbsolutePath();
       downloadOK &= getSikulixJarFromMaven(libsLux, dlDir, null, libsLux);
     }
-    if (getAPI) {
+    if (getIDE || getAPI) {
       jarsList[1] = new File(workDir, apiJarName + ".jar").getAbsolutePath();
-      downloadOK &= getSikulixJarFromMaven(apiJarName, dlDir, null, apiJarName);      
+      downloadOK &= getSikulixJarFromMaven(apiJarName, dlDir, null, apiJarName);
     }
 		if (getIDE) {
 			localJar = new File(workDir, localIDE).getAbsolutePath();
@@ -918,23 +927,20 @@ public class RunSetup {
 		}
 		if (getJython) {
 			targetJar = new File(workDir, localJython).getAbsolutePath();
-      downloadOK = getJarFromMaven(Settings.SikuliJythonMaven, dlDir, targetJar, "Jython");
-			downloadOK &= dlOK;
+      downloadOK &= getJarFromMaven(Settings.SikuliJythonMaven, dlDir, targetJar, "Jython");
 		}
 		if (getJRuby) {
 			targetJar = new File(workDir, localJRuby).getAbsolutePath();
-      downloadOK = getJarFromMaven(Settings.SikuliJRubyMaven, dlDir, targetJar, "JRuby");
-			downloadOK &= dlOK;
+      downloadOK &= getJarFromMaven(Settings.SikuliJRubyMaven, dlDir, targetJar, "JRuby");
 			if (downloadOK && getJRubyAddOns) {
 				targetJar = new File(workDir, localJRubyAddOns).getAbsolutePath();
-        downloadOK = download(Settings.downloadBaseDir, dlDir, downloadJRubyAddOns, targetJar, "JRubyAddOns");
-				downloadOK &= dlOK;
+        downloadOK &= download(Settings.downloadBaseDir, dlDir, downloadJRubyAddOns, targetJar, "JRubyAddOns");
 			}
 		}
 		if (getTess) {
 			targetJar = new File(workDir, localTess).getAbsolutePath();
       downloadOK = download(Settings.downloadBaseDir, dlDir, downloadTess, targetJar, "Tesseract");
-			downloadOK &= dlOK;
+//			downloadOK &= download(Settings.tessData.get("eng"), dlDir, null, null, null);
 		}
 		if (getRServer) {
 			targetJar = new File(workDir, localRServer).getAbsolutePath();
@@ -1052,8 +1058,8 @@ public class RunSetup {
 			success &= FileManager.buildJar(targetJar, jarsList, null, null, libsFilter);
 			success &= handleTempAfter(localTemp, localJar);
 		}
-    
-    for (int i = 2; i < jarsList.length; i++) {
+
+    for (int i = (getAPI ? 2 : 1); i < jarsList.length; i++) {
       if (jarsList[i] != null) {
         new File(jarsList[i]).delete();
       }
@@ -1357,7 +1363,7 @@ public class RunSetup {
 				return fJarFile;
 			}
 	}
-  
+
   private static String getProjectJarFileName(String jarFilePre, String jarFileSuf) {
     return String.format("%s-%s%s",jarFilePre, Settings.SikuliProjectVersion, jarFileSuf);
   }

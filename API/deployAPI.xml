@@ -156,7 +156,7 @@
 		<sikulixvmaj>1</sikulixvmaj>
 		<sikulixvmin>1</sikulixvmin>
 		<sikulixvsub>0</sikulixvsub>
-		<sikulixbeta>4</sikulixbeta>
+		<sikulixbeta>0</sikulixbeta>
 		<!--   this decides, where setup downloads from   -->
 		<!--		<sikulixdev>release</sikulixdev>-->
 		<sikulixdev>development</sikulixdev>
