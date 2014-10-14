@@ -201,37 +201,38 @@ public class ResourceLoader {
         String jarName = "";
         String libsJarName = "";
         String tessJarName = "";
-        if (jarPath.contains("API")) {
-          log(-1, "The jar in use was not built with setup!\n"
-                  + "We might be running from local Maven repository?\n" + jarPath);
-          jarName = "API";
-          libsJarName = "Libs" + Settings.getShortOS();
-          tessJarName = "Tesseract";
-        }
-        if (runningSikulixapi) {
-          log(3, "The jar in use is some sikulixapi.jar\n%s", jarPath);
-          libsJarName = "sikulixlibs" + Settings.getShortOS();
-          jarName = "sikulixapi";
-          tessJarName = "sikulixtessdata";
-        }
-        if (!jarName.isEmpty()) {
-          try {
-            libsURL = new URL(jarURL.toString().replace(jarName, libsJarName));
-            if (!Sikulix.addToClasspath(libsURL.getPath())
-                    || !org.sikuli.script.Sikulix.isOnClasspath(libsJarName)) {
-              libsURL = null;
-            }
-            tessURL = new URL(jarURL.toString().replace(jarName, tessJarName));
-            if (!Sikulix.addToClasspath(tessURL.getPath())
-                    || !org.sikuli.script.Sikulix.isOnClasspath(tessJarName)) {
-              tessURL = null;
-            }
-          } catch (Exception ex) {
-            log(-1, "\n%s", ex);
-          }
-        }
         if (apiJarURL != null) {
           libsURL = apiJarURL;
+        } else {
+          if (jarPath.contains("API")) {
+            log(-1, "The jar in use was not built with setup!\n"
+                    + "We might be running from local Maven repository?\n" + jarPath);
+            jarName = "API";
+            libsJarName = "Libs" + Settings.getShortOS();
+            tessJarName = "Tesseract";
+          }
+          if (runningSikulixapi) {
+            log(3, "The jar in use is some sikulixapi.jar\n%s", jarPath);
+            libsJarName = "sikulixlibs" + Settings.getShortOS();
+            jarName = "sikulixapi";
+            tessJarName = "sikulixtessdata";
+          }
+          if (!jarName.isEmpty()) {
+            try {
+              libsURL = new URL(jarURL.toString().replace(jarName, libsJarName));
+              if (!Sikulix.addToClasspath(libsURL.getPath())
+                      || !org.sikuli.script.Sikulix.isOnClasspath(libsJarName)) {
+                libsURL = null;
+              }
+              tessURL = new URL(jarURL.toString().replace(jarName, tessJarName));
+              if (!Sikulix.addToClasspath(tessURL.getPath())
+                      || !org.sikuli.script.Sikulix.isOnClasspath(tessJarName)) {
+                tessURL = null;
+              }
+            } catch (Exception ex) {
+              log(-1, "\n%s", ex);
+            }
+          }
         }
         if (libsURL == null) {
           log(-1, "Terminating: The jar was not built with setup nor "
@@ -660,9 +661,7 @@ public class ResourceLoader {
     if (currentURL == null) {
       currentURL = jarURL;
     }
-    if (currentURL.getPath().endsWith(".jar")) {
-      extractingFromJar = true;
-    }
+    extractingFromJar = currentURL.getPath().endsWith(".jar");
     List<String[]> entries = makePackageFileList(currentURL, tok, true);
     if (entries == null || entries.isEmpty()) {
       return false;

@@ -433,6 +433,7 @@ public class RunSetup {
 					log(-1, "createSetupFolder: did not work- terminating");
 					System.exit(1);
 				}
+//        workDir = FileManager.slashify(workDir, true) + "Setup";
 				if (noSetup) {
 					System.exit(0);
 				}
@@ -468,7 +469,7 @@ public class RunSetup {
 		log1(lvl, "SikuliX Setup Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
 
 		File localJarIDE = new File(workDir, localIDE);
-		File localJarJava = new File(workDir, localAPI);
+		File localJarAPI = new File(workDir, localAPI);
 		File localMacFolder = new File(workDir, folderMacApp);
 
     //TODO Windows 8 HKLM/SOFTWARE/JavaSoft add Prefs ????
@@ -480,7 +481,7 @@ public class RunSetup {
 							+ "\nClick YES, if you want to install ..."
 							+ "\ncurrent stuff will be saved to BackUp."
 							+ "\n... Click NO to skip ...";
-			if (localJarIDE.exists() || localJarJava.exists() || localMacFolder.exists()) {
+			if (localJarIDE.exists() || localJarAPI.exists() || localMacFolder.exists()) {
 				int avail = -1;
 				boolean someUpdate = false;
 				String ask1 = "You have " + Settings.getVersion()
@@ -748,7 +749,7 @@ public class RunSetup {
           if (winSU.option3.isSelected()) {
             getJRuby = true;
             if (winSU.option8.isSelected()) {
-              getJRubyAddOns = false;
+              getJRubyAddOns = true;
             }
           }
           if (!getJython && !getJRuby) {
@@ -820,27 +821,25 @@ public class RunSetup {
 				if (!proxyMsg.isEmpty()) {
 					msg += proxyMsg + "\n";
 				}
+        msg += "\n--- Native support libraries for " + Settings.osName + " (sikulixlibs...)\n";
 				if (getIDE) {
 					downloadedFiles += downloadIDE + " ";
 					msg += "\n--- Package 1 ---\n" + downloadIDE + " (IDE/Scripting)";
 					if (getJython) {
-//						downloadedFiles += downloadJython + " ";
+						downloadedFiles += downloadJython + " ";
 						msg += "\n - with Jython";
 					}
 					if (getJRuby) {
-//						downloadedFiles += downloadJRuby + " ";
+						downloadedFiles += downloadJRuby + " ";
               msg += "\n - with JRuby";
             if (getJRubyAddOns) {
               downloadedFiles += downloadJRubyAddOns + " ";
               msg += " incl. AddOns";
             }
 					}
-//					if (Settings.isMac()) {
-//            downloadedFiles += downloadMacApp + " ";
-//						msg += "\n" + downloadMacApp + " (Mac-App)";
-//					}
+          msg += "\n";
 				}
-				if (getIDE) {
+				if (getAPI) {
 					downloadedFiles += downloadAPI + " ";
 					msg += "\n--- Package 2 ---\n" + downloadAPI + " (Java API)";
 				}
@@ -850,8 +849,8 @@ public class RunSetup {
 					}
 					msg += "\n--- Additions ---";
 					if (getTess) {
-						downloadedFiles += downloadTess + " ";
-						msg += "\n" + downloadTess + " (Tesseract)";
+						downloadedFiles += "tessdata-eng" + " ";
+						msg += "\n" + "tessdata-eng" + " (Tesseract)";
 					}
 					if (getRServer) {
 						downloadedFiles += downloadRServer + " ";
@@ -861,15 +860,13 @@ public class RunSetup {
 			}
 		}
 
-		if (getIDE || getAPI || getRServer) {
-			if (getIDE || getRServer) {
-				msg += "\n\nOnly click NO, if you want to terminate setup now!\n"
-								+ "Click YES even if you want to use local copies in Downloads!";
-				if (!popAsk(msg)) {
-					terminate("");
-				}
-			}
-		} else {
+    if (getIDE || getAPI || getRServer) {
+      msg += "\n\nOnly click NO, if you want to terminate setup now!\n"
+              + "Click YES even if you want to use local copies in Downloads!";
+      if (!popAsk(msg)) {
+        terminate("");
+      }
+    } else {
 			popError("Nothing selected! You might try again ;-)");
 			terminate("");
 		}
@@ -949,8 +946,11 @@ public class RunSetup {
 		if (getTess) {
 			String langTess = "eng";
 			targetJar = new File(workDir, localTess).getAbsolutePath();
-      downloadOK &= download(Settings.downloadBaseDir, dlDir, downloadTess, targetJar, "Tesseract");
-			downloadOK &= download(Settings.tessData.get(langTess), dlDir, null, null, null);
+      String xTess = Settings.tessData.get(langTess);
+      String[] xTessNames = xTess.split("/");
+      String xTessName = xTessNames[xTessNames.length - 1];
+			downloadOK &= download(xTess, dlDir, null, "nocopy", null);
+      log(lvl, "trying to extract from: %s", xTessName);
 			Archiver archiver = ArchiverFactory.createArchiver("tar", "gz");
 			archiver.extract(new File(dlDir, "tesseract-ocr-3.02.eng.tar.gz"), new File(dlDir));
 			File fTess = new File(dlDir, "tesseract-ocr/tessdata");
@@ -959,17 +959,20 @@ public class RunSetup {
 				downloadOK = false;
 			}
 			File fTessData = new File(dlDir, "tessdata-" + langTess);
+      log(lvl, "preparing the tessdata stuff in %s", fTessData.getAbsolutePath());
 			fTessData.mkdirs();
 			FileManager.xcopy(fTess.getAbsolutePath(), fTessData.getAbsolutePath());
 			FileManager.deleteFileOrFolder(fTess.getParent());
 			loader.export(runningJarURL, "tessdata#", fTessData.getAbsolutePath());
-			fTargetJar = (new File(dlDir, localTemp));
+      log (lvl, "finally preparing %s", localTess);
+			fTargetJar = (new File(workDir, localTemp));
 			targetJar = fTargetJar.getAbsolutePath();
-			String tessJar = new File(dlDir, downloadTess).getAbsolutePath();
-			downloadOK &= FileManager.buildJar(targetJar, new String[]{tessJar},
+			String tessJar = new File(workDir, localTess).getAbsolutePath();
+			downloadOK &= FileManager.buildJar(targetJar, new String[]{},
 							new String[]{fTessData.getAbsolutePath()},
 							new String[]{"META-INF/libs/tessdata"}, null);
-			downloadOK &= handleTempAfter(targetJar, new File(workDir, localTess).getAbsolutePath());
+			downloadOK &= handleTempAfter(targetJar, tessJar);
+      FileManager.deleteFileOrFolder(fTessData.getAbsolutePath());
 		}
 		if (getRServer) {
 			targetJar = new File(workDir, localRServer).getAbsolutePath();
@@ -1124,18 +1127,17 @@ public class RunSetup {
 		}
 		folderLibs.mkdirs();
 
-    URL uTess = null;
     if (getAPI) {
 			log1(lvl, "Trying to run functional test: JAVA-API");
 			splash = showSplash("Trying to run functional test(s)", "Java-API: org.sikuli.script.Sikulix.testSetup()");
-			if (!Sikulix.addToClasspath(localJarJava.getAbsolutePath())) {
+			if (!Sikulix.addToClasspath(localJarAPI.getAbsolutePath())) {
 				closeSplash(splash);
 				log0(-1, "Java-API test: ");
 				popError("Something serious happened! Sikuli not useable!\n"
 								+ "Check the error log at " + (logfile == null ? "printout" : logfile));
 				terminate("Functional test JAVA-API did not work", 1);
 			}
-			URL apiJarUrl = loader.setApiJarURL(localJarJava.getAbsolutePath());
+			URL apiJarUrl = loader.setApiJarURL(FileManager.slashify(localJarAPI.getAbsolutePath(), false));
 			try {
 				log0(lvl, "trying to run org.sikuli.script.Sikulix.testSetup()");
 				if (getTess) {
@@ -1175,7 +1177,7 @@ public class RunSetup {
 								+ "Check the error log at " + (logfile == null ? "printout" : logfile));
 				terminate("Functional test IDE did not work", 1);
 			}
-			URL ideJarUrl = loader.setApiJarURL(localJarIDE.getAbsolutePath());
+			URL ideJarUrl = loader.setApiJarURL(FileManager.slashify(localJarIDE.getAbsolutePath(), false));
       if (getTess) {
         loader.export(ideJarUrl, "META-INF#libs/tessdata/", workDir);
       }
@@ -1369,12 +1371,9 @@ public class RunSetup {
           fname = new File(projectDir, "Remote/target/"
                   + "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
           FileManager.xcopy(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
-          fname = new File(projectDir, "Tesseract/target/"
-                  + Settings.SikuliProjectVersion + downloadTessSuffix).getAbsolutePath();
-          FileManager.xcopy(fname, new File(fDownloads, downloadTess).getAbsolutePath());
-          fname = new File(projectDir, "MacApp/target/"
-                  + Settings.SikuliProjectVersion + downloadMacAppSuffix).getAbsolutePath();
-          FileManager.xcopy(fname, new File(fDownloads, downloadMacApp).getAbsolutePath());
+//          fname = new File(projectDir, "MacApp/target/"
+//                  + Settings.SikuliProjectVersion + downloadMacAppSuffix).getAbsolutePath();
+//          FileManager.xcopy(fname, new File(fDownloads, downloadMacApp).getAbsolutePath());
         } catch (Exception ex) {
           log(-1, "createSetupFolder: copying files did not work: %s", fname);
           success = false;
@@ -1726,7 +1725,9 @@ public class RunSetup {
 		}
 		if (jar == null) {
 			jar = item;
-		}
+		} else if ("nocopy".equals(jar)) {
+      jar = null;
+    }
 		if (itemName == null) {
 			itemName = item;
 		}
@@ -1748,15 +1749,17 @@ public class RunSetup {
 				return false;
 			}
 		}
-		try {
-			FileManager.xcopy(downloaded.getAbsolutePath(), jar);
-		} catch (IOException ex) {
-			terminate("Unable to copy from Downloads: "
-							+ downloaded.getAbsolutePath() + "\n" + ex.getMessage());
-		}
-		log(lvl, "Copied from Downloads: " + item);
-    if (!shouldDownload) {
-      downloadedFiles = downloadedFiles.replace(item + " ", "");
+    if (jar != null) {
+      try {
+        FileManager.xcopy(downloaded.getAbsolutePath(), jar);
+      } catch (IOException ex) {
+        terminate("Unable to copy from Downloads: "
+                + downloaded.getAbsolutePath() + "\n" + ex.getMessage());
+      }
+      log(lvl, "Copied from Downloads: " + item);
+      if (!shouldDownload) {
+        downloadedFiles = downloadedFiles.replace(item + " ", "");
+      }
     }
 		return true;
 	}
