@@ -433,6 +433,7 @@ public class RunSetup {
 					log(-1, "createSetupFolder: did not work- terminating");
 					System.exit(1);
 				}
+//        workDir = FileManager.slashify(workDir, true) + "Setup";
 				if (noSetup) {
 					System.exit(0);
 				}
@@ -468,7 +469,7 @@ public class RunSetup {
 		log1(lvl, "SikuliX Setup Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
 
 		File localJarIDE = new File(workDir, localIDE);
-		File localJarJava = new File(workDir, localAPI);
+		File localJarAPI = new File(workDir, localAPI);
 		File localMacFolder = new File(workDir, folderMacApp);
 
     //TODO Windows 8 HKLM/SOFTWARE/JavaSoft add Prefs ????
@@ -480,7 +481,7 @@ public class RunSetup {
 							+ "\nClick YES, if you want to install ..."
 							+ "\ncurrent stuff will be saved to BackUp."
 							+ "\n... Click NO to skip ...";
-			if (localJarIDE.exists() || localJarJava.exists() || localMacFolder.exists()) {
+			if (localJarIDE.exists() || localJarAPI.exists() || localMacFolder.exists()) {
 				int avail = -1;
 				boolean someUpdate = false;
 				String ask1 = "You have " + Settings.getVersion()
@@ -1126,18 +1127,17 @@ public class RunSetup {
 		}
 		folderLibs.mkdirs();
 
-    URL uTess = null;
     if (getAPI) {
 			log1(lvl, "Trying to run functional test: JAVA-API");
 			splash = showSplash("Trying to run functional test(s)", "Java-API: org.sikuli.script.Sikulix.testSetup()");
-			if (!Sikulix.addToClasspath(localJarJava.getAbsolutePath())) {
+			if (!Sikulix.addToClasspath(localJarAPI.getAbsolutePath())) {
 				closeSplash(splash);
 				log0(-1, "Java-API test: ");
 				popError("Something serious happened! Sikuli not useable!\n"
 								+ "Check the error log at " + (logfile == null ? "printout" : logfile));
 				terminate("Functional test JAVA-API did not work", 1);
 			}
-			URL apiJarUrl = loader.setApiJarURL(localJarJava.getAbsolutePath());
+			URL apiJarUrl = loader.setApiJarURL(FileManager.slashify(localJarAPI.getAbsolutePath(), false));
 			try {
 				log0(lvl, "trying to run org.sikuli.script.Sikulix.testSetup()");
 				if (getTess) {
@@ -1177,7 +1177,7 @@ public class RunSetup {
 								+ "Check the error log at " + (logfile == null ? "printout" : logfile));
 				terminate("Functional test IDE did not work", 1);
 			}
-			URL ideJarUrl = loader.setApiJarURL(localJarIDE.getAbsolutePath());
+			URL ideJarUrl = loader.setApiJarURL(FileManager.slashify(localJarIDE.getAbsolutePath(), false));
       if (getTess) {
         loader.export(ideJarUrl, "META-INF#libs/tessdata/", workDir);
       }
