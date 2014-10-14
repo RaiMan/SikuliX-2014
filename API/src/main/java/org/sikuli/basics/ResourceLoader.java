@@ -660,9 +660,7 @@ public class ResourceLoader {
     if (currentURL == null) {
       currentURL = jarURL;
     }
-    if (currentURL.getPath().endsWith(".jar")) {
-      extractingFromJar = true;
-    }
+    extractingFromJar = currentURL.getPath().endsWith(".jar");
     List<String[]> entries = makePackageFileList(currentURL, tok, true);
     if (entries == null || entries.isEmpty()) {
       return false;

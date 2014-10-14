@@ -840,7 +840,7 @@ public class RunSetup {
 //						msg += "\n" + downloadMacApp + " (Mac-App)";
 //					}
 				}
-				if (getIDE) {
+				if (getAPI) {
 					downloadedFiles += downloadAPI + " ";
 					msg += "\n--- Package 2 ---\n" + downloadAPI + " (Java API)";
 				}
@@ -850,8 +850,8 @@ public class RunSetup {
 					}
 					msg += "\n--- Additions ---";
 					if (getTess) {
-						downloadedFiles += downloadTess + " ";
-						msg += "\n" + downloadTess + " (Tesseract)";
+						downloadedFiles += "tessdata-eng" + " ";
+						msg += "\n" + "tessdata-eng" + " (Tesseract)";
 					}
 					if (getRServer) {
 						downloadedFiles += downloadRServer + " ";
@@ -861,15 +861,13 @@ public class RunSetup {
 			}
 		}
 
-		if (getIDE || getAPI || getRServer) {
-			if (getIDE || getRServer) {
-				msg += "\n\nOnly click NO, if you want to terminate setup now!\n"
-								+ "Click YES even if you want to use local copies in Downloads!";
-				if (!popAsk(msg)) {
-					terminate("");
-				}
-			}
-		} else {
+    if (getIDE || getAPI || getRServer) {
+      msg += "\n\nOnly click NO, if you want to terminate setup now!\n"
+              + "Click YES even if you want to use local copies in Downloads!";
+      if (!popAsk(msg)) {
+        terminate("");
+      }
+    } else {
 			popError("Nothing selected! You might try again ;-)");
 			terminate("");
 		}
@@ -949,8 +947,7 @@ public class RunSetup {
 		if (getTess) {
 			String langTess = "eng";
 			targetJar = new File(workDir, localTess).getAbsolutePath();
-      downloadOK &= download(Settings.downloadBaseDir, dlDir, downloadTess, targetJar, "Tesseract");
-			downloadOK &= download(Settings.tessData.get(langTess), dlDir, null, null, null);
+			downloadOK &= download(Settings.tessData.get(langTess), dlDir, null, "nocopy", null);
 			Archiver archiver = ArchiverFactory.createArchiver("tar", "gz");
 			archiver.extract(new File(dlDir, "tesseract-ocr-3.02.eng.tar.gz"), new File(dlDir));
 			File fTess = new File(dlDir, "tesseract-ocr/tessdata");
@@ -963,13 +960,14 @@ public class RunSetup {
 			FileManager.xcopy(fTess.getAbsolutePath(), fTessData.getAbsolutePath());
 			FileManager.deleteFileOrFolder(fTess.getParent());
 			loader.export(runningJarURL, "tessdata#", fTessData.getAbsolutePath());
-			fTargetJar = (new File(dlDir, localTemp));
+			fTargetJar = (new File(workDir, localTemp));
 			targetJar = fTargetJar.getAbsolutePath();
-			String tessJar = new File(dlDir, downloadTess).getAbsolutePath();
-			downloadOK &= FileManager.buildJar(targetJar, new String[]{tessJar},
+			String tessJar = new File(workDir, localTess).getAbsolutePath();
+			downloadOK &= FileManager.buildJar(targetJar, new String[]{},
 							new String[]{fTessData.getAbsolutePath()},
 							new String[]{"META-INF/libs/tessdata"}, null);
-			downloadOK &= handleTempAfter(targetJar, new File(workDir, localTess).getAbsolutePath());
+			downloadOK &= handleTempAfter(targetJar, tessJar);
+      FileManager.deleteFileOrFolder(fTessData.getAbsolutePath());
 		}
 		if (getRServer) {
 			targetJar = new File(workDir, localRServer).getAbsolutePath();
@@ -1369,12 +1367,9 @@ public class RunSetup {
           fname = new File(projectDir, "Remote/target/"
                   + "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
           FileManager.xcopy(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
-          fname = new File(projectDir, "Tesseract/target/"
-                  + Settings.SikuliProjectVersion + downloadTessSuffix).getAbsolutePath();
-          FileManager.xcopy(fname, new File(fDownloads, downloadTess).getAbsolutePath());
-          fname = new File(projectDir, "MacApp/target/"
-                  + Settings.SikuliProjectVersion + downloadMacAppSuffix).getAbsolutePath();
-          FileManager.xcopy(fname, new File(fDownloads, downloadMacApp).getAbsolutePath());
+//          fname = new File(projectDir, "MacApp/target/"
+//                  + Settings.SikuliProjectVersion + downloadMacAppSuffix).getAbsolutePath();
+//          FileManager.xcopy(fname, new File(fDownloads, downloadMacApp).getAbsolutePath());
         } catch (Exception ex) {
           log(-1, "createSetupFolder: copying files did not work: %s", fname);
           success = false;
@@ -1726,7 +1721,9 @@ public class RunSetup {
 		}
 		if (jar == null) {
 			jar = item;
-		}
+		} else if ("nocopy".equals(jar)) {
+      jar = null;
+    }
 		if (itemName == null) {
 			itemName = item;
 		}
@@ -1748,15 +1745,17 @@ public class RunSetup {
 				return false;
 			}
 		}
-		try {
-			FileManager.xcopy(downloaded.getAbsolutePath(), jar);
-		} catch (IOException ex) {
-			terminate("Unable to copy from Downloads: "
-							+ downloaded.getAbsolutePath() + "\n" + ex.getMessage());
-		}
-		log(lvl, "Copied from Downloads: " + item);
-    if (!shouldDownload) {
-      downloadedFiles = downloadedFiles.replace(item + " ", "");
+    if (jar != null) {
+      try {
+        FileManager.xcopy(downloaded.getAbsolutePath(), jar);
+      } catch (IOException ex) {
+        terminate("Unable to copy from Downloads: "
+                + downloaded.getAbsolutePath() + "\n" + ex.getMessage());
+      }
+      log(lvl, "Copied from Downloads: " + item);
+      if (!shouldDownload) {
+        downloadedFiles = downloadedFiles.replace(item + " ", "");
+      }
     }
 		return true;
 	}
