@@ -748,7 +748,7 @@ public class RunSetup {
           if (winSU.option3.isSelected()) {
             getJRuby = true;
             if (winSU.option8.isSelected()) {
-              getJRubyAddOns = false;
+              getJRubyAddOns = true;
             }
           }
           if (!getJython && !getJRuby) {
@@ -820,25 +820,23 @@ public class RunSetup {
 				if (!proxyMsg.isEmpty()) {
 					msg += proxyMsg + "\n";
 				}
+        msg += "\n--- Native support libraries for " + Settings.osName + " (sikulixlibs...)\n";
 				if (getIDE) {
 					downloadedFiles += downloadIDE + " ";
 					msg += "\n--- Package 1 ---\n" + downloadIDE + " (IDE/Scripting)";
 					if (getJython) {
-//						downloadedFiles += downloadJython + " ";
+						downloadedFiles += downloadJython + " ";
 						msg += "\n - with Jython";
 					}
 					if (getJRuby) {
-//						downloadedFiles += downloadJRuby + " ";
+						downloadedFiles += downloadJRuby + " ";
               msg += "\n - with JRuby";
             if (getJRubyAddOns) {
               downloadedFiles += downloadJRubyAddOns + " ";
               msg += " incl. AddOns";
             }
 					}
-//					if (Settings.isMac()) {
-//            downloadedFiles += downloadMacApp + " ";
-//						msg += "\n" + downloadMacApp + " (Mac-App)";
-//					}
+          msg += "\n";
 				}
 				if (getAPI) {
 					downloadedFiles += downloadAPI + " ";
@@ -947,7 +945,11 @@ public class RunSetup {
 		if (getTess) {
 			String langTess = "eng";
 			targetJar = new File(workDir, localTess).getAbsolutePath();
-			downloadOK &= download(Settings.tessData.get(langTess), dlDir, null, "nocopy", null);
+      String xTess = Settings.tessData.get(langTess);
+      String[] xTessNames = xTess.split("/");
+      String xTessName = xTessNames[xTessNames.length - 1];
+			downloadOK &= download(xTess, dlDir, null, "nocopy", null);
+      log(lvl, "trying to extract from: %s", xTessName);
 			Archiver archiver = ArchiverFactory.createArchiver("tar", "gz");
 			archiver.extract(new File(dlDir, "tesseract-ocr-3.02.eng.tar.gz"), new File(dlDir));
 			File fTess = new File(dlDir, "tesseract-ocr/tessdata");
@@ -956,10 +958,12 @@ public class RunSetup {
 				downloadOK = false;
 			}
 			File fTessData = new File(dlDir, "tessdata-" + langTess);
+      log(lvl, "preparing the tessdata stuff in %s", fTessData.getAbsolutePath());
 			fTessData.mkdirs();
 			FileManager.xcopy(fTess.getAbsolutePath(), fTessData.getAbsolutePath());
 			FileManager.deleteFileOrFolder(fTess.getParent());
 			loader.export(runningJarURL, "tessdata#", fTessData.getAbsolutePath());
+      log (lvl, "finally preparing %s", localTess);
 			fTargetJar = (new File(workDir, localTemp));
 			targetJar = fTargetJar.getAbsolutePath();
 			String tessJar = new File(workDir, localTess).getAbsolutePath();

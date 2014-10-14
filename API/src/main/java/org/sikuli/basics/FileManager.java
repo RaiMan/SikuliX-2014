@@ -1137,9 +1137,10 @@ public class FileManager {
       return;
     }
     String suffix = "";
-    if (file.canExecute()) {
-      suffix = EXECUTABLE;
-    }
+//TODO buildjar: suffix EXECUTABL
+//    if (file.canExecute()) {
+//      suffix = EXECUTABLE;
+//    }
     jar.putNextEntry(new ZipEntry(prefix + (prefix.equals("") ? "" : "/") + file.getName() + suffix));
     FileInputStream in = new FileInputStream(file);
     bufferedWrite(in, jar);
