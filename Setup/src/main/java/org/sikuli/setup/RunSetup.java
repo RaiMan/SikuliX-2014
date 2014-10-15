@@ -1732,36 +1732,42 @@ public class RunSetup {
 			itemName = item;
 		}
 		File downloaded = new File(tDir, item);
-		if (downloaded.exists()) {
-			if (popAsk("In your Setup/Downloads folder you already have: " + itemName + "\n"
-							+ downloaded.getAbsolutePath()
-							+ "\nClick YES, if you want to use this for setup processing\n\n"
-							+ "... or click NO, to download a fresh copy")) {
-				shouldDownload = false;
-			}
-		}
+		shouldDownload = ! takeAlreadyDownloaded(downloaded, itemName);
 		if (shouldDownload) {
 			JFrame progress = new SplashFrame("download");
 			String fname = FileManager.downloadURL(dlSource, tDir, progress);
 			progress.dispose();
 			if (null == fname) {
-				log1(-1, "Fatal error 001: not able to download: %s", item);
-				return false;
+				terminate(String.format("Fatal error 001: not able to download: %s", item), 1);
 			}
 		}
     if (jar != null) {
-      try {
-        FileManager.xcopy(downloaded.getAbsolutePath(), jar);
-      } catch (IOException ex) {
-        terminate("Unable to copy from Downloads: "
-                + downloaded.getAbsolutePath() + "\n" + ex.getMessage());
-      }
-      log(lvl, "Copied from Downloads: " + item);
+			copyFromDownloads(downloaded, item, jar);
       if (!shouldDownload) {
         downloadedFiles = downloadedFiles.replace(item + " ", "");
       }
     }
 		return true;
+	}
+
+	private static boolean takeAlreadyDownloaded(File artefact, String itemName) {
+		if (artefact.exists()) {
+			return popAsk("Setup/Downloads folder has: " + itemName + "\n"
+							+ artefact.getAbsolutePath()
+							+ "\nClick YES, if you want to use this for setup processing\n\n"
+							+ "... or click NO, to download a fresh copy");
+		}
+		return false;
+	}
+
+	private static void copyFromDownloads(File artefact, String item, String jar) {
+		try {
+			FileManager.xcopy(artefact.getAbsolutePath(), jar);
+		} catch (IOException ex) {
+			terminate("Unable to copy from Downloads: "
+							+ artefact.getAbsolutePath() + "\n" + ex.getMessage());
+		}
+		log(lvl, "Copied from Downloads: " + item);
 	}
 
 	private static boolean getSikulixJarFromMaven(String src, String targetDir,
