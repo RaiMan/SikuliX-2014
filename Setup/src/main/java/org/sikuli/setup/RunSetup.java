@@ -899,17 +899,33 @@ public class RunSetup {
       forSystemMac = Settings.isMac();
       forSystemLux = Settings.isLinux();
     }
+		File libDownloaded;
     if (forSystemWin || forAllSystems) {
       jarsList[6] = new File(workDir, libsWin + ".jar").getAbsolutePath();
-      downloadOK &= getSikulixJarFromMaven(libsWin, dlDir, null, libsWin);
+			libDownloaded = new File(dlDir, libsWin + "-" + version + ".jar");
+			if (! takeAlreadyDownloaded(libDownloaded, libsWin)) {
+				downloadOK &= getSikulixJarFromMaven(libsWin, dlDir, null, libsWin);
+			} else {
+				copyFromDownloads(new File(jarsList[6]), libsWin, libsWin + ".jar");
+			}
     }
     if (forSystemMac || forAllSystems) {
       jarsList[7] = new File(workDir, libsMac + ".jar").getAbsolutePath();
-      downloadOK &= getSikulixJarFromMaven(libsMac, dlDir, null, libsMac);
+			libDownloaded = new File(dlDir, libsMac + "-" + version + ".jar");
+			if (! takeAlreadyDownloaded(libDownloaded, libsMac)) {
+				downloadOK &= getSikulixJarFromMaven(libsMac, dlDir, null, libsMac);
+			} else {
+				copyFromDownloads(libDownloaded, libsMac, jarsList[7]);
+			}
     }
     if (forSystemLux || forAllSystems) {
       jarsList[8] = new File(workDir, libsLux + ".jar").getAbsolutePath();
-      downloadOK &= getSikulixJarFromMaven(libsLux, dlDir, null, libsLux);
+			libDownloaded = new File(dlDir, libsLux + "-" + version + ".jar");
+			if (! takeAlreadyDownloaded(libDownloaded, libsLux)) {
+				downloadOK &= getSikulixJarFromMaven(libsLux, dlDir, null, libsLux);
+			} else {
+				copyFromDownloads(libDownloaded, libsLux, jarsList[8]);
+			}
     }
     if (getIDE || getAPI) {
 			localJar = new File(workDir, localAPI).getAbsolutePath();
@@ -1293,24 +1309,26 @@ public class RunSetup {
         return false;
       }
 
+			File fLibsmac, fLibswin, fLibslux, jythonJar, jrubyJar;
+
 			File fIDEPlus = getProjectJarFile(projectDir,
 							"IDEPlus", "sikulix-plus", "-ide-fat.jar");
 			success &= fIDEPlus != null;
 			File fAPIPlus = getProjectJarFile(projectDir,
 							"APIPlus", "sikulixapi-plus", "-plain.jar");
 			success &= fAPIPlus != null;
-      File fLibsmac, fLibswin, fLibslux, jythonJar, jrubyJar;
-      if (success && !noSetup) {
-        fLibsmac = getProjectJarFile(projectDir,
-                "Libsmac", libsMac, ".jar");
-        success &= fLibsmac != null;
-        fLibswin = getProjectJarFile(projectDir,
-                "Libswin", libsWin, ".jar");
-        success &= fLibswin != null;
-        fLibslux = getProjectJarFile(projectDir,
-                "Libslux", libsLux, ".jar");
-        success &= fLibslux != null;
 
+			fLibsmac = getProjectJarFile(projectDir,
+							"Libsmac", libsMac, ".jar");
+			success &= fLibsmac != null;
+			fLibswin = getProjectJarFile(projectDir,
+							"Libswin", libsWin, ".jar");
+			success &= fLibswin != null;
+			fLibslux = getProjectJarFile(projectDir,
+							"Libslux", libsLux, ".jar");
+			success &= fLibslux != null;
+
+      if (success && !noSetup) {
         jythonJar = new File(Settings.SikuliJython);
         if (!jythonJar.exists()) {
           Debug.log(lvl, "createSetupFolder: missing: " + jythonJar.getAbsolutePath());
@@ -1323,7 +1341,7 @@ public class RunSetup {
           success = false;
         }
       } else {
-        fLibsmac = fLibswin = fLibslux = jythonJar = jrubyJar = null;
+        jythonJar = jrubyJar = null;
       }
       String jrubyAddons = "sikulixjrubyaddons-" + Settings.SikuliProjectVersion + "-plain.jar";
       File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
