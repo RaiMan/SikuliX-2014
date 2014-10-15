@@ -161,12 +161,16 @@ public class Sikulix {
   }
 
   public static void terminate(int n) {
+    String msg = "***** Terminating SikuliX Setup after a fatal error"
+                        + (n == 0 ? "*****\n" : " %d *****\n")
+                        +	"SikuliX is not useable!\n"
+                        + "Check the error log at " + Debug.logfile;
     if (Settings.runningSetup) {
-      popError(String.format(
-						"***** Terminating SikuliX Setup after a fatal error"
-            + (n == 0 ? "*****\n" : " %d *****\n")
-						+	"SikuliX is not useable!\n"
-            + "Check the error log at " + Debug.logfile, n));
+      if (Settings.noPupUps) {
+        log(-1, msg, n);
+      } else {
+        popError(String.format(msg, n));
+      }
     } else {
 	    Debug.error("***** Terminating SikuliX after a fatal error"
             + (n == 0 ? "*****\n" : " %d *****\n")
@@ -221,6 +225,7 @@ public class Sikulix {
    * @return success
    */
   public static boolean testSetupSilent() {
+    Settings.noPupUps = true;
     return doTestSetup("Java API", true);
   }
 
