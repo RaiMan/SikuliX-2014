@@ -1368,15 +1368,15 @@ public class RunSetup {
                   new File(fDownloads, downloadAPI).getAbsolutePath());
 
 					// copy the library jars
-          if (!noSetup) {
-            String fshort;
-            for (File fEntry : new File[]{fLibsmac, fLibswin, fLibslux}) {
-              fname = fEntry.getAbsolutePath();
-              fshort = fEntry.getName();
-              FileManager.xcopy(fname,
-                    new File(fDownloads, fshort).getAbsolutePath());
-            }
+					String fshort;
+					for (File fEntry : new File[]{fLibsmac, fLibswin, fLibslux}) {
+						fname = fEntry.getAbsolutePath();
+						fshort = fEntry.getName();
+						FileManager.xcopy(fname,
+									new File(fDownloads, fshort).getAbsolutePath());
+					}
 
+          if (!noSetup) {
             fname = jythonJar.getAbsolutePath();
             FileManager.xcopy(fname,
                     new File(fDownloads, downloadJython).getAbsolutePath());
