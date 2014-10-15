@@ -244,15 +244,16 @@ public class RunSetup {
 						getJRuby = true;
 					} else if (val.contains("1.3")) {
 						hasOptions = true;
+						getIDE = true;
 						getJRuby = true;
 						getJRubyAddOns = true;
-					} else if (val.contains("2")) {
+					} else if ("2".equals(val)) {
 						hasOptions = true;
 						getAPI = true;
-					} else if (val.contains("3")) {
+					} else if ("3".equals(val)) {
 						hasOptions = true;
 						getTess = true;
-					} else if (val.contains("4")) {
+					} else if ("4".equals(val)) {
 						hasOptions = true;
 						forAllSystems = true;
 					} else if (val.contains("4.1")) {
@@ -264,7 +265,7 @@ public class RunSetup {
 					} else if (val.contains("4.3")) {
 						hasOptions = true;
 						forSystemLux = true;
-					} else if (val.contains("5")) {
+					} else if ("5".equals(val)) {
 						hasOptions = true;
 						getRServer = true;
 					}
