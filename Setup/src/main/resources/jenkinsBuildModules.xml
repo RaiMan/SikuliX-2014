@@ -12,9 +12,6 @@
 		<module>IDE</module>
 		<module>IDEPlus</module>
 		<module>Setup</module>
-		<module>MacApp</module>
-		<module>Tesseract4SikuliX</module>
 		<module>Remote</module>
-		<module>Guide</module>
 		<module>TestRunMaven</module>
 	</modules>

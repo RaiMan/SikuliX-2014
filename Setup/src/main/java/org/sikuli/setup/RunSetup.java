@@ -1347,7 +1347,8 @@ public class RunSetup {
       File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
       if (!fJRubyAddOns.exists()) {
         Debug.log(lvl, "createSetupFolder: missing: " + fJRubyAddOns.getAbsolutePath());
-        success = false;
+//TODO JRubyAddOns optimize time of repeated build
+//        success = false;
       }
       if (success) {
         File fDownloads = new File(targetDir, "Downloads");
@@ -1385,8 +1386,10 @@ public class RunSetup {
                     new File(fDownloads, downloadJRuby).getAbsolutePath());
           }
           fname = fJRubyAddOns.getAbsolutePath();
-          FileManager.xcopy(fname,
-                  new File(fDownloads, downloadJRubyAddOns).getAbsolutePath());
+          File sname = new File(fDownloads, downloadJRubyAddOns);
+          if (sname.exists()) {
+            FileManager.xcopy(fname, sname.getAbsolutePath());
+          }
           fname = new File(projectDir, "Remote/target/"
                   + "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
           FileManager.xcopy(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
