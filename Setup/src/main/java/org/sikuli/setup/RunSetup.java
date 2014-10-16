@@ -899,17 +899,33 @@ public class RunSetup {
       forSystemMac = Settings.isMac();
       forSystemLux = Settings.isLinux();
     }
+		File libDownloaded;
     if (forSystemWin || forAllSystems) {
       jarsList[6] = new File(workDir, libsWin + ".jar").getAbsolutePath();
-      downloadOK &= getSikulixJarFromMaven(libsWin, dlDir, null, libsWin);
+			libDownloaded = new File(dlDir, libsWin + "-" + version + ".jar");
+			if (! takeAlreadyDownloaded(libDownloaded, libsWin)) {
+				downloadOK &= getSikulixJarFromMaven(libsWin, dlDir, null, libsWin);
+			} else {
+				copyFromDownloads(new File(jarsList[6]), libsWin, libsWin + ".jar");
+			}
     }
     if (forSystemMac || forAllSystems) {
       jarsList[7] = new File(workDir, libsMac + ".jar").getAbsolutePath();
-      downloadOK &= getSikulixJarFromMaven(libsMac, dlDir, null, libsMac);
+			libDownloaded = new File(dlDir, libsMac + "-" + version + ".jar");
+			if (! takeAlreadyDownloaded(libDownloaded, libsMac)) {
+				downloadOK &= getSikulixJarFromMaven(libsMac, dlDir, null, libsMac);
+			} else {
+				copyFromDownloads(libDownloaded, libsMac, jarsList[7]);
+			}
     }
     if (forSystemLux || forAllSystems) {
       jarsList[8] = new File(workDir, libsLux + ".jar").getAbsolutePath();
-      downloadOK &= getSikulixJarFromMaven(libsLux, dlDir, null, libsLux);
+			libDownloaded = new File(dlDir, libsLux + "-" + version + ".jar");
+			if (! takeAlreadyDownloaded(libDownloaded, libsLux)) {
+				downloadOK &= getSikulixJarFromMaven(libsLux, dlDir, null, libsLux);
+			} else {
+				copyFromDownloads(libDownloaded, libsLux, jarsList[8]);
+			}
     }
     if (getIDE || getAPI) {
 			localJar = new File(workDir, localAPI).getAbsolutePath();
@@ -1293,24 +1309,26 @@ public class RunSetup {
         return false;
       }
 
+			File fLibsmac, fLibswin, fLibslux, jythonJar, jrubyJar;
+
 			File fIDEPlus = getProjectJarFile(projectDir,
 							"IDEPlus", "sikulix-plus", "-ide-fat.jar");
 			success &= fIDEPlus != null;
 			File fAPIPlus = getProjectJarFile(projectDir,
 							"APIPlus", "sikulixapi-plus", "-plain.jar");
 			success &= fAPIPlus != null;
-      File fLibsmac, fLibswin, fLibslux, jythonJar, jrubyJar;
-      if (success && !noSetup) {
-        fLibsmac = getProjectJarFile(projectDir,
-                "Libsmac", libsMac, ".jar");
-        success &= fLibsmac != null;
-        fLibswin = getProjectJarFile(projectDir,
-                "Libswin", libsWin, ".jar");
-        success &= fLibswin != null;
-        fLibslux = getProjectJarFile(projectDir,
-                "Libslux", libsLux, ".jar");
-        success &= fLibslux != null;
 
+			fLibsmac = getProjectJarFile(projectDir,
+							"Libsmac", libsMac, ".jar");
+			success &= fLibsmac != null;
+			fLibswin = getProjectJarFile(projectDir,
+							"Libswin", libsWin, ".jar");
+			success &= fLibswin != null;
+			fLibslux = getProjectJarFile(projectDir,
+							"Libslux", libsLux, ".jar");
+			success &= fLibslux != null;
+
+      if (success && !noSetup) {
         jythonJar = new File(Settings.SikuliJython);
         if (!jythonJar.exists()) {
           Debug.log(lvl, "createSetupFolder: missing: " + jythonJar.getAbsolutePath());
@@ -1323,7 +1341,7 @@ public class RunSetup {
           success = false;
         }
       } else {
-        fLibsmac = fLibswin = fLibslux = jythonJar = jrubyJar = null;
+        jythonJar = jrubyJar = null;
       }
       String jrubyAddons = "sikulixjrubyaddons-" + Settings.SikuliProjectVersion + "-plain.jar";
       File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
@@ -1351,15 +1369,15 @@ public class RunSetup {
                   new File(fDownloads, downloadAPI).getAbsolutePath());
 
 					// copy the library jars
-          if (!noSetup) {
-            String fshort;
-            for (File fEntry : new File[]{fLibsmac, fLibswin, fLibslux}) {
-              fname = fEntry.getAbsolutePath();
-              fshort = fEntry.getName();
-              FileManager.xcopy(fname,
-                    new File(fDownloads, fshort).getAbsolutePath());
-            }
+					String fshort;
+					for (File fEntry : new File[]{fLibsmac, fLibswin, fLibslux}) {
+						fname = fEntry.getAbsolutePath();
+						fshort = fEntry.getName();
+						FileManager.xcopy(fname,
+									new File(fDownloads, fshort).getAbsolutePath());
+					}
 
+          if (!noSetup) {
             fname = jythonJar.getAbsolutePath();
             FileManager.xcopy(fname,
                     new File(fDownloads, downloadJython).getAbsolutePath());
@@ -1736,36 +1754,42 @@ public class RunSetup {
 			itemName = item;
 		}
 		File downloaded = new File(tDir, item);
-		if (downloaded.exists()) {
-			if (popAsk("In your Setup/Downloads folder you already have: " + itemName + "\n"
-							+ downloaded.getAbsolutePath()
-							+ "\nClick YES, if you want to use this for setup processing\n\n"
-							+ "... or click NO, to download a fresh copy")) {
-				shouldDownload = false;
-			}
-		}
+		shouldDownload = ! takeAlreadyDownloaded(downloaded, itemName);
 		if (shouldDownload) {
 			JFrame progress = new SplashFrame("download");
 			String fname = FileManager.downloadURL(dlSource, tDir, progress);
 			progress.dispose();
 			if (null == fname) {
-				log1(-1, "Fatal error 001: not able to download: %s", item);
-				return false;
+				terminate(String.format("Fatal error 001: not able to download: %s", item), 1);
 			}
 		}
     if (jar != null) {
-      try {
-        FileManager.xcopy(downloaded.getAbsolutePath(), jar);
-      } catch (IOException ex) {
-        terminate("Unable to copy from Downloads: "
-                + downloaded.getAbsolutePath() + "\n" + ex.getMessage());
-      }
-      log(lvl, "Copied from Downloads: " + item);
+			copyFromDownloads(downloaded, item, jar);
       if (!shouldDownload) {
         downloadedFiles = downloadedFiles.replace(item + " ", "");
       }
     }
 		return true;
+	}
+
+	private static boolean takeAlreadyDownloaded(File artefact, String itemName) {
+		if (artefact.exists()) {
+			return popAsk("Setup/Downloads folder has: " + itemName + "\n"
+							+ artefact.getAbsolutePath()
+							+ "\nClick YES, if you want to use this for setup processing\n\n"
+							+ "... or click NO, to download a fresh copy");
+		}
+		return false;
+	}
+
+	private static void copyFromDownloads(File artefact, String item, String jar) {
+		try {
+			FileManager.xcopy(artefact.getAbsolutePath(), jar);
+		} catch (IOException ex) {
+			terminate("Unable to copy from Downloads: "
+							+ artefact.getAbsolutePath() + "\n" + ex.getMessage());
+		}
+		log(lvl, "Copied from Downloads: " + item);
 	}
 
 	private static boolean getSikulixJarFromMaven(String src, String targetDir,
