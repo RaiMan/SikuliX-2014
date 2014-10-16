@@ -54,12 +54,18 @@ BE AWARE: These files are not useable for any other purpose than being processed
 - <a href="${sikuli.usedversion}-2.jar">${sikuli.usedversion}-2</a> use SikuliX with Java and Java aware languages (setup option 2)<br>
 - <a href="${sikuli.minorversion}-3.jar">${sikuli.minorversion}-3</a> if you want to try the experimental remote support (setup option 5)<br><br>
 additionally you need the libs package for your system (or all for option 4) <br>
-- for Windows:
-- for Mac:
-- for Linux:
+- for Windows: <a href="sikulixlibswin-${sikuli.usedversion}.jar">sikulixlibswin</a><br>
+- for Mac: <a href="sikulixlibsmac-${sikuli.usedversion}.jar">sikulixlibsmac</a><br>
+- for Linux: <a href="sikulixlibslux-${sikuli.usedversion}.jar">sikulixlibslux</a><br><br>
+additionally you need the tessdata base english package (for option 3) <br>
+- tessdata-eng: <a href="tesseract-ocr-3.02.eng.tar.gz">tesseract-ocr-3.02.eng.tar.gz</a><br>
+&nbsp;&nbsp;(put it as is into the folder Downloads - do not uncompress)
 <hr>
-As a special service for the users of sikulixapi.jar: a ready to use jar (no setup needed)<br>
-The only caveat: it is bigger, since it contains the native libraries for all systems.<br>
+As a special service for non-Maven/Gradle users of sikulixapi.jar: a ready to use jar (no setup needed)<br>
+The only caveats:
+- it is bigger, since it contains the native libraries for all systems.<br>
+- it does not support Tesseract usage out of the box. If you want to use OCR, you have to run a setup, to get a valid sikulixapi.jar or
+create an appropriate tessdata folder yourself e.g. by downloading and uncompressing the above tessdata-eng-package.<br><br>
 <a href="sikulixapi-${sikuli.usedversion}.jar">sikulixapi-${sikuli.usedversion}.jar</a><br>
 This is part of the preparation for having it later on MavenCentral.<br>
 For Java based developement the API sources and the full Java docs might be of value:<br>
