@@ -20,23 +20,18 @@ public class TestRun {
 
 		//TextRecognizer.getInstance();
 
-//		String imgN = "./target/classes/images/images.sikuli/image.png";
-//		URL dir = FileManager.makeURL("./target/classes/images/images.sikuli");
-//		Debug.test("URL: %s", FileManager.makeURL("./target/classes/images/images.sikuli"));
-//    Debug.setDebugLevel(3);
-//		Debug.test("***** 1st image");
-//		Image img = Image.create(imgN);
-//		Debug.test("***** 2nd image");
-//		img = Image.create(imgN);
-//		Image.dump();
-//		Debug.test("***** purge");
-//		Image.purge(dir);
+		String imgN = "./target/classes/images/images.sikuli";
+		String img = "image.png";
+    Debug.setDebugLevel(3);
+//    ImagePath.setBundlePath(imgN);
+    ImagePath.add("com.sikulix.testrun.TestRun/images/images.sikuli");
+		Debug.test("***** 1st image");
+		Image iimg = Image.create(img);
+		Debug.test("***** 2nd image");
+		iimg = Image.create(img);
+		Image.dump();
 
-//    Debug.setDebugLevel(3);
-//		Debug.log(3, "trying testSetup");
-//		Debug.test("testSetup: #returned#", Sikulix.testSetup());
-    
-		System.exit(1);
+    System.exit(1);
   }
 
   public void loggerCallBack(String msg) {
