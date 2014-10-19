@@ -224,11 +224,6 @@ public class ResourceLoader {
                       || !org.sikuli.script.Sikulix.isOnClasspath(libsJarName)) {
                 libsURL = null;
               }
-              tessURL = new URL(jarURL.toString().replace(jarName, tessJarName));
-              if (!Sikulix.addToClasspath(tessURL.getPath())
-                      || !org.sikuli.script.Sikulix.isOnClasspath(tessJarName)) {
-                tessURL = null;
-              }
             } catch (Exception ex) {
               log(-1, "\n%s", ex);
             }
