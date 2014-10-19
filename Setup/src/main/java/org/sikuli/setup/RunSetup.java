@@ -1387,7 +1387,7 @@ public class RunSetup {
           }
           fname = fJRubyAddOns.getAbsolutePath();
           File sname = new File(fDownloads, downloadJRubyAddOns);
-          if (sname.exists()) {
+          if (fJRubyAddOns.exists()) {
             FileManager.xcopy(fname, sname.getAbsolutePath());
           }
           fname = new File(projectDir, "Remote/target/"
