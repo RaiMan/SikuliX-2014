@@ -330,7 +330,7 @@ public class ImagePath {
       }
 			return true;
     } else {
-      log(-1, "addImagePath: not valid: %s %s", mainPath,
+      log(-1, "add: not valid: %s %s", mainPath,
 							(altPath == null ? "" : " / " + altPath));
     }
     return false;
@@ -466,14 +466,17 @@ public class ImagePath {
 				return true;
 			}
 		}
-		String wf = System.getProperty("user.dir");
-		log(-1, "setBundlePath: invalid BundlePath: %s \nusing working folder: %s",
-						bPath, wf);
-		if (!new File(wf).exists()) {
-			log(-1, "setBundlePath: Fatal error: working folder does not exist --- terminating");
-			System.exit(1);
-		}
-		return setBundlePath(wf);
+    if (getCount() ==0) {
+      String wf = System.getProperty("user.dir");
+      log(-1, "setBundlePath: invalid BundlePath: %s \nusing working folder: %s",
+              bPath, wf);
+      if (!new File(wf).exists()) {
+        log(-1, "setBundlePath: Fatal error: working folder does not exist --- terminating");
+        System.exit(1);
+      }
+      return setBundlePath(wf);
+    }
+    return true;
   }
 
   /**
@@ -518,6 +521,7 @@ public class ImagePath {
 			try {
 				cls = Class.forName(klassName);
 			} catch (ClassNotFoundException ex) {
+        log(-1,"add: class %s not found on classpath.", klassName);
 			}
 			if (cls != null) {
 				CodeSource codeSrc = cls.getProtectionDomain().getCodeSource();
