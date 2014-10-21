@@ -1,4 +1,4 @@
-package org.sikuli.remote;
+package org.sikuli.remoterobot;
 
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;

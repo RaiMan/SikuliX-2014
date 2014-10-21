@@ -132,7 +132,7 @@
 		<module>IDE</module>
 		<module>IDEPlus</module>
 		<module>Setup</module>
-		<module>Remote</module>
+		<module>RemoteRobot</module>
 		<module>TestRunMaven</module>
 	</modules>
 
