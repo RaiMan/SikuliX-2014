@@ -28,6 +28,7 @@ public class TextRecognizer {
 
   private static TextRecognizer _instance = null;
   private static boolean _init_succeeded = false;
+	private static int lvl = 3;
 
   static {
     FileManager.loadLibrary("VisionProxy");
@@ -47,17 +48,23 @@ public class TextRecognizer {
         ResourceLoader.get().export("META-INF#libs/tessdata/", fpath.getAbsolutePath());
       }
       if (!fpath.exists()) {
-        Debug.error("TextRecognizer not working: tessdata folder not found at %s", path);
+				Debug.log(lvl, "Trying to download Tesseract language pack eng, "
+								+ "since not available yet at:\n%s", Settings.OcrDataPath);
+			}
+      if (!fpath.exists()) {
+        Debug.error("TextRecognizer not working: tessdata folder not available at %s\n", path);
         Settings.OcrTextRead = false;
         Settings.OcrTextSearch = false;
         fpath = null;
       }
-    }
-    if (fpath != null) {
-      Vision.initOCR(FileManager.slashify(Settings.OcrDataPath, true));
-      _init_succeeded = true;
-      Debug.log(3, "TextRecognizer: init OK: using as data folder: " + fpath.getAbsolutePath());
-    }
+			if (fpath != null) {
+				Vision.initOCR(FileManager.slashify(Settings.OcrDataPath, true));
+				_init_succeeded = true;
+				Debug.log(lvl, "TextRecognizer: init OK: using as data folder:\n" + fpath.getAbsolutePath());
+			}
+    } else {
+			Debug.error("TextRecognizer: init: not possible: Settings.OcrDataPath not set");
+		}
   }
 
   public static TextRecognizer getInstance() {
