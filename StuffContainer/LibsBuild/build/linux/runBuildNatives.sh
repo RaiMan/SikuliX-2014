@@ -16,6 +16,8 @@ echo -----  Linux build workflow for native modules on $ARCH-bit systems
 
 # trying to find the active JDK
 
+if [ -z "$JDK" ]; then
+
 # this worked on Ubuntu 12
 for e in `whereis -b javac`; do
 if [ "$e" == "javac:" ]; then
@@ -38,38 +40,29 @@ if [ "$jvcx" != "" ]; then
   JDK=`dirname $JDK`
 fi
 
+fi
+
 # if JDK not found with the above eval
 # JDK=...insert path to JDK... and uncomment
 
-if [ -e $JDK/include ]; then
+if [ -e $JDK/include/jni.h ]; then
   # folder(s) containing the header files
   includeParm="-I$JDK/include -I$JDK/include/linux -I/usr/include -I/usr/local/include"
   echo --- The active JDK seems to be in $JDK
+else
+  echo --- JDK could not be found - please set the \"JDK\" environment variable
 fi
 
-if [ "$includeParm" == "" ]; then
-  echo JDK could not be found - check and set path manually \(line 30\)
+if pkg-config opencv; then
+  echo --- OpenCV version $(pkg-config --modversion opencv) found
+else
+  echo --- OpenCV libs could not be found
 fi
 
-for TMP_LIBS in /usr/lib /usr/lib64 /usr/local/lib /usr/local/lib64
-do
-  if [ "$libFolderO" == "" -a -e $TMP_LIBS/libopencv_core.so ]; then
-    LIBS=$TMP_LIBS
-    libFolderO=$LIBS
-    libFolderT=$LIBS
-    echo --- OpenCV libs seem to be in $LIBS
-    break;
-  fi
-done
-
-# if the openCV libs are not found with the above eval
-# folder containing the OpenCV libs
-# libFolderO=...insert path to folder... and uncomment
-# folder containing the Tesseract lib
-# libFolderT=...insert path to folder... and uncomment
-
-if [ "libFolderO" == "" ]; then
-  echo --- OpenCV libs could not be found - check and set paths manually \(line 63 and 65\)
+if pkg-config tesseract; then
+  echo --- Tesseract version $(pkg-config --modversion tesseract) found
+else
+  echo --- Tesseract libs could not be found
 fi
 
 # --------- Please check/adapt the following settings ------------
@@ -85,9 +78,8 @@ export SWIGEXEC="__NOT_SET__"
 
 # set some common folders in the SikuliX package structure
 # no need to change normally
-export DEVJAVA=../../../Natives/src/main/java
-export DEVNATIVE=../../../Natives/src/main/native
-export DEVLIBS=../../src/main/resources/META-INF/libs/linux/libs$ARCH
+export DEVJAVA=../../../../Libsvision/src/main/java
+export DEVNATIVE=../../../../Libsvision/src/main/java/native
 
 # ------------------------- do what is needed
 if [ "$SWIGEXEC" == "__NOT_SET__" ]; then
@@ -96,6 +88,9 @@ if [ "$SWIGEXEC" == "__NOT_SET__" ]; then
 else
   echo -----  use SWIG to create Java interface sources and native wrapper for VisionProxy
   . runSwigForVision.sh
-fi  
-echo -----  build libVisionProxy.so 
-. runBuildVisionProxy.sh
+fi
+
+if [ -n "$includeParm" ]; then
+  echo -----  build libVisionProxy.so
+  . runBuildVisionProxy.sh
+fi

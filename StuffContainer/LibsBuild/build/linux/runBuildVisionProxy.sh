@@ -4,7 +4,9 @@
 # variable DEVNATIVE is set outside - the native source files
 # variable JDK is set outside - Java JDK
 # variable LIBS is set outside - link libraries
-# variable DEVLIBS is set outside - the target folder for the linked module
+
+# abort on the first error
+set -e
 
 # native Sikuli sources
 src=$DEVNATIVE
@@ -40,4 +42,10 @@ echo -- visionJAVA_wrap
 g++ -c -O3 -fPIC -MMD -MP -MF $externals/visionJAVA_wrap.o.d $includeParm -o $externals/visionJAVA_wrap.o $src/Vision/visionJAVA_wrap.cxx
 
 echo -- finally linking
-g++  -shared -s -fPIC -dynamic -o $DEVLIBS/libVisionProxy.so $externals/cvgui.o $externals/finder.o $externals/pyramid-template-matcher.o $externals/sikuli-debug.o $externals/tessocr.o $externals/vision.o $externals/visionJAVA_wrap.o $LIBS/libtesseract.so $LIBS/libopencv_core.so $LIBS/libopencv_highgui.so $LIBS/libopencv_imgproc.so 
+g++  -shared -s -fPIC -dynamic $(pkg-config --libs opencv tesseract) -o libVisionProxy.so $externals/cvgui.o $externals/finder.o $externals/pyramid-template-matcher.o $externals/sikuli-debug.o $externals/tessocr.o $externals/vision.o $externals/visionJAVA_wrap.o
+
+if [ -e libVisionProxy.so ]; then
+  echo -- created libVisionProxy.so
+else
+  echo -- error building libVisionProxy.so
+fi
