@@ -22,7 +22,7 @@ public class FileTransferTests extends BaseTest {
     private File clientFilePath;
 
     @BeforeClass
-    public void init() throws URISyntaxException, IOException {
+    public void init() throws IOException {
 
         filePath = getResource(RESOURCE_BUTTON_IMAGE);
         copyToServerPath = new File(filePath.getParent() + "\\server");
