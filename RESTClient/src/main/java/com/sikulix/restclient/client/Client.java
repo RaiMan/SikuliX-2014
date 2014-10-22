@@ -1,15 +1,14 @@
-package com.sikulix.remoteserver.client;
+package com.sikulix.restclient.client;
 
-import com.sikulix.remoteserver.interfaces.common.Sikulix;
-import com.sikulix.remoteserver.interfaces.entities.Command;
-import com.sikulix.remoteserver.interfaces.entities.Image;
-import com.sikulix.remoteserver.utils.ObjectMapperProvider;
+import org.sikuli.remoteinterfaces.common.Sikulix;
+import org.sikuli.remoteinterfaces.entities.Command;
+import org.sikuli.remoteinterfaces.entities.Image;
+import com.sikulix.restclient.utils.ObjectMapperProvider;
 import org.apache.commons.io.IOUtils;
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.*;
 import org.glassfish.jersey.media.multipart.file.FileDataBodyPart;
 
-//import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.client.WebTarget;
@@ -20,7 +19,6 @@ import java.nio.file.Paths;
 import java.util.logging.Logger;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
-
 /**
  * Author: Sergey Kuts
  */
@@ -48,10 +46,12 @@ public class Client implements Sikulix {
                 .post(Entity.json(command));
 
         if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            CLIENT_LOGGER.info("The following process has been finished: " + command.getValues());
+            CLIENT_LOGGER.info("The following process has been finished: " + command);
         } else {
-            CLIENT_LOGGER.severe("Unable to finish the following process: " + command.getValues());
+            CLIENT_LOGGER.severe("Unable to finish the following process: " + command);
         }
+
+        CLIENT_LOGGER.info("Status: " + response.getStatus());
 
         response.close();
     }
@@ -103,9 +103,9 @@ public class Client implements Sikulix {
                 .post(Entity.json(image));
 
         if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            CLIENT_LOGGER.info("Image " + image.getValues() + " has been clicked.");
+            CLIENT_LOGGER.info("Image " + image + " has been clicked.");
         } else {
-            CLIENT_LOGGER.severe("Unable to click image " + image.getValues());
+            CLIENT_LOGGER.severe("Unable to click image " + image);
         }
 
         response.close();
@@ -122,9 +122,9 @@ public class Client implements Sikulix {
         response.close();
 
         if (exists) {
-            CLIENT_LOGGER.info("Image " + image.getValues() + " exists.");
+            CLIENT_LOGGER.info("Image " + image + " exists.");
         } else {
-            CLIENT_LOGGER.severe("Unable to find image " + image.getValues());
+            CLIENT_LOGGER.severe("Unable to find image " + image);
         }
 
         return exists;
@@ -139,9 +139,9 @@ public class Client implements Sikulix {
                 .post(Entity.json(image));
 
         if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            CLIENT_LOGGER.info("Text '" + escapeJava(text) + "' has been set to " + image.getValues());
+            CLIENT_LOGGER.info("Text '" + escapeJava(text) + "' has been set to " + image);
         } else {
-            CLIENT_LOGGER.severe("Unable to set text '" + text + "' to " + image.getValues());
+            CLIENT_LOGGER.severe("Unable to set text '" + escapeJava(text) + "' to " + image);
         }
 
         response.close();

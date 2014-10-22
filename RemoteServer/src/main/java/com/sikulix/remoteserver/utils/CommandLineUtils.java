@@ -1,6 +1,6 @@
 package com.sikulix.remoteserver.utils;
 
-import com.sikulix.remoteserver.interfaces.entities.Command;
+import org.sikuli.remoteinterfaces.entities.Command;
 import com.sikulix.remoteserver.wrapper.ExecutionLogger;
 import org.apache.commons.exec.*;
 
@@ -22,11 +22,14 @@ public final class CommandLineUtils {
 
     public static int executeCommandLine(final Command command) {
 
-        CMD_LOGGER.info("Processing the following command: " + command.getValues());
+        CMD_LOGGER.info("Processing the following command: " + command.getProcess() + " " + command.getArgs());
 
         final long timeout = (command.getTimeout() > 0 ? command.getTimeout() : 0) * 1000;
         final CommandLine commandLine = new CommandLine(quoteArgument(command.getProcess()));
-        command.getArgs().stream().forEach(arg -> commandLine.addArgument(quoteArgument(arg)));
+
+        for (String arg :  command.getArgs()) {
+            commandLine.addArgument(quoteArgument(arg));
+        }
 
         final ExecutionResultsHandler resultHandler = new ExecutionResultsHandler();
         final PumpStreamHandler streamHandler = new PumpStreamHandler(new ExecutionLogger(CMD_LOGGER, Level.INFO),

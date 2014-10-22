@@ -6,7 +6,6 @@ import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory;
 
 import java.net.InetAddress;
 import java.net.URI;
-import java.util.*;
 import java.util.logging.Logger;
 
 /**
@@ -27,12 +26,7 @@ public class Server {
 
     public static void main(final String[] args) {
         try {
-            startServer(Arrays.asList(args)
-                    .stream()
-                    .findFirst()
-                    .filter(NumberUtils::isNumber)
-                    .map(Integer::parseInt)
-                    .orElse(DEFAULT_PORT));
+            startServer(args.length > 0 && NumberUtils.isNumber(args[1]) ? Integer.parseInt(args[1]) : DEFAULT_PORT);
         } catch (Exception e) {
             SERVER_LOGGER.severe(e.toString());
         }

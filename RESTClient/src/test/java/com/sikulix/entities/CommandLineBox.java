@@ -1,6 +1,6 @@
 package com.sikulix.entities;
 
-import com.sikulix.remoteserver.interfaces.entities.Command;
+import org.sikuli.remoteinterfaces.entities.Command;
 
 import java.util.List;
 
@@ -29,5 +29,11 @@ public class CommandLineBox implements Command {
 
     public int getTimeout() {
         return timeout;
+    }
+
+    public String toString() {
+        return "[process = " + getProcess() +
+                "; args = " + getArgs() +
+                "; timeout = " + getTimeout() + "]";
     }
 }
