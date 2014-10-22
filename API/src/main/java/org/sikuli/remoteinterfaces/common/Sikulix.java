@@ -1,6 +1,6 @@
-package com.sikulix.remoteserver.interfaces.common;
+package org.sikuli.remoteinterfaces.common;
 
-import com.sikulix.remoteserver.interfaces.entities.Image;
+import org.sikuli.remoteinterfaces.entities.Image;
 
 /**
  * Author: Sergey Kuts
@@ -13,7 +13,5 @@ public interface Sikulix extends CommandLineExecutor, FileTransporter {
 
     boolean exists(final Image image, final int timeout);
 
-    // Override it for closing client connections, or just skip
-    default void close() {
-    }
+    void close();
 }

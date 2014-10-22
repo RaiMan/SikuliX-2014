@@ -3,14 +3,14 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <parent>
-        <groupId>com.sikulix</groupId>
         <artifactId>SikuliX-2014</artifactId>
+        <groupId>com.sikulix</groupId>
         <version>1.1.0</version>
         <relativePath>../</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>sikulixremoteserver</artifactId>
+    <artifactId>sikulixrestclient</artifactId>
     <version>${parent.version}</version>
     <packaging>jar</packaging>
 
@@ -40,21 +40,16 @@
                 </configuration>
             </plugin>
 
-           <plugin>
+            <plugin>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <configuration>
                     <descriptorRefs>
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
-                    <archive>
-                        <manifest>
-                            <mainClass>com.sikulix.remoteserver.server.Server</mainClass>
-                        </manifest>
-                    </archive>
                 </configuration>
                 <executions>
                     <execution>
-                        <id>server</id>
+                        <id>client</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
@@ -62,13 +57,25 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.17</version>
+                <configuration>
+                    <skipTests>true</skipTests>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>src/test/resources/suites/suites.xml</suiteXmlFile>
+                    </suiteXmlFiles>
+                </configuration>
+            </plugin>
         </plugins>
     </build>
 
     <dependencies>
         <dependency>
             <groupId>com.sikulix</groupId>
-            <artifactId>sikulixapi-complete</artifactId>
+            <artifactId>sikulixapi</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -80,16 +87,6 @@
             <groupId>commons-lang</groupId>
             <artifactId>commons-lang</artifactId>
             <version>2.6</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-exec</artifactId>
-            <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-grizzly2-http</artifactId>
-            <version>${jersey.version}</version>
         </dependency>
         <dependency>
             <groupId>org.glassfish.jersey.media</groupId>
@@ -105,6 +102,11 @@
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mrbean</artifactId>
             <version>1.9.13</version>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>6.8.7</version>
         </dependency>
     </dependencies>
 </project>

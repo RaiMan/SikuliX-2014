@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="sikulix suite">
+    <test name="Sikulix tests">
+        <classes>
+            <class name="com.sikulix.tests.CommandLineTests"/>
+            <class name="com.sikulix.tests.FileTransferTests"/>
+            <class name="com.sikulix.tests.SikuliXTests"/>
+        </classes>
+    </test>
+</suite>

@@ -1,4 +1,4 @@
-package com.sikulix.remoteserver.interfaces.common;
+package org.sikuli.remoteinterfaces.common;
 
 /**
  * Author: Sergey Kuts

@@ -1,6 +1,6 @@
 package com.sikulix.remoteserver.service;
 
-import com.sikulix.remoteserver.interfaces.entities.Image;
+import org.sikuli.remoteinterfaces.entities.Image;
 import com.sikulix.remoteserver.wrapper.RemoteDesktop;
 
 import javax.ws.rs.*;

@@ -54,14 +54,17 @@ public class FileTransferService {
     public StreamingOutput downloadFile(@QueryParam("fromPath") final String fromPath) {
         FILE_TRANSFER_LOGGER.info("Sending " + fromPath);
 
-        return outputStream -> {
-            try (final FileInputStream inputStream = new FileInputStream(new File(fromPath))) {
-                IOUtils.copy(inputStream, outputStream);
-                outputStream.flush();
+        return new StreamingOutput() {
+            @Override
+            public void write(final OutputStream outputStream) {
+                try (final FileInputStream inputStream = new FileInputStream(new File(fromPath))) {
+                    IOUtils.copy(inputStream, outputStream);
+                    outputStream.flush();
 
-                FILE_TRANSFER_LOGGER.info("File " + fromPath + " has been sent.");
-            } catch (NullPointerException | IOException e) {
-                FILE_TRANSFER_LOGGER.severe("An error occurred while stream copying: " + e.getMessage());
+                    FILE_TRANSFER_LOGGER.info("File " + fromPath + " has been sent.");
+                } catch (NullPointerException | IOException e) {
+                    FILE_TRANSFER_LOGGER.severe("An error occurred while stream copying: " + e.getMessage());
+                }
             }
         };
     }

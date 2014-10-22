@@ -1,7 +1,6 @@
 package com.sikulix.tests;
 
-import com.sikulix.remoteserver.client.Client;
-import com.sikulix.remoteserver.interfaces.common.Sikulix;
+import com.sikulix.entities.BaseTest;
 import org.apache.commons.io.FileUtils;
 import org.testng.annotations.*;
 
@@ -14,12 +13,7 @@ import static org.testng.Assert.assertTrue;
 /**
  * Author: Sergey Kuts
  */
-public class FileTransferTests {
-
-    // You should set real IP, instead of localhost
-    private static final String SIKULIX_SERVER_IP = "127.0.0.1";
-    private static final int SIKULIX_SERVER_PORT = 4041;
-    private static final String RESOURCE_IMAGE = "buttonStart.png";
+public class FileTransferTests extends BaseTest {
 
     private File filePath;
     private File copyToServerPath;
@@ -27,13 +21,10 @@ public class FileTransferTests {
     private File serverFilePath;
     private File clientFilePath;
 
-    private Sikulix sikuliXClient;
-
     @BeforeClass
-    public void init() throws URISyntaxException, IOException {
-        sikuliXClient = new Client(SIKULIX_SERVER_IP, SIKULIX_SERVER_PORT);
+    public void init() throws IOException {
 
-        filePath = new File(ClassLoader.getSystemResource(RESOURCE_IMAGE).toURI());
+        filePath = getResource(RESOURCE_BUTTON_IMAGE);
         copyToServerPath = new File(filePath.getParent() + "\\server");
         copyToClientPath = new File(filePath.getParent() + "\\client");
         serverFilePath = new File(copyToServerPath.getPath() + "\\" + filePath.getName());
@@ -53,20 +44,13 @@ public class FileTransferTests {
 
     @Test(priority = 1)
     public void uploadFile() {
-        sikuliXClient.uploadFile(filePath.getPath(), copyToServerPath.getPath());
+        getClient().uploadFile(filePath.getPath(), copyToServerPath.getPath());
         assertTrue(serverFilePath.exists());
     }
 
     @Test(priority = 2)
     public void downloadFile() {
-        sikuliXClient.downloadFile(serverFilePath.getPath(), copyToClientPath.getPath());
+        getClient().downloadFile(serverFilePath.getPath(), copyToClientPath.getPath());
         assertTrue(clientFilePath.exists());
-    }
-
-    @AfterClass
-    public void disposeClient() {
-        if (sikuliXClient != null) {
-            sikuliXClient.close();
-        }
     }
 }

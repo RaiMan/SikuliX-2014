@@ -1,46 +1,57 @@
 RESTful SikuliX client-server
 ======
 
-Implemented via java 8, maven, grizzly-http-server, jersey client, sikulixapi, apache commons utils and testng.
+Implemented via maven, grizzly-http-server, sikulixapi and apache commons utils.
 
-Main usage: remote SikuliX control, bi-directional file transferring and command line execution.
+Main usage: remote Sikulix server provides useful services for common sikulixapi actions, bi-directional file transferring and command line execution.
 
-Sources contain the following content: 
- 
- - Common interfaces for Sikuli, IO and Cmd + Image and Command entities.
+Source code provides the following content:
+
  - Grizzly http server with custom configuration.
- - Services for processing Sikuli, IO and Cmd http requests.
+ - Services for processing Sikulix, IO and Cmd http requests.
  - CommandLine utility class, that uses commons-exec library for flexible cmd control.
- - RemoteDesktop - SikuliX wrapper for common click / type / exists APIs. Uses observers mechanism to allow flexible elements' waiting.
- - Embedded REST Jersey 2.x client, that implements common interfaces for further sending http requests to remote server.
- - Sample tests, that use embedded resources for bi-directional file transferring, batch files execution and common sikuli actions checking.
+ - RemoteDesktop - Sikulix wrapper for common click / type / exists APIs. Uses observers mechanism to allow flexible elements' waiting.
 
-Note: batch files' extension in resources should be changed from 'txt' to 'bat' (updated due to security reasons). 
+To build remote server use the following command: `mvn clean install`.
+Note that it depends on `sikulixapi`, so you must build appropriate dependencies first or provide your own version reference.
  
-Sample REST request for typing text, and appropriate service looks like the following:
+Sample sikulix, command line and file transfer services look like the following:
+
 ```java
-    public void setText(final Image image, final String text, final int timeout) {
-        final Response response = service.path("image")
-                .path("setText")
-                .queryParam("text", text)
-                .queryParam("timeout", timeout)
-                .request(MediaType.APPLICATION_JSON)
-                .post(Entity.json(image));
 
-        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            CLIENT_LOGGER.info("Text '" + escapeJava(text) + "' has been set to " + image.getValues());
-        } else {
-            CLIENT_LOGGER.severe("Unable to set text '" + text + "' to " + image.getValues());
-        }
+    @POST
+    @Path("/click")
+    public Response click(final Image image, @QueryParam("timeout") final int timeout) {
+        return Response.status(new RemoteDesktop().click(image, timeout) ?
+                Response.Status.OK : Response.Status.NOT_FOUND).build();
+    }
 
-        response.close();
+    @Path("/download")
+    @GET
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public StreamingOutput downloadFile(@QueryParam("fromPath") final String fromPath) {
+        FILE_TRANSFER_LOGGER.info("Sending " + fromPath);
+
+        return new StreamingOutput() {
+            @Override
+            public void write(final OutputStream outputStream) {
+                try (final FileInputStream inputStream = new FileInputStream(new File(fromPath))) {
+                    IOUtils.copy(inputStream, outputStream);
+                    outputStream.flush();
+
+                    FILE_TRANSFER_LOGGER.info("File " + fromPath + " has been sent.");
+                } catch (NullPointerException | IOException e) {
+                    FILE_TRANSFER_LOGGER.severe("An error occurred while stream copying: " + e.getMessage());
+                }
+            }
+        };
     }
 
     @POST
-    @Path("/setText")
-    public Response setText(final Image image, @QueryParam("text") final String text,
-                            @QueryParam("timeout") final int timeout) {
-        return Response.status(new RemoteDesktop().setText(image, text, timeout) ?
-                Response.Status.OK : Response.Status.NOT_FOUND).build();
-    }	
+    @Path("/execute")
+    public Response execute(final Command command) {
+        return Response.status(CommandLineUtils.executeCommandLine(command) != -1 ?
+                Response.Status.OK : Response.Status.INTERNAL_SERVER_ERROR)
+                .build();
+    }
 ```

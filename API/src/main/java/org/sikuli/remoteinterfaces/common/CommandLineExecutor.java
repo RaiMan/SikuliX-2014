@@ -1,6 +1,6 @@
-package com.sikulix.remoteserver.interfaces.common;
+package org.sikuli.remoteinterfaces.common;
 
-import com.sikulix.remoteserver.interfaces.entities.Command;
+import org.sikuli.remoteinterfaces.entities.Command;
 
 /**
  * Author: Sergey Kuts

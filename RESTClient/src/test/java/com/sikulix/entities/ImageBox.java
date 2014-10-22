@@ -1,7 +1,7 @@
 package com.sikulix.entities;
 
 
-import com.sikulix.remoteserver.interfaces.entities.Image;
+import org.sikuli.remoteinterfaces.entities.Image;
 
 /**
  * Author: Sergey Kuts
@@ -22,5 +22,10 @@ public class ImageBox implements Image {
 
     public float getSimilarity() {
         return similarity;
+    }
+
+    public String toString() {
+        return "[image path = " + getPath() +
+                "; similarity = " + getSimilarity() + "]";
     }
 }

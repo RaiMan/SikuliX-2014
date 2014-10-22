@@ -1,6 +1,6 @@
 package com.sikulix.remoteserver.service;
 
-import com.sikulix.remoteserver.interfaces.entities.Command;
+import org.sikuli.remoteinterfaces.entities.Command;
 import com.sikulix.remoteserver.utils.CommandLineUtils;
 
 import javax.ws.rs.*;

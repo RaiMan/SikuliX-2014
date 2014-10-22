@@ -133,6 +133,8 @@
 		<module>IDEPlus</module>
 		<module>Setup</module>
 		<module>RemoteRobot</module>
+		<module>RemoteServer</module>
+		<module>RESTClient</module>
 		<module>TestRunMaven</module>
 	</modules>
 
