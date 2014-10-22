@@ -19,7 +19,7 @@ Important notes:
  - Tests are `disabled by default` to avoid unexpected failures during project building. Set `skipTests=false` in `pom.xml` to enable them.
  - Tests were created `only for Windows OS`. Feel free to add your own for Unix and Mac.
  - Explore `resources folder` before test execution: batch files' extension should be changed from `txt` to `bat`; you will probably need to replace images with your own.
- - `RemoteServer` should started before test execution: `java -jar sikulixremoteserver-1.1.0-jar-with-dependencies.jar port`.
+ - `RemoteServer` should be started before test execution: `java -jar sikulixremoteserver-1.1.0-jar-with-dependencies.jar port`. You can skip port to use default one - 4041.
  - `SIKULI_SERVER_IP` / `SIKULIX_SERVER_PORT` should be changed according to your server's configuration.
  
 REST call example for setting some text into particular image element:
@@ -44,7 +44,7 @@ REST call example for setting some text into particular image element:
     }
 ```
 
-And appropriate test to click Start button, type `cmd` into search field, press Enter and verify that command line is opened.
+And appropriate test to click `Start` button, type `cmd` into search field, press `Enter` and verify that command line is opened.
 
 ```java
 

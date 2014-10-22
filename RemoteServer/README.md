@@ -3,7 +3,7 @@ RESTful SikuliX client-server
 
 Implemented via maven, grizzly-http-server, sikulixapi and apache commons utils.
 
-Main usage: remote Sikulix server, that provides useful services for common sikulixapi actions, bi-directional file transferring and command line execution.
+Main usage: remote Sikulix server provides useful services for common sikulixapi actions, bi-directional file transferring and command line execution.
 
 Source code provides the following content:
 
@@ -13,7 +13,7 @@ Source code provides the following content:
  - RemoteDesktop - Sikulix wrapper for common click / type / exists APIs. Uses observers mechanism to allow flexible elements' waiting.
 
 To build remote server use the following command: `mvn clean install`.
-Note that it depends on `sikulixapi`, so you should build appropriate dependencies first or provide your own version reference.
+Note that it depends on `sikulixapi`, so you must build appropriate dependencies first or provide your own version reference.
  
 Sample sikulix, command line and file transfer services look like the following:
 
