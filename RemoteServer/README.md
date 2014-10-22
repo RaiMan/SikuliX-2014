@@ -1,4 +1,4 @@
-RESTful SikuliX client-server
+Remote SikuliX server
 ======
 
 Implemented via maven, grizzly-http-server, sikulixapi and apache commons utils.
@@ -14,6 +14,8 @@ Source code provides the following content:
 
 To build remote server use the following command: `mvn clean install`.
 Note that it depends on `sikulixapi`, so you must build appropriate dependencies first or provide your own version reference.
+
+To run remote server use the following command: `java -jar sikulixremoteserver-1.1.0-jar-with-dependencies.jar port`. You can skip port argument to use default one - 4041.
  
 Sample sikulix, command line and file transfer services look like the following:
 
