@@ -45,7 +45,7 @@ public class BaseTest {
         }
     }
 
-    public static Sikulix getClient() {
+    public Sikulix getClient() {
         return sikuliXClient;
     }
 
