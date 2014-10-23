@@ -5,7 +5,7 @@ import org.sikuli.remoteinterfaces.entities.Image;
 /**
  * Author: Sergey Kuts
  */
-public interface Sikulix extends CommandLineExecutor, FileTransporter {
+public interface Sikulix extends CommandLineExecutor, FileProcessor {
 
     void click(final Image image, final int timeout);
 

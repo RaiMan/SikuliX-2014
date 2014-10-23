@@ -1,7 +1,6 @@
 package com.sikulix.remoteserver.utils;
 
 import org.sikuli.remoteinterfaces.entities.Command;
-import com.sikulix.remoteserver.wrapper.ExecutionLogger;
 import org.apache.commons.exec.*;
 
 import java.io.IOException;
@@ -13,11 +12,11 @@ import static org.apache.commons.exec.util.StringUtils.quoteArgument;
 /**
  * Author: Sergey Kuts
  */
-public final class CommandLineUtils {
+public final class CommandLineUtility {
 
-    private static final Logger CMD_LOGGER = Logger.getLogger(CommandLineUtils.class.getName());
+    private static final Logger CMD_LOGGER = Logger.getLogger(CommandLineUtility.class.getName());
 
-    private CommandLineUtils() {
+    private CommandLineUtility() {
     }
 
     public static int executeCommandLine(final Command command) {
@@ -65,6 +64,20 @@ public final class CommandLineUtils {
 
         public int getExitValue() {
             return hasResult() ? super.getExitValue() : exitValue;
+        }
+    }
+
+    private static class ExecutionLogger extends LogOutputStream {
+
+        private Logger logger;
+
+        public ExecutionLogger(final Logger logger, final Level logLevel) {
+            super(logLevel.intValue());
+            this.logger = logger;
+        }
+
+        protected void processLine(final String line, final int level) {
+            logger.log(logger.getLevel(), line);
         }
     }
 }

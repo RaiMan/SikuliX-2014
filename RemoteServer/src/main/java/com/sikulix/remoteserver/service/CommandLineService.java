@@ -1,7 +1,7 @@
 package com.sikulix.remoteserver.service;
 
+import com.sikulix.remoteserver.utils.CommandLineUtility;
 import org.sikuli.remoteinterfaces.entities.Command;
-import com.sikulix.remoteserver.utils.CommandLineUtils;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -18,7 +18,7 @@ public class CommandLineService {
     @POST
     @Path("/execute")
     public Response execute(final Command command) {
-        return Response.status(CommandLineUtils.executeCommandLine(command) != -1 ?
+        return Response.status(CommandLineUtility.executeCommandLine(command) != -1 ?
                 Response.Status.OK : Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
     }
