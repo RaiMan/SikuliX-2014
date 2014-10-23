@@ -817,6 +817,8 @@ public class ResourceLoader {
       } else {
         lib = mappedlib;
         log(lvl, "Linux: %s \nnot bundled - trying to load from system paths", lib);
+//TODO try to find it on LD_LIBRARY_PATH
+				Sikulix.terminate(109);
       }
     } else {
       log(lvl + 1, "Found: " + libname + " at " + lib);

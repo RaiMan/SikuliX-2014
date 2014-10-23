@@ -1177,5 +1177,20 @@ public class FileManager {
 	public static boolean pathEquals(String path1, String path2) {
     return (new File(path1)).equals(new File(path2));
   }
+
+	public static boolean checkPrereqs() {
+		if (Settings.isLinux()) {
+			return checkPrereqsLux();
+		} else if (Settings.isWindows()) {
+			return true;
+		} else if (Settings.isMac()) {
+			return true;
+		}
+		return true;
+	}
+
+	public static boolean checkPrereqsLux() {
+		return true;
+	}
 }
 

@@ -156,8 +156,8 @@ public class RunSetup {
    if (codeSrc != null && codeSrc.getLocation() != null) {
       runningJarURL = codeSrc.getLocation();
     } else {
-      log(-1, "Fatal Error 101: Not possible to accessjar file for RunSetup.class");
-      Sikulix.terminate(101);
+      log(-1, "Fatal Error 201: Not possible to accessjar file for RunSetup.class");
+      Sikulix.terminate(201);
     }
 
     if (Settings.SikuliVersionBetaN > 0 && Settings.SikuliVersionBetaN < 99) {
@@ -651,6 +651,10 @@ public class RunSetup {
     }
     if (!test) {
       if (!isUpdateSetup) {
+				if (!FileManager.checkPrereqs()) {
+		      log(-1, "Fatal Error 202: some prereqs are not available");
+					Sikulix.terminate(202);
+				}
         popInfo("Please read carefully before proceeding!!");
         winSetup = new JFrame("SikuliX-Setup");
         Border rpb = new LineBorder(Color.YELLOW, 8);
@@ -1026,12 +1030,13 @@ public class RunSetup {
 		if (Settings.isLinux()) {
 			File linuxLibsDir = new File(workDir, "libs");
 			linuxLibsDir.mkdir();
-			if (popAsk("If you have prepared your own libVisionProxy.so,\n"
-							+ "then place a copy of it into the folder libs at:\n"
-							+  linuxLibsDir.getAbsolutePath() + "\n"
-							+ "Click YES if you have (be sure, it is there)\n"
+			if (popAsk("If you want/need to build\n"
+							+ "or have already built your own libVisionProxy.so,\n"
+							+ "Then Click YES\n"
 							+ "Click NO to pack the bundled libs to the jars.")) {
 				shouldPackLibs = false;
+//							+ "then place a copy of it into the folder libs at:\n"
+//							+  linuxLibsDir.getAbsolutePath() + "\n"
 			}
       if (test) {
         shouldPackLibs = true;
