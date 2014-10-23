@@ -19,30 +19,26 @@ externals=stuff/_ext/VisionProxy
 rm -f -R $externals
 mkdir -p $externals
 
-# the compile steps
-echo -- cvgui
-g++ -c -O3 -fPIC -MMD -MP -MF $externals/cvgui.o.d $includeParm -o $externals/cvgui.o $src/Vision/cvgui.cpp
+list=(
+  cvgui.cpp
+  finder.cpp
+  pyramid-template-matcher.cpp
+  sikuli-debug.cpp
+  tessocr.cpp
+  vision.cpp
+  visionJAVA_wrap.cxx
+)
 
-echo -- finder
-g++ -c -O3 -fPIC -MMD -MP -MF $externals/finder.o.d $includeParm -o $externals/finder.o $src/Vision/finder.cpp
+link_str="g++ -shared -s -fPIC -dynamic $(pkg-config --libs opencv tesseract) -o libVisionProxy.so "
 
-echo -- pyramid-template-matcher
-g++ -c -O3 -fPIC -MMD -MP -MF $externals/pyramid-template-matcher.o.d $includeParm -o $externals/pyramid-template-matcher.o $src/Vision/pyramid-template-matcher.cpp
-
-echo -- sikuli-debug
-g++ -c -O3 -fPIC -MMD -MP -MF $externals/sikuli-debug.o.d $includeParm -o $externals/sikuli-debug.o $src/Vision/sikuli-debug.cpp
-
-echo -- tessocr
-g++ -c -O3 -fPIC -MMD -MP -MF $externals/tessocr.o.d $includeParm -o $externals/tessocr.o $src/Vision/tessocr.cpp
-
-echo -- vision
-g++ -c -O3 -fPIC -MMD -MP -MF $externals/vision.o.d $includeParm -o $externals/vision.o $src/Vision/vision.cpp
-
-echo -- visionJAVA_wrap
-g++ -c -O3 -fPIC -MMD -MP -MF $externals/visionJAVA_wrap.o.d $includeParm -o $externals/visionJAVA_wrap.o $src/Vision/visionJAVA_wrap.cxx
+for fn in "${list[@]}"; do
+  echo "--  $fn"
+  g++ -c -O3 -fPIC -MMD -MP -MF $externals/$fn.o.d $includeParm -o $externals/$fn.o $src/Vision/$fn
+  link_str+=" $externals/$fn.o "
+done
 
 echo -- finally linking
-g++  -shared -s -fPIC -dynamic $(pkg-config --libs opencv tesseract) -o libVisionProxy.so $externals/cvgui.o $externals/finder.o $externals/pyramid-template-matcher.o $externals/sikuli-debug.o $externals/tessocr.o $externals/vision.o $externals/visionJAVA_wrap.o
+eval $link_str
 
 if [ -e libVisionProxy.so ]; then
   echo -- created libVisionProxy.so
