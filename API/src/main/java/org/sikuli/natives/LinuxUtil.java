@@ -6,7 +6,6 @@
  */
 package org.sikuli.natives;
 
-import org.sikuli.natives.OSUtil;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.io.*;
