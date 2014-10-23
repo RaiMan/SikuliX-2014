@@ -230,6 +230,7 @@ public class RunSetup {
       }
     }
 
+//TODO add parameter for proxy settings, linux options
     if (args.length > 0 && "options".equals(args[0])) {
       options.remove(0);
 			if (!options.isEmpty()) {

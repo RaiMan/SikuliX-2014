@@ -43,6 +43,7 @@ public class Server {
   private static boolean isHandling = false;
   private static boolean shouldStop = false;
   
+//TODO set loglevel at runtime
   private static int logLevel = 0;
   private static void log(int lvl, String message, Object... args) {
     if (lvl < 0 || lvl >= logLevel) {
