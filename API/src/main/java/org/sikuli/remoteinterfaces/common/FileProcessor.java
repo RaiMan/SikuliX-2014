@@ -1,0 +1,19 @@
+package org.sikuli.remoteinterfaces.common;
+
+import java.util.List;
+
+/**
+ * Author: Sergey Kuts
+ */
+public interface FileProcessor {
+
+    void uploadFile(final List<String> filesPath, final String saveToPath);
+
+    void downloadFile(final String downloadFilePath, final String saveToPath);
+
+    void createFolder(final String path);
+
+    void delete(final String path);
+
+    boolean exists(final List<String> paths);
+}

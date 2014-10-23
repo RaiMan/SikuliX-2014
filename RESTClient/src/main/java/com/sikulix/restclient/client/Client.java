@@ -16,9 +16,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.*;
 import java.nio.file.Paths;
+import java.util.List;
 import java.util.logging.Logger;
 
 import static org.apache.commons.lang.StringEscapeUtils.escapeJava;
+
 /**
  * Author: Sergey Kuts
  */
@@ -27,16 +29,19 @@ public class Client implements Sikulix {
     private javax.ws.rs.client.Client client;
     private WebTarget service;
 
+    private String ip;
+
     private static final Logger CLIENT_LOGGER = Logger.getLogger(Client.class.getName());
 
     public Client(final String ip, final int port) {
-        client = ClientBuilder.newBuilder()
+        this.ip = ip;
+        this.client = ClientBuilder.newBuilder()
                 .register(ObjectMapperProvider.class)
                 .register(JacksonFeature.class)
                 .register(MultiPartFeature.class)
                 .build();
 
-        service = client.target("http://" + ip + ":" + port + "/sikuli");
+        this.service = this.client.target("http://" + this.ip + ":" + port + "/sikuli");
     }
 
     public void executeCommandLine(final Command command) {
@@ -46,19 +51,71 @@ public class Client implements Sikulix {
                 .post(Entity.json(command));
 
         if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            CLIENT_LOGGER.info("The following process has been finished: " + command);
+            CLIENT_LOGGER.info("The following process has been finished on " + ip + ": " + command);
         } else {
-            CLIENT_LOGGER.severe("Unable to finish the following process: " + command);
+            CLIENT_LOGGER.severe("Unable to finish the following process on " + ip + ": " + command);
         }
-
-        CLIENT_LOGGER.info("Status: " + response.getStatus());
 
         response.close();
     }
 
-    public void uploadFile(final String filePath, final String saveToPath) {
-        final MultiPart multiPart = new MultiPart(MediaType.MULTIPART_FORM_DATA_TYPE)
-                .bodyPart(new FileDataBodyPart("file", new File(filePath), MediaType.APPLICATION_OCTET_STREAM_TYPE));
+    public boolean exists(final List<String> paths) {
+        final Response response = service.path("file")
+                .path("exists")
+                .request(MediaType.APPLICATION_JSON)
+                .post(Entity.entity(paths, MediaType.APPLICATION_JSON_TYPE));
+
+        final boolean exists = response.getStatus() == Response.Status.OK.getStatusCode();
+
+        if (exists) {
+            CLIENT_LOGGER.info("The following file(-s) or folder(-s) exists on " + ip + ": " + paths);
+        } else {
+            CLIENT_LOGGER.severe("The following file(-s) or folder(-s) doesn't exist on " + ip + ": " + paths);
+        }
+
+        response.close();
+
+        return exists;
+    }
+
+    public void delete(final String path) {
+        final Response response = service.path("file")
+                .path("delete")
+                .queryParam("path", path)
+                .request(MediaType.APPLICATION_JSON)
+                .post(null);
+
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            CLIENT_LOGGER.info("The following file or folder has been deleted from " + ip + ": " + path);
+        } else {
+            CLIENT_LOGGER.severe("Unable to delete " + path + " from " + ip);
+        }
+
+        response.close();
+    }
+
+    public void createFolder(final String path) {
+        final Response response = service.path("file")
+                .path("createFolder")
+                .queryParam("path", path)
+                .request(MediaType.APPLICATION_JSON)
+                .post(null);
+
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            CLIENT_LOGGER.info(path + " has been created on " + ip);
+        } else {
+            CLIENT_LOGGER.severe("Unable to create " + path + " on " + ip);
+        }
+
+        response.close();
+    }
+
+    public void uploadFile(final List<String> filesPath, final String saveToPath) {
+        final MultiPart multiPart = new MultiPart(MediaType.MULTIPART_FORM_DATA_TYPE);
+
+        for (String path : filesPath) {
+            multiPart.bodyPart(new FileDataBodyPart("file", new File(path), MediaType.APPLICATION_OCTET_STREAM_TYPE));
+        }
 
         final Response response = service.path("file")
                 .path("upload")
@@ -67,9 +124,9 @@ public class Client implements Sikulix {
                 .post(Entity.entity(multiPart, multiPart.getMediaType()));
 
         if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            CLIENT_LOGGER.info("File " + filePath + " has been saved to " + saveToPath);
+            CLIENT_LOGGER.info("File(-s) " + filesPath + " has been saved to " + saveToPath + " on " + ip);
         } else {
-            CLIENT_LOGGER.severe("Unable to save a file " + filePath + " to " + saveToPath);
+            CLIENT_LOGGER.severe("Unable to save file(-s) " + filesPath + " to " + saveToPath + " on " + ip);
         }
 
         response.close();
@@ -89,9 +146,10 @@ public class Client implements Sikulix {
             IOUtils.copy(inputStream, fileOutputStream);
             fileOutputStream.flush();
 
-            CLIENT_LOGGER.info("File " + downloadFilePath + " has been saved to " + saveToPath);
+            CLIENT_LOGGER.info("File " + downloadFilePath + " has been saved to " + saveToPath + " on " + ip);
         } catch (NullPointerException | IOException e) {
-            CLIENT_LOGGER.severe("Unable to save a file " + downloadFilePath + " to " + saveToPath + ": " + e.getMessage());
+            CLIENT_LOGGER.severe("Unable to save a file " + downloadFilePath + " from " + ip +
+                    " to " + saveToPath + " on local VM: " + e.getMessage());
         }
     }
 
@@ -103,9 +161,9 @@ public class Client implements Sikulix {
                 .post(Entity.json(image));
 
         if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            CLIENT_LOGGER.info("Image " + image + " has been clicked.");
+            CLIENT_LOGGER.info("Image " + image + " has been clicked on " + ip);
         } else {
-            CLIENT_LOGGER.severe("Unable to click image " + image);
+            CLIENT_LOGGER.severe("Unable to click image " + image +  " on " + ip);
         }
 
         response.close();
@@ -122,9 +180,9 @@ public class Client implements Sikulix {
         response.close();
 
         if (exists) {
-            CLIENT_LOGGER.info("Image " + image + " exists.");
+            CLIENT_LOGGER.info("Image " + image + " exists on " + ip);
         } else {
-            CLIENT_LOGGER.severe("Unable to find image " + image);
+            CLIENT_LOGGER.severe("Unable to find image " + image + " on " + ip);
         }
 
         return exists;
@@ -139,9 +197,9 @@ public class Client implements Sikulix {
                 .post(Entity.json(image));
 
         if (response.getStatus() == Response.Status.OK.getStatusCode()) {
-            CLIENT_LOGGER.info("Text '" + escapeJava(text) + "' has been set to " + image);
+            CLIENT_LOGGER.info("Text '" + escapeJava(text) + "' has been set to " + image + " on " + ip);
         } else {
-            CLIENT_LOGGER.severe("Unable to set text '" + escapeJava(text) + "' to " + image);
+            CLIENT_LOGGER.severe("Unable to set text '" + escapeJava(text) + "' to " + image + " on " + ip);
         }
 
         response.close();

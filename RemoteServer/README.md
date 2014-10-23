@@ -9,7 +9,8 @@ Source code provides the following content:
 
  - Grizzly http server with custom configuration.
  - Services for processing Sikulix, IO and Cmd http requests.
- - CommandLine utility class, that uses commons-exec library for flexible cmd control.
+ - CommandLineUtility class, that uses commons-exec library for flexible cmd control.
+ - FileUtility class provides some sample APIs for remote file system control.
  - RemoteDesktop - Sikulix wrapper for common click / type / exists APIs. Uses observers mechanism to allow flexible elements' waiting.
 
 To build remote server use the following command: `mvn clean install`.
@@ -56,4 +57,10 @@ Sample sikulix, command line and file transfer services look like the following:
                 Response.Status.OK : Response.Status.INTERNAL_SERVER_ERROR)
                 .build();
     }
+    
+    @POST
+    @Path("/delete")
+    public Response delete(@QueryParam("path") final String path) {
+        return Response.status(FileUtility.delete(path) ? Response.Status.OK : Response.Status.NOT_FOUND).build();
+    }    
 ```

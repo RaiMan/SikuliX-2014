@@ -6,7 +6,8 @@ import org.testng.annotations.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.testng.Assert.assertTrue;
 
@@ -15,42 +16,46 @@ import static org.testng.Assert.assertTrue;
  */
 public class FileTransferTests extends BaseTest {
 
-    private File filePath;
-    private File copyToServerPath;
-    private File copyToClientPath;
-    private File serverFilePath;
-    private File clientFilePath;
+    private File button;
+    private File input;
+    private File label;
+
+    private List<String> localPaths;
+    private List<String> remotePaths;
 
     @BeforeClass
     public void init() throws IOException {
+        button = getResource(RESOURCE_BUTTON_IMAGE);
+        input = getResource(RESOURCE_INPUT_IMAGE);
+        label = getResource(RESOURCE_LABEL_IMAGE);
 
-        filePath = getResource(RESOURCE_BUTTON_IMAGE);
-        copyToServerPath = new File(filePath.getParent() + "\\server");
-        copyToClientPath = new File(filePath.getParent() + "\\client");
-        serverFilePath = new File(copyToServerPath.getPath() + "\\" + filePath.getName());
-        clientFilePath = new File(copyToClientPath.getPath() + "\\" + filePath.getName());
+        localPaths = Arrays.asList(button.getPath(), input.getPath(), label.getPath());
+        remotePaths = Arrays.asList(IMAGES_PATH + "\\" + button.getName(),
+                IMAGES_PATH + "\\" + input.getName(), IMAGES_PATH + "\\" + label.getName());
 
-        if (copyToServerPath.exists()) {
-            FileUtils.deleteDirectory(copyToServerPath);
+        if (getClient().exists(Arrays.asList(IMAGES_PATH))) {
+            getClient().delete(IMAGES_PATH);
         }
 
-        if (copyToClientPath.exists()) {
-            FileUtils.deleteDirectory(copyToClientPath);
+        getClient().createFolder(IMAGES_PATH);
+
+        final File localFolder = new File(IMAGES_PATH);
+        if (localFolder.exists()) {
+            FileUtils.forceDelete(localFolder);
         }
 
-        copyToServerPath.mkdir();
-        copyToClientPath.mkdir();
+        FileUtils.forceMkdir(localFolder);
     }
 
     @Test(priority = 1)
-    public void uploadFile() {
-        getClient().uploadFile(filePath.getPath(), copyToServerPath.getPath());
-        assertTrue(serverFilePath.exists());
+    public void uploadFiles() {
+        getClient().uploadFile(localPaths, IMAGES_PATH);
+        assertTrue(getClient().exists(remotePaths));
     }
 
     @Test(priority = 2)
     public void downloadFile() {
-        getClient().downloadFile(serverFilePath.getPath(), copyToClientPath.getPath());
-        assertTrue(clientFilePath.exists());
+        getClient().downloadFile(remotePaths.get(0), IMAGES_PATH);
+        assertTrue(new File(IMAGES_PATH + "\\" + button.getName()).exists());
     }
 }

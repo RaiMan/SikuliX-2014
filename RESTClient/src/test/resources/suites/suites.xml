@@ -5,7 +5,7 @@
         <classes>
             <class name="com.sikulix.tests.CommandLineTests"/>
             <class name="com.sikulix.tests.FileTransferTests"/>
-            <class name="com.sikulix.tests.SikuliXTests"/>
+            <class name="com.sikulix.tests.IntegrationTests"/>
         </classes>
     </test>
 </suite>

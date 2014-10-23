@@ -18,12 +18,15 @@ public class BaseTest {
     public static final String SIKULIX_SERVER_IP = "127.0.0.1";
     public static final int SIKULIX_SERVER_PORT = 4041;
     // Don't forget to change resource batches' extension from .txt to .bat
-    public static final String RESOURCE_FILE = "batches/runner.bat";
+    public static final String RESOURCE_RUNNER_BATCH = "batches/runner.bat";
+    public static final String RESOURCE_SAMPLE_BATCH = "batches/sampleBatch.bat";
     public static final String RESOURCE_BUTTON_IMAGE = "images/buttonStart.png";
     public static final String RESOURCE_LABEL_IMAGE = "images/labelAdministrator.png";
     public static final String RESOURCE_INPUT_IMAGE = "images/inputFindFiles.png";
     public static final String EMPTY_FILE = "EmptyFile.txt";
-    public static final int WAIT_TIMEOUT = 5;
+    public static final String IMAGES_PATH = "c:\\temp\\images";
+    public static final String BATCHES_PATH = "c:\\temp\\batches";
+    public static final int WAIT_TIMEOUT = 3;
     public static final float SIMILARITY = 0.9f;
 
     private static final Logger BASE_TEST_LOGGER = Logger.getLogger(BaseTest.class.getName());
@@ -56,9 +59,5 @@ public class BaseTest {
             BASE_TEST_LOGGER.severe("Unable to get URI from resource " + resourceName + ": " + e.getMessage());
             return null;
         }
-    }
-
-    public String getResourcePath(final String resourceName) {
-        return ClassLoader.getSystemResource(resourceName).getPath();
     }
 }
