@@ -11,7 +11,7 @@ public class ImageBox implements Image {
     private String path;
     private float similarity;
 
-    public ImageBox(String path, float similarity) {
+    public ImageBox(final String path, final float similarity) {
         this.path = path;
         this.similarity = similarity;
     }
