@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.BeforeClass;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.Settings;
 
 public class APITest {
 
@@ -17,7 +18,7 @@ public class APITest {
 		if (!Sikulix.canRun()) {
 			Debug.test("ERROR: running headless - all tests will be skipped while showing success");
 		} else {
-			s = Sikulix.init();
+			if (! Settings.isLinux()) s = Sikulix.init();
 		}
     Debug.test("APITest: init: ending");
   }
