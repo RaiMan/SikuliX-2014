@@ -79,7 +79,7 @@
 				<updatePolicy>never</updatePolicy>
 			</snapshots>
 		</repository>
-		<repository> <!-- Tesseract4SikuliX: java/dev/jai-imageio/jai-imageio-core-standalone/1.2 -->
+<!--		<repository>  Tesseract4SikuliX: java/dev/jai-imageio/jai-imageio-core-standalone/1.2
 			<releases/>
 			<snapshots>
 				<enabled>false</enabled>
@@ -87,7 +87,7 @@
 			<id>mygrid-repository</id>
 			<name>myGrid Repository</name>
 			<url>http://www.mygrid.org.uk/maven/repository</url>
-		</repository>
+		</repository>-->
 	</repositories>
 
 	<dependencies>
