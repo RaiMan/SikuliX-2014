@@ -2,14 +2,11 @@ package com.sikulix.tests;
 
 import com.sikulix.entities.BaseTest;
 import com.sikulix.entities.CommandLineBox;
-import org.apache.commons.io.FileUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 

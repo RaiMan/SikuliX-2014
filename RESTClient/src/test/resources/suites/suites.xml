@@ -6,6 +6,7 @@
             <class name="com.sikulix.tests.CommandLineTests"/>
             <class name="com.sikulix.tests.FileTransferTests"/>
             <class name="com.sikulix.tests.IntegrationTests"/>
+            <class name="com.sikulix.tests.LinuxTests"/>
         </classes>
     </test>
 </suite>
