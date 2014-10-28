@@ -3,9 +3,7 @@
 <suite name="sikulix suite">
     <test name="Sikulix tests">
         <classes>
-            <class name="com.sikulix.tests.CommandLineTests"/>
-            <class name="com.sikulix.tests.FileTransferTests"/>
-            <class name="com.sikulix.tests.IntegrationTests"/>
+            <class name="com.sikulix.tests.WindowsTests"/>
             <class name="com.sikulix.tests.LinuxTests"/>
         </classes>
     </test>

@@ -18,7 +18,7 @@ Note that it depends on `sikulixapi`, so you must build appropriate dependencies
 
 To run remote server use the following command: `java -jar sikulixremoteserver-1.1.0-jar-with-dependencies.jar port`. You can skip port argument to use default one - 4041.
  
-Sample sikulix, command line and file transfer services look like the following:
+Sample sikulix, command-line and file transfer services look like the following:
 
 ```java
 
@@ -33,18 +33,16 @@ Sample sikulix, command line and file transfer services look like the following:
     @GET
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
     public StreamingOutput downloadFile(@QueryParam("fromPath") final String fromPath) {
-        FILE_TRANSFER_LOGGER.info("Sending " + fromPath);
-
         return new StreamingOutput() {
             @Override
             public void write(final OutputStream outputStream) {
-                try (final FileInputStream inputStream = new FileInputStream(new File(fromPath))) {
+                try (final FileInputStream inputStream = new FileInputStream(new File(separatorsToSystem(fromPath)))) {
                     IOUtils.copy(inputStream, outputStream);
                     outputStream.flush();
 
-                    FILE_TRANSFER_LOGGER.info("File " + fromPath + " has been sent.");
+                    IO_LOGGER.info("File " + separatorsToSystem(fromPath) + " has been sent.");
                 } catch (NullPointerException | IOException e) {
-                    FILE_TRANSFER_LOGGER.severe("An error occurred while stream copying: " + e.getMessage());
+                    IO_LOGGER.severe("An error occurred while stream copying: " + e.getMessage());
                 }
             }
         };

@@ -21,17 +21,15 @@ public class BaseTest {
     // Don't forget to change resource batches' extension from .txt to .bat
     public static final String RESOURCE_RUNNER_BATCH = "batches/runner.bat";
     public static final String RESOURCE_SAMPLE_BATCH = "batches/sampleBatch.bat";
-    public static final String RESOURCE_BUTTON_IMAGE = "images/buttonStart.png";
-    public static final String RESOURCE_LABEL_IMAGE = "images/labelAdministrator.png";
-    public static final String RESOURCE_INPUT_IMAGE = "images/inputFindFiles.png";
+    public static final String RESOURCE_BUTTON_START_IMAGE = "images/buttonStart.png";
+    public static final String RESOURCE_INPUT_FIND_FILES_IMAGE = "images/inputFindFiles.png";
+    public static final String RESOURCE_INPUT_CMD_IMAGE = "images/inputCmd.png";
     public static final String RESOURCE_TERMINAL_IMAGE = "images/terminal.png";
     public static final String RESOURCE_INPUT_TERMINAL_IMAGE = "images/inputTerminal.png";
     public static final String RESOURCE_LABEL_FF_IMAGE = "images/labelFF.png";
     public static final String RESOURCE_SH_SCRIPT = "sh/script.sh";
 
     public static final String EMPTY_FILE = "empty.txt";
-    public static final String IMAGES_PATH = "c:\\temp\\images";
-    public static final String BATCHES_PATH = "c:\\temp\\batches";
 
     public static final int WAIT_TIMEOUT = 3;
     public static final float SIMILARITY = 0.9f;

@@ -11,16 +11,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 
-import static org.testng.Assert.*;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 
 /**
  * Author: Sergey Kuts
  */
-public class LinuxTests extends BaseTest {
+public class WindowsTests extends BaseTest {
 
-    private static final File SERVER_PATH = new File(System.getProperty("user.home") + "/server");
-    private static final File CLIENT_PATH = new File(System.getProperty("user.home") + "/client");
-    private static final File SH_SCRIPT = getResource(RESOURCE_SH_SCRIPT);
+    private static final File SERVER_PATH = new File(System.getenv("TMP") + "/server");
+    private static final File CLIENT_PATH = new File(System.getenv("TMP") + "/client");
+    private static final File BATCH_RUNNER_SCRIPT = getResource(RESOURCE_RUNNER_BATCH);
+    private static final File BATCH_SAMPLE_SCRIPT = getResource(RESOURCE_SAMPLE_BATCH);
 
     @Test(priority = 1)
     public void recreateFolders() throws IOException {
@@ -44,14 +46,15 @@ public class LinuxTests extends BaseTest {
 
     @Test(priority = 2)
     public void uploadFileToServer() {
-        getClient().uploadFile(Arrays.asList(SH_SCRIPT.getPath()), SERVER_PATH.getPath());
-        assertTrue(getClient().exists(Arrays.asList(SERVER_PATH.getPath() + "/" + SH_SCRIPT.getName())));
+        getClient().uploadFile(Arrays.asList(BATCH_RUNNER_SCRIPT.getPath(), BATCH_SAMPLE_SCRIPT.getPath()), SERVER_PATH.getPath());
+        assertTrue(getClient().exists(Arrays.asList(SERVER_PATH.getPath() + "/" + BATCH_RUNNER_SCRIPT.getName(),
+                SERVER_PATH.getPath() + "/" + BATCH_SAMPLE_SCRIPT.getName())));
     }
 
     @Test(priority = 3)
     public void executeScript() {
-        getClient().executeCommandLine(
-                new CommandLineBox("sh", Arrays.asList(SERVER_PATH.getPath() + "/" + SH_SCRIPT.getName()), WAIT_TIMEOUT));
+        getClient().executeCommandLine(new CommandLineBox(SERVER_PATH.getPath() + "/" + BATCH_RUNNER_SCRIPT.getName(),
+                Arrays.asList("arg1", "arg2", "arg3"), WAIT_TIMEOUT));
         assertTrue(getClient().exists(Arrays.asList(SERVER_PATH.getPath() + "/" + EMPTY_FILE)));
     }
 
@@ -62,10 +65,10 @@ public class LinuxTests extends BaseTest {
     }
 
     @Test(priority = 5)
-    public void callFirefoxFromTerminal() {
-        getClient().click(new ImageBox(getResource(RESOURCE_TERMINAL_IMAGE).getPath(), SIMILARITY), 3);
-        getClient().setText(new ImageBox(getResource(RESOURCE_INPUT_TERMINAL_IMAGE).getPath(), SIMILARITY),
-                "firefox" + Key.ENTER, 3);
-        getClient().exists(new ImageBox(getResource(RESOURCE_LABEL_FF_IMAGE).getPath(), SIMILARITY), 5);
+    public void callCommandLineFromStartMenu() {
+        getClient().click(new ImageBox(getResource(RESOURCE_BUTTON_START_IMAGE).getPath(), SIMILARITY), WAIT_TIMEOUT);
+        getClient().setText(new ImageBox(getResource(RESOURCE_INPUT_FIND_FILES_IMAGE).getPath(), SIMILARITY),
+                "cmd" + Key.ENTER, WAIT_TIMEOUT);
+        assertTrue(getClient().exists(new ImageBox(getResource(RESOURCE_INPUT_CMD_IMAGE).getPath(), SIMILARITY), WAIT_TIMEOUT));
     }
 }
