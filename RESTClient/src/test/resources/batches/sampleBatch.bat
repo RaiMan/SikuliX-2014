@@ -1,6 +1,6 @@
 @echo off
 
-echo. 2>EmptyFile.txt
+echo. 2>empty.txt
 
 setlocal enabledelayedexpansion
 
