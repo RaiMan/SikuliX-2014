@@ -22,6 +22,8 @@ public class TestRun {
     Screen s = Sikulix.init();
 		TextRecognizer tr = TextRecognizer.getInstance();
 
+		testVNC(new String[]{});
+
     System.exit(1);
   }
 
@@ -40,25 +42,25 @@ public class TestRun {
 		iimg = Image.create(img);
 		Image.dump();
   }
-  
+
   public static void testVNC(String[] args) throws FindFailed{
 
     Socket s = null;
-    
+
     try {
-      s = new Socket("192.168.1.17", 5900); //open a socket to vnc server on listening port
+      s = new Socket("192.168.2.102", 5900); //open a socket to vnc server on listening port
       s.setSoTimeout(1000);
       s.setKeepAlive(true); //some socket configuration
     } catch (IOException ex) {
       p("Socket open: failed: %s", ex.getMessage());
     }
-    
+
     ConnectionController cc = new ConnectionController(s);
     cc.openConnection(0); //opens the vnc connection for connection 0, multiple are supported
 
     cc.setPixelFormat(0, "Truecolor", 32, 0);  //for connection 0, set pixel data to Truecolor, 32 bits per pixel, little endian
     cc.start(0); //start thread that keeps BufferedImage updated by polling server for remote desktop changes
-    
+
     Sikulix.pause(2); //wait for buffered image to be updated before we do sikuli stuff
 
     VNCScreen vnc = new VNCScreen();  //default constructor uses ConnectionController index 0
@@ -74,11 +76,11 @@ public class TestRun {
 }
 
 
-// Try and catch blocks for exceptions are omitted from example.  
-// The VNC protocol supports multiple pixel formats.  
-// Currently, the VNC client code only supports truecolor, 32 bits per pixel, little endian pixel format.  
-// Depending on which VNC server you are using, it may initialize the connection with some other pixel format that is not currently supported.  
-// In this case, a message is printed to stderr saying "Error: PixelFormat not supported, setPixelFormat required" to let the user know.  
-// After that, the setPixelFormat line changes the connection to the format supported by the client.  
-// That line could probably be better integrated into Sikuli's 
+// Try and catch blocks for exceptions are omitted from example.
+// The VNC protocol supports multiple pixel formats.
+// Currently, the VNC client code only supports truecolor, 32 bits per pixel, little endian pixel format.
+// Depending on which VNC server you are using, it may initialize the connection with some other pixel format that is not currently supported.
+// In this case, a message is printed to stderr saying "Error: PixelFormat not supported, setPixelFormat required" to let the user know.
+// After that, the setPixelFormat line changes the connection to the format supported by the client.
+// That line could probably be better integrated into Sikuli's
 // logging system but I am less familiar with the details of while level would be appropriate.}
