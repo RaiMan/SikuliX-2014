@@ -43,6 +43,38 @@ public final class FileUtility {
         return !exists;
     }
 
+    public static boolean cleanFolder(final String path) {
+        boolean cleared;
+
+        try {
+            FileUtils.cleanDirectory(new File(path));
+            cleared = true;
+        } catch (IOException e) {
+            IO_LOGGER.severe(e.getMessage());
+            cleared = false;
+        }
+
+        IO_LOGGER.info(path + " folder cleared = " + cleared);
+
+        return cleared;
+    }
+
+    public static boolean copyFolder(final String copyFrom, final String copyTo) {
+        boolean copied;
+
+        try {
+            FileUtils.copyDirectory(new File(copyFrom), new File(copyTo));
+            copied = true;
+        } catch (IOException e) {
+            IO_LOGGER.severe(e.getMessage());
+            copied = false;
+        }
+
+        IO_LOGGER.info(copyFrom + " copied to " + copyTo + " = " + copied);
+
+        return copied;
+    }
+
     public static boolean exists(final List<String> paths) {
         boolean exists = true;
 

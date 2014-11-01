@@ -91,4 +91,16 @@ public class FileService {
     public Response createFolder(@QueryParam("path") final String path) {
         return Response.status(FileUtility.createFolder(path) ? Response.Status.OK : Response.Status.NOT_FOUND).build();
     }
+
+    @POST
+    @Path("/copyFolder")
+    public Response copyFolder(@QueryParam("fromPath") final String fromPath, @QueryParam("toPath") final String toPath) {
+        return Response.status(FileUtility.copyFolder(fromPath, toPath) ? Response.Status.OK : Response.Status.NOT_FOUND).build();
+    }
+
+    @POST
+    @Path("/cleanFolder")
+    public Response cleanFolder(@QueryParam("path") final String path) {
+        return Response.status(FileUtility.cleanFolder(path) ? Response.Status.OK : Response.Status.NOT_FOUND).build();
+    }
 }

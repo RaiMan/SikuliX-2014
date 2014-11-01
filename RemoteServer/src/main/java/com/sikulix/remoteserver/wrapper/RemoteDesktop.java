@@ -22,15 +22,35 @@ public class RemoteDesktop {
     }
 
     public boolean click(final Image element, final int timeout) {
-        return onAppear(createImage(element), SikuliAction.CLICK).observe(timeout);
+        final Pattern image = createImage(element);
+        return image.isValid() && onAppear(image, SikuliAction.CLICK).observe(timeout);
     }
 
     public boolean setText(final Image element, final String text, final int timeout) {
-        return onAppear(createImage(element), SikuliAction.TYPE, text).observe(timeout);
+        final Pattern image = createImage(element);
+        return image.isValid() && onAppear(image, SikuliAction.TYPE, text).observe(timeout);
+    }
+
+    public boolean dragAndDrop(final Image dragFrom, final Image dropTo, final int timeout) {
+        final Pattern drag = createImage(dragFrom);
+        final Pattern drop = createImage(dropTo);
+
+        boolean successDragAndDrop = false;
+
+        if ((drag.isValid() && desktop.exists(drag, timeout) != null) && (drop.isValid() && desktop.exists(drop, timeout) != null)) {
+            try {
+                successDragAndDrop = desktop.dragDrop(drag, drop) == 1;
+            } catch (FindFailed findFailed) {
+                successDragAndDrop = false;
+            }
+        }
+
+        return successDragAndDrop;
     }
 
     public boolean exists(final Image element, final int timeout) {
-        return desktop.exists(createImage(element), timeout) != null;
+        final Pattern image = createImage(element);
+        return image.isValid() && desktop.exists(image, timeout) != null;
     }
 
     private Pattern createImage(final Image element) {

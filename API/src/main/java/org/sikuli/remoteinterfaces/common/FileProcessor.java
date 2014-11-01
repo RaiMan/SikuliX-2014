@@ -13,6 +13,10 @@ public interface FileProcessor {
 
     void createFolder(final String path);
 
+    void copyFolder(final String copyFrom, final String copyTo);
+
+    void cleanFolder(final String path);
+
     void delete(final String path);
 
     boolean exists(final List<String> paths);
