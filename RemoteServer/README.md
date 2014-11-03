@@ -10,8 +10,8 @@ Source code provides the following content:
  - Grizzly http server with custom configuration.
  - Services for processing Sikulix, IO and Cmd http requests.
  - CommandLineUtility class, that uses commons-exec library for flexible cmd control.
- - FileUtility class provides some sample APIs for remote file system control.
- - RemoteDesktop - Sikulix wrapper for common click / type / exists APIs. Uses observers mechanism to allow flexible elements' waiting.
+ - FileUtility class provides some useful APIs for remote file system control.
+ - RemoteDesktop - Sikulix wrapper for common click / type / drag&drop / exists APIs. Uses observers mechanism to allow flexible elements' waiting.
 
 To build remote server use the following command: `mvn clean install`.
 Note that it depends on `sikulixapi`, so you must build appropriate dependencies first or provide your own version reference.
