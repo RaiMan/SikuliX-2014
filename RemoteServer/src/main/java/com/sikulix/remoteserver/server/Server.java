@@ -26,7 +26,7 @@ public class Server {
 
     public static void main(final String[] args) {
         try {
-            startServer(args.length > 0 && NumberUtils.isNumber(args[1]) ? Integer.parseInt(args[1]) : DEFAULT_PORT);
+            startServer(args.length > 0 && NumberUtils.isNumber(args[0]) ? Integer.parseInt(args[0]) : DEFAULT_PORT);
         } catch (Exception e) {
             SERVER_LOGGER.severe(e.toString());
         }

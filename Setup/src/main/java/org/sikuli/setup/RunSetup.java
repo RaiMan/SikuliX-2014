@@ -911,7 +911,7 @@ public class RunSetup {
 			if (! takeAlreadyDownloaded(libDownloaded, libsWin)) {
 				downloadOK &= getSikulixJarFromMaven(libsWin, dlDir, null, libsWin);
 			} else {
-				copyFromDownloads(new File(jarsList[6]), libsWin, libsWin + ".jar");
+				copyFromDownloads(libDownloaded, libsWin, jarsList[6]);
 			}
     }
     if (forSystemMac || forAllSystems) {

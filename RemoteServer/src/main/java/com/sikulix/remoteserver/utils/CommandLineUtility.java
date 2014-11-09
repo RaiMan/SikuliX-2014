@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import static org.apache.commons.exec.util.StringUtils.quoteArgument;
+import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
 
 /**
  * Author: Sergey Kuts
@@ -21,13 +22,21 @@ public final class CommandLineUtility {
 
     public static int executeCommandLine(final Command command) {
 
-        CMD_LOGGER.info("Processing the following command: " + command.getProcess() + " " + command.getArgs());
+        if (command.getProcess() == null) {
+            CMD_LOGGER.severe("There's nothing to execute.");
+            return -1;
+        }
+
+        CMD_LOGGER.info("Processing the following command: " + command.getProcess() +
+                (command.getArgs() != null ? " " + command.getArgs() : ""));
 
         final long timeout = (command.getTimeout() > 0 ? command.getTimeout() : 0) * 1000;
-        final CommandLine commandLine = new CommandLine(quoteArgument(command.getProcess()));
+        final CommandLine commandLine = new CommandLine(separatorsToSystem(quoteArgument(command.getProcess())));
 
-        for (String arg :  command.getArgs()) {
-            commandLine.addArgument(quoteArgument(arg));
+        if (command.getArgs() != null) {
+            for (String arg : command.getArgs()) {
+                commandLine.addArgument(quoteArgument(arg));
+            }
         }
 
         final ExecutionResultsHandler resultHandler = new ExecutionResultsHandler();

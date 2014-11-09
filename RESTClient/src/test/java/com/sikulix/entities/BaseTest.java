@@ -17,15 +17,20 @@ public class BaseTest {
     // You should set real IP, instead of localhost
     public static final String SIKULIX_SERVER_IP = "127.0.0.1";
     public static final int SIKULIX_SERVER_PORT = 4041;
+
     // Don't forget to change resource batches' extension from .txt to .bat
     public static final String RESOURCE_RUNNER_BATCH = "batches/runner.bat";
     public static final String RESOURCE_SAMPLE_BATCH = "batches/sampleBatch.bat";
-    public static final String RESOURCE_BUTTON_IMAGE = "images/buttonStart.png";
-    public static final String RESOURCE_LABEL_IMAGE = "images/labelAdministrator.png";
-    public static final String RESOURCE_INPUT_IMAGE = "images/inputFindFiles.png";
-    public static final String EMPTY_FILE = "EmptyFile.txt";
-    public static final String IMAGES_PATH = "c:\\temp\\images";
-    public static final String BATCHES_PATH = "c:\\temp\\batches";
+    public static final String RESOURCE_BUTTON_START_IMAGE = "images/buttonStart.png";
+    public static final String RESOURCE_INPUT_FIND_FILES_IMAGE = "images/inputFindFiles.png";
+    public static final String RESOURCE_INPUT_CMD_IMAGE = "images/inputCmd.png";
+    public static final String RESOURCE_TERMINAL_IMAGE = "images/terminal.png";
+    public static final String RESOURCE_INPUT_TERMINAL_IMAGE = "images/inputTerminal.png";
+    public static final String RESOURCE_LABEL_FF_IMAGE = "images/labelFF.png";
+    public static final String RESOURCE_SH_SCRIPT = "sh/script.sh";
+
+    public static final String EMPTY_FILE = "empty.txt";
+
     public static final int WAIT_TIMEOUT = 3;
     public static final float SIMILARITY = 0.9f;
 
@@ -52,7 +57,7 @@ public class BaseTest {
         return sikuliXClient;
     }
 
-    public File getResource(final String resourceName) {
+    public static File getResource(final String resourceName) {
         try {
             return new File(ClassLoader.getSystemResource(resourceName).toURI());
         } catch (URISyntaxException e) {

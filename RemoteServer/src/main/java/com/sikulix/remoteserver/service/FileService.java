@@ -14,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import static org.apache.commons.io.FilenameUtils.separatorsToSystem;
+
 /**
  * Author: Sergey Kuts
  */
@@ -37,14 +39,14 @@ public class FileService {
                     filePart.getContentDisposition().getFileName();
 
             try (final InputStream inputStream = filePart.getValueAs(InputStream.class);
-                 final FileOutputStream outputStream = new FileOutputStream(new File(filePath))) {
+                 final FileOutputStream outputStream = new FileOutputStream(new File(separatorsToSystem(filePath)))) {
                 IOUtils.copy(inputStream, outputStream);
                 outputStream.flush();
 
-                IO_LOGGER.info("File " + filePath + " has been saved.");
+                IO_LOGGER.info("File " + separatorsToSystem(filePath) + " has been saved.");
                 responses.add(Response.Status.OK);
             } catch (NullPointerException | IOException e) {
-                IO_LOGGER.severe("Unable to save file " + filePath + ": " + e.getMessage());
+                IO_LOGGER.severe("Unable to save file " + separatorsToSystem(filePath) + ": " + e.getMessage());
                 responses.add(Response.Status.INTERNAL_SERVER_ERROR);
             }
         }
@@ -60,11 +62,11 @@ public class FileService {
         return new StreamingOutput() {
             @Override
             public void write(final OutputStream outputStream) {
-                try (final FileInputStream inputStream = new FileInputStream(new File(fromPath))) {
+                try (final FileInputStream inputStream = new FileInputStream(new File(separatorsToSystem(fromPath)))) {
                     IOUtils.copy(inputStream, outputStream);
                     outputStream.flush();
 
-                    IO_LOGGER.info("File " + fromPath + " has been sent.");
+                    IO_LOGGER.info("File " + separatorsToSystem(fromPath) + " has been sent.");
                 } catch (NullPointerException | IOException e) {
                     IO_LOGGER.severe("An error occurred while stream copying: " + e.getMessage());
                 }
@@ -88,5 +90,17 @@ public class FileService {
     @Path("/createFolder")
     public Response createFolder(@QueryParam("path") final String path) {
         return Response.status(FileUtility.createFolder(path) ? Response.Status.OK : Response.Status.NOT_FOUND).build();
+    }
+
+    @POST
+    @Path("/copyFolder")
+    public Response copyFolder(@QueryParam("fromPath") final String fromPath, @QueryParam("toPath") final String toPath) {
+        return Response.status(FileUtility.copyFolder(fromPath, toPath) ? Response.Status.OK : Response.Status.NOT_FOUND).build();
+    }
+
+    @POST
+    @Path("/cleanFolder")
+    public Response cleanFolder(@QueryParam("path") final String path) {
+        return Response.status(FileUtility.cleanFolder(path) ? Response.Status.OK : Response.Status.NOT_FOUND).build();
     }
 }
