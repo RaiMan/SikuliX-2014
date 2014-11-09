@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URL;
+import java.util.List;
 import org.sikuli.script.*;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
@@ -20,7 +21,9 @@ public class TestRun {
     Debug.test("SikuliX 2014 TestRun: hello");
     Debug.setDebugLevel(3);
     Screen s = Sikulix.init();
-		TextRecognizer tr = TextRecognizer.getInstance();
+    ImagePath.add("com.sikulix.testrun.TestRun/images/images.sikuli");
+    
+    testListText(s);
 
     System.exit(1);
   }
@@ -28,12 +31,24 @@ public class TestRun {
   public void loggerCallBack(String msg) {
     p("from loggerCallBack: redirection: %s", msg);
   }
+  
+  private static void testListText(Screen s) {
+		TextRecognizer tr = TextRecognizer.getInstance();
+    Region reg = s.exists("image").right().highlight(2);
+    List<Match> words = tr.listText(s.capture(reg), reg);
+    p("words lenght: %d", words.size());
+    for (Match m: words) {
+      if (m.getScore() > 0.8) {
+        p("%s", m.getText());
+        m.highlight(1);
+      }
+    }
+  }
 
   private static void testImageInJar() {
 		String img = "image.png";
     Debug.setDebugLevel(3);
 //    ImagePath.setBundlePath(imgN);
-    ImagePath.add("com.sikulix.testrun.TestRun/images/images.sikuli");
 		Debug.test("***** 1st image");
 		Image iimg = Image.create(img);
 		Debug.test("***** 2nd image");
