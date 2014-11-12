@@ -466,7 +466,7 @@ public class Settings {
 	}
 
   public static boolean isMac10() {
-    if (isMac() && "10.10".equals(Settings.getOSVersion())) {
+    if (isMac() && Settings.getOSVersion().startsWith("10.10")) {
       return true;
     }
     return false;
