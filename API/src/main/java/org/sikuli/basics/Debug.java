@@ -265,7 +265,7 @@ public class Debug {
 	 */
 	public static boolean setLoggerAction(String mAction) {
 		if (mAction == null || mAction.isEmpty()) {
-			privateLoggerInfoName = "";
+			privateLoggerActionName = "";
 			return true;
 		}
 		return doSetLoggerCallback(mAction, CallbackType.ACTION);
@@ -281,7 +281,7 @@ public class Debug {
 	 */
 	public static boolean setLoggerError(String mError) {
 		if (mError == null || mError.isEmpty()) {
-			privateLoggerInfoName = "";
+			privateLoggerErrorName = "";
 			return true;
 		}
 		return doSetLoggerCallback(mError, CallbackType.ERROR);
@@ -297,7 +297,7 @@ public class Debug {
 	 */
 	public static boolean setLoggerDebug(String mDebug) {
 		if (mDebug == null || mDebug.isEmpty()) {
-			privateLoggerInfoName = "";
+			privateLoggerDebugName = "";
 			return true;
 		}
 		return doSetLoggerCallback(mDebug, CallbackType.DEBUG);
