@@ -646,7 +646,7 @@ public class ScriptRunner {
 			File scriptFile = null;
 			String sklPath = null;
 
-			if (scrProject.getName().endsWith(".skl") || scrProject.getName().endsWith(".skl")) {
+			if (scrProject.getName().endsWith(".skl") || scrProject.getName().endsWith(".zip")) {
 				sklPath = ScriptRunner.unzipSKL(scrProject.getAbsolutePath());
 				if (sklPath == null) {
 					return null;
