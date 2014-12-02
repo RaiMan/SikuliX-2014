@@ -1352,7 +1352,7 @@ public class RunSetup {
       String jrubyAddons = "sikulixjrubyaddons-" + Settings.SikuliProjectVersion + "-plain.jar";
       File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
       if (!fJRubyAddOns.exists()) {
-        Debug.log(lvl, "createSetupFolder: missing: " + fJRubyAddOns.getAbsolutePath());
+//        Debug.log(lvl, "createSetupFolder: missing: " + fJRubyAddOns.getAbsolutePath());
 //TODO JRubyAddOns optimize time of repeated build
 //        success = false;
       }
@@ -1391,14 +1391,14 @@ public class RunSetup {
             FileManager.xcopy(fname,
                     new File(fDownloads, downloadJRuby).getAbsolutePath());
           }
-          fname = fJRubyAddOns.getAbsolutePath();
-          File sname = new File(fDownloads, downloadJRubyAddOns);
-          if (fJRubyAddOns.exists()) {
-            FileManager.xcopy(fname, sname.getAbsolutePath());
-          }
-          fname = new File(projectDir, "Remote/target/"
-                  + "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
-          FileManager.xcopy(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
+//          fname = fJRubyAddOns.getAbsolutePath();
+//          File sname = new File(fDownloads, downloadJRubyAddOns);
+//          if (fJRubyAddOns.exists()) {
+//            FileManager.xcopy(fname, sname.getAbsolutePath());
+//          }
+//          fname = new File(projectDir, "Remote/target/"
+//                  + "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
+//          FileManager.xcopy(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
 //          fname = new File(projectDir, "MacApp/target/"
 //                  + Settings.SikuliProjectVersion + downloadMacAppSuffix).getAbsolutePath();
 //          FileManager.xcopy(fname, new File(fDownloads, downloadMacApp).getAbsolutePath());
