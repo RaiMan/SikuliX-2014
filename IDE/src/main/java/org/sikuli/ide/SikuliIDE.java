@@ -168,7 +168,14 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 //    }
 
     start = (new Date()).getTime();
-
+    
+    File ideDebug = new File(System.getProperty("user.home"), "SikulixDebug.txt");
+    if (ideDebug.exists()) {
+      Debug.setDebugLevel(3);
+      Debug.setLogFile(ideDebug.getAbsolutePath());
+      System.setProperty("sikuli.console", "false");
+    }
+    
     CommandArgs cmdArgs = new CommandArgs("IDE");
     cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
 
