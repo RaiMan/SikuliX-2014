@@ -153,6 +153,7 @@ public class Finder implements Iterator<Match> {
 		_cur_result_i = 0;
 	}
 
+//TODO public String find(String imageOrText, [similarity]) {
   /**
    * do a find op with the given image or the given text in the Finder's image
 	 * (hasNext() and next() will reveal possible match results)
