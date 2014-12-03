@@ -13,6 +13,7 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
@@ -436,6 +437,24 @@ public class Key {
       return keyTexts.get(key).intValue();
     }
   }
+  
+  public static void dump() {
+    Map<Integer, String> namesVK = new HashMap<Integer, String>();
+    for (int i = 0; i < keyVK.length; i += 2) {
+      namesVK.put(Integer.decode(keyVK[i+1]), keyVK[i].substring(3));
+    }
+    Map<String, Integer> sortedNames = new TreeMap<String, Integer>(keyTexts);
+    System.out.println("[info] Key: dump keynames (tokens) used with Region write");
+    System.out.println("[info] Token to use --- KeyEvent::keycode --- KeyEvent::keyname");
+    int keyN;
+    for (String key : sortedNames.keySet()) {
+      keyN = sortedNames.get(key);
+      if (keyN < 1) {
+        continue;
+      }
+      System.out.println(String.format("%s = %d (%s)", key, keyN, namesVK.get(keyN)));      
+    }
+  }
   //</editor-fold>
 
   /**
@@ -658,7 +677,7 @@ public class Key {
       case Key.C_PAGE_DOWN: return "#PDOWN.";
       case Key.C_END: return "#END.";
       case Key.C_HOME: return "#HOME.";
-      case Key.C_DELETE: return "#DEL";
+      case Key.C_DELETE: return "#DEL.";
 //Function keys
       case Key.C_ESC: return "#ESC.";
       case Key.C_F1: return "#F1.";
