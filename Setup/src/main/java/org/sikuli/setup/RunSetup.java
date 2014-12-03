@@ -442,6 +442,7 @@ public class RunSetup {
 				logToFile = false;
 			} else {
 				workDir += "/Setup";
+        new File(workDir).mkdirs();
 			}
       Settings.runningSetupInValidContext = true;
 			Settings.runningSetupInContext = workDir;
@@ -1761,10 +1762,16 @@ public class RunSetup {
 		}
 		File downloaded = new File(tDir, item);
 		shouldDownload = ! takeAlreadyDownloaded(downloaded, itemName);
+    String fname = null;
 		if (shouldDownload) {
-			JFrame progress = new SplashFrame("download");
-			String fname = FileManager.downloadURL(dlSource, tDir, progress);
-			progress.dispose();
+      if (hasOptions) {
+        log1(lvl, "SilentSetup: Downloading: %s", itemName);
+        fname = FileManager.downloadURL(dlSource, tDir, null);        
+      } else {
+        JFrame progress = new SplashFrame("download");
+        fname = FileManager.downloadURL(dlSource, tDir, progress);
+        progress.dispose();
+      }
 			if (null == fname) {
 				terminate(String.format("Fatal error 001: not able to download: %s", item), 1);
 			}
