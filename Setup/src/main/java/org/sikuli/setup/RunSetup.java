@@ -121,6 +121,12 @@ public class RunSetup {
   private static String libsWin = "sikulixlibswin";
   private static String libsLux = "sikulixlibslux";
   private static String apiJarName = "sikulixapi";
+	private static File folderLibs = new File(workDir, "libs");
+	private static String libLux1 = "libVisionProxy.so";
+	private static String libLux2 = "libJXGrabKey.so";
+
+
+
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
@@ -1028,33 +1034,54 @@ public class RunSetup {
 			System.exit(0);
 		}
 
+ 		String osarch = System.getProperty("os.arch");
+		osarch = osarch.contains("64") ? "64" : "32";
+
 		if (Settings.isLinux()) {
-			File linuxLibsDir = new File(workDir, "libs");
-			linuxLibsDir.mkdir();
 			if (popAsk("If you already built your own\n"
 							+ "libVisionProxy.so and/or libJXGrabKey.so, then make sure\n"
 							+ "to place copies into the folder libs at:\n"
-							+  linuxLibsDir.getAbsolutePath() + "\n"
+							+  folderLibs.getAbsolutePath() + "\n"
+							+ "and make sure the libs are for " + osarch + "-Bit.\n"
               + "before Clicking YES.\n"
 							+ "Click NO to use the libs that are bundled with setup.")) {
 				shouldPackLibs = false;
+				if (!folderLibs.exists()) {
+					terminate("You wanted to provide a folder libs, "
+									+ "but it does not exist. Terminating!", -1);
+				}
 			}
       if (test) {
         shouldPackLibs = true;
       }
 		}
 
+		if (folderLibs.exists() && shouldPackLibs) {
+			FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
+		}
+		folderLibs.mkdirs();
+
+		String[] libsFileList = new String[] {null, null};
+		String[] libsFilePrefix = new String[] {null, null};
+		if (!shouldPackLibs) {
+			libsFileList[0] = new File(folderLibs, libLux1).getAbsolutePath();
+			libsFileList[1] = new File(folderLibs, libLux2).getAbsolutePath();
+			for (int i = 0; i < 2; i++) {
+				if (! new File(libsFileList[i]).exists()) {
+					libsFileList[i] = null;
+				}
+			}
+			String libPrefix = "META-INF/libs/linux/libs" + osarch;
+			log(lvl, "Provided libs will be stored at %", libPrefix);
+			libsFilePrefix[0] = libPrefix;
+			libsFilePrefix[1] = libPrefix;
+		}
+
 		boolean success = true;
 		FileManager.JarFileFilter libsFilter = new FileManager.JarFileFilter() {
 			@Override
 			public boolean accept(ZipEntry entry, String jarname) {
-				if (forAllSystems) {
-					if (!shouldPackLibs && entry.getName().startsWith("META-INF/libs/linux")
-									&& entry.getName().contains("VisionProxy")) {
-						return false;
-					}
-					return true;
-				} else if (forSystemWin) {
+				if (forSystemWin) {
 					if (entry.getName().startsWith("META-INF/libs/mac")
 									|| entry.getName().startsWith("META-INF/libs/linux")
 									|| entry.getName().startsWith("jxgrabkey")) {
@@ -1073,8 +1100,23 @@ public class RunSetup {
 									|| entry.getName().startsWith("com.melloware.jintellitype")) {
 						return false;
 					}
-					if (!shouldPackLibs && entry.getName().contains("VisionProxy")) {
-						return false;
+				}
+				if (forSystemLux || forAllSystems) {
+					if (!shouldPackLibs && entry.getName().contains(libLux1)) {
+						if (new File(folderLibs, libLux1).exists()) {
+							log(lvl, "Found provided lib: %s", libLux1);
+							return false;
+						} else {
+							return true;
+						}
+					}
+					if (!shouldPackLibs && entry.getName().contains(libLux2)) {
+						if (new File(folderLibs, libLux2).exists()) {
+							log(lvl, "Found provided lib: %s", libLux2);
+							return false;
+						} else {
+							return true;
+						}
 					}
 				}
 				return true;
@@ -1093,7 +1135,8 @@ public class RunSetup {
 			log1(lvl, "adding needed stuff to sikulixapi.jar");
 			localJar = (new File(workDir, localAPI)).getAbsolutePath();
 			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-			success &= FileManager.buildJar(targetJar, jarsList, null, null, libsFilter);
+			success &= FileManager.buildJar(
+							targetJar, jarsList, libsFileList, libsFilePrefix, libsFilter);
 			success &= handleTempAfter(targetJar, localJar);
 		}
 
@@ -1111,7 +1154,8 @@ public class RunSetup {
         }
 			}
 			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-			success &= FileManager.buildJar(targetJar, jarsList, null, null, libsFilter);
+			success &= FileManager.buildJar(
+							targetJar, jarsList,  libsFileList, libsFilePrefix, libsFilter);
 			success &= handleTempAfter(targetJar, localJar);
 		}
 
@@ -1145,12 +1189,6 @@ public class RunSetup {
 		//</editor-fold>
 
 		//<editor-fold defaultstate="collapsed" desc="option setup: environment setup and test">
-		File folderLibs = new File(workDir, "libs");
-		if (folderLibs.exists()) {
-			FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
-		}
-		folderLibs.mkdirs();
-
     if (getAPI) {
 			log1(lvl, "Trying to run functional test: JAVA-API");
 			splash = showSplash("Trying to run functional test(s)", "Java-API: org.sikuli.script.Sikulix.testSetup()");
@@ -1766,7 +1804,7 @@ public class RunSetup {
 		if (shouldDownload) {
       if (hasOptions) {
         log1(lvl, "SilentSetup: Downloading: %s", itemName);
-        fname = FileManager.downloadURL(dlSource, tDir, null);        
+        fname = FileManager.downloadURL(dlSource, tDir, null);
       } else {
         JFrame progress = new SplashFrame("download");
         fname = FileManager.downloadURL(dlSource, tDir, progress);

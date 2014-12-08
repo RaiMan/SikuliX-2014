@@ -1037,6 +1037,9 @@ public class FileManager {
       }
       if (files != null) {
         for (int i = 0; i < files.length; i++) {
+					if (files[i] == null) {
+						continue;
+					}
           log0(lvl, "buildJar: adding: " + files[i]);
           addToJar(jout, new File(files[i]), prefixs[i]);
         }
