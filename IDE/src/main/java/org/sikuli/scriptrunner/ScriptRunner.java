@@ -348,12 +348,6 @@ public class ScriptRunner {
    */
   public static void runscript(String[] args) {
 
-    if (isRunningScript) {
-      System.out.println("[error] SikuliScript: can only run one at a time!");
-      return;
-    }
-
-    isRunningScript = true;
     initScriptingSupport();
     IScriptRunner currentRunner = null;
 
@@ -377,6 +371,12 @@ public class ScriptRunner {
       return;
     }
 
+    if (isRunningScript) {
+      System.out.println("[error] SikuliScript: can only run one at a time!");
+      return;
+    }
+    isRunningScript = true;
+    
     CommandArgs cmdArgs = new CommandArgs("SCRIPT");
     CommandLine cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
     String cmdValue;
