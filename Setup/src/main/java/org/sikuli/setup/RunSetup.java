@@ -1073,7 +1073,7 @@ public class RunSetup {
 				}
 			}
 			String libPrefix = "META-INF/libs/linux/libs" + osarch;
-			log(lvl, "Provided libs will be stored at %", libPrefix);
+			log(lvl, "Provided libs will be stored at %s", libPrefix);
 			libsFilePrefix[0] = libPrefix;
 			libsFilePrefix[1] = libPrefix;
 		}
