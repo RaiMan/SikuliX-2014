@@ -121,7 +121,7 @@ public class RunSetup {
   private static String libsWin = "sikulixlibswin";
   private static String libsLux = "sikulixlibslux";
   private static String apiJarName = "sikulixapi";
-	private static File folderLibs = new File(workDir, "libs");
+	private static File folderLibs;
 	private static String libLux1 = "libVisionProxy.so";
 	private static String libLux2 = "libJXGrabKey.so";
 
@@ -1036,6 +1036,7 @@ public class RunSetup {
 
  		String osarch = System.getProperty("os.arch");
 		osarch = osarch.contains("64") ? "64" : "32";
+		folderLibs = new File(workDir, "libs");
 
 		if (Settings.isLinux()) {
 			if (popAsk("If you already built your own\n"
