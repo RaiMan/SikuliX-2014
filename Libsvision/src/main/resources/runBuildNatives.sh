@@ -71,15 +71,18 @@ fi
 # example: /usr/bin/swig 
 # leave the setting as is, to not run the SWIG step
 
-#export SWIGEXEC=/usr/bin/swig
 export SWIGEXEC="__NOT_SET__"
+if [ "$2" == "swig" ]; then
+  export SWIGEXEC=/usr/bin/swig
+fi
 
 # any specifics should be resolved in runSwigforVision.sh
 
 # set some common folders in the SikuliX package structure
 # no need to change normally
-export DEVJAVA=../../../../Libsvision/src/main/java
+export DEVJAVA=../../../../API/src/main/java
 export DEVNATIVE=../../../../Libsvision/src/main/java/native
+export DEVLIBS=../../../../Libslux/src/main/resources/META-INF/libs/linux/libs$ARCH/
 
 # ------------------------- do what is needed
 if [ "$SWIGEXEC" == "__NOT_SET__" ]; then
