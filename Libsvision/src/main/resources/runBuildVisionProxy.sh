@@ -29,7 +29,7 @@ list=(
   visionJAVA_wrap.cxx
 )
 
-link_str="g++ -shared -s -fPIC -dynamic $(pkg-config --libs opencv tesseract) -o libVisionProxy.so "
+link_str="-shared -s -fPIC -dynamic -o libVisionProxy.so "
 
 for fn in "${list[@]}"; do
   echo "--  $fn"
@@ -38,10 +38,26 @@ for fn in "${list[@]}"; do
 done
 
 echo -- finally linking
-eval $link_str
+rm -f libVisionProxy.so
+link_str+="/usr/lib/x86_64-linux-gnu/libopencv_core.so "
+link_str+="/usr/lib/x86_64-linux-gnu/libopencv_highgui.so "
+link_str+="/usr/lib/x86_64-linux-gnu/libopencv_imgproc.so "
+link_str+="/usr/lib/libtesseract.so "
+echo $link_str
+g++ $link_str 
 
 if [ -e libVisionProxy.so ]; then
-  echo -- created libVisionProxy.so
+  echo -- checking created libVisionProxy.so
+  undefined=`ldd -r libVisionProxy.so | grep -c "undefined symbol:"`
+  if [ "undefined" == "0" ]; then
+    if [ -e $DEVLIBS ]; then    
+      cp libVisionProxy.so $DEVLIBS
+    fi
+    echo -- should be useable
+  else
+    echo -- not useable - has unresolved symbols
+    undefined=`ldd -r libVisionProxy.so | grep "undefined symbol:"`
+  fi
 else
   echo -- error building libVisionProxy.so
 fi
