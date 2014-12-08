@@ -1031,13 +1031,13 @@ public class RunSetup {
 		if (Settings.isLinux()) {
 			File linuxLibsDir = new File(workDir, "libs");
 			linuxLibsDir.mkdir();
-			if (popAsk("If you want/need to build\n"
-							+ "or have already built your own libVisionProxy.so,\n"
-							+ "Then Click YES\n"
-							+ "Click NO to pack the bundled libs to the jars.")) {
+			if (popAsk("If you already built your own\n"
+							+ "libVisionProxy.so and/or libJXGrabKey.so, then make sure\n"
+							+ "to place copies into the folder libs at:\n"
+							+  linuxLibsDir.getAbsolutePath() + "\n"
+              + "before Clicking YES.\n"
+							+ "Click NO to use the libs that are bundled with setup.")) {
 				shouldPackLibs = false;
-//							+ "then place a copy of it into the folder libs at:\n"
-//							+  linuxLibsDir.getAbsolutePath() + "\n"
 			}
       if (test) {
         shouldPackLibs = true;
