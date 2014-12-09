@@ -124,10 +124,9 @@ public class RunSetup {
 	private static File folderLibs;
 	private static String libLux1 = "libVisionProxy.so";
 	private static String libLux2 = "libJXGrabKey.so";
-
-
-
-
+  private static String linuxDistro = "";
+  private static String osarch;
+  
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
 		Debug.logx(level, me + ": " + mem + ": " + message, args);
@@ -651,6 +650,25 @@ public class RunSetup {
 
 		//<editor-fold defaultstate="collapsed" desc="option setup preps display options">
     String proxyMsg = "";
+    
+    if (Settings.isLinux()) {
+      String result = ResourceLoader.get().runcmd("lsb_release -i -r -s");
+      linuxDistro = result.replaceAll("\n", " ").trim();
+      log1(lvl, "LinuxDistro: %s", linuxDistro);
+      boolean success;
+      String successMsg = FileManager.checkPrereqsLux(linuxDistro);
+      if (successMsg != null && !hasOptions) {
+        log1(-1, "checkPrereqs: %s", successMsg);
+        success = popAsk("Some prerequisites are not available."
+                + "\nSee setup logfile for detailed info."
+                + "\n\nClick YES to proceed."
+                + "\nClick NO to terminate.");
+        if (!success) {
+          Sikulix.terminate(202);
+        } 
+      }
+    }
+
     if (!test) {
       getIDE = false;
       getJython = false;
@@ -662,7 +680,7 @@ public class RunSetup {
 		      log(-1, "Fatal Error 202: some prereqs are not available");
 					Sikulix.terminate(202);
 				}
-        popInfo("Please read carefully before proceeding!!");
+
         winSetup = new JFrame("SikuliX-Setup");
         Border rpb = new LineBorder(Color.YELLOW, 8);
         winSetup.getRootPane().setBorder(rpb);
@@ -682,6 +700,9 @@ public class RunSetup {
         // running system
         Settings.getOS();
         msg = Settings.osName + " " + Settings.getOSVersion();
+        if (Settings.isLinux()) {
+          msg += " (" + linuxDistro + ")";
+        }
         winSU.suSystem.setText(msg);
         log1(lvl, "RunningSystem: " + msg);
 
@@ -1034,12 +1055,12 @@ public class RunSetup {
 			System.exit(0);
 		}
 
- 		String osarch = System.getProperty("os.arch");
+ 		osarch = System.getProperty("os.arch");
 		osarch = osarch.contains("64") ? "64" : "32";
 		folderLibs = new File(workDir, "libs");
 
 		if (Settings.isLinux()) {
-			if (popAsk("If you already built your own\n"
+			if (!hasOptions && popAsk("If you already built your own\n"
 							+ "libVisionProxy.so and/or libJXGrabKey.so, then make sure\n"
 							+ "to place copies into the folder libs at:\n"
 							+  folderLibs.getAbsolutePath() + "\n"
@@ -1052,15 +1073,19 @@ public class RunSetup {
 									+ "but it does not exist. Terminating!", -1);
 				}
 			}
-      if (test) {
-        shouldPackLibs = true;
+      if (hasOptions && folderLibs.exists()) {
+        shouldPackLibs = false;
       }
 		}
-
+    
 		if (folderLibs.exists() && shouldPackLibs) {
 			FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
 		}
 		folderLibs.mkdirs();
+    
+    if (!shouldPackLibs) {
+      log1(lvl, "Advice: some libs are provided in folder libs");
+    }
 
 		String[] libsFileList = new String[] {null, null};
 		String[] libsFilePrefix = new String[] {null, null};
@@ -1103,17 +1128,19 @@ public class RunSetup {
 					}
 				}
 				if (forSystemLux || forAllSystems) {
-					if (!shouldPackLibs && entry.getName().contains(libLux1)) {
+					if (!shouldPackLibs && entry.getName().contains(libLux1)
+                              && entry.getName().contains("libs" + osarch)) {
 						if (new File(folderLibs, libLux1).exists()) {
-							log(lvl, "Found provided lib: %s", libLux1);
+							log(lvl, "Found provided lib: %s (libs%s)", libLux1, osarch);
 							return false;
 						} else {
 							return true;
 						}
 					}
-					if (!shouldPackLibs && entry.getName().contains(libLux2)) {
+					if (!shouldPackLibs && entry.getName().contains(libLux2)
+                              && entry.getName().contains("libs" + osarch)) {
 						if (new File(folderLibs, libLux2).exists()) {
-							log(lvl, "Found provided lib: %s", libLux2);
+							log(lvl, "Found provided lib: %s (libs%s)", libLux2, osarch);
 							return false;
 						} else {
 							return true;
