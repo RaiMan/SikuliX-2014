@@ -1182,9 +1182,7 @@ public class FileManager {
   }
 
 	public static boolean checkPrereqs() {
-		if (Settings.isLinux()) {
-			return checkPrereqsLux();
-		} else if (Settings.isWindows()) {
+		if (Settings.isWindows()) {
 			return true;
 		} else if (Settings.isMac()) {
 			return true;
@@ -1192,8 +1190,11 @@ public class FileManager {
 		return true;
 	}
 
-	public static boolean checkPrereqsLux() {
-		return true;
+	public static String checkPrereqsLux(String linuxDistro) {
+    if (! linuxDistro.startsWith("Ubuntux")) {      
+      return "Not running on Ubuntu - bundled libs might not work";
+    }
+		return null;
 	}
 }
 
