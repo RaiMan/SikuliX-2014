@@ -2509,7 +2509,11 @@ public class Region {
         if (ptn == null) {
           f.find(new Pattern(img).similar(Settings.CheckLastSeenSimilar));
         } else {
-          f.find(new Pattern(ptn).similar(Settings.CheckLastSeenSimilar));
+          if (ptn.getSimilar() > Settings.CheckLastSeenSimilar) {
+            f.find(ptn);
+          } else {
+            f.find(new Pattern(ptn).similar(Settings.CheckLastSeenSimilar));
+          }
         }
         if (f.hasNext()) {
           log(lvl, "checkLastSeen: still there");
