@@ -123,8 +123,10 @@ public class RunSetup {
   private static String libsLux = "sikulixlibslux";
   private static String apiJarName = "sikulixapi";
   private static File folderLibs;
-  private static String linuxDistro = "";
+  private static String linuxDistro = "*** testing Linux ***";
   private static String osarch;
+//TODO set true to test on Mac  
+  private static boolean isLinux = false; 
 
   // -MF $externals/$fn.o.d -o $externals/$fn.o $src/Vision/$fn
   public static boolean buildComplete = true;
@@ -142,6 +144,9 @@ public class RunSetup {
   private static String libGrabKey = "libJXGrabKey.so";
   private static boolean visionProvided = false;
   private static boolean grabKeyProvided = false;
+  private static boolean shouldExport = false;
+  private static String[] libsFileList = new String[]{null, null};
+  private static String[] libsFilePrefix = new String[]{null, null};
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static void log(int level, String message, Object... args) {
@@ -509,10 +514,11 @@ public class RunSetup {
         linuxDistro = "***UNKNOWN***";
       }
       log1(lvl, "LinuxDistro: %s (%s-Bit)", linuxDistro, osarch);
+      isLinux = true;
     }
 
     boolean success;
-    if (Settings.isLinux() && !libsProvided) {
+    if (isLinux && !libsProvided) {
       visionProvided = new File(folderLibs, libVision).exists();
       grabKeyProvided = new File(folderLibs, libGrabKey).exists();
       if (visionProvided || grabKeyProvided) {
@@ -728,7 +734,7 @@ public class RunSetup {
         // running system
         Settings.getOS();
         msg = Settings.osName + " " + Settings.getOSVersion();
-        if (Settings.isLinux()) {
+        if (isLinux) {
           msg += " (" + linuxDistro + ")";
         }
         winSU.suSystem.setText(msg);
@@ -949,9 +955,11 @@ public class RunSetup {
     fDLDir.mkdirs();
     String dlDir = fDLDir.getAbsolutePath();
     if (!forSystemWin && !forSystemMac && !forSystemLux) {
-      forSystemWin = Settings.isWindows();
-      forSystemMac = Settings.isMac();
-      forSystemLux = Settings.isLinux();
+      forSystemLux = isLinux;
+      if (! isLinux) {
+        forSystemWin = Settings.isWindows();
+        forSystemMac = Settings.isMac();
+      }
     }
     File libDownloaded;
     if (forSystemWin || forAllSystems) {
@@ -989,7 +997,6 @@ public class RunSetup {
       } else {
         String[] libsExport = new String[]{null, null};
         String[] libsCheck = new String[]{null, null};
-        boolean shouldExport = false;
         if (!new File(folderLibs, libVision).exists()) {
           libsExport[0] = libVision;
           shouldExport = true;
@@ -1011,11 +1018,23 @@ public class RunSetup {
         }
         libsCheck[0] = new File(folderLibs, libVision).getAbsolutePath();
         libsCheck[1] = new File(folderLibs, libGrabKey).getAbsolutePath();
-        for (String libCheck : libsCheck) {
-          if (new File(libCheck).exists()) {
-            log(lvl, "checking\n%s", libCheck);
+        File fLibCheck;
+        boolean shouldTerminate = false;
+        boolean shouldBuild = false;
+        for (int i = 0; i < libsCheck.length; i++) {
+          fLibCheck = new File(libsCheck[i]);
+          if (fLibCheck.exists()) {
+            if (!checklibs(fLibCheck)) {
+              if (libsExport[i] == null) {
+                log(-1, "provided %s not useable on this Linux distro - see log", fLibCheck.getName());
+                shouldTerminate = true;
+              } else {
+                log(-1, "bundled %s not useable on this Linux distro - see log", fLibCheck.getName());
+                shouldBuild = true;
+              }
+            }
           } else {
-            log(-1, "check not possible for\n%s", libCheck);
+            log(-1, "check not possible for\n%s", fLibCheck);
           }
         }
         for (String exLib : libsExport) {
@@ -1028,7 +1047,12 @@ public class RunSetup {
         if (! libsProvided) {
           FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
         }
-        terminate("");
+        if (shouldTerminate) {
+          terminate("Correct the problems with your provided libs and try again");
+        }
+        if (shouldBuild) {
+          terminate("Trying to build");          
+        }
       }
     }
     if (getIDE || getAPI) {
@@ -1126,51 +1150,23 @@ public class RunSetup {
       System.exit(0);
     }
 
-    if (Settings.isLinux()) {
-      if (!hasOptions && !libsProvided && popAsk("If you already built your own\n"
-              + "libVisionProxy.so and/or libJXGrabKey.so, then make sure\n"
-              + "to NOW have copies in folder libs at:\n"
-              + folderLibs.getAbsolutePath() + "\n"
-              + "and make sure the libs are for " + osarch + "-Bit.\n"
-              + "BEFORE Clicking YES.\n"
-              + "Click NO to use the libs that are bundled with setup.")) {
-        shouldPackLibs = false;
-        if (!folderLibs.exists()) {
-          terminate("You wanted to provide a folder libs, "
-                  + "but it does not exist. Terminating!", -1);
-        }
-      }
-      if (hasOptions && folderLibs.exists()) {
-        shouldPackLibs = false;
-      }
+    if (isLinux) {
       if (libsProvided) {
         shouldPackLibs = false;
       }
-    }
-
-    if (folderLibs.exists() && shouldPackLibs) {
-      FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
-    }
-    folderLibs.mkdirs();
-
-    if (!shouldPackLibs) {
-      log1(lvl, "Advice: some libs are provided in folder libs");
-    }
-
-    String[] libsFileList = new String[]{null, null};
-    String[] libsFilePrefix = new String[]{null, null};
-    if (!shouldPackLibs) {
-      libsFileList[0] = new File(folderLibs, libVision).getAbsolutePath();
-      libsFileList[1] = new File(folderLibs, libGrabKey).getAbsolutePath();
-      for (int i = 0; i < 2; i++) {
-        if (!new File(libsFileList[i]).exists()) {
-          libsFileList[i] = null;
+      if (!shouldPackLibs) {
+        libsFileList[0] = new File(folderLibs, libVision).getAbsolutePath();
+        libsFileList[1] = new File(folderLibs, libGrabKey).getAbsolutePath();
+        for (int i = 0; i < 2; i++) {
+          if (!new File(libsFileList[i]).exists()) {
+            libsFileList[i] = null;
+          }
         }
+        String libPrefix = "META-INF/libs/linux/libs" + osarch;
+        log(lvl, "Provided libs will be stored at %s", libPrefix);
+        libsFilePrefix[0] = libPrefix;
+        libsFilePrefix[1] = libPrefix;
       }
-      String libPrefix = "META-INF/libs/linux/libs" + osarch;
-      log(lvl, "Provided libs will be stored at %s", libPrefix);
-      libsFilePrefix[0] = libPrefix;
-      libsFilePrefix[1] = libPrefix;
     }
 
     success = true;
@@ -1272,7 +1268,7 @@ public class RunSetup {
       } else if (Settings.isMac()) {
         loader.export(runningJarURL, "Commands/mac#" + runsikulix, workDir);
         ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x", new File(workDir, runsikulix).getAbsolutePath()});
-      } else if (Settings.isLinux()) {
+      } else if (isLinux) {
         loader.export(runningJarURL, "Commands/linux#" + runsikulix, workDir);
         ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x", new File(workDir, runsikulix).getAbsolutePath()});
         ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x", new File(workDir, localIDE).getAbsolutePath()});
@@ -1286,6 +1282,8 @@ public class RunSetup {
     restore(true); //to get back the stuff that was not changed
     //</editor-fold>
 
+    terminate("");
+    
     //<editor-fold defaultstate="collapsed" desc="api test">
     if (getAPI) {
       log1(lvl, "Trying to run functional test: JAVA-API");
@@ -1408,21 +1406,9 @@ public class RunSetup {
     System.exit(0);
   }
 
-  private static boolean checklibs() {
-    boolean success;
-    String smsg = checkPrereqsLux(linuxDistro, workDir);
-    if (smsg != null && !hasOptions) {
-      log1(-1, "checkPrereqs: %s", smsg);
-      success = popAsk("Some prerequisites are not available."
-              + "\nSee setup logfile for detailed info."
-              + "\n\nClick YES to proceed and provide your own libs."
-              + "\nClick NO to terminate - then check and repair.");
-      if (!success) {
-        Sikulix.terminate(202);
-      }
-      runBuild();
-    }
-    return true;
+  private static boolean checklibs(File lib) {
+    log(lvl, "checking\n%s", lib);
+    return false;
   }
 
   private static String checkPrereqsLux(String linuxDistro, String workDir) {
@@ -1588,7 +1574,7 @@ public class RunSetup {
                     new FileManager.FileFilter() {
                       @Override
                       public boolean accept(File entry) {
-                        if (Settings.isLinux() && "libs".equals(entry.getName())) {
+                        if (isLinux && "libs".equals(entry.getName())) {
                           return false;
                         }
                         return true;
