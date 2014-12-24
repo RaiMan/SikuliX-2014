@@ -138,7 +138,7 @@ public class JRubyScriptRunner implements IScriptRunner {
             String[] args = null;
             String[] iargs = {/*"-i", "-c",*/
                 "require 'irb'\n"
-                + "SikuliScript.runningInteractive();\n"
+                + "ScriptRunner.runningInteractive();\n"
                 + "print \"Hello, this is your interactive Sikuli (rules for interactive Ruby apply)\\n"
                 + "use the UP/DOWN arrow keys to walk through the input history\\n"
                 + "help()<enter> will output some basic Ruby information\\n"
