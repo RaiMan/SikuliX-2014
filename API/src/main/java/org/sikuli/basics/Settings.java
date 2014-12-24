@@ -33,6 +33,7 @@ public class Settings {
 	private static void log(int level, String message, Object... args) {
 		Debug.logx(level, me + message, args);
 	}
+  
 
   public static int SikuliVersionMajor;
 	public static int SikuliVersionMinor;

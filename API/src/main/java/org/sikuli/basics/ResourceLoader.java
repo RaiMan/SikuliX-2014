@@ -15,8 +15,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.net.URLClassLoader;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,15 +34,15 @@ public class ResourceLoader {
   private static ResourceLoader resourceLoader = null;
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
-  private String me = "ResourceLoader";
-  private String mem = "...";
-  private int lvl = 3;
+  private static String me = "ResourceLoader";
+  private static String mem = "...";
+  private static int lvl = 3;
 
-  private void log(int level, String message, Object... args) {
+  private static void log(int level, String message, Object... args) {
     Debug.logx(level, me + ": " + mem + ": " + message, args);
   }
 
-  private void log0(int level, String message, Object... args) {
+  private static void log0(int level, String message, Object... args) {
     Debug.logx(level, me + ": " + message, args);
   }
   //</editor-fold>
@@ -102,6 +104,7 @@ public class ResourceLoader {
 
 	private boolean initDone = false;
 	private boolean usrPathProblem = false;
+  private boolean beSilent = false;
 
   private ResourceLoader() {
     log0(lvl, "SikuliX Package Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
@@ -138,6 +141,47 @@ public class ResourceLoader {
       resourceLoader = new ResourceLoader();
     }
     return resourceLoader;
+  }
+  
+  private void setSilent(boolean state) {
+    beSilent = state;
+  } 
+  
+  public static ResourceLoader forJar(String jarName) {
+    ResourceLoader rl = get();
+    URL jar = null;
+    if (new File(jarName).isAbsolute()) {
+      try {
+        jar = new URL("file", null, jarName);
+      } catch (MalformedURLException ex) {
+        log(-1, "%s", ex);
+      }
+    } else {
+      jar = getJarFromClasspath(jarName);
+    }
+    if (jar != null) {
+      rl.setCurrentJar(jar);
+      return rl;
+    } else {
+      return null;
+    }
+  }
+  
+  private static URL getJarFromClasspath(String jarName) {
+    URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+    URL[] urls = sysLoader.getURLs();
+    URL jarurl = null;
+    for (URL url : urls) {
+      if (url.getPath().toLowerCase().contains(jarName)) {
+        jarurl = url;
+        break;
+      }
+    }
+    return jarurl;
+  } 
+  
+  private void setCurrentJar(URL jar) {
+    currentURL = jar;
   }
 
 	public URL setApiJarURL(String pURL) {
@@ -756,7 +800,9 @@ public class ResourceLoader {
     String error = "*** error ***" + NL;
     try {
       log(lvl, Sikulix.arrayToString(args));
-      Debug.info("runcmd: " + Sikulix.arrayToString(args));
+      if (!beSilent) {
+        Debug.info("runcmd: " + Sikulix.arrayToString(args));
+      }
       Process process = Runtime.getRuntime().exec(args);
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
       BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
