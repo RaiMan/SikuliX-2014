@@ -151,13 +151,22 @@ public class Observer {
 
   private void callEventObserver(String name, Match match, long time) {
     Object ptn = eventNames.get(name);
-    log(lvl, "%s: %s with: %s at: %s", eventTypes.get(name), name, ptn, match);
-    ObserveEvent observeEvent = new ObserveEvent(name, eventTypes.get(name), ptn, match, observedRegion, time);
+    ObserveEvent.Type obsType = eventTypes.get(name);
+    log(lvl, "%s: %s with: %s at: %s", obsType, name, ptn, match);
+    ObserveEvent observeEvent = new ObserveEvent(name, obsType, ptn, match, observedRegion, time);
     Object callBack = eventCallBacks.get(name);
     Observing.addEvent(observeEvent);
     if (callBack != null && callBack instanceof ObserverCallBack) {
-      log(lvl, "running call back");
-      ((ObserverCallBack) callBack).appeared(observeEvent);
+      log(lvl, "running call back: %s", obsType);
+      if (obsType == ObserveEvent.Type.APPEAR) {
+        ((ObserverCallBack) callBack).appeared(observeEvent);
+      } else if (obsType == ObserveEvent.Type.VANISH) {
+        ((ObserverCallBack) callBack).vanished(observeEvent);
+      } else if (obsType == ObserveEvent.Type.CHANGE) {
+        ((ObserverCallBack) callBack).changed(observeEvent);
+      } else if (obsType == ObserveEvent.Type.GENERIC) {
+        ((ObserverCallBack) callBack).happened(observeEvent);
+      }
     }    
   }
 
