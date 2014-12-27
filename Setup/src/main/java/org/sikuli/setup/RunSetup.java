@@ -1408,6 +1408,8 @@ public class RunSetup {
 
   private static boolean checklibs(File lib) {
     log(lvl, "checking\n%s", lib);
+    // readelf -d lib
+    // ldd -r lib
     return false;
   }
 
