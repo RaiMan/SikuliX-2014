@@ -25,6 +25,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -129,16 +131,19 @@ public class RunSetup {
   private static boolean isLinux = false; 
 
   // -MF $externals/$fn.o.d -o $externals/$fn.o $src/Vision/$fn
-  public static boolean buildComplete = true;
-  public static String buildCppMods = "-MF %s.o.d -o %s.o %s";
-  public static String buildCppInclude = "";
-  public static String buildFolderSrc = "Build/Source";
-  public static String[] buildSrcFiles = new String[]{"cvgui.cpp", "finder.cpp", "pyramid-template-matcher.cpp", "sikuli-debug.cpp", "tessocr.cpp", "vision.cpp", "visionJAVA_wrap.cxx"};
-  public static String buildCppFix = "g++ -c -O3 -fPIC -MMD -MP %s "; // $includeParm
-  public static String buildFolder = "Build";
-  public static String buildFolderStuff = "Build/Stuff";
+  private static boolean buildComplete = true;
+  private static String buildCppMods = "-MF %s.o.d -o %s.o %s";
+  private static String buildFolderSrc = "Build/Source";
+  private static String buildFolderInclude = "Build/Include";
+  private static String[] buildSrcFiles = 
+          new String[]{"cvgui.cpp", "finder.cpp", 
+                       "pyramid-template-matcher.cpp", "sikuli-debug.cpp", "tessocr.cpp", 
+                       "vision.cpp", "visionJAVA_wrap.cxx"};
+  private static String buildCppFix = "g++ -c -O3 -fPIC -MMD -MP %s "; // $includeParm
+  private static String buildFolder = "Build";
+  private static String buildFolderStuff = "Build/Stuff";
   private static String buildCompile = "";
-  private static String buildLink = "g++ -shared -s -fPIC -dynamic -o libVisionProxy.so ";
+  private static String buildLink = "g++ -shared -s -fPIC -dynamic ";
   private static boolean libsProvided = false;
   private static String libVision = "libVisionProxy.so";
   private static String libGrabKey = "libJXGrabKey.so";
@@ -147,6 +152,15 @@ public class RunSetup {
   private static boolean shouldExport = false;
   private static String[] libsFileList = new String[]{null, null};
   private static String[] libsFilePrefix = new String[]{null, null};
+  private static String libOpenCVcore = "";
+  private static String libOpenCVimgproc = "";
+  private static String libOpenCVhighgui = "";
+  private static String libTesseract = "";
+  private static boolean libSearched = false;
+  private static boolean checkSuccess = true;
+  private static boolean opencvAvail = true;
+  private static boolean tessAvail = true;
+  private static String cmdError = "*** error ***";
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static void log(int level, String message, Object... args) {
@@ -255,6 +269,32 @@ public class RunSetup {
       }
     }
 
+    if (options.size() > 0 && "noSetup".equals(options.get(0))) {
+      noSetup = true;
+      options.remove(0);
+    }
+
+    if (options.size() > 0 && "update".equals(options.get(0))) {
+      runningUpdate = true;
+      options.remove(0);
+    }
+
+    if (options.size() > 0 && "updateSetup".equals(options.get(0))) {
+      isUpdateSetup = true;
+      options.remove(0);
+    }
+
+    if (options.size() > 1 && "log".equals(options.get(0))) {
+      options.remove(0);
+      String log = options.remove(0);
+      try {
+        logLevel = Integer.decode(log);
+      } catch (NumberFormatException numberFormatException) {
+      }
+    }
+
+    //</editor-fold>
+
 //TODO add parameter for proxy settings, linux options
     if (args.length > 0 && "options".equals(args[0])) {
       options.remove(0);
@@ -305,32 +345,7 @@ public class RunSetup {
         }
       }
     }
-
-    if (options.size() > 0 && "noSetup".equals(options.get(0))) {
-      noSetup = true;
-      options.remove(0);
-    }
-
-    if (options.size() > 0 && "update".equals(options.get(0))) {
-      runningUpdate = true;
-      options.remove(0);
-    }
-
-    if (options.size() > 0 && "updateSetup".equals(options.get(0))) {
-      isUpdateSetup = true;
-      options.remove(0);
-    }
-
-    if (options.size() > 1 && "log".equals(options.get(0))) {
-      options.remove(0);
-      String log = options.remove(0);
-      try {
-        logLevel = Integer.decode(log);
-      } catch (NumberFormatException numberFormatException) {
-      }
-    }
-
-    //</editor-fold>
+    
     runningJar = FileManager.getJarName(RunSetup.class);
 
     if (runningJar.isEmpty()) {
@@ -441,7 +456,7 @@ public class RunSetup {
       popError("invalid command line options - terminating");
       System.exit(999);
     }
-
+    
     //<editor-fold defaultstate="collapsed" desc="general preps">
     Settings.runningSetup = true;
     Settings.LogTime = true;
@@ -450,6 +465,18 @@ public class RunSetup {
     uhome = System.getProperty("user.home");
     runningJar = FileManager.getJarPath(RunSetup.class);
     workDir = new File(runningJar).getParent();
+
+    osarch = System.getProperty("os.arch");
+    osarch = osarch.contains("64") ? "64" : "32";
+    if (Settings.isLinux()) {
+      String result = ResourceLoader.get().runcmd("lsb_release -i -r -s");
+      linuxDistro = result.replaceAll("\n", " ").trim();
+      if (linuxDistro.contains("*** error ***")) {
+        linuxDistro = "***UNKNOWN***";
+      }
+      log1(lvl, "LinuxDistro: %s (%s-Bit)", linuxDistro, osarch);
+      isLinux = true;
+    }
 
     if (!runningJar.endsWith(".jar") || runningJar.endsWith("-plain.jar")) {
       if (!hasOptions) {
@@ -502,21 +529,9 @@ public class RunSetup {
     File localJarAPI = new File(workDir, localAPI);
     File localMacFolder = new File(workDir, folderMacApp);
 
-    osarch = System.getProperty("os.arch");
-    osarch = osarch.contains("64") ? "64" : "32";
     folderLibs = new File(workDir, "libs");
 
     //TODO Windows 8 HKLM/SOFTWARE/JavaSoft add Prefs ????
-    if (Settings.isLinux()) {
-      String result = ResourceLoader.get().runcmd("lsb_release -i -r -s");
-      linuxDistro = result.replaceAll("\n", " ").trim();
-      if (linuxDistro.contains("*** error ***")) {
-        linuxDistro = "***UNKNOWN***";
-      }
-      log1(lvl, "LinuxDistro: %s (%s-Bit)", linuxDistro, osarch);
-      isLinux = true;
-    }
-
     boolean success;
     if (isLinux && !libsProvided) {
       visionProvided = new File(folderLibs, libVision).exists();
@@ -535,100 +550,104 @@ public class RunSetup {
     }
 
     //<editor-fold defaultstate="collapsed" desc="checking update/beta">
-    if (!runningUpdate && !isUpdateSetup) {
-      String uVersion = "";
-      String msgFooter = "You have " + Settings.getVersion()
-              + "\nClick YES, if you want to install ..."
-              + "\ncurrent stuff will be saved to BackUp."
-              + "\n... Click NO to skip ...";
-      if (localJarIDE.exists() || localJarAPI.exists() || localMacFolder.exists()) {
-        int avail = -1;
-        boolean someUpdate = false;
-        String ask1 = "You have " + Settings.getVersion()
-                + "\nClick YES if you want to run setup again\n"
-                + "This will download fresh versions of the selected stuff.\n"
-                + "Your current stuff will be saved to folder BackUp.\n\n"
-                + "If you cancel the setup later or it is not successful\n"
-                + "the saved stuff will be restored from folder BackUp\n\n";
-        if (!popAsk(ask1)) {
-          userTerminated("Do not run setup again");
-        }
-				//<editor-fold defaultstate="collapsed" desc="update - currently deactivated">
-//				String ask2 = "Click YES to get info on updates or betas.\n"
-//								+ "or click NO to terminate setup now.";
-//				if (generallyDoUpdate && popAsk(ask2)) {
-//					splash = showSplash("Checking for update or beta versions! (you have " + version + ")",
-//									"please wait - may take some seconds ...");
-//					AutoUpdater au = new AutoUpdater();
-//					avail = au.checkUpdate();
-//					closeSplash(splash);
-//					if (avail > 0) {
-//						if (avail == AutoUpdater.BETA || avail == AutoUpdater.SOMEBETA) {
-//							someUpdate = true;
-//							uVersion = au.getBetaVersion();
-//							if (popAsk("Version " + uVersion + " is available\n" + msgFooter)) {
-//								isBeta = true;
-//							}
-//						}
-//						if (avail > AutoUpdater.FINAL) {
-//							avail -= AutoUpdater.SOMEBETA;
-//						}
-//						if (avail > 0 && avail != AutoUpdater.BETA) {
-//							someUpdate = true;
-//							if (popAsk(au.whatUpdate + "\n" + msgFooter)) {
-//								isUpdate = true;
-//								uVersion = au.getVersionNumber();
-//							}
-//						}
-//					}
-//					if (!someUpdate) {
-//						popInfo("No suitable update or beta available");
-//						userTerminated("No suitable update or beta available");
-//					}
-//				}
-        //</editor-fold>
-        if (!isBeta && !isUpdate) {
-          reset(-1);
-        } else {
-          //<editor-fold defaultstate="collapsed" desc="update - currently deactivated">
-          log0(lvl, "%s is available", uVersion);
-          if (uVersion.equals(updateVersion)) {
-            reset(avail);
-            Settings.downloadBaseDir = Settings.downloadBaseDirBase + uVersion.substring(0, 3) + "/";
-            downloadSetup = "sikuli-update-" + uVersion + ".jar";
-            if (!download(Settings.downloadBaseDir, workDir, downloadSetup,
-                    new File(workDir, downloadSetup).getAbsolutePath(), "")) {
-              restore(true);
-              popError("Download did not complete successfully.\n"
-                      + "Check the logfile for possible error causes.\n\n"
-                      + "If you think, setup's inline download from Dropbox is blocked somehow on,\n"
-                      + "your system, you might download manually (see respective FAQ)\n"
-                      + "For other reasons, you might simply try to run setup again.");
-              terminate("download not completed successfully");
-            }
-            popInfo("Now you can run the update process:\n"
-                    + "DoubleClick " + "sikuli-update-" + uVersion + ".jar"
-                    + "\nin folder " + workDir + "\n\nPlease click OK before proceeding!");
-            terminate("");
-          } else {
-            popError("downloadable update: " + uVersion + "\nexpected update: " + updateVersion
-                    + "\n do not match --- terminating --- pls. report");
-            terminate("update versions do not match");
+    if (!hasOptions) {
+      if (!runningUpdate && !isUpdateSetup) {
+        String uVersion = "";
+        String msgFooter = "You have " + Settings.getVersion()
+                + "\nClick YES, if you want to install ..."
+                + "\ncurrent stuff will be saved to BackUp."
+                + "\n... Click NO to skip ...";
+        if (localJarIDE.exists() || localJarAPI.exists() || localMacFolder.exists()) {
+          int avail = -1;
+          boolean someUpdate = false;
+          String ask1 = "You have " + Settings.getVersion()
+                  + "\nClick YES if you want to run setup again\n"
+                  + "This will download fresh versions of the selected stuff.\n"
+                  + "Your current stuff will be saved to folder BackUp.\n\n"
+                  + "If you cancel the setup later or it is not successful\n"
+                  + "the saved stuff will be restored from folder BackUp\n\n";
+          if (!popAsk(ask1)) {
+            userTerminated("Do not run setup again");
           }
+          //<editor-fold defaultstate="collapsed" desc="update - currently deactivated">
+  //				String ask2 = "Click YES to get info on updates or betas.\n"
+  //								+ "or click NO to terminate setup now.";
+  //				if (generallyDoUpdate && popAsk(ask2)) {
+  //					splash = showSplash("Checking for update or beta versions! (you have " + version + ")",
+  //									"please wait - may take some seconds ...");
+  //					AutoUpdater au = new AutoUpdater();
+  //					avail = au.checkUpdate();
+  //					closeSplash(splash);
+  //					if (avail > 0) {
+  //						if (avail == AutoUpdater.BETA || avail == AutoUpdater.SOMEBETA) {
+  //							someUpdate = true;
+  //							uVersion = au.getBetaVersion();
+  //							if (popAsk("Version " + uVersion + " is available\n" + msgFooter)) {
+  //								isBeta = true;
+  //							}
+  //						}
+  //						if (avail > AutoUpdater.FINAL) {
+  //							avail -= AutoUpdater.SOMEBETA;
+  //						}
+  //						if (avail > 0 && avail != AutoUpdater.BETA) {
+  //							someUpdate = true;
+  //							if (popAsk(au.whatUpdate + "\n" + msgFooter)) {
+  //								isUpdate = true;
+  //								uVersion = au.getVersionNumber();
+  //							}
+  //						}
+  //					}
+  //					if (!someUpdate) {
+  //						popInfo("No suitable update or beta available");
+  //						userTerminated("No suitable update or beta available");
+  //					}
+  //				}
           //</editor-fold>
+          if (!isBeta && !isUpdate) {
+            reset(-1);
+          } else {
+            //<editor-fold defaultstate="collapsed" desc="update - currently deactivated">
+            log0(lvl, "%s is available", uVersion);
+            if (uVersion.equals(updateVersion)) {
+              reset(avail);
+              Settings.downloadBaseDir = Settings.downloadBaseDirBase + uVersion.substring(0, 3) + "/";
+              downloadSetup = "sikuli-update-" + uVersion + ".jar";
+              if (!download(Settings.downloadBaseDir, workDir, downloadSetup,
+                      new File(workDir, downloadSetup).getAbsolutePath(), "")) {
+                restore(true);
+                popError("Download did not complete successfully.\n"
+                        + "Check the logfile for possible error causes.\n\n"
+                        + "If you think, setup's inline download from Dropbox is blocked somehow on,\n"
+                        + "your system, you might download manually (see respective FAQ)\n"
+                        + "For other reasons, you might simply try to run setup again.");
+                terminate("download not completed successfully");
+              }
+              popInfo("Now you can run the update process:\n"
+                      + "DoubleClick " + "sikuli-update-" + uVersion + ".jar"
+                      + "\nin folder " + workDir + "\n\nPlease click OK before proceeding!");
+              terminate("");
+            } else {
+              popError("downloadable update: " + uVersion + "\nexpected update: " + updateVersion
+                      + "\n do not match --- terminating --- pls. report");
+              terminate("update versions do not match");
+            }
+            //</editor-fold>
+          }
         }
+      } else {
+        //<editor-fold defaultstate="collapsed" desc="update - currently deactivated">
+        log0(lvl, "Update started");
+        if (!generallyDoUpdate) {
+          terminate("Switched Off: Run update!");
+        }
+        if (!popAsk("You requested to run an Update now"
+                + "\nYES to continue\nNO to terminate")) {
+          userTerminated("");
+        }
+        //</editor-fold>
       }
     } else {
-      //<editor-fold defaultstate="collapsed" desc="update - currently deactivated">
-      log0(lvl, "Update started");
-      if (!generallyDoUpdate) {
-        terminate("Switched Off: Run update!");
-      }
-      if (!popAsk("You requested to run an Update now"
-              + "\nYES to continue\nNO to terminate")) {
-        userTerminated("");
-      }
-      //</editor-fold>
+      reset(-1);
     }
     //</editor-fold>
 
@@ -1021,16 +1040,22 @@ public class RunSetup {
         File fLibCheck;
         boolean shouldTerminate = false;
         boolean shouldBuild = false;
+        boolean shouldBuildVision = false;
         for (int i = 0; i < libsCheck.length; i++) {
           fLibCheck = new File(libsCheck[i]);
           if (fLibCheck.exists()) {
             if (!checklibs(fLibCheck)) {
               if (libsExport[i] == null) {
-                log(-1, "provided %s not useable on this Linux distro - see log", fLibCheck.getName());
+                log1(-1, "provided %s might not be useable on this Linux distro - see log", fLibCheck.getName());
                 shouldTerminate = true;
               } else {
-                log(-1, "bundled %s not useable on this Linux distro - see log", fLibCheck.getName());
-                shouldBuild = true;
+                log1(-1, "bundled %s might not be useable on this Linux distro - see log", fLibCheck.getName());
+                if (i > 0) {
+                  //TODO why? JXGrabKey unresolved: pthread
+                  //shouldBuild = true;
+                } else {
+                  shouldBuildVision = true;
+                }
               }
             }
           } else {
@@ -1044,17 +1069,34 @@ public class RunSetup {
           }
           FileManager.deleteFileOrFolder(new File(folderLibs, exLib).getAbsolutePath());
         }
+//TODO for testing uncomment
+//        shouldBuildVision = true; // uncomment or delete
+        if (!hasOptions && (shouldBuild || shouldBuildVision)) {
+          log1(-1, "A bundled lib could not be checked or does not work.");
+          if (shouldBuildVision) {
+            if (popAsk("The bundled/provided libVisionProxy.so might not work."
+                    + "\nShould we try to build it now?"
+                    + "\nClick YES to try a build"
+                    + "\nClick NO to continue and fix it later yourself")) {
+              log1(lvl, "Trying to build libVisionProxy.so");
+              shouldBuild |= !buildVision();
+            }
+          }
+        }
         if (! libsProvided) {
           FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
         }
-        if (shouldTerminate) {
-          terminate("Correct the problems with your provided libs and try again");
-        }
-        if (shouldBuild) {
-          terminate("Trying to build");          
+        if (shouldTerminate || shouldBuild) {
+          if (!popAsk("Fore some reason one or more of the \n"
+                  + "native libraries might not be useable.\n"
+                  + "Click YES to continue anyway (be sure its ok)\n"
+                  + "Click NO to terminate and correct the problems.")) {
+            terminate("Correct the problems with the bundled/provided libs and try again");
+          }
         }
       }
     }
+    
     if (getIDE || getAPI) {
       localJar = new File(workDir, localAPI).getAbsolutePath();
       downloadOK &= download(Settings.downloadBaseDir, dlDir, downloadAPI, localJar, "Java API");
@@ -1281,8 +1323,6 @@ public class RunSetup {
     }
     restore(true); //to get back the stuff that was not changed
     //</editor-fold>
-
-    terminate("");
     
     //<editor-fold defaultstate="collapsed" desc="api test">
     if (getAPI) {
@@ -1407,13 +1447,122 @@ public class RunSetup {
   }
 
   private static boolean checklibs(File lib) {
-    log(lvl, "checking\n%s", lib);
+    String cmdRet;
+    String[] retLines;
+    
+    if (!libSearched) {
+      log1(lvl, "checking: availability of OpenCV and Tesseract");
+      log1(lvl, "checking: scanning loader cache (ldconfig -p)");
+      cmdRet = ResourceLoader.get().runcmd("ldconfig -p");
+      if (cmdRet.contains(cmdError)) {
+        log1(-1, "checking: ldconfig returns error:\ns", cmdRet);
+        checkSuccess = false;
+      } else {
+        String[] libs = cmdRet.split("\n");
+        for (String libx : libs) {
+          libx = libx.trim();
+          if (!libx.startsWith("lib")) {
+            continue;
+          }
+          if (libx.startsWith("libopencv_core.so.")) {
+            libOpenCVcore = libx.split("=>")[1].trim();
+          } else if (libx.startsWith("libopencv_highgui.so.")) {
+            libOpenCVhighgui = libx.split("=>")[1].trim();
+          } else if (libx.startsWith("libopencv_imgproc.so.")) {
+            libOpenCVimgproc = libx.split("=>")[1].trim();
+          } else if (libx.startsWith("libtesseract.so.")) {
+            libTesseract = libx.split("=>")[1].trim();
+          }
+        }
+        if (libOpenCVcore == null || libOpenCVhighgui == null || libOpenCVimgproc == null) {
+          log1(-1, "checking: OpenCV not in loader cache (see doc-note on OpenCV)");
+          opencvAvail = checkSuccess = false;
+        } else {
+          log1(lvl, "checking: found OpenCV libs:\n%s", libOpenCVcore);
+        }
+        if (libTesseract == null) {
+          log1(-1, "checking: Tesseract not in loader cache (see doc-note on Tesseract)");
+          tessAvail = checkSuccess = false;
+        } else {
+          log1(lvl, "checking: found Tesseract lib:\n%s", libTesseract);
+        }
+      }
+      
+      // checking wmctrl
+      cmdRet = ResourceLoader.get().runcmd("wmctrl -m");
+      if (cmdRet.contains(cmdError)) {
+        log1(-1, "checking: wmctrl not available or not working");
+        checkSuccess = false;
+      } else {
+        log1(lvl, "checking: wmctrl seems to be available");
+      }
+      libSearched = true;
+    }
+
+    log1(lvl, "checking\n%s", lib);
+    log1(lvl, "checking: needed libs (readelf -d lib)");
     // readelf -d lib
+    // 0x0000000000000001 (NEEDED)             Shared library: [libtesseract.so.3]
+    cmdRet = ResourceLoader.get().runcmd("readelf -d " + lib);
+    if (cmdRet.contains(cmdError)) {
+      log1(-1, "checking: readelf returns error:\ns", cmdRet);
+      checkSuccess = false;
+    } else {
+      retLines = cmdRet.split("\n");
+      String libsNeeded = "";
+      for (String line : retLines) {
+        if (line.contains("(NEEDED)")) {
+          line = line.split("\\[")[1].replace("]", "");
+          libsNeeded += line + ":";
+        }
+      }
+      log0(lvl, libsNeeded);
+    }
+    
+    log1(lvl, "checking: needed libs useable? (ldd -r lib)");
+    if (!runLdd(lib)) {
+      checkSuccess = false;
+    }
+
+    return checkSuccess;
+  }
+  
+  private static boolean runLdd(File lib) {
     // ldd -r lib
-    return false;
+    // undefined symbol: _ZN2cv3MatC1ERKS0_RKNS_5Rect_IiEE	(./libVisionProxy.so)
+    String cmdRet = ResourceLoader.get().runcmd("ldd -r " + lib);
+    String[] retLines;
+    boolean success = true;
+    if (cmdRet.contains(cmdError)) {
+      log1(-1, "checking: ldd returns error:\ns", cmdRet);
+      success = false;
+    } else {
+      retLines = cmdRet.split("\n");
+      String libName = lib.getName();
+      String libsMissing = "";
+      for (String line : retLines) {
+        if (line.contains("undefined symbol:") && line.contains(libName)) {
+          line = line.split("symbol:")[1].trim().split("\\s")[0]; 
+          libsMissing += line + ":";
+        }
+      }
+      if (libsMissing.isEmpty()) {
+        log1(lvl, "checking: should work: %s", libName);
+      } else {
+        log1(-1, "checking: might not work, has undefined symbols: %s", libName);
+        log0(lvl, "%s", libsMissing);
+        success = false;
+      }
+    }
+    return success;
   }
 
-  private static String checkPrereqsLux(String linuxDistro, String workDir) {
+  private static boolean buildVision() {
+    File build = new File(workDir, buildFolder);
+    File source = new File(workDir, buildFolderSrc);
+    File stuff = new File(workDir, buildFolderStuff);
+    File incl = new File(workDir, buildFolderInclude);
+    
     File javaHome = new File(System.getProperty("java.home"));
     File javaInclude = null;
     File javaIncludeLinux = null;
@@ -1431,91 +1580,77 @@ public class RunSetup {
         javaHome = null;
       }
     }
+
+    String buildInclude = "";
+    String inclUsr = "/usr/include";
+    String inclUsrLocal = "/usr/local/include";
+    
+    boolean exportIncludeJava = false;
     if (javaHome == null) {
-      log(lvl, "JDK: not found - set JAVA_HOME to a valid JDK");
-      buildComplete = false;
+      //log(lvl, "JDK: not found - set JAVA_HOME to a valid JDK");
+      //buildComplete = false;
+      log0(lvl, "buildVision: JDK: not found - using the bundled include files");
+      buildInclude += " -I" + incl.getAbsolutePath();
+      exportIncludeJava = true;
     } else {
       log(lvl, "JDK: found at: %s", javaHome);
-      buildCppInclude = String.format("-I%s -I%s -I/usr/include -I/usr/local/include ",
+      buildInclude += String.format("-I%s -I%s ",
               javaInclude.getAbsolutePath(), javaIncludeLinux.getAbsolutePath());
     }
 
-    File source = new File(workDir, buildFolderSrc);
-    File stuff = new File(workDir, buildFolderStuff);
+    boolean exportIncludeOpenCV = false;
+    boolean exportIncludeTesseract = false;
 
+    String inclLib = "opencv2";
+    if (!new File(inclUsr, inclLib).exists() && !new File(inclUsrLocal, inclLib).exists()) {
+      exportIncludeOpenCV = true;
+      if (!exportIncludeJava) {
+        buildInclude += " -I" + incl.getAbsolutePath();
+      }
+    }
+
+    inclLib = "tesseract";
+    if (!new File(inclUsr, inclLib).exists() && !new File(inclUsrLocal, inclLib).exists()) {
+      exportIncludeTesseract = true;
+      if (!exportIncludeOpenCV && !exportIncludeJava) {
+        buildInclude += " -I" + incl.getAbsolutePath();
+      }
+    }
+
+    if (!exportIncludeOpenCV || !exportIncludeTesseract) {
+      buildInclude += " -I" + inclUsr + " -I" + inclUsrLocal;
+    }
+    
     String mfFile;
     String srcFile;
+    log0(lvl, "buildVision: setting up the compile commands");
     for (String sFile : buildSrcFiles) {
       buildCompile += String.format("echo ----- %s\n", sFile);
-      buildCompile += String.format(buildCppFix, buildCppInclude);
+      buildCompile += String.format(buildCppFix, buildInclude);
       mfFile = new File(stuff, sFile).getAbsolutePath();
       srcFile = new File(source, sFile).getAbsolutePath();
       buildCompile += String.format(buildCppMods, mfFile, mfFile, srcFile);
       buildCompile += "\n";
       buildLink += mfFile + ".o ";
     }
-    String cmdRet = ResourceLoader.get().runcmd("ldconfig -p");
-    String[] libs = cmdRet.split("\n");
-    String libOpenCVcore = null;
-    String libOpenCVimgproc = null;
-    String libOpenCVhighgui = null;
-    String libTesseract = null;
-    for (String lib : libs) {
-      lib = lib.trim();
-      if (!lib.startsWith("lib")) {
-        continue;
-      }
-      if (lib.startsWith("libopencv_core.so.")) {
-        libOpenCVcore = lib.split("=>")[1].trim();
-      }
-      if (lib.startsWith("libopencv_highgui.so.")) {
-        libOpenCVhighgui = lib.split("=>")[1].trim();
-      }
-      if (lib.startsWith("libopencv_imgproc.so.")) {
-        libOpenCVimgproc = lib.split("=>")[1].trim();
-      }
-      if (lib.startsWith("libtesseract.so.")) {
-        libTesseract = lib.split("=>")[1].trim();
-      }
-    }
-    if (libOpenCVcore == null || libOpenCVhighgui == null || libOpenCVimgproc == null) {
-      log(lvl, "CheckPrereqs: OpenCV seems not to be available (see doc-note on OpenCV)");
-      buildComplete = false;
-    } else {
-      log(lvl, "CheckPrereqs: found OpenCV libs: %s", libOpenCVcore);
-    }
-    if (libTesseract == null) {
-      log(lvl, "CheckPrereqs: Tesseract seems not to be available (see doc-note on Tesseract)");
-      buildComplete = false;
-    } else {
-      log(lvl, "CheckPrereqs: found Tesseract lib: %s", libTesseract);
-    }
+    log0(lvl, "buildVision: setting up the link command");
     buildLink += libOpenCVcore + " ";
     buildLink += libOpenCVhighgui + " ";
     buildLink += libOpenCVimgproc + " ";
     buildLink += libTesseract + " ";
-
-    if (buildComplete) {
-      return null;
-    } else {
-      return "build not possible";
-    }
-  }
-
-  private static void runBuild() {
-    File build = new File(workDir, buildFolder);
-    File source = new File(workDir, buildFolderSrc);
-    File stuff = new File(workDir, buildFolderStuff);
-
+    String libVisionPath = new File(build, libVision).getAbsolutePath();
+    buildLink += "-o " + libVisionPath;
     ResourceLoader rl = ResourceLoader.forJar("setup");
+    File cmdFile = null;
     if (rl != null) {
+      FileManager.deleteFileOrFolder(build.getAbsolutePath());
       build.mkdirs();
       source.mkdirs();
       if (stuff.exists()) {
         FileManager.deleteFileOrFolder(stuff.getAbsolutePath());
       }
       stuff.mkdirs();
-      File cmdFile = new File(build, "runBuild");
+      cmdFile = new File(build, "runBuild");
 
       PrintStream out = null;
       try {
@@ -1525,17 +1660,55 @@ public class RunSetup {
         out.println("echo ----------- LINKING");
         out.println(buildLink);
         out.close();
-        log(lvl, "CreateBuild: build file written to: %s", out);
+        log0(lvl, "buildVision: build script written to: %s", cmdFile);
       } catch (Exception ex) {
-        log(-1, "CreateBuild: cannot write %s", out);
-        return;
+        log0(-1, "buildVision: cannot write %s", cmdFile);
+        return false;
       }
       rl.export("srcnativelibs/Vision#", source.getAbsolutePath());
+      if (exportIncludeJava) {
+        rl.export("srcnativelibs/VisionInclude/Java#", incl.getAbsolutePath());
+      }
+      if (exportIncludeOpenCV) {
+        rl.export("srcnativelibs/VisionInclude/OpenCV#", incl.getAbsolutePath());
+      }
+      if (exportIncludeTesseract) {
+        rl.export("srcnativelibs/VisionInclude/Tesseract#", incl.getAbsolutePath());
+      }
       cmdFile.setExecutable(true);
     } else {
-      log(-1, "CreateBuild: cannot export lib sources");
-      return;
+      log0(-1, "buildVision: cannot export lib sources");
+      return false;
     }
+
+      JFrame spl = null;
+      if (opencvAvail && tessAvail) {
+      spl = showSplash(libVision, "running build script");
+      log0(lvl,"buildVision: running build script");
+      String cmdRet = rl.runcmd(cmdFile.getAbsolutePath());
+      if (cmdRet.contains(cmdError)) {
+        log0(-1, "buildVision: build script returns error:\ns", cmdRet);
+        closeSplash(spl);
+        return false;
+      } else {
+        log0(lvl,"buildVision: checking created libVisionProxy.so");
+        if (!runLdd(new File(libVisionPath))) {
+          log0(-1,"------- output of the build run\n%s", cmdRet);
+          closeSplash(spl);
+          return false;
+        }
+      }
+    }
+    try {
+      FileManager.xcopy(libVisionPath, new File(folderLibs, libVision).getAbsolutePath());
+    } catch (IOException ex) {
+      log0(-1, "could not copy built libVisionProxy.so to libs folder\n%s", ex.getMessage());
+      closeSplash(spl);
+      return false;
+    }
+    libsProvided = true;
+    closeSplash(spl);
+    return true;
   }
 
   private static void runScriptTest(String[] testargs) {
@@ -1805,46 +1978,44 @@ public class RunSetup {
   }
 
   private static void reset(int type) {
-    if (hasOptions) {
-      return;
-    }
-    log1(3, "requested to reset: " + workDir);
-    String message = "";
-    if (type <= 0) {
-      message = "You decided to run setup again!\n";
-    } else if (isBeta) {
-      message = "You decided to install a beta version!\n";
-    } else if (isUpdate) {
-      message = "You decided to install a new version!\n";
-    }
-    File fBackup = new File(workDir, "BackUp");
-    if (fBackup.exists()) {
-      if (!popAsk(message + "A backup folder exists and will be purged!\n"
-              + "Click YES if you want to proceed.\n"
-              + "Click NO, to first save the current backup folder and come back. ")) {
-        System.exit(0);
+    if (!hasOptions) {
+      log1(3, "requested to reset: " + workDir);
+      String message = "";
+      if (type <= 0) {
+        message = "You decided to run setup again!\n";
+      } else if (isBeta) {
+        message = "You decided to install a beta version!\n";
+      } else if (isUpdate) {
+        message = "You decided to install a new version!\n";
+      }
+      File fBackup = new File(workDir, "BackUp");
+      if (fBackup.exists()) {
+        if (!popAsk(message + "A backup folder exists and will be purged!\n"
+                + "Click YES if you want to proceed.\n"
+                + "Click NO, to first save the current backup folder and come back. ")) {
+          System.exit(0);
+        }
+      }
+      splash = showSplash("Now creating backup and cleaning setup folder", "please wait - may take some seconds ...");
+      String backup = fBackup.getAbsolutePath();
+      FileManager.deleteFileOrFolder(backup, new FileManager.FileFilter() {
+        @Override
+        public boolean accept(File entry) {
+          return true;
+        }
+      });
+      try {
+        FileManager.xcopy(workDir, backup);
+      } catch (IOException ex) {
+        popError("Reset: Not possible to backup:\n" + ex.getMessage());
+        terminate("Reset: Not possible to backup:\n" + ex.getMessage());
       }
     }
-    splash = showSplash("Now creating backup and cleaning setup folder", "please wait - may take some seconds ...");
-    String backup = fBackup.getAbsolutePath();
-    FileManager.deleteFileOrFolder(backup, new FileManager.FileFilter() {
-      @Override
-      public boolean accept(File entry) {
-        return true;
-      }
-    });
-    try {
-      FileManager.xcopy(workDir, backup);
-    } catch (IOException ex) {
-      popError("Reset: Not possible to backup:\n" + ex.getMessage());
-      terminate("Reset: Not possible to backup:\n" + ex.getMessage());
-    }
+    
     FileManager.deleteFileOrFolder(workDir, new FileManager.FileFilter() {
       @Override
       public boolean accept(File entry) {
-        if (entry.getName().startsWith("run")) {
-          return false;
-        } else if (entry.getName().equals(localSetup)) {
+        if (entry.getName().equals(localSetup)) {
           return false;
         } else if (workDir.equals(entry.getAbsolutePath())) {
           return false;
@@ -1860,6 +2031,11 @@ public class RunSetup {
         return true;
       }
     });
+    
+    if (hasOptions) {
+      return;
+    }
+    
     closeSplash(splash);
     log1(3, "backup completed!");
     backUpExists = true;
