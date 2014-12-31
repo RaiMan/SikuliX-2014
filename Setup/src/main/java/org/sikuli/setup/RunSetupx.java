@@ -127,8 +127,12 @@ public class RunSetup {
   private static File folderLibs;
   private static String linuxDistro = "*** testing Linux ***";
   private static String osarch;
+<<<<<<< OURS
 <<<<<<< .merge_file_t1ln4c
 
+=======
+  
+>>>>>>> THEIRS
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
 		Debug.logx(level, me + ": " + mem + ": " + message, args);
@@ -743,8 +747,12 @@ public class RunSetup {
 
     //<editor-fold defaultstate="collapsed" desc="setup preps and display options">
     String proxyMsg = "";
+<<<<<<< OURS
 <<<<<<< .merge_file_t1ln4c
 
+=======
+    
+>>>>>>> THEIRS
     if (Settings.isLinux()) {
       String result = ResourceLoader.get().runcmd("lsb_release -i -r -s");
       linuxDistro = result.replaceAll("\n", " ").trim();
@@ -759,7 +767,7 @@ public class RunSetup {
                 + "\nClick NO to terminate.");
         if (!success) {
           Sikulix.terminate(202);
-        }
+        } 
       }
     }
 =======
@@ -807,7 +815,8 @@ public class RunSetup {
         log1(lvl, "parent of jar/classes: %s", workDir);
 
         // running Java
-        msg = "Java " + Settings.JavaVersion + " (" + Settings.JavaArch + ") " + Settings.JREVersion;
+        String osarch = System.getProperty("os.arch");
+        msg = "Java " + Settings.JavaVersion + " (" + osarch + ") " + Settings.JREVersion;
         winSU.suJava.setText(msg);
         log1(lvl, "RunningJava: " + msg);
 
@@ -1235,7 +1244,7 @@ public class RunSetup {
 			System.exit(0);
 		}
 
- 		osarch = Settings.JavaArch;
+ 		osarch = System.getProperty("os.arch");
 		osarch = osarch.contains("64") ? "64" : "32";
 		folderLibs = new File(workDir, "libs");
 
@@ -1257,12 +1266,12 @@ public class RunSetup {
         shouldPackLibs = false;
       }
 		}
-
+    
 		if (folderLibs.exists() && shouldPackLibs) {
 			FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
 		}
 		folderLibs.mkdirs();
-
+    
     if (!shouldPackLibs) {
       log1(lvl, "Advice: some libs are provided in folder libs");
     }
