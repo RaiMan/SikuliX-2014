@@ -126,7 +126,7 @@ public class RunSetup {
 	private static String libLux2 = "libJXGrabKey.so";
   private static String linuxDistro = "";
   private static String osarch;
-  
+
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
 		Debug.logx(level, me + ": " + mem + ": " + message, args);
@@ -650,7 +650,7 @@ public class RunSetup {
 
 		//<editor-fold defaultstate="collapsed" desc="option setup preps display options">
     String proxyMsg = "";
-    
+
     if (Settings.isLinux()) {
       String result = ResourceLoader.get().runcmd("lsb_release -i -r -s");
       linuxDistro = result.replaceAll("\n", " ").trim();
@@ -665,7 +665,7 @@ public class RunSetup {
                 + "\nClick NO to terminate.");
         if (!success) {
           Sikulix.terminate(202);
-        } 
+        }
       }
     }
 
@@ -711,8 +711,7 @@ public class RunSetup {
         log1(lvl, "parent of jar/classes: %s", workDir);
 
         // running Java
-        String osarch = System.getProperty("os.arch");
-        msg = "Java " + Settings.JavaVersion + " (" + osarch + ") " + Settings.JREVersion;
+        msg = "Java " + Settings.JavaVersion + " (" + Settings.JavaArch + ") " + Settings.JREVersion;
         winSU.suJava.setText(msg);
         log1(lvl, "RunningJava: " + msg);
 
@@ -1055,7 +1054,7 @@ public class RunSetup {
 			System.exit(0);
 		}
 
- 		osarch = System.getProperty("os.arch");
+ 		osarch = Settings.JavaArch;
 		osarch = osarch.contains("64") ? "64" : "32";
 		folderLibs = new File(workDir, "libs");
 
@@ -1077,12 +1076,12 @@ public class RunSetup {
         shouldPackLibs = false;
       }
 		}
-    
+
 		if (folderLibs.exists() && shouldPackLibs) {
 			FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
 		}
 		folderLibs.mkdirs();
-    
+
     if (!shouldPackLibs) {
       log1(lvl, "Advice: some libs are provided in folder libs");
     }
