@@ -1190,11 +1190,4 @@ public class FileManager {
 		return true;
 	}
 
-	public static String checkPrereqsLux(String linuxDistro) {
-    if (! linuxDistro.startsWith("Ubuntux")) {      
-      return "Not running on Ubuntu - bundled libs might not work";
-    }
-		return null;
-	}
 }
-

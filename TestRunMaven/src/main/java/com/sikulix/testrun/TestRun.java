@@ -23,7 +23,7 @@ public class TestRun {
     Screen s = Sikulix.init();
     ImagePath.add("com.sikulix.testrun.TestRun/images/images.sikuli");
     
-    testListText(s);
+//    testListText(s);
 
 		testVNC(new String[]{});
 
@@ -86,10 +86,9 @@ public class TestRun {
     //do other sikuli operations
 
     cc.closeConnection(0); //clean up socket, stop thread
-}
+  }
 
 }
-
 
 // Try and catch blocks for exceptions are omitted from example.
 // The VNC protocol supports multiple pixel formats.

@@ -1,17 +1,19 @@
-#!/bin/sh
+#!/bin/bash
 # this script compiles and links a Sikuli module on Linux 32 or 64Bit
 
 # abort on the first error
-set -e
+# set -e
 
-if [ -z $1 ]; then
-  ARCH=`getconf LONG_BIT`
-else
-  ARCH=$1
+if [ "$1" = "32" ]; then
+  ARCH=32
 fi
 
-if ! [[ "$ARCH" == "32" || "$ARCH" == "64" ]]; then
-  printf  "Usage: $0 [ 32 | 64 ]\nSpecify 32 or 64 bit\n"
+if [ "$1" = "64" ]; then
+  ARCH=64
+fi
+
+if  [ -z "$ARCH" ]; then
+  echo  "Bit-Arch missing - Specify 32 or 64"
   exit
 fi
 
@@ -23,14 +25,14 @@ echo -----  Linux build workflow for native modules on $ARCH-bit systems
 
 # trying to find the active JDK
 if [ -z "$JDK" ]; then
-	for e in `whereis -b javac`; do
-		if [ "$e" == "javac:" ]; then
-			continue
-		else
-			jvc=$e
-			break
-		fi
-	done
+  for e in `whereis -b javac`; do
+    if [ "$e" = "javac:" ]; then
+      continue
+    else
+      jvc=$e
+      break
+    fi
+  done
 
 	jvcx=
 	while [ "$jvc" != "" ]; do
@@ -50,22 +52,23 @@ if [ -e $JDK/include/jni.h ]; then
   echo --- The active JDK seems to be in $JDK
 else
   echo --- JDK could not be found - please set the \"JDK\" environment variable
+  exit
 fi
 
-libsOpenCV=
 if pkg-config opencv; then
   echo --- OpenCV version $(pkg-config --modversion opencv) found
   libsOpenCV=$(pkg-config --libs opencv)
 else
-  echo --- OpenCV libs could not be found
+  echo --- pkg-config - OpenCV libs could not be found
+  libsOpenCV=
 fi
 
-libsTesseract=
 if pkg-config tesseract; then
   echo --- Tesseract version $(pkg-config --modversion tesseract) found
   libsTesseract=$(pkg-config --libs tesseract)
 else
-  echo --- Tesseract libs could not be found
+  echo --- pkg-config - Tesseract libs could not be found
+  libsTesseract=
 fi
 
 # native Sikuli sources
@@ -79,54 +82,52 @@ externals=stuff/_ext/VisionProxy
 rm -f -R $externals
 mkdir -p $externals
 
-list=(
-  cvgui.cpp
-  finder.cpp
-  pyramid-template-matcher.cpp
-  sikuli-debug.cpp
-  tessocr.cpp
-  vision.cpp
-  visionJAVA_wrap.cxx
-)
+list="cvgui.cpp finder.cpp pyramid-template-matcher.cpp sikuli-debug.cpp tessocr.cpp vision.cpp visionJAVA_wrap.cxx"
 
 link_str="-shared -s -fPIC -dynamic -o libVisionProxy.so "
 
-for fn in "${list[@]}"; do
+echo ----- now compiling
+for fn in ${list}; do
   echo "--  $fn"
-  g++ -c -O3 -fPIC -MMD -MP -MF $externals/$fn.o.d $includeParm -o $externals/$fn.o $src/Vision/$fn
-  link_str+=" $externals/$fn.o "
+  g++ -c -O3 -fPIC -MMD -MP $includeParm -MF $externals/$fn.o.d -o $externals/$fn.o $src/Vision/$fn
+  link_str=$link_str" $externals/$fn.o "
 done
 
-echo -- finally linking
+echo ----- finally linking
 rm -f libVisionProxy.so
 
-if [ "" == "libsOpenCV" ]; then
-	link_str+="/usr/lib/x86_64-linux-gnu/libopencv_core.so "
-	link_str+="/usr/lib/x86_64-linux-gnu/libopencv_highgui.so "
-	link_str+="/usr/lib/x86_64-linux-gnu/libopencv_imgproc.so "
+if [ "" = "$libsOpenCV" ]; then
+	link_str=$link_str"/usr/lib/x86_64-linux-gnu/libopencv_core.so "
+	link_str=$link_str"/usr/lib/x86_64-linux-gnu/libopencv_highgui.so "
+	link_str=$link_str"/usr/lib/x86_64-linux-gnu/libopencv_imgproc.so "
 else
-	link_str+=$libsOpenCV
+	link_str=$link_str$libsOpenCV
 fi
 
-if [ "" == "libsTesseract" ]; then
-	link_str+="/usr/lib/libtesseract.so "
+if [ "" = "$libsTesseract" ]; then
+	link_str=$link_str"/usr/lib/libtesseract.so "
 else
-	link_str+=$libsTesseract
+	link_str=$link_str$libsTesseract
 fi
+
+#echo ---------------------------------
+#echo $link_str
+#echo ---------------------------------
 
 g++ $link_str
 
 if [ -e libVisionProxy.so ]; then
-  echo -- checking created libVisionProxy.so
+  echo ----- checking created libVisionProxy.so
   undefined=`ldd -r libVisionProxy.so | grep -c "undefined symbol:"`
-  if [ "undefined" == "0" ]; then
+  if [ "$undefined" = "0" ]; then
+    echo -- should be useable
     if [ -e $DEVLIBS ]; then
       cp libVisionProxy.so $DEVLIBS
+      echo -- copied to $DEVLIBS
     fi
-    echo -- should be useable
   else
     echo -- not useable - has unresolved symbols
-    undefined=`ldd -r libVisionProxy.so | grep "undefined symbol:"`
+    ldd -r libVisionProxy.so | grep "undefined symbol:"
   fi
 else
   echo -- error building libVisionProxy.so
