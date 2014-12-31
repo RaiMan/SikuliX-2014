@@ -127,6 +127,31 @@ public class RunSetup {
   private static File folderLibs;
   private static String linuxDistro = "*** testing Linux ***";
   private static String osarch;
+<<<<<<< OURS
+<<<<<<< .merge_file_t1ln4c
+
+=======
+  
+>>>>>>> THEIRS
+	//<editor-fold defaultstate="collapsed" desc="new logging concept">
+	private static void log(int level, String message, Object... args) {
+		Debug.logx(level, me + ": " + mem + ": " + message, args);
+	}
+
+	private static void log0(int level, String message, Object... args) {
+		Debug.logx(level, me + ": " + message, args);
+	}
+
+	private static void log1(int level, String message, Object... args) {
+		String sout;
+		String prefix = level < 0 ? "error" : "debug";
+		if (args.length != 0) {
+			sout = String.format("[" + prefix + "] " + message, args);
+		} else {
+			sout = "[" + prefix + "] " + message;
+		}
+		Debug.logx(level, me + ": " + message, args);
+=======
 //TODO set true to test on Mac  
   private static boolean isLinux = false; 
 
@@ -180,6 +205,7 @@ public class RunSetup {
       sout = "[" + prefix + "] " + message;
     }
     Debug.logx(level, me + ": " + message, args);
+>>>>>>> .merge_file_u7wUIE
     if (logToFile) {
       System.out.println(sout);
     }
@@ -721,6 +747,31 @@ public class RunSetup {
 
     //<editor-fold defaultstate="collapsed" desc="setup preps and display options">
     String proxyMsg = "";
+<<<<<<< OURS
+<<<<<<< .merge_file_t1ln4c
+
+=======
+    
+>>>>>>> THEIRS
+    if (Settings.isLinux()) {
+      String result = ResourceLoader.get().runcmd("lsb_release -i -r -s");
+      linuxDistro = result.replaceAll("\n", " ").trim();
+      log1(lvl, "LinuxDistro: %s", linuxDistro);
+      boolean success;
+      String successMsg = FileManager.checkPrereqsLux(linuxDistro);
+      if (successMsg != null && !hasOptions) {
+        log1(-1, "checkPrereqs: %s", successMsg);
+        success = popAsk("Some prerequisites are not available."
+                + "\nSee setup logfile for detailed info."
+                + "\n\nClick YES to proceed."
+                + "\nClick NO to terminate.");
+        if (!success) {
+          Sikulix.terminate(202);
+        } 
+      }
+    }
+=======
+>>>>>>> .merge_file_u7wUIE
 
     if (!test) {
       getIDE = false;
@@ -1186,6 +1237,137 @@ public class RunSetup {
     }
     //</editor-fold>
 
+<<<<<<< .merge_file_t1ln4c
+		//<editor-fold defaultstate="collapsed" desc="option setup: add needed stuff">
+		if (!getIDE && !getAPI) {
+			log1(lvl, "Nothing else to do");
+			System.exit(0);
+		}
+
+ 		osarch = System.getProperty("os.arch");
+		osarch = osarch.contains("64") ? "64" : "32";
+		folderLibs = new File(workDir, "libs");
+
+		if (Settings.isLinux()) {
+			if (!hasOptions && popAsk("If you already built your own\n"
+							+ "libVisionProxy.so and/or libJXGrabKey.so, then make sure\n"
+							+ "to place copies into the folder libs at:\n"
+							+  folderLibs.getAbsolutePath() + "\n"
+							+ "and make sure the libs are for " + osarch + "-Bit.\n"
+              + "before Clicking YES.\n"
+							+ "Click NO to use the libs that are bundled with setup.")) {
+				shouldPackLibs = false;
+				if (!folderLibs.exists()) {
+					terminate("You wanted to provide a folder libs, "
+									+ "but it does not exist. Terminating!", -1);
+				}
+			}
+      if (hasOptions && folderLibs.exists()) {
+        shouldPackLibs = false;
+      }
+		}
+    
+		if (folderLibs.exists() && shouldPackLibs) {
+			FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
+		}
+		folderLibs.mkdirs();
+    
+    if (!shouldPackLibs) {
+      log1(lvl, "Advice: some libs are provided in folder libs");
+    }
+
+		String[] libsFileList = new String[] {null, null};
+		String[] libsFilePrefix = new String[] {null, null};
+		if (!shouldPackLibs) {
+			libsFileList[0] = new File(folderLibs, libLux1).getAbsolutePath();
+			libsFileList[1] = new File(folderLibs, libLux2).getAbsolutePath();
+			for (int i = 0; i < 2; i++) {
+				if (! new File(libsFileList[i]).exists()) {
+					libsFileList[i] = null;
+				}
+			}
+			String libPrefix = "META-INF/libs/linux/libs" + osarch;
+			log(lvl, "Provided libs will be stored at %s", libPrefix);
+			libsFilePrefix[0] = libPrefix;
+			libsFilePrefix[1] = libPrefix;
+		}
+
+		boolean success = true;
+		FileManager.JarFileFilter libsFilter = new FileManager.JarFileFilter() {
+			@Override
+			public boolean accept(ZipEntry entry, String jarname) {
+				if (forSystemWin) {
+					if (entry.getName().startsWith("META-INF/libs/mac")
+									|| entry.getName().startsWith("META-INF/libs/linux")
+									|| entry.getName().startsWith("jxgrabkey")) {
+						return false;
+					}
+				} else if (forSystemMac) {
+					if (entry.getName().startsWith("META-INF/libs/windows")
+									|| entry.getName().startsWith("META-INF/libs/linux")
+									|| entry.getName().startsWith("com.melloware.jintellitype")
+									|| entry.getName().startsWith("jxgrabkey")) {
+						return false;
+					}
+				} else if (forSystemLux) {
+					if (entry.getName().startsWith("META-INF/libs/windows")
+									|| entry.getName().startsWith("META-INF/libs/mac")
+									|| entry.getName().startsWith("com.melloware.jintellitype")) {
+						return false;
+					}
+				}
+				if (forSystemLux || forAllSystems) {
+					if (!shouldPackLibs && entry.getName().contains(libLux1)
+                              && entry.getName().contains("libs" + osarch)) {
+						if (new File(folderLibs, libLux1).exists()) {
+							log(lvl, "Found provided lib: %s (libs%s)", libLux1, osarch);
+							return false;
+						} else {
+							return true;
+						}
+					}
+					if (!shouldPackLibs && entry.getName().contains(libLux2)
+                              && entry.getName().contains("libs" + osarch)) {
+						if (new File(folderLibs, libLux2).exists()) {
+							log(lvl, "Found provided lib: %s (libs%s)", libLux2, osarch);
+							return false;
+						} else {
+							return true;
+						}
+					}
+				}
+				return true;
+			}
+		};
+
+		splash = showSplash("Now adding needed stuff to selected jars.", "please wait - may take some seconds ...");
+
+		jarsList[1] = (new File(workDir, localAPI)).getAbsolutePath();
+
+		if (getTess) {
+			jarsList[2] = (new File(workDir, localTess)).getAbsolutePath();
+		}
+
+		if (success && getAPI) {
+			log1(lvl, "adding needed stuff to sikulixapi.jar");
+			localJar = (new File(workDir, localAPI)).getAbsolutePath();
+			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
+			success &= FileManager.buildJar(
+							targetJar, jarsList, libsFileList, libsFilePrefix, libsFilter);
+			success &= handleTempAfter(targetJar, localJar);
+		}
+
+		if (success && getIDE) {
+			log1(lvl, "adding needed stuff to sikulix.jar");
+			localJar = (new File(workDir, localIDE)).getAbsolutePath();
+			jarsList[0] = localJar;
+			if (getJython) {
+				jarsList[3] = (new File(workDir, localJython)).getAbsolutePath();
+			}
+			if (getJRuby) {
+				jarsList[4] = (new File(workDir, localJRuby)).getAbsolutePath();
+				if (getJRubyAddOns) {
+=======
     //<editor-fold defaultstate="collapsed" desc="create jars and add needed stuff">
     if (!getIDE && !getAPI) {
       log1(lvl, "Nothing else to do");
@@ -1286,6 +1468,7 @@ public class RunSetup {
       if (getJRuby) {
         jarsList[4] = (new File(workDir, localJRuby)).getAbsolutePath();
         if (getJRubyAddOns) {
+>>>>>>> .merge_file_u7wUIE
           jarsList[5] = (new File(workDir, localJRubyAddOns)).getAbsolutePath();
         }
       }
