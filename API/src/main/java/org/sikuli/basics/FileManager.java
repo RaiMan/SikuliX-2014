@@ -1008,7 +1008,8 @@ public class FileManager {
     return true;
   }
 
-  public static boolean buildJar(String jarName, String[] jars, String[] files, String[] prefixs, FileManager.JarFileFilter filter) {
+  public static boolean buildJar(String jarName, String[] jars, 
+          String[] files, String[] prefixs, FileManager.JarFileFilter filter) {
     log0(lvl, "buildJar: " + jarName);
     try {
       JarOutputStream jout = new JarOutputStream(new FileOutputStream(jarName));
@@ -1058,9 +1059,12 @@ public class FileManager {
    * @param jarName absolute path to jar file
    * @param folderName absolute path to the target folder
    * @param del true if the folder should be deleted before unpack
+   * @param strip true if the path should be stripped
+   * @param filter to select specific content
    * @return true if success,  false otherwise
    */
-  public static boolean unpackJar(String jarName, String folderName, boolean del) {
+  public static boolean unpackJar(String jarName, String folderName, boolean del, boolean strip,
+          FileManager.JarFileFilter filter) {
     jarName = FileManager.slashify(jarName, false);
     if (!jarName.endsWith(".jar")) {
       jarName += ".jar";
@@ -1088,23 +1092,29 @@ public class FileManager {
       int n;
       File f;
       for (ZipEntry z = in.getNextEntry(); z != null; z = in.getNextEntry()) {
-        if (z.isDirectory()) {
-          (new File(folderName, z.getName())).mkdirs();
-        } else {
-          n = z.getName().lastIndexOf(EXECUTABLE);
-          if (n >= 0) {
-            f = new File(folderName, z.getName().substring(0, n));
-            isExecutable = true;
+        if (filter == null || filter.accept(z, null)) {
+          if (z.isDirectory()) {
+            (new File(folderName, z.getName())).mkdirs();
           } else {
-            f = new File(folderName, z.getName());
-            isExecutable = false;
-          }
-          f.getParentFile().mkdirs();
-          out = new BufferedOutputStream(new FileOutputStream(f));
-          bufferedWrite(in, out);
-          out.close();
-          if (isExecutable) {
-            f.setExecutable(true, false);
+            n = z.getName().lastIndexOf(EXECUTABLE);
+            if (n >= 0) {
+              f = new File(folderName, z.getName().substring(0, n));
+              isExecutable = true;
+            } else {
+              f = new File(folderName, z.getName());
+              isExecutable = false;
+            }
+            if (strip) {
+              f = new File(folderName, f.getName());
+            } else {
+              f.getParentFile().mkdirs();
+            }
+            out = new BufferedOutputStream(new FileOutputStream(f));
+            bufferedWrite(in, out);
+            out.close();
+            if (isExecutable) {
+              f.setExecutable(true, false);
+            }
           }
         }
       }

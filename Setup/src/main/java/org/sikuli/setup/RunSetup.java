@@ -161,6 +161,7 @@ public class RunSetup {
   private static String cmdError = "*** error ***";
   private static boolean shouldBuildVision = false;
   private static boolean notests = false;
+  private static String currentlib;
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static void log(int level, String message, Object... args) {
@@ -418,7 +419,7 @@ public class RunSetup {
           }
           if (todo.equals("unpack")) {
             log0(3, "requested to unpack %s \nto %s", jarName, folder);
-            FileManager.unpackJar(jarName, folder, true);
+            FileManager.unpackJar(jarName, folder, true, false, null);
           } else {
             String jarBack = jarName.substring(0, jarName.length() - 4) + "-backup.jar";
             try {
@@ -1031,14 +1032,25 @@ public class RunSetup {
           shouldExport = true;
         }
         if (shouldExport) {
-          ResourceLoader rl = ResourceLoader.forJar(jarsList[8]);
-          Sikulix.addToClasspath(jarsList[8]);
+//          ResourceLoader rl = ResourceLoader.forJar(jarsList[8]);
+//          Sikulix.addToClasspath(jarsList[8]);
           for (String exLib : libsExport) {
             if (exLib == null) {
               continue;
             }
-            rl.export("META-INF/libs/linux/libs" + osarch + "#" + exLib, 
-                    folderLibs.getAbsolutePath());
+            currentlib = exLib;
+            FileManager.unpackJar(jarsList[8], folderLibs.getAbsolutePath(), 
+                    false, true, new FileManager.JarFileFilter() {
+              @Override
+              public boolean accept(ZipEntry entry, String jarname) {
+                if (entry.getName().contains("libs" + osarch + "/" + currentlib)) {
+                  return true;
+                }
+                return false;
+              }
+            });
+//            rl.export("META-INF/libs/linux/libs" + osarch + "#" + exLib, 
+//                    folderLibs.getAbsolutePath());
           }
         }
         libsCheck[0] = new File(folderLibs, libVision).getAbsolutePath();
@@ -1052,10 +1064,10 @@ public class RunSetup {
           if (fLibCheck.exists()) {
             if (!checklibs(fLibCheck)) {
               if (libsExport[i] == null) {
-                log1(-1, "provided %s might not be useable on this Linux distro - see log", fLibCheck.getName());
+                log1(-1, "provided %s might not be useable on this Linux - see log", fLibCheck.getName());
                 shouldTerminate = true;
               } else {
-                log1(-1, "bundled %s might not be useable on this Linux distro - see log", fLibCheck.getName());
+                log1(-1, "bundled %s might not be useable on this Linux - see log", fLibCheck.getName());
                 if (i > 0) {
                   //TODO why? JXGrabKey unresolved: pthread
                   //shouldBuild = true;
