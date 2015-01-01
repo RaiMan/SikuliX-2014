@@ -161,6 +161,7 @@ public class RunSetup {
   private static boolean opencvAvail = true;
   private static boolean tessAvail = true;
   private static String cmdError = "*** error ***";
+  private static boolean shouldBuildVision = false;
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static void log(int level, String message, Object... args) {
@@ -334,9 +335,12 @@ public class RunSetup {
           } else if ("5".equals(val)) {
             hasOptions = true;
             getRServer = true;
-          } else if (val.startsWith("lib")) {
+          } else if (val.toLowerCase().startsWith("lib")) {
             hasOptions = true;
             libsProvided = true;
+          } else if (val.toLowerCase().startsWith("buildv")) {
+            hasOptions = true;
+            shouldBuildVision = true;
           }
         }
         options.clear();
@@ -1040,7 +1044,7 @@ public class RunSetup {
         File fLibCheck;
         boolean shouldTerminate = false;
         boolean shouldBuild = false;
-        boolean shouldBuildVision = false;
+        boolean shouldBuildVisionNow = false;
         for (int i = 0; i < libsCheck.length; i++) {
           fLibCheck = new File(libsCheck[i]);
           if (fLibCheck.exists()) {
@@ -1054,7 +1058,7 @@ public class RunSetup {
                   //TODO why? JXGrabKey unresolved: pthread
                   //shouldBuild = true;
                 } else {
-                  shouldBuildVision = true;
+                  shouldBuildVisionNow = true;
                 }
               }
             }
@@ -1071,9 +1075,9 @@ public class RunSetup {
         }
 //TODO for testing uncomment
 //        shouldBuildVision = true; // uncomment or delete
-        if (!hasOptions && (shouldBuild || shouldBuildVision)) {
+        if (!hasOptions && (shouldBuild || shouldBuildVisionNow)) {
           log1(-1, "A bundled lib could not be checked or does not work.");
-          if (shouldBuildVision) {
+          if (shouldBuildVisionNow) {
             if (popAsk("The bundled/provided libVisionProxy.so might not work."
                     + "\nShould we try to build it now?"
                     + "\nClick YES to try a build"
@@ -1093,6 +1097,9 @@ public class RunSetup {
                   + "Click NO to terminate and correct the problems.")) {
             terminate("Correct the problems with the bundled/provided libs and try again");
           }
+        }
+        if (hasOptions && shouldBuildVision) {
+          buildVision();
         }
       }
     }
@@ -1566,6 +1573,8 @@ public class RunSetup {
     File javaHome = new File(System.getProperty("java.home"));
     File javaInclude = null;
     File javaIncludeLinux = null;
+    
+    log1(lvl, "starting inline build: libVisionProxy.so");
 
     if (!new File(javaHome, "bin/javac").exists()) {
       javaHome = javaHome.getParentFile();
@@ -1593,7 +1602,7 @@ public class RunSetup {
       buildInclude += " -I" + incl.getAbsolutePath();
       exportIncludeJava = true;
     } else {
-      log(lvl, "JDK: found at: %s", javaHome);
+      log0(lvl, "JDK: found at: %s", javaHome);
       buildInclude += String.format("-I%s -I%s ",
               javaInclude.getAbsolutePath(), javaIncludeLinux.getAbsolutePath());
     }
@@ -1677,37 +1686,39 @@ public class RunSetup {
       }
       cmdFile.setExecutable(true);
     } else {
-      log0(-1, "buildVision: cannot export lib sources");
+      log1(-1, "buildVision: cannot export lib sources");
       return false;
     }
 
       JFrame spl = null;
       if (opencvAvail && tessAvail) {
       spl = showSplash(libVision, "running build script");
-      log0(lvl,"buildVision: running build script");
+      log1(lvl,"buildVision: running build script");
       String cmdRet = rl.runcmd(cmdFile.getAbsolutePath());
       if (cmdRet.contains(cmdError)) {
-        log0(-1, "buildVision: build script returns error:\ns", cmdRet);
+        log1(-1, "buildVision: build script returns error:\ns", cmdRet);
         closeSplash(spl);
         return false;
       } else {
-        log0(lvl,"buildVision: checking created libVisionProxy.so");
+        log1(lvl,"buildVision: checking created libVisionProxy.so");
         if (!runLdd(new File(libVisionPath))) {
-          log0(-1,"------- output of the build run\n%s", cmdRet);
+          log1(-1,"------- output of the build run\n%s", cmdRet);
           closeSplash(spl);
           return false;
         }
       }
     }
     try {
+      folderLibs.mkdirs();
       FileManager.xcopy(libVisionPath, new File(folderLibs, libVision).getAbsolutePath());
     } catch (IOException ex) {
-      log0(-1, "could not copy built libVisionProxy.so to libs folder\n%s", ex.getMessage());
+      log1(-1, "could not copy built libVisionProxy.so to libs folder\n%s", ex.getMessage());
       closeSplash(spl);
       return false;
     }
     libsProvided = true;
     closeSplash(spl);
+    log1(lvl, "ending inline build: success: libVisionProxy.so");
     return true;
   }
 
