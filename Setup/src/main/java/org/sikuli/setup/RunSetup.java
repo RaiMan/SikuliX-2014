@@ -160,6 +160,7 @@ public class RunSetup {
   private static boolean tessAvail = true;
   private static String cmdError = "*** error ***";
   private static boolean shouldBuildVision = false;
+  private static boolean notests = false;
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static void log(int level, String message, Object... args) {
@@ -339,6 +340,9 @@ public class RunSetup {
           } else if (val.toLowerCase().startsWith("buildv")) {
             hasOptions = true;
             shouldBuildVision = true;
+          } else if (val.toLowerCase().startsWith("not")) {
+            hasOptions = true;
+            notests = true;
           }
         }
         options.clear();
@@ -1276,8 +1280,8 @@ public class RunSetup {
       log1(lvl, "adding needed stuff to sikulixapi.jar");
       localJar = (new File(workDir, localAPI)).getAbsolutePath();
       targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-      success &= FileManager.buildJar(
-              targetJar, jarsList, libsFileList, libsFilePrefix, libsFilter);
+      success &= FileManager.buildJar(targetJar, jarsList, 
+              libsFileList, libsFilePrefix, libsFilter);
       success &= handleTempAfter(targetJar, localJar);
     }
 
@@ -1330,7 +1334,7 @@ public class RunSetup {
     //</editor-fold>
     
     //<editor-fold defaultstate="collapsed" desc="api test">
-    if (getAPI) {
+    if (!notests && getAPI) {
       log1(lvl, "Trying to run functional test: JAVA-API");
       splash = showSplash("Trying to run functional test(s)", "Java-API: org.sikuli.script.Sikulix.testSetup()");
       if (!Sikulix.addToClasspath(localJarAPI.getAbsolutePath())) {
@@ -1376,7 +1380,7 @@ public class RunSetup {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="ide test">
-    if (getIDE) {
+    if (!notests && getIDE) {
       if (!Sikulix.addToClasspath(localJarIDE.getAbsolutePath())) {
         closeSplash(splash);
         popError("Something serious happened! Sikuli not useable!\n"

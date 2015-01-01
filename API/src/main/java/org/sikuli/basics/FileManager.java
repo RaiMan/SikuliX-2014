@@ -1040,7 +1040,7 @@ public class FileManager {
 					if (files[i] == null) {
 						continue;
 					}
-          log0(lvl, "buildJar: adding: " + files[i]);
+          log0(lvl, "buildJar: adding to %s:\n%s", prefixs[i], files[i]);
           addToJar(jout, new File(files[i]), prefixs[i]);
         }
       }
