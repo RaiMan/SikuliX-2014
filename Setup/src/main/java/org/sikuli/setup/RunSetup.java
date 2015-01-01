@@ -1032,8 +1032,6 @@ public class RunSetup {
           shouldExport = true;
         }
         if (shouldExport) {
-//          ResourceLoader rl = ResourceLoader.forJar(jarsList[8]);
-//          Sikulix.addToClasspath(jarsList[8]);
           for (String exLib : libsExport) {
             if (exLib == null) {
               continue;
@@ -1049,8 +1047,6 @@ public class RunSetup {
                 return false;
               }
             });
-//            rl.export("META-INF/libs/linux/libs" + osarch + "#" + exLib, 
-//                    folderLibs.getAbsolutePath());
           }
         }
         libsCheck[0] = new File(folderLibs, libVision).getAbsolutePath();
