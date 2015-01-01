@@ -25,8 +25,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -470,7 +468,7 @@ public class RunSetup {
     runningJar = FileManager.getJarPath(RunSetup.class);
     workDir = new File(runningJar).getParent();
 
-    osarch = System.getProperty("os.arch");
+    osarch = Settings.JavaArch;
     osarch = osarch.contains("64") ? "64" : "32";
     if (Settings.isLinux()) {
       String result = ResourceLoader.get().runcmd("lsb_release -i -r -s");
@@ -769,7 +767,7 @@ public class RunSetup {
 
         // running Java
         String osarch = System.getProperty("os.arch");
-        msg = "Java " + Settings.JavaVersion + " (" + osarch + ") " + Settings.JREVersion;
+        msg = "Java " + Settings.JavaVersion + " (" + Settings.JavaArch + ") " + Settings.JREVersion;
         winSU.suJava.setText(msg);
         log1(lvl, "RunningJava: " + msg);
 
