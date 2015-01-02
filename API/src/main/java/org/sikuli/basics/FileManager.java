@@ -29,7 +29,7 @@ import java.net.Proxy;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.net.UnknownHostException;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -322,7 +322,7 @@ public class FileManager {
           int bytesRead = 0;
 		      while ((bytesRead = reader.read(buffer)) > 0) {
             totalBytesRead += bytesRead;
-						target += (new String(Arrays.copyOfRange(buffer, 0, bytesRead), StandardCharsets.UTF_8));
+						target += (new String(Arrays.copyOfRange(buffer, 0, bytesRead), Charset.forName("utf-8")));
           }
 			} catch (Exception ex) {
 				log0(-1, "problems while downloading\n" + ex.getMessage());
@@ -1008,7 +1008,7 @@ public class FileManager {
     return true;
   }
 
-  public static boolean buildJar(String jarName, String[] jars, 
+  public static boolean buildJar(String jarName, String[] jars,
           String[] files, String[] prefixs, FileManager.JarFileFilter filter) {
     log0(lvl, "buildJar: " + jarName);
     try {

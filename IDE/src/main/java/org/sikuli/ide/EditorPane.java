@@ -28,7 +28,7 @@ import javax.swing.event.CaretListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.text.*;
-import java.nio.charset.StandardCharsets;
+import java.nio.charset.Charset;
 
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
@@ -285,12 +285,12 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		try {
 			if (script instanceof String) {
 				isr = new InputStreamReader(
-					new ByteArrayInputStream(((String) script).getBytes(StandardCharsets.UTF_8)),
-					StandardCharsets.UTF_8);
+					new ByteArrayInputStream(((String) script).getBytes(Charset.forName("utf-8"))),
+					Charset.forName("utf-8"));
 			} else if (script instanceof File) {
 				isr = new InputStreamReader(
 					new FileInputStream((File) script),
-					StandardCharsets.UTF_8);
+					Charset.forName("utf-8"));
 			} else {
 				log(-1, "readScript: not supported %s as %s", script, script.getClass());
 				return false;

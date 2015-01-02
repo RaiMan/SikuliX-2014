@@ -50,7 +50,10 @@ public final class CommandLineUtility {
         try {
             executor.execute(commandLine, resultHandler);
             resultHandler.waitFor(timeout);
-        } catch (InterruptedException | IOException e) {
+        } catch (InterruptedException e) {
+            CMD_LOGGER.severe("Error occurred during command execution: " + e.getMessage());
+            return -1;
+        } catch (IOException e) {
             CMD_LOGGER.severe("Error occurred during command execution: " + e.getMessage());
             return -1;
         }
