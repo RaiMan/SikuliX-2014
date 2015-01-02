@@ -56,7 +56,7 @@
 		-->
 		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
 		<sikuli.minorversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.minorversion>
-		<sikulixjythonversion>2.7-b2</sikulixjythonversion>
+		<sikulixjythonversion>2.7-b3</sikulixjythonversion>
 		<sikulixjrubyversion>1.7.13</sikulixjrubyversion>
 		<sikulixlocalrepo>${settings.localRepository}</sikulixlocalrepo>
 		<sikuli.helpers>Setup/src/main/resources</sikuli.helpers>
@@ -127,16 +127,12 @@
 		<module>Libswin</module>
 		<module>API</module>
 		<module>APIPlus</module>
-		<module>APIFat</module>
 		<module>JRubyAddOns</module>
 		<module>JRubyGem</module>
 		<module>Jygments4SikuliX</module>
 		<module>IDE</module>
 		<module>IDEPlus</module>
 		<module>Setup</module>
-		<module>RemoteRobot</module>
-		<module>RemoteServer</module>
-		<module>TestRunMaven</module>
 	</modules>
 
 	<build>

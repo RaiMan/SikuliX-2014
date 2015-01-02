@@ -48,13 +48,12 @@ Setup will find the local files and ask you to use them instead of downloading f
 BE AWARE: These files are not useable for any other purpose than being processed by sikulixsetup.
 <hr>
 - <a href="${sikuli.usedversion}-1.jar">${sikuli.usedversion}-1</a> to get the SikuliX IDE (setup option1)<br>
-- to use the IDE you must have at least one of the following (suboptions of setup option 1):<br>
-&nbsp;&nbsp;<a href= "jython-standalone-2.7-b2.jar">Jython</a> for scripting with Python/Jython (jython-standalone-2.7-b2)<br>
-&nbsp;&nbsp;<a href="jruby-complete-1.7.13.jar">JRuby</a> for scripting with Ruby/JRuby (jruby-complete-1.7.13)<br><br>
-- <a href="${sikuli.usedversion}-2.jar">${sikuli.usedversion}-2</a> use SikuliX with Java and Java aware languages (setup option 2)<br>
-- <a href="${sikuli.minorversion}-3.jar">${sikuli.minorversion}-3</a> if you want to try the experimental remote support (setup option 5)<br>
+- to use the IDE you must have at least one of the following (suboptions 1.1 and 1.2):<br>
+&nbsp;&nbsp;<a href= "jython-standalone-2.7-b3.jar">Jython</a> 1.1 for scripting with Python/Jython (jython-standalone-2.7-b2)<br>
+&nbsp;&nbsp;<a href="jruby-complete-1.7.13.jar">JRuby</a> 1.2 for scripting with Ruby/JRuby (jruby-complete-1.7.13)<br><br>
 - <a href="${sikuli.minorversion}-6.jar">${sikuli.minorversion}-6</a> if you want to try the experimental JRubyAddons (setup option 1.3)<br><br>
-additionally you need the libs package for your system (or all for option 4) <br>
+- <a href="${sikuli.usedversion}-2.jar">${sikuli.usedversion}-2</a> use SikuliX with Java and Java aware languages (setup option 2)<br>
+additionally you need the libs package for your system<br>
 - for Windows: <a href="sikulixlibswin-${sikuli.usedversion}.jar">sikulixlibswin</a><br>
 - for Mac: <a href="sikulixlibsmac-${sikuli.usedversion}.jar">sikulixlibsmac</a><br>
 - for Linux: <a href="sikulixlibslux-${sikuli.usedversion}.jar">sikulixlibslux</a><br><br>
@@ -62,16 +61,6 @@ additionally you need the tessdata base english package (for option 3) <br>
 - tessdata-eng: <a href="tesseract-ocr-3.02.eng.tar.gz">tesseract-ocr-3.02.eng.tar.gz</a><br>
 &nbsp;&nbsp;(put it as is into the folder Downloads - do not uncompress)
 <hr>
-As a special service for non-Maven/Gradle users of sikulixapi.jar: a ready to use jar (no setup needed)<br>
-The only caveats:
-- it is bigger, since it contains the native libraries for all systems.<br>
-- it does not support Tesseract usage out of the box. If you want to use OCR, you have to run a setup, to get a valid sikulixapi.jar or
-create an appropriate tessdata folder yourself e.g. by downloading and uncompressing the above tessdata-eng-package.<br><br>
-<a href="sikulixapi-${sikuli.usedversion}.jar">sikulixapi-${sikuli.usedversion}.jar</a><br>
-This is part of the preparation for having it later on MavenCentral.<br>
-For Java based developement the API sources and the full Java docs might be of value:<br>
-<a href="sikulixapi-${sikuli.usedversion}-javadoc.jar">sikulixapi-${sikuli.usedversion}-javadoc.jar</a><br>
-<a href="sikulixapi-${sikuli.usedversion}-sources.jar">sikulixapi-${sikuli.usedversion}-sources.jar</a><br>
 <h3>Status of bug fixes and new features</h3>
 <hr>
 Bugs reported on <a href="https://bugs.launchpad.net/sikuli/+bugs" target="_blank">Launchpad</a> marked as FixCommitted-Critical

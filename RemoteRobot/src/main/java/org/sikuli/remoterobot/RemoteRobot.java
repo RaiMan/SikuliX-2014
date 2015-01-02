@@ -17,7 +17,7 @@ import java.util.Scanner;
 import javax.swing.ImageIcon;
 
 
-public class Server {
+public class RemoteRobot {
   private static final String key = "KEY";
   private static final String kType = "TYPE";
   private static final String mouse = "MOUSE";
@@ -132,7 +132,7 @@ public class Server {
     private void init(Socket sock) {
       socket = sock;
       if (in == null || out == null) {
-        Server.log(-1, "communication not established");
+        RemoteRobot.log(-1, "communication not established");
         System.exit(1);
       }
       thread = new Thread(this, "HandleClient");
@@ -147,18 +147,18 @@ public class Server {
     @Override
     public void run() {
       String e;
-      Server.log("now handling client: " + socket);
+      RemoteRobot.log("now handling client: " + socket);
       while (keepRunning) {
         try {
           e = in.nextLine();
           if (e != null) {
-            Server.log("processing: " + e);
+            RemoteRobot.log("processing: " + e);
             if (e.contains("EXIT")) {
               stopRunning();
               in.close();
               out.close();
               if (e.contains("STOP")) {
-                Server.log("stop server requested");
+                RemoteRobot.log("stop server requested");
                 shouldStop = true;
               }
               return;
@@ -184,7 +184,7 @@ public class Server {
             }
           }
         } catch (Exception ex) {
-          Server.log(-1, "Exception while processing\n" + ex.getMessage());
+          RemoteRobot.log(-1, "Exception while processing\n" + ex.getMessage());
           stopRunning();
         }
       }
@@ -234,10 +234,10 @@ public class Server {
       } else {
         rect = evalRectangle(area);
         if (rect == null) {
-          Server.log(-1, "Capture: invalid rectangle: " + area);          
+          RemoteRobot.log(-1, "Capture: invalid rectangle: " + area);          
           rect = SCREEN;
         } 
-        Server.log("Capture: " + rect);          
+        RemoteRobot.log("Capture: " + rect);          
         img = robot.createScreenCapture(rect);
       }
       ImageIcon imgObject = new ImageIcon(img);
@@ -396,22 +396,22 @@ public class Server {
         out.writeObject(o);
         out.flush();
         if (o instanceof ImageIcon) {
-          Server.log("returned: Image(%dx%d)", 
+          RemoteRobot.log("returned: Image(%dx%d)", 
                   ((ImageIcon) o).getIconWidth(), ((ImageIcon) o).getIconHeight());          
         } else {
-          Server.log("returned: "  + o);
+          RemoteRobot.log("returned: "  + o);
         }
       } catch (IOException ex) {
-        Server.log(-1, "send: writeObject: Exception: " + ex.getMessage());
+        RemoteRobot.log(-1, "send: writeObject: Exception: " + ex.getMessage());
       }
     }
 
     public void stopRunning() {
-      Server.log("stop client handling requested");
+      RemoteRobot.log("stop client handling requested");
       try {
         socket.close();
       } catch (IOException ex) {
-        Server.log(-1, "fatal: socket not closeable");
+        RemoteRobot.log(-1, "fatal: socket not closeable");
         System.exit(1);
       }
       keepRunning = false;

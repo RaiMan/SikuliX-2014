@@ -5,14 +5,10 @@
 		<module>Libswin</module>
 		<module>API</module>
 		<module>APIPlus</module>
-		<module>APIFat</module>
 		<module>JRubyAddOns</module>
 		<module>JRubyGem</module>
 		<module>Jygments4SikuliX</module>
 		<module>IDE</module>
 		<module>IDEPlus</module>
 		<module>Setup</module>
-		<module>RemoteRobot</module>
-		<module>RemoteServer</module>
-		<module>TestRunMaven</module>
 	</modules>
