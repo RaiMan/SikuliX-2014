@@ -182,6 +182,7 @@ public class Client implements Sikulix {
 	public void downloadFile(final String downloadFilePath, final String saveToPath) {
 		final String filePath = (saveToPath.endsWith("\\") ? saveToPath : saveToPath.concat("\\"))
 //						+ Paths.get(separatorsToSystem(downloadFilePath)).getFileName();
+//TODO might not work
 						+ new File(separatorsToSystem(downloadFilePath)).getName();
 		InputStream inputStream;
 		FileOutputStream fileOutputStream;
