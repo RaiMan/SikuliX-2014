@@ -82,7 +82,7 @@ public class RunSetup {
   private static String localSetup = setupName + ".jar";
   private static String localUpdate = "sikulixupdate";
   private static String localTess = "sikulixtessdata.jar";
-  private static String localRServer = "sikulixremoteserver.jar";
+  private static String localRServer = "sikulixremoterobot.jar";
   private static String localJython = "sikulixjython.jar";
   private static String localJRuby = "sikulixjruby.jar";
   private static String localJRubyAddOns = "sikulixjrubyaddons.jar";
@@ -856,15 +856,15 @@ public class RunSetup {
         if (winSU.option5.isSelected()) {
           getTess = true;
         }
-        if (winSU.option6.isSelected()) {
-          forAllSystems = true;
-        }
-        if (winSU.option7.isSelected()) {
-          getRServer = true;
-        }
+//        if (winSU.option6.isSelected()) {
+//          forAllSystems = true;
+//        }
+//        if (winSU.option7.isSelected()) {
+//          getRServer = true;
+//        }
 
         if (((getTess || forAllSystems) && !(getIDE || getAPI))) {
-          popError("You only selected Option 3 or 4 !\n"
+          popError("You only selected Option 3 !\n"
                   + "This is currently not supported.\n"
                   + "Please start allover again with valid options.\n");
           terminate("");
@@ -1161,22 +1161,23 @@ public class RunSetup {
       if (!fTess.exists()) {
         log1(-1, "Download: tessdata: version: eng - did not work");
         downloadOK = false;
+      } else {
+        File fTessData = new File(dlDir, "tessdata-" + langTess);
+        log(lvl, "preparing the tessdata stuff in %s", fTessData.getAbsolutePath());
+        fTessData.mkdirs();
+        FileManager.xcopy(fTess.getAbsolutePath(), fTessData.getAbsolutePath());
+        FileManager.deleteFileOrFolder(fTess.getParent());
+        loader.export(runningJarURL, "tessdata#", fTessData.getAbsolutePath());
+        log(lvl, "finally preparing %s", localTess);
+        fTargetJar = (new File(workDir, localTemp));
+        targetJar = fTargetJar.getAbsolutePath();
+        String tessJar = new File(workDir, localTess).getAbsolutePath();
+        downloadOK &= FileManager.buildJar(targetJar, new String[]{},
+                new String[]{fTessData.getAbsolutePath()},
+                new String[]{"META-INF/libs/tessdata"}, null);
+        downloadOK &= handleTempAfter(targetJar, tessJar);
+        FileManager.deleteFileOrFolder(fTessData.getAbsolutePath());
       }
-      File fTessData = new File(dlDir, "tessdata-" + langTess);
-      log(lvl, "preparing the tessdata stuff in %s", fTessData.getAbsolutePath());
-      fTessData.mkdirs();
-      FileManager.xcopy(fTess.getAbsolutePath(), fTessData.getAbsolutePath());
-      FileManager.deleteFileOrFolder(fTess.getParent());
-      loader.export(runningJarURL, "tessdata#", fTessData.getAbsolutePath());
-      log(lvl, "finally preparing %s", localTess);
-      fTargetJar = (new File(workDir, localTemp));
-      targetJar = fTargetJar.getAbsolutePath();
-      String tessJar = new File(workDir, localTess).getAbsolutePath();
-      downloadOK &= FileManager.buildJar(targetJar, new String[]{},
-              new String[]{fTessData.getAbsolutePath()},
-              new String[]{"META-INF/libs/tessdata"}, null);
-      downloadOK &= handleTempAfter(targetJar, tessJar);
-      FileManager.deleteFileOrFolder(fTessData.getAbsolutePath());
     }
     if (getRServer) {
       targetJar = new File(workDir, localRServer).getAbsolutePath();
@@ -1743,6 +1744,13 @@ public class RunSetup {
       log(lvl, "runScriptTest: error: %s", ex.getMessage());
     }
   }
+  
+  private static String addSeps(String item) {
+    if (Settings.isWindows()) {
+      return item.replace("/", "\\");
+    }
+    return item;
+  }
 
   private static boolean createSetupFolder(String path) {
     String projectDir = null, targetDir = null;
@@ -1770,8 +1778,13 @@ public class RunSetup {
                     new FileManager.FileFilter() {
                       @Override
                       public boolean accept(File entry) {
-                        if (isLinux && "libs".equals(entry.getName())) {
+                        if (isLinux && entry.getPath().contains(addSeps("/libs/"))) {
                           return false;
+                        } 
+                        if (entry.getPath().contains(addSeps("/Downloads/"))) {
+                          if (entry.getName().contains("tess")) {
+                            return false;
+                          }
                         }
                         return true;
                       }
@@ -1822,13 +1835,7 @@ public class RunSetup {
       } else {
         jythonJar = jrubyJar = null;
       }
-      String jrubyAddons = "sikulixjrubyaddons-" + Settings.SikuliProjectVersion + "-plain.jar";
-      File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
-      if (!fJRubyAddOns.exists()) {
-//        Debug.log(lvl, "createSetupFolder: missing: " + fJRubyAddOns.getAbsolutePath());
-//TODO JRubyAddOns optimize time of repeated build
-//        success = false;
-      }
+      
       if (success) {
         File fDownloads = new File(targetDir, "Downloads");
         if (new File(targetDir, "Downloads").exists()) {
@@ -1864,17 +1871,26 @@ public class RunSetup {
             FileManager.xcopy(fname,
                     new File(fDownloads, downloadJRuby).getAbsolutePath());
           }
-//          fname = fJRubyAddOns.getAbsolutePath();
-//          File sname = new File(fDownloads, downloadJRubyAddOns);
-//          if (fJRubyAddOns.exists()) {
+
+//TODO JRubyAddOns
+          String jrubyAddons = "sikulixjrubyaddons-" + Settings.SikuliProjectVersion + "-plain.jar";
+          File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
+          fname = fJRubyAddOns.getAbsolutePath();
+          File sname = new File(fDownloads, downloadJRubyAddOns);
+          if (fJRubyAddOns.exists()) {
 //            FileManager.xcopy(fname, sname.getAbsolutePath());
-//          }
-//          fname = new File(projectDir, "Remote/target/"
-//                  + "sikulixremote-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
+          }
+
+//TODO remote robot
+          fname = new File(projectDir, "RemoteRobot/target/"
+                  + "sikulixremoterobot-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
 //          FileManager.xcopy(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
-//          fname = new File(projectDir, "MacApp/target/"
-//                  + Settings.SikuliProjectVersion + downloadMacAppSuffix).getAbsolutePath();
+
+//TODO MacApp          
+          fname = new File(projectDir, "MacApp/target/"
+                  + Settings.SikuliProjectVersion + downloadMacAppSuffix).getAbsolutePath();
 //          FileManager.xcopy(fname, new File(fDownloads, downloadMacApp).getAbsolutePath());
+          
         } catch (Exception ex) {
           log(-1, "createSetupFolder: copying files did not work: %s", fname);
           success = false;
@@ -2143,11 +2159,11 @@ public class RunSetup {
         m += "\n- deploying Sikuli apps to be used all over the place";
         break;
       case (5):
-        om = "To try out the experimental remote feature";
+        om = "To try out the experimental remote robot feature";
 //              -------------------------------------------------------------
         m += "\nYou might start the downloaded jar on any system, that is reachable "
                 + "\nby other systems in your network via TCP/IP (hostname or IP-address)."
-                + "\nusing: java -jar sikulix-remoteserver.jar"
+                + "\nusing: java -jar sikulixremoterobot.jar"
                 + "\n\nThe server is started and listens on a port (default 50000) for incoming requests"
                 + "\nto use the mouse or keyboard or send back a screenshot."
                 + "\nOn the client side a Sikuli script has to initiate a remote screen with the "

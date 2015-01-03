@@ -29,7 +29,7 @@
         <configuration>
           <archive>
             <manifest>
-              <mainClass>org.sikuli.remote.Server</mainClass>
+              <mainClass>org.sikuli.remoterobot.RemoteRobot</mainClass>
             </manifest>
           </archive>
         </configuration>
