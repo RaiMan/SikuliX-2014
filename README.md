@@ -3,6 +3,8 @@
 
 1.1.0 final is under development
 -----------------
+The followup is SikuliX2 [version 2.0.0 in 2015](https://github.com/RaiMan/SikuliX2) 
+<hr>
 
 The Maven GroupID for the project now is **com.sikulix** (package names remain org.sikuli....)
 
