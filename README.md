@@ -28,6 +28,8 @@ find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/Sik
 **You might also visit the WIKI**
 
 <hr>
+This is the **last version that compiles and runs on Java 6**. SikuliX2 will need Java 1.7+.
+
 **If you want to test the head of developement without the need to build from sources:** <br>
 [look here: I have setup a page with nightly builds](http://nightly.sikuli.de)<br>
 **At your own risk ;-) Take care for your existing work - be prepared to restore your stuff!!**
