@@ -1191,13 +1191,4 @@ public class FileManager {
     return (new File(path1)).equals(new File(path2));
   }
 
-	public static boolean checkPrereqs() {
-		if (Settings.isWindows()) {
-			return true;
-		} else if (Settings.isMac()) {
-			return true;
-		}
-		return true;
-	}
-
 }
