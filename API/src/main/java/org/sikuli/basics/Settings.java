@@ -178,12 +178,12 @@ public class Settings {
 							SikuliVersionMajor, SikuliVersionMinor, SikuliVersionSub);
 			bversion = String.format("%d.%d.%d-Beta%d",
 							SikuliVersionMajor, SikuliVersionMinor, SikuliVersionSub, SikuliVersionBetaN);
-			SikuliVersionDefault = "Sikuli " + sversion;
+			SikuliVersionDefault = "SikuliX " + sversion;
 			SikuliVersionBeta = "Sikuli " + bversion;
-			SikuliVersionDefaultIDE = "Sikuli IDE " + sversion;
-			SikuliVersionBetaIDE = "Sikuli IDE " + bversion;
-			SikuliVersionDefaultScript = "Sikuli Script " + sversion;
-			SikuliVersionBetaScript = "Sikuli Script " + bversion;
+			SikuliVersionDefaultIDE = "SikulixIDE " + sversion;
+			SikuliVersionBetaIDE = "SikulixIDE " + bversion;
+			SikuliVersionDefaultScript = "SikulixScript " + sversion;
+			SikuliVersionBetaScript = "SikulixScript " + bversion;
 
 			if ("release".equals(svt)) {
 				downloadBaseDirBase = dlProdLink;

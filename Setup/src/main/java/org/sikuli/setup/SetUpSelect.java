@@ -57,7 +57,6 @@ public class SetUpSelect extends javax.swing.JPanel {
     jLabel9 = new javax.swing.JLabel();
     option2 = new javax.swing.JCheckBox();
     option3 = new javax.swing.JCheckBox();
-    option8 = new javax.swing.JCheckBox();
 
     textField1.setText("textField1");
 
@@ -158,13 +157,6 @@ public class SetUpSelect extends javax.swing.JPanel {
       }
     });
 
-    option8.setText("3. I want the JRuby AddOns (rspec, cucumber, ...)");
-    option8.addActionListener(new java.awt.event.ActionListener() {
-      public void actionPerformed(java.awt.event.ActionEvent evt) {
-        option8ActionPerformed(evt);
-      }
-    });
-
     org.jdesktop.layout.GroupLayout layout = new org.jdesktop.layout.GroupLayout(this);
     this.setLayout(layout);
     layout.setHorizontalGroup(
@@ -190,7 +182,7 @@ public class SetUpSelect extends javax.swing.JPanel {
                 .add(ask1))
               .add(layout.createSequentialGroup()
                 .add(option4)
-                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addPreferredGap(org.jdesktop.layout.LayoutStyle.RELATED, 92, Short.MAX_VALUE)
                 .add(ask5))
               .add(layout.createSequentialGroup()
                 .add(option5)
@@ -218,7 +210,7 @@ public class SetUpSelect extends javax.swing.JPanel {
                           .add(suFolder)
                           .add(suJava)))))
                   .add(jLabel5))
-                .add(0, 200, Short.MAX_VALUE))
+                .add(0, 0, Short.MAX_VALUE))
               .add(org.jdesktop.layout.GroupLayout.TRAILING, layout.createSequentialGroup()
                 .add(29, 29, 29)
                 .add(jLabel6)
@@ -238,8 +230,6 @@ public class SetUpSelect extends javax.swing.JPanel {
             .add(option2)
             .add(10, 10, 10)
             .add(option3)
-            .add(18, 18, 18)
-            .add(option8)
             .addContainerGap(org.jdesktop.layout.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
     );
     layout.setVerticalGroup(
@@ -277,8 +267,7 @@ public class SetUpSelect extends javax.swing.JPanel {
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
           .add(jLabel9)
           .add(option2)
-          .add(option3)
-          .add(option8))
+          .add(option3))
         .add(18, 18, 18)
         .add(layout.createParallelGroup(org.jdesktop.layout.GroupLayout.BASELINE)
           .add(option4)
@@ -345,10 +334,6 @@ public class SetUpSelect extends javax.swing.JPanel {
     // TODO add your handling code here:
   }//GEN-LAST:event_option3ActionPerformed
 
-  private void option8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_option8ActionPerformed
-    // TODO add your handling code here:
-  }//GEN-LAST:event_option8ActionPerformed
-
   // Variables declaration - do not modify//GEN-BEGIN:variables
   public javax.swing.JButton ask1;
   public javax.swing.JButton ask4;
@@ -372,7 +357,6 @@ public class SetUpSelect extends javax.swing.JPanel {
   protected javax.swing.JCheckBox option3;
   protected javax.swing.JCheckBox option4;
   protected javax.swing.JCheckBox option5;
-  protected javax.swing.JCheckBox option8;
   public javax.swing.JTextField pName;
   public javax.swing.JTextField pPort;
   private javax.swing.JButton setupNow;

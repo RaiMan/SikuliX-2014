@@ -842,9 +842,6 @@ public class RunSetup {
           }
           if (winSU.option3.isSelected()) {
             getJRuby = true;
-            if (winSU.option8.isSelected()) {
-              getJRubyAddOns = true;
-            }
           }
           if (!getJython && !getJRuby) {
             getIDE = false;
@@ -1838,9 +1835,6 @@ public class RunSetup {
       
       if (success) {
         File fDownloads = new File(targetDir, "Downloads");
-        if (new File(targetDir, "Downloads").exists()) {
-          FileManager.deleteFileOrFolder(new File(targetDir, "Downloads").getAbsolutePath(), null);
-        }
         fDownloads.mkdir();
         String fname = null;
         try {
