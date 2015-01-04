@@ -736,11 +736,6 @@ public class RunSetup {
     }
     if (!test) {
       if (!isUpdateSetup) {
-        if (!FileManager.checkPrereqs()) {
-          log(-1, "Fatal Error 202: some prereqs are not available");
-          Sikulix.terminate(202);
-        }
-
         winSetup = new JFrame("SikuliX-Setup");
         Border rpb = new LineBorder(Color.YELLOW, 8);
         winSetup.getRootPane().setBorder(rpb);
@@ -908,7 +903,10 @@ public class RunSetup {
         msg += "\n--- Native support libraries for " + Settings.osName + " (sikulixlibs...)\n";
         if (getIDE) {
           downloadedFiles += downloadIDE + " ";
-          msg += "\n--- Package 1 ---\n" + downloadIDE + " (IDE/Scripting)";
+          downloadedFiles += downloadAPI + " ";
+          msg += "\n--- Package 1 ---\n" + 
+                  downloadIDE + " (IDE/Scripting)\n" +
+                  downloadAPI + " (Java API)";
           if (getJython) {
             downloadedFiles += downloadJython + " ";
             msg += "\n - with Jython";
@@ -924,8 +922,13 @@ public class RunSetup {
           msg += "\n";
         }
         if (getAPI) {
-          downloadedFiles += downloadAPI + " ";
-          msg += "\n--- Package 2 ---\n" + downloadAPI + " (Java API)";
+          msg += "\n--- Package 2 ---\n" + downloadAPI;
+          if (!getIDE) {
+            downloadedFiles += downloadAPI + " ";
+            msg += " (Java API)";
+          } else {
+            msg += " (done in package 1)";
+          }
         }
         if (getTess || getRServer) {
           if (getIDE || getAPI) {
@@ -1119,22 +1122,15 @@ public class RunSetup {
       localJar = new File(workDir, localIDE).getAbsolutePath();
       dlOK = download(Settings.downloadBaseDir, dlDir, downloadIDE, localJar, "IDE/Scripting");
       downloadOK &= dlOK;
-//			if (Settings.isMac()) {
-//				targetJar = new File(workDir, localMacApp).getAbsolutePath();
-//				if (!test) {
-//					dlOK = download(downloadBaseDir, dlDir, downloadMacApp, targetJar, "MacApp");
-//				}
-//				if (dlOK) {
-//					FileManager.deleteFileOrFolder((new File(workDir, folderMacApp)).getAbsolutePath());
-//					FileManager.unpackJar(targetJar, workDir, false);
-//					FileManager.deleteFileOrFolder(new File(workDir, "META-INF").getAbsolutePath());
-//				}
-//				downloadOK &= dlOK;
-//			}
     }
     if (getJython) {
       targetJar = new File(workDir, localJython).getAbsolutePath();
-      downloadOK &= getJarFromMaven(Settings.SikuliJythonMaven, dlDir, targetJar, "Jython");
+      if (Settings.isJava6()) {
+        log1(lvl, "running on Java 6: need to use Jython 2.5 - which is downloaded");
+        downloadOK &= getJarFromMaven(Settings.SikuliJythonMaven25, dlDir, targetJar, "Jython");
+      } else {
+        downloadOK &= getJarFromMaven(Settings.SikuliJythonMaven, dlDir, targetJar, "Jython");
+      }
     }
     if (getJRuby) {
       targetJar = new File(workDir, localJRuby).getAbsolutePath();
@@ -1308,6 +1304,10 @@ public class RunSetup {
       success &= FileManager.buildJar(
               targetJar, jarsList, libsFileList, libsFilePrefix, libsFilter);
       success &= handleTempAfter(targetJar, localJar);
+    }
+    
+    if (getIDE && Settings.isMac()) {
+      log1(lvl, "making the Mac application Sikulix.app");
     }
 
     for (int i = (getAPI ? 2 : 1); i < jarsList.length; i++) {
@@ -1880,11 +1880,6 @@ public class RunSetup {
                   + "sikulixremoterobot-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
 //          FileManager.xcopy(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
 
-//TODO MacApp          
-          fname = new File(projectDir, "MacApp/target/"
-                  + Settings.SikuliProjectVersion + downloadMacAppSuffix).getAbsolutePath();
-//          FileManager.xcopy(fname, new File(fDownloads, downloadMacApp).getAbsolutePath());
-          
         } catch (Exception ex) {
           log(-1, "createSetupFolder: copying files did not work: %s", fname);
           success = false;

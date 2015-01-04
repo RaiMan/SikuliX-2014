@@ -169,10 +169,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
 
     Settings.isRunningIDE = true;
-		if (Settings.isMac()) {
-			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "SikuliX-IDE");
-		}
+    if (Settings.isMac()) {
+      System.setProperty("apple.laf.useScreenMenuBar", "true");
+    }    
 
     start = (new Date()).getTime();
     
@@ -184,6 +183,12 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
     
     getInstance();
+    if (Settings.SikuliJythonVersion.contains("2.7") && Settings.JREVersion.startsWith("1.6")) {
+      Sikulix.popError("The bundled Jython version 2.7\n"
+              + "cannot be used on Java 6!\n"
+              + "Terminating after OK");
+      System.exit(1);
+    }
  		sikulixIDE.initNativeSupport();
 
     CommandArgs cmdArgs = new CommandArgs("IDE");
@@ -238,6 +243,17 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
             || cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
       log(lvl, "Switching to ScriptRunner with option -r, -t or -i");
       ScriptRunner.runscript(args);
+    }
+    
+    if (Settings.isMac() && !Settings.isMacApp) {
+      if (!Sikulix.popAsk("This use of SikuliX is not supported\n"
+              + "and might lead to misbehavior!\n"
+              + "Click YES to continue (you should be sure)\n"
+              + "Click NO to terminate and check the situation.")) {
+        System.exit(1);
+      }
+    } else {
+      log(lvl, "running on Mac as SikuliX.app");
     }
     
     if (macOpenFiles != null) {
@@ -370,6 +386,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 			return;
 		}
 		log(lvl, "initNativeSupport: starting");
+    if (System.getProperty("sikulix.asapp") != null) {
+      Settings.isMacApp = true;
+    }
     try {
 //      com.apple.eawt.QuitResponse
       Class sysclass = URLClassLoader.class;

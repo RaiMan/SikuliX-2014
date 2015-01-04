@@ -105,7 +105,9 @@ public class Settings {
 	public static String SikuliVersionIDE;
 	public static String SikuliVersionScript;
 	public static String SikuliJythonVersion;
+	public static String SikuliJythonVersion25;
 	public static String SikuliJythonMaven;
+	public static String SikuliJythonMaven25;
 	public static String SikuliJython;
 	public static String SikuliJRubyVersion;
 	public static String SikuliJRuby;
@@ -224,8 +226,11 @@ public class Settings {
 
 			SikuliLocalRepo = FileManager.slashify(prop.getProperty("sikulixlocalrepo"), true);
 			SikuliJythonVersion = prop.getProperty("sikulixvjython");
+			SikuliJythonVersion25 = "2.5.3";
 			SikuliJythonMaven = "org/python/jython-standalone/" +
 							 SikuliJythonVersion + "/jython-standalone-" + SikuliJythonVersion + ".jar";
+			SikuliJythonMaven25 = "org/python/jython-standalone/" +
+							 SikuliJythonVersion25 + "/jython-standalone-" + SikuliJythonVersion25 + ".jar";
 			SikuliJython = SikuliLocalRepo + SikuliJythonMaven;
 			SikuliJRubyVersion = prop.getProperty("sikulixvjruby");
 			SikuliJRubyMaven = "org/jruby/jruby-complete/" +
@@ -394,7 +399,11 @@ public class Settings {
 		return JavaVersion > 6;
 	}
 
-	public static void showJavaInfo() {
+	public static boolean isJava6() {
+		return JavaVersion < 7;
+	}
+
+  public static void showJavaInfo() {
 		Debug.log(1, "Running on Java " + JavaVersion + " (" + JREVersion + ")");
 	}
 

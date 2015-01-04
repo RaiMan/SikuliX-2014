@@ -1,0 +1,14 @@
+PROPS='-Xmx512M -Dfile.encoding=UTF-8'
+sjar=/Applications/Sikulix.app/Contents/Java/sikulix.jar
+
+if [ "$1" = "" ]; then
+  echo "Error: terminating: no parameters provided (at least -r or -i)"
+else
+  if [ -e $sjar ]; then
+    export SIKULI_COMMAND=$*
+    echo "running SikuliX: $sjar $SIKULI_COMMAND"
+    java $PROPS -jar $sjar $SIKULI_COMMAND
+  else
+    echo "Error: terminating: $sjar not found"
+  fi
+fi
