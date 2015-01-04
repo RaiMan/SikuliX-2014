@@ -153,19 +153,26 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
           FileManager.cleanTemp();
         }
     });
+    
+    new File(Settings.BaseTempPath).mkdirs();
+    isRunning = new File(Settings.BaseTempPath, "sikuli-ide-isrunning");
+    try {
+      isRunning.createNewFile();
+      isRunningFile = new FileOutputStream(isRunning);
+      if (null == isRunningFile.getChannel().tryLock()) {
+        Sikulix.popError("Terminating on FatalError: IDE already running");
+        System.exit(1);
+      }
+    } catch (Exception ex) {
+      Sikulix.popError("Terminating on FatalError: cannot access IDE lock for/n" + isRunning);
+      System.exit(1);
+    }
 
-//    if (System.getProperty("sikuli.FromCommandLine") == null) {
-//      String[] userOptions = collectOptions("IDE", args);
-//      if (userOptions == null) {
-//        System.exit(0);
-//      }
-//      if (userOptions.length > 0) {
-//        for (String e : userOptions) {
-//          log(lvl, "arg: " + e);
-//        }
-//        args = userOptions;
-//      }
-//    }
+    Settings.isRunningIDE = true;
+		if (Settings.isMac()) {
+			System.setProperty("apple.laf.useScreenMenuBar", "true");
+			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "SikuliX-IDE");
+		}
 
     start = (new Date()).getTime();
     
@@ -176,6 +183,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       System.setProperty("sikuli.console", "false");
     }
     
+    getInstance();
+ 		sikulixIDE.initNativeSupport();
+
     CommandArgs cmdArgs = new CommandArgs("IDE");
     cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
 
@@ -229,27 +239,14 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       log(lvl, "Switching to ScriptRunner with option -r, -t or -i");
       ScriptRunner.runscript(args);
     }
-
-    new File(Settings.BaseTempPath).mkdirs();
-    isRunning = new File(Settings.BaseTempPath, "sikuli-ide-isrunning");
-    try {
-      isRunning.createNewFile();
-      isRunningFile = new FileOutputStream(isRunning);
-      if (null == isRunningFile.getChannel().tryLock()) {
-        Sikulix.popError("Terminating on FatalError: IDE already running");
-        System.exit(1);
+    
+    if (macOpenFiles != null) {
+      for (File f : macOpenFiles) {
+        if (f.getName().endsWith(".skl")) {
+          ScriptRunner.runscript(new String[]{"-r", f.getAbsolutePath()});          
+        }
       }
-    } catch (Exception ex) {
-      Sikulix.popError("Terminating on FatalError: cannot access IDE lock for/n" + isRunning);
-      System.exit(1);
     }
-
-    Settings.isRunningIDE = true;
-		if (Settings.isMac()) {
-			System.setProperty("apple.laf.useScreenMenuBar", "true");
-			System.setProperty("com.apple.mrj.application.apple.menu.about.name", "SikuliX-IDE");
-		}
-    getInstance();
 
     Settings.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
     Settings.showJavaInfo();
@@ -264,7 +261,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
 		ScriptRunner.initScriptingSupport();
 		IDESupport.initIDESupport();
-		sikulixIDE.initNativeSupport();
     sikulixIDE.initSikuliIDE(args);
   }
 
@@ -384,10 +380,11 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       Class clAboutHandler = sysclass.forName("com.apple.eawt.AboutHandler");
       Class clPreferencesHandler = sysclass.forName("com.apple.eawt.PreferencesHandler");
       Class clQuitHandler = sysclass.forName("com.apple.eawt.QuitHandler");
+      Class clOpenHandler = sysclass.forName("com.apple.eawt.OpenFilesHandler");
 
       Object appHandler = Proxy.newProxyInstance(
                                   comAppleEawtApplication.getClassLoader(),
-                                  new Class[] { clAboutHandler, clPreferencesHandler, clQuitHandler },
+                                  new Class[] { clAboutHandler, clPreferencesHandler, clQuitHandler, clOpenHandler},
                                   this);
       Method m = comAppleEawtApplication.getMethod("setAboutHandler", new Class[]{clAboutHandler});
 			m.invoke(instApplication, new Object[]{appHandler});
@@ -398,6 +395,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       m = comAppleEawtApplication.getMethod("setQuitHandler", new Class[]{clQuitHandler});
 			m.invoke(instApplication, new Object[]{appHandler});
       showQuit = false;
+      m = comAppleEawtApplication.getMethod("setOpenFileHandler", new Class[]{clOpenHandler});
+			m.invoke(instApplication, new Object[]{appHandler});
     } catch (Exception ex) {
       String em = String.format("initNativeSupport: Mac: error:\n%s", ex.getMessage());
       log(-1, em);
@@ -407,6 +406,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 		log(lvl, "initNativeSupport: success");
   }
 
+  private static List<File> macOpenFiles = null;
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
     String mName = method.getName();
@@ -414,6 +414,18 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       sikulixIDE.doAbout();
     } else if ("handlePreferences".equals(mName)) {
       sikulixIDE.showPreferencesWindow();
+    } else if ("openFiles".equals(mName)) {
+      log(lvl, "nativeSupport: should open files");
+      try {
+        Method mOpenFiles = args[0].getClass().getMethod("getFiles", new Class[]{});
+        macOpenFiles = (List<File>) mOpenFiles.invoke(args[0], new Class[]{});
+        for (File f : macOpenFiles) {
+          log(lvl, "nativeSupport: openFiles: %s", macOpenFiles);          
+        }
+      } catch (Exception ex) {
+        log(lvl, "NativeSupport: Quit: error: %s", ex.getMessage());
+        System.exit(1);
+      }
     } else if ("handleQuitRequestWith".equals(mName)) {
       try {
         Class sysclass = URLClassLoader.class;
@@ -493,42 +505,40 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
   private void restoreSession(int tabIndex) {
     String session_str = prefs.getIdeSession();
-    String[] filenames = null;
-    if (session_str == null && loadScripts == null) {
+    if (session_str == null && loadScripts == null && macOpenFiles == null) {
       return;
     }
-    filenames = session_str.split(";");
-    for (int i = 0; i < filenames.length; i++) {
-      if (filenames[i].isEmpty()) {
-        continue;
+    List<String> filesToLoad = new ArrayList<String>();
+    if (macOpenFiles != null) {
+      for (File f : macOpenFiles) {
+        filesToLoad.add(f.getAbsolutePath());
+        restoreScriptFromSession(f.getAbsolutePath());
       }
-      Debug.log(3, "restore session at %d: " + filenames[i], restoredScripts + 1);
-      File f = new File(filenames[i]);
-      if (f.exists()) {
-        if (restoreScriptFromSession(filenames[i])) {
-          restoredScripts += 1;
+    }
+    if (session_str != null) {
+      String[] filenames = session_str.split(";");
+      for (int i = 0; i < filenames.length; i++) {
+        if (filenames[i].isEmpty()) {
+          continue;
+        }
+        File f = new File(filenames[i]);
+        if (f.exists() && !filesToLoad.contains(f.getAbsolutePath())) {
+          Debug.log(3, "restore session: %s", f);
+          filesToLoad.add(f.getAbsolutePath());
+          restoreScriptFromSession(f.getAbsolutePath());
         }
       }
     }
-    if (loadScripts == null) {
-      return;
-    }
-    int ao;
-    for (int i = 0; i < loadScripts.length; i++) {
-      if (loadScripts[i].isEmpty()) {
-        continue;
-      }
-      File f = new File(loadScripts[i]);
-      if (f.exists()) {
-        if (restoreScriptFromSession(loadScripts[i])) {
-          ao = isAlreadyOpen(getCurrentCodePane().getCurrentSrcDir());
-          if (ao < 0) {
-            restoredScripts += 1;
-            Debug.log(3, "preload script at %d: " + loadScripts[i], restoredScripts + 1);
-          } else {
-            tabPane.remove(ao);
-            Debug.log(3, "preload session script at %d: " + loadScripts[i], restoredScripts + 1);
-          }
+    if (loadScripts != null) {
+      for (int i = 0; i < loadScripts.length; i++) {
+        if (loadScripts[i].isEmpty()) {
+          continue;
+        }
+        File f = new File(loadScripts[i]);
+        if (f.exists() && !filesToLoad.contains(f.getAbsolutePath())) {
+          Debug.log(3, "preload script: %s", f);
+          filesToLoad.add(f.getAbsolutePath());
+          restoreScriptFromSession(f.getAbsolutePath());
         }
       }
     }
