@@ -257,7 +257,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       log(lvl, "running on Mac as SikuliX.app");
     }
     
-//TODO how to differentiate open and run
+//TODO how to differentiate open and run for doubleclick/drop scripts
     if (macOpenFiles != null) {
       for (File f : macOpenFiles) {
         if (f.getName().endsWith(".sikuli") || f.getName().endsWith(".skl")) {
