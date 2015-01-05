@@ -127,8 +127,6 @@
 		<module>Libswin</module>
 		<module>API</module>
 		<module>APIPlus</module>
-		<module>JRubyAddOns</module>
-		<module>JRubyGem</module>
 		<module>Jygments4SikuliX</module>
 		<module>IDE</module>
 		<module>IDEPlus</module>
