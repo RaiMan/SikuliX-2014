@@ -186,7 +186,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     if (Settings.SikuliJythonVersion.contains("2.7") && Settings.JREVersion.startsWith("1.6")) {
       Sikulix.popError("The bundled Jython version 2.7\n"
               + "cannot be used on Java 6!\n"
-              + "Terminating after OK");
+              + "Run setup again in this environment.\n"
+              + "Click OK to terminate now");
       System.exit(1);
     }
  		sikulixIDE.initNativeSupport();
