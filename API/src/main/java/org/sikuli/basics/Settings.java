@@ -33,7 +33,7 @@ public class Settings {
 	private static void log(int level, String message, Object... args) {
 		Debug.logx(level, me + message, args);
 	}
-  
+
 
   public static int SikuliVersionMajor;
 	public static int SikuliVersionMinor;
@@ -105,7 +105,7 @@ public class Settings {
 	public static String SikuliVersionIDE;
 	public static String SikuliVersionScript;
 	public static String SikuliJythonVersion;
-	public static String SikuliJythonVersion25;
+	public static String SikuliJythonVersion25 = "2.5.4-rc1";
 	public static String SikuliJythonMaven;
 	public static String SikuliJythonMaven25;
 	public static String SikuliJython;
@@ -163,6 +163,7 @@ public class Settings {
 			InputStream is;
 			is = Settings.class.getClassLoader().getResourceAsStream("Settings/" + svf);
 			prop.load(is);
+			is.close();
 			String svt = prop.getProperty("sikulixdev");
 			SikuliVersionMajor = Integer.decode(prop.getProperty("sikulixvmaj"));
 			SikuliVersionMinor = Integer.decode(prop.getProperty("sikulixvmin"));
@@ -226,7 +227,6 @@ public class Settings {
 
 			SikuliLocalRepo = FileManager.slashify(prop.getProperty("sikulixlocalrepo"), true);
 			SikuliJythonVersion = prop.getProperty("sikulixvjython");
-			SikuliJythonVersion25 = "2.5.3";
 			SikuliJythonMaven = "org/python/jython-standalone/" +
 							 SikuliJythonVersion + "/jython-standalone-" + SikuliJythonVersion + ".jar";
 			SikuliJythonMaven25 = "org/python/jython-standalone/" +

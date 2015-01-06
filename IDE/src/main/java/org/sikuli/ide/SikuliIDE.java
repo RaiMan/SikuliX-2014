@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -153,7 +154,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
           FileManager.cleanTemp();
         }
     });
-    
+
     new File(Settings.BaseTempPath).mkdirs();
     isRunning = new File(Settings.BaseTempPath, "sikuli-ide-isrunning");
     try {
@@ -171,25 +172,40 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     Settings.isRunningIDE = true;
     if (Settings.isMac()) {
       System.setProperty("apple.laf.useScreenMenuBar", "true");
-    }    
+    }
 
     start = (new Date()).getTime();
-    
+
     File ideDebug = new File(System.getProperty("user.home"), "SikulixDebug.txt");
     if (ideDebug.exists()) {
       Debug.setDebugLevel(3);
       Debug.setLogFile(ideDebug.getAbsolutePath());
       System.setProperty("sikuli.console", "false");
     }
-    
+
     getInstance();
-    if (Settings.SikuliJythonVersion.contains("2.7") && Settings.JREVersion.startsWith("1.6")) {
-      Sikulix.popError("The bundled Jython version 2.7\n"
-              + "cannot be used on Java 6!\n"
-              + "Run setup again in this environment.\n"
-              + "Click OK to terminate now");
-      System.exit(1);
-    }
+
+    if (Settings.JREVersion.startsWith("1.6")) {
+			String jyversion = "";
+			Properties prop = new Properties();
+			String fp = "org/python/version.properties";
+			InputStream ifp = null;
+			try {
+				ifp = SikuliIDE.class.getClassLoader().getResourceAsStream(fp);
+				if (ifp != null) {
+					prop.load(ifp);
+					ifp.close();
+					jyversion = prop.getProperty("jython.version");
+				}
+			} catch (IOException ex) {}
+			if (!jyversion.isEmpty() && !jyversion.startsWith("2.5")) {
+				Sikulix.popError(String.format("The bundled Jython %s\n"
+								+ "cannot be used on Java 6!\n"
+								+ "Run setup again in this environment.\n"
+								+ "Click OK to terminate now", jyversion));
+				System.exit(1);
+			}
+		}
  		sikulixIDE.initNativeSupport();
 
     CommandArgs cmdArgs = new CommandArgs("IDE");
@@ -245,7 +261,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       log(lvl, "Switching to ScriptRunner with option -r, -t or -i");
       ScriptRunner.runscript(args);
     }
-    
+
     if (Settings.isMac() && !Settings.isMacApp) {
       if (!Sikulix.popAsk("This use of SikuliX is not supported\n"
               + "and might lead to misbehavior!\n"
@@ -256,12 +272,12 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     } else {
       log(lvl, "running on Mac as SikuliX.app");
     }
-    
+
 //TODO how to differentiate open and run for doubleclick/drop scripts
     if (macOpenFiles != null) {
       for (File f : macOpenFiles) {
         if (f.getName().endsWith(".sikuli") || f.getName().endsWith(".skl")) {
-          ScriptRunner.runscript(new String[]{"-r", f.getAbsolutePath()});          
+          ScriptRunner.runscript(new String[]{"-r", f.getAbsolutePath()});
         }
       }
     }
@@ -376,7 +392,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       (new FileAction()).doNew(null);
     }
     tabPane.setSelectedIndex(0);
-    
+
     Debug.log(3, "Sikuli-IDE startup: " + ((new Date()).getTime() - start));
     setVisible(true);
     _mainSplitPane.setDividerLocation(0.6);
@@ -441,7 +457,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         Method mOpenFiles = args[0].getClass().getMethod("getFiles", new Class[]{});
         macOpenFiles = (List<File>) mOpenFiles.invoke(args[0], new Class[]{});
         for (File f : macOpenFiles) {
-          log(lvl, "nativeSupport: openFiles: %s", macOpenFiles);          
+          log(lvl, "nativeSupport: openFiles: %s", macOpenFiles);
         }
       } catch (Exception ex) {
         log(lvl, "NativeSupport: Quit: error: %s", ex.getMessage());
