@@ -121,7 +121,6 @@
 	</dependencies>
 
 	<modules>
-		<module>Libsvision</module>
 		<module>Libslux</module>
 		<module>Libsmac</module>
 		<module>Libswin</module>

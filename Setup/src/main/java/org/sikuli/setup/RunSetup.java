@@ -1570,6 +1570,8 @@ public class RunSetup {
 
     log1(lvl, "starting inline build: libVisionProxy.so");
 
+    ResourceLoader rl = ResourceLoader.forJar("libslux");
+
     if (!new File(javaHome, "bin/javac").exists()) {
       javaHome = javaHome.getParentFile();
     }
@@ -1643,7 +1645,6 @@ public class RunSetup {
     buildLink += libTesseract + " ";
     String libVisionPath = new File(build, libVision).getAbsolutePath();
     buildLink += "-o " + libVisionPath;
-    ResourceLoader rl = ResourceLoader.forJar("setup");
     File cmdFile = null;
     if (rl != null) {
       FileManager.deleteFileOrFolder(build.getAbsolutePath());
