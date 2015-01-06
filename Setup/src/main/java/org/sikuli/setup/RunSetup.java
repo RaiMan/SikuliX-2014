@@ -125,17 +125,17 @@ public class RunSetup {
   private static File folderLibs;
   private static String linuxDistro = "*** testing Linux ***";
   private static String osarch;
-//TODO set true to test on Mac  
-  private static boolean isLinux = false; 
+//TODO set true to test on Mac
+  private static boolean isLinux = false;
 
   // -MF $externals/$fn.o.d -o $externals/$fn.o $src/Vision/$fn
   private static boolean buildComplete = true;
   private static String buildCppMods = "-MF %s.o.d -o %s.o %s";
   private static String buildFolderSrc = "Build/Source";
   private static String buildFolderInclude = "Build/Include";
-  private static String[] buildSrcFiles = 
-          new String[]{"cvgui.cpp", "finder.cpp", 
-                       "pyramid-template-matcher.cpp", "sikuli-debug.cpp", "tessocr.cpp", 
+  private static String[] buildSrcFiles =
+          new String[]{"cvgui.cpp", "finder.cpp",
+                       "pyramid-template-matcher.cpp", "sikuli-debug.cpp", "tessocr.cpp",
                        "vision.cpp", "visionJAVA_wrap.cxx"};
   private static String buildCppFix = "g++ -c -O3 -fPIC -MMD -MP %s "; // $includeParm
   private static String buildFolder = "Build";
@@ -352,7 +352,7 @@ public class RunSetup {
         }
       }
     }
-    
+
     runningJar = FileManager.getJarName(RunSetup.class);
 
     if (runningJar.isEmpty()) {
@@ -463,7 +463,7 @@ public class RunSetup {
       popError("invalid command line options - terminating");
       System.exit(999);
     }
-    
+
     //<editor-fold defaultstate="collapsed" desc="general preps">
     Settings.runningSetup = true;
     Settings.LogTime = true;
@@ -904,7 +904,7 @@ public class RunSetup {
         if (getIDE) {
           downloadedFiles += downloadIDE + " ";
           downloadedFiles += downloadAPI + " ";
-          msg += "\n--- Package 1 ---\n" + 
+          msg += "\n--- Package 1 ---\n" +
                   downloadIDE + " (IDE/Scripting)\n" +
                   downloadAPI + " (Java API)";
           if (getJython) {
@@ -1019,7 +1019,7 @@ public class RunSetup {
         folderLibs.mkdirs();
       }
       if (!folderLibs.exists()) {
-        log(-1, "Linux: check useability of libs problems with libs folder\n%s", folderLibs);
+        log(-1, "Linux: check useability of libs: problems with libs folder\n%s", folderLibs);
       } else {
         String[] libsExport = new String[]{null, null};
         String[] libsCheck = new String[]{null, null};
@@ -1037,7 +1037,7 @@ public class RunSetup {
               continue;
             }
             currentlib = exLib;
-            FileManager.unpackJar(jarsList[8], folderLibs.getAbsolutePath(), 
+            FileManager.unpackJar(jarsList[8], folderLibs.getAbsolutePath(),
                     false, true, new FileManager.JarFileFilter() {
               @Override
               public boolean accept(ZipEntry entry, String jarname) {
@@ -1053,7 +1053,6 @@ public class RunSetup {
         libsCheck[1] = new File(folderLibs, libGrabKey).getAbsolutePath();
         File fLibCheck;
         boolean shouldTerminate = false;
-        boolean shouldBuild = false;
         boolean shouldBuildVisionNow = false;
         for (int i = 0; i < libsCheck.length; i++) {
           fLibCheck = new File(libsCheck[i]);
@@ -1061,16 +1060,15 @@ public class RunSetup {
             if (!checklibs(fLibCheck)) {
               if (libsExport[i] == null) {
                 log1(-1, "provided %s might not be useable on this Linux - see log", fLibCheck.getName());
-                shouldTerminate = true;
               } else {
                 log1(-1, "bundled %s might not be useable on this Linux - see log", fLibCheck.getName());
-                if (i > 0) {
-                  //TODO why? JXGrabKey unresolved: pthread
-                  //shouldBuild = true;
-                } else {
-                  shouldBuildVisionNow = true;
-                }
               }
+							if (i > 0) {
+								//TODO why? JXGrabKey unresolved: pthread
+								//shouldBuild = true;
+							} else {
+								shouldBuildVisionNow = true;
+							}
             }
           } else {
             log(-1, "check not possible for\n%s", fLibCheck);
@@ -1083,37 +1081,29 @@ public class RunSetup {
           }
           FileManager.deleteFileOrFolder(new File(folderLibs, exLib).getAbsolutePath());
         }
-//TODO for testing uncomment
-//        shouldBuildVision = true; // uncomment or delete
-        if (!hasOptions && (shouldBuild || shouldBuildVisionNow)) {
-          log1(-1, "A bundled lib could not be checked or does not work.");
-          if (shouldBuildVisionNow) {
-            if (popAsk("The bundled/provided libVisionProxy.so might not work."
-                    + "\nShould we try to build it now?"
-                    + "\nClick YES to try a build"
-                    + "\nClick NO to continue and fix it later yourself")) {
-              log1(lvl, "Trying to build libVisionProxy.so");
-              shouldBuild |= !buildVision();
-            }
-          }
+				if (shouldBuildVisionNow) {
+					log1(-1, "A bundled lib could not be checked or does not work.");
+					if (!popAsk("The bundled/provided libVisionProxy.so might not work."
+									+ "\nShould we try to build it now?"
+									+ "\nClick YES to try a build"
+									+ "\nClick NO to terminate and correct the problems.")) {
+						shouldTerminate = true;
+						shouldBuildVisionNow = false;
+					}
+				}
+        if (shouldBuildVisionNow || (hasOptions && shouldBuildVision)) {
+					log1(lvl, "Trying to build libVisionProxy.so");
+					shouldTerminate |= !buildVision();
         }
         if (! libsProvided) {
           FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
         }
-        if (shouldTerminate || shouldBuild) {
-          if (!popAsk("Fore some reason one or more of the \n"
-                  + "native libraries might not be useable.\n"
-                  + "Click YES to continue anyway (be sure its ok)\n"
-                  + "Click NO to terminate and correct the problems.")) {
-            terminate("Correct the problems with the bundled/provided libs and try again");
-          }
-        }
-        if (hasOptions && shouldBuildVision) {
-          buildVision();
+        if (shouldTerminate) {
+					terminate("Correct the problems with the bundled/provided libs and try again");
         }
       }
     }
-    
+
     if (getIDE || getAPI) {
       localJar = new File(workDir, localAPI).getAbsolutePath();
       downloadOK &= download(Settings.downloadBaseDir, dlDir, downloadAPI, localJar, "Java API");
@@ -1282,7 +1272,7 @@ public class RunSetup {
       log1(lvl, "adding needed stuff to sikulixapi.jar");
       localJar = (new File(workDir, localAPI)).getAbsolutePath();
       targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-      success &= FileManager.buildJar(targetJar, jarsList, 
+      success &= FileManager.buildJar(targetJar, jarsList,
               libsFileList, libsFilePrefix, libsFilter);
       success &= handleTempAfter(targetJar, localJar);
     }
@@ -1305,7 +1295,7 @@ public class RunSetup {
               targetJar, jarsList, libsFileList, libsFilePrefix, libsFilter);
       success &= handleTempAfter(targetJar, localJar);
     }
-    
+
     if (getIDE && Settings.isMac()) {
       log1(lvl, "making the Mac application Sikulix.app");
     }
@@ -1338,7 +1328,7 @@ public class RunSetup {
     }
     restore(true); //to get back the stuff that was not changed
     //</editor-fold>
-    
+
     //<editor-fold defaultstate="collapsed" desc="api test">
     if (!notests && getAPI) {
       log1(lvl, "Trying to run functional test: JAVA-API");
@@ -1464,7 +1454,7 @@ public class RunSetup {
   private static boolean checklibs(File lib) {
     String cmdRet;
     String[] retLines;
-    
+
     if (!libSearched) {
       log1(lvl, "checking: availability of OpenCV and Tesseract");
       log1(lvl, "checking: scanning loader cache (ldconfig -p)");
@@ -1502,7 +1492,7 @@ public class RunSetup {
           log1(lvl, "checking: found Tesseract lib:\n%s", libTesseract);
         }
       }
-      
+
       // checking wmctrl
       cmdRet = ResourceLoader.get().runcmd("wmctrl -m");
       if (cmdRet.contains(cmdError)) {
@@ -1533,7 +1523,7 @@ public class RunSetup {
       }
       log0(lvl, libsNeeded);
     }
-    
+
     log1(lvl, "checking: needed libs useable? (ldd -r lib)");
     if (!runLdd(lib)) {
       checkSuccess = false;
@@ -1541,7 +1531,7 @@ public class RunSetup {
 
     return checkSuccess;
   }
-  
+
   private static boolean runLdd(File lib) {
     // ldd -r lib
     // undefined symbol: _ZN2cv3MatC1ERKS0_RKNS_5Rect_IiEE	(./libVisionProxy.so)
@@ -1557,7 +1547,7 @@ public class RunSetup {
       String libsMissing = "";
       for (String line : retLines) {
         if (line.contains("undefined symbol:") && line.contains(libName)) {
-          line = line.split("symbol:")[1].trim().split("\\s")[0]; 
+          line = line.split("symbol:")[1].trim().split("\\s")[0];
           libsMissing += line + ":";
         }
       }
@@ -1577,11 +1567,11 @@ public class RunSetup {
     File source = new File(workDir, buildFolderSrc);
     File stuff = new File(workDir, buildFolderStuff);
     File incl = new File(workDir, buildFolderInclude);
-    
+
     File javaHome = new File(System.getProperty("java.home"));
     File javaInclude = null;
     File javaIncludeLinux = null;
-    
+
     log1(lvl, "starting inline build: libVisionProxy.so");
 
     if (!new File(javaHome, "bin/javac").exists()) {
@@ -1601,7 +1591,7 @@ public class RunSetup {
     String buildInclude = "";
     String inclUsr = "/usr/include";
     String inclUsrLocal = "/usr/local/include";
-    
+
     boolean exportIncludeJava = false;
     if (javaHome == null) {
       //log(lvl, "JDK: not found - set JAVA_HOME to a valid JDK");
@@ -1637,7 +1627,7 @@ public class RunSetup {
     if (!exportIncludeOpenCV || !exportIncludeTesseract) {
       buildInclude += " -I" + inclUsr + " -I" + inclUsrLocal;
     }
-    
+
     String mfFile;
     String srcFile;
     log0(lvl, "buildVision: setting up the compile commands");
@@ -1741,7 +1731,7 @@ public class RunSetup {
       log(lvl, "runScriptTest: error: %s", ex.getMessage());
     }
   }
-  
+
   private static String addSeps(String item) {
     if (Settings.isWindows()) {
       return item.replace("/", "\\");
@@ -1777,7 +1767,7 @@ public class RunSetup {
                       public boolean accept(File entry) {
                         if (isLinux && entry.getPath().contains(addSeps("/libs/"))) {
                           return false;
-                        } 
+                        }
                         if (entry.getPath().contains(addSeps("/Downloads/"))) {
                           if (entry.getName().contains("tess")) {
                             return false;
@@ -1832,7 +1822,7 @@ public class RunSetup {
       } else {
         jythonJar = jrubyJar = null;
       }
-      
+
       if (success) {
         File fDownloads = new File(targetDir, "Downloads");
         fDownloads.mkdir();
@@ -2037,7 +2027,7 @@ public class RunSetup {
         terminate("Reset: Not possible to backup:\n" + ex.getMessage());
       }
     }
-    
+
     FileManager.deleteFileOrFolder(workDir, new FileManager.FileFilter() {
       @Override
       public boolean accept(File entry) {
@@ -2057,11 +2047,11 @@ public class RunSetup {
         return true;
       }
     });
-    
+
     if (hasOptions) {
       return;
     }
-    
+
     closeSplash(splash);
     log1(3, "backup completed!");
     backUpExists = true;
