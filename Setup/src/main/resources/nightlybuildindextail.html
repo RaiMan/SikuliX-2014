@@ -1,5 +1,9 @@
-<h4>Build: 2015-01-01</h4>
-fixed: Linux setup: libVisionProxy.so (provided or bundled) is checked and can be built on the fly during setup (only tested until now on Ubuntu 14.04 64Bit)
+<h4>Build: 2015-01-06</h4>
+fixed: Linux setup: libVisionProxy.so (provided or bundled) is checked and can be built on the fly during setup (tested on Ubuntu 14.04 64/32 Bit)<br>
+fixed: JRuby: did not run unsaved scripts<br>
+fixed: Java 6: Jython version is checked: must be 2.5 and is used with setup (having bundled 2.7 terminates)<br>
+changed: Jruby now 1.7.18, Jython now 2.7-b3
+fixed: version 1.1.0 now compiles on Java 6 again
 <h4>Build: 2014-12-28</h4>
 fixed: problem with CheckLastSeen when pattern is used<br>
 fixed: only onAppear handler was called on event (other handlers not called)
