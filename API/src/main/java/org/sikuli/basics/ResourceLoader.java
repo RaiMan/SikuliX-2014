@@ -104,7 +104,6 @@ public class ResourceLoader {
 
 	private boolean initDone = false;
 	private boolean usrPathProblem = false;
-  private boolean beSilent = false;
 
   private ResourceLoader() {
     log0(lvl, "SikuliX Package Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
@@ -142,11 +141,7 @@ public class ResourceLoader {
     }
     return resourceLoader;
   }
-  
-  private void setSilent(boolean state) {
-    beSilent = state;
-  } 
-  
+
   public static ResourceLoader forJar(String jarName) {
     ResourceLoader rl = get();
     URL jar = null;
@@ -166,7 +161,7 @@ public class ResourceLoader {
       return null;
     }
   }
-  
+
   private static URL getJarFromClasspath(String jarName) {
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     URL[] urls = sysLoader.getURLs();
@@ -178,8 +173,8 @@ public class ResourceLoader {
       }
     }
     return jarurl;
-  } 
-  
+  }
+
   private void setCurrentJar(URL jar) {
     currentURL = jar;
   }
@@ -799,10 +794,11 @@ public class ResourceLoader {
     String result = "";
     String error = "*** error ***" + NL;
     try {
-      log(lvl, Sikulix.arrayToString(args));
-      if (!beSilent) {
-        Debug.info("runcmd: " + Sikulix.arrayToString(args));
-      }
+			if (lvl <= Debug.getDebugLevel()) {
+				log(lvl, Sikulix.arrayToString(args));
+			} else {
+				Debug.info("runcmd: " + Sikulix.arrayToString(args));
+			}
       Process process = Runtime.getRuntime().exec(args);
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
       BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
