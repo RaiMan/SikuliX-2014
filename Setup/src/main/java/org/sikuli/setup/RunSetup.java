@@ -1058,15 +1058,13 @@ public class RunSetup {
           fLibCheck = new File(libsCheck[i]);
           if (fLibCheck.exists()) {
             if (!checklibs(fLibCheck)) {
-              if (libsExport[i] == null) {
-                log1(-1, "provided %s might not be useable on this Linux - see log", fLibCheck.getName());
-              } else {
-                log1(-1, "bundled %s might not be useable on this Linux - see log", fLibCheck.getName());
-              }
-							if (i > 0) {
-								//TODO why? JXGrabKey unresolved: pthread
-								//shouldBuild = true;
-							} else {
+//TODO why? JXGrabKey unresolved: pthread
+							if (i == 0) {
+								if (libsExport[i] == null) {
+									log1(-1, "provided %s might not be useable on this Linux - see log", fLibCheck.getName());
+								} else {
+									log1(-1, "bundled %s might not be useable on this Linux - see log", fLibCheck.getName());
+								}
 								shouldBuildVisionNow = true;
 							}
             }
@@ -1505,7 +1503,6 @@ public class RunSetup {
     }
 
     log1(lvl, "checking\n%s", lib);
-    log1(lvl, "checking: needed libs (readelf -d lib)");
     // readelf -d lib
     // 0x0000000000000001 (NEEDED)             Shared library: [libtesseract.so.3]
     cmdRet = ResourceLoader.get().runcmd("readelf -d " + lib);
@@ -1524,7 +1521,6 @@ public class RunSetup {
       log0(lvl, libsNeeded);
     }
 
-    log1(lvl, "checking: needed libs useable? (ldd -r lib)");
     if (!runLdd(lib)) {
       checkSuccess = false;
     }
