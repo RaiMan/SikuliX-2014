@@ -1091,7 +1091,7 @@ public class RunSetup {
 				}
         if (shouldBuildVisionNow || (hasOptions && shouldBuildVision)) {
 					log1(lvl, "Trying to build libVisionProxy.so");
-					shouldTerminate |= !buildVision();
+					shouldTerminate |= !buildVision(jarsList[8]);
         }
         if (! libsProvided) {
           FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
@@ -1558,7 +1558,7 @@ public class RunSetup {
     return success;
   }
 
-  private static boolean buildVision() {
+  private static boolean buildVision(String srcjar) {
     File build = new File(workDir, buildFolder);
     File source = new File(workDir, buildFolderSrc);
     File stuff = new File(workDir, buildFolderStuff);
@@ -1570,7 +1570,7 @@ public class RunSetup {
 
     log1(lvl, "starting inline build: libVisionProxy.so");
 
-    ResourceLoader rl = ResourceLoader.forJar("libslux");
+    ResourceLoader rl = ResourceLoader.forJar(srcjar);
 
     if (!new File(javaHome, "bin/javac").exists()) {
       javaHome = javaHome.getParentFile();
