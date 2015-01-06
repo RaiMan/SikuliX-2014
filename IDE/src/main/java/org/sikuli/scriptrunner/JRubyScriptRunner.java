@@ -82,6 +82,9 @@ public class JRubyScriptRunner implements IScriptRunner {
 
 	private static String sikuliLibPath;
 
+	private boolean isFromIDE;
+	private boolean isCompileOnly;
+
 	@Override
 	public void init(String[] args) {
 		//TODO classpath and other path handlings
@@ -95,27 +98,24 @@ public class JRubyScriptRunner implements IScriptRunner {
 			fillSysArgv(null, null);
 			createScriptingContainer();
 			executeScriptHeader(new String[0]);
-//			SikuliX.displaySplash(null);
 			return runRuby(null, scriptArgs, null);
 		}
 		scriptfile = new File(scriptfile.getAbsolutePath());
 		fillSysArgv(scriptfile, scriptArgs);
 		createScriptingContainer();
+		int exitCode = 0;
+		isFromIDE = ! (forIDE == null);
+		if (isFromIDE && forIDE.length > 1 && forIDE[0] != null ) {
+			isCompileOnly = forIDE[0].toUpperCase().equals(COMPILE_ONLY);
+		}
 		if (forIDE == null) {
 			executeScriptHeader(new String[]{
 				scriptfile.getParentFile().getAbsolutePath(),
 				scriptfile.getParentFile().getParentFile().getAbsolutePath()});
-		} else {
-			executeScriptHeader(new String[]{
-				forIDE[0]});
-		}
-		int exitCode = 0;
-//		SikuliX.displaySplashFirstTime(null);
-//		SikuliX.displaySplash(null);
-		if (forIDE == null) {
 			exitCode = runRuby(scriptfile, null,
 							new String[]{scriptfile.getParentFile().getAbsolutePath()});
 		} else {
+			executeScriptHeader(new String[]{forIDE[0]});
 			exitCode = runRuby(scriptfile, null, forIDE);
 		}
 		log(lvl + 1, "runScript: at exit: path:");
@@ -267,7 +267,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 						new InputStreamReader(
 							new FileInputStream(ruFile.getAbsolutePath()), "UTF-8"));
 // TODO implement compile only !!!
-					if (scriptPaths[0].toUpperCase().equals(COMPILE_ONLY)) {
+					if (isCompileOnly) {
 						log(lvl, "runRuby: running COMPILE_ONLY");
 						EvalUnit unit = interpreter.parse(script, filename);
 						//unit.run();
@@ -276,6 +276,9 @@ public class JRubyScriptRunner implements IScriptRunner {
 							filename = FileManager.slashify(scriptPaths[0], true)
 											+ scriptPaths[1] + ".sikuli";
 							log(lvl, "runRuby: running script from IDE: \n" + filename);
+							if (scriptPaths[0] == null) {
+								filename = "";
+							}
 							fromIDE = true;
 						} else {
 							filename = scriptPaths[0];
@@ -462,7 +465,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 	 */
 	private void executeScriptHeader(String[] syspaths) {
 // TODO implement compile only
-		if (syspaths.length > 0 && syspaths[0].toUpperCase().equals(COMPILE_ONLY)) {
+		if (isCompileOnly) {
 			return;
 		}
 		List<String> path = interpreter.getLoadPaths();

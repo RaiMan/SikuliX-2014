@@ -162,17 +162,14 @@ public class JythonScriptRunner implements IScriptRunner {
 		}
 		pyFile = new File(pyFile.getAbsolutePath());
 		fillSysArgv(pyFile, argv);
-		if (forIDE == null) {
+		int exitCode = 0;
+		if (isFromIDE) {
+			executeScriptHeader(new String[]{forIDE[0]});
+			exitCode = runPython(pyFile, null, forIDE);
+		} else {
 			executeScriptHeader(new String[]{
 				pyFile.getParent(),
 				pyFile.getParentFile().getParent()});
-		} else {
-			executeScriptHeader(new String[]{forIDE[0]});
-		}
-		int exitCode = 0;
-		if (isFromIDE) {
-			exitCode = runPython(pyFile, null, forIDE);
-		} else {
 			exitCode = runPython(pyFile, null, new String[]{pyFile.getParentFile().getAbsolutePath()});
 		}
 		log(lvl + 1, "runScript: at exit: path:");
@@ -661,7 +658,7 @@ public class JythonScriptRunner implements IScriptRunner {
 				jypath.add(pyPath);
 			}
 		}
-		
+
 		if (savedpathlen == 0) {
 			savedpathlen = interpreter.getSystemState().path.size();
 			log(lvl + 1, "executeScriptHeader: saved sys.path: %d", savedpathlen);
