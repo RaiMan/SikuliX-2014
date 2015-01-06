@@ -4,15 +4,11 @@ echo -
 echo ---
 
 if [ "$sbase" == "" ]; then
-  apifat=$base/APIFat/target
-  apidocs=$base/API/target
 	source=$base/Setup/target
 	dist=$base/Setup/target/Setup
   target=$base/SikuliX-Setup
 else
   echo ----- running on Jenkins
-  apifat=$sbase/APIFat/target
-  apidocs=$sbase/API/target
   source=$sbase/Setup/target
 	dist=$sbase/Setup/target/Setup
   target=$jbase/SikuliX-Setup
@@ -31,7 +27,6 @@ fi
 mkdir $target
 mkdir $target/Downloads
 
-# ----------- Setup
 echo ----- collecting jars
 setupjar=`ls $source/*-plain.jar`
 pversion=`java -jar $setupjar pversion`
@@ -41,16 +36,8 @@ ls -l $dist
 echo ----- content of $dist/Downloads
 ls -l $dist/Downloads
 
-# ----------- Setup
-echo ----- copy Setup APIFat
-apijar=`ls $apifat/*-plain.jar`
+echo ----- copy jars
 cp $dist/*.jar $target/
-cp $apijar $target/sikulixapi-$pversion.jar
-cp $apidocs/*-javadoc.jar $target
-cp $apidocs/*-sources.jar $target
-
-# ----------- Jars
-echo ----- copy Download Jars
 cp $dist/Downloads/* $target/Downloads/
 
 echo ----------- final content of $target
