@@ -141,9 +141,9 @@ public class Screen extends Region implements EventObserver, IScreen {
 
   /**
    * create a Screen (ScreenUnion) object as a united region of all available monitors
-   * TODO: check wether this can be a Screen object
    * @return ScreenUnion
    */
+//TODO: check wether this can be a Screen object, to be tested: Region methods
   public static ScreenUnion all() {
     return new ScreenUnion();
   }
