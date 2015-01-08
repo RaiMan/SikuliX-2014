@@ -478,6 +478,7 @@ public class RunSetup {
       String result = ResourceLoader.get().runcmd("lsb_release -i -r -s");
       linuxDistro = result.replaceAll("\n", " ").trim();
       if (linuxDistro.contains("*** error ***")) {
+        log0(-1, "command returns error: lsb_release -i -r -s\n%s", result);
         linuxDistro = "***UNKNOWN***";
       }
       log1(lvl, "LinuxDistro: %s (%s-Bit)", linuxDistro, osarch);
@@ -1558,7 +1559,7 @@ public class RunSetup {
     String[] retLines;
     boolean success = true;
     if (cmdRet.contains(cmdError)) {
-      log1(-1, "checking: ldd returns error:\ns", cmdRet);
+      log1(-1, "checking: ldd returns error:\n%s", cmdRet);
       success = false;
     } else {
       retLines = cmdRet.split("\n");
@@ -1588,6 +1589,7 @@ public class RunSetup {
     File incl = new File(workDir, buildFolderInclude);
 
     File javaHome = new File(System.getProperty("java.home"));
+    log1(lvl, "home of java: %s", javaHome);
     File javaInclude = null;
     File javaIncludeLinux = null;
 
@@ -1631,6 +1633,7 @@ public class RunSetup {
 
     String inclLib = "opencv2";
     if (!new File(inclUsr, inclLib).exists() && !new File(inclUsrLocal, inclLib).exists()) {
+      log0(lvl, "buildVision: opencv-include: not found - using the bundled include files");
       exportIncludeOpenCV = true;
       if (!exportIncludeJava) {
         buildInclude += " -I" + incl.getAbsolutePath();
@@ -1639,6 +1642,7 @@ public class RunSetup {
 
     inclLib = "tesseract";
     if (!new File(inclUsr, inclLib).exists() && !new File(inclUsrLocal, inclLib).exists()) {
+      log0(lvl, "buildVision: tesseract-include: not found - using the bundled include files");
       exportIncludeTesseract = true;
       if (!exportIncludeOpenCV && !exportIncludeJava) {
         buildInclude += " -I" + incl.getAbsolutePath();
