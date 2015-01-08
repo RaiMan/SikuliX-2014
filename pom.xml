@@ -59,7 +59,7 @@
 		<sikulixjythonversion>2.7-b3</sikulixjythonversion>
 		<sikulixjrubyversion>1.7.18</sikulixjrubyversion>
 		<sikulixlocalrepo>${settings.localRepository}</sikulixlocalrepo>
-		<sikuli.helpers>Setup/src/main/resources</sikuli.helpers>
+		<sikuli.helpers>Setup/src/main/resources/content</sikuli.helpers>
 		<timestamp>${maven.build.timestamp}</timestamp>
 		<maven.build.timestamp.format>yyyy-MM-dd_HH:mm</maven.build.timestamp.format>
 	</properties>

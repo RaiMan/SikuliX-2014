@@ -1,7 +1,7 @@
 <assembly xmlns="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0"
           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
           xsi:schemaLocation="http://maven.apache.org/plugins/maven-assembly-plugin/assembly/1.1.0 http://maven.apache.org/xsd/assembly-1.1.0.xsd">
-  <id>idejruby-fat</id>
+  <id>ide-fat</id>
   <formats>
     <format>jar</format>
   </formats>
@@ -11,8 +11,9 @@
       <outputDirectory>/</outputDirectory>
       <useProjectArtifact>true</useProjectArtifact>
       <excludes>
-        <exclude>org.python:jython-standalone</exclude>
-        <exclude>*:gem:*</exclude>
+        <exclude>com.nativelibs4java:bridj</exclude>
+				<exclude>com.melloware:jintellitype</exclude>
+				<exclude>jxgrabkey:jxgrabkey</exclude>
       </excludes>
       <unpack>true</unpack>
       <scope>runtime</scope>

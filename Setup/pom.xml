@@ -55,6 +55,16 @@
 			<resource>
 				<directory>src/main/resources</directory>
 				<filtering>true</filtering>
+				<includes>
+					<include>content/*</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>false</filtering>
+				<excludes>
+					<exclude>content/*</exclude>
+				</excludes>
 			</resource>
 		</resources>
 		<defaultGoal>clean package</defaultGoal>
@@ -69,7 +79,7 @@
 						</manifest>
 					</archive>
 					<descriptors>
-						<descriptor>../${sikuli.helpers}/plain.xml</descriptor>
+						<descriptor>../${sikuli.helpers}/setup-fat.xml</descriptor>
 					</descriptors>
 					<finalName>sikulixsetup-${project.version}</finalName>
 				</configuration>
