@@ -79,7 +79,7 @@
 						</manifest>
 					</archive>
 					<descriptors>
-						<descriptor>../${sikuli.helpers}/setup-fat.xml</descriptor>
+						<descriptor>../${sikuli.helpers}/plain.xml</descriptor>
 					</descriptors>
 					<finalName>sikulixsetup-${project.version}</finalName>
 				</configuration>

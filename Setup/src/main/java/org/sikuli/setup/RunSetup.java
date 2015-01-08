@@ -76,6 +76,7 @@ public class RunSetup {
   private static String localIDE = "sikulix.jar";
   private static String fMacApp = "SikuliX.app";
   private static String fMacAppContent = fMacApp + "/Contents";
+	private static String fMacAppContentOrg = "macapp";
   private static String fMacAppjar = fMacAppContent +"/Java/sikulix.jar";
   private static String setupName = "sikulixsetup-" + version;
   private static String localSetup = setupName + ".jar";
@@ -341,7 +342,6 @@ public class RunSetup {
             hasOptions = true;
             shouldBuildVision = true;
           } else if (val.toLowerCase().startsWith("not")) {
-            hasOptions = true;
             notests = true;
           }
         }
@@ -534,8 +534,6 @@ public class RunSetup {
 
     File localJarIDE = new File(workDir, localIDE);
     File localJarAPI = new File(workDir, localAPI);
-    File localMacApp = new File(workDir, fMacApp);
-    File localMacAppContent = new File(workDir, fMacAppContent);
 
     folderLibs = new File(workDir, "libs");
 
@@ -920,6 +918,9 @@ public class RunSetup {
               msg += " incl. AddOns";
             }
           }
+					if (Settings.isMac()) {
+            msg += "\n - creating Mac application";
+					}
           msg += "\n";
         }
         if (getAPI) {
@@ -1281,7 +1282,7 @@ public class RunSetup {
       localJar = (new File(workDir, localIDE)).getAbsolutePath();
       jarsList[0] = localJar;
       if (getJython) {
-//        jarsList[3] = (new File(workDir, localJython)).getAbsolutePath();
+        jarsList[3] = (new File(workDir, localJython)).getAbsolutePath();
       }
       if (getJRuby) {
         jarsList[4] = (new File(workDir, localJRuby)).getAbsolutePath();
@@ -1304,21 +1305,25 @@ public class RunSetup {
 
 					@Override
 					public boolean accept(ZipEntry entry, String jarname) {
-						if (entry.getName().startsWith("macapp")) {
+						if (entry.getName().startsWith(fMacAppContentOrg)) {
 							return true;
 						}
 						return false;
 					}
 				});
-				String fmam = new File(workDir, "SikuliX.app/macapp").getAbsolutePath();
+				String fmam = new File(fma, fMacAppContentOrg).getAbsolutePath();
 				FileManager.xcopy(fmam, fmac);
 				FileManager.deleteFileOrFolder(fmam);
 				new File(fmac, "run").renameTo(new File(fma, "run"));
+        ResourceLoader.get().runcmd(
+								new String[]{"chmod", "ugo+x", new File(fma, "run").getAbsolutePath()});
+        ResourceLoader.get().runcmd(
+								new String[]{"chmod", "ugo+x", new File(fmac, "MacOS/JavaAppLauncher").getAbsolutePath()});
 				File fmacj = new File(fmac, "Java");
 				fmacj.mkdir();
-				new File(localJar).renameTo(new File(fmacj, localIDE));
+				localJarIDE = new File(fmacj, localIDE);
+				new File(localJar).renameTo(localJarIDE);
 			}
-			notests = true;
     }
 
     for (int i = (getAPI ? 2 : 1); i < jarsList.length; i++) {
@@ -1328,15 +1333,11 @@ public class RunSetup {
     }
     closeSplash(splash);
 
-    if (success && getIDE) {
+    if (success && getIDE && !Settings.isMac()) {
       log1(lvl, "processing commandfiles");
       splash = showSplash("Now processing commandfiles.", "please wait - may take some seconds ...");
       if (Settings.isWindows()) {
         loader.export(runningJarURL, "Commands/windows#" + runsikulix + ".cmd", workDir);
-      } else if (Settings.isMac()) {
-//        loader.export(runningJarURL, "Commands/mac#" + runsikulix, workDir);
-        ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x",
-					new File(new File(workDir, fMacApp), "run").getAbsolutePath()});
       } else if (isLinux) {
         loader.export(runningJarURL, "Commands/linux#" + runsikulix, workDir);
         ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x", new File(workDir, runsikulix).getAbsolutePath()});
@@ -1399,6 +1400,7 @@ public class RunSetup {
 
     //<editor-fold defaultstate="collapsed" desc="ide test">
     if (!notests && getIDE) {
+			success = true;
       if (!Sikulix.addToClasspath(localJarIDE.getAbsolutePath())) {
         closeSplash(splash);
         popError("Something serious happened! Sikuli not useable!\n"
@@ -1428,6 +1430,7 @@ public class RunSetup {
           }
         } catch (Exception ex) {
           closeSplash(splash);
+					success &= false;
           log0(-1, ex.getMessage());
           popError("Something serious happened! Sikuli not useable!\n"
                   + "Check the error log at " + (logfile == null ? "printout" : logfile));
@@ -1452,20 +1455,28 @@ public class RunSetup {
           }
         } catch (Exception ex) {
           closeSplash(splash);
+					success &= false;
           log0(-1, "content of returned error's (%s) message:\n%s", ex, ex.getMessage());
           popError("Something serious happened! Sikuli not useable!\n"
                   + "Check the error log at " + (logfile == null ? "printout" : logfile));
           terminate("Functional test JRuby did not work", 1);
         }
       }
+			if (success && Settings.isMac()) {
+				popInfo("You now have the IDE as SikuliX.app\n"
+								+ "It is recommended to move SikuliX.app\n"
+								+ "to the /Applications folder.");
+			}
     }
     //</editor-fold>
 
-    splash = showSplash("Setup seems to have ended successfully!",
-            "Detailed information see: " + (logfile == null ? "printout" : logfile));
-    start += 2000;
+		if (!notests) {
+			splash = showSplash("Setup seems to have ended successfully!",
+							"Detailed information see: " + (logfile == null ? "printout" : logfile));
+			start += 2000;
 
-    closeSplash(splash);
+			closeSplash(splash);
+		}
 
     log0(lvl,
             "... SikuliX Setup seems to have ended successfully ;-)");
