@@ -22,10 +22,12 @@ public class TestRun {
     Debug.setDebugLevel(3);
     Screen s = Sikulix.init();
     ImagePath.add("com.sikulix.testrun.TestRun/images/images.sikuli");
-    
+		s.wait("nightly.PNG", 30);
+		Sikulix.popup("returned from wait");
+
 //    testListText(s);
 
-		testVNC(new String[]{});
+//		testVNC(new String[]{});
 
     System.exit(1);
   }
@@ -33,7 +35,7 @@ public class TestRun {
   public void loggerCallBack(String msg) {
     p("from loggerCallBack: redirection: %s", msg);
   }
-  
+
   private static void testListText(Screen s) {
 		TextRecognizer tr = TextRecognizer.getInstance();
     Region reg = s.exists("image").right().highlight(2);

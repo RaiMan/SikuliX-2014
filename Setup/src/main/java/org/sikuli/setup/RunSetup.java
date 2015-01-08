@@ -74,10 +74,9 @@ public class RunSetup {
   private static String downloadTess = minorversion + downloadTessSuffix;
   private static String localAPI = "sikulixapi.jar";
   private static String localIDE = "sikulix.jar";
-  private static String localMacApp = "sikulixmacapp.jar";
-  private static String localMacAppIDE = "SikuliX-IDE.app/Contents/sikulix.jar";
-  private static String folderMacApp = "SikuliX-IDE.app";
-  private static String folderMacAppContent = folderMacApp + "/Contents";
+  private static String fMacApp = "SikuliX.app";
+  private static String fMacAppContent = fMacApp + "/Contents";
+  private static String fMacAppjar = fMacAppContent +"/Java/sikulix.jar";
   private static String setupName = "sikulixsetup-" + version;
   private static String localSetup = setupName + ".jar";
   private static String localUpdate = "sikulixupdate";
@@ -535,7 +534,8 @@ public class RunSetup {
 
     File localJarIDE = new File(workDir, localIDE);
     File localJarAPI = new File(workDir, localAPI);
-    File localMacFolder = new File(workDir, folderMacApp);
+    File localMacApp = new File(workDir, fMacApp);
+    File localMacAppContent = new File(workDir, fMacAppContent);
 
     folderLibs = new File(workDir, "libs");
 
@@ -565,7 +565,7 @@ public class RunSetup {
                 + "\nClick YES, if you want to install ..."
                 + "\ncurrent stuff will be saved to BackUp."
                 + "\n... Click NO to skip ...";
-        if (localJarIDE.exists() || localJarAPI.exists() || localMacFolder.exists()) {
+        if (localJarIDE.exists() || localJarAPI.exists()) {
           int avail = -1;
           boolean someUpdate = false;
           String ask1 = "You have " + Settings.getVersion()
@@ -1281,7 +1281,7 @@ public class RunSetup {
       localJar = (new File(workDir, localIDE)).getAbsolutePath();
       jarsList[0] = localJar;
       if (getJython) {
-        jarsList[3] = (new File(workDir, localJython)).getAbsolutePath();
+//        jarsList[3] = (new File(workDir, localJython)).getAbsolutePath();
       }
       if (getJRuby) {
         jarsList[4] = (new File(workDir, localJRuby)).getAbsolutePath();
@@ -1293,10 +1293,32 @@ public class RunSetup {
       success &= FileManager.buildJar(
               targetJar, jarsList, libsFileList, libsFilePrefix, libsFilter);
       success &= handleTempAfter(targetJar, localJar);
-    }
 
-    if (getIDE && Settings.isMac()) {
-      log1(lvl, "making the Mac application Sikulix.app");
+			if (Settings.isMac()) {
+				log1(lvl, "making the Mac application Sikulix.app");
+				String setupjar = new File (workDir, localSetup).getAbsolutePath();
+				String fma = new File(workDir, fMacApp).getAbsolutePath();
+				String fmac = new File(workDir, fMacAppContent).getAbsolutePath();
+				FileManager.unpackJar(setupjar, fma, false, false,
+								new FileManager.JarFileFilter() {
+
+					@Override
+					public boolean accept(ZipEntry entry, String jarname) {
+						if (entry.getName().startsWith("macapp")) {
+							return true;
+						}
+						return false;
+					}
+				});
+				String fmam = new File(workDir, "SikuliX.app/macapp").getAbsolutePath();
+				FileManager.xcopy(fmam, fmac);
+				FileManager.deleteFileOrFolder(fmam);
+				new File(fmac, "run").renameTo(new File(fma, "run"));
+				File fmacj = new File(fmac, "Java");
+				fmacj.mkdir();
+				new File(localJar).renameTo(new File(fmacj, localIDE));
+			}
+			notests = true;
     }
 
     for (int i = (getAPI ? 2 : 1); i < jarsList.length; i++) {
@@ -1307,13 +1329,14 @@ public class RunSetup {
     closeSplash(splash);
 
     if (success && getIDE) {
-      log1(lvl, "exporting commandfiles");
-      splash = showSplash("Now exporting commandfiles.", "please wait - may take some seconds ...");
+      log1(lvl, "processing commandfiles");
+      splash = showSplash("Now processing commandfiles.", "please wait - may take some seconds ...");
       if (Settings.isWindows()) {
         loader.export(runningJarURL, "Commands/windows#" + runsikulix + ".cmd", workDir);
       } else if (Settings.isMac()) {
-        loader.export(runningJarURL, "Commands/mac#" + runsikulix, workDir);
-        ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x", new File(workDir, runsikulix).getAbsolutePath()});
+//        loader.export(runningJarURL, "Commands/mac#" + runsikulix, workDir);
+        ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x",
+					new File(new File(workDir, fMacApp), "run").getAbsolutePath()});
       } else if (isLinux) {
         loader.export(runningJarURL, "Commands/linux#" + runsikulix, workDir);
         ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x", new File(workDir, runsikulix).getAbsolutePath()});
