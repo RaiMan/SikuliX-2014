@@ -1621,8 +1621,6 @@ public class RunSetup {
 
 		log1(lvl, "starting inline build: libVisionProxy.so");
 
-		ResourceLoader rl = ResourceLoader.forJar(srcjar);
-
 		if (!new File(javaHome, "bin/javac").exists()) {
 			javaHome = javaHome.getParentFile();
 		}
@@ -1698,16 +1696,14 @@ public class RunSetup {
 		buildLink += libTesseract + " ";
 		String libVisionPath = new File(build, libVision).getAbsolutePath();
 		buildLink += "-o " + libVisionPath;
-		File cmdFile = null;
+
+		File cmdFile = new File(build, "runBuild");
+		ResourceLoader rl = ResourceLoader.forJar(srcjar);
 		if (rl != null) {
 			FileManager.deleteFileOrFolder(build.getAbsolutePath());
 			build.mkdirs();
 			source.mkdirs();
-			if (stuff.exists()) {
-				FileManager.deleteFileOrFolder(stuff.getAbsolutePath());
-			}
 			stuff.mkdirs();
-			cmdFile = new File(build, "runBuild");
 
 			PrintStream out = null;
 			log(lvl, "-------------- content of created build script");
@@ -1715,10 +1711,10 @@ public class RunSetup {
 				out = new PrintStream(new FileOutputStream(cmdFile));
 				out.println("echo ----------- COMPILING");
 				out.print(buildCompile);
-				log(lvl, "%s", buildCompile);
+				log(lvl, "----------- COMPILING\n%s", buildCompile);
 				out.println("echo ----------- LINKING");
 				out.println(buildLink);
-				log(lvl, "%s", buildLink);
+				log(lvl, "----------- LINKING\n%s\n----------- SCRIPT END", buildLink);
 				out.close();
 				log1(lvl, "buildVision: build script written to: %s", cmdFile);
 			} catch (Exception ex) {
