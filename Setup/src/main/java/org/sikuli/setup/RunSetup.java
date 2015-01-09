@@ -1540,14 +1540,20 @@ public class RunSetup {
 				}
 			}
 
-			// checking wmctrl
+			// checking wmctrl, xdotool
 			cmdRet = ResourceLoader.get().runcmd("wmctrl -m");
 			if (cmdRet.contains(cmdError)) {
 				log1(-1, "checking: wmctrl not available or not working");
-				checkSuccess = false;
 			} else {
 				log1(lvl, "checking: wmctrl seems to be available");
 			}
+			cmdRet = ResourceLoader.get().runcmd("xdotool version");
+			if (cmdRet.contains(cmdError)) {
+				log1(-1, "checking: xdotool not available or not working");
+			} else {
+				log1(lvl, "checking: xdotool seems to be available");
+			}
+
 			libSearched = true;
 		}
 
