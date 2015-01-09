@@ -1591,13 +1591,13 @@ public class RunSetup {
 				line = line.split("symbol:")[1].trim().split("\\s")[0];
 				libsMissing += line + ":";
 			}
-			if (libsMissing.isEmpty()) {
-				log1(lvl, "checking: should work: %s", libName);
-			} else {
-				log1(-1, "checking: might not work, has undefined symbols: %s", libName);
-				log0(lvl, "%s", libsMissing);
-				success = false;
-			}
+		}
+		if (libsMissing.isEmpty()) {
+			log1(lvl, "checking: should work: %s", libName);
+		} else {
+			log1(-1, "checking: might not work, has undefined symbols: %s", libName);
+			log0(lvl, "%s", libsMissing);
+			success = false;
 		}
 		return success;
 	}
