@@ -9,16 +9,41 @@ package org.sikuli.natives;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.io.*;
+import org.sikuli.basics.ResourceLoader;
 
 public class LinuxUtil implements OSUtil {
 
+	private static boolean wmctrlAvail = true;
+	private static boolean xdoToolAvail = true;
+
 	@Override
 	public String getLibName() {
+		String cmdRet = ResourceLoader.get().runcmd("wmctrl -m");
+		if (cmdRet.contains("*** error ***")) {
+			System.out.println("[error] checking: wmctrl not available or not working");
+			wmctrlAvail = false;
+		}
+		cmdRet = ResourceLoader.get().runcmd("xdotool version");
+		if (cmdRet.contains("*** error ***")) {
+			System.out.println("[error] checking: xdotool not available or not working");
+			xdoToolAvail = false;
+		}
 		return "";
+	}
+
+	private boolean wmctrlIsAvail(String f) {
+		if (wmctrlAvail) {
+			return true;
+		}
+		System.out.println("[error] " + f + ": wmctrl not available or not working");
+		return false;
 	}
 
   @Override
   public int switchApp(String appName, int winNum) {
+		if (!wmctrlIsAvail("switchApp")) {
+			return -1;
+		}
     try {
       String cmd[] = {"wmctrl", "-a", appName};
       Process p = Runtime.getRuntime().exec(cmd);
@@ -77,6 +102,10 @@ public class LinuxUtil implements OSUtil {
 
   @Override
   public Rectangle getFocusedWindow() {
+		if (!xdoToolAvail) {
+			System.out.println("[error] getFocusedWindow: xdotool not available or not working");
+			return null;
+		}
     String cmd[] = {"xdotool", "getactivewindow"};
     try {
       Process p = Runtime.getRuntime().exec(cmd);
@@ -110,7 +139,6 @@ public class LinuxUtil implements OSUtil {
   }
 
   private String[] findWindow(String appName, int winNum, SearchType type) {
-    //Debug.log("findWindow: " + appName + " " + winNum + " " + type);
     String[] found = {};
     int numFound = 0;
     try {
@@ -204,6 +232,9 @@ public class LinuxUtil implements OSUtil {
 
   @Override
   public int closeApp(int pid) {
+		if (!wmctrlIsAvail("closeApp")) {
+			return -1;
+		}
     String winLine[] = findWindow("" + pid, 0, SearchType.PID);
     if (winLine == null) {
       return -1;
@@ -221,6 +252,9 @@ public class LinuxUtil implements OSUtil {
 
   @Override
   public int switchApp(int pid, int num) {
+		if (!wmctrlIsAvail("switchApp")) {
+			return -1;
+		}
     String winLine[] = findWindow("" + pid, num, SearchType.PID);
     if (winLine == null) {
       return -1;
