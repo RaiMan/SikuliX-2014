@@ -162,6 +162,7 @@ public class RunSetup {
   private static boolean shouldBuildVision = false;
   private static boolean notests = false;
   private static String currentlib;
+  private static boolean clean = false;
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static void log(int level, String message, Object... args) {
@@ -343,6 +344,8 @@ public class RunSetup {
             shouldBuildVision = true;
           } else if (val.toLowerCase().startsWith("not")) {
             notests = true;
+          } else if (val.toLowerCase().startsWith("clean")) {
+            clean = true;
           }
         }
         options.clear();
@@ -486,7 +489,7 @@ public class RunSetup {
     }
 
     if (!runningJar.endsWith(".jar") || runningJar.endsWith("-plain.jar")) {
-      if (!hasOptions) {
+      if (!hasOptions || clean) {
         if (noSetup) {
           log(lvl, "creating Setup folder - not running setup");
         } else {
@@ -501,14 +504,15 @@ public class RunSetup {
           System.exit(0);
         }
         logToFile = false;
-      } else {
+      }
+      if (hasOptions && !clean) {
         workDir += "/Setup";
         new File(workDir).mkdirs();
       }
       Settings.runningSetupInValidContext = true;
       Settings.runningSetupInContext = workDir;
     }
-
+    
     if (logToFile) {
       logfile = (new File(workDir, localLogfile)).getAbsolutePath();
       if (!Debug.setLogFile(logfile)) {

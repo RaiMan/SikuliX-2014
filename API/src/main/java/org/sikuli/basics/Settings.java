@@ -12,6 +12,7 @@ import java.net.InetAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -145,12 +146,14 @@ public class Settings {
 	public static Proxy proxy = null;
 
 	private static Preferences options = Preferences.userNodeForPackage(Sikulix.class);
-
+  
+  private static String installBase = null;
+  
 	static {
 		if (System.getProperty("user.name") != null && !"".equals(System.getProperty("user.name"))) {
 			UserName = System.getProperty("user.name");
 		}
-
+    
 		BaseTempPath = new File(System.getProperty("java.io.tmpdir"), "Sikulix").getAbsolutePath();
 
 		// TODO check existence of an extension repository
@@ -249,6 +252,17 @@ public class Settings {
 		}
 		tessData.put("eng", "http://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz");
 	}
+  
+  public static synchronized String setInstallBase(String base) {
+    if (base != null && installBase == null) {
+      installBase = base;
+    }
+    return installBase;
+  }
+  
+  public static String getInstallBase() {
+    return setInstallBase(null);
+  }
 
 	public static boolean isVersionRelease() {
 		return SikuliVersionType.isEmpty();
@@ -297,6 +311,7 @@ public class Settings {
 	public static final int ISLINUX = 2;
 	public static final int ISNOTSUPPORTED = 3;
 	public static boolean isMacApp = false;
+  public static boolean isWinApp = false;
 	public static final String appPathMac = "/Applications/SikuliX-IDE.app/Contents";
 
 	public static boolean ThrowException = true; // throw FindFailed exception
