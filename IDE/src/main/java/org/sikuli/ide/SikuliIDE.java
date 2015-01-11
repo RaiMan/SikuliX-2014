@@ -17,6 +17,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -262,15 +263,38 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       ScriptRunner.runscript(args);
     }
 
-    if (Settings.isMac() && !Settings.isMacApp) {
-      if (!Sikulix.popAsk("This use of SikuliX is not supported\n"
-              + "and might lead to misbehavior!\n"
-              + "Click YES to continue (you should be sure)\n"
-              + "Click NO to terminate and check the situation.")) {
-        System.exit(1);
-      }
+    String baseJar = null;
+    CodeSource codeSrc = SikuliIDE.class.getProtectionDomain().getCodeSource();
+    if (codeSrc != null && codeSrc.getLocation() != null) {
+       baseJar = codeSrc.getLocation().getPath();
+    }
+    if (baseJar != null) {
+      String jn = new File(baseJar).getName();
+      Settings.setInstallBase(new File(baseJar).getParent());
+      log(lvl, "runs as %s in:\n%s", jn, Settings.getInstallBase());
     } else {
-      log(lvl, "running on Mac as SikuliX.app");
+      log(-1, "Terminating: no valid baseJar");
+      System.exit(1);
+    }
+    
+    if (Settings.isMac()) {
+      if (!Settings.isMacApp) {
+        if (!Sikulix.popAsk("This use of SikuliX is not supported\n"
+                + "and might lead to misbehavior!\n"
+                + "Click YES to continue (you should be sure)\n"
+                + "Click NO to terminate and check the situation.")) {
+          System.exit(1);
+        }
+      } else {
+        log(lvl, "running on Mac as SikuliX.app");
+      }
+    }
+    
+    if (Settings.isWindows()) {
+      if (Settings.getInstallBase().contains("SikuliX.exe")) {
+        Settings.isWinApp = true;
+        log(lvl, "Running as Windows Application in \n%s", Settings.getInstallBase());
+      }
     }
 
 //TODO how to differentiate open and run for doubleclick/drop scripts
