@@ -2990,14 +2990,6 @@ public class Region {
     return observeDo(secs);
   }
 
-  public boolean observe(double secs, boolean bg) {
-    if (bg) {
-      return observeInBackground(secs);
-    } else {
-      return observeDo(secs);
-    }
-  }
-
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
    * @param secs time in seconds the observer should run
