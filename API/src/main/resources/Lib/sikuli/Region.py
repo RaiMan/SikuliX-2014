@@ -60,3 +60,6 @@ class Region(JRegion):
     def text(self):
         return JRegion.text(self).encode("utf8")
 
+# still needed, to be backwards compatible
+    def observe(self, waitTime = FOREVER, background = False):
+        return self.observeJ(waitTime, background)
