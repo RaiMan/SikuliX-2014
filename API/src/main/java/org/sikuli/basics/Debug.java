@@ -66,6 +66,8 @@ public class Debug {
 	private static String privateLoggerDebugPrefix = "";
 	private static boolean isJython;
 	private static boolean isJRuby;
+  private static Object scriptRunner = null;
+  private static Method doSomethingSpecial = null;
 
 	private static PrintStream redirectedOut = null, redirectedErr = null;
 
@@ -110,17 +112,29 @@ public class Debug {
 
 	private static boolean doSetLogger(Object logger) {
 		String className = logger.getClass().getName();
-		boolean success = true;
 		isJython = className.contains("org.python");
 		isJRuby = className.contains("org.jruby");
 		if ( isJRuby ) {
 			logx(3, "Debug: setLogger: given instance's class: %s", className);
 			error("setLogger: not yet supported in JRuby script");
 			loggerRedirectSupported=false;
-			success = false;
+			return false;
 		}
-		privateLogger = logger;
-		return success;
+    try {
+      Class Scripting = Class.forName("org.sikuli.scriptrunner.ScriptRunner");
+      Method getRunner = Scripting.getMethod("getRunner",
+              new Class[]{String.class, String.class});
+      scriptRunner = getRunner.invoke(Scripting, new Object[]{null, "jython"});
+      if (scriptRunner != null) {
+        doSomethingSpecial = scriptRunner.getClass().getMethod("doSomethingSpecial",
+                new Class[]{String.class, Object[].class});
+      }
+  		privateLogger = logger;
+    } catch (Exception ex) {
+      log(-1, "setLogger: Jython init: we have problems\n%s", ex.getMessage());
+      scriptRunner = null;
+    }
+		return scriptRunner != null;
 	}
 
 	/**
@@ -211,11 +225,11 @@ public class Debug {
   }
 
   private static boolean runnerDoSomethingSpecial(String action, Object[] args) {
+    if (scriptRunner == null) {
+      return false;
+    }
     try {
-      Class ScriptRunner = Class.forName("org.sikuli.scriptrunner.ScriptRunner");
-      Method doSomethingSpecial = ScriptRunner.getMethod("doSomethingSpecial",
-              new Class[]{String.class, Object[].class});
-      Object ret = doSomethingSpecial.invoke(ScriptRunner, new Object[]{action, args});
+      Object ret = doSomethingSpecial.invoke(scriptRunner, new Object[]{action, args});
       return (Boolean) ret;
     } catch (Exception ex) {
       log(-100, "Debug.runnerDoSomethingSpecial: Fatal Error 999: could not be run!");
