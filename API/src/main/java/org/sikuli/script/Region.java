@@ -2855,7 +2855,7 @@ public class Region {
   }
 
   private <PSIC> String onEvent(PSIC targetThreshhold, Object observer, ObserveEvent.Type obsType) {
-    if (observer.getClass().getTypeName().contains("org.python")) {
+    if (observer.getClass().getName().contains("org.python")) {
       observer = new ObserverCallBack(observer, obsType);
     }
     String name = Observing.add(this, (ObserverCallBack) observer, obsType, targetThreshhold);

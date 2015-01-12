@@ -38,7 +38,7 @@ public class ObserverCallBack implements EventListener {
     this.callback = callback;
     this.obsType = obsType;
     try {
-      if (callback.getClass().getTypeName().contains("org.python")) {
+      if (callback.getClass().getName().contains("org.python")) {
         Class Scripting = Class.forName("org.sikuli.scriptrunner.ScriptRunner");
         Method getRunner = Scripting.getMethod("getRunner",
                 new Class[]{String.class, String.class});
