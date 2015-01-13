@@ -207,7 +207,7 @@ public class ObserveEvent {
       return String.format("Event(%s) %s on: %s with: %d count: %d",
             type, name, region, index, getCount());
     } else {
-      return String.format("Event(%s) %s on: %s with: %s match: %s count: %d",
+      return String.format("Event(%s) %s on: %s with: %s\nmatch: %s count: %d",
             type, name, region, pattern, match, getCount());
     }
   }

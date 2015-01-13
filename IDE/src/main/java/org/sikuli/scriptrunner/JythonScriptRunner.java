@@ -15,8 +15,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.python.core.Py;
+import org.python.core.PyFunction;
 import org.python.core.PyInstance;
 import org.python.core.PyList;
+import org.python.core.PyMethod;
 import org.python.core.PyObject;
 import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
@@ -518,6 +521,8 @@ public class JythonScriptRunner implements IScriptRunner {
 			return checkCallback(args);
 		} else if ("runLoggerCallback".equals(action)) {
 			return runLoggerCallback(args);
+		} else if ("runObserveCallback".equals(action)) {
+			return runObserveCallback(args);
 		} else if ("runCallback".equals(action)) {
 			return runCallback(args);
 		} else {
@@ -550,6 +555,16 @@ public class JythonScriptRunner implements IScriptRunner {
 			inst.invoke(mName, pmsg);
 		} catch (Exception ex) {
 			log(-100, "runLoggerCallback: invoke: %s", ex.getMessage());
+			return false;
+		}
+		return true;
+	}
+
+  private boolean runObserveCallback(Object[] args) {
+		try {
+      ((PyFunction) args[0]).__call__(Py.java2py(args[1]));
+		} catch (Exception ex) {
+			log(-1, "runObserveCallback: jython invoke: %s", ex.getMessage());
 			return false;
 		}
 		return true;

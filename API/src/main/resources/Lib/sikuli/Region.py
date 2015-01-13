@@ -1,10 +1,9 @@
 # Copyright 2010-2014, Sikuli.org, sikulix.com
 # Released under the MIT License.
-# modified RaiMan 2013
+# modified RaiMan 2014
 
 from org.sikuli.basics import Debug
 from org.sikuli.script import Region as JRegion
-from org.sikuli.script import ObserverCallBack
 from org.sikuli.script.Constants import *
 import sys
 import inspect
@@ -61,39 +60,6 @@ class Region(JRegion):
     def text(self):
         return JRegion.text(self).encode("utf8")
 
-# observe(): Special setup for Jython
-# assures, that in any case the same region object is used
-    def onAppear(self, target, handler = None):
-        if not handler:
-            return self.onAppearJ(target, None)
-        class AnonyObserver(ObserverCallBack):
-            def appeared(self, event):
-                handler(event)
-        return self.onAppearJ(target, AnonyObserver())
-
-    def onVanish(self, target, handler = None):
-        if not handler:
-            return self.onVanishJ(target, None)
-        class AnonyObserver(ObserverCallBack):
-            def vanished(self, event):
-                handler(event)
-        return self.onVanishJ(target, AnonyObserver())
-
-    def onChange(self, arg1=0, arg2=None):
-        if isinstance(arg1, int):
-            min_size = arg1
-            handler = arg2
-        else:
-            if (arg2 != None):
-                raise Exception("onChange: Invalid parameters set")
-            min_size = 0
-            handler = arg1
-        if not handler:
-            return self.onChangeJ(min_size, None)
-        class AnonyObserver(ObserverCallBack):
-            def changed(self, event):
-                handler(event)
-        return self.onChangeJ(min_size, AnonyObserver())
-
-    def observe(self, time=FOREVER, background=False):
-        return self.observeJ(time, background)
+# still needed, to be backwards compatible
+    def observe(self, waitTime = FOREVER, background = False):
+        return self.observeJ(waitTime, background)
