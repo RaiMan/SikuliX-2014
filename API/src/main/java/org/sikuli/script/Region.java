@@ -2828,7 +2828,7 @@ public class Region {
    * @return the event's name
    */
   public <PSI> String onAppear(PSI target, Object observer) {
-    return onAppearDo(target, observer);
+    return onEvent(target, observer, ObserveEvent.Type.APPEAR);
   }
 
   /**
@@ -2840,7 +2840,7 @@ public class Region {
    * @return the event's name
    */
   public <PSI> String onAppear(PSI target) {
-    return onAppearDo(target, null);
+    return onEvent(target, null, ObserveEvent.Type.APPEAR);
   }
 
   /**
@@ -2851,17 +2851,20 @@ public class Region {
    * @return the event's name
    */
   public <PSI> String onAppearJ(PSI target, Object observer) {
-    return onAppearDo(target, observer);
+    return onEvent(target, observer, ObserveEvent.Type.APPEAR);
   }
 
-  private <PSI> String onAppearDo(PSI target, Object observer) {
-    String name = Observing.add(this,
-            (ObserverCallBack) observer, ObserveEvent.Type.APPEAR, target);
-    log(lvl, "%s: onAppear%s: %s with: %s", toStringShort(),
-            (observer == null ? "" : " with callback"), name, target);
+  private <PSIC> String onEvent(PSIC targetThreshhold, Object observer, ObserveEvent.Type obsType) {
+    if (observer.getClass().getName().contains("org.python") ||
+            observer.getClass().getName().contains("org.jruby") ) {
+      observer = new ObserverCallBack(observer, obsType);
+    }
+    String name = Observing.add(this, (ObserverCallBack) observer, obsType, targetThreshhold);
+    log(lvl, "%s: observer %s %s: %s with: %s", toStringShort(), obsType, 
+            (observer == null ? "" : " with callback"), name, targetThreshhold);
     return name;
   }
-
+  
   /**
    * a subsequently started observer in this region should wait for the target to vanish
    * and notify the given observer about this event<br>
@@ -2873,7 +2876,7 @@ public class Region {
    * @return the event's name
    */
   public <PSI> String onVanish(PSI target, Object observer) {
-    return onVanishDo(target, observer);
+    return onEvent(target, observer, ObserveEvent.Type.VANISH);
   }
 
   /**
@@ -2885,7 +2888,7 @@ public class Region {
    * @return the event's name
    */
   public <PSI> String onVanish(PSI target) {
-    return onVanishDo(target, null);
+    return onEvent(target, null, ObserveEvent.Type.VANISH);
   }
 
   /**
@@ -2896,15 +2899,7 @@ public class Region {
    * @return the event's name
    */
   public <PSI> String onVanishJ(PSI target, Object observer) {
-    return onVanishDo(target, observer);
-  }
-
-  private <PSI> String onVanishDo(PSI target, Object observer) {
-    String name = Observing.add(this,
-            (ObserverCallBack) observer, ObserveEvent.Type.VANISH, target);
-    log(lvl, "%s: onVanish%s: %s with: %s", toStringShort(),
-            (observer == null ? "" : " with callback"), name, target);
-    return name;
+    return onEvent(target, observer, ObserveEvent.Type.VANISH);
   }
 
   /**
@@ -2917,7 +2912,8 @@ public class Region {
    * @return the event's name
    */
   public String onChange(int threshold, Object observer) {
-    return onChangeDo(threshold, observer);
+    return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels), 
+            observer, ObserveEvent.Type.CHANGE);
   }
 
   /**
@@ -2928,7 +2924,8 @@ public class Region {
    * @return the event's name
    */
   public String onChange(int threshold) {
-    return onChangeDo(threshold, null);
+    return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels), 
+            null, ObserveEvent.Type.CHANGE);
   }
 
   /**
@@ -2941,7 +2938,7 @@ public class Region {
    * @return the event's name
    */
   public String onChange(Object observer) {
-    return onChangeDo(0, observer);
+    return onEvent(Settings.ObserveMinChangedPixels, observer, ObserveEvent.Type.CHANGE);
   }
 
   /**
@@ -2952,21 +2949,18 @@ public class Region {
    * @return the event's name
    */
   public String onChange() {
-    return onChangeDo(0, null);
+    return onEvent(Settings.ObserveMinChangedPixels, null, ObserveEvent.Type.CHANGE);
   }
 
   /**
    *INTERNAL USE ONLY: for use with scripting API bridges
-   * @param minSize value
+   * @param threshold min pixel size - 0 = ObserveMinChangedPixels
    * @param observer ObserverCallBack
    * @return the event's name
    */
-  public String onChangeJ(int minSize, Object observer) {
-    if (minSize == 0) {
-      return onChangeDo(Settings.ObserveMinChangedPixels, observer);
-    } else {
-      return onChangeDo(minSize, observer);
-    }
+  public String onChangeJ(int threshold, Object observer) {
+    return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels), 
+            observer, ObserveEvent.Type.CHANGE);
   }
 
   public String onChangeDo(int threshold, Object observer) {

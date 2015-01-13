@@ -31,8 +31,13 @@ import org.sikuli.basics.Settings;
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.javasupport.JavaEmbedUtils.EvalUnit;
 import org.jruby.CompatVersion;
+import org.jruby.Ruby;
 import org.jruby.embed.LocalContextScope;
 import org.jruby.RubyInstanceConfig.CompileMode;
+import org.jruby.RubyProc;
+import org.jruby.javasupport.JavaUtil;
+import org.jruby.runtime.ThreadContext;
+import org.jruby.runtime.builtin.IRubyObject;
 import org.sikuli.script.Sikulix;
 
 public class JRubyScriptRunner implements IScriptRunner {
@@ -84,6 +89,10 @@ public class JRubyScriptRunner implements IScriptRunner {
 
 	private boolean isFromIDE;
 	private boolean isCompileOnly;
+  
+  private static Ruby runtime = Ruby.newInstance();
+  private static ThreadContext context = runtime.getCurrentContext();
+
 
 	@Override
 	public void init(String[] args) {
@@ -217,10 +226,44 @@ public class JRubyScriptRunner implements IScriptRunner {
 	public boolean doSomethingSpecial(String action, Object[] args) {
 		if ("redirect".equals(action)) {
 			return doRedirect((PipedInputStream[]) args);
+		} else if ("checkCallback".equals(action)) {
+			return checkCallback(args);
+		} else if ("runLoggerCallback".equals(action)) {
+			return runLoggerCallback(args);
+		} else if ("runObserveCallback".equals(action)) {
+			return runObserveCallback(args);
+		} else if ("runCallback".equals(action)) {
+			return runCallback(args);
 		} else {
 			return false;
 		}
 	}
+
+  private boolean checkCallback(Object[] args) {
+    log(-1, "checkCallback: no implementation yet");
+    return false;
+  }
+
+  private boolean runLoggerCallback(Object[] args) {
+    log(-1, "runLoggerCallback: no implementation yet");
+    return false;
+  }
+
+  private boolean runObserveCallback(Object[] args) {
+    IRubyObject[] pargs;
+    try {
+      pargs = new IRubyObject[] {JavaUtil.convertJavaToRuby(runtime, args[1])};
+      ((RubyProc) args[0]).call(context, pargs);
+    } catch (Exception ex) {
+      log(-1, "runObserveCallback: jruby invoke: %s\n%s\n%s", args[0].getClass(),args[0], ex.getMessage());    
+    }
+    return true;
+  }
+
+  private boolean runCallback(Object[] args) {
+    log(-1, "runCallback: no implementation yet");
+    return false;
+  }
 
 	@Override
 	public void execBefore(String[] stmts) {
