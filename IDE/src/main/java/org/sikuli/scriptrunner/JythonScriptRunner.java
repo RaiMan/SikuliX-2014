@@ -564,7 +564,7 @@ public class JythonScriptRunner implements IScriptRunner {
 		try {
       ((PyFunction) args[0]).__call__(Py.java2py(args[1]));
 		} catch (Exception ex) {
-			log(-1, "runObserveCallback: invoke: %s", ex.getMessage());
+			log(-1, "runObserveCallback: jython invoke: %s", ex.getMessage());
 			return false;
 		}
 		return true;
