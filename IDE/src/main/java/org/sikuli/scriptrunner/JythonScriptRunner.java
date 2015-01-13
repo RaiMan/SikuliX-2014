@@ -23,6 +23,7 @@ import org.python.util.PythonInterpreter;
 import org.python.util.jython;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.basics.Settings;
 import org.sikuli.script.Sikulix;
 
 /**
@@ -99,34 +100,37 @@ public class JythonScriptRunner implements IScriptRunner {
     if (isReady) {
       return;
     }
-		String jarPath = Sikulix.getJarPath();
-		if (!jarPath.isEmpty()) {
-			sikuliLibPath = new File(jarPath, "Lib").getAbsolutePath();
-			String sikuliPy = "sikuli/__init__.py";
-			if (Sikulix.isRunningFromJar()) {
-				if (!FileManager.checkJarContent(jarPath, "Lib/" + sikuliPy)) {
-					sikuliLibPath = null;
-				}
-			} else {
-				if (!new File(sikuliLibPath, sikuliPy).exists()) {
-					sikuliLibPath = null;
-				}
-			}
-		}
-		if (sikuliLibPath != null) {
-			if (System.getProperty("python.path") == null) {
-				System.setProperty("python.path", sikuliLibPath);
-				log(lvl, "init: setting java environment python.path: \n" + System.getProperty("python.path"));
-			} else {
-				String pp = System.getProperty("python.path");
-				if (pp != null && !pp.isEmpty() && !FileManager.pathEquals(pp, sikuliLibPath)) {
-					log(-1, "init: Not running from jar and Python path not empty: Sikuli might not work!\n"
-									+ "Current python.path: " + pp);
-				}
-			}
-		} else {
-			log(-1, "init: could not find sikuli.py in %s", jarPath);
-		}
+//TODO isWinApp: Jython init skipped
+    if (!Settings.isWinApp) {
+      String jarPath = Sikulix.getJarPath();
+      if (!jarPath.isEmpty()) {
+        sikuliLibPath = new File(jarPath, "Lib").getAbsolutePath();
+        String sikuliPy = "sikuli/__init__.py";
+        if (Sikulix.isRunningFromJar()) {
+          if (!FileManager.checkJarContent(jarPath, "Lib/" + sikuliPy)) {
+            sikuliLibPath = null;
+          }
+        } else {
+          if (!new File(sikuliLibPath, sikuliPy).exists()) {
+            sikuliLibPath = null;
+          }
+        }
+      }
+      if (sikuliLibPath != null) {
+        if (System.getProperty("python.path") == null) {
+          System.setProperty("python.path", sikuliLibPath);
+          log(lvl, "init: setting java environment python.path: \n" + System.getProperty("python.path"));
+        } else {
+          String pp = System.getProperty("python.path");
+          if (pp != null && !pp.isEmpty() && !FileManager.pathEquals(pp, sikuliLibPath)) {
+            log(-1, "init: Not running from jar and Python path not empty: Sikuli might not work!\n"
+                    + "Current python.path: " + pp);
+          }
+        }
+      } else {
+        log(-1, "init: could not find sikuli.py in %s", jarPath);
+      }
+    }
 		getInterpreter();
     isReady = true;
 	}

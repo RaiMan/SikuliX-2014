@@ -234,7 +234,7 @@ public class ResourceLoader {
       File libsfolder;
       String libspath;
 
-      if (System.getProperty("sikuli.DoNotExport") == null && !isFatJar()) {
+      if (System.getProperty("sikuli.DoNotExport") == null && !isFatJar() && !Settings.isWinApp) {
         libsURL = null;
 //TODO evaluation of running situation should be put in one place
         String jarName = "";
