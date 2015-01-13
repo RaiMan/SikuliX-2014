@@ -92,47 +92,6 @@ module Sikulix
     private name
   end
 
-  # Redefinition of native org.sikuli.script.Region class
-  class Region
-    # Service class for all callbacks processing
-    class RObserverCallBack < ObserverCallBack # :nodoc: all
-      def initialize(block)
-        super()
-        @block = block
-      end
-      %w(appeared vanished changed).each do |name|
-        define_method(name) do |*args|
-          @block.call(*(args.first @block.arity))
-        end
-      end
-    end
-    alias_method :java_onAppear, :onAppear
-    alias_method :java_onVanish, :onVanish
-    alias_method :java_onChange, :onChange
-
-    # Redefinition of the java method for Ruby specific
-    def onAppear(target, &block)
-      java_onAppear target, RObserverCallBack.new(block)
-    end
-
-    # Redefinition of the java method for Ruby specific
-    def onVanish(target, &block)
-      java_onVanish target, RObserverCallBack.new(block)
-    end
-
-    # Redefinition of the java method for Ruby specific
-    def onChange(&block)
-      java_onChange RObserverCallBack.new(block)
-    end
-
-    # alias_method :java_findAll,  :findAll
-    # def findAll(*args)
-    #   begin
-    #     java_findAll(*args)
-    #   rescue NativeException => e; raise e.message; end
-    # end
-  end
-
   # Wrap following java-methods by an exception processor
   native_exception_protect(
     Region,
