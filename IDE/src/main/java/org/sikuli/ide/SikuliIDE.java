@@ -270,8 +270,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
     if (baseJar != null) {
       String jn = new File(baseJar).getName();
-      Settings.setInstallBase(new File(baseJar).getParent());
-      log(lvl, "runs as %s in:\n%s", jn, Settings.getInstallBase());
+      Settings.setInstallBase(new File(baseJar).getParent(), jn);
+      log(lvl + 1, "runs as %s in:\n%s", jn, Settings.getInstallBase());
     } else {
       log(-1, "Terminating: no valid baseJar");
       System.exit(1);
@@ -291,8 +291,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
     
     if (Settings.isWindows()) {
-      if (Settings.getInstallBase().contains("SikuliX.exe")) {
-        Settings.isWinApp = true;
+      if (Settings.isWinApp) {
         log(lvl, "Running as Windows Application in \n%s", Settings.getInstallBase());
       }
     }
@@ -330,28 +329,34 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       prefs.setDefaults(prefs.getUserType());
     }
 
-    ResourceLoader.get().check(Settings.SIKULI_LIB);
-
     _windowSize = prefs.getIdeSize();
     _windowLocation = prefs.getIdeLocation();
-    Screen m = (Screen) (new Location(_windowLocation)).getScreen();
-    if (m == null) {
-      String em = "Remembered window not valid.\nGoing to primary screen";
-      log(-1, em);
-      Sikulix.popError(em, "IDE has problems ...");
-      m = Screen.getPrimaryScreen();
-      _windowSize.width = 0;
-    }
-    Rectangle s = m.getBounds();
-    if (_windowSize.width == 0 || _windowSize.width > s.width
-            || _windowSize.height > s.height) {
-      if (s.width < 1025) {
-        _windowSize = new Dimension(1024, 700);
-        _windowLocation = new Point(0, 0);
-      } else {
-        _windowSize = new Dimension(s.width - 150, s.height - 100);
-        _windowLocation = new Point(75, 0);
+
+    if (!Settings.isWinApp) {
+      ResourceLoader.get().check(Settings.SIKULI_LIB);
+    
+      Screen m = (Screen) (new Location(_windowLocation)).getScreen();
+      if (m == null) {
+        String em = "Remembered window not valid.\nGoing to primary screen";
+        log(-1, em);
+        Sikulix.popError(em, "IDE has problems ...");
+        m = Screen.getPrimaryScreen();
+        _windowSize.width = 0;
       }
+      Rectangle s = m.getBounds();
+      if (_windowSize.width == 0 || _windowSize.width > s.width
+              || _windowSize.height > s.height) {
+        if (s.width < 1025) {
+          _windowSize = new Dimension(1024, 700);
+          _windowLocation = new Point(0, 0);
+        } else {
+          _windowSize = new Dimension(s.width - 150, s.height - 100);
+          _windowLocation = new Point(75, 0);
+        }
+      }
+    } else {
+//TODO isWinApp: not checking remebered IDE window size and position
+      Debug.log(3, "isWinApp: not checking remebered IDE window size and position");
     }
     setSize(_windowSize);
     setLocation(_windowLocation);
@@ -2621,6 +2626,11 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   private void initHotkeys() {
+//TODO isWinApp: initHotkeys skipped
+    if (Settings.isWinApp) {
+      Debug.log(3, "isWinApp: initHotkeys skipped");
+      return;
+    }
     installCaptureHotkey();
     installStopHotkey();
   }

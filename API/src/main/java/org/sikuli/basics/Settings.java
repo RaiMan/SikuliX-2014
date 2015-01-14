@@ -253,15 +253,18 @@ public class Settings {
 		tessData.put("eng", "http://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz");
 	}
   
-  public static synchronized String setInstallBase(String base) {
+  public static synchronized String setInstallBase(String base, String filename) {
     if (base != null && installBase == null) {
       installBase = base;
+      if (filename.endsWith(".exe")) {
+        isWinApp = true;
+      }
     }
     return installBase;
   }
   
   public static String getInstallBase() {
-    return setInstallBase(null);
+    return setInstallBase(null, null);
   }
 
 	public static boolean isVersionRelease() {

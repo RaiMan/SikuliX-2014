@@ -2,7 +2,7 @@
 <launch4jConfig>
   <dontWrapJar>false</dontWrapJar>
   <headerType>gui</headerType>
-  <jar>C:\Users\RaiMan\Documents\GitHub\SikuliX-2014\StuffContainer\winApp\forSikuliX\sikulix\sikulix.jar</jar>
+  <jar>C:\Users\RaiMan\Documents\GitHub\SikuliX-2014\Setup\target\Setup\sikulix.jar</jar>
   <outfile>C:\Users\RaiMan\Documents\GitHub\SikuliX-2014\StuffContainer\winApp\forSikuliX\sikulix\SikuliX.exe</outfile>
   <errTitle></errTitle>
   <cmdLine></cmdLine>
