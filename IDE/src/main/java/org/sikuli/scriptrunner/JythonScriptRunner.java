@@ -26,6 +26,7 @@ import org.python.util.PythonInterpreter;
 import org.python.util.jython;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.basics.ResourceLoader;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.Sikulix;
 
@@ -133,6 +134,18 @@ public class JythonScriptRunner implements IScriptRunner {
       } else {
         log(-1, "init: could not find sikuli.py in %s", jarPath);
       }
+    } else {
+      File winLibs = ResourceLoader.get().getLibsDir();
+      String jarLibs = "Lib/";
+      String fContent = jarLibs + "sikulixfoldercontent";
+      String sContent = FileManager.extractResourceAsLines(fContent);
+      File fpLib = new File(winLibs, "Lib");
+      for (String fName : sContent.split("\\n")) {
+        log(lvl + 1, "libs export: %s", fName);
+        FileManager.extractResource(jarLibs + fName, new File(fpLib, fName));
+      }
+      System.setProperty("python.path", fpLib.getAbsolutePath());
+      log(lvl, "");
     }
 		getInterpreter();
     isReady = true;

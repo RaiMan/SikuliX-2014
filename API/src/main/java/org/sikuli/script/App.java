@@ -22,6 +22,7 @@ import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import org.sikuli.basics.FileManager;
+import org.sikuli.basics.RunTime;
 import org.sikuli.natives.OSUtil;
 import org.sikuli.natives.SysUtil;
 
@@ -45,7 +46,7 @@ public class App {
     new Screen();
 		String libName = _osUtil.getLibName();
 		if (!libName.isEmpty()) {
-			FileManager.loadLibrary(libName);
+			RunTime.loadLibrary(libName);
 		}
   }
 

@@ -14,6 +14,7 @@ import org.sikuli.basics.ResourceLoader;
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
+import org.sikuli.basics.RunTime;
 import org.sikuli.natives.Mat;
 import org.sikuli.natives.OCRWord;
 import org.sikuli.natives.OCRWords;
@@ -31,7 +32,7 @@ public class TextRecognizer {
 	private static int lvl = 3;
 
   static {
-    FileManager.loadLibrary("VisionProxy");
+    RunTime.loadLibrary("VisionProxy");
   }
 
   private TextRecognizer() {

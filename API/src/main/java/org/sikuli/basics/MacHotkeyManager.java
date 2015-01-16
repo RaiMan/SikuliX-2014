@@ -20,7 +20,7 @@ public class MacHotkeyManager extends HotkeyManager {
   static final int CARBON_MASK_CTRL = 0x1000;
 
   static {
-    FileManager.loadLibrary("MacHotkeyManager");
+    RunTime.loadLibrary("MacHotkeyManager");
   }
 
   @Override

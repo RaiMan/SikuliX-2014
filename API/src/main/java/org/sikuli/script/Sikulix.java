@@ -27,6 +27,7 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.basics.HotkeyManager;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.ResourceLoader;
+import org.sikuli.basics.RunTime;
 import org.sikuli.basics.Settings;
 
 /**
@@ -35,7 +36,6 @@ import org.sikuli.basics.Settings;
 public class Sikulix {
 
   private static final String me = "Sikulix: ";
-	private static boolean runningHeadless = false;
 
   private static int lvl = 3;
 	private static final String prefNonSikuli = "nonSikuli_";
@@ -48,9 +48,6 @@ public class Sikulix {
   private static String jarParentPath;
 
 	static {
-		if (GraphicsEnvironment.isHeadless()) {
-			runningHeadless = true;
-		}
     CodeSource codeSrc = Sikulix.class.getProtectionDomain().getCodeSource();
     if (codeSrc != null && codeSrc.getLocation() != null) {
       URL jarURL = codeSrc.getLocation();
@@ -96,8 +93,14 @@ public class Sikulix {
     runningSikulixapi = runningAPI;
   }
 
+  private static RunTime runTime = null;
 	public static void main(String[] args) {
+    Debug.setDebugLevel(3);
+    runTime = RunTime.get();
 		log(lvl, "running main: nothing to do (yet)");
+    if (Debug.getDebugLevel() > 2) {
+      System.exit(1);
+    }
 	}
 
   /**
@@ -119,7 +122,7 @@ public class Sikulix {
 	 * @return true if not running headless false otherwise
 	 */
 	public static boolean canRun() {
-		return !runningHeadless;
+		return !RunTime.get().isHeadless();
 	}
 
   /**
@@ -265,73 +268,15 @@ public class Sikulix {
     log(lvl, "testSetup: last Screen/Finder.find: did not work");
     return false;
   }
-
-  /**
-   * add a jar to end of classpath at runtime
-   *
-   * @param jar absolute filename
-   * @return success
-   */
+  
+  @Deprecated
   public static boolean addToClasspath(String jar) {
-    log(lvl, "addToClasspath: " + jar);
-		File jarFile = new File(jar);
-		if (!jarFile.exists()) {
-			log(-1, "does not exist - not added");
-			return false;
-		}
-    Method method;
-    URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-    URL[] urls = sysLoader.getURLs();
-    dumpClasspath(false, lvl + 1 );
-    Class sysclass = URLClassLoader.class;
-    try {
-      jar = FileManager.slashify(jarFile.getAbsolutePath(), false);
-      if (Settings.isWindows()) {
-        jar = "/" + jar;
-      }
-      URL u = (new URI("file", jar, null)).toURL();
-      method = sysclass.getDeclaredMethod("addURL", new Class[]{URL.class});
-      method.setAccessible(true);
-      method.invoke(sysLoader, new Object[]{u});
-    } catch (Exception ex) {
-      log(-1, "Did not work: %s", ex.getMessage());
-      return false;
-    }
-    log(lvl + 1, "after adding to classpath");
-    dumpClasspath(false, lvl + 1 );
-    return true;
+    return RunTime.get().addToClasspath(jar);
   }
 
-  /**
-   * print the classpath at runtime
-   */
-  public static void dumpClasspath() {
-    dumpClasspath(true, 0);
-  }
-
-  private static void dumpClasspath(boolean verbose, int loglevel) {
-    URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-    URL[] urls = sysLoader.getURLs();
-    if (verbose) {
-      log(loglevel, "***** Classpath dump *****");
-    }
-    for (int i = 0; i < urls.length; i++) {
-      log(loglevel, "%d: %s", i, urls[i]);
-    }
-    if (verbose) {
-      log(loglevel, "***** Classpath dump ***** end");
-    }
-  }
-
+  @Deprecated
   public static boolean isOnClasspath(String artefact) {
-    URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-    URL[] urls = sysLoader.getURLs();
-    for (URL url : urls) {
-      if (url.getPath().contains(artefact)) {
-        return true;
-      }
-    }
-    return false;
+    return null != RunTime.get().isOnClasspath(artefact);
   }
 
 	public static String run(String cmdline) {

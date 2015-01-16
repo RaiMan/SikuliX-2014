@@ -52,7 +52,7 @@ public class ExtensionManager {
       url = Settings.SikuliRepo + name + "-" + version + ".jar";
     }
 		String extPath = Settings.getUserExtPath();
-		String tmpdir = Settings.BaseTempPath;
+		String tmpdir = RunTime.get().BaseTempPath;
 		try {
 			File localFile = new File(FileManager.downloadURL(new URL(url), tmpdir));
 			String extName = localFile.getName();

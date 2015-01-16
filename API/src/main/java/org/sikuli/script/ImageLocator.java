@@ -19,6 +19,7 @@ import java.util.Iterator;
 import java.util.Map;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.basics.RunTime;
 import org.sikuli.basics.Settings;
 
 /**
@@ -33,7 +34,7 @@ public class ImageLocator {
 
   static ArrayList<String> pathList = new ArrayList<String>();
   static int firstEntries = 1;
-  static File _cache_dir_global = new File(Settings.BaseTempPath, "sikuli_cache/SIKULI_GLOBAL/");
+  static File _cache_dir_global = new File(RunTime.get().BaseTempPath, "sikuli_cache/SIKULI_GLOBAL/");
   static Map<URI, String> _cache = new HashMap<URI, String>();
 
   static {
