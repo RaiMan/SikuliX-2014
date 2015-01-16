@@ -104,6 +104,8 @@ public class ResourceLoader {
 
 	private boolean initDone = false;
 	private boolean usrPathProblem = false;
+  
+  private RunTime runTime;
 
   private ResourceLoader() {
     log0(lvl, "SikuliX Package Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
@@ -138,6 +140,7 @@ public class ResourceLoader {
   public static ResourceLoader get() {
     if (resourceLoader == null) {
       resourceLoader = new ResourceLoader();
+      resourceLoader.runTime = RunTime.get();
     }
     return resourceLoader;
   }
@@ -188,10 +191,6 @@ public class ResourceLoader {
 		}
     return apiJarURL;
 	}
-
-//  public void init(String[] args) {
-//    //Debug.log(lvl, "%s: %s: init", me, loaderName);
-//  }
 
   private boolean isFatJar() {
     if (extractingFromJar) {
@@ -341,7 +340,7 @@ public class ResourceLoader {
         checkLib = "VisionProxy";
       }
 
-      if (!Settings.runningSetup) {
+      if (!Settings.isWinApp && !Settings.runningSetup) {
         // check Java property sikuli.home
         if (sikhomeProp != null) {
           libspath = FileManager.slashify(sikhomeProp, true) + "libs";
@@ -459,7 +458,7 @@ public class ResourceLoader {
     }
 
     //<editor-fold defaultstate="collapsed" desc="libs dir finally invalid">
-    if (libPath == null) {
+    if (libPath == null && !Settings.isWinApp) {
       log(-1, "No valid libs path available until now!");
       File jarPathLibs = null;
 
@@ -499,6 +498,31 @@ public class ResourceLoader {
     }
     //</editor-fold>
 
+    if (Settings.isWinApp) {
+      String osArchNum = osarch.contains("64") ? "64" : "32";
+      log(lvl, "isWinApp: checking libs folder");
+      String jarLibs = "META-INF/libs/windows/libs" + osArchNum + "/";
+      String fContent = jarLibs + "sikulixfoldercontent";
+      String sContent = FileManager.extractResourceAsLines(fContent);
+      File fpLibsWin = new File(Settings.getInstallBase(), "libs");
+      log(lvl, "isWinApp: creating libs folder at: \n%s", fpLibsWin);
+      boolean success = true;
+      for (String fName : sContent.split("\\n")) {
+        log(lvl + 1, "libs export: %s", fName);
+        success &= FileManager.extractResource(jarLibs + fName, new File(fpLibsWin, fName));
+      }
+      if (!success) {
+        log(-1, "isWinApp: problems creating libs folder");
+        Sikulix.terminate(999);
+      }
+      libPath = fpLibsWin.getAbsolutePath();
+      libsDir = checkLibsDir(libPath);
+      if (libsDir == null) {
+        log(-1, "isWinApp: finally giving up");
+        Sikulix.terminate(999);
+      }
+    }
+    
     if (Settings.isLinux()) {
       File libsLinux = new File(libsDir.getParent(), "libsLinux/libVisionProxy.so");
       if (libsLinux.exists()) {
@@ -527,6 +551,10 @@ public class ResourceLoader {
 
     initDone = true;
     return libsDir != null;
+  }
+  
+  public File getLibsDir() {
+    return libsDir;
   }
 
 	private boolean checkJavaUsrPath() {
@@ -1034,45 +1062,6 @@ public class ResourceLoader {
         out.close();
       }
     }
-  }
-
-  /**
-   * Extract files from a jar using a list of files in a file (def. filelist.txt)
-   *
-   * @param srcPath from here
-   * @param localPath to there (if null, create a default in temp folder)
-   * @return the local path to the extracted resources
-   * @throws IOException
-   */
-  private String extractWithList(String srcPath, String localPath) throws IOException {
-    mem = "extractWithList";
-    if (localPath == null) {
-      localPath = Settings.BaseTempPath + File.separator + "sikuli" + File.separator + srcPath;
-      new File(localPath).mkdirs();
-    }
-    log(lvl, "From " + srcPath + " to " + localPath);
-    localPath = FileManager.slashify(localPath, true);
-    BufferedReader r = new BufferedReader(new InputStreamReader(
-            cl.getResourceAsStream(srcPath + fileList)));
-    if (r == null) {
-      log(-1, "File containing file list not found: " + fileList);
-      return null;
-    }
-    String line;
-    InputStream in;
-    while ((line = r.readLine()) != null) {
-      String fullpath = localPath + line;
-      log(lvl, "extracting: " + fullpath);
-      File outf = new File(fullpath);
-      outf.getParentFile().mkdirs();
-      in = cl.getResourceAsStream(srcPath + line);
-      if (in != null) {
-        copyResource(in, outf);
-      } else {
-        log(-1, "Not found");
-      }
-    }
-    return localPath;
   }
 
   /**

@@ -135,8 +135,6 @@ public class Settings {
 	 * Resource types to be used with IResourceLoader implementations
 	 */
 	public static final String SIKULI_LIB = "*sikuli_lib";
-	public static String BaseTempPath;
-	public static String UserName = "UnKnown";
 
 	public static String proxyName = prefs.get("ProxyName", null);
 	public static String proxyIP = prefs.get("ProxyIP", null);
@@ -144,18 +142,11 @@ public class Settings {
 	public static String proxyPort = prefs.get("ProxyPort", null);
 	public static boolean proxyChecked = false;
 	public static Proxy proxy = null;
-
-	private static Preferences options = Preferences.userNodeForPackage(Sikulix.class);
   
   private static String installBase = null;
   
 	static {
-		if (System.getProperty("user.name") != null && !"".equals(System.getProperty("user.name"))) {
-			UserName = System.getProperty("user.name");
-		}
     
-		BaseTempPath = new File(System.getProperty("java.io.tmpdir"), "Sikulix").getAbsolutePath();
-
 		// TODO check existence of an extension repository
 		SikuliRepo = null;
 
@@ -253,18 +244,14 @@ public class Settings {
 		tessData.put("eng", "http://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz");
 	}
   
-  public static synchronized String setInstallBase(String base, String filename) {
-    if (base != null && installBase == null) {
-      installBase = base;
-      if (filename.endsWith(".exe")) {
-        isWinApp = true;
-      }
-    }
-    return installBase;
-  }
+  /**
+   * INTERNAL USE: to trigger the initialization
+   */
+  public static synchronized void init() {};
   
+  @Deprecated
   public static String getInstallBase() {
-    return setInstallBase(null, null);
+    return RunTime.get().fSxBase.getAbsolutePath();
   }
 
 	public static boolean isVersionRelease() {

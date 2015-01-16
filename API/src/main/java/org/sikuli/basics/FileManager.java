@@ -67,22 +67,6 @@ public class FileManager {
   private static SplashFrame _progress = null;
   private static final String EXECUTABLE = "#executable";
 
-  /**
-   * System.load() the given library module <br>
- from standard places (folder libs or SikulixUtil/libs) in the following order<br>
-   * 1. -Dsikuli.Home=<br> 2. Environement SIKULIX_HOME<br>
-   * 3. parent folder of sikuli-script.jar (or main jar)<br>
-   * 4. folder user's home (user.home)<br>
-   * 5. current working dir or parent of current working dir<br>
-   * 6. standard installation places of Sikuli
-   *
-	 * @param libname generic library name (no pre nor post fix)
-   */
-  public static void loadLibrary(String libname) {
-    ResourceLoader.get().check(Settings.SIKULI_LIB);
-    ResourceLoader.get().loadLib(libname);
-  }
-
   private static int tryGetFileSize(URL url) {
     HttpURLConnection conn = null;
     try {
@@ -356,19 +340,26 @@ public class FileManager {
     return true;
   }
 
+  public static File createTempDir(String path) {
+    File tempDir = new File(RunTime.get().BaseTempPath, path);
+    log0(lvl, "createTempDir: %s", tempDir);
+    if (!tempDir.exists()) {
+      tempDir.mkdirs();
+    }
+    if (!tempDir.exists()) {
+      log0(-1, "createTempDir: %s", tempDir);
+      return null;
+    }
+    return tempDir;
+  }
+
   public static File createTempDir() {
     Random rand = new Random();
     int randomInt = 1 + rand.nextInt();
-
-    File tempDir = new File(Settings.BaseTempPath + File.separator + "tmp-" + randomInt + ".sikuli");
-    if (tempDir.exists() == false) {
-      tempDir.mkdirs();
+    File tempDir = createTempDir("tmp-" + randomInt + ".sikuli");
+    if (null != tempDir) {
+      tempDir.deleteOnExit();
     }
-
-    tempDir.deleteOnExit();
-
-    log0(lvl, "tempdir create:\n%s", tempDir);
-
     return tempDir;
   }
 
@@ -388,7 +379,13 @@ public class FileManager {
     return doDeleteFileOrFolder(path, null);
   }
 
-	private static boolean doDeleteFileOrFolder(String path, FileFilter filter) {
+  public static void resetFolder(File path) {
+		log0(lvl, "resetFolder: %s", path);
+    doDeleteFileOrFolder(path.getAbsolutePath(), null);
+    path.mkdirs();
+  }
+
+  private static boolean doDeleteFileOrFolder(String path, FileFilter filter) {
     File entry = new File(path);
     File f;
     String[] entries;
@@ -409,7 +406,7 @@ public class FileManager {
           try {
             f.delete();
           } catch (Exception ex) {
-            log0(-1, "deleteFileOrFolder: " + f.getAbsolutePath() + "\n" + ex.getMessage());
+            log0(-1, "deleteFile: not deleted:\n" + f.getAbsolutePath() + "\n" + ex.getMessage());
             return false;
           }
         }
@@ -420,7 +417,7 @@ public class FileManager {
       try {
         entry.delete();
       } catch (Exception ex) {
-        log0(-1, "deleteFileOrFolder: " + entry.getAbsolutePath() + "\n" + ex.getMessage());
+        log0(-1, "deleteFolder: not deleted:\n" + entry.getAbsolutePath() + "\n" + ex.getMessage());
         return false;
       }
     }
@@ -434,7 +431,7 @@ public class FileManager {
   public static File createTempFile(String suffix, String path) {
     String temp1 = "sikuli-";
     String temp2 = "." + suffix;
-    File fpath = new File(Settings.BaseTempPath);
+    File fpath = new File(RunTime.get().BaseTempPath);
     if (path != null) {
       fpath = new File(path);
     }
@@ -532,6 +529,40 @@ public class FileManager {
 				out.close();
 			}
 		}
+  }
+  
+  private static String makeFileListString;
+  private static String makeFileListPrefix;
+  
+  public static String makeFileList(File path, String prefix) {
+    makeFileListPrefix = prefix;
+    return makeFileListDo(path, true);
+  }
+  
+  private static String makeFileListDo(File path, boolean starting) {
+    String x;
+    if (starting) {
+      makeFileListString = "";
+    }
+    if (!path.exists()) {
+      return makeFileListString;
+    }
+    if (path.isDirectory()) {
+      String[] fcl = path.list();
+      for (String fc : fcl) {
+        makeFileListDo(new File(path, fc), false);
+      }
+    } else {
+      x = path.getAbsolutePath();
+      if (!makeFileListPrefix.isEmpty()) {
+        x = x.replace(makeFileListPrefix, "").replace("\\", "/");
+        if (x.startsWith("/")) {
+          x = x.substring(1);
+        }
+      }
+      makeFileListString += x + "\n";
+    }
+    return makeFileListString;
   }
 
   /**
@@ -885,6 +916,9 @@ public class FileManager {
     for (File f : new File(System.getProperty("java.io.tmpdir")).listFiles(new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {
+        if (name.contains("sikulixlibs")) {
+          return false;
+        }
         if (name.contains("BridJExtractedLibraries")) {
           return true;
         }
@@ -1168,6 +1202,48 @@ public class FileManager {
     public boolean accept(File entry);
   }
 
+  public static String extractResourceAsLines(String src) {
+    String res = null;
+    ClassLoader cl = FileManager.class.getClassLoader();
+    InputStream isContent = cl.getResourceAsStream(src);
+    if (isContent != null) {
+      res = "";
+      String line;
+      try {
+        BufferedReader cnt = new BufferedReader(new InputStreamReader(isContent));
+        line = cnt.readLine();
+        while (line != null) {
+          res += line + "\n";
+          line = cnt.readLine();
+        }
+        cnt.close();
+      } catch (Exception ex) {
+        log(-1, "extractResourceAsLines: %s\n%s", src, ex);
+      }
+    }
+    return res;
+  }
+
+  public static boolean extractResource(String src, File tgt) {
+    ClassLoader cl = FileManager.class.getClassLoader();
+    InputStream isContent = cl.getResourceAsStream(src);
+    if (isContent != null) {
+      try {
+        log0(lvl + 1, "extractResource: %s to %s", src, tgt);
+        tgt.getParentFile().mkdirs();
+        OutputStream osTgt = new FileOutputStream(tgt);
+        bufferedWrite(isContent, osTgt);
+        osTgt.close();
+      } catch (Exception ex) {
+        log(-1, "extractResource:\n%s", src, ex);
+        return false;
+      }
+    } else {
+      return false;
+    }
+    return true;
+  }
+  
   private static synchronized void bufferedWrite(InputStream in, OutputStream out) throws IOException {
     byte[] buffer = new byte[1024 * 512];
     int read;

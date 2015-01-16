@@ -38,6 +38,7 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.basics.SplashFrame;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.ResourceLoader;
+import org.sikuli.basics.RunTime;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.Sikulix;
 
@@ -148,8 +149,8 @@ public class RunSetup {
 	private static boolean visionProvided = false;
 	private static boolean grabKeyProvided = false;
 	private static boolean shouldExport = false;
-	private static String[] libsFileList = new String[]{null, null};
-	private static String[] libsFilePrefix = new String[]{null, null};
+	private static String[] libsFileList = new String[]{null, null, null, null, null};
+	private static String[] libsFilePrefix = new String[]{null, null, null, null, null};
 	private static String libOpenCVcore = "";
 	private static String libOpenCVimgproc = "";
 	private static String libOpenCVhighgui = "";
@@ -163,6 +164,9 @@ public class RunSetup {
 	private static boolean notests = false;
 	private static String currentlib;
 	private static boolean clean = false;
+  private static String filterItem1;
+  private static File winLibs = null;
+  private static RunTime runTime;
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
@@ -190,6 +194,8 @@ public class RunSetup {
 
 	public static void main(String[] args) throws IOException {
 		mem = "main";
+    
+    runTime = RunTime.get(RunTime.Type.SETUP);
 
 		PreferencesUser prefs = PreferencesUser.getInstance();
 		boolean prefsHaveProxy = false;
@@ -1101,6 +1107,39 @@ public class RunSetup {
 			} else {
 				copyFromDownloads(libDownloaded, libsWin, jarsList[6]);
 			}
+      winLibs = new File(workDir, "winlibs");
+			if (winLibs.exists()) {
+        FileManager.deleteFileOrFolder(winLibs.getAbsolutePath());
+      }
+			winLibs.mkdirs();        
+			if (winLibs.exists()) {
+        File wlf;
+        int ix = 2;
+        for (String sub : new String[]{"libs32", "libs64"}) {
+          filterItem1 = "libs/windows/" + sub;
+          File fTarget = new File(winLibs, sub);
+          FileManager.unpackJar(jarsList[6], fTarget.getAbsolutePath(),
+                  false, true, new FileManager.JarFileFilter() {
+                    @Override
+                    public boolean accept(ZipEntry entry, String jarname) {
+                      if (entry.getName().contains(filterItem1)) {
+                        return true;
+                      }
+                      return false;
+                    }
+                  });
+          FileManager.deleteFileOrFolder(new File(fTarget, "META-INF").getAbsolutePath());
+          String fContent = FileManager.makeFileList(fTarget, fTarget.getAbsolutePath());
+          String fpContent = new File(fTarget, "sikulixfoldercontent").getAbsolutePath();
+          FileManager.writeStringToFile(fContent, fpContent);
+          libsFileList[ix] = fpContent;
+          libsFilePrefix[ix] = "META-INF/libs/windows/" + sub;
+          ix++;
+        }
+      } else {
+        log(-1, "libsWin: cannot create folder content");
+        terminate("libsWin: cannot create folder content");
+      }     
 		}
 
 		if (forSystemMac || forAllSystems) {
@@ -1172,6 +1211,8 @@ public class RunSetup {
 				fTargetJar = (new File(workDir, localTemp));
 				targetJar = fTargetJar.getAbsolutePath();
 				String tessJar = new File(workDir, localTess).getAbsolutePath();
+        String tess = FileManager.makeFileList(fTessData, fTessData.getAbsolutePath());
+        FileManager.writeStringToFile(tess, new File(fTessData, "sikulixfoldercontent").getAbsolutePath());
 				downloadOK &= FileManager.buildJar(targetJar, new String[]{},
 								new String[]{fTessData.getAbsolutePath()},
 								new String[]{"META-INF/libs/tessdata"}, null);
@@ -1232,6 +1273,7 @@ public class RunSetup {
 				if (forSystemWin) {
 					if (entry.getName().startsWith("META-INF/libs/mac")
 									|| entry.getName().startsWith("META-INF/libs/linux")
+                  || entry.getName().endsWith("sikulixfoldercontent")
 									|| entry.getName().startsWith("jxgrabkey")) {
 						return false;
 					}
@@ -1296,6 +1338,30 @@ public class RunSetup {
 			jarsList[0] = localJar;
 			if (getJython) {
 				jarsList[3] = (new File(workDir, localJython)).getAbsolutePath();
+        if (winLibs.exists()) {
+          FileManager.unpackJar(new File(dlDir, downloadAPI).getAbsolutePath(), winLibs.getAbsolutePath(), 
+                  false, false, new FileManager.JarFileFilter() {
+            @Override
+            public boolean accept(ZipEntry entry, String jarname) {
+              if (entry.getName().startsWith("Lib/")) return true;
+              return false;
+            }
+          });
+          FileManager.unpackJar(new File(workDir, localJython).getAbsolutePath(), winLibs.getAbsolutePath(), 
+                  false, false, new FileManager.JarFileFilter() {
+            @Override
+            public boolean accept(ZipEntry entry, String jarname) {
+              if (entry.getName().startsWith("Lib/")) return true;
+              return false;
+            }
+          });        
+          File fTarget = new File(winLibs, "Lib");
+          String fContent = FileManager.makeFileList(fTarget, fTarget.getAbsolutePath());
+          String fpContent = new File(fTarget, "sikulixfoldercontent").getAbsolutePath();
+          FileManager.writeStringToFile(fContent, fpContent);
+          libsFileList[4] = fpContent;
+          libsFilePrefix[4] = "Lib";
+        }
 			}
 			if (getJRuby) {
 				jarsList[4] = (new File(workDir, localJRuby)).getAbsolutePath();
@@ -1339,7 +1405,11 @@ public class RunSetup {
 			}
 		}
 
-		for (int i = (getAPI ? 2 : 1); i < jarsList.length; i++) {
+    if (winLibs != null) {
+      FileManager.deleteFileOrFolder(winLibs.getAbsolutePath());
+    }
+
+    for (int i = (getAPI ? 2 : 1); i < jarsList.length; i++) {
 			if (jarsList[i] != null) {
 				new File(jarsList[i]).delete();
 			}

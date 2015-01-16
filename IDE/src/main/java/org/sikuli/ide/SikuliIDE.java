@@ -51,6 +51,7 @@ import org.sikuli.basics.Settings;
 import org.sikuli.idesupport.IIDESupport;
 import org.sikuli.script.ImagePath;
 import org.sikuli.basics.ResourceLoader;
+import org.sikuli.basics.RunTime;
 import org.sikuli.scriptrunner.ScriptRunner;
 import org.sikuli.idesupport.IDESupport;
 import org.sikuli.script.Key;
@@ -110,11 +111,10 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   private PreferencesUser prefs;
   private boolean ACCESSING_AS_FOLDER = false;
   private static long start;
-  private static File isRunning = null;
-  private static FileOutputStream isRunningFile = null;
   private boolean showAbout = true;
   private boolean showPrefs = true;
   private boolean showQuit = true;
+  
 
   static {
   }
@@ -139,74 +139,20 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
   }
 
+  private static RunTime runTime;
   public static void main(String[] args) {
 
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-        @Override
-        public void run() {
-          log(lvl, "final cleanup");
-          if (isRunning != null) {
-            try {
-              isRunningFile.close();
-            } catch (IOException ex) {
-            }
-            isRunning.delete();
-          }
-          FileManager.cleanTemp();
-        }
-    });
-
-    new File(Settings.BaseTempPath).mkdirs();
-    isRunning = new File(Settings.BaseTempPath, "sikuli-ide-isrunning");
-    try {
-      isRunning.createNewFile();
-      isRunningFile = new FileOutputStream(isRunning);
-      if (null == isRunningFile.getChannel().tryLock()) {
-        Sikulix.popError("Terminating on FatalError: IDE already running");
-        System.exit(1);
-      }
-    } catch (Exception ex) {
-      Sikulix.popError("Terminating on FatalError: cannot access IDE lock for/n" + isRunning);
-      System.exit(1);
+    boolean inittest = false;
+    if (args.length > 0 && "inittest".equals(args[0])) {
+      inittest = true;
+      Debug.setDebugLevel(3);
     }
-
-    Settings.isRunningIDE = true;
-    if (Settings.isMac()) {
-      System.setProperty("apple.laf.useScreenMenuBar", "true");
-    }
-
     start = (new Date()).getTime();
 
-    File ideDebug = new File(System.getProperty("user.home"), "SikulixDebug.txt");
-    if (ideDebug.exists()) {
-      Debug.setDebugLevel(3);
-      Debug.setLogFile(ideDebug.getAbsolutePath());
-      System.setProperty("sikuli.console", "false");
-    }
-
+    runTime = RunTime.get(RunTime.Type.IDE);
+        
     getInstance();
 
-    if (Settings.JREVersion.startsWith("1.6")) {
-			String jyversion = "";
-			Properties prop = new Properties();
-			String fp = "org/python/version.properties";
-			InputStream ifp = null;
-			try {
-				ifp = SikuliIDE.class.getClassLoader().getResourceAsStream(fp);
-				if (ifp != null) {
-					prop.load(ifp);
-					ifp.close();
-					jyversion = prop.getProperty("jython.version");
-				}
-			} catch (IOException ex) {}
-			if (!jyversion.isEmpty() && !jyversion.startsWith("2.5")) {
-				Sikulix.popError(String.format("The bundled Jython %s\n"
-								+ "cannot be used on Java 6!\n"
-								+ "Run setup again in this environment.\n"
-								+ "Click OK to terminate now", jyversion));
-				System.exit(1);
-			}
-		}
  		sikulixIDE.initNativeSupport();
 
     CommandArgs cmdArgs = new CommandArgs("IDE");
@@ -263,36 +209,16 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       ScriptRunner.runscript(args);
     }
 
-    String baseJar = null;
-    CodeSource codeSrc = SikuliIDE.class.getProtectionDomain().getCodeSource();
-    if (codeSrc != null && codeSrc.getLocation() != null) {
-       baseJar = codeSrc.getLocation().getPath();
-    }
-    if (baseJar != null) {
-      String jn = new File(baseJar).getName();
-      Settings.setInstallBase(new File(baseJar).getParent(), jn);
-      log(lvl + 1, "runs as %s in:\n%s", jn, Settings.getInstallBase());
-    } else {
-      log(-1, "Terminating: no valid baseJar");
-      System.exit(1);
-    }
-    
-    if (Settings.isMac()) {
-      if (!Settings.isMacApp) {
-        if (!Sikulix.popAsk("This use of SikuliX is not supported\n"
-                + "and might lead to misbehavior!\n"
-                + "Click YES to continue (you should be sure)\n"
-                + "Click NO to terminate and check the situation.")) {
-          System.exit(1);
-        }
-      } else {
-        log(lvl, "running on Mac as SikuliX.app");
-      }
-    }
-    
     if (Settings.isWindows()) {
+//Settings.isWinApp = true;
       if (Settings.isWinApp) {
-        log(lvl, "Running as Windows Application in \n%s", Settings.getInstallBase());
+        String osarch = System.getProperty("os.arch");
+        osarch = osarch.contains("64") ? "64" : "32";
+        log(lvl, "Running as Windows %s Application in \n%s", osarch, Settings.getInstallBase());
+        if (!runTime.baseJar.endsWith(".exe")) {
+          Sikulix.addToClasspath(Settings.SikuliLocalRepo + "com/sikulix/sikulixlibswin/1.1.0/sikulixlibswin-1.1.0.jar");
+        }
+        ResourceLoader.get().check(Settings.SIKULI_LIB);
       }
     }
 
@@ -332,31 +258,26 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     _windowSize = prefs.getIdeSize();
     _windowLocation = prefs.getIdeLocation();
 
-    if (!Settings.isWinApp) {
-      ResourceLoader.get().check(Settings.SIKULI_LIB);
-    
-      Screen m = (Screen) (new Location(_windowLocation)).getScreen();
-      if (m == null) {
-        String em = "Remembered window not valid.\nGoing to primary screen";
-        log(-1, em);
-        Sikulix.popError(em, "IDE has problems ...");
-        m = Screen.getPrimaryScreen();
-        _windowSize.width = 0;
+    ResourceLoader.get().check(Settings.SIKULI_LIB);
+
+    Screen m = (Screen) (new Location(_windowLocation)).getScreen();
+    if (m == null) {
+      String em = "Remembered window not valid.\nGoing to primary screen";
+      log(-1, em);
+      Sikulix.popError(em, "IDE has problems ...");
+      m = Screen.getPrimaryScreen();
+      _windowSize.width = 0;
+    }
+    Rectangle s = m.getBounds();
+    if (_windowSize.width == 0 || _windowSize.width > s.width
+            || _windowSize.height > s.height) {
+      if (s.width < 1025) {
+        _windowSize = new Dimension(1024, 700);
+        _windowLocation = new Point(0, 0);
+      } else {
+        _windowSize = new Dimension(s.width - 150, s.height - 100);
+        _windowLocation = new Point(75, 0);
       }
-      Rectangle s = m.getBounds();
-      if (_windowSize.width == 0 || _windowSize.width > s.width
-              || _windowSize.height > s.height) {
-        if (s.width < 1025) {
-          _windowSize = new Dimension(1024, 700);
-          _windowLocation = new Point(0, 0);
-        } else {
-          _windowSize = new Dimension(s.width - 150, s.height - 100);
-          _windowLocation = new Point(75, 0);
-        }
-      }
-    } else {
-//TODO isWinApp: not checking remebered IDE window size and position
-      Debug.log(3, "isWinApp: not checking remebered IDE window size and position");
     }
     setSize(_windowSize);
     setLocation(_windowLocation);
@@ -2626,11 +2547,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   private void initHotkeys() {
-//TODO isWinApp: initHotkeys skipped
-    if (Settings.isWinApp) {
-      Debug.log(3, "isWinApp: initHotkeys skipped");
-      return;
-    }
     installCaptureHotkey();
     installStopHotkey();
   }

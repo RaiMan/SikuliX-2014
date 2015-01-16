@@ -12,7 +12,7 @@ import jxgrabkey.JXGrabKey;
 
 public class LinuxHotkeyManager extends HotkeyManager {
    static{
-         FileManager.loadLibrary("JXGrabKey");
+         RunTime.loadLibrary("JXGrabKey");
    }
 
    class HotkeyData {

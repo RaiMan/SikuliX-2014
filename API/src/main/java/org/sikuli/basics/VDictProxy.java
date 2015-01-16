@@ -18,7 +18,7 @@ public class VDictProxy<T> {
    private Map<Integer, T> _i2obj = new HashMap<Integer, T>();
 
    static {
-         FileManager.loadLibrary("VDictProxy");
+         RunTime.loadLibrary("VDictProxy");
    }
 
    public VDictProxy(){
