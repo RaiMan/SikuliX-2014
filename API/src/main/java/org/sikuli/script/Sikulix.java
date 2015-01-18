@@ -7,12 +7,8 @@
 package org.sikuli.script;
 
 import java.awt.Dimension;
-import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.lang.reflect.Method;
-import java.net.URI;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.security.CodeSource;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -95,12 +91,15 @@ public class Sikulix {
 
   private static RunTime runTime = null;
 	public static void main(String[] args) {
-    Debug.setDebugLevel(3);
+    if (args.length > 0) {
+      if ("inittest".equals(args[0])) {
+        RunTime.testing = true;
+      } else {
+        Debug.setDebugLevel(args[0]);
+      }
+    }
     runTime = RunTime.get();
 		log(lvl, "running main: nothing to do (yet)");
-    if (Debug.getDebugLevel() > 2) {
-      System.exit(1);
-    }
 	}
 
   /**
