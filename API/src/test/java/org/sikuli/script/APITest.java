@@ -13,14 +13,14 @@ public class APITest {
 
   @BeforeClass
   public static void init() {
-    Debug.test("APITest: init: starting");
-    Debug.setDebugLevel(3);
-		if (!Sikulix.canRun()) {
-			Debug.test("ERROR: running headless - all tests will be skipped while showing success");
-		} else {
-			if (! Settings.isLinux()) s = Sikulix.init();
-		}
-    Debug.test("APITest: init: ending");
+//    Debug.test("APITest: init: starting");
+//    Debug.setDebugLevel(3);
+//		if (!Sikulix.canRun()) {
+//			Debug.test("ERROR: running headless - all tests will be skipped while showing success");
+//		} else {
+//			if (! Settings.isLinux()) s = Sikulix.init();
+//		}
+//    Debug.test("APITest: init: ending");
   }
 
   @Test
