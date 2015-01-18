@@ -12,12 +12,10 @@ import java.net.InetAddress;
 import java.net.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.security.CodeSource;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.prefs.Preferences;
 import org.sikuli.script.Image;
 import org.sikuli.script.Sikulix;
 
@@ -142,9 +140,7 @@ public class Settings {
 	public static String proxyPort = prefs.get("ProxyPort", null);
 	public static boolean proxyChecked = false;
 	public static Proxy proxy = null;
-  
-  private static String installBase = null;
-  
+    
 	static {
     
 		// TODO check existence of an extension repository
