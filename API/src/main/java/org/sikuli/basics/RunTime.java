@@ -329,7 +329,6 @@ public class RunTime {
         }
       }
     }
-    List<String> content = null;
     if (shouldExport) {
       String sysShort = runningOn.toString().toLowerCase();
       log(lvl, "now exporting libs");
@@ -362,23 +361,7 @@ public class RunTime {
           terminate(1, "libs to export not found on above classpath: " + fpJarLibs);
         }
         log(lvl, "libs to export are at:\n%s", uLibsFrom);
-        content = resourceListDeep(uLibsFrom);
-        
-        int count = 0;          
-        if (content != null && content.size() > 1) {
-          log(lvl, "files to export: %d", content.size() - 1);
-          content.set(0, null);
-          for (String eFile : content) {
-            if (eFile == null) {
-              continue;
-            }
-            if (extractResourceToFile(fpJarLibs, eFile, fLibsFolder, eFile)) {
-              log(lvl + 1, "extractResourceToFile done: %s", eFile);
-              count++;
-            }
-          }
-        }
-        log(lvl, "files exported: %d", count);
+        extractRessourcesToFolder(uLibsFrom, fpJarLibs, fLibsFolder);
       }
     }
     
@@ -386,18 +369,38 @@ public class RunTime {
     log(lvl, "global init: leaving");
   }
   
+  void extractRessourcesToFolder(URL uFrom, String fpRessources, File fFolder) {
+    List<String> content = null;
+    content = resourceListDeep(uFrom);
+    int count = 0;
+    if (content != null && content.size() > 1) {
+      log(lvl, "files to export: %d", content.size() - 1);
+      content.set(0, null);
+      for (String eFile : content) {
+        if (eFile == null) {
+          continue;
+        }
+        if (extractResourceToFile(fpRessources, eFile, fFolder, eFile)) {
+          log(lvl + 1, "extractResourceToFile done: %s", eFile);
+          count++;
+        }
+      }
+    }
+    log(lvl, "files exported: %d", count);
+  }
+  
   boolean extractResourceToFile(String inPrefix, String inFile, File outDir, String outFile) {
-    InputStream aBufIS;
+    InputStream aIS;
     FileOutputStream aFileOS;
-    aBufIS = (InputStream) clsRef.getResourceAsStream(inPrefix + "/" + inFile);
+    aIS = (InputStream) clsRef.getResourceAsStream(inPrefix + "/" + inFile);
     File out = new File(outDir, inFile);
     if (!out.getParentFile().exists()) {
       out.getParentFile().mkdirs();
     }
     try {
       aFileOS = new FileOutputStream(out);
-      copy(aBufIS, aFileOS);
-      aBufIS.close();
+      copy(aIS, aFileOS);
+      aIS.close();
       aFileOS.close();
     } catch (Exception ex) {
       log(-1, "extractResourceToFile: %s\n%s", outFile, ex);
@@ -419,12 +422,12 @@ public class RunTime {
   }
 
   public List<String> resourceList(URL folder) {
-    log(lvl, "resourceList:\n%s", folder);
+    log(lvl + 1, "resourceList:\n%s", folder);
     return doResourceList(folder, false);
   }
   
   public List<String> resourceListDeep(URL folder) {
-    log(lvl, "resourceListDeep:\n%s", folder);
+    log(lvl + 1, "resourceListDeep:\n%s", folder);
     return doResourceList(folder, true);
   }
   
