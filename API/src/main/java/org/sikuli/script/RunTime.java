@@ -4,11 +4,9 @@
  *
  * RaiMan 2014
  */
-package org.sikuli.basics;
+package org.sikuli.script;
 
 import java.awt.GraphicsEnvironment;
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -17,7 +15,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
@@ -33,6 +30,10 @@ import java.util.StringTokenizer;
 import java.util.prefs.Preferences;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
+import org.sikuli.basics.ResourceLoader;
+import org.sikuli.basics.Settings;
 import org.sikuli.script.Sikulix;
 
 /**

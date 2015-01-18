@@ -6,13 +6,11 @@
  */
 package org.sikuli.basics;
 
+import org.sikuli.script.RunTime;
 import java.io.*;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
-import org.sikuli.basics.Debug;
-import org.sikuli.basics.FileManager;
-import org.sikuli.basics.Settings;
 
 public class ExtensionManager {
 	private static ExtensionManager _instance = null;

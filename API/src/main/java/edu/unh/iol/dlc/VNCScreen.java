@@ -23,7 +23,7 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.RunTime;
+import org.sikuli.script.RunTime;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.EventObserver;
 import org.sikuli.script.EventSubject;

@@ -51,7 +51,7 @@ import org.sikuli.basics.Settings;
 import org.sikuli.idesupport.IIDESupport;
 import org.sikuli.script.ImagePath;
 import org.sikuli.basics.ResourceLoader;
-import org.sikuli.basics.RunTime;
+import org.sikuli.script.RunTime;
 import org.sikuli.scriptrunner.ScriptRunner;
 import org.sikuli.idesupport.IDESupport;
 import org.sikuli.script.Key;

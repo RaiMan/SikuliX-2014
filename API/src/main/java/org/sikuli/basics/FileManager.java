@@ -6,6 +6,7 @@
  */
 package org.sikuli.basics;
 
+import org.sikuli.script.RunTime;
 import java.awt.Desktop;
 import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;

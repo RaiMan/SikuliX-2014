@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.Map;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.RunTime;
 import org.sikuli.basics.Settings;
 
 /**

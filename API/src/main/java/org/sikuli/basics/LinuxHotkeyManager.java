@@ -6,6 +6,7 @@
  */
 package org.sikuli.basics;
 
+import org.sikuli.script.RunTime;
 import java.util.*;
 import jxgrabkey.HotkeyConflictException;
 import jxgrabkey.JXGrabKey;

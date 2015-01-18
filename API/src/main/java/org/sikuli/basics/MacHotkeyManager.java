@@ -6,6 +6,7 @@
  */
 package org.sikuli.basics;
 
+import org.sikuli.script.RunTime;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 

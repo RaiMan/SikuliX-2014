@@ -12,7 +12,6 @@ import org.sikuli.basics.Debug;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Iterator;
-import org.sikuli.basics.RunTime;
 import org.sikuli.natives.FindInput;
 import org.sikuli.natives.FindResult;
 import org.sikuli.natives.FindResults;

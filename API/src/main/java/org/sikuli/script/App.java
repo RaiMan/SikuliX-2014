@@ -22,7 +22,6 @@ import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.RunTime;
 import org.sikuli.natives.OSUtil;
 import org.sikuli.natives.SysUtil;
 

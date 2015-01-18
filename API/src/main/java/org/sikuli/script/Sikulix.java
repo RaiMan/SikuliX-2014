@@ -23,7 +23,6 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.basics.HotkeyManager;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.ResourceLoader;
-import org.sikuli.basics.RunTime;
 import org.sikuli.basics.Settings;
 
 /**

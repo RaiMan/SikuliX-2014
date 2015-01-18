@@ -38,7 +38,7 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.basics.SplashFrame;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.ResourceLoader;
-import org.sikuli.basics.RunTime;
+import org.sikuli.script.RunTime;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.Sikulix;
 

@@ -15,7 +15,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.RunTime;
 
 /**
  * A screen represents a physical monitor with its coordinates and size according to the global

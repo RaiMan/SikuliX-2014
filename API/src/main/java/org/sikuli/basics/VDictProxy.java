@@ -6,6 +6,7 @@
  */
 package org.sikuli.basics;
 
+import org.sikuli.script.RunTime;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.HashMap;
