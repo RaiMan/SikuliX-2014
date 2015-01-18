@@ -88,17 +88,11 @@ public class Sikulix {
     runningSikulixapi = runningAPI;
   }
 
-  private static RunTime runTime = null;
+  private static RunTime rt = null;
 	public static void main(String[] args) {
-    if (args.length > 0) {
-      if ("inittest".equals(args[0])) {
-        RunTime.testing = true;
-      } else {
-        Debug.setDebugLevel(args[0]);
-      }
-    }
-    runTime = RunTime.get();
-		log(lvl, "running main: nothing to do (yet)");
+    rt = RunTime.get();
+    rt.dumpOptions();
+    log(lvl, "running main: nothing to do (yet)");
 	}
 
   /**

@@ -7,8 +7,10 @@
 package org.sikuli.script;
 
 import java.awt.GraphicsEnvironment;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -24,7 +26,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import java.util.prefs.Preferences;
@@ -67,11 +72,18 @@ public class RunTime {
   public static boolean testing = false;
   
   Type runType = Type.INIT;
+
+  /**
+   * INTERNAL USE to initialize the runtime environment for SikuliX<br>
+   * for public use: use RunTime.get() to get the existing instance
+   * @param typ IDE or API
+   * @return the RunTime singleton instance 
+   */
   public static synchronized RunTime get(Type typ) {
     if (runTime == null) {
-      if (testing) Debug.setDebugLevel(3);
-      Settings.init(); // force Settings initialization
       runTime = new RunTime();
+      runTime.loadOptions(typ);
+      Settings.init(); // force Settings initialization
       runTime.init(typ);
       if (Type.IDE.equals(typ)) {
         runTime.initIDEbefore();
@@ -87,10 +99,20 @@ public class RunTime {
     return runTime;
   }
   
+  /**
+   * get the initialized RunTime singleton instance
+   * @return
+   */
   public static synchronized RunTime get() {
-    return get(Type.API);
+    if (runTime == null) {
+      return get(Type.API);
+    }
+    return runTime;
   }
   
+  /**
+   * INTERNAL USE
+   */
   public enum Type {
     IDE, API, SETUP, INIT
   }
@@ -104,7 +126,7 @@ public class RunTime {
   public String sxBuild = "";
   public String sxBuildStamp = "";
   public String jreVersion = java.lang.System.getProperty("java.runtime.version");
-	public Preferences options = Preferences.userNodeForPackage(Sikulix.class);
+	public Preferences optionsIDE = Preferences.userNodeForPackage(Sikulix.class);
   public ClassLoader classLoader = RunTime.class.getClassLoader();
 	public String baseJar = "";
   public String userName = "";
@@ -117,6 +139,9 @@ public class RunTime {
   File fLibsFolder = null;
   File fUserDir = null;
   File fWorkDir = null;
+  File fOptions = null;
+  Properties options = null;
+  String fnOptions = "SikulixOptions.txt";
   public File fSxBase = null;
   public File fSxBaseJar = null;
   public File fSxProject = null;
@@ -134,14 +159,251 @@ public class RunTime {
   public int javaVersion = 0;
   public String osName = "NotKnown";
   public String osVersion = "";
+  
+  void loadOptions(Type typ) {
 
-  private void init(Type typ) {
+    String tmpdir = System.getProperty("user.home");
+    if (tmpdir != null && !tmpdir.isEmpty()) {
+      fUserDir = new File(tmpdir);
+    } else {
+      fUserDir = new File(fTempPath, "SikuliXuser_" + userName);
+      FileManager.resetFolder(runTime.fUserDir);
+      log(-1, "init: user.home not valid (null or empty) - using empty:\n%s", fUserDir);
+    }
+    log(runTime.lvl, "user.home: %s", fUserDir);
+    
+    tmpdir = System.getProperty("user.dir");
+    if (tmpdir != null && !tmpdir.isEmpty()) {
+      fWorkDir = new File(tmpdir);
+    } else {
+      fWorkDir = new File(fTempPath, "SikuliXwork");
+      FileManager.resetFolder(fWorkDir);
+      log(-1, "init: user.dir (working folder) not valid (null or empty) - using empty:\n%s", fWorkDir);
+    }
+    log(lvl, "user.dir (work dir): %s", fWorkDir);
+        
+    File fDebug = new File(fUserDir, "SikulixDebug.txt");
+    if (fDebug.exists()) {
+      Debug.setDebugLevel(3);
+      Debug.setLogFile(fDebug.getAbsolutePath());
+      if (Type.IDE.equals(typ)) {
+        System.setProperty("sikuli.console", "false");
+      }
+      log(lvl, "auto-debugging with level 3 into %s", fDebug);
+    }
+    
+    fOptions = new File(fWorkDir, fnOptions);
+    if (!fOptions.exists()) {
+      fOptions = new File(fUserDir, fnOptions);
+      if (!fOptions.exists()) {
+        fOptions = null;
+      }
+    }
+    if (fOptions != null) {
+      options = new Properties();
+      String svf = "sikulixversion.txt";
+      try {
+        InputStream is;
+        is = new FileInputStream(fOptions);
+        options.load(is);
+        is.close();
+      } catch (Exception ex) {
+        log(-1, "while checking Options file: %s", fOptions);
+        fOptions = null;
+        options = null;
+      }
+      log(lvl, "have Options file at: %s", fOptions);
+      testing = isOption("testing", false);
+      if (testing) Debug.setDebugLevel(3);
+    }
+  }
+ 
+  /**
+   * NOT IMPLEMENTED YET
+   * load an options file, that is merged with an existing options store (same key overwrites value)
+   * @param fpOptions path to a file containing options
+   */
+  public void loadOptions(String fpOptions) {
+    log(-1, "loadOptions: not yet implemented");
+  }
+  
+  /**
+   * NOT IMPLEMENTED YET
+   * saves  the current option store to a file (overwritten)
+   * @param fpOptions path to a file 
+   * @return success
+   */
+  public boolean saveOptions(String fpOptions) {
+    log(-1, "saveOptions: not yet implemented");
+    return false;
+  }
+
+  /**
+   * NOT IMPLEMENTED YET
+   * saves  the current option store to the file it was created from (overwritten) 
+   * @return success, false if the current store was not created from file
+   */
+  public boolean saveOptions() {
+    log(-1, "saveOptions: not yet implemented");
+    return false;
+  }
+  
+  
+  /**
+   * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)
+   * @param pName the option key (case-sensitive)
+   * @return true only if option exists and has yes or true (not case-sensitive), in all other cases false
+   */
+  public boolean isOption(String pName) {
+    if (options == null) {
+      return false;
+    }
+    String pVal = options.getProperty(pName, "false").toLowerCase();
+    if (pVal.isEmpty() || pVal.contains("yes") || pVal.contains("true")) {
+      return true;
+    }
+    return false;
+  }
+  
+  /**
+   * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)
+   * @param pName the option key (case-sensitive)
+   * @param bDefault the default to be returned if option absent or empty
+   * @return true if option has yes or no, false for no or false (not case-sensitive)
+   */
+  public boolean isOption(String pName, Boolean bDefault) {
+    if (options == null) {
+      return bDefault;
+    }
+    String pVal = options.getProperty(pName, bDefault.toString()).toLowerCase();
+    if (pVal.isEmpty()) {
+      return bDefault;
+    } else if (pVal.contains("yes") || pVal.contains("true")) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * look into the option file if any (if no option file is found, the option is taken as not existing)
+   * @param pName the option key (case-sensitive)
+   * @return the associated value, empty string if absent
+   */
+  public String getOption(String pName) {
+    if (options == null) {
+      return "";
+    }
+    String pVal = options.getProperty(pName, "").toLowerCase();
+    return pVal;
+  }
+
+  /**
+   * look into the option file if any (if no option file is found, the option is taken as not existing)<br>
+   * side-effect: if no options file is there, an options store will be created in memory<br>
+   * in this case and when the option is absent or empty, the given default will be stored<br>
+   * you might later save the options store to a file with storeOptions()
+   * @param pName the option key (case-sensitive)
+   * @param sDefault the default to be returned if option absent or empty
+   * @return the associated value, the default value if absent or empty
+   */
+  public String getOption(String pName, String sDefault) {
+    if (options == null) {
+      options = new Properties();
+      options.setProperty(pName, sDefault);
+      return sDefault;
+    }
+    String pVal = options.getProperty(pName, sDefault).toLowerCase();
+    if (pVal.isEmpty()) {
+      options.setProperty(pName, sDefault);
+      return sDefault;
+    }
+    return pVal;
+  }
+
+  /**
+   * store an option key-value pair, overwrites existing value<br>
+   * new option store is created if necessary and can later be saved to a file
+   * @param pName
+   * @param sValue
+   */
+  public void setOption(String pName, String sValue) {
+    if (options == null) {
+      options = new Properties();
+    }
+    options.setProperty(pName, sValue);
+  }
+
+  /**
+   * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)<br>
+   * tries to convert the stored string value into an integer number (gives 0 if not possible)<br> 
+   * @param pName the option key (case-sensitive)
+   * @return the converted integer number, 0 if absent or not possible
+   */
+  public int getOptionNumber(String pName) {
+    if (options == null) {
+      return 0;
+    }
+    String pVal = options.getProperty(pName, "0").toLowerCase();
+    int nVal = 0;
+    try {
+      nVal = Integer.getInteger(pVal);
+    } catch (Exception ex) {}
+    return nVal;
+  }
+
+  /**
+   * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)<br>
+   * tries to convert the stored string value into an integer number (gives 0 if not possible)<br> 
+   * @param pName the option key (case-sensitive)
+   * @param nDefault the default to be returned if option absent, empty or not convertable
+   * @return the converted integer number, default if absent, empty or not possible
+   */
+  public int getOptionNumber(String pName, Integer nDefault) {
+    if (options == null) {
+      return nDefault;
+    }
+    String pVal = options.getProperty(pName, nDefault.toString()).toLowerCase();
+    int nVal = nDefault;
+    try {
+      nVal = Integer.getInteger(pVal);
+    } catch (Exception ex) {}
+    return nVal;
+  }
+  
+  /**
+   * all options and their values
+   * @return a map of key-value pairs containing the found options, empty if no options file found 
+   */
+  public Map<String,String> getOptions() {
+    Map<String, String> mapOptions = new HashMap<String, String>();
+    if (options != null) {
+      Enumeration<?> optionNames = options.propertyNames();
+      String optionName; 
+      while (optionNames.hasMoreElements()) {
+        optionName = (String) optionNames.nextElement();
+        mapOptions.put(optionName, getOption(optionName));
+      }
+    }
+    return mapOptions;
+  }
+  
+  /**
+   * all options and their values written to sysout as key = value
+   */
+  public void dumpOptions() {
+    logp("*** options dump %s", fOptions);
+    for (String sOpt: getOptions().keySet()) {
+      logp("%s = %s", sOpt, getOption(sOpt));
+    }
+    logp("*** options dump end");
+  }
+
+  void init(Type typ) {
     log(lvl, "global init: entering as: %s", typ);
     
     sxBuild = Settings.SikuliVersionBuild;
     sxBuildStamp = sxBuild.replace("_", "").replace("-", "").replace(":", "").substring(0, 12);
 
-        
 //<editor-fold defaultstate="collapsed" desc="general">
     String os = osNameSysProp.toLowerCase();
     if (os.startsWith("mac")) {
@@ -173,36 +435,6 @@ public class RunTime {
     fBaseTempPath.mkdirs();
     BaseTempPath = fBaseTempPath.getAbsolutePath();
     log(lvl, "java.io.tmpdir: %s", fTempPath);
-    
-    tmpdir = System.getProperty("user.home");
-    if (tmpdir != null && !tmpdir.isEmpty()) {
-      fUserDir = new File(tmpdir);
-    } else {
-      fUserDir = new File(fTempPath, "SikuliXuser_" + userName);
-      FileManager.resetFolder(fUserDir);
-      log(-1, "init: user.home not valid (null or empty) - using empty:\n%s", fUserDir);
-    }
-    log(lvl, "user.home: %s", fUserDir);
-    
-    tmpdir = System.getProperty("user.dir");
-    if (tmpdir != null && !tmpdir.isEmpty()) {
-      fWorkDir = new File(tmpdir);
-    } else {
-      fWorkDir = new File(fTempPath, "SikuliXwork");
-      FileManager.resetFolder(fWorkDir);
-      log(-1, "init: user.dir (working folder) not valid (null or empty) - using empty:\n%s", fWorkDir);
-    }
-    log(lvl, "user.dir (work dir): %s", fWorkDir);
-    
-    File fDebug = new File(fUserDir, "SikulixDebug.txt");
-    if (fDebug.exists()) {
-      Debug.setDebugLevel(3);
-      Debug.setLogFile(fDebug.getAbsolutePath());
-      if (Type.IDE.equals(typ)) {
-        System.setProperty("sikuli.console", "false");
-      }
-      log(lvl, "auto-debugging with level 3 into %s", fDebug);
-    }
 //</editor-fold>
     
 //<editor-fold defaultstate="collapsed" desc="classpath">
@@ -292,6 +524,7 @@ public class RunTime {
     log(lvl, "running %dBit on %s (%s) %s", javaArch, osName, osVersion, appType);
 //</editor-fold>
     
+//<editor-fold defaultstate="collapsed" desc="libs export">
     boolean shouldExport = false;
     URL uLibsFrom = null;
     fLibsFolder = new File(fTempPath, "SikulixLibs_" + sxBuildStamp);
@@ -348,7 +581,7 @@ public class RunTime {
           logp("***** for testing: exporting from classes");
         } else {
           logp("***** for testing: exporting from jar");
-          fpLibsFrom = new File(fSxProject, 
+          fpLibsFrom = new File(fSxProject,
                   String.format("Libs%s/target/sikulixlibs%s-1.1.0.jar", sysShort, sysShort)).getAbsolutePath();
         }
       }
@@ -365,12 +598,19 @@ public class RunTime {
         extractRessourcesToFolder(uLibsFrom, fpJarLibs, fLibsFolder);
       }
     }
+//</editor-fold>
     
     runType = typ;
     log(lvl, "global init: leaving");
   }
   
-  void extractRessourcesToFolder(URL uFrom, String fpRessources, File fFolder) {
+  /**
+   * export all resource files from the given subtree on classpath to the given folder retaining the subtree 
+   * @param uFrom base where the subtree is contained (folder or jar on classpath)
+   * @param fpRessources path of the subtree
+   * @param fFolder folder where to export
+   */
+  public void extractRessourcesToFolder(URL uFrom, String fpRessources, File fFolder) {
     List<String> content = null;
     content = resourceListDeep(uFrom);
     int count = 0;
@@ -390,7 +630,15 @@ public class RunTime {
     log(lvl, "files exported: %d", count);
   }
   
-  boolean extractResourceToFile(String inPrefix, String inFile, File outDir, String outFile) {
+  /**
+   * store a resource found on classpath to a file in the given folder
+   * @param inPrefix a subtree found in classpath
+   * @param inFile the filename combined with the prefix on classpath
+   * @param outDir a folder where to export
+   * @param outFile the filename for export
+   * @return success
+   */
+  public boolean extractResourceToFile(String inPrefix, String inFile, File outDir, String outFile) {
     InputStream aIS;
     FileOutputStream aFileOS;
     aIS = (InputStream) clsRef.getResourceAsStream(inPrefix + "/" + inFile);
@@ -422,11 +670,21 @@ public class RunTime {
     }
   }
 
+  /**
+   * list all files only in the given folder (subfolders are ignored)
+   * @param folder folder or jar on classpath
+   * @return the list (might be empty)
+   */
   public List<String> resourceList(URL folder) {
     log(lvl + 1, "resourceList:\n%s", folder);
     return doResourceList(folder, false);
   }
   
+  /**
+   * list all files in the folder and it's subtree (files only, no folder names), but the files have the subtree prefixed
+   * @param folder folder or jar on classpath
+   * @return the list (might be empty)
+   */
   public List<String> resourceListDeep(URL folder) {
     log(lvl + 1, "resourceListDeep:\n%s", folder);
     return doResourceList(folder, true);
@@ -503,10 +761,10 @@ public class RunTime {
     return files;
   }
 
-  private File isRunning = null;
-  private FileOutputStream isRunningFile = null;
+  File isRunning = null;
+  FileOutputStream isRunningFile = null;
 
-  private void initIDEbefore() {
+  void initIDEbefore() {
     log(lvl, "initIDEbefore: entering");
     Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
@@ -578,22 +836,22 @@ public class RunTime {
     log(lvl, "initIDEbefore: leaving");
   }
   
-  private void initIDEafter() {
+  void initIDEafter() {
     log(lvl, "initIDEafter: entering");
     log(lvl, "initIDEafter: leaving");
  }  
 
-  private void initAPI() {
+  void initAPI() {
     log(lvl, "initAPI: entering");
     log(lvl, "initAPI: leaving");
   }  
 
-  private void initSetup() {
+  void initSetup() {
     log(lvl, "initSetup: entering");
     log(lvl, "initSetup: leaving");
   } 
   
-  private boolean checkLibs(File flibsFolder) {
+  boolean checkLibs(File flibsFolder) {
     // 1.1-MadeForSikuliX64M.txt
     String name = String.format("1.1-MadeForSikuliX%d%s.txt", javaArch, runningOn.toString().substring(0, 1));
     if (! new File(flibsFolder, name).exists()) {
@@ -603,15 +861,22 @@ public class RunTime {
     return true;
   }
 
-  private void storeClassPath() {
+  void storeClassPath() {
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     classPath = Arrays.asList(sysLoader.getURLs());
   }
   
+  /**
+   * print the current classpath entries to sysout
+   */
   public void dumpClassPath() {
     dumpClassPath(null);
   }
 
+  /**
+   * print the current classpath entries to sysout whose path name contain the given string
+   * @param filter the fileter string
+   */
   public void dumpClassPath(String filter) {
     filter = filter == null ? "" : filter; 
     logp("*** classpath dump %s", filter);
@@ -633,6 +898,11 @@ public class RunTime {
     logp("*** classpath dump end");
   }
 
+  /**
+   * check wether a classpath entry contains the given identifying string, stops on first match
+   * @param artefact the identifying string
+   * @return the absolute path of the entry found
+   */
   public String isOnClasspath(String artefact) {
     String cpe = null;
     if (classPath.isEmpty()) {
@@ -646,6 +916,11 @@ public class RunTime {
     return cpe;
   }
   
+  /**
+   * adds the given folder or jar to the end of the current classpath
+   * @param jar absolute path to a folder or jar
+   * @return success
+   */
   public boolean addToClasspath(String jar) {
     log(lvl, "addToClasspath: " + jar);
 		File jarFile = new File(jar);
@@ -676,10 +951,17 @@ public class RunTime {
     return true;
   }
   
+  /**
+   * print the current java system properties key-value pairs sorted by key
+   */
   public void dumpSysProps() {
     dumpSysProps(null);
   }
 
+  /**
+   * print the current java system properties key-value pairs sorted by key but only keys containing filter
+   * @param filter the filter string
+   */
   public void dumpSysProps(String filter) {
     filter = filter == null ? "" : filter;
     logp("*** system properties dump " + filter);
@@ -704,19 +986,39 @@ public class RunTime {
     logp("*** system properties dump end" + filter);
   }
   
-  
+  /**
+   * checks, whether Java runs with a valid GraphicsEnvironment (usually means real screens connected)
+   * @return false if Java thinks it has access to screen(s), true otherwise
+   */
   public boolean isHeadless() {
 		return GraphicsEnvironment.isHeadless();
   }
   
+  /**
+   * INTERNAL USE: to check whether we are running in compiled classes context 
+   * @return true if the code source location is a folder ending with classes (Maven convention)
+   */
   public boolean isRunningFromJar() {
     return runningJar;
   }
 
+  /**
+   * run a system command finally using Java::Runtime.getRuntime().exec(args) and waiting for completion 
+   * @param cmd the command as it would be given on command line, quoting is preserved
+   * @return the output produced by the command (sysout [+ "*** error ***" + syserr] 
+   * if the syserr part is present, the command might have failed
+   */
   public String runcmd(String cmd) {
     return runcmd(new String[]{cmd});
   }
 
+  /**
+   * run a system command finally using Java::Runtime.getRuntime().exec(args) and waiting for completion
+   * @param cmd the command as it would be given on command line splitted into 
+   * the space devided parts, first part is the command, the rest are parameters and their values
+   * @return the output produced by the command (sysout [+ "*** error ***" + syserr] 
+   * if the syserr part is present, the command might have failed
+   */
   public String runcmd(String args[]) {
     if (args.length == 0) {
       return "";
