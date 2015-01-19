@@ -142,51 +142,79 @@ module Sikulix
      :type, :paste, :observe]
    )
 
-  # Default screen object for "undotted" methods.
+  # Default screen of host machine.
   $SIKULI_SCREEN = Screen.new
+  # Screen used for undotted methods.
   $DEFAULT_SCREEN = $SIKULI_SCREEN
+  # Pool of screens of remote machines connected via VNC.
   $VNC_SCREEN_POOL = []
-  $CONNECTION_CONTROLLER = false
+  # ConnectionController instance
+  @cc = false
 
+  # Initializes connections to remote machines
+  # *args - sequence of address[:port] strings. Default port - 5900
+  # example: 
+  # initVNCPool("192.168.2.3:5901", "192.168.4.3")
   def initVNCPool(*args)
-    if $CONNECTION_CONTROLLER
-      puts "VNC Pool already initialized, free it first!"
+    if @cc
+      puts 'VNC Pool already initialized, free it first!'
       return
     end
     sockets = []
     args.each do |str|
-      address = str.scan(/[0-9\.]+/)[0]
-      port = str.scan(/[0-9\.]+/)[1].to_i
+      address, port = str.scan(/([^:]+):?(.+)?/)[0]
+      if !port
+        port = 5900
+      else
+        port = port.to_i
+      end
       s = Socket.new(address, port)
       s.setSoTimeout(1000)
       s.setKeepAlive(true)
       sockets << s
-    end    
-    $CONNECTION_CONTROLLER = ConnectionController.new(*sockets)
-    cc = $CONNECTION_CONTROLLER
-    sockets.size.times do |id|
-      cc.openConnection(id)
-      cc.setPixelFormat(id, "Truecolor", 32, 0)
-      cc.start(id)
     end
+    @cc = ConnectionController.new(*sockets)
+    sockets.each_index do |id|
+      @cc.openConnection(id)
+      @cc.setPixelFormat(id, 'Truecolor', 32, 0)
+      @cc.start(id)
+    end
+    # sleep left here to wait for buffering
+    # it seems that there is no methods in ConnectionController class
+    # with which we can check if connection is ready
+    # so we will sleep according to ConnectionController author`s example
     sleep 2
+    # that import isn`t in the top of a module because
+    # there is static section in it which requires
+    # ConnectionController instance to exist
     java_import 'edu.unh.iol.dlc.VNCScreen'
-    sockets.size.times do |id|
+    sockets.each_index do |id|
       $VNC_SCREEN_POOL << VNCScreen.new(id)
     end
     puts "Pool of #{$SCREEN_POOL} vnc connections initialized"
   end
   
+  # Replaces default screen for which all undotted methods are
+  # called with another screen
+  # example:
+  # setDefaultScreen($SIKULI_SCREEN)
+  # click(Location(10,10)) <- click will be performed on local screen
+  #
+  # setDefaultScreen($VNC_SCREEN_POOL[0])
+  # click(Location(10,10)) <- click will be performed on remote screen num 0
   def setDefaultScreen(screen)
     if screen.respond_to?(:click)
       $DEFAULT_SCREEN = screen
       puts "Screen switched"
     end
   end
-
+  
+  # Closes all the connections to remote nodes
+  # You should call that method when all actions are performed
+  # Connections shouldn`t be left opened
   def freeVNCPool
-    $VNC_SCREEN_POOL.size.times { $CONNECTION_CONTROLLER.close_connection(0) }
-    $CONNECTION_CONTROLLER = false
+    $VNC_SCREEN_POOL.size.times { @cc.close_connection(0) }
+    @cc = false
   end
 
 # This is an alternative for method generation using define_method
