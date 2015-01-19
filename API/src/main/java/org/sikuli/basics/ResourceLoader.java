@@ -30,8 +30,7 @@ import java.util.zip.ZipInputStream;
 import org.sikuli.script.Sikulix;
 
 public class ResourceLoader {
-//implements IResourceLoader {
-
+  
   private static ResourceLoader resourceLoader = null;
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
@@ -106,8 +105,6 @@ public class ResourceLoader {
 	private boolean initDone = false;
 	private boolean usrPathProblem = false;
   
-  private RunTime runTime;
-
   private ResourceLoader() {
     log0(lvl, "SikuliX Package Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
     cl = this.getClass().getClassLoader();
@@ -141,7 +138,6 @@ public class ResourceLoader {
   public static ResourceLoader get() {
     if (resourceLoader == null) {
       resourceLoader = new ResourceLoader();
-      resourceLoader.runTime = RunTime.get();
     }
     return resourceLoader;
   }

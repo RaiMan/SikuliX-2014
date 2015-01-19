@@ -65,9 +65,7 @@ import org.sikuli.natives.Vision;
  */
 public class Image {
 
-  static {
-//    FileManager.loadLibrary(Settings.libOpenCV);
-  }
+  static RunTime runTime = RunTime.get();
 
   private static String me = "Image: ";
   private static int lvl = 3;

@@ -10,6 +10,9 @@ import java.awt.Dimension;
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -29,6 +32,8 @@ import org.sikuli.basics.Settings;
  * global services for package API
  */
 public class Sikulix {
+  
+  static RunTime runTime = null;
 
   private static final String me = "Sikulix: ";
 
@@ -43,6 +48,10 @@ public class Sikulix {
   private static String jarParentPath;
 
 	static {
+    if (Debug.getDebugLevel() == 0) {
+      Debug.setDebugLevel(1);
+    }
+    runTime = RunTime.get();
     CodeSource codeSrc = Sikulix.class.getProtectionDomain().getCodeSource();
     if (codeSrc != null && codeSrc.getLocation() != null) {
       URL jarURL = codeSrc.getLocation();
@@ -54,6 +63,17 @@ public class Sikulix {
         jarPath += "/";
       }
     }
+	}
+  
+  public static int debugLevel = 1;
+  private static RunTime rt = null;
+	public static void main(String[] args) {
+    int dl = RunTime.checkArgs(args);
+    if (dl > -1) {
+      debugLevel = dl;
+    }
+    rt = RunTime.reset();
+    log(lvl, "running main: nothing to do (yet)");
 	}
 
   public static boolean isRunningFromJar() {
@@ -87,13 +107,6 @@ public class Sikulix {
   public static void setRunningSikulixapi(boolean runningAPI) {
     runningSikulixapi = runningAPI;
   }
-
-  private static RunTime rt = null;
-	public static void main(String[] args) {
-    rt = RunTime.get();
-    rt.dumpOptions();
-    log(lvl, "running main: nothing to do (yet)");
-	}
 
   /**
    * call this, to initialize Sikuli up to useability

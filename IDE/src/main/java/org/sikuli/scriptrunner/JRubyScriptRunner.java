@@ -26,7 +26,6 @@ import java.util.List;
 //import java.io.StringWriter;
 
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.Settings;
 
 import org.jruby.embed.ScriptingContainer;
 import org.jruby.javasupport.JavaEmbedUtils.EvalUnit;
@@ -38,9 +37,12 @@ import org.jruby.RubyProc;
 import org.jruby.javasupport.JavaUtil;
 import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.sikuli.script.RunTime;
 import org.sikuli.script.Sikulix;
 
 public class JRubyScriptRunner implements IScriptRunner {
+  
+  static RunTime runTime = RunTime.get();
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static final String me = "JRubyScriptRunner: ";
@@ -495,7 +497,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 		if (interpreter == null) {
 			sysargv = new ArrayList<String>();
 			sysargv.add("--???--");
-			sysargv.addAll(Arrays.asList(Settings.getArgs()));
+			sysargv.addAll(Arrays.asList(runTime.getArgs()));
 			createScriptingContainer();
 		}
 		return interpreter;

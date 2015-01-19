@@ -18,7 +18,7 @@ import org.sikuli.natives.FindResult;
  * find text<br>and elapsed times for debugging
  */
 public class Match extends Region implements Comparable<Match> {
-
+  
   private double simScore;
   private Location target = null;
   private Image image = null;

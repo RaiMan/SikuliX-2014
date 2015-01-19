@@ -30,6 +30,8 @@ import org.sikuli.basics.Settings;
  */
 @Deprecated
 public class ImageLocator {
+  
+  static RunTime runTime = RunTime.get();
 
   static ArrayList<String> pathList = new ArrayList<String>();
   static int firstEntries = 1;

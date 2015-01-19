@@ -23,6 +23,8 @@ import edu.unh.iol.dlc.VNCScreen;
  *
  */
 public class Region {
+  
+  static RunTime runTime = RunTime.get();
 
   private static String me = "Region: ";
   private static int lvl = 3;

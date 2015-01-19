@@ -31,6 +31,8 @@ import org.sikuli.basics.Settings;
  * - any location as a valid URL, from where image files can be loaded<br>
  */
 public class ImagePath {
+  
+  static RunTime runTime = RunTime.get();
 
   private static final String me = "ImagePath: ";
   private static final int lvl = 3;

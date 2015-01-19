@@ -25,6 +25,8 @@ import org.sikuli.natives.Vision;
  * Will be rewritten for use of Tess4J - Java only implementation
  */
 public class TextRecognizer {
+  
+  static RunTime runTime = RunTime.get();
 
   private static TextRecognizer _instance = null;
   private static boolean _init_succeeded = false;

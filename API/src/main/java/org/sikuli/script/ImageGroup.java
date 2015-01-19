@@ -24,6 +24,8 @@ import java.util.Map;
  * Based on the stored match data you might produce a new ImageGroup on the fly.<br>
  */
 public class ImageGroup {
+  
+  static RunTime runTime = RunTime.get();
 
   private static Map<String, ImageGroup> imageGroups =
           Collections.synchronizedMap(new HashMap<String, ImageGroup>());

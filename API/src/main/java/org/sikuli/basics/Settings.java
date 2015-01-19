@@ -61,7 +61,7 @@ public class Settings {
 	public static int breakPoint = 0;
 	public static boolean handlesMacBundles = true;
 	public static boolean runningSetup = false;
-	private static final PreferencesUser prefs = PreferencesUser.getInstance();
+	private static PreferencesUser prefs;
 
 	/**
 	 * location of folder Tessdata
@@ -90,8 +90,6 @@ public class Settings {
 	 */
 	public static String SikuliRepo;
 	public static String SikuliLocalRepo = "";
-	private static String[] args = new String[0];
-	private static String[] sargs = new String[0];
 	public static String[] ServerList = {"http://dl.dropboxusercontent.com/u/42895525/SikuliX"};
 	private static String sversion;
 	private static String bversion;
@@ -135,17 +133,25 @@ public class Settings {
 	 */
 	public static final String SIKULI_LIB = "*sikuli_lib";
 
-	public static String proxyName = prefs.get("ProxyName", null);
-	public static String proxyIP = prefs.get("ProxyIP", null);
+	public static String proxyName;
+	public static String proxyIP;
 	public static InetAddress proxyAddress = null;
-	public static String proxyPort = prefs.get("ProxyPort", null);
+	public static String proxyPort;
 	public static boolean proxyChecked = false;
 	public static Proxy proxy = null;
     
-	static {
     
+  /**
+   * INTERNAL USE: to trigger the initialization
+   */
+  public static synchronized void init() {
 		// TODO check existence of an extension repository
 		SikuliRepo = null;
+    prefs = PreferencesUser.getInstance();
+    proxyName = prefs.get("ProxyName", null);
+    String proxyIP = prefs.get("ProxyIP", null);
+    InetAddress proxyAddress = null;
+    String proxyPort = prefs.get("ProxyPort", null);
 
 		// set the version strings
 		Properties prop = new Properties();
@@ -241,10 +247,6 @@ public class Settings {
 		tessData.put("eng", "http://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz");
 	}
   
-  /**
-   * INTERNAL USE: to trigger the initialization
-   */
-  public static synchronized void init() {};
   
   @Deprecated
   public static String getInstallBase() {
@@ -514,40 +516,8 @@ public class Settings {
 		return sversion.substring(0, 3);
 	}
 
-	public static void setArgs(String[] args, String[] sargs) {
-		Settings.args = args;
-		Settings.sargs = sargs;
-	}
-
-	public static String[] getArgs() {
-		return Settings.args;
-	}
-
-	public static String[] getSikuliArgs() {
-		return Settings.sargs;
-	}
 
 	public static String getTimestamp() {
 		return (new Date()).getTime() + "";
-	}
-
-	public static void printArgs() {
-		if (Debug.getDebugLevel() < lvl) {
-			return;
-		}
-		String[] args = Settings.getSikuliArgs();
-		if (args.length > 0) {
-			Debug.log(lvl, "--- Sikuli parameters ---");
-			for (int i = 0; i < args.length; i++) {
-				Debug.log(lvl, "%d: %s", i + 1, args[i]);
-			}
-		}
-		args = Settings.getArgs();
-		if (args.length > 0) {
-			Debug.log(lvl, "--- User parameters ---");
-			for (int i = 0; i < args.length; i++) {
-				Debug.log(lvl, "%d: %s", i + 1, args[i]);
-			}
-		}
 	}
 }

@@ -7,7 +7,6 @@
 package org.sikuli.script;
 
 import java.awt.GraphicsEnvironment;
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,21 +38,52 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.ResourceLoader;
 import org.sikuli.basics.Settings;
-import org.sikuli.script.Sikulix;
 
 /**
  * INTERNAL USE: Intended to concentrate all, that is needed at startup of sikulix or sikulixapi
  */
 public class RunTime {
 
-  public static void loadLibrary(String libname) {
-    ResourceLoader.get().check(Settings.SIKULI_LIB);
-    ResourceLoader.get().loadLib(libname);
+	String[] args = new String[0];
+	String[] sargs = new String[0];
+  
+  public void setArgs(String[] args, String[] sargs) {
+    this.args = args;
+    this.sargs = sargs;
+  }
+
+  public String[] getSikuliArgs() {
+    return sargs;
+  }
+
+  public String[] getArgs() {
+    return args;
   }
   
+	public void printArgs() {
+		if (Debug.getDebugLevel() < lvl) {
+			return;
+		}
+		String[] xargs = getSikuliArgs();
+		if (xargs.length > 0) {
+			Debug.log(lvl, "--- Sikuli parameters ---");
+			for (int i = 0; i < xargs.length; i++) {
+				Debug.log(lvl, "%d: %s", i + 1, xargs[i]);
+			}
+		}
+		xargs = getArgs();
+		if (xargs.length > 0) {
+			Debug.log(lvl, "--- User parameters ---");
+			for (int i = 0; i < xargs.length; i++) {
+				Debug.log(lvl, "%d: %s", i + 1, xargs[i]);
+			}
+		}
+	}
+
   final String me = "RunTime%s: ";
-  public int lvl = 3;
-  public int minLvl = lvl;
+  int lvl = 3;
+  int minLvl = lvl;
+  static String preLogMessages = "";
   
   void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -67,8 +97,21 @@ public class RunTime {
     log(-1, "*** terminating: " + msg);
     System.exit(retval);
   }
-
+  
+  /**
+   * INTERNAL USE
+   */
+  public enum Type {
+    IDE, API, SETUP, INIT
+  }
+  
+  private enum theSystem {
+    WIN, MAC, LUX, FOO
+  }
+    
   static RunTime runTime = null;
+  static int debugLevelSaved;
+  static String debugLogfileSaved;
   public static boolean testing = false;
   
   Type runType = Type.INIT;
@@ -82,7 +125,19 @@ public class RunTime {
   public static synchronized RunTime get(Type typ) {
     if (runTime == null) {
       runTime = new RunTime();
+      debugLevelSaved = Debug.getDebugLevel();
+      debugLogfileSaved = Debug.logfile;
       runTime.loadOptions(typ);
+      int dl = runTime.getOptionNumber("debuglevel");
+      if (dl > 0 && Debug.getDebugLevel() == 0) {
+        Debug.setDebugLevel(dl);
+      }
+      if (Type.SETUP.equals(typ)) {
+        Debug.setDebugLevel(3);
+      }
+      if (Debug.getDebugLevel() > 1) {
+        runTime.dumpOptions();
+      }
       Settings.init(); // force Settings initialization
       runTime.init(typ);
       if (Type.IDE.equals(typ)) {
@@ -112,15 +167,55 @@ public class RunTime {
   
   /**
    * INTERNAL USE
+   * get a new initialized RunTime singleton instance
+   * @return
    */
-  public enum Type {
-    IDE, API, SETUP, INIT
+  public static synchronized RunTime reset(Type typ) {
+    if (runTime != null) {
+      preLogMessages += "RunTime: resetting RunTime instance;";
+      if (Sikulix.debugLevel == 1) {
+        Debug.setDebugLevel(debugLevelSaved);
+      }
+      Debug.setLogFile(debugLogfileSaved);
+      runTime = null;
+    }
+    return get(typ);
   }
   
-  private enum theSystem {
-    WIN, MAC, LUX, FOO
+  /**
+   * INTERNAL USE
+   * get a new initialized RunTime singleton instance
+   * @return
+   */
+  public static synchronized RunTime reset() {
+    return reset(Type.API);
   }
-    
+  
+  public static int checkArgs(String[] args) {
+    int debugLevel = -1;
+    List<String> options = new ArrayList<String>();
+    options.addAll(Arrays.asList(args));
+    for (int n = 0; n < options.size(); n++) {
+      String opt = options.get(n);
+      if (!opt.startsWith("-")) {
+        continue;
+      }
+      if (opt.startsWith("-d")) {
+        int nD = -1;
+        try {
+          nD = n+1 == options.size() ? 1 : Integer.decode(options.get(n+1));
+        } catch (Exception ex) {
+          nD = 1;
+        }
+        if (nD > -1) {
+          debugLevel = nD;
+          Debug.setDebugLevel(nD);
+        }
+      }
+    }
+    return debugLevel;
+  }
+  
   RunTime() {}
   
   public String sxBuild = "";
@@ -134,23 +229,24 @@ public class RunTime {
   
   Class clsRef = RunTime.class;
   List<URL> classPath = new ArrayList<URL>();
-  File fTempPath = null;
-  File fBaseTempPath = null;
-  File fLibsFolder = null;
-  File fUserDir = null;
-  File fWorkDir = null;
+  public File fTempPath = null;
+  public File fBaseTempPath = null;
+  public File fLibsFolder = null;
+  Map<String, Boolean> libsLoaded = new HashMap<String, Boolean>();
+  public File fUserDir = null;
+  public File fWorkDir = null;
   File fOptions = null;
   Properties options = null;
   String fnOptions = "SikulixOptions.txt";
   public File fSxBase = null;
   public File fSxBaseJar = null;
   public File fSxProject = null;
-  boolean runningJar = true;
-  boolean runningWindows = false;
-  boolean runningMac = false;
-  boolean runningLinux = false;
-  boolean runningWinApp = false;
-  boolean runningMacApp = false;
+  public boolean runningJar = true;
+  public boolean runningWindows = false;
+  public boolean runningMac = false;
+  public boolean runningLinux = false;
+  public boolean runningWinApp = false;
+  public boolean runningMacApp = false;
   theSystem runningOn = theSystem.FOO;
   final String osNameSysProp = System.getProperty("os.name");
   final String osVersionSysProp = System.getProperty("os.version");
@@ -160,251 +256,20 @@ public class RunTime {
   public String osName = "NotKnown";
   public String osVersion = "";
   
-  void loadOptions(Type typ) {
-
-    String tmpdir = System.getProperty("user.home");
-    if (tmpdir != null && !tmpdir.isEmpty()) {
-      fUserDir = new File(tmpdir);
-    } else {
-      fUserDir = new File(fTempPath, "SikuliXuser_" + userName);
-      FileManager.resetFolder(runTime.fUserDir);
-      log(-1, "init: user.home not valid (null or empty) - using empty:\n%s", fUserDir);
-    }
-    log(runTime.lvl, "user.home: %s", fUserDir);
-    
-    tmpdir = System.getProperty("user.dir");
-    if (tmpdir != null && !tmpdir.isEmpty()) {
-      fWorkDir = new File(tmpdir);
-    } else {
-      fWorkDir = new File(fTempPath, "SikuliXwork");
-      FileManager.resetFolder(fWorkDir);
-      log(-1, "init: user.dir (working folder) not valid (null or empty) - using empty:\n%s", fWorkDir);
-    }
-    log(lvl, "user.dir (work dir): %s", fWorkDir);
-        
-    File fDebug = new File(fUserDir, "SikulixDebug.txt");
-    if (fDebug.exists()) {
-      Debug.setDebugLevel(3);
-      Debug.setLogFile(fDebug.getAbsolutePath());
-      if (Type.IDE.equals(typ)) {
-        System.setProperty("sikuli.console", "false");
-      }
-      log(lvl, "auto-debugging with level 3 into %s", fDebug);
-    }
-    
-    fOptions = new File(fWorkDir, fnOptions);
-    if (!fOptions.exists()) {
-      fOptions = new File(fUserDir, fnOptions);
-      if (!fOptions.exists()) {
-        fOptions = null;
-      }
-    }
-    if (fOptions != null) {
-      options = new Properties();
-      String svf = "sikulixversion.txt";
-      try {
-        InputStream is;
-        is = new FileInputStream(fOptions);
-        options.load(is);
-        is.close();
-      } catch (Exception ex) {
-        log(-1, "while checking Options file: %s", fOptions);
-        fOptions = null;
-        options = null;
-      }
-      log(lvl, "have Options file at: %s", fOptions);
-      testing = isOption("testing", false);
-      if (testing) Debug.setDebugLevel(3);
-    }
-  }
- 
-  /**
-   * NOT IMPLEMENTED YET
-   * load an options file, that is merged with an existing options store (same key overwrites value)
-   * @param fpOptions path to a file containing options
-   */
-  public void loadOptions(String fpOptions) {
-    log(-1, "loadOptions: not yet implemented");
-  }
-  
-  /**
-   * NOT IMPLEMENTED YET
-   * saves  the current option store to a file (overwritten)
-   * @param fpOptions path to a file 
-   * @return success
-   */
-  public boolean saveOptions(String fpOptions) {
-    log(-1, "saveOptions: not yet implemented");
-    return false;
-  }
-
-  /**
-   * NOT IMPLEMENTED YET
-   * saves  the current option store to the file it was created from (overwritten) 
-   * @return success, false if the current store was not created from file
-   */
-  public boolean saveOptions() {
-    log(-1, "saveOptions: not yet implemented");
-    return false;
-  }
-  
-  
-  /**
-   * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)
-   * @param pName the option key (case-sensitive)
-   * @return true only if option exists and has yes or true (not case-sensitive), in all other cases false
-   */
-  public boolean isOption(String pName) {
-    if (options == null) {
-      return false;
-    }
-    String pVal = options.getProperty(pName, "false").toLowerCase();
-    if (pVal.isEmpty() || pVal.contains("yes") || pVal.contains("true")) {
-      return true;
-    }
-    return false;
-  }
-  
-  /**
-   * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)
-   * @param pName the option key (case-sensitive)
-   * @param bDefault the default to be returned if option absent or empty
-   * @return true if option has yes or no, false for no or false (not case-sensitive)
-   */
-  public boolean isOption(String pName, Boolean bDefault) {
-    if (options == null) {
-      return bDefault;
-    }
-    String pVal = options.getProperty(pName, bDefault.toString()).toLowerCase();
-    if (pVal.isEmpty()) {
-      return bDefault;
-    } else if (pVal.contains("yes") || pVal.contains("true")) {
-      return true;
-    }
-    return false;
-  }
-
-  /**
-   * look into the option file if any (if no option file is found, the option is taken as not existing)
-   * @param pName the option key (case-sensitive)
-   * @return the associated value, empty string if absent
-   */
-  public String getOption(String pName) {
-    if (options == null) {
-      return "";
-    }
-    String pVal = options.getProperty(pName, "").toLowerCase();
-    return pVal;
-  }
-
-  /**
-   * look into the option file if any (if no option file is found, the option is taken as not existing)<br>
-   * side-effect: if no options file is there, an options store will be created in memory<br>
-   * in this case and when the option is absent or empty, the given default will be stored<br>
-   * you might later save the options store to a file with storeOptions()
-   * @param pName the option key (case-sensitive)
-   * @param sDefault the default to be returned if option absent or empty
-   * @return the associated value, the default value if absent or empty
-   */
-  public String getOption(String pName, String sDefault) {
-    if (options == null) {
-      options = new Properties();
-      options.setProperty(pName, sDefault);
-      return sDefault;
-    }
-    String pVal = options.getProperty(pName, sDefault).toLowerCase();
-    if (pVal.isEmpty()) {
-      options.setProperty(pName, sDefault);
-      return sDefault;
-    }
-    return pVal;
-  }
-
-  /**
-   * store an option key-value pair, overwrites existing value<br>
-   * new option store is created if necessary and can later be saved to a file
-   * @param pName
-   * @param sValue
-   */
-  public void setOption(String pName, String sValue) {
-    if (options == null) {
-      options = new Properties();
-    }
-    options.setProperty(pName, sValue);
-  }
-
-  /**
-   * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)<br>
-   * tries to convert the stored string value into an integer number (gives 0 if not possible)<br> 
-   * @param pName the option key (case-sensitive)
-   * @return the converted integer number, 0 if absent or not possible
-   */
-  public int getOptionNumber(String pName) {
-    if (options == null) {
-      return 0;
-    }
-    String pVal = options.getProperty(pName, "0").toLowerCase();
-    int nVal = 0;
-    try {
-      nVal = Integer.getInteger(pVal);
-    } catch (Exception ex) {}
-    return nVal;
-  }
-
-  /**
-   * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)<br>
-   * tries to convert the stored string value into an integer number (gives 0 if not possible)<br> 
-   * @param pName the option key (case-sensitive)
-   * @param nDefault the default to be returned if option absent, empty or not convertable
-   * @return the converted integer number, default if absent, empty or not possible
-   */
-  public int getOptionNumber(String pName, Integer nDefault) {
-    if (options == null) {
-      return nDefault;
-    }
-    String pVal = options.getProperty(pName, nDefault.toString()).toLowerCase();
-    int nVal = nDefault;
-    try {
-      nVal = Integer.getInteger(pVal);
-    } catch (Exception ex) {}
-    return nVal;
-  }
-  
-  /**
-   * all options and their values
-   * @return a map of key-value pairs containing the found options, empty if no options file found 
-   */
-  public Map<String,String> getOptions() {
-    Map<String, String> mapOptions = new HashMap<String, String>();
-    if (options != null) {
-      Enumeration<?> optionNames = options.propertyNames();
-      String optionName; 
-      while (optionNames.hasMoreElements()) {
-        optionName = (String) optionNames.nextElement();
-        mapOptions.put(optionName, getOption(optionName));
-      }
-    }
-    return mapOptions;
-  }
-  
-  /**
-   * all options and their values written to sysout as key = value
-   */
-  public void dumpOptions() {
-    logp("*** options dump %s", fOptions);
-    for (String sOpt: getOptions().keySet()) {
-      logp("%s = %s", sOpt, getOption(sOpt));
-    }
-    logp("*** options dump end");
-  }
-
   void init(Type typ) {
+    for (String line : preLogMessages.split(";")) {
+      if (!line.isEmpty()) {
+        log(lvl, line);
+      }
+    }
     log(lvl, "global init: entering as: %s", typ);
-    
+    log(lvl, "user.home: %s", fUserDir);
+    log(lvl, "user.dir (work dir): %s", fWorkDir);
+     
+//<editor-fold defaultstate="collapsed" desc="general">
     sxBuild = Settings.SikuliVersionBuild;
     sxBuildStamp = sxBuild.replace("_", "").replace("-", "").replace(":", "").substring(0, 12);
 
-//<editor-fold defaultstate="collapsed" desc="general">
     String os = osNameSysProp.toLowerCase();
     if (os.startsWith("mac")) {
       osName = "Mac OSX";
@@ -565,14 +430,15 @@ public class RunTime {
     }
     if (shouldExport) {
       String sysShort = runningOn.toString().toLowerCase();
-      log(lvl, "now exporting libs");
       String fpJarLibs = "/META-INF/libs/" + sysName + "/libs" + javaArch;
       String fpLibsFrom = "";
       if (runningJar) {
         fpLibsFrom = fSxBaseJar.getAbsolutePath();
       } else {
+        String fSrcFolder = typ.toString();
+        if (Type.SETUP.toString().equals(fSrcFolder)) fSrcFolder = "Setup";
         if (!runningWinApp) {
-          fpLibsFrom = fSxBaseJar.getPath().replace(typ.toString(), "Libs" + sysShort) + "/";
+          fpLibsFrom = fSxBaseJar.getPath().replace(fSrcFolder, "Libs" + sysShort) + "/";
         }
       }
       if (testing) {
@@ -585,17 +451,19 @@ public class RunTime {
                   String.format("Libs%s/target/sikulixlibs%s-1.1.0.jar", sysShort, sysShort)).getAbsolutePath();
         }
       }
-      if (!Type.SETUP.equals(typ)) {
-        if (!fpLibsFrom.isEmpty()) {
-          addToClasspath(fpLibsFrom);
-        }
-        uLibsFrom = clsRef.getResource(fpJarLibs);
-        if (uLibsFrom == null) {
-          dumpClassPath();
-          terminate(1, "libs to export not found on above classpath: " + fpJarLibs);
-        }
-        log(lvl, "libs to export are at:\n%s", uLibsFrom);
-        extractRessourcesToFolder(uLibsFrom, fpJarLibs, fLibsFolder);
+      log(lvl, "now exporting libs");
+      if (!fpLibsFrom.isEmpty()) {
+        addToClasspath(fpLibsFrom);
+      }
+      uLibsFrom = clsRef.getResource(fpJarLibs);
+      if (uLibsFrom == null) {
+        dumpClassPath();
+        terminate(1, "libs to export not found on above classpath: " + fpJarLibs);
+      }
+      log(lvl, "libs to export are at:\n%s", uLibsFrom);
+      extractRessourcesToFolder(uLibsFrom, fpJarLibs, fLibsFolder);        
+      for (String aFile : fLibsFolder.list()) {
+        libsLoaded.put(aFile, false);
       }
     }
 //</editor-fold>
@@ -604,6 +472,376 @@ public class RunTime {
     log(lvl, "global init: leaving");
   }
   
+  void initIDEbefore() {
+    log(lvl, "initIDEbefore: entering");
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+        @Override
+        public void run() {
+          log(lvl, "final cleanup");
+          if (isRunning != null) {
+            try {
+              isRunningFile.close();
+            } catch (IOException ex) {
+            }
+            isRunning.delete();
+          }
+          FileManager.cleanTemp();
+        }
+    });
+
+    new File(BaseTempPath).mkdirs();
+    isRunning = new File(BaseTempPath, "sikuli-ide-isrunning");
+    try {
+      isRunning.createNewFile();
+      isRunningFile = new FileOutputStream(isRunning);
+      if (null == isRunningFile.getChannel().tryLock()) {
+        Sikulix.popError("Terminating on FatalError: IDE already running");
+        System.exit(1);
+      }
+    } catch (Exception ex) {
+      Sikulix.popError("Terminating on FatalError: cannot access IDE lock for/n" + isRunning);
+      System.exit(1);
+    }
+
+    if (jreVersion.startsWith("1.6")) {
+			String jyversion = "";
+			Properties prop = new Properties();
+			String fp = "org/python/version.properties";
+			InputStream ifp = null;
+			try {
+				ifp = classLoader.getResourceAsStream(fp);
+				if (ifp != null) {
+					prop.load(ifp);
+					ifp.close();
+					jyversion = prop.getProperty("jython.version");
+				}
+			} catch (IOException ex) {}
+			if (!jyversion.isEmpty() && !jyversion.startsWith("2.5")) {
+				Sikulix.popError(String.format("The bundled Jython %s\n"
+								+ "cannot be used on Java 6!\n"
+								+ "Run setup again in this environment.\n"
+								+ "Click OK to terminate now", jyversion));
+				System.exit(1);
+			}
+		}
+
+    Settings.isRunningIDE = true;
+    
+    if (runningMac) {
+      System.setProperty("apple.laf.useScreenMenuBar", "true");
+      if (!runningMacApp) {
+        if (!Sikulix.popAsk("This use of SikuliX is not supported\n"
+                + "and might lead to misbehavior!\n"
+                + "Click YES to continue (you should be sure)\n"
+                + "Click NO to terminate and check the situation.")) {
+          System.exit(1);
+        }
+      } 
+    }
+    
+    log(lvl, "initIDEbefore: leaving");
+  }
+  
+  void initIDEafter() {
+    log(lvl, "initIDEafter: entering");
+    log(lvl, "initIDEafter: leaving");
+ }  
+
+  void initAPI() {
+    log(lvl, "initAPI: entering");
+    log(lvl, "initAPI: leaving");
+  }  
+
+  void initSetup() {
+    log(lvl, "initSetup: entering");
+    log(lvl, "initSetup: leaving");
+  } 
+  
+  /**
+   * INTERNAL USE: load a native library from the libs folder
+   * @param libname name of library
+   */
+  public static void loadLibrary(String libname) {
+    if (RunTime.get().loadLib(libname)) {
+      return;
+    }
+    ResourceLoader.get().check(Settings.SIKULI_LIB);
+    ResourceLoader.get().loadLib(libname);
+  }
+  
+  boolean loadLib(String libName) {
+    if (runningWindows) {
+      libName += ".dll";
+    } else if (runningMac) {
+      libName = "lib" + libName + ".dylib";      
+    } else if (runningLinux) {
+      libName = "lib" + libName + ".so";      
+    }
+    File fLib = new File(fLibsFolder, libName);
+    Boolean vLib = libsLoaded.get(libName);
+    if (vLib == null || !fLib.exists()) {
+      terminate(1, String.format("lib: %s not available in %s", libName, fLibsFolder));
+    }
+    String msg = "loadLib: %s";
+    if (vLib) {
+      msg += " already loaded";
+    }
+    log(lvl, msg, libName);
+    if (vLib) {
+      return true;
+    }
+    try {
+      System.load(new File(fLibsFolder, libName).getAbsolutePath());
+    } catch (Error e) {
+      log(-1, "Problematic lib: %s (...TEMP...)", fLib);
+      log(-1, "%s loaded, but it might be a problem with needed dependent libraries\nERROR: %s",
+              libName, e.getMessage().replace(fLib.getAbsolutePath(), "...TEMP..."));
+      terminate(1, "problem with native library: " + libName);
+    }
+    libsLoaded.put(libName, true);
+    return true;
+  }
+  
+  void loadOptions(Type typ) {
+
+    String tmpdir = System.getProperty("user.home");
+    if (tmpdir != null && !tmpdir.isEmpty()) {
+      fUserDir = new File(tmpdir);
+    } else {
+      fUserDir = new File(fTempPath, "SikuliXuser_" + userName);
+      FileManager.resetFolder(runTime.fUserDir);
+      log(-1, "init: user.home not valid (null or empty) - using empty:\n%s", fUserDir);
+    }
+    
+    tmpdir = System.getProperty("user.dir");
+    if (tmpdir != null && !tmpdir.isEmpty()) {
+      fWorkDir = new File(tmpdir);
+    } else {
+      fWorkDir = new File(fTempPath, "SikuliXwork");
+      FileManager.resetFolder(fWorkDir);
+      log(-1, "init: user.dir (working folder) not valid (null or empty) - using empty:\n%s", fWorkDir);
+    }
+        
+    File fDebug = new File(fUserDir, "SikulixDebug.txt");
+    if (fDebug.exists()) {
+      if (Debug.getDebugLevel() == 0) {
+        Debug.setDebugLevel(3);
+      }
+      Debug.setLogFile(fDebug.getAbsolutePath());
+      if (Type.IDE.equals(typ)) {
+        System.setProperty("sikuli.console", "false");
+      }
+      logp("auto-debugging with level %d into %s", Debug.getDebugLevel(), fDebug);
+    }
+   
+    fOptions = new File(fWorkDir, fnOptions);
+    if (!fOptions.exists()) {
+      fOptions = new File(fUserDir, fnOptions);
+      if (!fOptions.exists()) {
+        fOptions = null;
+      }
+    }
+    if (fOptions != null) {
+      options = new Properties();
+      String svf = "sikulixversion.txt";
+      try {
+        InputStream is;
+        is = new FileInputStream(fOptions);
+        options.load(is);
+        is.close();
+      } catch (Exception ex) {
+        log(-1, "while checking Options file: %s", fOptions);
+        fOptions = null;
+        options = null;
+      }
+      log(lvl, "have Options file at: %s", fOptions);
+      testing = isOption("testing", false);
+      if (testing) Debug.setDebugLevel(3);
+    }
+  }
+ 
+  /**
+   * NOT IMPLEMENTED YET
+   * load an options file, that is merged with an existing options store (same key overwrites value)
+   * @param fpOptions path to a file containing options
+   */
+  public void loadOptions(String fpOptions) {
+    log(-1, "loadOptions: not yet implemented");
+  }
+  
+  /**
+   * NOT IMPLEMENTED YET
+   * saves  the current option store to a file (overwritten)
+   * @param fpOptions path to a file 
+   * @return success
+   */
+  public boolean saveOptions(String fpOptions) {
+    log(-1, "saveOptions: not yet implemented");
+    return false;
+  }
+
+  /**
+   * NOT IMPLEMENTED YET
+   * saves  the current option store to the file it was created from (overwritten) 
+   * @return success, false if the current store was not created from file
+   */
+  public boolean saveOptions() {
+    log(-1, "saveOptions: not yet implemented");
+    return false;
+  }
+  
+  
+  /**
+   * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)
+   * @param pName the option key (case-sensitive)
+   * @return true only if option exists and has yes or true (not case-sensitive), in all other cases false
+   */
+  public boolean isOption(String pName) {
+    if (options == null) {
+      return false;
+    }
+    String pVal = options.getProperty(pName, "false").toLowerCase();
+    if (pVal.isEmpty() || pVal.contains("yes") || pVal.contains("true")) {
+      return true;
+    }
+    return false;
+  }
+  
+  /**
+   * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)
+   * @param pName the option key (case-sensitive)
+   * @param bDefault the default to be returned if option absent or empty
+   * @return true if option has yes or no, false for no or false (not case-sensitive)
+   */
+  public boolean isOption(String pName, Boolean bDefault) {
+    if (options == null) {
+      return bDefault;
+    }
+    String pVal = options.getProperty(pName, bDefault.toString()).toLowerCase();
+    if (pVal.isEmpty()) {
+      return bDefault;
+    } else if (pVal.contains("yes") || pVal.contains("true")) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+   * look into the option file if any (if no option file is found, the option is taken as not existing)
+   * @param pName the option key (case-sensitive)
+   * @return the associated value, empty string if absent
+   */
+  public String getOption(String pName) {
+    if (options == null) {
+      return "";
+    }
+    String pVal = options.getProperty(pName, "").toLowerCase();
+    return pVal;
+  }
+
+  /**
+   * look into the option file if any (if no option file is found, the option is taken as not existing)<br>
+   * side-effect: if no options file is there, an options store will be created in memory<br>
+   * in this case and when the option is absent or empty, the given default will be stored<br>
+   * you might later save the options store to a file with storeOptions()
+   * @param pName the option key (case-sensitive)
+   * @param sDefault the default to be returned if option absent or empty
+   * @return the associated value, the default value if absent or empty
+   */
+  public String getOption(String pName, String sDefault) {
+    if (options == null) {
+      options = new Properties();
+      options.setProperty(pName, sDefault);
+      return sDefault;
+    }
+    String pVal = options.getProperty(pName, sDefault).toLowerCase();
+    if (pVal.isEmpty()) {
+      options.setProperty(pName, sDefault);
+      return sDefault;
+    }
+    return pVal;
+  }
+
+  /**
+   * store an option key-value pair, overwrites existing value<br>
+   * new option store is created if necessary and can later be saved to a file
+   * @param pName
+   * @param sValue
+   */
+  public void setOption(String pName, String sValue) {
+    if (options == null) {
+      options = new Properties();
+    }
+    options.setProperty(pName, sValue);
+  }
+
+  /**
+   * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)<br>
+   * tries to convert the stored string value into an integer number (gives 0 if not possible)<br> 
+   * @param pName the option key (case-sensitive)
+   * @return the converted integer number, 0 if absent or not possible
+   */
+  public int getOptionNumber(String pName) {
+    if (options == null) {
+      return 0;
+    }
+    String pVal = options.getProperty(pName, "0").toLowerCase();
+    int nVal = 0;
+    try {
+      nVal = Integer.decode(pVal);
+    } catch (Exception ex) {}
+    return nVal;
+  }
+
+  /**
+   * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)<br>
+   * tries to convert the stored string value into an integer number (gives 0 if not possible)<br> 
+   * @param pName the option key (case-sensitive)
+   * @param nDefault the default to be returned if option absent, empty or not convertable
+   * @return the converted integer number, default if absent, empty or not possible
+   */
+  public int getOptionNumber(String pName, Integer nDefault) {
+    if (options == null) {
+      return nDefault;
+    }
+    String pVal = options.getProperty(pName, nDefault.toString()).toLowerCase();
+    int nVal = nDefault;
+    try {
+      nVal = Integer.decode(pVal);
+    } catch (Exception ex) {}
+    return nVal;
+  }
+  
+  /**
+   * all options and their values
+   * @return a map of key-value pairs containing the found options, empty if no options file found 
+   */
+  public Map<String,String> getOptions() {
+    Map<String, String> mapOptions = new HashMap<String, String>();
+    if (options != null) {
+      Enumeration<?> optionNames = options.propertyNames();
+      String optionName; 
+      while (optionNames.hasMoreElements()) {
+        optionName = (String) optionNames.nextElement();
+        mapOptions.put(optionName, getOption(optionName));
+      }
+    }
+    return mapOptions;
+  }
+  
+  /**
+   * all options and their values written to sysout as key = value
+   */
+  public void dumpOptions() {
+    if (fOptions != null && options.size() > 0) {
+      logp("*** options dump %s", fOptions);
+      for (String sOpt: getOptions().keySet()) {
+        logp("%s = %s", sOpt, getOption(sOpt));
+      }
+      logp("*** options dump end");
+    }
+  }
+
   /**
    * export all resource files from the given subtree on classpath to the given folder retaining the subtree 
    * @param uFrom base where the subtree is contained (folder or jar on classpath)
@@ -764,93 +1002,6 @@ public class RunTime {
   File isRunning = null;
   FileOutputStream isRunningFile = null;
 
-  void initIDEbefore() {
-    log(lvl, "initIDEbefore: entering");
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-        @Override
-        public void run() {
-          log(lvl, "final cleanup");
-          if (isRunning != null) {
-            try {
-              isRunningFile.close();
-            } catch (IOException ex) {
-            }
-            isRunning.delete();
-          }
-          FileManager.cleanTemp();
-        }
-    });
-
-    new File(BaseTempPath).mkdirs();
-    isRunning = new File(BaseTempPath, "sikuli-ide-isrunning");
-    try {
-      isRunning.createNewFile();
-      isRunningFile = new FileOutputStream(isRunning);
-      if (null == isRunningFile.getChannel().tryLock()) {
-        Sikulix.popError("Terminating on FatalError: IDE already running");
-        System.exit(1);
-      }
-    } catch (Exception ex) {
-      Sikulix.popError("Terminating on FatalError: cannot access IDE lock for/n" + isRunning);
-      System.exit(1);
-    }
-
-    if (jreVersion.startsWith("1.6")) {
-			String jyversion = "";
-			Properties prop = new Properties();
-			String fp = "org/python/version.properties";
-			InputStream ifp = null;
-			try {
-				ifp = classLoader.getResourceAsStream(fp);
-				if (ifp != null) {
-					prop.load(ifp);
-					ifp.close();
-					jyversion = prop.getProperty("jython.version");
-				}
-			} catch (IOException ex) {}
-			if (!jyversion.isEmpty() && !jyversion.startsWith("2.5")) {
-				Sikulix.popError(String.format("The bundled Jython %s\n"
-								+ "cannot be used on Java 6!\n"
-								+ "Run setup again in this environment.\n"
-								+ "Click OK to terminate now", jyversion));
-				System.exit(1);
-			}
-		}
-
-    Settings.isRunningIDE = true;
-    
-    if (Settings.isMac()) {
-      System.setProperty("apple.laf.useScreenMenuBar", "true");
-      if (!Settings.isMacApp) {
-        if (!Sikulix.popAsk("This use of SikuliX is not supported\n"
-                + "and might lead to misbehavior!\n"
-                + "Click YES to continue (you should be sure)\n"
-                + "Click NO to terminate and check the situation.")) {
-          System.exit(1);
-        }
-      } else {
-        log(lvl, "running on Mac as SikuliX.app");
-      }
-    }
-    
-    log(lvl, "initIDEbefore: leaving");
-  }
-  
-  void initIDEafter() {
-    log(lvl, "initIDEafter: entering");
-    log(lvl, "initIDEafter: leaving");
- }  
-
-  void initAPI() {
-    log(lvl, "initAPI: entering");
-    log(lvl, "initAPI: leaving");
-  }  
-
-  void initSetup() {
-    log(lvl, "initSetup: entering");
-    log(lvl, "initSetup: leaving");
-  } 
-  
   boolean checkLibs(File flibsFolder) {
     // 1.1-MadeForSikuliX64M.txt
     String name = String.format("1.1-MadeForSikuliX%d%s.txt", javaArch, runningOn.toString().substring(0, 1));

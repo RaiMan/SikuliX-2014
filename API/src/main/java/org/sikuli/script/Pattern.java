@@ -17,6 +17,8 @@ import java.net.URL;
  * - image as in-memory image
  */
 public class Pattern {
+  
+  static RunTime runTime = RunTime.get();
 
   private Image image = null;
   private float similarity = (float) Settings.MinSimilarity;

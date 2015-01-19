@@ -12,30 +12,36 @@ import java.util.*;
 import org.sikuli.basics.Debug;
 
 public class SikuliIDEI18N {
-   static ResourceBundle i18nRB, i18nRB_en;
-   static Locale curLocale;
+   static ResourceBundle i18nRB = null;
+   static ResourceBundle i18nRB_en = null;
+   static Locale curLocale = null;
 
    static {
       Locale locale_en = new Locale("en","US");
       i18nRB_en = ResourceBundle.getBundle("i18n/IDE",locale_en);
       Locale locale = PreferencesUser.getInstance().getLocale();
+      curLocale = locale;
       if(!setLocale(locale)){
          locale = locale_en;
          PreferencesUser.getInstance().setLocale(locale);
       }
-      Debug.log(2, "locale: " + locale);
    }
 
    public static boolean setLocale(Locale locale){
-      curLocale = locale;
       try{
          i18nRB = ResourceBundle.getBundle("i18n/IDE",locale);
       }
       catch(MissingResourceException e){
-         Debug.error("no locale for " + locale);
+         Debug.error("SikuliIDEI18N: no locale for " + locale);
          return false;
       }
       return true;
+   }
+   
+   public static String getLocaleShow() {
+     String ret = curLocale.toString();
+     if (i18nRB == null) ret += " (using en_US)";
+     return ret;
    }
 
    public static String _I(String key, Object... args){

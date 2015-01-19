@@ -12,6 +12,7 @@ import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import org.sikuli.script.RunTime;
 
 /**
  * Debug is a utility class that wraps println statements and allows more or less command line
@@ -31,7 +32,7 @@ import java.util.Date;
  * This solution is NOT threadsafe !!!
  */
 public class Debug {
-
+  
   private static int DEBUG_LEVEL = 0;
 	private static boolean loggerRedirectSupported = true;
   private long _beginTime = 0;

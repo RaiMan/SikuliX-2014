@@ -30,9 +30,12 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.ImagePath;
+import org.sikuli.script.RunTime;
 import org.sikuli.script.Sikulix;
 
 public class ScriptRunner {
+  
+  static RunTime runTime = RunTime.get();
 
 	private static final String me = "ScriptRunner: ";
   private static final int lvl = 3;
@@ -422,10 +425,9 @@ public class ScriptRunner {
       }
     }
 
-    Settings.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
+    runTime.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
     log(lvl, "CmdOrg: " + System.getenv("SIKULI_COMMAND"));
-    Settings.showJavaInfo();
-    Settings.printArgs();
+    runTime.printArgs();
 
     // select script runner and/or start interactive session
     // option is overloaded - might specify runner for -r/-t

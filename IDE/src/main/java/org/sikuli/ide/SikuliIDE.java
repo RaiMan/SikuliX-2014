@@ -17,14 +17,12 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import javax.swing.*;
 import javax.swing.event.*;
 import javax.swing.text.*;
@@ -50,7 +48,6 @@ import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
 import org.sikuli.idesupport.IIDESupport;
 import org.sikuli.script.ImagePath;
-import org.sikuli.basics.ResourceLoader;
 import org.sikuli.script.RunTime;
 import org.sikuli.scriptrunner.ScriptRunner;
 import org.sikuli.idesupport.IDESupport;
@@ -142,16 +139,13 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   private static RunTime runTime;
   public static void main(String[] args) {
 
-    boolean inittest = false;
-    if (args.length > 0 && "inittest".equals(args[0])) {
-      inittest = true;
-      Debug.setDebugLevel(3);
-    }
     start = (new Date()).getTime();
-
+    
+    int debuglevel = RunTime.checkArgs(args);
     runTime = RunTime.get(RunTime.Type.IDE);
         
     getInstance();
+    log(3, "running with Locale: %s", SikuliIDEI18N.getLocaleShow());
 
  		sikulixIDE.initNativeSupport();
 
@@ -163,7 +157,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       System.exit(1);
     }
 
-    if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
+    if (debuglevel < 0 && cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
       cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
       if (cmdValue == null) {
         Debug.setDebugLevel(3);
@@ -209,19 +203,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       ScriptRunner.runscript(args);
     }
 
-    if (Settings.isWindows()) {
-//Settings.isWinApp = true;
-      if (Settings.isWinApp) {
-        String osarch = System.getProperty("os.arch");
-        osarch = osarch.contains("64") ? "64" : "32";
-        log(lvl, "Running as Windows %s Application in \n%s", osarch, Settings.getInstallBase());
-        if (!runTime.baseJar.endsWith(".exe")) {
-          Sikulix.addToClasspath(Settings.SikuliLocalRepo + "com/sikulix/sikulixlibswin/1.1.0/sikulixlibswin-1.1.0.jar");
-        }
-        ResourceLoader.get().check(Settings.SIKULI_LIB);
-      }
-    }
-
 //TODO how to differentiate open and run for doubleclick/drop scripts
     if (macOpenFiles != null) {
       for (File f : macOpenFiles) {
@@ -231,9 +212,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       }
     }
 
-    Settings.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
-    Settings.showJavaInfo();
-    Settings.printArgs();
+    runTime.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
+    runTime.printArgs();
 
     try {
       UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
@@ -257,8 +237,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     _windowSize = prefs.getIdeSize();
     _windowLocation = prefs.getIdeLocation();
-
-    ResourceLoader.get().check(Settings.SIKULI_LIB);
 
     Screen m = (Screen) (new Location(_windowLocation)).getScreen();
     if (m == null) {
@@ -2154,7 +2132,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 							if (tabtitle.startsWith("*")) {
 								tabtitle = tabtitle.substring(1);
 							}
-							int ret = srunner.runScript(scriptFile, path, Settings.getArgs(),
+							int ret = srunner.runScript(scriptFile, path, runTime.getArgs(),
 											new String[]{parent, tabtitle});
 							addErrorMark(ret);
 							srunner.close();

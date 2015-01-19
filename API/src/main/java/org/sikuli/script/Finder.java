@@ -7,7 +7,6 @@
 package org.sikuli.script;
 
 import org.sikuli.basics.Settings;
-import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Debug;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
@@ -28,6 +27,8 @@ import org.sikuli.natives.Vision;
  */
 public class Finder implements Iterator<Match> {
 
+  static RunTime runTime = RunTime.get();
+  
   private Region _region = null;
   private Pattern _pattern = null;
   private FindInput _findInput = new FindInput();

@@ -21,7 +21,6 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import org.sikuli.basics.FileManager;
 import org.sikuli.natives.OSUtil;
 import org.sikuli.natives.SysUtil;
 
@@ -34,6 +33,8 @@ import org.sikuli.natives.SysUtil;
  * (cosult the docs for more info)
  */
 public class App {
+  
+  static RunTime runTime = RunTime.get();
 
   protected static final OSUtil _osUtil = SysUtil.getOSUtil();
   protected String _appName;
@@ -41,7 +42,6 @@ public class App {
 
   static {
 //TODO Sikuli hangs if App is used before Screen
-    //System.out.println("[static] App");
     new Screen();
 		String libName = _osUtil.getLibName();
 		if (!libName.isEmpty()) {

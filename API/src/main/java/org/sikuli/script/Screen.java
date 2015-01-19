@@ -27,6 +27,8 @@ import org.sikuli.basics.FileManager;
  * <br>The so called primary screen is the one with top left (0,0) and has id 0.
  */
 public class Screen extends Region implements EventObserver, IScreen {
+  
+  static RunTime runTime = RunTime.get();
 
   private static String me = "Screen: ";
   private static int lvl = 3;

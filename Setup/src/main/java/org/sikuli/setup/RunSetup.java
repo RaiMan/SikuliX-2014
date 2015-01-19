@@ -55,32 +55,32 @@ public class RunSetup {
 	private static String workDir;
 	private static String uhome;
 	private static String logfile;
-	private static String version = Settings.getVersionShort();
+	private static String version;
 //TODO wrong if version number parts have more than one digit
-	private static String minorversion = Settings.getVersionShort().substring(0, 5);
-	private static String majorversion = Settings.getVersionShort().substring(0, 3);
+	private static String minorversion;
+	private static String majorversion;
 	private static String updateVersion;
 	private static String downloadSetup;
 	private static String downloadMavenSnapshot = "";
 	private static String downloadMavenRelease = "";
-	private static String downloadIDE = version + "-1.jar";
-	private static String downloadAPI = version + "-2.jar";
-	private static String downloadRServer = version + "-3.jar";
-	private static String downloadJython = new File(Settings.SikuliJythonMaven).getName();
-	private static String downloadJRuby = new File(Settings.SikuliJRubyMaven).getName();
-	private static String downloadJRubyAddOns = version + "-6.jar";
+	private static String downloadIDE;
+	private static String downloadAPI;
+	private static String downloadRServer;
+	private static String downloadJython;
+	private static String downloadJRuby;
+	private static String downloadJRubyAddOns;
 	private static String downloadMacAppSuffix = "-9.jar";
-	private static String downloadMacApp = minorversion + downloadMacAppSuffix;
+	private static String downloadMacApp;
 	private static String downloadTessSuffix = "-8.jar";
-	private static String downloadTess = minorversion + downloadTessSuffix;
+	private static String downloadTess;
 	private static String localAPI = "sikulixapi.jar";
 	private static String localIDE = "sikulix.jar";
 	private static String fMacApp = "SikuliX.app";
-	private static String fMacAppContent = fMacApp + "/Contents";
+	private static String fMacAppContent;
 	private static String fMacAppContentOrg = "macapp";
-	private static String fMacAppjar = fMacAppContent + "/Java/sikulix.jar";
-	private static String setupName = "sikulixsetup-" + version;
-	private static String localSetup = setupName + ".jar";
+	private static String fMacAppjar;
+	private static String setupName;
+	private static String localSetup;
 	private static String localUpdate = "sikulixupdate";
 	private static String localTess = "sikulixtessdata.jar";
 	private static String localRServer = "sikulixremoterobot.jar";
@@ -112,7 +112,7 @@ public class RunSetup {
 	private static long start;
 	private static boolean runningSetup = false;
 	private static boolean generallyDoUpdate = false;
-	private static String timestampBuilt = Settings.SikuliVersionBuild;
+	private static String timestampBuilt;
 	private static boolean logToFile = true;
 	private static boolean hasOptions = false;
 	private static int logLevel = 3;
@@ -197,7 +197,25 @@ public class RunSetup {
     
     runTime = RunTime.get(RunTime.Type.SETUP);
 
-		PreferencesUser prefs = PreferencesUser.getInstance();
+    version = Settings.getVersionShort();
+//TODO wrong if version number parts have more than one digit
+    minorversion = Settings.getVersionShort().substring(0, 5);
+    majorversion = Settings.getVersionShort().substring(0, 3);
+    downloadIDE = version + "-1.jar";
+    downloadAPI = version + "-2.jar";
+    downloadRServer = version + "-3.jar";
+    downloadJython = new File(Settings.SikuliJythonMaven).getName();
+    downloadJRuby = new File(Settings.SikuliJRubyMaven).getName();
+    downloadJRubyAddOns = version + "-6.jar";
+    downloadMacApp = minorversion + downloadMacAppSuffix;
+    downloadTess = minorversion + downloadTessSuffix;
+	  fMacAppContent = fMacApp + "/Contents";
+	  fMacAppjar = fMacAppContent + "/Java/sikulix.jar";
+	  setupName = "sikulixsetup-" + version;
+	  localSetup = setupName + ".jar";
+    timestampBuilt = Settings.SikuliVersionBuild;
+
+    PreferencesUser prefs = PreferencesUser.getInstance();
 		boolean prefsHaveProxy = false;
 
 		CodeSource codeSrc = RunSetup.class.getProtectionDomain().getCodeSource();
@@ -360,15 +378,7 @@ public class RunSetup {
 			}
 		}
 
-		runningJar = FileManager.getJarName(RunSetup.class);
-
-		if (runningJar.isEmpty()) {
-			popError("error accessing jar - terminating");
-			System.exit(999);
-		}
-		if (runningJar.startsWith("sikulixupdate")) {
-			runningUpdate = true;
-		}
+		runningJar = runTime.fSxBaseJar.getAbsolutePath();
 
 		if (runningUpdate) {
 			localLogfile = "SikuliX-" + version + "-UpdateLog.txt";
@@ -474,16 +484,13 @@ public class RunSetup {
 		//<editor-fold defaultstate="collapsed" desc="general preps">
 		Settings.runningSetup = true;
 		Settings.LogTime = true;
-		Debug.setDebugLevel(logLevel);
 
-		uhome = System.getProperty("user.home");
-		runningJar = FileManager.getJarPath(RunSetup.class);
-		workDir = new File(runningJar).getParent();
+		uhome = runTime.fUserDir.getAbsolutePath();
+		workDir = runTime.fSxBase.getAbsolutePath();
 
-		osarch = Settings.JavaArch;
-		osarch = osarch.contains("64") ? "64" : "32";
-		if (Settings.isLinux()) {
-			String result = ResourceLoader.get().runcmd("lsb_release -i -r -s");
+		osarch = "" + runTime.javaArch;
+		if (runTime.runningLinux) {
+			String result = runTime.runcmd("lsb_release -i -r -s");
 			linuxDistro = result.replaceAll("\n", " ").trim();
 			if (linuxDistro.contains("*** error ***")) {
 				log0(-1, "command returns error: lsb_release -i -r -s\n%s", result);
@@ -531,10 +538,6 @@ public class RunSetup {
 			log1(lvl, "... starting with: " + Sikulix.arrayToString(args));
 		} else {
 			log1(lvl, "... starting with no args given");
-		}
-
-		if (logToFile && !hasOptions) {
-			Settings.getStatus();
 		}
 //</editor-fold>
 
@@ -1338,7 +1341,7 @@ public class RunSetup {
 			jarsList[0] = localJar;
 			if (getJython) {
 				jarsList[3] = (new File(workDir, localJython)).getAbsolutePath();
-        if (winLibs.exists()) {
+        if (winLibs != null && winLibs.exists()) {
           FileManager.unpackJar(new File(dlDir, downloadAPI).getAbsolutePath(), winLibs.getAbsolutePath(), 
                   false, false, new FileManager.JarFileFilter() {
             @Override
@@ -1865,7 +1868,7 @@ public class RunSetup {
 		File setupjar = null;
 		if (path.isEmpty()) {
 			if (runningJar.endsWith("classes") || runningJar.endsWith("-plain.jar")) {
-				projectDir = new File(workDir).getParentFile().getParentFile().getAbsolutePath();
+				projectDir = runTime.fSxProject.getAbsolutePath();
 			} else {
 				success = false;
 			}
@@ -1880,7 +1883,8 @@ public class RunSetup {
 				if (new File(projectDir, "Setup").exists()) {
 					File ftargetDir = new File(projectDir, "Setup/target/Setup");
 					if (ftargetDir.exists()) {
-						FileManager.deleteFileOrFolder(ftargetDir.getAbsolutePath(),
+            targetDir = ftargetDir.getAbsolutePath();
+						FileManager.deleteFileOrFolder(targetDir,
 										new FileManager.FileFilter() {
 											@Override
 											public boolean accept(File entry) {
@@ -1897,7 +1901,6 @@ public class RunSetup {
 										});
 					}
 					ftargetDir.mkdirs();
-					targetDir = ftargetDir.getAbsolutePath();
 				} else {
 					success = false;
 				}
