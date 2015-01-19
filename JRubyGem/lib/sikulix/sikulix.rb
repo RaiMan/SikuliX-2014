@@ -149,35 +149,31 @@ module Sikulix
   # Pool of screens of remote machines connected via VNC.
   $VNC_SCREEN_POOL = []
   # ConnectionController instance
-  @cc = false
+  @connection_controller = false
 
   # Initializes connections to remote machines
   # *args - sequence of address[:port] strings. Default port - 5900
   # example: 
   # initVNCPool("192.168.2.3:5901", "192.168.4.3")
   def initVNCPool(*args)
-    if @cc
+    if @connection_controller
       puts 'VNC Pool already initialized, free it first!'
       return
     end
     sockets = []
     args.each do |str|
       address, port = str.scan(/([^:]+):?(.+)?/)[0]
-      if !port
-        port = 5900
-      else
-        port = port.to_i
-      end
+      port = port ? port.to_i : 5900
       s = Socket.new(address, port)
       s.setSoTimeout(1000)
       s.setKeepAlive(true)
       sockets << s
     end
-    @cc = ConnectionController.new(*sockets)
+    @connection_controller = ConnectionController.new(*sockets)
     sockets.each_index do |id|
-      @cc.openConnection(id)
-      @cc.setPixelFormat(id, 'Truecolor', 32, 0)
-      @cc.start(id)
+      @connection_controller.openConnection(id)
+      @connection_controller.setPixelFormat(id, 'Truecolor', 32, 0)
+      @connection_controller.start(id)
     end
     # sleep left here to wait for buffering
     # it seems that there is no methods in ConnectionController class
@@ -213,8 +209,8 @@ module Sikulix
   # You should call that method when all actions are performed
   # Connections shouldn`t be left opened
   def freeVNCPool
-    $VNC_SCREEN_POOL.size.times { @cc.close_connection(0) }
-    @cc = false
+    $VNC_SCREEN_POOL.size.times { @connection_controller.close_connection(0) }
+    @connection_controller = false
   end
 
 # This is an alternative for method generation using define_method
