@@ -240,12 +240,12 @@ module Sikulix
 
   # Generate static methods in Sikulix context
   # for possible "undotted" methods.
-  Sikulix.java_class.method(:java_class_methods).call.map(&:name).uniq.each do |name|
+  Sikulix.java_class.java_class_methods.map(&:name).uniq.each do |name|
     obj_meth = Sikulix.method(name)
     dynamic_def(name) { |*args, &block| obj_method.call(*args, &block) }
   end
 
-  $SIKULI_SCREEN.java_class.method(:java_instance_methods).call.map(&:name).uniq.each do |name|
+  $SIKULI_SCREEN.java_class.java_instance_methods.map(&:name).uniq.each do |name|
     dynamic_def(name) { |*args, &block| $DEFAULT_SCREEN.method(name).call(*args, &block) }
   end
 
