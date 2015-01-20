@@ -10,7 +10,7 @@ module Sikulix
   # 'private' for avoiding of unexpected effects when
   #   'include Sikulix' is used.
   java_import java.net.Socket
-  java_import 'edu.unh.iol.dlc.ConnectionController'
+  java_import Java.edu.unh.iol.dlc.ConnectionController
   java_import org.sikuli.script.Sikulix
   java_import org.sikuli.script.Screen
   java_import org.sikuli.script.Region
@@ -183,7 +183,7 @@ module Sikulix
     # that import isn`t in the top of a module because
     # there is static section in it which requires
     # ConnectionController instance to exist
-    java_import 'edu.unh.iol.dlc.VNCScreen'
+    java_import Java.edu.unh.iol.dlc.VNCScreen
     sockets.each_index do |id|
       $VNC_SCREEN_POOL << VNCScreen.new(id)
     end
