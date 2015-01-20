@@ -6,7 +6,6 @@ require 'java'
 # Classes and methods for using SikuliX
 module Sikulix
   private
-
   # 'private' for avoiding of unexpected effects when
   #   'include Sikulix' is used.
   java_import java.net.Socket
@@ -294,9 +293,9 @@ module Sikulix
     dynamic_def(name) { |*args| cl.new(*args) }
   end
   dynamic_def("Location") { |*args| Location.new(*args).setOtherScreen($DEFAULT_SCREEN) }
-
 end
 
+# This is an alternative for method generation using define_method
 ## This method allow to call "undotted" methods that belong to
 ## Region/Screen or SikuliX classes.
 # def self.method_missing(name, *args, &block)
