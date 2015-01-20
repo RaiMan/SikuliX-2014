@@ -49,9 +49,9 @@ module Sikulix
 
   java_import org.sikuli.basics.Debug
 
-	begin
-	  java_import org.sikuli.scriptrunner.ScriptRunner
-	rescue
+  begin
+    java_import org.sikuli.scriptrunner.ScriptRunner
+  rescue
   end
 
   #
@@ -159,36 +159,42 @@ module Sikulix
       Debug.log(3, 'VNC Pool already initialized, free it first!')
       return
     end
-    sockets = []
-    args.each do |str|
+
+    sockets = args.map do |str|
       address, port = str.scan(/([^:]+):?(.+)?/)[0]
       port = port ? port.to_i : 5900
       s = Socket.new(address, port)
       s.setSoTimeout(1000)
       s.setKeepAlive(true)
-      sockets << s
+      s
     end
+
     @connection_controller = ConnectionController.new(*sockets)
     sockets.each_index do |id|
       @connection_controller.openConnection(id)
       @connection_controller.setPixelFormat(id, 'Truecolor', 32, 0)
       @connection_controller.start(id)
     end
+
     # sleep left here to wait for buffering
     # it seems that there is no methods in ConnectionController class
     # with which we can check if connection is ready
     # so we will sleep according to ConnectionController author`s example
+
     sleep 2
+
     # that import isn`t in the top of a module because
     # there is static section in it which requires
     # ConnectionController instance to exist
     java_import Java.edu.unh.iol.dlc.VNCScreen
+
     sockets.each_index do |id|
       $VNC_SCREEN_POOL << VNCScreen.new(id)
     end
+
     Debug.log(3, "Pool of #{$SCREEN_POOL} vnc connections initialized")
   end
-  
+
   # Replaces default screen for which all undotted methods are
   # called with another screen
   # example:
@@ -203,12 +209,12 @@ module Sikulix
       Debug.log("Screen switched")
     end
   end
-  
+
   # Closes all the connections to remote nodes
   # You should call that method when all actions are performed
   # Connections shouldn`t be left opened
   def freeVNCPool
-    $VNC_SCREEN_POOL.size.times { @connection_controller.close_connection(0) }
+    $VNC_SCREEN_POOL.each { @connection_controller.close_connection(0) }
     @connection_controller = false
   end
 
