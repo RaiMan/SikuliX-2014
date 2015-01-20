@@ -157,7 +157,7 @@ module Sikulix
   # initVNCPool("192.168.2.3:5901", "192.168.4.3")
   def initVNCPool(*args)
     if @connection_controller
-      puts 'VNC Pool already initialized, free it first!'
+      Debug.log(3, 'VNC Pool already initialized, free it first!')
       return
     end
     sockets = []
@@ -187,7 +187,7 @@ module Sikulix
     sockets.each_index do |id|
       $VNC_SCREEN_POOL << VNCScreen.new(id)
     end
-    puts "Pool of #{$SCREEN_POOL} vnc connections initialized"
+    Debug.log(3, "Pool of #{$SCREEN_POOL} vnc connections initialized")
   end
   
   # Replaces default screen for which all undotted methods are
@@ -201,7 +201,7 @@ module Sikulix
   def setDefaultScreen(screen)
     if screen.respond_to?(:click)
       $DEFAULT_SCREEN = screen
-      puts "Screen switched"
+      Debug.log("Screen switched")
     end
   end
   
