@@ -710,16 +710,25 @@ public class FileManager {
 
   public static URL makeURL(String fName, String type) {
     try {
-			fName = normalizeAbsolute(fName);
+      if ("file".equals(type)) {
+        fName = normalizeAbsolute(new File(fName).getPath());
+        if (!fName.startsWith("/")) {
+          fName = "/" + fName;
+        }
+      }
 			if ("jar".equals(type)) {
 				if (!fName.contains("!/")) {
 					fName += "!/";
 				}
-				if (!fName.startsWith("file://")) {
-          fName = new URL("file", null, fName).toString();
-        }
 				return new URL("jar:" + fName);
-			}
+			} else if ("file".equals(type)) {
+        File aFile = new File(fName);
+        if (aFile.exists() && aFile.isDirectory()) {
+          if (!fName.endsWith("/")) {
+            fName += "/";
+          }
+        }
+      }
       return new URL(type, null, fName);
     } catch (MalformedURLException ex) {
       return null;
@@ -729,13 +738,13 @@ public class FileManager {
   public static URL makeURL(URL path, String fName) {
     try {
 			if ("file".equals(path.getProtocol())) {
-				return new URL("file", null, new File(path.getPath(), fName).getAbsolutePath());
+				return makeURL(new File(path.getFile(), fName).getAbsolutePath());
 			} else if ("jar".equals(path.getProtocol())) {
 				String jp = path.getPath();
 				if (!jp.contains("!/")) {
 					jp += "!/";
 				}
-				String jpu = "jar:" + jp + fName;
+				String jpu = "jar:" + jp + "/" + fName;
 				return new URL(jpu);
 			}
       return new URL(path, slashify(fName, false));
@@ -744,15 +753,24 @@ public class FileManager {
     }
   }
 
-  public static URL getURLForContentFromURL(URL path, String fName) {
-    String type = path.getProtocol();
-    URL u = makeURL(new File(path.getPath(), slashify(fName, false)).getPath(), path.getProtocol());
+  public static URL getURLForContentFromURL(URL uRes, String fName) {
+    URL aURL = null;
+    if ("jar".equals(uRes.getProtocol())) {
+      return makeURL(uRes, fName);
+    } else if ("file".equals(uRes.getProtocol())) {
+      aURL = makeURL(new File(slashify(uRes.getPath(), false), slashify(fName, false)).getPath(), uRes.getProtocol());
+    } else if ("http".equals(uRes.getProtocol())) {
+      return null;
+    } 
     try {
-      u.getContent();
-      return u;
+      if (aURL != null) {
+        aURL.getContent();
+        return aURL;
+      }
     } catch (IOException ex) {
       return null;
     }
+    return aURL;
   }
 
 	public static boolean checkJarContent(String jarPath, String jarContent) {

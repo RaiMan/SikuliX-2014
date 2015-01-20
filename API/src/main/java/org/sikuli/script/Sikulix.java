@@ -72,7 +72,25 @@ public class Sikulix {
     if (dl > -1) {
       debugLevel = dl;
     }
-    rt = RunTime.reset();
+    rt = RunTime.get();
+    File fSetupJar = null;
+    if (rt.fSxProject == null) {
+      fSetupJar = new File(rt.fSxBase, "sikulixsetup-1.1.0.jar");
+    } else {
+      fSetupJar = new File(rt.fSxProject, "Setup/target/sikulixsetup-1.1.0-plain.jar");
+    }
+    if (!fSetupJar.exists()) {
+      log(-1, "cannot run - missing: %s", fSetupJar);
+      System.exit(1);
+    }
+    rt.addToClasspath(fSetupJar.getPath());
+    rt.dumpClassPath();
+    Screen s = new Screen();
+    ImagePath.add("org.sikuli.setup.RunSetup/Images");
+    s.exists("SikuliLogo");
+    s.exists("SikuliLogo");
+    s.highlight(-2);
+    if (RunTime.testing && !rt.runningJar) System.exit(1);
     log(lvl, "running main: nothing to do (yet)");
 	}
 

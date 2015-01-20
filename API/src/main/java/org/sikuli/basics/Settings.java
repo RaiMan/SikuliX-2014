@@ -245,6 +245,7 @@ public class Settings {
 			Sikulix.terminate(999);
 		}
 		tessData.put("eng", "http://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz");
+    getOS();
 	}
   
   

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URI;
 import java.net.URL;
@@ -38,6 +39,7 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.ResourceLoader;
 import org.sikuli.basics.Settings;
+import org.sikuli.basics.SysJNA;
 
 /**
  * INTERNAL USE: Intended to concentrate all, that is needed at startup of sikulix or sikulixapi
@@ -333,6 +335,10 @@ public class RunTime {
         fSxProject = fSxBase.getParentFile().getParentFile();
         log(lvl, "not jar - supposing Maven project: %s", fSxProject);
         appType = "in Maven project from classes";
+      } else if ("target".equals(fSxBase.getName())) {
+        fSxProject = fSxBase.getParentFile().getParentFile();
+        log(lvl, "folder target detected - supposing Maven project: %s", fSxProject);
+        appType = "in Maven project from some jar";
       } else {
         if (runningWindows) {
           if (jn.endsWith(".exe")) {
@@ -393,42 +399,48 @@ public class RunTime {
     boolean shouldExport = false;
     URL uLibsFrom = null;
     fLibsFolder = new File(fTempPath, "SikulixLibs_" + sxBuildStamp);
-    if (testing) {
-      logp("***** for testing");
-      FileManager.deleteFileOrFolder(fLibsFolder.getAbsolutePath());
-    }
-    if (!fLibsFolder.exists()) {
-      fLibsFolder.mkdirs();
-      if (!fLibsFolder.exists()) {
-        terminate(1, "libs folder not available: " + fLibsFolder.toString());
-      }
-      log(lvl, "new libs folder at: %s", fLibsFolder);
-      String[] fpList = fTempPath.list(new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-          if (name.contains("SikulixLibs")) return true;
-          return false;
-        }
-      });
-      if (fpList.length > 1) {
-        for (String entry : fpList) {
-          if (entry.endsWith(sxBuildStamp)) continue;
-          FileManager.deleteFileOrFolder(new File(fTempPath, entry).getAbsolutePath());
-        }
-      }
-      shouldExport = true;
-    } else {
-      log(lvl, "exists libs folder at: %s", fLibsFolder);
-      if (!checkLibs(fLibsFolder)) {
+    if (!Type.SETUP.equals(typ)) {
+      if (testing) {
+        logp("***** for testing");
         FileManager.deleteFileOrFolder(fLibsFolder.getAbsolutePath());
+      }
+      if (!fLibsFolder.exists()) {
         fLibsFolder.mkdirs();
-        shouldExport = true;
         if (!fLibsFolder.exists()) {
           terminate(1, "libs folder not available: " + fLibsFolder.toString());
         }
+        log(lvl, "new libs folder at: %s", fLibsFolder);
+        String[] fpList = fTempPath.list(new FilenameFilter() {
+          @Override
+          public boolean accept(File dir, String name) {
+            if (name.contains("SikulixLibs")) {
+              return true;
+            }
+            return false;
+          }
+        });
+        if (fpList.length > 1) {
+          for (String entry : fpList) {
+            if (entry.endsWith(sxBuildStamp)) {
+              continue;
+            }
+            FileManager.deleteFileOrFolder(new File(fTempPath, entry).getAbsolutePath());
+          }
+        }
+        shouldExport = true;
+      } else {
+        log(lvl, "exists libs folder at: %s", fLibsFolder);
+        if (!checkLibs(fLibsFolder)) {
+          FileManager.deleteFileOrFolder(fLibsFolder.getAbsolutePath());
+          fLibsFolder.mkdirs();
+          shouldExport = true;
+          if (!fLibsFolder.exists()) {
+            terminate(1, "libs folder not available: " + fLibsFolder.toString());
+          }
+        }
       }
     }
-    if (shouldExport) {
+    if (!Type.SETUP.equals(typ) && shouldExport) {
       String sysShort = runningOn.toString().toLowerCase();
       String fpJarLibs = "/META-INF/libs/" + sysName + "/libs" + javaArch;
       String fpLibsFrom = "";
@@ -436,13 +448,15 @@ public class RunTime {
         fpLibsFrom = fSxBaseJar.getAbsolutePath();
       } else {
         String fSrcFolder = typ.toString();
-        if (Type.SETUP.toString().equals(fSrcFolder)) fSrcFolder = "Setup";
+        if (Type.SETUP.toString().equals(fSrcFolder)) {
+          fSrcFolder = "Setup";
+        }
         if (!runningWinApp) {
           fpLibsFrom = fSxBaseJar.getPath().replace(fSrcFolder, "Libs" + sysShort) + "/";
         }
       }
-      if (testing) {
-        long now = (new Date().getTime()/10000)%2;
+      if (testing && !runningJar) {
+        long now = (new Date().getTime() / 10000) % 2;
         if (now == 0) {
           logp("***** for testing: exporting from classes");
         } else {
@@ -456,14 +470,23 @@ public class RunTime {
         addToClasspath(fpLibsFrom);
       }
       uLibsFrom = clsRef.getResource(fpJarLibs);
-      if (uLibsFrom == null) {
+      if (testing || uLibsFrom == null) {
         dumpClassPath();
+      }
+      if (uLibsFrom == null) {
         terminate(1, "libs to export not found on above classpath: " + fpJarLibs);
       }
       log(lvl, "libs to export are at:\n%s", uLibsFrom);
-      extractRessourcesToFolder(uLibsFrom, fpJarLibs, fLibsFolder);        
+      extractRessourcesToFolder(uLibsFrom, fpJarLibs, fLibsFolder);
+    }
+    if (!Type.SETUP.equals(typ)) {
       for (String aFile : fLibsFolder.list()) {
         libsLoaded.put(aFile, false);
+      }
+      if (runningWindows) {
+        if (!addToWindowsSystemPath(fLibsFolder)) {
+          terminate(1, "Problems setting up on Windows - see errors");
+        }
       }
     }
 //</editor-fold>
@@ -583,10 +606,12 @@ public class RunTime {
       terminate(1, String.format("lib: %s not available in %s", libName, fLibsFolder));
     }
     String msg = "loadLib: %s";
+    int level = lvl;
     if (vLib) {
+      level++;
       msg += " already loaded";
     }
-    log(lvl, msg, libName);
+    log(level, msg, libName);
     if (vLib) {
       return true;
     }
@@ -643,7 +668,6 @@ public class RunTime {
     }
     if (fOptions != null) {
       options = new Properties();
-      String svf = "sikulixversion.txt";
       try {
         InputStream is;
         is = new FileInputStream(fOptions);
@@ -654,9 +678,11 @@ public class RunTime {
         fOptions = null;
         options = null;
       }
-      log(lvl, "have Options file at: %s", fOptions);
       testing = isOption("testing", false);
-      if (testing) Debug.setDebugLevel(3);
+      if (testing) {
+        Debug.setDebugLevel(3);
+      }
+      log(lvl, "have Options file at: %s", fOptions);
     }
   }
  
@@ -906,6 +932,7 @@ public class RunTime {
       }
       out.write(tmp, 0, len);
     }
+    out.flush();
   }
 
   /**
@@ -933,7 +960,14 @@ public class RunTime {
     File fFolder = null;
     try {
       fFolder = new File(uFolder.toURI());
-      files.add(uFolder.getPath());
+      String sFolder = uFolder.getPath();
+      if (":".equals(sFolder.substring(2,3))) {
+        sFolder = sFolder.substring(1);
+      }
+      if (sFolder.endsWith("/")) {
+        sFolder = sFolder.substring(0, sFolder.length() - 1);
+      }
+      files.add(sFolder);
       return doResourceListFolder(fFolder, deep, files);
     } catch (Exception ex) {
       if (!"jar".equals(uFolder.getProtocol())) {
@@ -944,7 +978,6 @@ public class RunTime {
     if (parts.length < 2 || !parts[0].startsWith("file:")) {
       terminate(1, "doResourceList: not a valid jar URL: " + uFolder.getPath());
     }
-    String fpJar = parts[0].substring(5);
     String fpFolder = parts[1];
     files.add(fpFolder);
     return doResourceListJar(uFolder, fpFolder, deep, files);
@@ -1055,45 +1088,60 @@ public class RunTime {
    * @return the absolute path of the entry found
    */
   public String isOnClasspath(String artefact) {
+    artefact = FileManager.slashify(artefact, false).toUpperCase();
     String cpe = null;
     if (classPath.isEmpty()) {
       storeClassPath();
     }
-    for (URL e : classPath) {
-      if (e.getPath().contains(artefact)) {
-        cpe = e.getPath();
+    for (URL entry : classPath) {
+      String sEntry = FileManager.slashify(new File(entry.getPath()).getPath(), false);
+      if (sEntry.toUpperCase().contains(artefact)) {
+        cpe = new File(entry.getPath()).getPath();
+        break;
       }
     }
     return cpe;
   }
   
   /**
+   * check wether a the given URL is on classpath
+   * @param path URL to look for
+   * @return true if found else otherwise
+   */
+  public boolean isOnClasspath(URL path) {
+    if (classPath.isEmpty()) {
+      storeClassPath();
+    }
+    for (URL entry : classPath) {
+      if ( new File(path.getPath()).equals(new File(entry.getPath()))) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  /**
    * adds the given folder or jar to the end of the current classpath
-   * @param jar absolute path to a folder or jar
+   * @param jarOrFolder absolute path to a folder or jar
    * @return success
    */
-  public boolean addToClasspath(String jar) {
-    log(lvl, "addToClasspath: " + jar);
-		File jarFile = new File(jar);
-		if (!jarFile.exists()) {
+  public boolean addToClasspath(String jarOrFolder) {
+    URL uJarOrFolder = FileManager.makeURL(jarOrFolder);
+    if (isOnClasspath(uJarOrFolder)) {
+      return true;
+    }
+    log(lvl, "addToClasspath: %s", uJarOrFolder);
+		if (!new File(jarOrFolder).exists()) {
 			log(-1, "does not exist - not added");
 			return false;
 		}
     Method method;
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     Class sysclass = URLClassLoader.class;
-    try {
-      if (jar.endsWith(".jar")) {
-        jar = FileManager.slashify(jarFile.getAbsolutePath(), false);
-        if (Settings.isWindows()) {
-          jar = "/" + jar;
-        }
-      }
-      URL u = (new URI("file", jar, null)).toURL();
-      
+    try {      
       method = sysclass.getDeclaredMethod("addURL", new Class[]{URL.class});
       method.setAccessible(true);
-      method.invoke(sysLoader, new Object[]{u});
+      method.invoke(sysLoader, new Object[]{uJarOrFolder});
     } catch (Exception ex) {
       log(-1, "Did not work: %s", ex.getMessage());
       return false;
@@ -1102,6 +1150,71 @@ public class RunTime {
     return true;
   }
   
+  boolean addToWindowsSystemPath(File fLibsFolder) {
+    String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
+    if (syspath == null) {
+      terminate(1, "addToWindowsSystemPath: cannot access system path");
+    } else {
+      String libsPath = (fLibsFolder.getAbsolutePath()).replaceAll("/", "\\");
+      if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
+        if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", libsPath + ";" + syspath)) {
+          Sikulix.terminate(999);
+        }
+        syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
+        if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
+          log(-1, "addToWindowsSystemPath: adding to system path did not work:\n%s", syspath);
+          terminate(1, "addToWindowsSystemPath: did not work - see error");
+        }
+        log(lvl, "addToWindowsSystemPath: added to systempath:\n%s", libsPath);
+      }
+    }
+    if (!checkJavaUsrPath(fLibsFolder)) {
+      return false;
+    }
+    return true;
+  }
+
+  private boolean checkJavaUsrPath(File fLibsFolder) {
+    String fpLibsFolder = fLibsFolder.getAbsolutePath();
+    Field usrPathsField = null;
+    boolean contained = false;
+    try {
+      usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
+    } catch (NoSuchFieldException ex) {
+      log(-1, "checkJavaUsrPath: get\n%s", ex);
+    } catch (SecurityException ex) {
+      log(-1, "checkJavaUsrPath: get\n%s", ex);
+    }
+    if (usrPathsField != null) {
+      usrPathsField.setAccessible(true);
+      try {
+        //get array of paths
+        String[] javapaths = (String[]) usrPathsField.get(null);
+        //check if the path to add is already present
+        for (String p : javapaths) {
+          if (new File(p).equals(fLibsFolder)) {
+            contained = true;
+            break;
+          }
+        }
+        //add the new path
+        if (!contained) {
+          final String[] newPaths = Arrays.copyOf(javapaths, javapaths.length + 1);
+          newPaths[newPaths.length - 1] = fpLibsFolder;
+          usrPathsField.set(null, newPaths);
+          log(lvl, "checkJavaUsrPath: added to ClassLoader.usrPaths");
+          contained = true;
+        }
+      } catch (IllegalAccessException ex) {
+        log(-1, "checkJavaUsrPath: set\n%s", ex);
+      } catch (IllegalArgumentException ex) {
+        log(-1, "checkJavaUsrPath: set\n%s", ex);
+      }
+      return contained;
+    }
+    return false;
+  }
+
   /**
    * print the current java system properties key-value pairs sorted by key
    */
