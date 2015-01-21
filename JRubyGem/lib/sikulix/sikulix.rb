@@ -6,10 +6,10 @@ require 'java'
 # Classes and methods for using SikuliX
 module Sikulix
   private
-
   # 'private' for avoiding of unexpected effects when
   #   'include Sikulix' is used.
-
+  java_import java.net.Socket
+  java_import Java.edu.unh.iol.dlc.ConnectionController
   java_import org.sikuli.script.Sikulix
   java_import org.sikuli.script.Screen
   java_import org.sikuli.script.Region
@@ -49,9 +49,9 @@ module Sikulix
 
   java_import org.sikuli.basics.Debug
 
-	begin
-	  java_import org.sikuli.scriptrunner.ScriptRunner
-	rescue
+  begin
+    java_import org.sikuli.scriptrunner.ScriptRunner
+  rescue
   end
 
   #
@@ -100,8 +100,82 @@ module Sikulix
      :type, :paste, :observe]
    )
 
-  # Default screen object for "undotted" methods.
+  # Default screen of host machine.
   $SIKULI_SCREEN = Screen.new
+  # Screen used for undotted methods.
+  $DEFAULT_SCREEN = $SIKULI_SCREEN
+  # Pool of screens of remote machines connected via VNC.
+  $VNC_SCREEN_POOL = []
+  # ConnectionController instance
+  @connection_controller = false
+
+  # Initializes connections to remote machines
+  # *args - sequence of address[:port] strings. Default port - 5900
+  # example: 
+  # initVNCPool("192.168.2.3:5901", "192.168.4.3")
+  def initVNCPool(*args)
+    if @connection_controller
+      Debug.log(3, 'VNC Pool already initialized, free it first!')
+      return
+    end
+
+    sockets = args.map do |str|
+      address, port = str.scan(/([^:]+):?(.+)?/)[0]
+      port = port ? port.to_i : 5900
+      s = Socket.new(address, port)
+      s.setSoTimeout(1000)
+      s.setKeepAlive(true)
+      s
+    end
+
+    @connection_controller = ConnectionController.new(*sockets)
+    sockets.each_index do |id|
+      @connection_controller.openConnection(id)
+      @connection_controller.setPixelFormat(id, 'Truecolor', 32, 0)
+      @connection_controller.start(id)
+    end
+
+    # sleep left here to wait for buffering
+    # it seems that there is no methods in ConnectionController class
+    # with which we can check if connection is ready
+    # so we will sleep according to ConnectionController author`s example
+
+    sleep 2
+
+    # that import isn`t in the top of a module because
+    # there is static section in it which requires
+    # ConnectionController instance to exist
+    java_import Java.edu.unh.iol.dlc.VNCScreen
+
+    sockets.each_index do |id|
+      $VNC_SCREEN_POOL << VNCScreen.new(id)
+    end
+
+    Debug.log(3, "Pool of #{$SCREEN_POOL} vnc connections initialized")
+  end
+
+  # Replaces default screen for which all undotted methods are
+  # called with another screen
+  # example:
+  # setDefaultScreen($SIKULI_SCREEN)
+  # click(Location(10,10)) <- click will be performed on local screen
+  #
+  # setDefaultScreen($VNC_SCREEN_POOL[0])
+  # click(Location(10,10)) <- click will be performed on remote screen num 0
+  def setDefaultScreen(screen)
+    if screen.respond_to?(:click)
+      $DEFAULT_SCREEN = screen
+      Debug.log("Screen switched")
+    end
+  end
+
+  # Closes all the connections to remote nodes
+  # You should call that method when all actions are performed
+  # Connections shouldn`t be left opened
+  def freeVNCPool
+    $VNC_SCREEN_POOL.each { @connection_controller.close_connection(0) }
+    @connection_controller = false
+  end
 
 # This is an alternative for method generation using define_method
 #  # Generate hash of ('method name'=>method)
@@ -130,12 +204,13 @@ module Sikulix
 
   # Generate static methods in Sikulix context
   # for possible "undotted" methods.
-  [$SIKULI_SCREEN, Sikulix].each do |obj|
-    mtype = (obj.class == Class ? :java_class_methods : :java_instance_methods)
-    obj.java_class.method(mtype).call.map(&:name).uniq.each do |name|
-      obj_meth = obj.method(name)
-      dynamic_def(name) { |*args, &block| obj_meth.call(*args, &block) }
-    end
+  Sikulix.java_class.java_class_methods.map(&:name).uniq.each do |name|
+    obj_meth = Sikulix.method(name)
+    dynamic_def(name) { |*args, &block| obj_method.call(*args, &block) }
+  end
+
+  $SIKULI_SCREEN.java_class.java_instance_methods.map(&:name).uniq.each do |name|
+    dynamic_def(name) { |*args, &block| $DEFAULT_SCREEN.method(name).call(*args, &block) }
   end
 
   # TODO: check it after Env Java-class refactoring
@@ -178,10 +253,11 @@ module Sikulix
 
   # Generate methods like constructors.
   # Example: Pattern("123.png").similar(0.5)
-  [Pattern, Region, Screen, App, Location].each do |cl|
+  [Pattern, Region, Screen, App].each do |cl|
     name = cl.java_class.simple_name
     dynamic_def(name) { |*args| cl.new(*args) }
   end
+  dynamic_def("Location") { |*args| Location.new(*args).setOtherScreen($DEFAULT_SCREEN) }
 end
 
 # This is an alternative for method generation using define_method
