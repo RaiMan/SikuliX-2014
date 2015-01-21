@@ -6,19 +6,15 @@
  */
 package org.sikuli.script;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.awt.image.BufferedImage;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import javax.swing.ImageIcon;
-import javax.swing.JFrame;
-import static javax.swing.WindowConstants.DISPOSE_ON_CLOSE;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
+import org.sikuli.basics.HotkeyListener;
+import org.sikuli.basics.HotkeyManager;
 
 /**
  * this class implements an interface to the Java key system
@@ -28,6 +24,48 @@ import org.sikuli.basics.Settings;
  * for details consult the docs
  */
 public class Key {
+
+  /**
+   * add a hotkey and listener
+   * @param key respective key specifier according class Key
+   * @param modifiers respective key specifier according class KeyModifiers
+   * @param listener a HotKeyListener instance
+   * @return true if ok, false otherwise
+   */
+  public static boolean addHotkey(String key, int modifiers, HotkeyListener listener) {
+    return HotkeyManager.getInstance().addHotkey(key, modifiers, listener);
+  }
+
+  /**
+   * add a hotkey and listener
+   * @param key respective key specifier according class Key
+   * @param modifiers respective key specifier according class KeyModifiers
+   * @param listener a HotKeyListener instance
+   * @return true if ok, false otherwise
+   */
+  public static boolean addHotkey(char key, int modifiers, HotkeyListener listener) {
+    return HotkeyManager.getInstance().addHotkey(key, modifiers, listener);
+  }
+
+  /**
+   * remove a hotkey and listener
+   * @param key respective key specifier according class Key
+   * @param modifiers respective key specifier according class KeyModifiers
+   * @return true if ok, false otherwise
+   */
+  public static boolean removeHotkey(String key, int modifiers) {
+    return HotkeyManager.getInstance().removeHotkey(key, modifiers);
+  }
+
+  /**
+   * remove a hotkey and listener
+   * @param key respective key specifier according class Key
+   * @param modifiers respective key specifier according class KeyModifiers
+   * @return true if ok, false otherwise
+   */
+  public static boolean removeHotkey(char key, int modifiers) {
+    return HotkeyManager.getInstance().removeHotkey(key, modifiers);
+  }
 
   static String[] keyVK = new String[] {
   //<editor-fold defaultstate="collapsed" desc="VK_xxx constant names and values Java 7">

@@ -174,7 +174,7 @@ public class Env {
    */
   @Deprecated
   public static boolean addHotkey(String key, int modifiers, HotkeyListener listener) {
-    return HotkeyManager.getInstance().addHotkey(key, modifiers, listener);
+    return Key.addHotkey(key, modifiers, listener);
   }
 
   /**
@@ -187,7 +187,7 @@ public class Env {
    */
   @Deprecated
   public static boolean addHotkey(char key, int modifiers, HotkeyListener listener) {
-    return HotkeyManager.getInstance().addHotkey(key, modifiers, listener);
+    return Key.addHotkey(key, modifiers, listener);
   }
 
   /**
@@ -199,7 +199,7 @@ public class Env {
    */
   @Deprecated
   public static boolean removeHotkey(String key, int modifiers) {
-    return HotkeyManager.getInstance().removeHotkey(key, modifiers);
+    return Key.removeHotkey(key, modifiers);
   }
 
   /**
@@ -211,7 +211,7 @@ public class Env {
    */
   @Deprecated
   public static boolean removeHotkey(char key, int modifiers) {
-    return HotkeyManager.getInstance().removeHotkey(key, modifiers);
+    return Key.removeHotkey(key, modifiers);
   }
 
 //TODO where to use???
