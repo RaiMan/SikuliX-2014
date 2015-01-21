@@ -91,8 +91,8 @@ public class RunTime {
       debugLevelSaved = Debug.getDebugLevel();
       debugLogfileSaved = Debug.logfile;
       runTime.loadOptions(typ);
-      int dl = runTime.getOptionNumber("debuglevel");
-      if (dl > 0 && Debug.getDebugLevel() == 0) {
+      int dl = runTime.getOptionNumber("debug.level");
+      if (dl > 0 && Debug.getDebugLevel() < 2) {
         Debug.setDebugLevel(dl);
       }
       if (Type.SETUP.equals(typ)) {
@@ -203,6 +203,8 @@ public class RunTime {
   public int javaVersion = 0;
   public String osName = "NotKnown";
   public String osVersion = "";
+  String appType = null;
+
 //</editor-fold>
   
 //<editor-fold defaultstate="collapsed" desc="global init">
@@ -215,8 +217,6 @@ public class RunTime {
       }
     }
     log(lvl, "global init: entering as: %s", typ);
-    log(lvl, "user.home: %s", fUserDir);
-    log(lvl, "user.dir (work dir): %s", fWorkDir);
     
     sxBuild = Settings.SikuliVersionBuild;
     sxBuildStamp = sxBuild.replace("_", "").replace("-", "").replace(":", "").substring(0, 12);
@@ -239,7 +239,6 @@ public class RunTime {
     if (userName.isEmpty()) {
       userName = "unknown";
     }
-    log(lvl, "user.name: %s", userName);
     
     String tmpdir = System.getProperty("java.io.tmpdir");
     if (tmpdir != null && !tmpdir.isEmpty()) {
@@ -250,16 +249,9 @@ public class RunTime {
     fBaseTempPath = new File(fTempPath, "Sikulix");
     fBaseTempPath.mkdirs();
     BaseTempPath = fBaseTempPath.getAbsolutePath();
-    log(lvl, "java.io.tmpdir: %s", fTempPath);
 //</editor-fold>
     
-//<editor-fold defaultstate="collapsed" desc="classpath">
-    String appType = null;
-    
-    if (Debug.getDebugLevel() > minLvl) {
-      dumpClassPath("sikuli");
-    }
-    
+//<editor-fold defaultstate="collapsed" desc="classpath">        
     try {
       if (Type.IDE.equals(typ)) {
         clsRef = Class.forName("org.sikuli.ide.SikuliIDE");
@@ -319,9 +311,8 @@ public class RunTime {
       javaArch = 64;
     }
     
-    javaShow = String.format("versions (%d,%d) java %s vm %s class %s arch %s",
+    javaShow = String.format("java %d-%d version %s vm %s class %s arch %s",
             javaVersion, javaArch, vJava, vVM, vClass, vSysArch);
-    log(lvl, javaShow);
     
     if (Debug.getDebugLevel() > minLvl) {
       dumpSysProps();
@@ -341,7 +332,6 @@ public class RunTime {
     } else {
       terminate(-1, "running on not supported System: %s");
     }
-    log(lvl, "running %dBit on %s (%s) %s", javaArch, osName, osVersion, appType);
 //</editor-fold>
     
 //<editor-fold defaultstate="collapsed" desc="libs export">
@@ -441,6 +431,9 @@ public class RunTime {
 //</editor-fold>
     
     runType = typ;
+    if (Debug.getDebugLevel() == minLvl) {
+      show();
+    }
     log(lvl, "global init: leaving");
   }
 //</editor-fold>
@@ -544,6 +537,24 @@ public class RunTime {
   public boolean isRunningFromJar() {
     return runningJar;
   }
+
+  public void show() {
+    logp("***** show environment for %s", runType);
+    logp("user.home: %s", fUserDir);
+    logp("user.dir (work dir): %s", fWorkDir);
+    logp("user.name: %s", userName);
+    logp("java.io.tmpdir: %s", fTempPath);
+    logp("running %dBit on %s (%s) %s", javaArch, osName, osVersion, appType);
+    logp(javaShow);
+    logp("libs folder: %s", fLibsFolder);
+    if (runningJar) {
+      logp("executing jar: %s", fSxBaseJar);
+    }
+    if (Debug.getDebugLevel() > minLvl - 1) {
+      dumpClassPath("sikulix");
+    }
+    logp("***** show environment end");
+  }  
 //</editor-fold>
   
 //<editor-fold defaultstate="collapsed" desc="native libs handling">
@@ -726,7 +737,7 @@ public class RunTime {
       if (testing) {
         Debug.setDebugLevel(3);
       }
-      log(lvl, "have Options file at: %s", fOptions);
+      log(lvl, "found Options file at: %s", fOptions);
     }
   }
   
@@ -900,11 +911,19 @@ public class RunTime {
   }
   
   /**
+   * check whether options are defined
+   * @return true if at lest one option defined else false
+   */
+  public boolean hasOptions() {
+    return options != null && options.size() > 0;
+  }
+  
+  /**
    * all options and their values written to sysout as key = value
    */
   public void dumpOptions() {
-    if (fOptions != null && options.size() > 0) {
-      logp("*** options dump %s", fOptions);
+    if (options.size() > 0) {
+      logp("*** options dump %s", (fOptions != null ? "" : fOptions));
       for (String sOpt: getOptions().keySet()) {
         logp("%s = %s", sOpt, getOption(sOpt));
       }
