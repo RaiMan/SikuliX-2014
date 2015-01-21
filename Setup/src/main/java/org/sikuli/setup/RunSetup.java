@@ -1206,7 +1206,7 @@ public class RunSetup {
 				downloadOK = false;
 			} else {
 				File fTessData = new File(dlDir, "tessdata-" + langTess);
-				log(lvl, "preparing the tessdata stuff in %s", fTessData.getAbsolutePath());
+				log(lvl, "preparing the tessdata stuff in:\n%s", fTessData.getAbsolutePath());
 				fTessData.mkdirs();
 				FileManager.xcopy(fTess.getAbsolutePath(), fTessData.getAbsolutePath());
 				FileManager.deleteFileOrFolder(fTess.getParent());
@@ -1217,7 +1217,7 @@ public class RunSetup {
 				String tessJar = new File(workDir, localTess).getAbsolutePath();
         String tess = FileManager.makeFileList(fTessData, fTessData.getAbsolutePath());
         FileManager.writeStringToFile(tess, new File(fTessData, "sikulixfoldercontent").getAbsolutePath());
-				downloadOK &= FileManager.buildJar(targetJar, new String[]{},
+				downloadOK &= FileManager.buildJar("#" + targetJar, new String[]{},
 								new String[]{fTessData.getAbsolutePath()},
 								new String[]{"META-INF/libs/tessdata"}, null);
 				downloadOK &= handleTempAfter(targetJar, tessJar);
@@ -1331,7 +1331,7 @@ public class RunSetup {
 			log1(lvl, "adding needed stuff to sikulixapi.jar");
 			localJar = (new File(workDir, localAPI)).getAbsolutePath();
 			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-			success &= FileManager.buildJar(targetJar, jarsList,
+			success &= FileManager.buildJar("#"+targetJar, jarsList,
 							libsFileList, libsFilePrefix, libsFilter);
 			success &= handleTempAfter(targetJar, localJar);
 		}
@@ -1884,7 +1884,7 @@ public class RunSetup {
 				if (new File(projectDir, "Setup").exists()) {
 					File ftargetDir = new File(projectDir, "Setup/target/Setup");
 					if (ftargetDir.exists()) {
-						FileManager.deleteFileOrFolder(targetDir,
+						FileManager.deleteFileOrFolder(ftargetDir.getAbsolutePath(),
 										new FileManager.FileFilter() {
 											@Override
 											public boolean accept(File entry) {
@@ -2024,8 +2024,8 @@ public class RunSetup {
 
 	private static boolean handleTempAfter(String temp, String target) {
 		boolean success = true;
-		log1(lvl, "renaming temp file to target jar:\n%s", target);
-		FileManager.deleteFileOrFolder(target);
+		log1(lvl, "renaming sikulixtemp.jar to target jar: %s", new File(target).getName());
+		FileManager.deleteFileOrFolder("#" + target);
 		success &= !new File(target).exists();
 		if (success) {
 			success &= (new File(temp)).renameTo(new File(target));

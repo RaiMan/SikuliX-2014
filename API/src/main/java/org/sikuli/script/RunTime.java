@@ -18,7 +18,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
@@ -46,42 +45,7 @@ import org.sikuli.basics.SysJNA;
  */
 public class RunTime {
 
-	String[] args = new String[0];
-	String[] sargs = new String[0];
-  
-  public void setArgs(String[] args, String[] sargs) {
-    this.args = args;
-    this.sargs = sargs;
-  }
-
-  public String[] getSikuliArgs() {
-    return sargs;
-  }
-
-  public String[] getArgs() {
-    return args;
-  }
-  
-	public void printArgs() {
-		if (Debug.getDebugLevel() < lvl) {
-			return;
-		}
-		String[] xargs = getSikuliArgs();
-		if (xargs.length > 0) {
-			Debug.log(lvl, "--- Sikuli parameters ---");
-			for (int i = 0; i < xargs.length; i++) {
-				Debug.log(lvl, "%d: %s", i + 1, xargs[i]);
-			}
-		}
-		xargs = getArgs();
-		if (xargs.length > 0) {
-			Debug.log(lvl, "--- User parameters ---");
-			for (int i = 0; i < xargs.length; i++) {
-				Debug.log(lvl, "%d: %s", i + 1, xargs[i]);
-			}
-		}
-	}
-
+//<editor-fold defaultstate="collapsed" desc="logging">
   final String me = "RunTime%s: ";
   int lvl = 3;
   int minLvl = lvl;
@@ -99,10 +63,14 @@ public class RunTime {
     log(-1, "*** terminating: " + msg);
     System.exit(retval);
   }
+//</editor-fold>
   
+//<editor-fold defaultstate="collapsed" desc="instance">
   /**
    * INTERNAL USE
    */
+  RunTime() {}
+  
   public enum Type {
     IDE, API, SETUP, INIT
   }
@@ -110,19 +78,12 @@ public class RunTime {
   private enum theSystem {
     WIN, MAC, LUX, FOO
   }
-    
-  static RunTime runTime = null;
-  static int debugLevelSaved;
-  static String debugLogfileSaved;
-  public static boolean testing = false;
   
-  Type runType = Type.INIT;
-
   /**
    * INTERNAL USE to initialize the runtime environment for SikuliX<br>
    * for public use: use RunTime.get() to get the existing instance
    * @param typ IDE or API
-   * @return the RunTime singleton instance 
+   * @return the RunTime singleton instance
    */
   public static synchronized RunTime get(Type typ) {
     if (runTime == null) {
@@ -144,7 +105,7 @@ public class RunTime {
       runTime.init(typ);
       if (Type.IDE.equals(typ)) {
         runTime.initIDEbefore();
-        runTime.initAPI();  
+        runTime.initAPI();
         runTime.initIDEafter();
       } else {
         runTime.initAPI();
@@ -192,40 +153,22 @@ public class RunTime {
   public static synchronized RunTime reset() {
     return reset(Type.API);
   }
+//</editor-fold>
+      
+//<editor-fold defaultstate="collapsed" desc="variables">
+  static RunTime runTime = null;
+  static int debugLevelSaved;
+  static String debugLogfileSaved;
+  public static boolean testing = false;
   
-  public static int checkArgs(String[] args) {
-    int debugLevel = -1;
-    List<String> options = new ArrayList<String>();
-    options.addAll(Arrays.asList(args));
-    for (int n = 0; n < options.size(); n++) {
-      String opt = options.get(n);
-      if (!opt.startsWith("-")) {
-        continue;
-      }
-      if (opt.startsWith("-d")) {
-        int nD = -1;
-        try {
-          nD = n+1 == options.size() ? 1 : Integer.decode(options.get(n+1));
-        } catch (Exception ex) {
-          nD = 1;
-        }
-        if (nD > -1) {
-          debugLevel = nD;
-          Debug.setDebugLevel(nD);
-        }
-      }
-    }
-    return debugLevel;
-  }
-  
-  RunTime() {}
+  Type runType = Type.INIT;
   
   public String sxBuild = "";
   public String sxBuildStamp = "";
   public String jreVersion = java.lang.System.getProperty("java.runtime.version");
-	public Preferences optionsIDE = Preferences.userNodeForPackage(Sikulix.class);
+  public Preferences optionsIDE = Preferences.userNodeForPackage(Sikulix.class);
   public ClassLoader classLoader = RunTime.class.getClassLoader();
-	public String baseJar = "";
+  public String baseJar = "";
   public String userName = "";
   public String BaseTempPath = "";
   
@@ -237,12 +180,15 @@ public class RunTime {
   Map<String, Boolean> libsLoaded = new HashMap<String, Boolean>();
   public File fUserDir = null;
   public File fWorkDir = null;
+
   File fOptions = null;
   Properties options = null;
   String fnOptions = "SikulixOptions.txt";
+
   public File fSxBase = null;
   public File fSxBaseJar = null;
   public File fSxProject = null;
+
   public boolean runningJar = true;
   public boolean runningWindows = false;
   public boolean runningMac = false;
@@ -257,8 +203,12 @@ public class RunTime {
   public int javaVersion = 0;
   public String osName = "NotKnown";
   public String osVersion = "";
+//</editor-fold>
   
+//<editor-fold defaultstate="collapsed" desc="global init">
   void init(Type typ) {
+    
+//<editor-fold defaultstate="collapsed" desc="general">
     for (String line : preLogMessages.split(";")) {
       if (!line.isEmpty()) {
         log(lvl, line);
@@ -267,11 +217,10 @@ public class RunTime {
     log(lvl, "global init: entering as: %s", typ);
     log(lvl, "user.home: %s", fUserDir);
     log(lvl, "user.dir (work dir): %s", fWorkDir);
-     
-//<editor-fold defaultstate="collapsed" desc="general">
+    
     sxBuild = Settings.SikuliVersionBuild;
     sxBuildStamp = sxBuild.replace("_", "").replace("-", "").replace(":", "").substring(0, 12);
-
+    
     String os = osNameSysProp.toLowerCase();
     if (os.startsWith("mac")) {
       osName = "Mac OSX";
@@ -494,24 +443,26 @@ public class RunTime {
     runType = typ;
     log(lvl, "global init: leaving");
   }
+//</editor-fold>
   
+//<editor-fold defaultstate="collapsed" desc="init for IDE">
   void initIDEbefore() {
     log(lvl, "initIDEbefore: entering");
     Runtime.getRuntime().addShutdownHook(new Thread() {
-        @Override
-        public void run() {
-          log(lvl, "final cleanup");
-          if (isRunning != null) {
-            try {
-              isRunningFile.close();
-            } catch (IOException ex) {
-            }
-            isRunning.delete();
+      @Override
+      public void run() {
+        log(lvl, "final cleanup");
+        if (isRunning != null) {
+          try {
+            isRunningFile.close();
+          } catch (IOException ex) {
           }
-          FileManager.cleanTemp();
+          isRunning.delete();
         }
+        FileManager.cleanTemp();
+      }
     });
-
+    
     new File(BaseTempPath).mkdirs();
     isRunning = new File(BaseTempPath, "sikuli-ide-isrunning");
     try {
@@ -525,29 +476,29 @@ public class RunTime {
       Sikulix.popError("Terminating on FatalError: cannot access IDE lock for/n" + isRunning);
       System.exit(1);
     }
-
+    
     if (jreVersion.startsWith("1.6")) {
-			String jyversion = "";
-			Properties prop = new Properties();
-			String fp = "org/python/version.properties";
-			InputStream ifp = null;
-			try {
-				ifp = classLoader.getResourceAsStream(fp);
-				if (ifp != null) {
-					prop.load(ifp);
-					ifp.close();
-					jyversion = prop.getProperty("jython.version");
-				}
-			} catch (IOException ex) {}
-			if (!jyversion.isEmpty() && !jyversion.startsWith("2.5")) {
-				Sikulix.popError(String.format("The bundled Jython %s\n"
-								+ "cannot be used on Java 6!\n"
-								+ "Run setup again in this environment.\n"
-								+ "Click OK to terminate now", jyversion));
-				System.exit(1);
-			}
-		}
-
+      String jyversion = "";
+      Properties prop = new Properties();
+      String fp = "org/python/version.properties";
+      InputStream ifp = null;
+      try {
+        ifp = classLoader.getResourceAsStream(fp);
+        if (ifp != null) {
+          prop.load(ifp);
+          ifp.close();
+          jyversion = prop.getProperty("jython.version");
+        }
+      } catch (IOException ex) {}
+      if (!jyversion.isEmpty() && !jyversion.startsWith("2.5")) {
+        Sikulix.popError(String.format("The bundled Jython %s\n"
+                + "cannot be used on Java 6!\n"
+                + "Run setup again in this environment.\n"
+                + "Click OK to terminate now", jyversion));
+        System.exit(1);
+      }
+    }
+    
     Settings.isRunningIDE = true;
     
     if (runningMac) {
@@ -559,27 +510,43 @@ public class RunTime {
                 + "Click NO to terminate and check the situation.")) {
           System.exit(1);
         }
-      } 
+      }
     }
     
     log(lvl, "initIDEbefore: leaving");
   }
   
   void initIDEafter() {
-    log(lvl, "initIDEafter: entering");
-    log(lvl, "initIDEafter: leaving");
- }  
-
-  void initAPI() {
-    log(lvl, "initAPI: entering");
-    log(lvl, "initAPI: leaving");
-  }  
-
-  void initSetup() {
-    log(lvl, "initSetup: entering");
-    log(lvl, "initSetup: leaving");
-  } 
+//    log(lvl, "initIDEafter: entering");
+//    log(lvl, "initIDEafter: leaving");
+  }
+//</editor-fold>
   
+//<editor-fold defaultstate="collapsed" desc="init for API">
+  void initAPI() {
+//    log(lvl, "initAPI: entering");
+//    log(lvl, "initAPI: leaving");
+  }
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="init for Setup">
+  void initSetup() {
+//    log(lvl, "initSetup: entering");
+//    log(lvl, "initSetup: leaving");
+  }
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="helpers">
+  /**
+   * INTERNAL USE: to check whether we are running in compiled classes context
+   * @return true if the code source location is a folder ending with classes (Maven convention)
+   */
+  public boolean isRunningFromJar() {
+    return runningJar;
+  }
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="native libs handling">
   /**
    * INTERNAL USE: load a native library from the libs folder
    * @param libname name of library
@@ -596,9 +563,9 @@ public class RunTime {
     if (runningWindows) {
       libName += ".dll";
     } else if (runningMac) {
-      libName = "lib" + libName + ".dylib";      
+      libName = "lib" + libName + ".dylib";
     } else if (runningLinux) {
-      libName = "lib" + libName + ".so";      
+      libName = "lib" + libName + ".so";
     }
     File fLib = new File(fLibsFolder, libName);
     Boolean vLib = libsLoaded.get(libName);
@@ -626,9 +593,86 @@ public class RunTime {
     libsLoaded.put(libName, true);
     return true;
   }
-  
-  void loadOptions(Type typ) {
 
+  boolean checkLibs(File flibsFolder) {
+    // 1.1-MadeForSikuliX64M.txt
+    String name = String.format("1.1-MadeForSikuliX%d%s.txt", javaArch, runningOn.toString().substring(0, 1));
+    if (! new File(flibsFolder, name).exists()) {
+      log(lvl, "libs folder empty or has wrong content");
+      return false;
+    }
+    return true;
+  }
+
+  boolean addToWindowsSystemPath(File fLibsFolder) {
+    String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
+    if (syspath == null) {
+      terminate(1, "addToWindowsSystemPath: cannot access system path");
+    } else {
+      String libsPath = (fLibsFolder.getAbsolutePath()).replaceAll("/", "\\");
+      if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
+        if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", libsPath + ";" + syspath)) {
+          Sikulix.terminate(999);
+        }
+        syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
+        if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
+          log(-1, "addToWindowsSystemPath: adding to system path did not work:\n%s", syspath);
+          terminate(1, "addToWindowsSystemPath: did not work - see error");
+        }
+        log(lvl, "addToWindowsSystemPath: added to systempath:\n%s", libsPath);
+      }
+    }
+    if (!checkJavaUsrPath(fLibsFolder)) {
+      return false;
+    }
+    return true;
+  }
+
+  private boolean checkJavaUsrPath(File fLibsFolder) {
+    String fpLibsFolder = fLibsFolder.getAbsolutePath();
+    Field usrPathsField = null;
+    boolean contained = false;
+    try {
+      usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
+    } catch (NoSuchFieldException ex) {
+      log(-1, "checkJavaUsrPath: get\n%s", ex);
+    } catch (SecurityException ex) {
+      log(-1, "checkJavaUsrPath: get\n%s", ex);
+    }
+    if (usrPathsField != null) {
+      usrPathsField.setAccessible(true);
+      try {
+        //get array of paths
+        String[] javapaths = (String[]) usrPathsField.get(null);
+        //check if the path to add is already present
+        for (String p : javapaths) {
+          if (new File(p).equals(fLibsFolder)) {
+            contained = true;
+            break;
+          }
+        }
+        //add the new path
+        if (!contained) {
+          final String[] newPaths = Arrays.copyOf(javapaths, javapaths.length + 1);
+          newPaths[newPaths.length - 1] = fpLibsFolder;
+          usrPathsField.set(null, newPaths);
+          log(lvl, "checkJavaUsrPath: added to ClassLoader.usrPaths");
+          contained = true;
+        }
+      } catch (IllegalAccessException ex) {
+        log(-1, "checkJavaUsrPath: set\n%s", ex);
+      } catch (IllegalArgumentException ex) {
+        log(-1, "checkJavaUsrPath: set\n%s", ex);
+      }
+      return contained;
+    }
+    return false;
+  }
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="options handling">
+  void loadOptions(Type typ) {
+    
     String tmpdir = System.getProperty("user.home");
     if (tmpdir != null && !tmpdir.isEmpty()) {
       fUserDir = new File(tmpdir);
@@ -646,7 +690,7 @@ public class RunTime {
       FileManager.resetFolder(fWorkDir);
       log(-1, "init: user.dir (working folder) not valid (null or empty) - using empty:\n%s", fWorkDir);
     }
-        
+    
     File fDebug = new File(fUserDir, "SikulixDebug.txt");
     if (fDebug.exists()) {
       if (Debug.getDebugLevel() == 0) {
@@ -658,7 +702,7 @@ public class RunTime {
       }
       logp("auto-debugging with level %d into %s", Debug.getDebugLevel(), fDebug);
     }
-   
+    
     fOptions = new File(fWorkDir, fnOptions);
     if (!fOptions.exists()) {
       fOptions = new File(fUserDir, fnOptions);
@@ -685,7 +729,7 @@ public class RunTime {
       log(lvl, "have Options file at: %s", fOptions);
     }
   }
- 
+  
   /**
    * NOT IMPLEMENTED YET
    * load an options file, that is merged with an existing options store (same key overwrites value)
@@ -698,17 +742,17 @@ public class RunTime {
   /**
    * NOT IMPLEMENTED YET
    * saves  the current option store to a file (overwritten)
-   * @param fpOptions path to a file 
+   * @param fpOptions path to a file
    * @return success
    */
   public boolean saveOptions(String fpOptions) {
     log(-1, "saveOptions: not yet implemented");
     return false;
   }
-
+  
   /**
    * NOT IMPLEMENTED YET
-   * saves  the current option store to the file it was created from (overwritten) 
+   * saves  the current option store to the file it was created from (overwritten)
    * @return success, false if the current store was not created from file
    */
   public boolean saveOptions() {
@@ -751,7 +795,7 @@ public class RunTime {
     }
     return false;
   }
-
+  
   /**
    * look into the option file if any (if no option file is found, the option is taken as not existing)
    * @param pName the option key (case-sensitive)
@@ -764,7 +808,7 @@ public class RunTime {
     String pVal = options.getProperty(pName, "").toLowerCase();
     return pVal;
   }
-
+  
   /**
    * look into the option file if any (if no option file is found, the option is taken as not existing)<br>
    * side-effect: if no options file is there, an options store will be created in memory<br>
@@ -787,7 +831,7 @@ public class RunTime {
     }
     return pVal;
   }
-
+  
   /**
    * store an option key-value pair, overwrites existing value<br>
    * new option store is created if necessary and can later be saved to a file
@@ -800,10 +844,10 @@ public class RunTime {
     }
     options.setProperty(pName, sValue);
   }
-
+  
   /**
    * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)<br>
-   * tries to convert the stored string value into an integer number (gives 0 if not possible)<br> 
+   * tries to convert the stored string value into an integer number (gives 0 if not possible)<br>
    * @param pName the option key (case-sensitive)
    * @return the converted integer number, 0 if absent or not possible
    */
@@ -818,10 +862,10 @@ public class RunTime {
     } catch (Exception ex) {}
     return nVal;
   }
-
+  
   /**
    * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)<br>
-   * tries to convert the stored string value into an integer number (gives 0 if not possible)<br> 
+   * tries to convert the stored string value into an integer number (gives 0 if not possible)<br>
    * @param pName the option key (case-sensitive)
    * @param nDefault the default to be returned if option absent, empty or not convertable
    * @return the converted integer number, default if absent, empty or not possible
@@ -840,13 +884,13 @@ public class RunTime {
   
   /**
    * all options and their values
-   * @return a map of key-value pairs containing the found options, empty if no options file found 
+   * @return a map of key-value pairs containing the found options, empty if no options file found
    */
   public Map<String,String> getOptions() {
     Map<String, String> mapOptions = new HashMap<String, String>();
     if (options != null) {
       Enumeration<?> optionNames = options.propertyNames();
-      String optionName; 
+      String optionName;
       while (optionNames.hasMoreElements()) {
         optionName = (String) optionNames.nextElement();
         mapOptions.put(optionName, getOption(optionName));
@@ -867,9 +911,11 @@ public class RunTime {
       logp("*** options dump end");
     }
   }
-
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="handling resoources from classpath">
   /**
-   * export all resource files from the given subtree on classpath to the given folder retaining the subtree 
+   * export all resource files from the given subtree on classpath to the given folder retaining the subtree
    * @param uFrom base where the subtree is contained (folder or jar on classpath)
    * @param fpRessources path of the subtree
    * @param fFolder folder where to export
@@ -934,7 +980,7 @@ public class RunTime {
     }
     out.flush();
   }
-
+  
   /**
    * list all files only in the given folder (subfolders are ignored)
    * @param folder folder or jar on classpath
@@ -1000,12 +1046,12 @@ public class RunTime {
             logp("adding: %s", entry);
           }
           files.add(fEntry.getAbsolutePath().substring(1 + files.get(0).length()));
-        }        
+        }
       }
     }
     return files;
   }
-
+  
   List<String> doResourceListJar(URL uJar, String folder, boolean deep, List<String> files) {
     ZipInputStream zJar;
     String fpJar = uJar.getPath().split("!")[0];
@@ -1031,20 +1077,12 @@ public class RunTime {
     }
     return files;
   }
-
+  
   File isRunning = null;
   FileOutputStream isRunningFile = null;
-
-  boolean checkLibs(File flibsFolder) {
-    // 1.1-MadeForSikuliX64M.txt
-    String name = String.format("1.1-MadeForSikuliX%d%s.txt", javaArch, runningOn.toString().substring(0, 1));
-    if (! new File(flibsFolder, name).exists()) {
-      log(lvl, "libs folder empty or has wrong content");
-      return false;
-    }
-    return true;
-  }
-
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="classpath handling">
   void storeClassPath() {
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     classPath = Arrays.asList(sysLoader.getURLs());
@@ -1056,13 +1094,13 @@ public class RunTime {
   public void dumpClassPath() {
     dumpClassPath(null);
   }
-
+  
   /**
    * print the current classpath entries to sysout whose path name contain the given string
    * @param filter the fileter string
    */
   public void dumpClassPath(String filter) {
-    filter = filter == null ? "" : filter; 
+    filter = filter == null ? "" : filter;
     logp("*** classpath dump %s", filter);
     storeClassPath();
     String sEntry;
@@ -1081,7 +1119,7 @@ public class RunTime {
     }
     logp("*** classpath dump end");
   }
-
+  
   /**
    * check wether a classpath entry contains the given identifying string, stops on first match
    * @param artefact the identifying string
@@ -1119,7 +1157,7 @@ public class RunTime {
     }
     return false;
   }
-
+  
   /**
    * adds the given folder or jar to the end of the current classpath
    * @param jarOrFolder absolute path to a folder or jar
@@ -1131,14 +1169,14 @@ public class RunTime {
       return true;
     }
     log(lvl, "addToClasspath: %s", uJarOrFolder);
-		if (!new File(jarOrFolder).exists()) {
-			log(-1, "does not exist - not added");
-			return false;
-		}
+    if (!new File(jarOrFolder).exists()) {
+      log(-1, "does not exist - not added");
+      return false;
+    }
     Method method;
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     Class sysclass = URLClassLoader.class;
-    try {      
+    try {
       method = sysclass.getDeclaredMethod("addURL", new Class[]{URL.class});
       method.setAccessible(true);
       method.invoke(sysLoader, new Object[]{uJarOrFolder});
@@ -1149,79 +1187,16 @@ public class RunTime {
     storeClassPath();
     return true;
   }
+//</editor-fold>
   
-  boolean addToWindowsSystemPath(File fLibsFolder) {
-    String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
-    if (syspath == null) {
-      terminate(1, "addToWindowsSystemPath: cannot access system path");
-    } else {
-      String libsPath = (fLibsFolder.getAbsolutePath()).replaceAll("/", "\\");
-      if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
-        if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", libsPath + ";" + syspath)) {
-          Sikulix.terminate(999);
-        }
-        syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
-        if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
-          log(-1, "addToWindowsSystemPath: adding to system path did not work:\n%s", syspath);
-          terminate(1, "addToWindowsSystemPath: did not work - see error");
-        }
-        log(lvl, "addToWindowsSystemPath: added to systempath:\n%s", libsPath);
-      }
-    }
-    if (!checkJavaUsrPath(fLibsFolder)) {
-      return false;
-    }
-    return true;
-  }
-
-  private boolean checkJavaUsrPath(File fLibsFolder) {
-    String fpLibsFolder = fLibsFolder.getAbsolutePath();
-    Field usrPathsField = null;
-    boolean contained = false;
-    try {
-      usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
-    } catch (NoSuchFieldException ex) {
-      log(-1, "checkJavaUsrPath: get\n%s", ex);
-    } catch (SecurityException ex) {
-      log(-1, "checkJavaUsrPath: get\n%s", ex);
-    }
-    if (usrPathsField != null) {
-      usrPathsField.setAccessible(true);
-      try {
-        //get array of paths
-        String[] javapaths = (String[]) usrPathsField.get(null);
-        //check if the path to add is already present
-        for (String p : javapaths) {
-          if (new File(p).equals(fLibsFolder)) {
-            contained = true;
-            break;
-          }
-        }
-        //add the new path
-        if (!contained) {
-          final String[] newPaths = Arrays.copyOf(javapaths, javapaths.length + 1);
-          newPaths[newPaths.length - 1] = fpLibsFolder;
-          usrPathsField.set(null, newPaths);
-          log(lvl, "checkJavaUsrPath: added to ClassLoader.usrPaths");
-          contained = true;
-        }
-      } catch (IllegalAccessException ex) {
-        log(-1, "checkJavaUsrPath: set\n%s", ex);
-      } catch (IllegalArgumentException ex) {
-        log(-1, "checkJavaUsrPath: set\n%s", ex);
-      }
-      return contained;
-    }
-    return false;
-  }
-
+//<editor-fold defaultstate="collapsed" desc="system enviroment">
   /**
    * print the current java system properties key-value pairs sorted by key
    */
   public void dumpSysProps() {
     dumpSysProps(null);
   }
-
+  
   /**
    * print the current java system properties key-value pairs sorted by key but only keys containing filter
    * @param filter the filter string
@@ -1242,7 +1217,7 @@ public class RunTime {
         keysProp.add(entry);
       }
     }
-    Collections.sort(keysProp);    
+    Collections.sort(keysProp);
     String form = "%-" + nL.toString() + "s = %s";
     for (Object e : keysProp) {
       logp(form, e, sysProps.get(e));
@@ -1255,32 +1230,26 @@ public class RunTime {
    * @return false if Java thinks it has access to screen(s), true otherwise
    */
   public boolean isHeadless() {
-		return GraphicsEnvironment.isHeadless();
-  }
+    return GraphicsEnvironment.isHeadless();
+  }  
+//</editor-fold>
   
+//<editor-fold defaultstate="collapsed" desc="runcmd">
   /**
-   * INTERNAL USE: to check whether we are running in compiled classes context 
-   * @return true if the code source location is a folder ending with classes (Maven convention)
-   */
-  public boolean isRunningFromJar() {
-    return runningJar;
-  }
-
-  /**
-   * run a system command finally using Java::Runtime.getRuntime().exec(args) and waiting for completion 
+   * run a system command finally using Java::Runtime.getRuntime().exec(args) and waiting for completion
    * @param cmd the command as it would be given on command line, quoting is preserved
-   * @return the output produced by the command (sysout [+ "*** error ***" + syserr] 
+   * @return the output produced by the command (sysout [+ "*** error ***" + syserr]
    * if the syserr part is present, the command might have failed
    */
   public String runcmd(String cmd) {
     return runcmd(new String[]{cmd});
   }
-
+  
   /**
    * run a system command finally using Java::Runtime.getRuntime().exec(args) and waiting for completion
-   * @param cmd the command as it would be given on command line splitted into 
+   * @param cmd the command as it would be given on command line splitted into
    * the space devided parts, first part is the command, the rest are parameters and their values
-   * @return the output produced by the command (sysout [+ "*** error ***" + syserr] 
+   * @return the output produced by the command (sysout [+ "*** error ***" + syserr]
    * if the syserr part is present, the command might have failed
    */
   public String runcmd(String args[]) {
@@ -1327,11 +1296,11 @@ public class RunTime {
     boolean hasError = false;
     int retVal;
     try {
-			if (lvl <= Debug.getDebugLevel()) {
-				log(lvl, Sikulix.arrayToString(args));
-			} else {
-				Debug.info("runcmd: " + Sikulix.arrayToString(args));
-			}
+      if (lvl <= Debug.getDebugLevel()) {
+        log(lvl, Sikulix.arrayToString(args));
+      } else {
+        Debug.info("runcmd: " + Sikulix.arrayToString(args));
+      }
       Process process = Runtime.getRuntime().exec(args);
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
       BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
@@ -1362,4 +1331,69 @@ public class RunTime {
     }
     return result;
   }
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="args handling for scriptrunner">
+  String[] args = new String[0];
+  String[] sargs = new String[0];
+  
+  public void setArgs(String[] args, String[] sargs) {
+    this.args = args;
+    this.sargs = sargs;
+  }
+  
+  public String[] getSikuliArgs() {
+    return sargs;
+  }
+  
+  public String[] getArgs() {
+    return args;
+  }
+  
+  public void printArgs() {
+    if (Debug.getDebugLevel() < lvl) {
+      return;
+    }
+    String[] xargs = getSikuliArgs();
+    if (xargs.length > 0) {
+      Debug.log(lvl, "--- Sikuli parameters ---");
+      for (int i = 0; i < xargs.length; i++) {
+        Debug.log(lvl, "%d: %s", i + 1, xargs[i]);
+      }
+    }
+    xargs = getArgs();
+    if (xargs.length > 0) {
+      Debug.log(lvl, "--- User parameters ---");
+      for (int i = 0; i < xargs.length; i++) {
+        Debug.log(lvl, "%d: %s", i + 1, xargs[i]);
+      }
+    }
+  }
+
+  public static int checkArgs(String[] args) {
+    int debugLevel = -1;
+    List<String> options = new ArrayList<String>();
+    options.addAll(Arrays.asList(args));
+    for (int n = 0; n < options.size(); n++) {
+      String opt = options.get(n);
+      if (!opt.startsWith("-")) {
+        continue;
+      }
+      if (opt.startsWith("-d")) {
+        int nD = -1;
+        try {
+          nD = n+1 == options.size() ? 1 : Integer.decode(options.get(n+1));
+        } catch (Exception ex) {
+          nD = 1;
+        }
+        if (nD > -1) {
+          debugLevel = nD;
+          Debug.setDebugLevel(nD);
+        }
+      }
+    }
+    return debugLevel;
+  }
+//</editor-fold>
+  
 }

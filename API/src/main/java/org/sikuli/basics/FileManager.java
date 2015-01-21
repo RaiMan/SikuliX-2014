@@ -50,19 +50,12 @@ import org.sikuli.script.Sikulix;
  */
 public class FileManager {
 
-  //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static String me = "FileManager";
-  private static String mem = "...";
   private static int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
-    Debug.logx(level, me + ": " + mem + ": " + message, args);
-  }
-
-  private static void log0(int level, String message, Object... args) {
     Debug.logx(level, me + ": " + message, args);
   }
-  //</editor-fold>
 
   static final int DOWNLOAD_BUFFER_SIZE = 153600;
   private static SplashFrame _progress = null;
@@ -108,7 +101,7 @@ public class FileManager {
       }
       if (a != null && p > 1024) {
         proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(a, p));
-        log0(lvl, "Proxy defined: %s : %d", a.getHostAddress(), p);
+        log(lvl, "Proxy defined: %s : %d", a.getHostAddress(), p);
       }
       Settings.proxyChecked = true;
       Settings.proxy = proxy;
@@ -136,7 +129,7 @@ public class FileManager {
       p = getProxyPort(pPort);
     }
     if (a != null && p > 1024) {
-      log0(lvl, "Proxy stored: %s : %d", a.getHostAddress(), p);
+      log(lvl, "Proxy stored: %s : %d", a.getHostAddress(), p);
       Settings.proxyChecked = true;
       Settings.proxyName = host;
       Settings.proxyIP = adr;
@@ -169,12 +162,12 @@ public class FileManager {
     File fullpath = new File(localPath);
     if (fullpath.exists()) {
       if (fullpath.isFile()) {
-        log0(-1, "download: target path must be a folder:" + localPath);
+        log(-1, "download: target path must be a folder:\n%s", localPath);
         fullpath = null;
       }
     } else {
       if (!fullpath.mkdirs()) {
-        log0(-1, "download: could not create target folder: " + localPath);
+        log(-1, "download: could not create target folder:\n%s", localPath);
         fullpath = null;
       }
     }
@@ -185,9 +178,9 @@ public class FileManager {
 			}
       srcLengthKB = (int) (srcLength / 1024);
       if (srcLength > 0) {
-        log0(lvl, "Downloading %s having %d KB", filename, srcLengthKB);
+        log(lvl, "Downloading %s having %d KB", filename, srcLengthKB);
 			} else {
-        log0(lvl, "Downloading %s with unknown size", filename);
+        log(lvl, "Downloading %s with unknown size", filename);
 			}
 			fullpath = new File(localPath, filename);
 			targetPath = fullpath.getAbsolutePath();
@@ -226,10 +219,10 @@ public class FileManager {
 					}
 				}
 				writer.close();
-				log0(lvl, "downloaded %d KB to %s", (int) (totalBytesRead / 1024), targetPath);
-				log0(lvl, "download time: %d", (int) (((new Date()).getTime() - begin_t) / 1000));
+				log(lvl, "downloaded %d KB to:\n%s", (int) (totalBytesRead / 1024), targetPath);
+				log(lvl, "download time: %d", (int) (((new Date()).getTime() - begin_t) / 1000));
 			} catch (Exception ex) {
-				log0(-1, "problems while downloading\n" + ex.getMessage());
+				log(-1, "problems while downloading\n%s", ex);
 				targetPath = null;
 			} finally {
 				if (reader != null) {
@@ -267,7 +260,7 @@ public class FileManager {
     try {
       src = new URL(url);
     } catch (MalformedURLException ex) {
-      log0(-1, "download: bad URL: " + url);
+      log(-1, "download: bad URL: " + url);
       return null;
     }
     return downloadURL(src, localPath);
@@ -283,7 +276,7 @@ public class FileManager {
     try {
       url = new URL(src);
     } catch (MalformedURLException ex) {
-      log0(-1, "download: bad URL: " + src);
+      log(-1, "download: bad URL: " + src);
       return null;
     }
     String[] path = url.getPath().split("/");
@@ -295,7 +288,7 @@ public class FileManager {
 		srcLength = tryGetFileSize(url);
 		if (srcLength > 0) {
 			srcLengthKB = (int) (srcLength / 1024);
-			log0(lvl, "Downloading %s having %d KB", filename, srcLengthKB);
+			log(lvl, "Downloading %s having %d KB", filename, srcLengthKB);
 			InputStream reader = null;
 			try {
 				if (getProxy() != null) {
@@ -310,7 +303,7 @@ public class FileManager {
 						target += (new String(Arrays.copyOfRange(buffer, 0, bytesRead), Charset.forName("utf-8")));
           }
 			} catch (Exception ex) {
-				log0(-1, "problems while downloading\n" + ex.getMessage());
+				log(-1, "problems while downloading\n" + ex.getMessage());
 				target= null;
 			} finally {
 				if (reader != null) {
@@ -335,7 +328,7 @@ public class FileManager {
       URL u = new URL(url);
       Desktop.getDesktop().browse(u.toURI());
     } catch (Exception ex) {
-      log0(-1, "show in browser: bad URL: " + url);
+      log(-1, "show in browser: bad URL: " + url);
       return false;
     }
     return true;
@@ -343,12 +336,12 @@ public class FileManager {
 
   public static File createTempDir(String path) {
     File tempDir = new File(RunTime.get().BaseTempPath, path);
-    log0(lvl, "createTempDir: %s", tempDir);
+    log(lvl, "createTempDir: %s", tempDir);
     if (!tempDir.exists()) {
       tempDir.mkdirs();
     }
     if (!tempDir.exists()) {
-      log0(-1, "createTempDir: %s", tempDir);
+      log(-1, "createTempDir: %s", tempDir);
       return null;
     }
     return tempDir;
@@ -366,22 +359,26 @@ public class FileManager {
 
   public static void deleteTempDir(String path) {
     if (!deleteFileOrFolder(path)) {
-      log0(-1, "deleteTempDir: not possible");
+      log(-1, "deleteTempDir: not possible");
     }
   }
 
   public static boolean deleteFileOrFolder(String path, FileFilter filter) {
-		log0(lvl, "deleteFileOrFolder: %s\n%s", (filter == null ? "" : "filtered: "), path);
+		log(lvl, "deleteFileOrFolder: %s\n%s", (filter == null ? "" : "filtered: "), path);
     return doDeleteFileOrFolder(path, filter);
 	}
 
-    public static boolean deleteFileOrFolder(String path) {
-		log0(lvl, "deleteFileOrFolder: %s", path);
+  public static boolean deleteFileOrFolder(String path) {
+    if (path.startsWith("#")) {
+      path = path.substring(1);
+    } else {
+  		log(lvl, "deleteFileOrFolder:\n%s", path);
+    }
     return doDeleteFileOrFolder(path, null);
   }
 
   public static void resetFolder(File path) {
-		log0(lvl, "resetFolder: %s", path);
+		log(lvl, "resetFolder:\n%s", path);
     doDeleteFileOrFolder(path.getAbsolutePath(), null);
     path.mkdirs();
   }
@@ -407,7 +404,7 @@ public class FileManager {
           try {
             f.delete();
           } catch (Exception ex) {
-            log0(-1, "deleteFile: not deleted:\n" + f.getAbsolutePath() + "\n" + ex.getMessage());
+            log(-1, "deleteFile: not deleted:\n" + f.getAbsolutePath() + "\n" + ex.getMessage());
             return false;
           }
         }
@@ -418,7 +415,7 @@ public class FileManager {
       try {
         entry.delete();
       } catch (Exception ex) {
-        log0(-1, "deleteFolder: not deleted:\n" + entry.getAbsolutePath() + "\n" + ex.getMessage());
+        log(-1, "deleteFolder: not deleted:\n" + entry.getAbsolutePath() + "\n" + ex.getMessage());
         return false;
       }
     }
@@ -440,10 +437,10 @@ public class FileManager {
       fpath.mkdirs();
       File temp = File.createTempFile(temp1, temp2, fpath);
       temp.deleteOnExit();
-      log0(lvl, "tempfile create:\n%s", temp.getAbsolutePath());
+      log(lvl, "tempfile create:\n%s", temp.getAbsolutePath());
       return temp;
     } catch (IOException ex) {
-      log0(-1, "createTempFile: IOException: %s\n%s", ex.getMessage(),
+      log(-1, "createTempFile: IOException: %s\n%s", ex.getMessage(),
               fpath + File.separator + temp1 + "12....56" + temp2);
       return null;
     }
@@ -651,7 +648,7 @@ public class FileManager {
         try {
           path = URLDecoder.decode(path, "UTF-8");
         } catch (Exception ex) {
-					log0(lvl, "slashify: decoding problem with %s\nwarning: filename might not be useable.", path);
+					log(lvl, "slashify: decoding problem with %s\nwarning: filename might not be useable.", path);
         }
       }
       if (File.separatorChar != '/') {
@@ -1017,7 +1014,7 @@ public class FileManager {
       out = new PrintStream(new FileOutputStream(path));
       out.print(text);
     } catch (Exception e) {
-      log0(-1,"writeStringToFile: did not work: " + path + "\n" + e.getMessage());
+      log(-1,"writeStringToFile: did not work: " + path + "\n" + e.getMessage());
     }
     if (out != null) {
       out.close();
@@ -1033,7 +1030,7 @@ public class FileManager {
     }
     folderName = FileManager.slashify(folderName, true);
     if (!(new File(folderName)).isDirectory()) {
-      log0(-1, "packJar: not a directory or does not exist: " + folderName);
+      log(-1, "packJar: not a directory or does not exist: " + folderName);
       return false;
     }
     try {
@@ -1045,7 +1042,7 @@ public class FileManager {
       } else {
         throw new Exception("workdir is null");
       }
-      log0(lvl, "packJar: %s from %s in workDir %s", jarName, folderName, dir.getAbsolutePath());
+      log(lvl, "packJar: %s from %s in workDir %s", jarName, folderName, dir.getAbsolutePath());
       if (!folderName.startsWith("http://") && !folderName.startsWith("https://")) {
         folderName = "file://" + (new File(folderName)).getAbsolutePath();
       }
@@ -1054,24 +1051,35 @@ public class FileManager {
       addToJar(jout, new File(src.getFile()), prefix);
       jout.close();
     } catch (Exception ex) {
-      log0(-1, "packJar: " + ex.getMessage());
+      log(-1, "packJar: " + ex.getMessage());
       return false;
     }
-    log0(lvl, "packJar: completed");
+    log(lvl, "packJar: completed");
     return true;
   }
 
-  public static boolean buildJar(String jarName, String[] jars,
+  public static boolean buildJar(String targetJar, String[] jars,
           String[] files, String[] prefixs, FileManager.JarFileFilter filter) {
-    log0(lvl, "buildJar: " + jarName);
+    boolean logShort = false;
+    if (targetJar.startsWith("#")) {
+      logShort = true;
+      targetJar = targetJar.substring(1);
+      log(lvl, "buildJar: %s", new File(targetJar).getName());
+    } else {
+      log(lvl, "buildJar:\n%s", targetJar);
+    }
     try {
-      JarOutputStream jout = new JarOutputStream(new FileOutputStream(jarName));
+      JarOutputStream jout = new JarOutputStream(new FileOutputStream(targetJar));
       ArrayList done = new ArrayList();
       for (int i = 0; i < jars.length; i++) {
         if (jars[i] == null) {
           continue;
         }
-        log0(lvl, "buildJar: adding: " + jars[i]);
+        if (logShort) {
+          log(lvl, "buildJar: adding: %s", new File(jars[i]).getName());
+        } else {
+          log(lvl, "buildJar: adding:\n%s", jars[i]);
+        }
         BufferedInputStream bin = new BufferedInputStream(new FileInputStream(jars[i]));
         ZipInputStream zin = new ZipInputStream(bin);
         for (ZipEntry zipentry = zin.getNextEntry(); zipentry != null; zipentry = zin.getNextEntry()) {
@@ -1082,7 +1090,7 @@ public class FileManager {
                 bufferedWrite(zin, jout);
               }
               done.add(zipentry.getName());
-              log0(lvl+2, "adding: " + zipentry.getName());
+              log(lvl+1, "adding: %s", zipentry.getName());
             }
           }
         }
@@ -1094,16 +1102,20 @@ public class FileManager {
 					if (files[i] == null) {
 						continue;
 					}
-          log0(lvl, "buildJar: adding to %s:\n%s", prefixs[i], files[i]);
-          addToJar(jout, new File(files[i]), prefixs[i]);
+          if (logShort) {
+            log(lvl, "buildJar: adding %s at %s", new File(files[i]).getName(), prefixs[i]);
+          } else {
+            log(lvl, "buildJar: adding %s at %s", files[i], prefixs[i]);
+          }
+         addToJar(jout, new File(files[i]), prefixs[i]);
         }
       }
       jout.close();
     } catch (Exception ex) {
-      log0(-1, "buildJar: " + ex.getMessage());
+      log(-1, "buildJar: %s", ex);
       return false;
     }
-    log0(lvl, "buildJar: completed");
+    log(lvl, "buildJar: completed");
     return true;
   }
 
@@ -1140,7 +1152,7 @@ public class FileManager {
         FileManager.deleteFileOrFolder(folderName);
       }
       in = new ZipInputStream(new BufferedInputStream(new FileInputStream(jarName)));
-      log0(lvl, "unpackJar: %s to %s", jarName, folderName);
+      log(lvl, "unpackJar: %s to %s", jarName, folderName);
       boolean isExecutable;
       int n;
       File f;
@@ -1173,10 +1185,10 @@ public class FileManager {
       }
       in.close();
     } catch (Exception ex) {
-      log0(-1, "unpackJar: " + ex.getMessage());
+      log(-1, "unpackJar: " + ex.getMessage());
       return false;
     }
-    log0(lvl, "unpackJar: completed");
+    log(lvl, "unpackJar: completed");
     return true;
   }
 
@@ -1248,7 +1260,7 @@ public class FileManager {
     InputStream isContent = cl.getResourceAsStream(src);
     if (isContent != null) {
       try {
-        log0(lvl + 1, "extractResource: %s to %s", src, tgt);
+        log(lvl + 1, "extractResource: %s to %s", src, tgt);
         tgt.getParentFile().mkdirs();
         OutputStream osTgt = new FileOutputStream(tgt);
         bufferedWrite(isContent, osTgt);

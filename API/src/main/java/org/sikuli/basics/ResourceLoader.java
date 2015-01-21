@@ -689,7 +689,7 @@ public class ResourceLoader {
   public boolean export(String res, String targetPath) {
     String memx = mem;
     mem = "export";
-    log(lvl, "Trying to access package for exporting: %s\nto: %s", res, targetPath);
+    log(lvl, "Trying to access package for exporting: %s to:\n%s", res, targetPath);
     boolean fastReturn = false;
     String pre = null, suf = "", tok = res;
     String[] parts;
@@ -962,7 +962,7 @@ public class ResourceLoader {
       try {
         ZipInputStream zip = new ZipInputStream(jar.openStream());
         ZipEntry ze;
-        log(lvl, "from: %s", FileManager.slashify(jar.getPath(), false));
+        log(lvl, "from:\n%s", FileManager.slashify(jar.getPath(), false));
         while ((ze = zip.getNextEntry()) != null) {
           String entryName = ze.getName();
           if (entryName.startsWith(path)
