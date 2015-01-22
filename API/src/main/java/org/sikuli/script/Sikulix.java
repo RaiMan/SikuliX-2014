@@ -10,9 +10,6 @@ import java.awt.Dimension;
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -73,6 +70,10 @@ public class Sikulix {
       debugLevel = dl;
     }
     rt = RunTime.get();
+    if (rt.hasOptions()) {
+      rt.dumpOptions();
+    }
+    rt.show();
     File fSetupJar = null;
     if (rt.fSxProject == null) {
       fSetupJar = new File(rt.fSxBase, "sikulixsetup-1.1.0.jar");
@@ -84,7 +85,9 @@ public class Sikulix {
       System.exit(1);
     }
     rt.addToClasspath(fSetupJar.getPath());
-    rt.dumpClassPath();
+    if (Debug.getDebugLevel() > 1) {
+      rt.dumpClassPath();
+    }
     Screen s = new Screen();
     ImagePath.add("org.sikuli.setup.RunSetup/Images");
     s.exists("SikuliLogo");
