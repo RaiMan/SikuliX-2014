@@ -578,13 +578,27 @@ public class JythonScriptRunner implements IScriptRunner {
 	}
 
   private boolean runObserveCallback(Object[] args) {
+    PyFunction func = (PyFunction) args[0];
+    boolean success = true;
 		try {
       ((PyFunction) args[0]).__call__(Py.java2py(args[1]));
 		} catch (Exception ex) {
-			log(-1, "runObserveCallback: jython invoke: %s", ex.getMessage());
-			return false;
+      if (!"<lambda>".equals(func.__name__)) {
+        log(-1, "runObserveCallback: jython invoke: %s", ex.getMessage());
+        return false;
+      }
+			success = false;
 		}
-		return true;
+    if (success) {
+      return true;
+    }
+		try {
+      ((PyFunction) args[0]).__call__();
+		} catch (Exception ex) {
+      log(-1, "runObserveCallback: jython invoke <lambda>: %s", ex.getMessage());
+      return false;
+    }
+    return true;
 	}
 
 //TODO implement generalized callback
