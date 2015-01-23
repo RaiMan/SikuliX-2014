@@ -12,7 +12,6 @@ import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -83,12 +82,14 @@ public class Sikulix {
 // *********************************
 // make a folder content list
     // Libswin/target/classes/META-INF/libs/windows/libs64
-    if (addJarToCP("Libswin", null)) {
-      rt.dumpClassPath();
+    if (rt.testSwitch()) {
+      addToCP("Libswin"); 
+    } else {
+      addJarToCP("Libswin", null); 
     }
     File testFolder = new File(rt.fUserDir, "SikulixTest");
     FileManager.deleteFileOrFolder(testFolder.getAbsolutePath());
-    rt.extractResourcesToFolder("/META-INF/libs", testFolder, new FilenameFilter() {
+    rt.extractResourcesToFolder("/META-INF/libs/windows", testFolder, new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {
         if (name.endsWith(".txt")) return false;

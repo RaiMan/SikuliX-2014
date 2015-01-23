@@ -1,8 +1,8 @@
 /*
- * Copyright 2010-2014, Sikuli.org, sikulix.com
+ * Copyright 2010-2015, Sikuli.org, sikulix.com
  * Released under the MIT License.
  *
- * RaiMan 2014
+ * RaiMan 2015
  */
 package org.sikuli.script;
 
@@ -410,8 +410,7 @@ public class RunTime {
         }
       }
       if (testing && !runningJar && !runningWinApp) {
-        long now = (new Date().getTime() / 10000) % 2;
-        if (now == 0) {
+        if (testSwitch()) {
           logp("***** for testing: exporting from classes");
         } else {
           logp("***** for testing: exporting from jar");
@@ -576,6 +575,13 @@ public class RunTime {
     }
     logp("***** show environment end");
   }  
+  
+  public boolean testSwitch() {
+    if (0 == (new Date().getTime() / 10000) % 2) {
+      return true;
+    }
+    return false;
+  }
 //</editor-fold>
   
 //<editor-fold defaultstate="collapsed" desc="native libs handling">
@@ -1080,16 +1086,16 @@ public class RunTime {
   
   List<String> doResourceListFolder(File fFolder, List<String> files, FilenameFilter filter) {
     boolean deep = true;
+    int localLevel = testing ? lvl : lvl + 1;
+    String subFolder = "";
     if (fFolder.isDirectory()) {
       if (!FileManager.pathEquals(fFolder.getPath(), files.get(0))) {
-        if (filter != null && !filter.accept(new File(files.get(0)), 
-                fFolder.getPath().substring(files.get(0).length()+1)+"/")) {
+        subFolder = fFolder.getPath().substring(files.get(0).length()+1) + "/";
+        if (filter != null && !filter.accept(new File(files.get(0)), subFolder)) {
           return files;
         }
       }
-      if (testing) {
-        logp(lvl + 1, "scanning folder:\n%s", fFolder);
-      }
+      logp(localLevel, "scanning folder:\n%s", fFolder);
       String[] subList = fFolder.list();
       for (String entry : subList) {
         if (filter != null && !filter.accept(fFolder, entry)) {
@@ -1098,13 +1104,13 @@ public class RunTime {
         File fEntry = new File(fFolder, entry);
         if (fEntry.isDirectory()) {
           if (deep) {
-           files.add(fEntry.getAbsolutePath().substring(1 + files.get(0).length()) + "/");
+           subFolder = fEntry.getAbsolutePath().substring(1 + files.get(0).length()) + "/";
+           files.add(subFolder);
+           logp(localLevel, "found: %s", subFolder);
            doResourceListFolder(fEntry, files, filter);
           }
         } else {
-          if (testing) {
-            logp(lvl + 1, "adding: %s", entry);
-          }
+          logp(localLevel, "from %s adding: %s", (subFolder.isEmpty() ? "." : subFolder), entry);
           files.add(fEntry.getAbsolutePath().substring(1 + fFolder.getPath().length()));
         }
       }
@@ -1120,27 +1126,37 @@ public class RunTime {
   List<String> doResourceListJar(URL uJar, String folder, List<String> files, FilenameFilter filter) {
     ZipInputStream zJar;
     String fpJar = uJar.getPath().split("!")[0];
+    int localLevel = testing ? lvl : lvl + 1;
     if (runningWinApp) {
       return doResourceListExe(folder, files);
     }
+    String fileSep = "/";
     if (!fpJar.endsWith(".jar")) {
       return files;
     }
-    if (testing) {
-      logp(lvl + 1, "scanning jar:\n%s", uJar);
-    }
+    logp(localLevel, "scanning jar:\n%s", uJar);
     folder = folder.startsWith("/") ? folder.substring(1) : folder;
     ZipEntry zEntry;
+    String subFolder = "";
     try {
       zJar = new ZipInputStream(new URL(fpJar).openStream());
       while ((zEntry = zJar.getNextEntry()) != null) {
         String zePath = zEntry.getName();
-        if (!zePath.endsWith("/") && zePath.startsWith(folder)) {
-          String zeName = zePath.substring(folder.length() + 1);
-          if (testing) {
-            logp(lvl + 1, "adding: %s", zeName);
+        if (zePath.startsWith(folder)) {
+          if (zePath.endsWith("/")) {
+            logp(localLevel, "found: %s", zEntry);
+          } else {
+            String zeName = zePath.substring(folder.length() + 1);
+            int nSep = zeName.lastIndexOf(fileSep);
+            String zefName = zeName.substring(nSep + 1, zeName.length());
+            String zeSub = "";
+            if (nSep > 0) {
+              zeSub = zeName.substring(0, nSep + 1);
+              
+            }
+            logp(localLevel, "from %s adding: %s", (zeSub.isEmpty() ? "." : zeSub), zefName);
+            files.add(zeName);
           }
-          files.add(zeName);
         }
       }
     } catch (Exception ex) {
