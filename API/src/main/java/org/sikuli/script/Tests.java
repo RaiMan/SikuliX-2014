@@ -121,11 +121,35 @@ public class Tests {
     rt = RunTime.get();
     String msg = "worked";
     addJarToCP("Libswin", null);
-    File content = new File(rt.fTestFolder, "sikulixcontent");
-    if (!rt.resourceListAsFile("META-INF/libs/windows", content, null)) {
+    File content = null;
+    String fsContent = "Libswin/src/main/resources/META-INF/libs/windows/" + rt.fpContent;
+    if (rt.fSxProject != null) {
+      content = new File(rt.fSxProject, fsContent);
+    } else {
+      content = new File(rt.fTestFolder, rt.fpContent);
+    }
+    if (!rt.resourceListAsFile("META-INF/libs/windows", content, new FilenameFilter() {
+      @Override
+      public boolean accept(File dir, String name) {
+        if (name.contains(rt.fpContent)) return false;
+        return true;
+      }
+    })) {
       msg = "did not work";
     }
     log(lvl, "*** %s *** test05_MakeLibswinContentFile: META-INF/libs/windows to:\n%s", msg, content);
+  }
+  
+  public static void test06_ExtractLibsWithContentlist() {
+    rt = RunTime.get();
+    String msg = "worked";
+    addJarToCP("Libswin", null);
+    File target = rt.fTestFolder;
+    FileManager.resetFolder(target);
+    if (!rt.extractResourcesToFolderWithList("META-INF/libs/windows", target, null)) {
+      msg = "did not work";
+    }
+    log(lvl, "*** %s *** test05_MakeLibswinContentFile: META-INF/libs/windows to:\n%s", msg, target);
   }
   
   private static boolean addToCP(String folder) {
