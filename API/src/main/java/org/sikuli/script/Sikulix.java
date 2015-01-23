@@ -8,8 +8,11 @@ package org.sikuli.script;
 
 import java.awt.Dimension;
 import java.io.File;
+import java.io.FilenameFilter;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -64,16 +67,47 @@ public class Sikulix {
   
   public static int debugLevel = 1;
   private static RunTime rt = null;
-	public static void main(String[] args) {
+	public static void main(String[] args) throws MalformedURLException {
     int dl = RunTime.checkArgs(args);
     if (dl > -1) {
       debugLevel = dl;
     }
     rt = RunTime.get();
-    if (rt.hasOptions()) {
-      rt.dumpOptions();
+    if (!rt.testing) {
+      rt.show();
     }
-    rt.show();
+    rt.testing = true;
+    Debug.on(3);
+    
+
+// *********************************
+// make a folder content list
+    // Libswin/target/classes/META-INF/libs/windows/libs64
+    if (addJarToCP("Libswin", null)) {
+      rt.dumpClassPath();
+    }
+    File testFolder = new File(rt.fUserDir, "SikulixTest");
+    FileManager.deleteFileOrFolder(testFolder.getAbsolutePath());
+    rt.extractResourcesToFolder("/META-INF/libs", testFolder, new FilenameFilter() {
+      @Override
+      public boolean accept(File dir, String name) {
+        if (name.endsWith(".txt")) return false;
+        if (name.contains("opencv")) return false;
+        if (name.endsWith("/")) {
+          if (name.contains("libs32")) {
+            return false;
+          }
+        }
+        return true;
+      }
+    });
+    if (RunTime.testing && !rt.runningJar) {
+      log(lvl, "testing is on - leaving");
+      System.exit(1);
+    }
+
+// *********************************
+// test images from jar
     File fSetupJar = null;
     if (rt.fSxProject == null) {
       fSetupJar = new File(rt.fSxBase, "sikulixsetup-1.1.0.jar");
@@ -93,9 +127,36 @@ public class Sikulix {
     s.exists("SikuliLogo");
     s.exists("SikuliLogo");
     s.highlight(-2);
-    if (RunTime.testing && !rt.runningJar) System.exit(1);
     log(lvl, "running main: nothing to do (yet)");
 	}
+  
+  private static boolean addToCP(String folder) {
+    if (rt.fSxProject != null) {
+      rt.addToClasspath(new File(rt.fSxProject, folder + "/target/classes").getAbsolutePath());
+      return true;
+    }
+    return false;
+  }
+
+  private static boolean addJarToCP(String folder, String filter) {
+    if (rt.fSxProject != null) {
+      File aFolder = new File(rt.fSxProject, folder + "/target");
+      if (! aFolder.exists()) {
+        return false;
+      }
+      for (String sFile : aFolder.list()) {
+        if (sFile.endsWith(".jar")) {
+          if (filter != null && !filter.isEmpty() && !sFile.contains(filter)) {
+            continue;
+          }
+          rt.addToClasspath(new File(aFolder, sFile.toString()).getAbsolutePath());
+          return true;
+        }
+      }
+      return false;
+    }
+    return false;
+  }
 
   public static boolean isRunningFromJar() {
     return runningFromJar;
