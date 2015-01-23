@@ -8,6 +8,7 @@ package org.sikuli.script;
 
 import java.awt.GraphicsEnvironment;
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URL;
@@ -46,52 +48,56 @@ import org.sikuli.basics.SysJNA;
 public class RunTime {
 
 //<editor-fold defaultstate="collapsed" desc="logging">
-  final String me = "RunTime%s: ";
-  int lvl = 3;
-  int minLvl = lvl;
-  static String preLogMessages = "";
-  
-  void log(int level, String message, Object... args) {
+  private final String me = "RunTime%s: ";
+  private int lvl = 3;
+  private int minLvl = lvl;
+  private static String preLogMessages = "";
+
+  private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
   }
-  
-  void logp(String message, Object... args) {
+
+  private void logp(String message, Object... args) {
     if (runningWinApp) {
       log(0, message, args);
     } else {
       System.out.println(String.format(message, args));
     }
   }
-  
-  void logp(int level, String message, Object... args) {
+
+  private void logp(int level, String message, Object... args) {
     if (level <= Debug.getDebugLevel()) {
       logp(message, args);
     }
   }
-  
-  void terminate(int retval, String msg) {
+
+  public void terminate(int retval, String msg) {
     log(-1, "*** terminating: " + msg);
     System.exit(retval);
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="instance">
   /**
    * INTERNAL USE
    */
-  RunTime() {}
-  
+  private RunTime() {
+  }
+
   public enum Type {
+
     IDE, API, SETUP, INIT
   }
-  
+
   private enum theSystem {
+
     WIN, MAC, LUX, FOO
   }
-  
+
   /**
    * INTERNAL USE to initialize the runtime environment for SikuliX<br>
    * for public use: use RunTime.get() to get the existing instance
+   *
    * @param typ IDE or API
    * @return the RunTime singleton instance
    */
@@ -126,9 +132,10 @@ public class RunTime {
     }
     return runTime;
   }
-  
+
   /**
    * get the initialized RunTime singleton instance
+   *
    * @return
    */
   public static synchronized RunTime get() {
@@ -137,16 +144,16 @@ public class RunTime {
     }
     return runTime;
   }
-  
+
   /**
-   * INTERNAL USE
-   * get a new initialized RunTime singleton instance
+   * INTERNAL USE get a new initialized RunTime singleton instance
+   *
    * @return
    */
   public static synchronized RunTime reset(Type typ) {
     if (runTime != null) {
       preLogMessages += "RunTime: resetting RunTime instance;";
-      if (Sikulix.debugLevel == 1) {
+      if (Sikulix.testNumber == 1) {
         Debug.setDebugLevel(debugLevelSaved);
       }
       Debug.setLogFile(debugLogfileSaved);
@@ -154,26 +161,26 @@ public class RunTime {
     }
     return get(typ);
   }
-  
+
   /**
-   * INTERNAL USE
-   * get a new initialized RunTime singleton instance
+   * INTERNAL USE get a new initialized RunTime singleton instance
+   *
    * @return
    */
   public static synchronized RunTime reset() {
     return reset(Type.API);
   }
 //</editor-fold>
-      
+
 //<editor-fold defaultstate="collapsed" desc="variables">
-  static RunTime runTime = null;
-  static int debugLevelSaved;
-  static String debugLogfileSaved;
+  private static RunTime runTime = null;
+  private static int debugLevelSaved;
+  private static String debugLogfileSaved;
   public static boolean testing = false;
   public static boolean testingWinApp = false;
-  
-  Type runType = Type.INIT;
-  
+
+  private Type runType = Type.INIT;
+
   public String sxBuild = "";
   public String sxBuildStamp = "";
   public String jreVersion = java.lang.System.getProperty("java.runtime.version");
@@ -182,23 +189,26 @@ public class RunTime {
   public String baseJar = "";
   public String userName = "";
   public String BaseTempPath = "";
-  
-  Class clsRef = RunTime.class;
-  List<URL> classPath = new ArrayList<URL>();
+
+  private Class clsRef = RunTime.class;
+  private List<URL> classPath = new ArrayList<URL>();
   public File fTempPath = null;
   public File fBaseTempPath = null;
   public File fLibsFolder = null;
-  Map<String, Boolean> libsLoaded = new HashMap<String, Boolean>();
+  private Map<String, Boolean> libsLoaded = new HashMap<String, Boolean>();
   public File fUserDir = null;
   public File fWorkDir = null;
+  public File fTestFolder = null;
+  public File fTestFile = null;
 
-  File fOptions = null;
-  Properties options = null;
-  String fnOptions = "SikulixOptions.txt";
+  private File fOptions = null;
+  private Properties options = null;
+  private String fnOptions = "SikulixOptions.txt";
 
   public File fSxBase = null;
   public File fSxBaseJar = null;
   public File fSxProject = null;
+  public String fpContent = "sikulixcontent";
 
   public boolean runningJar = true;
   public boolean runningWindows = false;
@@ -206,21 +216,21 @@ public class RunTime {
   public boolean runningLinux = false;
   public boolean runningWinApp = false;
   public boolean runningMacApp = false;
-  theSystem runningOn = theSystem.FOO;
-  final String osNameSysProp = System.getProperty("os.name");
-  final String osVersionSysProp = System.getProperty("os.version");
+  private theSystem runningOn = theSystem.FOO;
+  private final String osNameSysProp = System.getProperty("os.name");
+  private final String osVersionSysProp = System.getProperty("os.version");
   public String javaShow = "not-set";
   public int javaArch = 32;
   public int javaVersion = 0;
   public String osName = "NotKnown";
   public String osVersion = "";
-  String appType = null;
+  private String appType = null;
 
 //</editor-fold>
   
 //<editor-fold defaultstate="collapsed" desc="global init">
-  void init(Type typ) {
-    
+  private void init(Type typ) {
+
 //<editor-fold defaultstate="collapsed" desc="general">
     if ("winapp".equals(getOption("testing"))) {
       testingWinApp = true;
@@ -231,10 +241,10 @@ public class RunTime {
       }
     }
     log(lvl, "global init: entering as: %s", typ);
-    
+
     sxBuild = Settings.SikuliVersionBuild;
     sxBuildStamp = sxBuild.replace("_", "").replace("-", "").replace(":", "").substring(0, 12);
-    
+
     String os = osNameSysProp.toLowerCase();
     if (os.startsWith("mac")) {
       osName = "Mac OSX";
@@ -246,14 +256,14 @@ public class RunTime {
       osName = "Linux";
       runningLinux = true;
     }
-    
-    if (System.getProperty("user.name") != null ) {
+
+    if (System.getProperty("user.name") != null) {
       userName = System.getProperty("user.name");
     }
     if (userName.isEmpty()) {
       userName = "unknown";
     }
-    
+
     String tmpdir = System.getProperty("java.io.tmpdir");
     if (tmpdir != null && !tmpdir.isEmpty()) {
       fTempPath = new File(tmpdir);
@@ -264,7 +274,7 @@ public class RunTime {
     fBaseTempPath.mkdirs();
     BaseTempPath = fBaseTempPath.getAbsolutePath();
 //</editor-fold>
-    
+
 //<editor-fold defaultstate="collapsed" desc="classpath">        
     try {
       if (Type.IDE.equals(typ)) {
@@ -315,7 +325,7 @@ public class RunTime {
       terminate(1, "no valid Java context for SikuliX available (java.security.CodeSource.getLocation() is null)");
     }
 //</editor-fold>
-    
+
 //<editor-fold defaultstate="collapsed" desc="versions">
     String vJava = System.getProperty("java.runtime.version");
     String vVM = System.getProperty("java.vm.version");
@@ -325,14 +335,14 @@ public class RunTime {
     if (vSysArch.contains("64")) {
       javaArch = 64;
     }
-    
+
     javaShow = String.format("java %d-%d version %s vm %s class %s arch %s",
             javaVersion, javaArch, vJava, vVM, vClass, vSysArch);
-    
+
     if (Debug.getDebugLevel() > minLvl) {
       dumpSysProps();
     }
-    
+
     osVersion = osVersionSysProp;
     String sysName = "";
     if (runningWindows) {
@@ -348,7 +358,7 @@ public class RunTime {
       terminate(-1, "running on not supported System: %s");
     }
 //</editor-fold>
-    
+
 //<editor-fold defaultstate="collapsed" desc="libs export">
     boolean shouldExport = false;
     URL uLibsFrom = null;
@@ -443,7 +453,7 @@ public class RunTime {
       }
     }
 //</editor-fold>
-    
+
     runType = typ;
     if (Debug.getDebugLevel() == minLvl) {
       show();
@@ -451,12 +461,12 @@ public class RunTime {
     log(lvl, "global init: leaving");
   }
 //</editor-fold>
-  
-//<editor-fold defaultstate="collapsed" desc="init for IDE">
-  File isRunning = null;
-  FileOutputStream isRunningFile = null;
 
-  void initIDEbefore() {
+//<editor-fold defaultstate="collapsed" desc="init for IDE">
+  private File isRunning = null;
+  private FileOutputStream isRunningFile = null;
+
+  private void initIDEbefore() {
     log(lvl, "initIDEbefore: entering");
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
@@ -472,7 +482,7 @@ public class RunTime {
         FileManager.cleanTemp();
       }
     });
-    
+
     new File(BaseTempPath).mkdirs();
     isRunning = new File(BaseTempPath, "sikuli-ide-isrunning");
     try {
@@ -486,7 +496,7 @@ public class RunTime {
       Sikulix.popError("Terminating on FatalError: cannot access IDE lock for/n" + isRunning);
       System.exit(1);
     }
-    
+
     if (jreVersion.startsWith("1.6")) {
       String jyversion = "";
       Properties prop = new Properties();
@@ -499,7 +509,8 @@ public class RunTime {
           ifp.close();
           jyversion = prop.getProperty("jython.version");
         }
-      } catch (IOException ex) {}
+      } catch (IOException ex) {
+      }
       if (!jyversion.isEmpty() && !jyversion.startsWith("2.5")) {
         Sikulix.popError(String.format("The bundled Jython %s\n"
                 + "cannot be used on Java 6!\n"
@@ -508,9 +519,9 @@ public class RunTime {
         System.exit(1);
       }
     }
-    
+
     Settings.isRunningIDE = true;
-    
+
     if (runningMac) {
       System.setProperty("apple.laf.useScreenMenuBar", "true");
       if (!runningMacApp) {
@@ -522,33 +533,34 @@ public class RunTime {
         }
       }
     }
-    
+
     log(lvl, "initIDEbefore: leaving");
   }
-  
-  void initIDEafter() {
+
+  private void initIDEafter() {
 //    log(lvl, "initIDEafter: entering");
 //    log(lvl, "initIDEafter: leaving");
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="init for API">
-  void initAPI() {
+  private void initAPI() {
 //    log(lvl, "initAPI: entering");
 //    log(lvl, "initAPI: leaving");
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="init for Setup">
-  void initSetup() {
+  private void initSetup() {
 //    log(lvl, "initSetup: entering");
 //    log(lvl, "initSetup: leaving");
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="helpers">
   /**
    * INTERNAL USE: to check whether we are running in compiled classes context
+   *
    * @return true if the code source location is a folder ending with classes (Maven convention)
    */
   public boolean isRunningFromJar() {
@@ -574,8 +586,8 @@ public class RunTime {
       dumpClassPath("sikulix");
     }
     logp("***** show environment end");
-  }  
-  
+  }
+
   public boolean testSwitch() {
     if (0 == (new Date().getTime() / 10000) % 2) {
       return true;
@@ -583,10 +595,11 @@ public class RunTime {
     return false;
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="native libs handling">
   /**
    * INTERNAL USE: load a native library from the libs folder
+   *
    * @param libname name of library
    */
   public static void loadLibrary(String libname) {
@@ -596,8 +609,8 @@ public class RunTime {
     ResourceLoader.get().check(Settings.SIKULI_LIB);
     ResourceLoader.get().loadLib(libname);
   }
-  
-  boolean loadLib(String libName) {
+
+  private boolean loadLib(String libName) {
     if (runningWindows) {
       libName += ".dll";
     } else if (runningMac) {
@@ -632,17 +645,17 @@ public class RunTime {
     return true;
   }
 
-  boolean checkLibs(File flibsFolder) {
+  private boolean checkLibs(File flibsFolder) {
     // 1.1-MadeForSikuliX64M.txt
     String name = String.format("1.1-MadeForSikuliX%d%s.txt", javaArch, runningOn.toString().substring(0, 1));
-    if (! new File(flibsFolder, name).exists()) {
+    if (!new File(flibsFolder, name).exists()) {
       log(lvl, "libs folder empty or has wrong content");
       return false;
     }
     return true;
   }
 
-  boolean addToWindowsSystemPath(File fLibsFolder) {
+  private boolean addToWindowsSystemPath(File fLibsFolder) {
     String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
     if (syspath == null) {
       terminate(1, "addToWindowsSystemPath: cannot access system path");
@@ -707,10 +720,10 @@ public class RunTime {
     return false;
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="options handling">
-  void loadOptions(Type typ) {
-    
+  private void loadOptions(Type typ) {
+
     String tmpdir = System.getProperty("user.home");
     if (tmpdir != null && !tmpdir.isEmpty()) {
       fUserDir = new File(tmpdir);
@@ -719,7 +732,9 @@ public class RunTime {
       FileManager.resetFolder(runTime.fUserDir);
       log(-1, "init: user.home not valid (null or empty) - using empty:\n%s", fUserDir);
     }
-    
+    fTestFolder = new File(fUserDir, "SikulixTest");
+    fTestFile = new File(fTestFolder, "SikulixTest.txt");
+
     tmpdir = System.getProperty("user.dir");
     if (tmpdir != null && !tmpdir.isEmpty()) {
       fWorkDir = new File(tmpdir);
@@ -728,7 +743,7 @@ public class RunTime {
       FileManager.resetFolder(fWorkDir);
       log(-1, "init: user.dir (working folder) not valid (null or empty) - using empty:\n%s", fWorkDir);
     }
-    
+
     File fDebug = new File(fUserDir, "SikulixDebug.txt");
     if (fDebug.exists()) {
       if (Debug.getDebugLevel() == 0) {
@@ -740,7 +755,7 @@ public class RunTime {
       }
       logp("auto-debugging with level %d into %s", Debug.getDebugLevel(), fDebug);
     }
-    
+
     fOptions = new File(fWorkDir, fnOptions);
     if (!fOptions.exists()) {
       fOptions = new File(fUserDir, fnOptions);
@@ -767,19 +782,19 @@ public class RunTime {
       log(lvl, "found Options file at: %s", fOptions);
     }
   }
-  
+
   /**
-   * NOT IMPLEMENTED YET
-   * load an options file, that is merged with an existing options store (same key overwrites value)
+   * NOT IMPLEMENTED YET load an options file, that is merged with an existing options store (same key overwrites value)
+   *
    * @param fpOptions path to a file containing options
    */
   public void loadOptions(String fpOptions) {
     log(-1, "loadOptions: not yet implemented");
   }
-  
+
   /**
-   * NOT IMPLEMENTED YET
-   * saves  the current option store to a file (overwritten)
+   * NOT IMPLEMENTED YET saves the current option store to a file (overwritten)
+   *
    * @param fpOptions path to a file
    * @return success
    */
@@ -787,20 +802,20 @@ public class RunTime {
     log(-1, "saveOptions: not yet implemented");
     return false;
   }
-  
+
   /**
-   * NOT IMPLEMENTED YET
-   * saves  the current option store to the file it was created from (overwritten)
+   * NOT IMPLEMENTED YET saves the current option store to the file it was created from (overwritten)
+   *
    * @return success, false if the current store was not created from file
    */
   public boolean saveOptions() {
     log(-1, "saveOptions: not yet implemented");
     return false;
   }
-  
-  
+
   /**
    * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)
+   *
    * @param pName the option key (case-sensitive)
    * @return true only if option exists and has yes or true (not case-sensitive), in all other cases false
    */
@@ -814,9 +829,10 @@ public class RunTime {
     }
     return false;
   }
-  
+
   /**
    * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)
+   *
    * @param pName the option key (case-sensitive)
    * @param bDefault the default to be returned if option absent or empty
    * @return true if option has yes or no, false for no or false (not case-sensitive)
@@ -835,9 +851,10 @@ public class RunTime {
     }
     return true;
   }
-  
+
   /**
    * look into the option file if any (if no option file is found, the option is taken as not existing)
+   *
    * @param pName the option key (case-sensitive)
    * @return the associated value, empty string if absent
    */
@@ -848,12 +865,13 @@ public class RunTime {
     String pVal = options.getProperty(pName, "").toLowerCase();
     return pVal;
   }
-  
+
   /**
    * look into the option file if any (if no option file is found, the option is taken as not existing)<br>
    * side-effect: if no options file is there, an options store will be created in memory<br>
    * in this case and when the option is absent or empty, the given default will be stored<br>
    * you might later save the options store to a file with storeOptions()
+   *
    * @param pName the option key (case-sensitive)
    * @param sDefault the default to be returned if option absent or empty
    * @return the associated value, the default value if absent or empty
@@ -871,10 +889,11 @@ public class RunTime {
     }
     return pVal;
   }
-  
+
   /**
    * store an option key-value pair, overwrites existing value<br>
    * new option store is created if necessary and can later be saved to a file
+   *
    * @param pName
    * @param sValue
    */
@@ -884,10 +903,11 @@ public class RunTime {
     }
     options.setProperty(pName, sValue);
   }
-  
+
   /**
    * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)<br>
    * tries to convert the stored string value into an integer number (gives 0 if not possible)<br>
+   *
    * @param pName the option key (case-sensitive)
    * @return the converted integer number, 0 if absent or not possible
    */
@@ -899,13 +919,15 @@ public class RunTime {
     int nVal = 0;
     try {
       nVal = Integer.decode(pVal);
-    } catch (Exception ex) {}
+    } catch (Exception ex) {
+    }
     return nVal;
   }
-  
+
   /**
    * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)<br>
    * tries to convert the stored string value into an integer number (gives 0 if not possible)<br>
+   *
    * @param pName the option key (case-sensitive)
    * @param nDefault the default to be returned if option absent, empty or not convertable
    * @return the converted integer number, default if absent, empty or not possible
@@ -918,15 +940,17 @@ public class RunTime {
     int nVal = nDefault;
     try {
       nVal = Integer.decode(pVal);
-    } catch (Exception ex) {}
+    } catch (Exception ex) {
+    }
     return nVal;
   }
-  
+
   /**
    * all options and their values
+   *
    * @return a map of key-value pairs containing the found options, empty if no options file found
    */
-  public Map<String,String> getOptions() {
+  public Map<String, String> getOptions() {
     Map<String, String> mapOptions = new HashMap<String, String>();
     if (options != null) {
       Enumeration<?> optionNames = options.propertyNames();
@@ -938,44 +962,61 @@ public class RunTime {
     }
     return mapOptions;
   }
-  
+
   /**
    * check whether options are defined
+   *
    * @return true if at lest one option defined else false
    */
   public boolean hasOptions() {
     return options != null && options.size() > 0;
   }
-  
+
   /**
    * all options and their values written to sysout as key = value
    */
   public void dumpOptions() {
     if (options.size() > 0) {
       logp("*** options dump %s", (fOptions != null ? "" : fOptions));
-      for (String sOpt: getOptions().keySet()) {
+      for (String sOpt : getOptions().keySet()) {
         logp("%s = %s", sOpt, getOption(sOpt));
       }
       logp("*** options dump end");
     }
   }
 //</editor-fold>
-  
-//<editor-fold defaultstate="collapsed" desc="handling resoources from classpath">
+
+//<editor-fold defaultstate="collapsed" desc="handling resources from classpath">
   /**
    * export all resource files from the given subtree on classpath to the given folder retaining the subtree
+   *
    * @param fpRessources path of the subtree relative to root with leading /
    * @param fFolder folder where to export
-   * @param filter implementation of interface FilenameFilter or null for no Filtering
+   * @param filter implementation of interface FilenameFilter or null for no filtering
+   * @return success
    */
-  public void extractResourcesToFolder(String fpRessources, File fFolder, FilenameFilter filter) {
+  public boolean extractResourcesToFolder(String fpRessources, File fFolder, FilenameFilter filter) {
     List<String> content = null;
     content = resourceList(fpRessources, filter);
+    if (content == null) {
+      return false;
+    }
+    return extractResourcesToFolderWithList(fpRessources, fFolder, content);
+  }
+  
+  /**
+   * export all resource files from the given subtree on classpath to the given folder retaining the subtree
+   *
+   * @param fpRessources path of the subtree relative to root with leading /
+   * @param fFolder folder where to export
+   * @param content a list of filenames including a possible subfolder structure
+   * @return success
+   */
+  public boolean extractResourcesToFolderWithList(String fpRessources, File fFolder, List<String> content) {
     int count = 0;
     int ecount = 0;
     String subFolder = "";
-    if (content != null && content.size() > 1) {
-      content.set(0, null);
+    if (content != null && content.size() > 0) {
       for (String eFile : content) {
         if (eFile == null) {
           continue;
@@ -988,7 +1029,7 @@ public class RunTime {
           eFile = new File(subFolder, eFile).getPath();
         }
         if (extractResourceToFile(fpRessources, eFile, fFolder, eFile)) {
-          log(lvl+ 1, "extractResourceToFile done: %s", eFile);
+          log(lvl + 1, "extractResourceToFile done: %s", eFile);
           count++;
         } else {
           ecount++;
@@ -996,14 +1037,16 @@ public class RunTime {
       }
     }
     if (ecount > 0) {
-      log(lvl, "files exported: %d - skipped: %d from %s", count, ecount, fpRessources);
+      log(lvl, "files exported: %d - skipped: %d from %s to:\n %s", count, ecount, fpRessources, fFolder);
     } else {
-      log(lvl, "files exported: %d from: %s", count, fpRessources);
+      log(lvl, "files exported: %d from: %s to:\n %s", count, fpRessources, fFolder);
     }
+    return true;
   }
   
   /**
    * store a resource found on classpath to a file in the given folder
+   *
    * @param inPrefix a subtree found in classpath
    * @param inFile the filename combined with the prefix on classpath
    * @param outDir a folder where to export
@@ -1013,8 +1056,11 @@ public class RunTime {
   public boolean extractResourceToFile(String inPrefix, String inFile, File outDir, String outFile) {
     InputStream aIS;
     FileOutputStream aFileOS;
+    String content = inPrefix + "/" + inFile;
     try {
-      aIS = (InputStream) clsRef.getResourceAsStream(inPrefix + "/" + inFile);
+      content = runningWindows ? content.replace("\\", "/") : content;
+      if (!content.startsWith("/")) content = "/" + content;
+      aIS = (InputStream) clsRef.getResourceAsStream(content);
       if (aIS == null) {
         throw new IOException("resource not accessible");
       }
@@ -1027,13 +1073,269 @@ public class RunTime {
       aIS.close();
       aFileOS.close();
     } catch (Exception ex) {
-      log(-1, "extractResourceToFile: %s\n%s", outFile, ex);
+      log(-1, "extractResourceToFile: %s\n%s", content, ex);
       return false;
     }
     return true;
   }
+
+  /**
+   * store the content of a resource found on classpath in the returned string
+   *
+   * @param inPrefix a subtree from root found in classpath (leading /)
+   * @param inFile the filename combined with the prefix on classpath
+   * @param encoding
+   * @return file content
+   */
+  public String extractResourceToString(String inPrefix, String inFile, String encoding) {
+    InputStream aIS = null;
+    String out = null;
+    String content = inPrefix + "/" + inFile;
+    if (!content.startsWith("/")) content = "/" + content;
+    try {
+      content = runningWindows ? content.replace("\\", "/") : content;
+      aIS = (InputStream) clsRef.getResourceAsStream(content);
+      if (aIS == null) {
+        throw new IOException("resource not accessible");
+      }
+      if (encoding == null) {
+        encoding = "RAW-BYTE";
+        out = new String(copy(aIS));
+      } else if (encoding.isEmpty()) {
+        out = new String(copy(aIS), "UTF-8");
+      } else {
+        out = new String(copy(aIS), encoding);
+      }
+      aIS.close();
+      aIS = null;
+    } catch (Exception ex) {
+      log(-1, "extractResourceToString as %s from:\n%s\n%s", encoding, content, ex);
+    }
+    try {
+      if (aIS != null) {
+        aIS.close();
+      }
+    } catch (Exception ex) {}
+    return out;
+  }
+
+  /**
+   * list all files in the folder and it's subtree (files only, no folder names), but the files have the subtree
+   * prefixed
+   *
+   * @param folder folder or jar on classpath
+   * @param filter
+   * @return the list (might be empty)
+   */
+  public List<String> resourceList(String folder, FilenameFilter filter) {
+    List<String> files = new ArrayList<String>();
+    if (!folder.startsWith("/")) folder = "/" + folder;
+    URL uFolder = clsRef.getResource(folder);
+    if (uFolder == null) {
+      return files;
+    }
+    File fFolder = null;
+    try {
+      fFolder = new File(uFolder.toURI());
+      String sFolder = uFolder.getPath();
+      if (":".equals(sFolder.substring(2, 3))) {
+        sFolder = sFolder.substring(1);
+      }
+      if (sFolder.endsWith("/")) {
+        sFolder = sFolder.substring(0, sFolder.length() - 1);
+      }
+      files.add(sFolder);
+      files =  doResourceListFolder(fFolder, files, filter);
+      files.remove(0);
+      return files;
+    } catch (Exception ex) {
+      if (!"jar".equals(uFolder.getProtocol())) {
+        log(lvl, "resourceList:\n%s", folder);
+        log(-1, "resourceList: URL neither folder nor jar:\n%s", ex);
+        return null;
+      }
+    }
+    String[] parts = uFolder.getPath().split("!");
+    if (parts.length < 2 || !parts[0].startsWith("file:")) {
+      log(lvl, "resourceList:\n%s", folder);
+      log(-1, "resourceList: not a valid jar URL: " + uFolder.getPath());
+      return null;
+    }
+    String fpFolder = parts[1];
+    return doResourceListJar(uFolder, fpFolder, files, filter);
+  }
   
-  void copy(InputStream in, OutputStream out) throws IOException {
+  /**
+   * same as resourceList, but the list is written to file with lineseparators of the running system<br>
+   * @param folder path of the subtree relative to root with leading /
+   * @param target the file to take the list
+   * @param filter implementation of interface FilenameFilter or null for no filtering
+   * @return success
+   */
+  public boolean resourceListAsFile(String folder, File target, FilenameFilter filter) {
+    String content = resourceListAsString(folder, filter);
+    if (content == null) {
+      log(-1, "resourceListAsFile: did not work: %s", folder);
+      return false;
+    }
+    try {
+      FileManager.deleteFileOrFolder(target.getAbsolutePath());
+      target.getParentFile().mkdirs();
+      PrintWriter aPW =new PrintWriter(target);
+      aPW.write(content);
+      aPW.close();
+    } catch (Exception ex) {
+      log(-1, "resourceListAsFile: %s:\n%s", target, ex);
+      return false;
+    }
+    return true;
+  }
+
+  /**
+   * same as resourceList, but the list is stored as string with lineseparators of the running system<br>
+   * @param folder path of the subtree relative to root with leading /
+   * @param filter implementation of interface FilenameFilter or null for no filtering
+   * @return the resulting string
+   */
+  public String resourceListAsString(String folder, FilenameFilter filter) {
+    return resourceListAsString(folder, filter, null);
+  }
+  
+  /**
+   * same as resourceList, but the list is stored as string with a given separator<br>
+   * @param folder path of the subtree relative to root with leading /
+   * @param filter implementation of interface FilenameFilter or null for no filtering
+   * @param separator to be used to separate the entries 
+   * @return the resulting string
+   */
+  public String resourceListAsString(String folder, FilenameFilter filter, String separator) {
+    List<String> aList = resourceList(folder, filter);
+    if (aList == null) {
+      return null;
+    }
+    if (separator == null) {
+      separator = System.getProperty("line.separator");
+    }
+    String out = "";
+    String subFolder = "";
+    if (aList != null && aList.size() > 0) {
+      for (String eFile : aList) {
+        if (eFile == null) {
+          continue;
+        }
+        if (eFile.endsWith("/")) {
+          subFolder = eFile.substring(0, eFile.length() - 1);
+          continue;
+        }
+        if (!subFolder.isEmpty()) {
+          eFile = new File(subFolder, eFile).getPath();
+        }
+        out += eFile.replace("\\", "/") + separator;
+      }
+    }
+    return out;
+  }
+  
+  private List<String> doResourceListFolder(File fFolder, List<String> files, FilenameFilter filter) {
+    int localLevel = testing ? lvl : lvl + 1;
+    String subFolder = "";
+    if (fFolder.isDirectory()) {
+      if (!FileManager.pathEquals(fFolder.getPath(), files.get(0))) {
+        subFolder = fFolder.getPath().substring(files.get(0).length() + 1).replace("\\", "/") + "/";
+        if (filter != null && !filter.accept(new File(files.get(0), subFolder), "")) {
+          return files;
+        }
+      } else {
+        logp(localLevel, "scanning folder:\n%s", fFolder);
+        subFolder = "/";
+        files.add(subFolder);
+      }
+      String[] subList = fFolder.list();
+      for (String entry : subList) {
+        File fEntry = new File(fFolder, entry);
+        if (fEntry.isDirectory()) {
+          files.add(fEntry.getAbsolutePath().substring(1 + files.get(0).length()).replace("\\", "/") + "/");
+          doResourceListFolder(fEntry, files, filter);
+          files.add(subFolder);
+        } else {
+          if (filter != null && !filter.accept(fFolder, entry)) {
+            continue;
+          }
+          logp(localLevel, "from %s adding: %s", (subFolder.isEmpty() ? "." : subFolder), entry);
+          files.add(fEntry.getAbsolutePath().substring(1 + fFolder.getPath().length()));
+        }
+      }
+    }
+    return files;
+  }
+
+  private List<String> doResourceListWithList(String folder, List<String> files) {
+    String content = extractResourceToString(folder, fpContent, "");
+    files.addAll(Arrays.asList(content.split(content.indexOf("\r") != -1 ? "\r\n" : "\n")));
+    return files;
+  }
+
+  private List<String> doResourceListJar(URL uJar, String folder, List<String> files, FilenameFilter filter) {
+    ZipInputStream zJar;
+    String fpJar = uJar.getPath().split("!")[0];
+    int localLevel = testing ? lvl : lvl + 1;
+    if (runningWinApp) {
+      return doResourceListWithList(folder, files);
+    }
+    String fileSep = "/";
+    if (!fpJar.endsWith(".jar")) {
+      return files;
+    }
+    logp(localLevel, "scanning jar:\n%s", uJar);
+    folder = folder.startsWith("/") ? folder.substring(1) : folder;
+    File fFolder = new File(folder);
+    File fSubFolder = null;
+    ZipEntry zEntry;
+    String subFolder = "";
+    boolean skip = false;
+    try {
+      zJar = new ZipInputStream(new URL(fpJar).openStream());
+      while ((zEntry = zJar.getNextEntry()) != null) {
+        if (zEntry.getName().endsWith("/")) {
+          continue;
+        }
+        String zePath = zEntry.getName();
+        if (zePath.startsWith(folder)) {
+          String zeName = zePath.substring(folder.length() + 1);
+          int nSep = zeName.lastIndexOf(fileSep);
+          String zefName = zeName.substring(nSep + 1, zeName.length());
+          String zeSub = "";
+          if (nSep > 0) {
+            zeSub = zeName.substring(0, nSep + 1);
+            if (!subFolder.equals(zeSub)) {
+              subFolder = zeSub;
+              fSubFolder = new File(fFolder, subFolder);
+              skip = false;
+              if (filter != null && !filter.accept(fSubFolder, "")) {
+                skip = true;
+                continue;
+              }
+              files.add(zeSub);
+            }
+            if (skip) {
+              continue;
+            }
+          }
+          if (filter != null && !filter.accept(fSubFolder, zefName)) {
+            continue;
+          }
+          files.add(zefName);
+          logp(localLevel, "from %s adding: %s", (zeSub.isEmpty() ? "." : zeSub), zefName);
+        }
+      }
+    } catch (Exception ex) {
+      log(-1, "doResourceListJar: %s", ex);
+      return files;
+    }
+    return files;
+  }
+
+  private void copy(InputStream in, OutputStream out) throws IOException {
     byte[] tmp = new byte[8192];
     int len;
     while (true) {
@@ -1046,142 +1348,33 @@ public class RunTime {
     out.flush();
   }
   
-  /**
-   * list all files in the folder and it's subtree (files only, no folder names), but the files have the subtree prefixed
-   * @param folder folder or jar on classpath
-   * @return the list (might be empty)
-   */
-  public List<String> resourceList(String folder, FilenameFilter filter) {
-    log(lvl + 1, "resourceListDeep:\n%s", folder);
-    List<String> files = new ArrayList<String>();
-    URL uFolder = clsRef.getResource(folder);
-    if (uFolder == null) {
-      return files;
+  private byte[] copy(InputStream inputStream) throws IOException {
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    byte[] buffer = new byte[1024];
+    int length = 0;
+    while ((length = inputStream.read(buffer)) != -1) {
+      baos.write(buffer, 0, length);
     }
-    File fFolder = null;
-    try {
-      fFolder = new File(uFolder.toURI());
-      String sFolder = uFolder.getPath();
-      if (":".equals(sFolder.substring(2,3))) {
-        sFolder = sFolder.substring(1);
-      }
-      if (sFolder.endsWith("/")) {
-        sFolder = sFolder.substring(0, sFolder.length() - 1);
-      }
-      files.add(sFolder);
-      return doResourceListFolder(fFolder, files, filter);
-    } catch (Exception ex) {
-      if (!"jar".equals(uFolder.getProtocol())) {
-        terminate(1, "URL(uLibsFrom) neither folder nor jar: " + ex.toString());
-      }
-    }
-    String[] parts = uFolder.getPath().split("!");
-    if (parts.length < 2 || !parts[0].startsWith("file:")) {
-      terminate(1, "doResourceList: not a valid jar URL: " + uFolder.getPath());
-    }
-    String fpFolder = parts[1];
-    files.add(fpFolder);
-    return doResourceListJar(uFolder, fpFolder, files, filter);
-  }
-  
-  List<String> doResourceListFolder(File fFolder, List<String> files, FilenameFilter filter) {
-    boolean deep = true;
-    int localLevel = testing ? lvl : lvl + 1;
-    String subFolder = "";
-    if (fFolder.isDirectory()) {
-      if (!FileManager.pathEquals(fFolder.getPath(), files.get(0))) {
-        subFolder = fFolder.getPath().substring(files.get(0).length()+1) + "/";
-        if (filter != null && !filter.accept(new File(files.get(0)), subFolder)) {
-          return files;
-        }
-      }
-      logp(localLevel, "scanning folder:\n%s", fFolder);
-      String[] subList = fFolder.list();
-      for (String entry : subList) {
-        if (filter != null && !filter.accept(fFolder, entry)) {
-          continue;
-        }
-        File fEntry = new File(fFolder, entry);
-        if (fEntry.isDirectory()) {
-          if (deep) {
-           subFolder = fEntry.getAbsolutePath().substring(1 + files.get(0).length()) + "/";
-           files.add(subFolder);
-           logp(localLevel, "found: %s", subFolder);
-           doResourceListFolder(fEntry, files, filter);
-          }
-        } else {
-          logp(localLevel, "from %s adding: %s", (subFolder.isEmpty() ? "." : subFolder), entry);
-          files.add(fEntry.getAbsolutePath().substring(1 + fFolder.getPath().length()));
-        }
-      }
-    }
-    return files;
-  }
-  
-  List<String> doResourceListExe(String folder, List<String> files) {
-    log(-1, "doResourceListExe: not yet implemented");
-    return files;
-  }
-  
-  List<String> doResourceListJar(URL uJar, String folder, List<String> files, FilenameFilter filter) {
-    ZipInputStream zJar;
-    String fpJar = uJar.getPath().split("!")[0];
-    int localLevel = testing ? lvl : lvl + 1;
-    if (runningWinApp) {
-      return doResourceListExe(folder, files);
-    }
-    String fileSep = "/";
-    if (!fpJar.endsWith(".jar")) {
-      return files;
-    }
-    logp(localLevel, "scanning jar:\n%s", uJar);
-    folder = folder.startsWith("/") ? folder.substring(1) : folder;
-    ZipEntry zEntry;
-    String subFolder = "";
-    try {
-      zJar = new ZipInputStream(new URL(fpJar).openStream());
-      while ((zEntry = zJar.getNextEntry()) != null) {
-        String zePath = zEntry.getName();
-        if (zePath.startsWith(folder)) {
-          if (zePath.endsWith("/")) {
-            logp(localLevel, "found: %s", zEntry);
-          } else {
-            String zeName = zePath.substring(folder.length() + 1);
-            int nSep = zeName.lastIndexOf(fileSep);
-            String zefName = zeName.substring(nSep + 1, zeName.length());
-            String zeSub = "";
-            if (nSep > 0) {
-              zeSub = zeName.substring(0, nSep + 1);
-              
-            }
-            logp(localLevel, "from %s adding: %s", (zeSub.isEmpty() ? "." : zeSub), zefName);
-            files.add(zeName);
-          }
-        }
-      }
-    } catch (Exception ex) {
-      log(-1, "doResourceListJar: %s", ex);
-      return files;
-    }
-    return files;
+    return baos.toByteArray();
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="classpath handling">
-  void storeClassPath() {
+  private void storeClassPath() {
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     classPath = Arrays.asList(sysLoader.getURLs());
   }
-  
+
   /**
    * print the current classpath entries to sysout
    */
   public void dumpClassPath() {
     dumpClassPath(null);
   }
-  
+
   /**
    * print the current classpath entries to sysout whose path name contain the given string
+   *
    * @param filter the fileter string
    */
   public void dumpClassPath(String filter) {
@@ -1204,9 +1397,10 @@ public class RunTime {
     }
     logp("*** classpath dump end");
   }
-  
+
   /**
    * check wether a classpath entry contains the given identifying string, stops on first match
+   *
    * @param artefact the identifying string
    * @return the absolute path of the entry found
    */
@@ -1225,9 +1419,10 @@ public class RunTime {
     }
     return cpe;
   }
-  
+
   /**
    * check wether a the given URL is on classpath
+   *
    * @param path URL to look for
    * @return true if found else otherwise
    */
@@ -1236,15 +1431,16 @@ public class RunTime {
       storeClassPath();
     }
     for (URL entry : classPath) {
-      if ( new File(path.getPath()).equals(new File(entry.getPath()))) {
+      if (new File(path.getPath()).equals(new File(entry.getPath()))) {
         return true;
       }
     }
     return false;
   }
-  
+
   /**
    * adds the given folder or jar to the end of the current classpath
+   *
    * @param jarOrFolder absolute path to a folder or jar
    * @return success
    */
@@ -1273,7 +1469,7 @@ public class RunTime {
     return true;
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="system enviroment">
   /**
    * print the current java system properties key-value pairs sorted by key
@@ -1281,9 +1477,10 @@ public class RunTime {
   public void dumpSysProps() {
     dumpSysProps(null);
   }
-  
+
   /**
    * print the current java system properties key-value pairs sorted by key but only keys containing filter
+   *
    * @param filter the filter string
    */
   public void dumpSysProps(String filter) {
@@ -1309,33 +1506,36 @@ public class RunTime {
     }
     logp("*** system properties dump end" + filter);
   }
-  
+
   /**
    * checks, whether Java runs with a valid GraphicsEnvironment (usually means real screens connected)
+   *
    * @return false if Java thinks it has access to screen(s), true otherwise
    */
   public boolean isHeadless() {
     return GraphicsEnvironment.isHeadless();
-  }  
+  }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="runcmd">
   /**
    * run a system command finally using Java::Runtime.getRuntime().exec(args) and waiting for completion
+   *
    * @param cmd the command as it would be given on command line, quoting is preserved
-   * @return the output produced by the command (sysout [+ "*** error ***" + syserr]
-   * if the syserr part is present, the command might have failed
+   * @return the output produced by the command (sysout [+ "*** error ***" + syserr] if the syserr part is present, the
+   * command might have failed
    */
   public String runcmd(String cmd) {
     return runcmd(new String[]{cmd});
   }
-  
+
   /**
    * run a system command finally using Java::Runtime.getRuntime().exec(args) and waiting for completion
-   * @param cmd the command as it would be given on command line splitted into
-   * the space devided parts, first part is the command, the rest are parameters and their values
-   * @return the output produced by the command (sysout [+ "*** error ***" + syserr]
-   * if the syserr part is present, the command might have failed
+   *
+   * @param cmd the command as it would be given on command line splitted into the space devided parts, first part is
+   * the command, the rest are parameters and their values
+   * @return the output produced by the command (sysout [+ "*** error ***" + syserr] if the syserr part is present, the
+   * command might have failed
    */
   public String runcmd(String args[]) {
     if (args.length == 0) {
@@ -1406,7 +1606,7 @@ public class RunTime {
       process.destroy();
     } catch (Exception e) {
       log(-1, "fatal error: " + e);
-      result = String.format(error + "%s",e);
+      result = String.format(error + "%s", e);
       retVal = 9999;
       hasError = true;
     }
@@ -1417,24 +1617,24 @@ public class RunTime {
     return result;
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="args handling for scriptrunner">
-  String[] args = new String[0];
-  String[] sargs = new String[0];
-  
+  private String[] args = new String[0];
+  private String[] sargs = new String[0];
+
   public void setArgs(String[] args, String[] sargs) {
     this.args = args;
     this.sargs = sargs;
   }
-  
+
   public String[] getSikuliArgs() {
     return sargs;
   }
-  
+
   public String[] getArgs() {
     return args;
   }
-  
+
   public void printArgs() {
     if (Debug.getDebugLevel() < lvl) {
       return;
@@ -1467,7 +1667,7 @@ public class RunTime {
       if (opt.startsWith("-d")) {
         int nD = -1;
         try {
-          nD = n+1 == options.size() ? 1 : Integer.decode(options.get(n+1));
+          nD = n + 1 == options.size() ? 1 : Integer.decode(options.get(n + 1));
         } catch (Exception ex) {
           nD = 1;
         }
@@ -1480,5 +1680,5 @@ public class RunTime {
     return debugLevel;
   }
 //</editor-fold>
-  
+
 }
