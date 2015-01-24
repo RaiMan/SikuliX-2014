@@ -529,7 +529,7 @@ public class ImagePath {
 				CodeSource codeSrc = cls.getProtectionDomain().getCodeSource();
 				if (codeSrc != null && codeSrc.getLocation() != null) {
 					URL jarURL = codeSrc.getLocation();
-					if (jarURL.getPath().endsWith(".jar")) {
+					if (runTime.runningWinApp || jarURL.getPath().endsWith(".jar")) {
 						pathURL = FileManager.makeURL(jarURL.toString() + "!/" + subPath, "jar");
 					} else {
 						if (altPath == null || altPath.isEmpty()) {

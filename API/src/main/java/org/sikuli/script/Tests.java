@@ -3,6 +3,7 @@ package org.sikuli.script;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.Method;
+import java.net.URL;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 
@@ -50,7 +51,7 @@ public class Tests {
       if (testNumber == 1 || tNum == testNumber) {
         logp("\n========== running test: %s ==========", test.getName());
         try {
-        test.invoke(null, new Object[0]);
+          test.invoke(null, new Object[0]);
         } catch (Exception ex) {
           log(-1, "not possible:\n%s", ex);
         }
@@ -60,25 +61,42 @@ public class Tests {
 
   public static void test03_ImageFromJar() {
     rt = RunTime.get();
-    File fSetupJar = null;
-    if (rt.fSxProject == null) {
-      fSetupJar = new File(rt.fSxBase, "sikulixsetup-1.1.0.jar");
-    } else {
-      fSetupJar = new File(rt.fSxProject, "Setup/target/sikulixsetup-1.1.0-plain.jar");
+    File fImageJar = null;
+    String imagePath = "org.sikuli.script.Image/ImagesAPI";
+    String sJar = "sikulixsetup";
+    if (!rt.runningWinApp) {
+      if (rt.fSxProject == null) {
+        if (null == rt.isOnClasspath("/Setup/target/Setup")) {
+          fImageJar = new File(rt.fSxBase, "sikulixsetup-1.1.0.jar");
+        }
+      } else {
+        fImageJar = new File(rt.fSxProject, "Setup/target/sikulixsetup-1.1.0-plain.jar");
+      }
+      if (fImageJar == null || !fImageJar.exists()) {
+        fImageJar = rt.fSxBaseJar;
+        String sJarApi = rt.isOnClasspath("sikulixapi");
+        if (sJarApi == null) {
+          sJar = "sikulixapi";
+        } else {
+          sJar = null;
+        }
+        if (sJar != null) {
+          logp("terminating: cannot run - missing: the jar with images: %s", sJar);
+          System.exit(1);
+        }
+      } else {
+        imagePath = "org.sikuli.setup.RunSetup/Images";
+        rt.addToClasspath(fImageJar.getPath());
+      }
     }
-    if (!fSetupJar.exists()) {
-      log(-1, "cannot run - missing: %s", fSetupJar);
-      System.exit(1);
-    }
-    rt.addToClasspath(fSetupJar.getPath());
-    if (Debug.getDebugLevel() > 1) {
-      rt.dumpClassPath();
-    }
+    logp("******** starting test with imagePath: %s", imagePath);
+    rt.dumpClassPath();
     Screen s = new Screen();
-    ImagePath.add("org.sikuli.setup.RunSetup/Images");
+    ImagePath.add(imagePath);
     s.exists("SikuliLogo");
     s.exists("SikuliLogo");
     s.highlight(-2);
+    logp("******** ending test");
   }
 
   public static void test02_ExtractResourcesFromClasspath() {
@@ -107,7 +125,7 @@ public class Tests {
       }
     });
   }
-  
+
   public static void test04_ResourceListToFile() {
     rt = RunTime.get();
     String msg = "worked";
@@ -115,7 +133,7 @@ public class Tests {
       msg = "did not work";
     }
     log(lvl, "*** %s *** test03_ResourceListToFile: Lib to:\n%s", msg, rt.fTestFile);
-  }  
+  }
 
   public static void test05_MakeLibswinContentFile() {
     rt = RunTime.get();
@@ -131,7 +149,9 @@ public class Tests {
     if (!rt.resourceListAsFile("META-INF/libs/windows", content, new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {
-        if (name.contains(rt.fpContent)) return false;
+        if (name.contains(rt.fpContent)) {
+          return false;
+        }
         return true;
       }
     })) {
@@ -139,7 +159,7 @@ public class Tests {
     }
     log(lvl, "*** %s *** test05_MakeLibswinContentFile: META-INF/libs/windows to:\n%s", msg, content);
   }
-  
+
   public static void test06_ExtractLibsWithContentlist() {
     rt = RunTime.get();
     String msg = "worked";
@@ -151,7 +171,7 @@ public class Tests {
     }
     log(lvl, "*** %s *** test05_MakeLibswinContentFile: META-INF/libs/windows to:\n%s", msg, target);
   }
-  
+
   private static boolean addToCP(String folder) {
     if (rt.fSxProject != null) {
       rt.addToClasspath(new File(rt.fSxProject, folder + "/target/classes").getAbsolutePath());

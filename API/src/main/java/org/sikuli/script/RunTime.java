@@ -130,6 +130,9 @@ public class RunTime {
         }
       }
     }
+    if (testingWinApp && !runTime.runningWindows) {
+      runTime.terminate(1, "***** for testing winapp: not running on Windows");
+    }
     return runTime;
   }
 
@@ -446,11 +449,19 @@ public class RunTime {
         terminate(1, "libs to export not found on above classpath: " + fpJarLibs);
       }
       log(lvl, "libs to export are at:\n%s", uLibsFrom);
-      FilenameFilter filterLibs = null;
       if (runningWinApp || testingWinApp) {
-        filterLibs = new LibsFilter("libs" + javaArch);
+        String libsAccepted = "libs" + javaArch;
+        extractResourcesToFolder(fpJarLibs, fLibsFolder, new LibsFilter(libsAccepted));
+        File fCurrentLibs = new File(fLibsFolder, libsAccepted);
+        if (FileManager.xcopy(fCurrentLibs, fLibsFolder)) {
+          FileManager.deleteFileOrFolder(fCurrentLibs);
+        } else {
+          terminate(1, "could not create libs folder for Windows --- see log");
+        }
+      } else {
+        extractResourcesToFolder(fpJarLibs, fLibsFolder, null);
       }
-      extractResourcesToFolder(fpJarLibs, fLibsFolder, filterLibs);
+      
     }
     if (!Type.SETUP.equals(typ)) {
       for (String aFile : fLibsFolder.list()) {

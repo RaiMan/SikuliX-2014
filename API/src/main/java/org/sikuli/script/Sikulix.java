@@ -8,8 +8,6 @@ package org.sikuli.script;
 
 import java.awt.Dimension;
 import java.io.File;
-import java.io.FilenameFilter;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.security.CodeSource;
 import javax.swing.Box;
@@ -80,6 +78,11 @@ public class Sikulix {
     if (dl > -1) {
       testNumber = dl;
     }
+    
+    if (RunTime.testing) {
+     rt = RunTime.get();
+     testNumber = rt.getOptionNumber("testing.test", -1);
+    }
 
     if (testNumber > -1) {
       rt = RunTime.get();
@@ -87,9 +90,21 @@ public class Sikulix {
         rt.show();
         rt.testing = true;
         Debug.on(3);
-        Tests.runTest(testNumber);
       }            
+      Tests.runTest(testNumber);
+      System.exit(1);
     } else {
+      rt = RunTime.get();
+      if (rt.runningWinApp) {
+        popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
+        try {
+        Screen scr = new Screen();
+        scr.find(new Image(scr.userCapture("grab something to find"))).highlight(3);
+        } catch (Exception ex) {
+          popup("Uuups :-(\n" + ex.getMessage(), rt.fSxBaseJar.getName());
+        }
+        popup("Hello World\nNothing else to do ( yet ;-)", rt.fSxBaseJar.getName());
+      }
       System.out.println("nothing to do (yet)");
     }
   }

@@ -363,59 +363,70 @@ public class FileManager {
     }
   }
 
-  public static boolean deleteFileOrFolder(String path, FileFilter filter) {
-		log(lvl, "deleteFileOrFolder: %s\n%s", (filter == null ? "" : "filtered: "), path);
-    return doDeleteFileOrFolder(path, filter);
+  public static boolean deleteFileOrFolder(File fPath, FileFilter filter) {
+    return doDeleteFileOrFolder(fPath, filter);
 	}
 
-  public static boolean deleteFileOrFolder(String path) {
-    if (path.startsWith("#")) {
-      path = path.substring(1);
+  public static boolean deleteFileOrFolder(File fPath) {
+    return doDeleteFileOrFolder(fPath, null);
+	}
+
+  public static boolean deleteFileOrFolder(String fpPath, FileFilter filter) {
+    if (fpPath.startsWith("#")) {
+      fpPath = fpPath.substring(1);
     } else {
-  		log(lvl, "deleteFileOrFolder:\n%s", path);
+  		log(lvl, "deleteFileOrFolder: %s\n%s", (filter == null ? "" : "filtered: "), fpPath);
     }
-    return doDeleteFileOrFolder(path, null);
+    return doDeleteFileOrFolder(new File(fpPath), filter);
+	}
+
+  public static boolean deleteFileOrFolder(String fpPath) {
+    if (fpPath.startsWith("#")) {
+      fpPath = fpPath.substring(1);
+    } else {
+  		log(lvl, "deleteFileOrFolder:\n%s", fpPath);
+    }
+    return doDeleteFileOrFolder(new File(fpPath), null);
   }
 
-  public static void resetFolder(File path) {
-		log(lvl, "resetFolder:\n%s", path);
-    doDeleteFileOrFolder(path.getAbsolutePath(), null);
-    path.mkdirs();
+  public static void resetFolder(File fPath) {
+		log(lvl, "resetFolder:\n%s", fPath);
+    doDeleteFileOrFolder(fPath, null);
+    fPath.mkdirs();
   }
 
-  private static boolean doDeleteFileOrFolder(String path, FileFilter filter) {
-    File entry = new File(path);
-    File f;
+  private static boolean doDeleteFileOrFolder(File fPath, FileFilter filter) {
+    File aFile;
     String[] entries;
     boolean somethingLeft = false;
-    if (entry.isDirectory()) {
-      entries = entry.list();
+    if (fPath.isDirectory()) {
+      entries = fPath.list();
       for (int i = 0; i < entries.length; i++) {
-        f = new File(entry, entries[i]);
-        if (filter != null && !filter.accept(f)) {
+        aFile = new File(fPath, entries[i]);
+        if (filter != null && !filter.accept(aFile)) {
           somethingLeft = true;
           continue;
         }
-        if (f.isDirectory()) {
-          if (!doDeleteFileOrFolder(f.getAbsolutePath(), filter)) {
+        if (aFile.isDirectory()) {
+          if (!doDeleteFileOrFolder(aFile, filter)) {
             return false;
           }
         } else {
           try {
-            f.delete();
+            aFile.delete();
           } catch (Exception ex) {
-            log(-1, "deleteFile: not deleted:\n" + f.getAbsolutePath() + "\n" + ex.getMessage());
+            log(-1, "deleteFile: not deleted:\n%s\n%s", aFile, ex);
             return false;
           }
         }
       }
     }
     // deletes intermediate empty directories and finally the top now empty dir
-    if (!somethingLeft && entry.exists()) {
+    if (!somethingLeft && fPath.exists()) {
       try {
-        entry.delete();
+        fPath.delete();
       } catch (Exception ex) {
-        log(-1, "deleteFolder: not deleted:\n" + entry.getAbsolutePath() + "\n" + ex.getMessage());
+        log(-1, "deleteFolder: not deleted:\n" + fPath.getAbsolutePath() + "\n" + ex.getMessage());
         return false;
       }
     }
@@ -483,6 +494,26 @@ public class FileManager {
     }
     zis.close();
   }
+
+  public static boolean xcopy(File fSrc, File fDest) {
+    try {
+		doXcopy(fSrc, fDest, null);
+    } catch (Exception ex) {
+      log(lvl, "xcopy from: %s\nto: %s\n%s", fSrc, fDest, ex); 
+      return false;
+    }
+    return true;
+	}
+
+  public static boolean xcopy(File fSrc, File fDest, FileFilter filter) {
+    try {
+		doXcopy(fSrc, fDest, filter);
+    } catch (Exception ex) {
+      log(lvl, "xcopy from: %s\nto: %s\n%s", fSrc, fDest, ex); 
+      return false;
+    }
+    return true;
+	}
 
   public static void xcopy(String src, String dest) throws IOException {
 		doXcopy(new File(src), new File(dest), null);
