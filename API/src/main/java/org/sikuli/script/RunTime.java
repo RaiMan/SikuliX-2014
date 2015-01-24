@@ -233,6 +233,7 @@ public class RunTime {
 
 //<editor-fold defaultstate="collapsed" desc="general">
     if ("winapp".equals(getOption("testing"))) {
+      log(lvl, "***** for testing: simulating WinApp");
       testingWinApp = true;
     }
     for (String line : preLogMessages.split(";")) {
@@ -406,23 +407,25 @@ public class RunTime {
     }
     if (!Type.SETUP.equals(typ) && shouldExport) {
       String sysShort = runningOn.toString().toLowerCase();
-      String fpJarLibs = "/META-INF/libs/" + sysName + "/libs" + javaArch;
+      String fpJarLibs = "/META-INF/libs/" + sysName;
+      if (!runningWinApp && !testingWinApp) {
+        fpJarLibs += "/libs" + javaArch;
+      }
       String fpLibsFrom = "";
       if (runningJar) {
         fpLibsFrom = fSxBaseJar.getAbsolutePath();
       } else {
-        if (!runningWinApp) {
           String fSrcFolder = typ.toString();
           if (Type.SETUP.toString().equals(fSrcFolder)) {
             fSrcFolder = "Setup";
           }
           fpLibsFrom = fSxBaseJar.getPath().replace(fSrcFolder, "Libs" + sysShort) + "/";
-        }
       }
-      if (testing && !runningJar && !runningWinApp) {
-        if (testSwitch()) {
+      if (testing && !runningJar) {
+        if (testingWinApp || testSwitch()) {
           logp("***** for testing: exporting from classes");
         } else {
+          
           logp("***** for testing: exporting from jar");
           fpLibsFrom = new File(fSxProject,
                   String.format("Libs%s/target/sikulixlibs%s-1.1.0.jar", sysShort, sysShort)).getAbsolutePath();
@@ -440,7 +443,16 @@ public class RunTime {
         terminate(1, "libs to export not found on above classpath: " + fpJarLibs);
       }
       log(lvl, "libs to export are at:\n%s", uLibsFrom);
-      extractResourcesToFolder(fpJarLibs, fLibsFolder, null);
+      FilenameFilter filterLibs = null;
+      if (runningWinApp || testingWinApp) {
+        filterLibs = new FilenameFilter() {          
+          @Override
+          public boolean accept(File dir, String name) {
+            return true;
+          }
+        };
+      }
+      extractResourcesToFolder(fpJarLibs, fLibsFolder, filterLibs);
     }
     if (!Type.SETUP.equals(typ)) {
       for (String aFile : fLibsFolder.list()) {
@@ -1134,6 +1146,10 @@ public class RunTime {
     if (uFolder == null) {
       return files;
     }
+    URL uContentList = clsRef.getResource(folder + "/" + fpContent);
+    if (uContentList != null) {
+      return doResourceListWithList(folder, files, filter);
+    }
     File fFolder = null;
     try {
       fFolder = new File(uFolder.toURI());
@@ -1269,9 +1285,12 @@ public class RunTime {
     return files;
   }
 
-  private List<String> doResourceListWithList(String folder, List<String> files) {
-    String content = extractResourceToString(folder, fpContent, "");
+  private List<String> doResourceListWithList(String folder, List<String> files, FilenameFilter filter) {
+    String[] content = extractResourceToString(folder, fpContent, "");
     files.addAll(Arrays.asList(content.split(content.indexOf("\r") != -1 ? "\r\n" : "\n")));
+    if (filter != null) {
+      
+    }
     return files;
   }
 
@@ -1279,9 +1298,6 @@ public class RunTime {
     ZipInputStream zJar;
     String fpJar = uJar.getPath().split("!")[0];
     int localLevel = testing ? lvl : lvl + 1;
-    if (runningWinApp) {
-      return doResourceListWithList(folder, files);
-    }
     String fileSep = "/";
     if (!fpJar.endsWith(".jar")) {
       return files;
