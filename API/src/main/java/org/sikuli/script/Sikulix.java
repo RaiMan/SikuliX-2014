@@ -32,8 +32,6 @@ import org.sikuli.basics.Settings;
  */
 public class Sikulix {
 
-  static RunTime runTime = null;
-
   private static int lvl = 3;
 
   private static void log(int level, String message, Object... args) {
@@ -49,7 +47,6 @@ public class Sikulix {
     if (Debug.getDebugLevel() == 0) {
       Debug.setDebugLevel(1);
     }
-    runTime = RunTime.get();
     CodeSource codeSrc = Sikulix.class.getProtectionDomain().getCodeSource();
     if (codeSrc != null && codeSrc.getLocation() != null) {
       URL jarURL = codeSrc.getLocation();
@@ -63,8 +60,8 @@ public class Sikulix {
     }
   }
 
-  public static int testNumber = 0;
   private static RunTime rt = null;
+  public static int testNumber = -1;
 
   /**
    * checking parameter -d on commandline<br>
@@ -91,7 +88,7 @@ public class Sikulix {
         Debug.on(3);
       }      
 
-      Tests.runTest(5);
+      Tests.runTest(testNumber);
       
       if (rt.testing) {
         System.exit(1);
