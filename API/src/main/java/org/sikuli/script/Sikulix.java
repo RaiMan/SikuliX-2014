@@ -44,6 +44,7 @@ public class Sikulix {
   private static final String prefNonSikuli = "nonSikuli_";
 
   static {
+    rt = RunTime.get();
     if (Debug.getDebugLevel() == 0) {
       Debug.setDebugLevel(1);
     }
@@ -86,13 +87,8 @@ public class Sikulix {
         rt.show();
         rt.testing = true;
         Debug.on(3);
-      }      
-
-      Tests.runTest(testNumber);
-      
-      if (rt.testing) {
-        System.exit(1);
-      }
+        Tests.runTest(testNumber);
+      }            
     } else {
       System.out.println("nothing to do (yet)");
     }

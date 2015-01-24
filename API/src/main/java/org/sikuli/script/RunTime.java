@@ -406,11 +406,14 @@ public class RunTime {
       }
     }
     if (!Type.SETUP.equals(typ) && shouldExport) {
-      String sysShort = runningOn.toString().toLowerCase();
-      String fpJarLibs = "/META-INF/libs/" + sysName;
+      String sysShort = "win";
+      String fpJarLibs = "/META-INF/libs/";
       if (!runningWinApp && !testingWinApp) {
-        fpJarLibs += "/libs" + javaArch;
-      }
+        sysShort = runningOn.toString().toLowerCase();
+        fpJarLibs += sysName + "/libs" + javaArch;        
+      } else {
+        fpJarLibs += "windows";
+      }      
       String fpLibsFrom = "";
       if (runningJar) {
         fpLibsFrom = fSxBaseJar.getAbsolutePath();
@@ -445,12 +448,7 @@ public class RunTime {
       log(lvl, "libs to export are at:\n%s", uLibsFrom);
       FilenameFilter filterLibs = null;
       if (runningWinApp || testingWinApp) {
-        filterLibs = new FilenameFilter() {          
-          @Override
-          public boolean accept(File dir, String name) {
-            return true;
-          }
-        };
+        filterLibs = new LibsFilter("libs" + javaArch);
       }
       extractResourcesToFolder(fpJarLibs, fLibsFolder, filterLibs);
     }
@@ -471,6 +469,18 @@ public class RunTime {
       show();
     }
     log(lvl, "global init: leaving");
+  }
+  
+  class LibsFilter implements FilenameFilter {  
+    String sAccept = "";    
+    public LibsFilter(String toAccept) {
+      sAccept = toAccept;
+    }
+    @Override
+    public boolean accept(File dir, String name) {
+      if (dir.getPath().contains(sAccept)) return true;
+      return false;
+    }
   }
 //</editor-fold>
 
@@ -1286,10 +1296,16 @@ public class RunTime {
   }
 
   private List<String> doResourceListWithList(String folder, List<String> files, FilenameFilter filter) {
-    String[] content = extractResourceToString(folder, fpContent, "");
-    files.addAll(Arrays.asList(content.split(content.indexOf("\r") != -1 ? "\r\n" : "\n")));
-    if (filter != null) {
-      
+    String content = extractResourceToString(folder, fpContent, "");
+    String[] contentList = content.split(content.indexOf("\r") != -1 ? "\r\n" : "\n");
+    if (filter == null) {
+      files.addAll(Arrays.asList(contentList));      
+    } else {
+      for (String fpFile : contentList) {
+        if (filter.accept(new File(fpFile), "")) {
+          files.add(fpFile);
+        }
+      }
     }
     return files;
   }
