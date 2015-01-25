@@ -10,7 +10,6 @@ stuff/
 *.a
 *.def
 opencvsrc/
-SikuliX-Setup/
 .settings/
 .project
 .classpath
