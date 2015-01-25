@@ -205,7 +205,7 @@ module Sikulix
   # Generate static methods in Sikulix context
   # for possible "undotted" methods.
   Sikulix.java_class.java_class_methods.map(&:name).uniq.each do |name|
-    obj_meth = Sikulix.method(name)
+    obj_method = Sikulix.method(name)
     dynamic_def(name) { |*args, &block| obj_method.call(*args, &block) }
   end
 
