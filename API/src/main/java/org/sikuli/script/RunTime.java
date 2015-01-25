@@ -1009,7 +1009,7 @@ public class RunTime {
    * all options and their values written to sysout as key = value
    */
   public void dumpOptions() {
-    if (options.size() > 0) {
+    if (hasOptions()) {
       logp("*** options dump %s", (fOptions != null ? "" : fOptions));
       for (String sOpt : getOptions().keySet()) {
         logp("%s = %s", sOpt, getOption(sOpt));
