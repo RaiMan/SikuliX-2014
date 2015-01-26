@@ -6,7 +6,6 @@
  */
 package org.sikuli.basics;
 
-import org.sikuli.script.RunTime;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;

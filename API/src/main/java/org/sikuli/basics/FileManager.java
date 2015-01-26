@@ -396,6 +396,9 @@ public class FileManager {
   }
 
   private static boolean doDeleteFileOrFolder(File fPath, FileFilter filter) {
+    if (fPath == null) {
+      return false;
+    }
     File aFile;
     String[] entries;
     boolean somethingLeft = false;

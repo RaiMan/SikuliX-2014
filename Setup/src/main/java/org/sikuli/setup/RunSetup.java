@@ -24,7 +24,9 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
@@ -124,6 +126,8 @@ public class RunSetup {
 	private static String libsLux = "sikulixlibslux";
 	private static String apiJarName = "sikulixapi";
 	private static File folderLibs;
+  private  static File folderLibsWin;
+  private  static File folderLibsLux;
 	private static String linuxDistro = "*** testing Linux ***";
 	private static String osarch;
 //TODO set true to test on Mac
@@ -164,9 +168,9 @@ public class RunSetup {
 	private static boolean notests = false;
 	private static String currentlib;
 	private static boolean clean = false;
-  private static String filterItem1;
   private static File winLibs = null;
   private static RunTime runTime;
+  private static Map<String, String> addFilesToJar = new HashMap<String, String>();
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static void log(int level, String message, Object... args) {
@@ -546,22 +550,25 @@ public class RunSetup {
 		File localJarIDE = new File(workDir, localIDE);
 		File localJarAPI = new File(workDir, localAPI);
 
-		folderLibs = new File(workDir, "libs");
+		folderLibs = new File(workDir, "sikulixlibs");
+    folderLibs.mkdirs();
+    folderLibsWin = new File(folderLibs, "windows");
+    folderLibsLux = new File(folderLibs, "linux");
 
 		//TODO Windows 8 HKLM/SOFTWARE/JavaSoft add Prefs ????
 		boolean success;
 		if (isLinux && !libsProvided) {
-			visionProvided = new File(folderLibs, libVision).exists();
-			grabKeyProvided = new File(folderLibs, libGrabKey).exists();
+			visionProvided = new File(folderLibsLux, libVision).exists();
+			grabKeyProvided = new File(folderLibsLux, libGrabKey).exists();
 			if (visionProvided || grabKeyProvided) {
 				success = popAsk(String.format("Found a libs folder at\n%s\n"
 								+ "Click YES to use the contained libs "
 								+ "for setup (be sure they are useable).\n"
-								+ "Click NO to make a clean setup (libs are deleted).", folderLibs));
+								+ "Click NO to make a clean setup (libs are deleted).", folderLibsLux));
 				if (success) {
 					libsProvided = true;
 				} else {
-					FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
+					FileManager.deleteFileOrFolder(folderLibsLux.getAbsolutePath());
 				}
 			}
 		}
@@ -1014,19 +1021,19 @@ public class RunSetup {
 				copyFromDownloads(libDownloaded, libsLux, jarsList[8]);
 			}
 			// check bundled and/or provided libs
-			if (!folderLibs.exists()) {
-				folderLibs.mkdirs();
+			if (!folderLibsLux.exists()) {
+				folderLibsLux.mkdirs();
 			}
-			if (!folderLibs.exists()) {
-				log(-1, "Linux: check useability of libs: problems with libs folder\n%s", folderLibs);
+			if (!folderLibsLux.exists()) {
+				log(-1, "Linux: check useability of libs: problems with libs folder\n%s", folderLibsLux);
 			} else {
 				String[] libsExport = new String[]{null, null};
 				String[] libsCheck = new String[]{null, null};
-				if (!new File(folderLibs, libVision).exists()) {
+				if (!new File(folderLibsLux, libVision).exists()) {
 					libsExport[0] = libVision;
 					shouldExport = true;
 				}
-				if (!new File(folderLibs, libGrabKey).exists()) {
+				if (!new File(folderLibsLux, libGrabKey).exists()) {
 					libsExport[1] = libGrabKey;
 					shouldExport = true;
 				}
@@ -1036,7 +1043,7 @@ public class RunSetup {
 							continue;
 						}
 						currentlib = exLib;
-						FileManager.unpackJar(jarsList[8], folderLibs.getAbsolutePath(),
+						FileManager.unpackJar(jarsList[8], folderLibsLux.getAbsolutePath(),
 										false, true, new FileManager.JarFileFilter() {
 											@Override
 											public boolean accept(ZipEntry entry, String jarname) {
@@ -1048,8 +1055,8 @@ public class RunSetup {
 										});
 					}
 				}
-				libsCheck[0] = new File(folderLibs, libVision).getAbsolutePath();
-				libsCheck[1] = new File(folderLibs, libGrabKey).getAbsolutePath();
+				libsCheck[0] = new File(folderLibsLux, libVision).getAbsolutePath();
+				libsCheck[1] = new File(folderLibsLux, libGrabKey).getAbsolutePath();
 				File fLibCheck;
 				boolean shouldTerminate = false;
 				boolean shouldBuildVisionNow = false;
@@ -1076,7 +1083,7 @@ public class RunSetup {
 						libsProvided = true;
 						continue;
 					}
-					FileManager.deleteFileOrFolder(new File(folderLibs, exLib).getAbsolutePath());
+					FileManager.deleteFileOrFolder(new File(folderLibsLux, exLib).getAbsolutePath());
 				}
 				if (shouldBuildVisionNow) {
 					log1(-1, "A bundled lib could not be checked or does not work.");
@@ -1093,7 +1100,7 @@ public class RunSetup {
 					shouldTerminate |= !buildVision(jarsList[8]);
 				}
 				if (!libsProvided) {
-					FileManager.deleteFileOrFolder(folderLibs.getAbsolutePath());
+					FileManager.deleteFileOrFolder(folderLibsLux.getAbsolutePath());
 				}
 				if (shouldTerminate) {
 					terminate("Correct the problems with the bundled/provided libs and try again");
@@ -1111,39 +1118,13 @@ public class RunSetup {
 			} else {
 				copyFromDownloads(libDownloaded, libsWin, jarsList[6]);
 			}
-//      winLibs = new File(workDir, "winlibs");
-//			if (winLibs.exists()) {
-//        FileManager.deleteFileOrFolder(winLibs.getAbsolutePath());
-//      }
-//			winLibs.mkdirs();        
-//			if (winLibs.exists()) {
-//        File wlf;
-//        int ix = 2;
-//        for (String sub : new String[]{"libs32", "libs64"}) {
-//          filterItem1 = "libs/windows/" + sub;
-//          File fTarget = new File(winLibs, sub);
-//          FileManager.unpackJar(jarsList[6], fTarget.getAbsolutePath(),
-//                  false, true, new FileManager.JarFileFilter() {
-//                    @Override
-//                    public boolean accept(ZipEntry entry, String jarname) {
-//                      if (entry.getName().contains(filterItem1)) {
-//                        return true;
-//                      }
-//                      return false;
-//                    }
-//                  });
-//          FileManager.deleteFileOrFolder(new File(fTarget, "META-INF").getAbsolutePath());
-//          String fContent = FileManager.makeFileList(fTarget, fTarget.getAbsolutePath());
-//          String fpContent = new File(fTarget, "sikulixfoldercontent").getAbsolutePath();
-//          FileManager.writeStringToFile(fContent, fpContent);
-//          libsFileList[ix] = fpContent;
-//          libsFilePrefix[ix] = "META-INF/libs/windows/" + sub;
-//          ix++;
-//        }
-//      } else {
-//        log(-1, "libsWin: cannot create folder content");
-//        terminate("libsWin: cannot create folder content");
-//      }     
+      String libsWin = "sikulixlibs/windows";
+      
+      folderLibsWin = new File(workDir, libsWin);
+      FileManager.resetFolder(folderLibsWin);
+      runTime.addToClasspath(jarsList[6]);
+      runTime.resourceListAsSikulixContent(libsWin, folderLibsWin, null);
+      addFilesToJar.put(new File(folderLibsWin, runTime.fpContent).getAbsolutePath(), libsWin);
 		}
 
 		if (forSystemMac || forAllSystems) {
@@ -1196,6 +1177,7 @@ public class RunSetup {
 			String xTess = Settings.tessData.get(langTess);
 			String[] xTessNames = xTess.split("/");
 			String xTessName = xTessNames[xTessNames.length - 1];
+      String tessFolder = "tessdata-" + langTess;
 			downloadOK &= download(xTess, dlDir, null, "nocopy", null);
 			log(lvl, "trying to extract from: %s", xTessName);
 			Archiver archiver = ArchiverFactory.createArchiver("tar", "gz");
@@ -1205,22 +1187,27 @@ public class RunSetup {
 				log1(-1, "Download: tessdata: version: eng - did not work");
 				downloadOK = false;
 			} else {
-				File fTessData = new File(dlDir, "tessdata-" + langTess);
+				File fTessData = new File(dlDir,tessFolder);
 				log(lvl, "preparing the tessdata stuff in:\n%s", fTessData.getAbsolutePath());
-				fTessData.mkdirs();
+        FileManager.resetFolder(fTessData);
 				FileManager.xcopy(fTess.getAbsolutePath(), fTessData.getAbsolutePath());
 				FileManager.deleteFileOrFolder(fTess.getParent());
-				loader.export(runningJarURL, "tessdata#", fTessData.getAbsolutePath());
+        runTime.extractResourcesToFolder("sikulixtessdata", fTessData, null);
 				log(lvl, "finally preparing %s", localTess);
 				fTargetJar = (new File(workDir, localTemp));
 				targetJar = fTargetJar.getAbsolutePath();
 				String tessJar = new File(workDir, localTess).getAbsolutePath();
-        String tess = FileManager.makeFileList(fTessData, fTessData.getAbsolutePath());
-        FileManager.writeStringToFile(tess, new File(fTessData, "sikulixfoldercontent").getAbsolutePath());
+
+        if (runTime.runningWindows) {
+          success = runTime.addToClasspath(fTessData.getParent());
+          runTime.resourceListAsSikulixContent(tessFolder, fTessData, null);
+        }
+        
 				downloadOK &= FileManager.buildJar("#" + targetJar, new String[]{},
 								new String[]{fTessData.getAbsolutePath()},
-								new String[]{"META-INF/libs/tessdata"}, null);
+								new String[]{"sikulixtessdata"}, null);
 				downloadOK &= handleTempAfter(targetJar, tessJar);
+        
 				FileManager.deleteFileOrFolder(fTessData.getAbsolutePath());
 			}
 		}
@@ -1256,8 +1243,8 @@ public class RunSetup {
 				shouldPackLibs = false;
 			}
 			if (!shouldPackLibs) {
-				libsFileList[0] = new File(folderLibs, libVision).getAbsolutePath();
-				libsFileList[1] = new File(folderLibs, libGrabKey).getAbsolutePath();
+				libsFileList[0] = new File(folderLibsLux, libVision).getAbsolutePath();
+				libsFileList[1] = new File(folderLibsLux, libGrabKey).getAbsolutePath();
 				for (int i = 0; i < 2; i++) {
 					if (!new File(libsFileList[i]).exists()) {
 						libsFileList[i] = null;
@@ -1275,22 +1262,22 @@ public class RunSetup {
 			@Override
 			public boolean accept(ZipEntry entry, String jarname) {
 				if (forSystemWin) {
-					if (entry.getName().startsWith("META-INF/libs/mac")
-									|| entry.getName().startsWith("META-INF/libs/linux")
+					if (entry.getName().startsWith("sikulixlibs/mac")
+									|| entry.getName().startsWith("sikulixlibs/linux")
                   || entry.getName().endsWith("sikulixfoldercontent")
 									|| entry.getName().startsWith("jxgrabkey")) {
 						return false;
 					}
 				} else if (forSystemMac) {
-					if (entry.getName().startsWith("META-INF/libs/windows")
-									|| entry.getName().startsWith("META-INF/libs/linux")
+					if (entry.getName().startsWith("sikulixlibs/windows")
+									|| entry.getName().startsWith("sikulixlibs/linux")
 									|| entry.getName().startsWith("com.melloware.jintellitype")
 									|| entry.getName().startsWith("jxgrabkey")) {
 						return false;
 					}
 				} else if (forSystemLux) {
-					if (entry.getName().startsWith("META-INF/libs/windows")
-									|| entry.getName().startsWith("META-INF/libs/mac")
+					if (entry.getName().startsWith("sikulixlibs/windows")
+									|| entry.getName().startsWith("sikulixlibs/mac")
 									|| entry.getName().startsWith("com.melloware.jintellitype")) {
 						return false;
 					}
@@ -1298,7 +1285,7 @@ public class RunSetup {
 				if (forSystemLux || forAllSystems) {
 					if (!shouldPackLibs && entry.getName().contains(libVision)
 									&& entry.getName().contains("libs" + osarch)) {
-						if (new File(folderLibs, libVision).exists()) {
+						if (new File(folderLibsLux, libVision).exists()) {
 							log(lvl, "Found provided lib: %s (libs%s)", libVision, osarch);
 							return false;
 						} else {
@@ -1307,7 +1294,7 @@ public class RunSetup {
 					}
 					if (!shouldPackLibs && entry.getName().contains(libGrabKey)
 									&& entry.getName().contains("libs" + osarch)) {
-						if (new File(folderLibs, libGrabKey).exists()) {
+						if (new File(folderLibsLux, libGrabKey).exists()) {
 							log(lvl, "Found provided lib: %s (libs%s)", libGrabKey, osarch);
 							return false;
 						} else {
@@ -1342,30 +1329,6 @@ public class RunSetup {
 			jarsList[0] = localJar;
 			if (getJython) {
 				jarsList[3] = (new File(workDir, localJython)).getAbsolutePath();
-//        if (winLibs != null && winLibs.exists()) {
-//          FileManager.unpackJar(new File(dlDir, downloadAPI).getAbsolutePath(), winLibs.getAbsolutePath(), 
-//                  false, false, new FileManager.JarFileFilter() {
-//            @Override
-//            public boolean accept(ZipEntry entry, String jarname) {
-//              if (entry.getName().startsWith("Lib/")) return true;
-//              return false;
-//            }
-//          });
-//          FileManager.unpackJar(new File(workDir, localJython).getAbsolutePath(), winLibs.getAbsolutePath(), 
-//                  false, false, new FileManager.JarFileFilter() {
-//            @Override
-//            public boolean accept(ZipEntry entry, String jarname) {
-//              if (entry.getName().startsWith("Lib/")) return true;
-//              return false;
-//            }
-//          });        
-//          File fTarget = new File(winLibs, "Lib");
-//          String fContent = FileManager.makeFileList(fTarget, fTarget.getAbsolutePath());
-//          String fpContent = new File(fTarget, "sikulixfoldercontent").getAbsolutePath();
-//          FileManager.writeStringToFile(fContent, fpContent);
-//          libsFileList[4] = fpContent;
-//          libsFilePrefix[4] = "Lib";
-//        }
 			}
 			if (getJRuby) {
 				jarsList[4] = (new File(workDir, localJRuby)).getAbsolutePath();
@@ -1409,10 +1372,6 @@ public class RunSetup {
 			}
 		}
 
-//    if (winLibs != null) {
-//      FileManager.deleteFileOrFolder(winLibs.getAbsolutePath());
-//    }
-
     for (int i = (getAPI ? 2 : 1); i < jarsList.length; i++) {
 			if (jarsList[i] != null) {
 				new File(jarsList[i]).delete();
@@ -1442,6 +1401,8 @@ public class RunSetup {
     if (!notests && runTime.isHeadless()) {
       log0(lvl, "Running headless --- skipping tests");
     }
+    
+    FileManager.deleteFileOrFolder(folderLibsWin);
 
 		//<editor-fold defaultstate="collapsed" desc="api test">
 		if (getAPI && !notests  && !runTime.isHeadless()) {
@@ -1837,8 +1798,8 @@ public class RunSetup {
 			}
 		}
 		try {
-			folderLibs.mkdirs();
-			FileManager.xcopy(libVisionPath, new File(folderLibs, libVision).getAbsolutePath());
+			folderLibsLux.mkdirs();
+			FileManager.xcopy(libVisionPath, new File(folderLibsLux, libVision).getAbsolutePath());
 		} catch (IOException ex) {
 			log1(-1, "could not copy built libVisionProxy.so to libs folder\n%s", ex.getMessage());
 			closeSplash(spl);
@@ -1895,11 +1856,11 @@ public class RunSetup {
 										new FileManager.FileFilter() {
 											@Override
 											public boolean accept(File entry) {
-												if (isLinux && entry.getPath().contains(addSeps("/libs/"))) {
-													return false;
-												}
 												if (entry.getPath().contains(addSeps("/Downloads/"))) {
 													if (entry.getName().contains("tess")) {
+														return false;
+													}
+													if (entry.getPath().contains(addSeps("/sikulixlibs/linux"))) {
 														return false;
 													}
 												}
@@ -2167,7 +2128,7 @@ public class RunSetup {
 					return false;
 				} else if (workDir.equals(entry.getAbsolutePath())) {
 					return false;
-				} else if (folderLibs.getAbsolutePath().equals(entry.getAbsolutePath())) {
+				} else if (folderLibsLux.getAbsolutePath().equals(entry.getAbsolutePath())) {
 					return !libsProvided;
 				} else if ("BackUp".equals(entry.getName())) {
 					return false;

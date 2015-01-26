@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -60,7 +61,7 @@ public class Sikulix {
   }
 
   private static RunTime rt = null;
-  public static int testNumber = -1;
+  public static int testNumber = 0;
 
   /**
    * checking parameter -d on commandline<br>
@@ -95,11 +96,20 @@ public class Sikulix {
       System.exit(1);
     } else {
       rt = RunTime.get();
-       Debug.on(3);
+      Debug.on(3);
      
       File workDir = new File(rt.fSxProject, "Setup/target/Setup");
+      File fTarget = new File(workDir,"stuff/tessdata");
+      //fTarget = null;
+      String source = "META-INF/libs/tessdata"; ///eng.cube.bigrams";
+//      source = "Lib/sikulix.r";
+      List<String> content;
+      String[] arrContent;
+
       boolean success = addFromProject("Setup", "Setup/sikulixapi.jar");
-      rt.extractResourcesToFolderFromJar("sikulixapi.jar", "META-INF/libs/tessdata", new File(workDir,"stuff"), null);
+      FileManager.deleteFileOrFolder(fTarget);
+      content = rt.extractResourcesToFolderFromJar("sikulixapi.jar", source, fTarget, null);
+//      content = rt.extractResourcesToFolder(source, fTarget, null);
       rt.terminate(1,"");
 
       if (rt.runningWinApp) {        
