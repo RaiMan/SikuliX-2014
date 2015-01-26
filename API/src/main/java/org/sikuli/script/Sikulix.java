@@ -95,7 +95,14 @@ public class Sikulix {
       System.exit(1);
     } else {
       rt = RunTime.get();
-      if (rt.runningWinApp) {
+       Debug.on(3);
+     
+      File workDir = new File(rt.fSxProject, "Setup/target/Setup");
+      boolean success = addFromProject("Setup", "Setup/sikulixapi.jar");
+      rt.extractResourcesToFolderFromJar("sikulixapi.jar", "META-INF/libs/tessdata", new File(workDir,"stuff"), null);
+      rt.terminate(1,"");
+
+      if (rt.runningWinApp) {        
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
         try {
         Screen scr = new Screen();
@@ -107,6 +114,17 @@ public class Sikulix {
       }
       System.out.println("nothing to do (yet)");
     }
+  }
+  
+  private static boolean addFromProject(String project, String aJar) {
+    File aFile = null;
+    if (rt.fSxProject == null) {
+      return false;
+    } else {
+      aFile = new File(rt.fSxProject, project);
+    }
+    aFile = new File(aFile, "target/" + aJar);
+    return rt.addToClasspath(aFile.getAbsolutePath());
   }
 
   public static boolean isRunningFromJar() {

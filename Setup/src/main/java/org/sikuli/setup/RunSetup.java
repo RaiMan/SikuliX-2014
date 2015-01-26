@@ -1438,12 +1438,16 @@ public class RunSetup {
 		}
 		restore(true); //to get back the stuff that was not changed
 		//</editor-fold>
+    
+    if (!notests && runTime.isHeadless()) {
+      log0(lvl, "Running headless --- skipping tests");
+    }
 
 		//<editor-fold defaultstate="collapsed" desc="api test">
-		if (!notests && getAPI) {
+		if (getAPI && !notests  && !runTime.isHeadless()) {
 			log1(lvl, "Trying to run functional test: JAVA-API");
 			splash = showSplash("Trying to run functional test(s)", "Java-API: org.sikuli.script.Sikulix.testSetup()");
-			if (!Sikulix.addToClasspath(localJarAPI.getAbsolutePath())) {
+			if (!runTime.addToClasspath(localJarAPI.getAbsolutePath())) {
 				closeSplash(splash);
 				log0(-1, "Java-API test: ");
 				popError("Something serious happened! Sikuli not useable!\n"
@@ -1454,7 +1458,10 @@ public class RunSetup {
 			try {
 				log0(lvl, "trying to run org.sikuli.script.Sikulix.testSetup()");
 				if (getTess) {
-					loader.export(apiJarUrl, "META-INF#libs/tessdata/", workDir);
+          String theJar = runTime.isOnClasspath("sikulixapi.jar");
+          runTime.extractResourcesToFolder("META-INF/libs/tessdata/", 
+                  new File(runTime.fLibsFolder, "tessdata"), null);
+//					loader.export(apiJarUrl, "META-INF#libs/tessdata/", workDir);
 					getTess = false;
 				}
 				loader.export(apiJarUrl, "#Lib/", workDir);
@@ -1486,9 +1493,9 @@ public class RunSetup {
     //</editor-fold>
 
 		//<editor-fold defaultstate="collapsed" desc="ide test">
-		if (!notests && getIDE) {
+		if (getIDE && !notests  && !runTime.isHeadless()) {
 			success = true;
-			if (!Sikulix.addToClasspath(localJarIDE.getAbsolutePath())) {
+			if (!runTime.addToClasspath(localJarIDE.getAbsolutePath())) {
 				closeSplash(splash);
 				popError("Something serious happened! Sikuli not useable!\n"
 								+ "Check the error log at " + (logfile == null ? "printout" : logfile));

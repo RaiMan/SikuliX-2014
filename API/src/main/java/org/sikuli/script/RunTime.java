@@ -20,6 +20,7 @@ import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.security.CodeSource;
@@ -367,48 +368,46 @@ public class RunTime {
     boolean shouldExport = false;
     URL uLibsFrom = null;
     fLibsFolder = new File(fTempPath, "SikulixLibs_" + sxBuildStamp);
-    if (!Type.SETUP.equals(typ)) {
-      if (testing) {
-        logp("***** for testing");
-        FileManager.deleteFileOrFolder(fLibsFolder.getAbsolutePath());
-      }
+    if (testing) {
+      logp("***** for testing: delete libsfolder");
+      FileManager.deleteFileOrFolder(fLibsFolder);
+    }
+    if (!fLibsFolder.exists()) {
+      fLibsFolder.mkdirs();
       if (!fLibsFolder.exists()) {
-        fLibsFolder.mkdirs();
-        if (!fLibsFolder.exists()) {
-          terminate(1, "libs folder not available: " + fLibsFolder.toString());
-        }
-        log(lvl, "new libs folder at: %s", fLibsFolder);
-        String[] fpList = fTempPath.list(new FilenameFilter() {
-          @Override
-          public boolean accept(File dir, String name) {
-            if (name.contains("SikulixLibs")) {
-              return true;
-            }
-            return false;
+        terminate(1, "libs folder not available: " + fLibsFolder.toString());
+      }
+      log(lvl, "new libs folder at: %s", fLibsFolder);
+      String[] fpList = fTempPath.list(new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          if (name.contains("SikulixLibs")) {
+            return true;
           }
-        });
-        if (fpList.length > 1) {
-          for (String entry : fpList) {
-            if (entry.endsWith(sxBuildStamp)) {
-              continue;
-            }
-            FileManager.deleteFileOrFolder(new File(fTempPath, entry).getAbsolutePath());
-          }
+          return false;
         }
-        shouldExport = true;
-      } else {
-        log(lvl, "exists libs folder at: %s", fLibsFolder);
-        if (!checkLibs(fLibsFolder)) {
-          FileManager.deleteFileOrFolder(fLibsFolder.getAbsolutePath());
-          fLibsFolder.mkdirs();
-          shouldExport = true;
-          if (!fLibsFolder.exists()) {
-            terminate(1, "libs folder not available: " + fLibsFolder.toString());
+      });
+      if (fpList.length > 1) {
+        log(lvl, "deleting obsolete libs folders");
+        for (String entry : fpList) {
+          if (entry.endsWith(sxBuildStamp)) {
+            continue;
           }
+          FileManager.deleteFileOrFolder(new File(fTempPath, entry));
         }
+      }
+      shouldExport = true;
+    } 
+    log(lvl, "exists libs folder at: %s", fLibsFolder);
+    if (!checkLibs(fLibsFolder)) {
+      FileManager.deleteFileOrFolder(fLibsFolder);
+      fLibsFolder.mkdirs();
+      shouldExport = true;
+      if (!fLibsFolder.exists()) {
+        terminate(1, "libs folder not available: " + fLibsFolder.toString());
       }
     }
-    if (!Type.SETUP.equals(typ) && shouldExport) {
+    if (shouldExport) {
       String sysShort = "win";
       String fpJarLibs = "/META-INF/libs/";
       if (!runningWinApp && !testingWinApp) {
@@ -427,15 +426,19 @@ public class RunTime {
           }
           fpLibsFrom = fSxBaseJar.getPath().replace(fSrcFolder, "Libs" + sysShort) + "/";
       }
+      boolean shouldAddLibsJar = false;
       if (testing && !runningJar) {
         if (testingWinApp || testSwitch()) {
           logp("***** for testing: exporting from classes");
         } else {
           
           logp("***** for testing: exporting from jar");
-          fpLibsFrom = new File(fSxProject,
-                  String.format("Libs%s/target/sikulixlibs%s-1.1.0.jar", sysShort, sysShort)).getAbsolutePath();
+          shouldAddLibsJar = true;
         }
+      }
+      if (shouldAddLibsJar || (fSxProject != null && RunTime.Type.SETUP.equals(typ))) {
+        fpLibsFrom = new File(fSxProject,
+                String.format("Libs%s/target/sikulixlibs%s-1.1.0.jar", sysShort, sysShort)).getAbsolutePath();
       }
       log(lvl, "now exporting libs");
       if (!fpLibsFrom.isEmpty()) {
@@ -461,16 +464,13 @@ public class RunTime {
       } else {
         extractResourcesToFolder(fpJarLibs, fLibsFolder, null);
       }
-      
     }
-    if (!Type.SETUP.equals(typ)) {
-      for (String aFile : fLibsFolder.list()) {
-        libsLoaded.put(aFile, false);
-      }
-      if (runningWindows) {
-        if (!addToWindowsSystemPath(fLibsFolder)) {
-          terminate(1, "Problems setting up on Windows - see errors");
-        }
+    for (String aFile : fLibsFolder.list()) {
+      libsLoaded.put(aFile, false);
+    }
+    if (runningWindows) {
+      if (!addToWindowsSystemPath(fLibsFolder)) {
+        terminate(1, "Problems setting up on Windows - see errors");
       }
     }
 //</editor-fold>
@@ -1038,6 +1038,50 @@ public class RunTime {
   }
   
   /**
+   * export all resource files from the given subtree in given jar to the given folder retaining the subtree
+   *
+   * @param aJar absolute path to an existing jar or a string identifying the jar on classpath (no leading /)
+   * @param fpRessources path of the subtree relative to root with leading /
+   * @param fFolder folder where to export
+   * @param filter implementation of interface FilenameFilter or null for no filtering
+   * @return success
+   */
+  public boolean extractResourcesToFolderFromJar(String aJar, String fpRessources, File fFolder, FilenameFilter filter) {
+    List<String> content = new ArrayList<String>();
+    File faJar = new File(aJar); 
+    URL uaJar = null;
+    fpRessources = FileManager.slashify(fpRessources, false);
+    if (faJar.isAbsolute()) {
+      if (!faJar.exists()) {
+        log(-1, "extractResourcesToFolderFromJar: does not exist:\n%s", faJar);
+        return false;
+      }
+      try {
+        uaJar = new URL("jar", null, faJar.getAbsolutePath());
+      } catch (MalformedURLException ex) {
+        log(-1, "extractResourcesToFolderFromJar: bad URL for:\n%s", faJar);
+        return false;
+      }
+    } else {
+      uaJar = fromClasspath(aJar);
+      if (uaJar == null) {
+        log(-1, "extractResourcesToFolderFromJar: not on classpath: %s", aJar);
+        return false;
+      }
+      try {
+        String sJar = "file:" + uaJar.getPath() + "!/";
+        uaJar = new URL("jar", null, sJar);
+      } catch (MalformedURLException ex) {
+        log(-1, "extractResourcesToFolderFromJar: bad URL for:\n%s", uaJar);
+        return false;
+      }
+    }
+    content = doResourceListJar(uaJar, fpRessources, content, filter);
+    copyFromJarToFolderWithList(uaJar, fpRessources, content);
+    return true;
+  }
+
+  /**
    * export all resource files from the given subtree on classpath to the given folder retaining the subtree
    *
    * @param fpRessources path of the subtree relative to root with leading /
@@ -1377,6 +1421,72 @@ public class RunTime {
     }
     return files;
   }
+  
+  private boolean copyFromJarToFolderWithList(URL uJar, String folder, List<String> files) {
+    if (files == null || files.isEmpty()) {
+      log(lvl, "copyFromJarToFolderWithList: list of files is empty");
+      return false;
+    }
+    String fpJar = uJar.getPath().split("!")[0];
+    if (!fpJar.endsWith(".jar")) {
+      return false;
+    }
+    int localLevel = testing ? lvl : lvl + 1;
+    logp(localLevel, "scanning jar:\n%s", uJar);
+    folder = folder.startsWith("/") ? folder.substring(1) : folder;
+
+    String subFolder = "";
+
+    int maxFiles = files.size() - 1;
+    int nFiles = 0;
+    
+    ZipEntry zEntry;
+    ZipInputStream zJar;
+    String zPath;
+    try {
+      zJar = new ZipInputStream(new URL(fpJar).openStream());
+      String current = files.get(nFiles++);
+      folder += !folder.isEmpty() ? "/" : "";
+      boolean shouldStop = false;
+      while ((zEntry = zJar.getNextEntry()) != null) {
+        zPath = zEntry.getName();
+        if (zPath.endsWith("/")) {
+          continue;
+        }
+        while (current.endsWith("/")) {
+          if (nFiles > maxFiles) {
+            shouldStop = true;
+            break;
+          }
+          subFolder = current;
+          current = files.get(nFiles++);
+          if (!current.endsWith("/")) {
+            current = folder + subFolder + current;
+            break;
+          }
+        } 
+        if (shouldStop) {
+          break;
+        }
+        if (zPath.startsWith(current)) {
+          logp(lvl, "copying: %s", zPath);
+          if (nFiles > maxFiles) {
+            break;
+          }
+          current = files.get(nFiles++);
+          if (!current.endsWith("/")) {
+            current = folder + subFolder + current;
+          }
+        }
+      }
+    } catch (Exception ex) {
+      log(-1, "doResourceListJar: %s", ex);
+      return false;
+    }
+    return true;
+  }
+  
+  
 
   private void copy(InputStream in, OutputStream out) throws IOException {
     byte[] tmp = new byte[8192];
@@ -1458,6 +1568,21 @@ public class RunTime {
       if (sEntry.toUpperCase().contains(artefact)) {
         cpe = new File(entry.getPath()).getPath();
         break;
+      }
+    }
+    return cpe;
+  }
+
+  public URL fromClasspath(String artefact) {
+    artefact = FileManager.slashify(artefact, false).toUpperCase();
+    URL cpe = null;
+    if (classPath.isEmpty()) {
+      storeClassPath();
+    }
+    for (URL entry : classPath) {
+      String sEntry = FileManager.slashify(new File(entry.getPath()).getPath(), false);
+      if (sEntry.toUpperCase().contains(artefact)) {
+        return entry;
       }
     }
     return cpe;

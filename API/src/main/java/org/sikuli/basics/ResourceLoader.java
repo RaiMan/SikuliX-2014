@@ -183,7 +183,6 @@ public class ResourceLoader {
     apiJarURL = null;
 		try {
 			apiJarURL = (new URI("file", pURL, null)).toURL();
-      log0(lvl, "jar supposed to contain the libs:\n%s", apiJarURL);
 		} catch (Exception ex) {
 		}
     return apiJarURL;
