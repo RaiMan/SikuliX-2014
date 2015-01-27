@@ -173,7 +173,11 @@ public class RunSetup {
   private static Map<String, String> addFilesToJar = new HashMap<String, String>();
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
-	private static void log(int level, String message, Object... args) {
+	private static void logp(String message, Object... args) {
+		System.out.println(String.format(message, args));
+	}
+
+  private static void log(int level, String message, Object... args) {
 		Debug.logx(level, me + ": " + mem + ": " + message, args);
 	}
 
@@ -200,16 +204,24 @@ public class RunSetup {
 		mem = "main";
     
     runTime = RunTime.get(RunTime.Type.SETUP);
+    
+//    logp("**** command line args: %d", args.length);
+//    if (args.length > 0) {
+//      int i = 0;
+//      for (String arg : args) {
+//        logp("%3d: %s", i++, arg);
+//      }
+//    }
 
-    version = Settings.getVersionShort();
+    version = runTime.getVersionShort();
 //TODO wrong if version number parts have more than one digit
-    minorversion = Settings.getVersionShort().substring(0, 5);
-    majorversion = Settings.getVersionShort().substring(0, 3);
+    minorversion = runTime.getVersionShort().substring(0, 5);
+    majorversion = runTime.getVersionShort().substring(0, 3);
     downloadIDE = version + "-1.jar";
     downloadAPI = version + "-2.jar";
     downloadRServer = version + "-3.jar";
-    downloadJython = new File(Settings.SikuliJythonMaven).getName();
-    downloadJRuby = new File(Settings.SikuliJRubyMaven).getName();
+    downloadJython = new File(runTime.SikuliJythonMaven).getName();
+    downloadJRuby = new File(runTime.SikuliJRubyMaven).getName();
     downloadJRubyAddOns = version + "-6.jar";
     downloadMacApp = minorversion + downloadMacAppSuffix;
     downloadTess = minorversion + downloadTessSuffix;
@@ -217,7 +229,7 @@ public class RunSetup {
 	  fMacAppjar = fMacAppContent + "/Java/sikulix.jar";
 	  setupName = "sikulixsetup-" + version;
 	  localSetup = setupName + ".jar";
-    timestampBuilt = Settings.SikuliVersionBuild;
+    timestampBuilt = runTime.SikuliVersionBuild;
 
     PreferencesUser prefs = PreferencesUser.getInstance();
 		boolean prefsHaveProxy = false;
@@ -230,39 +242,39 @@ public class RunSetup {
 			Sikulix.terminate(201);
 		}
 
-		if (Settings.SikuliVersionBetaN > 0 && Settings.SikuliVersionBetaN < 99) {
+		if (runTime.SikuliVersionBetaN > 0 && runTime.SikuliVersionBetaN < 99) {
 			updateVersion = String.format("%d.%d.%d-Beta%d",
-							Settings.SikuliVersionMajor, Settings.SikuliVersionMinor, Settings.SikuliVersionSub,
-							1 + Settings.SikuliVersionBetaN);
-		} else if (Settings.SikuliVersionBetaN < 1) {
+							runTime.SikuliVersionMajor, runTime.SikuliVersionMinor, runTime.SikuliVersionSub,
+							1 + runTime.SikuliVersionBetaN);
+		} else if (runTime.SikuliVersionBetaN < 1) {
 			updateVersion = String.format("%d.%d.%d",
-							Settings.SikuliVersionMajor, Settings.SikuliVersionMinor,
-							1 + Settings.SikuliVersionSub);
+							runTime.SikuliVersionMajor, runTime.SikuliVersionMinor,
+							1 + runTime.SikuliVersionSub);
 		} else {
 			updateVersion = String.format("%d.%d.%d",
-							Settings.SikuliVersionMajor, 1 + Settings.SikuliVersionMinor, 0);
+							runTime.SikuliVersionMajor, 1 + runTime.SikuliVersionMinor, 0);
 		}
 
 		options.addAll(Arrays.asList(args));
 
 		//<editor-fold defaultstate="collapsed" desc="options return version">
 		if (args.length > 0 && "build".equals(args[0])) {
-			System.out.println(Settings.SikuliVersionBuild);
+			System.out.println(runTime.SikuliVersionBuild);
 			System.exit(0);
 		}
 
 		if (args.length > 0 && "pversion".equals(args[0])) {
-			System.out.println(Settings.SikuliProjectVersion);
+			System.out.println(runTime.SikuliProjectVersion);
 			System.exit(0);
 		}
 
 		if (args.length > 0 && "uversion".equals(args[0])) {
-			System.out.println(Settings.SikuliProjectVersionUsed);
+			System.out.println(runTime.SikuliProjectVersionUsed);
 			System.exit(0);
 		}
 
 		if (args.length > 0 && "version".equals(args[0])) {
-			System.out.println(Settings.getVersionShort());
+			System.out.println(runTime.getVersionShort());
 			System.exit(0);
 		}
 
@@ -545,13 +557,12 @@ public class RunSetup {
 		}
 //</editor-fold>
 
-		log1(lvl, "Setup: %s %s in folder:\n%s", Settings.getVersionShort(), Settings.SikuliVersionBuild, workDir);
+		log1(lvl, "Setup: %s %s in folder:\n%s", runTime.getVersionShort(), runTime.SikuliVersionBuild, workDir);
 
 		File localJarIDE = new File(workDir, localIDE);
 		File localJarAPI = new File(workDir, localAPI);
 
-		folderLibs = new File(workDir, "sikulixlibs");
-    folderLibs.mkdirs();
+		folderLibs = new File(workDir, "Downloads/sikulixlibs");
     folderLibsWin = new File(folderLibs, "windows");
     folderLibsLux = new File(folderLibs, "linux");
 
@@ -568,7 +579,7 @@ public class RunSetup {
 				if (success) {
 					libsProvided = true;
 				} else {
-					FileManager.deleteFileOrFolder(folderLibsLux.getAbsolutePath());
+					FileManager.resetFolder(folderLibsLux);
 				}
 			}
 		}
@@ -577,14 +588,14 @@ public class RunSetup {
 		if (!hasOptions) {
 			if (!runningUpdate && !isUpdateSetup) {
 				String uVersion = "";
-				String msgFooter = "You have " + Settings.getVersion()
+				String msgFooter = "You have " + runTime.getVersion()
 								+ "\nClick YES, if you want to install ..."
 								+ "\ncurrent stuff will be saved to BackUp."
 								+ "\n... Click NO to skip ...";
 				if (localJarIDE.exists() || localJarAPI.exists()) {
 					int avail = -1;
 					boolean someUpdate = false;
-					String ask1 = "You have " + Settings.getVersion()
+					String ask1 = "You have " + runTime.getVersion()
 									+ "\nClick YES if you want to run setup again\n"
 									+ "This will download fresh versions of the selected stuff.\n"
 									+ "Your current stuff will be saved to folder BackUp.\n\n"
@@ -634,9 +645,9 @@ public class RunSetup {
 						log0(lvl, "%s is available", uVersion);
 						if (uVersion.equals(updateVersion)) {
 							reset(avail);
-							Settings.downloadBaseDir = Settings.downloadBaseDirBase + uVersion.substring(0, 3) + "/";
+							runTime.downloadBaseDir = runTime.downloadBaseDirBase + uVersion.substring(0, 3) + "/";
 							downloadSetup = "sikuli-update-" + uVersion + ".jar";
-							if (!download(Settings.downloadBaseDir, workDir, downloadSetup,
+							if (!download(runTime.downloadBaseDir, workDir, downloadSetup,
 											new File(workDir, downloadSetup).getAbsolutePath(), "")) {
 								restore(true);
 								popError("Download did not complete successfully.\n"
@@ -769,11 +780,11 @@ public class RunSetup {
 				winSetup.setVisible(true);
 
 				//setup version basic
-				winSU.suVersion.setText(Settings.getVersionShort() + "   (" + Settings.SikuliVersionBuild + ")");
+				winSU.suVersion.setText(runTime.getVersionShort() + "   (" + runTime.SikuliVersionBuild + ")");
 
 				// running system
 				Settings.getOS();
-				msg = Settings.osName + " " + Settings.getOSVersion();
+				msg = runTime.osName + " " + Settings.getOSVersion();
 				if (isLinux) {
 					msg += " (" + linuxDistro + ")";
 				}
@@ -919,7 +930,7 @@ public class RunSetup {
 				if (!proxyMsg.isEmpty()) {
 					msg += proxyMsg + "\n";
 				}
-				msg += "\n--- Native support libraries for " + Settings.osName + " (sikulixlibs...)\n";
+				msg += "\n--- Native support libraries for " + runTime.osName + " (sikulixlibs...)\n";
 				if (getIDE) {
 					downloadedFiles += downloadIDE + " ";
 					downloadedFiles += downloadAPI + " ";
@@ -1139,33 +1150,33 @@ public class RunSetup {
 
 		if (getIDE || getAPI) {
 			localJar = new File(workDir, localAPI).getAbsolutePath();
-			downloadOK &= download(Settings.downloadBaseDir, dlDir, downloadAPI, localJar, "Java API");
+			downloadOK &= download(runTime.downloadBaseDir, dlDir, downloadAPI, localJar, "Java API");
 		}
 		if (getIDE) {
 			localJar = new File(workDir, localIDE).getAbsolutePath();
-			dlOK = download(Settings.downloadBaseDir, dlDir, downloadIDE, localJar, "IDE/Scripting");
+			dlOK = download(runTime.downloadBaseDir, dlDir, downloadIDE, localJar, "IDE/Scripting");
 			downloadOK &= dlOK;
 		}
 		if (getJython) {
 			targetJar = new File(workDir, localJython).getAbsolutePath();
 			if (Settings.isJava6()) {
 				log1(lvl, "running on Java 6: need to use Jython 2.5 - which is downloaded");
-				downloadOK &= getJarFromMaven(Settings.SikuliJythonMaven25, dlDir, targetJar, "Jython");
+				downloadOK &= getJarFromMaven(runTime.SikuliJythonMaven25, dlDir, targetJar, "Jython");
 			} else {
-				downloadOK &= getJarFromMaven(Settings.SikuliJythonMaven, dlDir, targetJar, "Jython");
+				downloadOK &= getJarFromMaven(runTime.SikuliJythonMaven, dlDir, targetJar, "Jython");
 			}
 		}
 		if (getJRuby) {
 			targetJar = new File(workDir, localJRuby).getAbsolutePath();
-			downloadOK &= getJarFromMaven(Settings.SikuliJRubyMaven, dlDir, targetJar, "JRuby");
+			downloadOK &= getJarFromMaven(runTime.SikuliJRubyMaven, dlDir, targetJar, "JRuby");
 			if (downloadOK && getJRubyAddOns) {
 				targetJar = new File(workDir, localJRubyAddOns).getAbsolutePath();
-				downloadOK &= download(Settings.downloadBaseDir, dlDir, downloadJRubyAddOns, targetJar, "JRubyAddOns");
+				downloadOK &= download(runTime.downloadBaseDir, dlDir, downloadJRubyAddOns, targetJar, "JRubyAddOns");
 			}
 		}
 		if (getRServer) {
 			targetJar = new File(workDir, localRServer).getAbsolutePath();
-			downloadOK = download(Settings.downloadBaseDir, dlDir, downloadRServer, targetJar, "RemoteServer");
+			downloadOK = download(runTime.downloadBaseDir, dlDir, downloadRServer, targetJar, "RemoteServer");
 			downloadOK &= dlOK;
 		}
 		//</editor-fold>
@@ -1174,7 +1185,7 @@ public class RunSetup {
 		if (getTess) {
 			String langTess = "eng";
 			targetJar = new File(workDir, localTess).getAbsolutePath();
-			String xTess = Settings.tessData.get(langTess);
+			String xTess = runTime.tessData.get(langTess);
 			String[] xTessNames = xTess.split("/");
 			String xTessName = xTessNames[xTessNames.length - 1];
       String tessFolder = "tessdata-" + langTess;
@@ -1216,7 +1227,7 @@ public class RunSetup {
 		if (!downloadedFiles.isEmpty()) {
 			log1(lvl, "Download ended");
 			log1(lvl, "Downloads for selected options:\n" + downloadedFiles);
-			log1(lvl, "Download page: " + Settings.downloadBaseDirWeb);
+			log1(lvl, "Download page: " + runTime.downloadBaseDirWeb);
 		}
 		if (!downloadOK) {
 			popError("Some of the downloads did not complete successfully.\n"
@@ -1224,7 +1235,7 @@ public class RunSetup {
 							+ "If you think, setup's inline download is blocked somehow on\n"
 							+ "your system, you might download the appropriate raw packages manually\n"
 							+ "into the folder Downloads in the setup folder and run setup again.\n\n"
-							+ "download page: " + Settings.downloadBaseDirWeb + "\n"
+							+ "download page: " + runTime.downloadBaseDirWeb + "\n"
 							+ "files to download (information is in the setup log file too)\n"
 							+ downloadedFiles
 							+ "\n\nBe aware: The raw packages are not useable without being processed by setup!\n\n"
@@ -1901,13 +1912,13 @@ public class RunSetup {
 			success &= fLibslux != null;
 
 			if (success && !noSetup) {
-				jythonJar = new File(Settings.SikuliJython);
+				jythonJar = new File(runTime.SikuliJython);
 				if (!jythonJar.exists()) {
 					Debug.log(lvl, "createSetupFolder: missing: " + jythonJar.getAbsolutePath());
 					success = false;
 				}
 
-				jrubyJar = new File(Settings.SikuliJRuby);
+				jrubyJar = new File(runTime.SikuliJRuby);
 				if (!jrubyJar.exists()) {
 					Debug.log(lvl, "createSetupFolder: missing " + jrubyJar.getAbsolutePath());
 					success = false;
@@ -1950,7 +1961,7 @@ public class RunSetup {
 					}
 
 //TODO JRubyAddOns
-					String jrubyAddons = "sikulixjrubyaddons-" + Settings.SikuliProjectVersion + "-plain.jar";
+					String jrubyAddons = "sikulixjrubyaddons-" + runTime.SikuliProjectVersion + "-plain.jar";
 					File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
 					fname = fJRubyAddOns.getAbsolutePath();
 					File sname = new File(fDownloads, downloadJRubyAddOns);
@@ -1960,7 +1971,7 @@ public class RunSetup {
 
 //TODO remote robot
 					fname = new File(projectDir, "RemoteRobot/target/"
-									+ "sikulixremoterobot-" + Settings.SikuliProjectVersion + ".jar").getAbsolutePath();
+									+ "sikulixremoterobot-" + runTime.SikuliProjectVersion + ".jar").getAbsolutePath();
 //          FileManager.xcopy(fname, new File(fDownloads, downloadRServer).getAbsolutePath());
 
 				} catch (Exception ex) {
@@ -1987,7 +1998,7 @@ public class RunSetup {
 	}
 
 	private static String getProjectJarFileName(String jarFilePre, String jarFileSuf) {
-		return String.format("%s-%s%s", jarFilePre, Settings.SikuliProjectVersion, jarFileSuf);
+		return String.format("%s-%s%s", jarFilePre, runTime.SikuliProjectVersion, jarFileSuf);
 	}
 
 	private static boolean handleTempAfter(String temp, String target) {
@@ -2374,7 +2385,7 @@ public class RunSetup {
 
 	private static boolean getSikulixJarFromMaven(String src, String targetDir,
 					String targetJar, String itemName) {
-		boolean develop = !Settings.isVersionRelease();
+		boolean develop = !runTime.isVersionRelease();
 		String mPath = "";
 		String xml;
 		String xmlContent;
@@ -2389,7 +2400,7 @@ public class RunSetup {
 			String dlMavenSnapshotPath = version + "-SNAPSHOT";
 			String dlMavenSnapshotXML = "maven-metadata.xml";
 			String dlMavenSnapshotPrefix = String.format("%s%s/%s/", sikulixMavenGroup, src, dlMavenSnapshotPath);
-			mPath = Settings.dlMavenSnapshot + dlMavenSnapshotPrefix;
+			mPath = runTime.dlMavenSnapshot + dlMavenSnapshotPrefix;
 			xml = mPath + dlMavenSnapshotXML;
 			xmlContent = FileManager.downloadURLtoString(xml);
 			Matcher m = Pattern.compile("<timestamp>(.*?)</timestamp>").matcher(xmlContent);
@@ -2417,7 +2428,7 @@ public class RunSetup {
 
 	private static boolean getJarFromMaven(String src, String target,
 					String targetJar, String itemName) {
-		return download(Settings.dlMavenRelease + src, target, null, targetJar, itemName);
+		return download(runTime.dlMavenRelease + src, target, null, targetJar, itemName);
 	}
 
 	private static void userTerminated(String msg) {

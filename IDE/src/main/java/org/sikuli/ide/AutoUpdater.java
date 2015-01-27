@@ -78,13 +78,13 @@ public class AutoUpdater {
   }
 
   public int checkUpdate() {
-    for (String s : Settings.ServerList) {
+    for (String s : SikuliIDE.runTime.ServerList) {
       try {
         if (checkUpdate(s)) {
-          smajor = Settings.SikuliVersionMajor;
-          sminor = Settings.SikuliVersionMinor;
-          ssub = Settings.SikuliVersionSub;
-          sbeta = Settings.SikuliVersionBetaN;
+          smajor = SikuliIDE.runTime.SikuliVersionMajor;
+          sminor = SikuliIDE.runTime.SikuliVersionMinor;
+          ssub = SikuliIDE.runTime.SikuliVersionSub;
+          sbeta = SikuliIDE.runTime.SikuliVersionBetaN;
           if (sbeta > 0) {
             if (smajor == major && sminor == minor) {
               available = FINAL;

@@ -24,7 +24,7 @@ public class Env {
    * @deprecated use Settings.getVersion() instead
    */
   @Deprecated
-  public static String SikuliVersion = Settings.SikuliVersion;
+  public static String SikuliVersion = "";
 
   /**
    *
@@ -42,7 +42,11 @@ public class Env {
    */
   @Deprecated
   public static String getSikuliVersion() {
-    return Settings.SikuliVersion;
+    return RunTime.get().SikuliVersion;
+  }
+  
+  protected static void setSikuliVersion(String version) {
+    SikuliVersion = version;
   }
 
   /**

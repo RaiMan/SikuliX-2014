@@ -433,7 +433,7 @@ public class ScriptRunner {
     // option is overloaded - might specify runner for -r/-t
     if (cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
       System.out.println(String.format(
-              "SikuliX Package Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild));
+              "SikuliX Package Build: %s %s", runTime.getVersionShort(), runTime.SikuliVersionBuild));
       int exitCode = 0;
       if (currentRunner == null) {
         String givenRunnerName = cmdLine.getOptionValue(CommandArgsEnum.INTERACTIVE.longname());

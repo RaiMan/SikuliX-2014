@@ -69,7 +69,7 @@ class SikuliIDEStatusBar extends JPanel {
   }
 
   public void resetMessage() {
-    setMessage(Settings.SikuliVersionIDE + " (" + Settings.SikuliVersionBuild + ")");
+    setMessage(SikuliIDE.runTime.SikuliVersionIDE + " (" + SikuliIDE.runTime.SikuliVersionBuild + ")");
     starting = 0;
   }
 //  @Override

@@ -73,7 +73,7 @@ class ExtensionItem extends JPanel implements ActionListener {
     }
     if (image == null) {
       try {
-        url = new URL(Settings.SikuliRepo+"extensionImage.jpg");
+        url = new URL(SikuliIDE.runTime.SikuliRepo + "extensionImage.jpg");
         image = ImageIO.read(url);
       } catch (Exception e) {
       }

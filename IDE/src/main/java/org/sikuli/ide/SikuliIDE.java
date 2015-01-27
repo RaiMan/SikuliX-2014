@@ -136,7 +136,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
   }
 
-  private static RunTime runTime;
+  public static RunTime runTime;
   public static void main(String[] args) {
 
     start = (new Date()).getTime();
@@ -413,7 +413,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
   @Override
   public void setTitle(String title) {
-    super.setTitle(SikuliIDESettings.SikuliVersion + " - " + title);
+    super.setTitle(runTime.SikuliVersionIDE + " - " + title);
   }
 
   public static ImageIcon getIconResource(String name) {
@@ -693,13 +693,13 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
   public void doAbout() {
     //TODO full featured About
-    String info = "You are running " + Settings.SikuliVersionIDE
+    String info = "You are running " + runTime.SikuliVersionIDE
             + "\n\nNeed help? -> start with Help Menu\n\n"
             + "*** Have fun ;-)\n\n"
             + "Tsung-Hsiang Chang aka vgod\n"
             + "Tom Yeh\n"
             + "Raimund Hocke aka RaiMan\n\n"
-            + "\n\nBuild: " + Settings.SikuliVersionBuild;
+            + "\n\nBuild: " + runTime.SikuliVersionBuild;
     JOptionPane.showMessageDialog(this, info,
             "Sikuli About", JOptionPane.PLAIN_MESSAGE);
   }
@@ -1728,7 +1728,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
 
     private void askBugOrAnswer(String msg, String title, String url) {
-      String si = Settings.getSystemInfo();
+      String si = runTime.getSystemInfo();
       System.out.println(si);
       msg = String.format(msg, si);
       if (Sikulix.popAsk(msg, title)) {
@@ -1750,7 +1750,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     public void doCheckUpdate(ActionEvent ae) {
       if (!checkUpdate(false)) {
         JOptionPane.showMessageDialog(null,
-                _I("msgNoUpdate"), SikuliIDESettings.SikuliVersion,
+                _I("msgNoUpdate"), runTime.SikuliVersionIDE,
                 JOptionPane.INFORMATION_MESSAGE);
       }
     }

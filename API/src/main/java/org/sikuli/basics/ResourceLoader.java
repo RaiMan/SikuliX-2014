@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+//import org.sikuli.script.RunTime;
 import org.sikuli.script.Sikulix;
 
 public class ResourceLoader {
@@ -66,12 +67,12 @@ public class ResourceLoader {
   private String libPath = null;
   private String libPathFallBack = null;
   private File libsDir = null;
-  private static final String checkFileNameAll = Settings.getVersionShortBasic() + "-MadeForSikuliX";
-  private final String checkFileNameMac = checkFileNameAll + "64M.txt";
-  private final String checkFileNameW32 = checkFileNameAll + "32W.txt";
-  private final String checkFileNameW64 = checkFileNameAll + "64W.txt";
-  private final String checkFileNameL32 = checkFileNameAll + "32L.txt";
-  private final String checkFileNameL64 = checkFileNameAll + "64L.txt";
+//  private static final String checkFileNameAll = RunTime.get().getVersionShortBasic() + "-MadeForSikuliX";
+//  private final String checkFileNameMac = checkFileNameAll + "64M.txt";
+//  private final String checkFileNameW32 = checkFileNameAll + "32W.txt";
+//  private final String checkFileNameW64 = checkFileNameAll + "64W.txt";
+//  private final String checkFileNameL32 = checkFileNameAll + "32L.txt";
+//  private final String checkFileNameL64 = checkFileNameAll + "64L.txt";
   private String checkFileName = null;
   private String checkLib = null;
   private final String checkLibWindows = "JIntellitype";
@@ -105,7 +106,7 @@ public class ResourceLoader {
 	private boolean usrPathProblem = false;
   
   private ResourceLoader() {
-    log0(lvl, "SikuliX Package Build: %s %s", Settings.getVersionShort(), Settings.SikuliVersionBuild);
+//    log0(lvl, "SikuliX Package Build: %s %s", RunTime.get().getVersionShort(), RunTime.get().SikuliVersionBuild);
     cl = this.getClass().getClassLoader();
     codeSrc = this.getClass().getProtectionDomain().getCodeSource();
     if (codeSrc != null && codeSrc.getLocation() != null) {
@@ -187,491 +188,488 @@ public class ResourceLoader {
     return apiJarURL;
 	}
 
-  private boolean isFatJar() {
-    if (extractingFromJar) {
-      try {
-        ZipInputStream zip = new ZipInputStream(jarURL.openStream());
-        ZipEntry ze;
-        while ((ze = zip.getNextEntry()) != null) {
-          String entryName = ze.getName();
-          if (entryName.startsWith(libSourcebase)) {
-            return true;
-          }
-        }
-      } catch (IOException e) {
-        return false;
-      }
-    }
-    return false;
-  }
-
-  /**
-	 * check the availability of the native libraries and export
-   * @param what check type (currently only Settings.SIKULI_LIB)
-	 * @return true on success, false otherwise
-   */
-  public boolean check(String what) {
-    mem = "check";
-
-    if (!what.equals(Settings.SIKULI_LIB)) {
-      log(-1, "Currently only Sikuli libs supported!");
-      return false;
-    }
-
-    if (initDone) {
-      return true;
-    }
-
-    if (libPath == null || libsDir == null) {
-      libPath = null;
-      libsDir = null;
-      File libsfolder;
-      String libspath;
-
-      if (System.getProperty("sikuli.DoNotExport") == null && !isFatJar() && !Settings.isWinApp) {
-        libsURL = null;
-//TODO evaluation of running situation should be put in one place
-        String jarName = "";
-        String libsJarName = "";
-        String tessJarName = "";
-        if (apiJarURL != null) {
-          libsURL = apiJarURL;
-        } else {
-          if (jarPath.contains("API")) {
-            log(-1, "The jar in use was not built with setup!\n"
-                    + "We might be running from local Maven repository?\n" + jarPath);
-            jarName = "API";
-            libsJarName = "Libs" + Settings.getShortOS();
-            tessJarName = "Tesseract";
-          }
-          if (runningSikulixapi) {
-            log(3, "The jar in use is some sikulixapi.jar\n%s", jarPath);
-            libsJarName = "sikulixlibs" + Settings.getShortOS();
-            jarName = "sikulixapi";
-            tessJarName = "sikulixtessdata";
-          }
-          if (!jarName.isEmpty()) {
-            try {
-              libsURL = new URL(jarURL.toString().replace(jarName, libsJarName));
-              if (!Sikulix.addToClasspath(libsURL.getPath())
-                      || !org.sikuli.script.Sikulix.isOnClasspath(libsJarName)) {
-                libsURL = null;
-              }
-            } catch (Exception ex) {
-              log(-1, "\n%s", ex);
-            }
-          }
-        }
-        if (libsURL == null) {
-          log(-1, "Terminating: The jar was not built with setup nor "
-                  + "can the libs be exported from classpath!\n" + jarPath);
-          Sikulix.terminate(999);
-        }
-      }
-
-      // check the bit-arch
-      osarch = System.getProperty("os.arch");
-      log(lvl - 1, "we are running on arch: " + osarch);
-      javahome = FileManager.slashify(System.getProperty("java.home"), true);
-      log(lvl - 1, "using Java at: " + javahome);
-
-      if (userhome != null) {
-        if (Settings.isWindows()) {
-          userSikuli = System.getenv("USERPROFILE");
-          if (userSikuli != null) {
-            userSikuli = FileManager.slashify(userSikuli, true) + prefixSikuli;
-          }
-        } else {
-          userSikuli = FileManager.slashify(userhome, true) + prefixSikuli;
-        }
-      }
-
-      //  Mac specific
-      if (Settings.isMac()) {
-        if (!osarch.contains("64")) {
-          log(-1, "Mac: only 64-Bit supported");
-          Sikulix.terminate(999);
-        }
-        libSource = String.format(libSource64, "mac");
-        checkFileName = checkFileNameMac;
-        checkLib = "VisionProxy";
-//TODO libs dir fallback
-//        if ((new File(libPathMac)).exists()) {
-//          libPathFallBack = libPathMac;
-//        }
-      }
-
-      // Windows specific
-      if (Settings.isWindows()) {
-        if (osarch.contains("64")) {
-          libSource = String.format(libSource64, "windows");
-          checkFileName = checkFileNameW64;
-//TODO libs dir fallback
-//          if ((new File(libPathWin)).exists()) {
-//            libPathFallBack = libPathWin;
-//          }
-        } else {
-          libSource = String.format(libSource32, "windows");
-          checkFileName = checkFileNameW32;
-//TODO libs dir fallback
-//          if ((new File(libPathWin)).exists()) {
-//            libPathFallBack = libPathWin;
-//          } else if ((new File(libPathWin32)).exists()) {
-//            libPathFallBack = libPathWin32;
-//          }
-        }
-        checkLib = "VisionProxy";
-      }
-
-      // Linux specific
-      if (Settings.isLinux()) {
-        if (osarch.contains("64")) {
-          libSource = String.format(libSource64, "linux");
-          checkFileName = checkFileNameL64;
-        } else {
-          libSource = String.format(libSource32, "linux");
-          checkFileName = checkFileNameL32;
-        }
-        checkLib = "VisionProxy";
-      }
-
-      if (!Settings.isWinApp && !Settings.runningSetup) {
-        // check Java property sikuli.home
-        if (sikhomeProp != null) {
-          libspath = FileManager.slashify(sikhomeProp, true) + "libs";
-          if ((new File(libspath)).exists()) {
-            libPath = libspath;
-          }
-          log(lvl, "Exists Property.sikuli.Home? %s: %s", libPath == null ? "NO" : "YES", libspath);
-          libsDir = checkLibsDir(libPath);
-        }
-
-        // check environmenet SIKULIX_HOME
-        if (libPath == null && sikhomeEnv != null) {
-          libspath = FileManager.slashify(sikhomeEnv, true) + "libs";
-          if ((new File(libspath)).exists()) {
-            libPath = libspath;
-          }
-          log(lvl, "Exists Environment.SIKULIX_HOME? %s: %s", libPath == null ? "NO" : "YES", libspath);
-          libsDir = checkLibsDir(libPath);
-        }
-
-        // check parent folder of jar file
-        if (libPath == null && jarPath != null) {
-          if (extractingFromJar) {
-            if (libsURL == null || runningSikulixapi) {
-              if (Settings.isMacApp) {
-                libsfolder = new File(libPathMac);
-              } else {
-                libsfolder = (new File(jarParentPath, "libs"));
-              }
-              if (libsfolder.exists()) {
-                libPath = libsfolder.getAbsolutePath();
-              } else if (runningSikulixapi) {
-                if (!libsfolder.mkdirs()) {
-                  log(-1, "running some sikulixapi.jar: cannot create libs folder in\n%s", jarParentPath);
-                } else {
-                  libPath = libsfolder.getAbsolutePath();
-                }
-              }
-              log(lvl, "Exists libs folder at location of jar? %s: %s", libPath == null ? "NO" : "YES", jarParentPath);
-              libsDir = checkLibsDir(libPath);
-              if (libsDir == null) {
-                if (System.getProperty("sikuli.DoNotExport") != null) {
-                  log(-1, "No valid libs folder with option sikuli.DoNotExport");
-                  System.exit(1);
-                }
-              }
-            }
-          } else {
-            log(lvl, "not running from jar: " + jarParentPath);
-          }
-        }
-
-        // check the users home folder
-        if (!Settings.runningSetup && !runningSikulixapi && libPath == null && userSikuli != null) {
-          File ud = new File(userSikuli, suffixLibs);
-          if (ud.exists()) {
-            libPath = ud.getAbsolutePath();
-          }
-          log(lvl, "Exists libs folder in user home folder? %s: %s", libPath == null ? "NO" : "YES",
-                  ud.getAbsolutePath());
-          libsDir = checkLibsDir(libPath);
-        }
-
-        // check the working directory and its parent
-        if (!Settings.runningSetup && !runningSikulixapi && libPath == null && userdir != null) {
-          File wd = new File(userdir);
-          File wdpl = null;
-          File wdp = new File(userdir).getParentFile();
-          File wdl = new File(FileManager.slashify(wd.getAbsolutePath(), true) + libSub);
-          if (wdp != null) {
-            wdpl = new File(FileManager.slashify(wdp.getAbsolutePath(), true) + libSub);
-          }
-          if (wdl.exists()) {
-            libPath = wdl.getAbsolutePath();
-          } else if (wdpl != null && wdpl.exists()) {
-            libPath = wdpl.getAbsolutePath();
-          }
-          log(lvl, "Exists libs folder in working folder or its parent? %s: %s", libPath == null ? "NO" : "YES",
-                  wd.getAbsolutePath());
-          libsDir = checkLibsDir(libPath);
-        }
-
-        if (!Settings.runningSetup && !runningSikulixapi && libPath == null && libPathFallBack != null) {
-          libPath = libPathFallBack;
-          log(lvl, "Checking available fallback for libs folder: " + libPath);
-          libsDir = checkLibsDir(libPath);
-        }
-      }
-    }
-
-    if (libsDir == null && libPath != null) {
-      log(lvl, "libs dir is empty, has wrong content or is outdated");
-      log(lvl, "Trying to extract libs to: " + libPath);
-      if (!FileManager.deleteFileOrFolder(libPath,
-              new FileManager.FileFilter() {
-                @Override
-                public boolean accept(File entry) {
-                  if (entry.getPath().contains("tessdata")) {
-                    return false;
-                  }
-                  return true;
-                }
-              })) {
-        log(-1, "Fatal Error 102: not possible to empty libs dir");
-        Sikulix.terminate(102);
-      }
-      File dir = (new File(libPath));
-      dir.mkdirs();
-      if (extractLibs(dir.getParent(), libSource) == null) {
-        log(-1, "... not possible!");
-        libPath = null;
-      } else {
-        libsDir = checkLibsDir(libPath);
-      }
-    }
-
-    //<editor-fold defaultstate="collapsed" desc="libs dir finally invalid">
-    if (libPath == null && !Settings.isWinApp) {
-      log(-1, "No valid libs path available until now!");
-      File jarPathLibs = null;
-
-      if (libPath == null && jarParentPath != null) {
-        if ((jarPath.endsWith(".jar") && libsURL == null) || apiJarURL != null) {
-          log(-2, "Please wait! Trying to extract libs to jar parent folder: \n" + jarParentPath);
-          jarPathLibs = extractLibs((new File(jarParentPath)).getAbsolutePath(), libSource);
-          if (jarPathLibs == null) {
-            log(-1, "not possible!");
-          } else {
-            libPath = jarPathLibs.getAbsolutePath();
-          }
-        } else if (Settings.runningSetupInValidContext) {
-          log(-2, "Please wait! Trying to extract libs to working folder: \n" + jarParentPath);
-          jarPathLibs = extractLibs(Settings.runningSetupInContext, libSource);
-          if (jarPathLibs == null) {
-            log(-1, "not possible!");
-          } else {
-            libPath = jarPathLibs.getAbsolutePath();
-          }
-        }
-      }
-      if (libPath == null && userSikuli != null) {
-        log(-2, "Please wait! Trying to extract libs to user home: \n" + userSikuli);
-        File userhomeLibs = extractLibs((new File(userSikuli)).getAbsolutePath(), libSource);
-        if (userhomeLibs == null) {
-          log(-1, "not possible!");
-        } else {
-          libPath = userhomeLibs.getAbsolutePath();
-        }
-      }
-      libsDir = checkLibsDir(libPath);
-      if (libPath == null || libsDir == null) {
-        log(-1, "Fatal Error 103: No valid native libraries folder available - giving up!");
-        Sikulix.terminate(103);
-      }
-    }
-    //</editor-fold>
-
-    if (Settings.isWinApp) {
-      String osArchNum = osarch.contains("64") ? "64" : "32";
-      log(lvl, "isWinApp: checking libs folder");
-      String jarLibs = "META-INF/libs/windows/libs" + osArchNum + "/";
-      String fContent = jarLibs + "sikulixfoldercontent";
-      String sContent = FileManager.extractResourceAsLines(fContent);
-      File fpLibsWin = new File(Settings.getInstallBase(), "libs");
-      log(lvl, "isWinApp: creating libs folder at: \n%s", fpLibsWin);
-      boolean success = true;
-      for (String fName : sContent.split("\\n")) {
-        log(lvl + 1, "libs export: %s", fName);
-        success &= FileManager.extractResource(jarLibs + fName, new File(fpLibsWin, fName));
-      }
-      if (!success) {
-        log(-1, "isWinApp: problems creating libs folder");
-        Sikulix.terminate(999);
-      }
-      libPath = fpLibsWin.getAbsolutePath();
-      libsDir = checkLibsDir(libPath);
-      if (libsDir == null) {
-        log(-1, "isWinApp: finally giving up");
-        Sikulix.terminate(999);
-      }
-    }
-    
-    if (Settings.isLinux()) {
-      File libsLinux = new File(libsDir.getParent(), "libsLinux/libVisionProxy.so");
-      if (libsLinux.exists()) {
-        log(lvl, "Trying to use provided library at: " + libsLinux.getAbsolutePath());
-        try {
-          FileManager.xcopy(libsLinux.getAbsolutePath(),
-                  new File(libPath, "libVisionProxy.so").getAbsolutePath());
-        } catch (IOException ex) {
-          log(-1, "... did not work: " + ex.getMessage());
-          Sikulix.terminate(999);
-        }
-      }
-    }
-
-//    if (itIsJython) {
-//      export("Lib/sikuli", libsDir.getParent());
-//      itIsJython = false;
+//<editor-fold defaultstate="collapsed" desc="now implemented in RunTime">
+//  public boolean check(String what) {
+//    mem = "check";
+//    
+//    if (!what.equals(Settings.SIKULI_LIB)) {
+//      log(-1, "Currently only Sikuli libs supported!");
+//      return false;
 //    }
-    if (Settings.OcrDataPath == null && System.getProperty("sikuli.DoNotExport") == null) {
-      if (Settings.isWindows() || Settings.isMac()) {
-        Settings.OcrDataPath = libPath;
-      } else {
-        Settings.OcrDataPath = "/usr/local/share";
-      }
-    }
-
-    initDone = true;
-    return libsDir != null;
-  }
+//    
+//    if (initDone) {
+//      return true;
+//    }
+//    
+//    if (libPath == null || libsDir == null) {
+//      libPath = null;
+//      libsDir = null;
+//      File libsfolder;
+//      String libspath;
+//      
+//      if (System.getProperty("sikuli.DoNotExport") == null && !isFatJar() && !Settings.isWinApp) {
+//        libsURL = null;
+////TODO evaluation of running situation should be put in one place
+//        String jarName = "";
+//        String libsJarName = "";
+//        String tessJarName = "";
+//        if (apiJarURL != null) {
+//          libsURL = apiJarURL;
+//        } else {
+//          if (jarPath.contains("API")) {
+//            log(-1, "The jar in use was not built with setup!\n"
+//                    + "We might be running from local Maven repository?\n" + jarPath);
+//            jarName = "API";
+//            libsJarName = "Libs" + Settings.getShortOS();
+//            tessJarName = "Tesseract";
+//          }
+//          if (runningSikulixapi) {
+//            log(3, "The jar in use is some sikulixapi.jar\n%s", jarPath);
+//            libsJarName = "sikulixlibs" + Settings.getShortOS();
+//            jarName = "sikulixapi";
+//            tessJarName = "sikulixtessdata";
+//          }
+//          if (!jarName.isEmpty()) {
+//            try {
+//              libsURL = new URL(jarURL.toString().replace(jarName, libsJarName));
+//              if (!Sikulix.addToClasspath(libsURL.getPath())
+//                      || !org.sikuli.script.Sikulix.isOnClasspath(libsJarName)) {
+//                libsURL = null;
+//              }
+//            } catch (Exception ex) {
+//              log(-1, "\n%s", ex);
+//            }
+//          }
+//        }
+//        if (libsURL == null) {
+//          log(-1, "Terminating: The jar was not built with setup nor "
+//                  + "can the libs be exported from classpath!\n" + jarPath);
+//          Sikulix.terminate(999);
+//        }
+//      }
+//      
+//      // check the bit-arch
+//      osarch = System.getProperty("os.arch");
+//      log(lvl - 1, "we are running on arch: " + osarch);
+//      javahome = FileManager.slashify(System.getProperty("java.home"), true);
+//      log(lvl - 1, "using Java at: " + javahome);
+//      
+//      if (userhome != null) {
+//        if (Settings.isWindows()) {
+//          userSikuli = System.getenv("USERPROFILE");
+//          if (userSikuli != null) {
+//            userSikuli = FileManager.slashify(userSikuli, true) + prefixSikuli;
+//          }
+//        } else {
+//          userSikuli = FileManager.slashify(userhome, true) + prefixSikuli;
+//        }
+//      }
+//      
+//      //  Mac specific
+//      if (Settings.isMac()) {
+//        if (!osarch.contains("64")) {
+//          log(-1, "Mac: only 64-Bit supported");
+//          Sikulix.terminate(999);
+//        }
+//        libSource = String.format(libSource64, "mac");
+//        checkFileName = checkFileNameMac;
+//        checkLib = "VisionProxy";
+////TODO libs dir fallback
+////        if ((new File(libPathMac)).exists()) {
+////          libPathFallBack = libPathMac;
+////        }
+//      }
+//      
+//      // Windows specific
+//      if (Settings.isWindows()) {
+//        if (osarch.contains("64")) {
+//          libSource = String.format(libSource64, "windows");
+//          checkFileName = checkFileNameW64;
+////TODO libs dir fallback
+////          if ((new File(libPathWin)).exists()) {
+////            libPathFallBack = libPathWin;
+////          }
+//        } else {
+//          libSource = String.format(libSource32, "windows");
+//          checkFileName = checkFileNameW32;
+////TODO libs dir fallback
+////          if ((new File(libPathWin)).exists()) {
+////            libPathFallBack = libPathWin;
+////          } else if ((new File(libPathWin32)).exists()) {
+////            libPathFallBack = libPathWin32;
+////          }
+//        }
+//        checkLib = "VisionProxy";
+//      }
+//      
+//      // Linux specific
+//      if (Settings.isLinux()) {
+//        if (osarch.contains("64")) {
+//          libSource = String.format(libSource64, "linux");
+//          checkFileName = checkFileNameL64;
+//        } else {
+//          libSource = String.format(libSource32, "linux");
+//          checkFileName = checkFileNameL32;
+//        }
+//        checkLib = "VisionProxy";
+//      }
+//      
+//      if (!Settings.isWinApp && !Settings.runningSetup) {
+//        // check Java property sikuli.home
+//        if (sikhomeProp != null) {
+//          libspath = FileManager.slashify(sikhomeProp, true) + "libs";
+//          if ((new File(libspath)).exists()) {
+//            libPath = libspath;
+//          }
+//          log(lvl, "Exists Property.sikuli.Home? %s: %s", libPath == null ? "NO" : "YES", libspath);
+//          libsDir = checkLibsDir(libPath);
+//        }
+//        
+//        // check environmenet SIKULIX_HOME
+//        if (libPath == null && sikhomeEnv != null) {
+//          libspath = FileManager.slashify(sikhomeEnv, true) + "libs";
+//          if ((new File(libspath)).exists()) {
+//            libPath = libspath;
+//          }
+//          log(lvl, "Exists Environment.SIKULIX_HOME? %s: %s", libPath == null ? "NO" : "YES", libspath);
+//          libsDir = checkLibsDir(libPath);
+//        }
+//        
+//        // check parent folder of jar file
+//        if (libPath == null && jarPath != null) {
+//          if (extractingFromJar) {
+//            if (libsURL == null || runningSikulixapi) {
+//              if (Settings.isMacApp) {
+//                libsfolder = new File(libPathMac);
+//              } else {
+//                libsfolder = (new File(jarParentPath, "libs"));
+//              }
+//              if (libsfolder.exists()) {
+//                libPath = libsfolder.getAbsolutePath();
+//              } else if (runningSikulixapi) {
+//                if (!libsfolder.mkdirs()) {
+//                  log(-1, "running some sikulixapi.jar: cannot create libs folder in\n%s", jarParentPath);
+//                } else {
+//                  libPath = libsfolder.getAbsolutePath();
+//                }
+//              }
+//              log(lvl, "Exists libs folder at location of jar? %s: %s", libPath == null ? "NO" : "YES", jarParentPath);
+//              libsDir = checkLibsDir(libPath);
+//              if (libsDir == null) {
+//                if (System.getProperty("sikuli.DoNotExport") != null) {
+//                  log(-1, "No valid libs folder with option sikuli.DoNotExport");
+//                  System.exit(1);
+//                }
+//              }
+//            }
+//          } else {
+//            log(lvl, "not running from jar: " + jarParentPath);
+//          }
+//        }
+//        
+//        // check the users home folder
+//        if (!Settings.runningSetup && !runningSikulixapi && libPath == null && userSikuli != null) {
+//          File ud = new File(userSikuli, suffixLibs);
+//          if (ud.exists()) {
+//            libPath = ud.getAbsolutePath();
+//          }
+//          log(lvl, "Exists libs folder in user home folder? %s: %s", libPath == null ? "NO" : "YES",
+//                  ud.getAbsolutePath());
+//          libsDir = checkLibsDir(libPath);
+//        }
+//        
+//        // check the working directory and its parent
+//        if (!Settings.runningSetup && !runningSikulixapi && libPath == null && userdir != null) {
+//          File wd = new File(userdir);
+//          File wdpl = null;
+//          File wdp = new File(userdir).getParentFile();
+//          File wdl = new File(FileManager.slashify(wd.getAbsolutePath(), true) + libSub);
+//          if (wdp != null) {
+//            wdpl = new File(FileManager.slashify(wdp.getAbsolutePath(), true) + libSub);
+//          }
+//          if (wdl.exists()) {
+//            libPath = wdl.getAbsolutePath();
+//          } else if (wdpl != null && wdpl.exists()) {
+//            libPath = wdpl.getAbsolutePath();
+//          }
+//          log(lvl, "Exists libs folder in working folder or its parent? %s: %s", libPath == null ? "NO" : "YES",
+//                  wd.getAbsolutePath());
+//          libsDir = checkLibsDir(libPath);
+//        }
+//        
+//        if (!Settings.runningSetup && !runningSikulixapi && libPath == null && libPathFallBack != null) {
+//          libPath = libPathFallBack;
+//          log(lvl, "Checking available fallback for libs folder: " + libPath);
+//          libsDir = checkLibsDir(libPath);
+//        }
+//      }
+//    }
+//    
+//    if (libsDir == null && libPath != null) {
+//      log(lvl, "libs dir is empty, has wrong content or is outdated");
+//      log(lvl, "Trying to extract libs to: " + libPath);
+//      if (!FileManager.deleteFileOrFolder(libPath,
+//              new FileManager.FileFilter() {
+//                @Override
+//                public boolean accept(File entry) {
+//                  if (entry.getPath().contains("tessdata")) {
+//                    return false;
+//                  }
+//                  return true;
+//                }
+//              })) {
+//        log(-1, "Fatal Error 102: not possible to empty libs dir");
+//        Sikulix.terminate(102);
+//      }
+//      File dir = (new File(libPath));
+//      dir.mkdirs();
+//      if (extractLibs(dir.getParent(), libSource) == null) {
+//        log(-1, "... not possible!");
+//        libPath = null;
+//      } else {
+//        libsDir = checkLibsDir(libPath);
+//      }
+//    }
+//    
+//    //<editor-fold defaultstate="collapsed" desc="libs dir finally invalid">
+//    if (libPath == null && !Settings.isWinApp) {
+//      log(-1, "No valid libs path available until now!");
+//      File jarPathLibs = null;
+//      
+//      if (libPath == null && jarParentPath != null) {
+//        if ((jarPath.endsWith(".jar") && libsURL == null) || apiJarURL != null) {
+//          log(-2, "Please wait! Trying to extract libs to jar parent folder: \n" + jarParentPath);
+//          jarPathLibs = extractLibs((new File(jarParentPath)).getAbsolutePath(), libSource);
+//          if (jarPathLibs == null) {
+//            log(-1, "not possible!");
+//          } else {
+//            libPath = jarPathLibs.getAbsolutePath();
+//          }
+//        } else if (Settings.runningSetupInValidContext) {
+//          log(-2, "Please wait! Trying to extract libs to working folder: \n" + jarParentPath);
+//          jarPathLibs = extractLibs(Settings.runningSetupInContext, libSource);
+//          if (jarPathLibs == null) {
+//            log(-1, "not possible!");
+//          } else {
+//            libPath = jarPathLibs.getAbsolutePath();
+//          }
+//        }
+//      }
+//      if (libPath == null && userSikuli != null) {
+//        log(-2, "Please wait! Trying to extract libs to user home: \n" + userSikuli);
+//        File userhomeLibs = extractLibs((new File(userSikuli)).getAbsolutePath(), libSource);
+//        if (userhomeLibs == null) {
+//          log(-1, "not possible!");
+//        } else {
+//          libPath = userhomeLibs.getAbsolutePath();
+//        }
+//      }
+//      libsDir = checkLibsDir(libPath);
+//      if (libPath == null || libsDir == null) {
+//        log(-1, "Fatal Error 103: No valid native libraries folder available - giving up!");
+//        Sikulix.terminate(103);
+//      }
+//    }
+//    //</editor-fold>
+//    
+//    if (Settings.isWinApp) {
+//      String osArchNum = osarch.contains("64") ? "64" : "32";
+//      log(lvl, "isWinApp: checking libs folder");
+//      String jarLibs = "META-INF/libs/windows/libs" + osArchNum + "/";
+//      String fContent = jarLibs + "sikulixfoldercontent";
+//      String sContent = FileManager.extractResourceAsLines(fContent);
+//      File fpLibsWin = new File(Settings.getInstallBase(), "libs");
+//      log(lvl, "isWinApp: creating libs folder at: \n%s", fpLibsWin);
+//      boolean success = true;
+//      for (String fName : sContent.split("\\n")) {
+//        log(lvl + 1, "libs export: %s", fName);
+//        success &= FileManager.extractResource(jarLibs + fName, new File(fpLibsWin, fName));
+//      }
+//      if (!success) {
+//        log(-1, "isWinApp: problems creating libs folder");
+//        Sikulix.terminate(999);
+//      }
+//      libPath = fpLibsWin.getAbsolutePath();
+//      libsDir = checkLibsDir(libPath);
+//      if (libsDir == null) {
+//        log(-1, "isWinApp: finally giving up");
+//        Sikulix.terminate(999);
+//      }
+//    }
+//    
+//    if (Settings.isLinux()) {
+//      File libsLinux = new File(libsDir.getParent(), "libsLinux/libVisionProxy.so");
+//      if (libsLinux.exists()) {
+//        log(lvl, "Trying to use provided library at: " + libsLinux.getAbsolutePath());
+//        try {
+//          FileManager.xcopy(libsLinux.getAbsolutePath(),
+//                  new File(libPath, "libVisionProxy.so").getAbsolutePath());
+//        } catch (IOException ex) {
+//          log(-1, "... did not work: " + ex.getMessage());
+//          Sikulix.terminate(999);
+//        }
+//      }
+//    }
+//    
+////    if (itIsJython) {
+////      export("Lib/sikuli", libsDir.getParent());
+////      itIsJython = false;
+////    }
+//    if (Settings.OcrDataPath == null && System.getProperty("sikuli.DoNotExport") == null) {
+//      if (Settings.isWindows() || Settings.isMac()) {
+//        Settings.OcrDataPath = libPath;
+//      } else {
+//        Settings.OcrDataPath = "/usr/local/share";
+//      }
+//    }
+//    
+//    initDone = true;
+//    return libsDir != null;
+//  }
   
-  public File getLibsDir() {
-    return libsDir;
-  }
-
-	private boolean checkJavaUsrPath() {
-		if (Settings.isWindows() && libPath != null) {
-			log(lvl, "checking ClassLoader.usrPaths having: %s", libPath);
-			Field usrPathsField = null;
-			try {
-				usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
-			} catch (NoSuchFieldException ex) {
-				log(-1, ex.getMessage());
-			} catch (SecurityException ex) {
-				log(-1, ex.getMessage());
-			}
-			boolean contained = false;
-			if (usrPathsField != null) {
-				usrPathsField.setAccessible(true);
-				try {
-					//get array of paths
-					String[] javapaths = (String[]) usrPathsField.get(null);
-					//check if the path to add is already present
-					for (String p : javapaths) {
-						if (FileManager.pathEquals(p, libPath)) {
-							contained = true;
-							break;
-						}
-					}
-					//add the new path
-					if (!contained) {
-						final String[] newPaths = Arrays.copyOf(javapaths, javapaths.length + 1);
-						newPaths[newPaths.length - 1] = libPath;
-						usrPathsField.set(null, newPaths);
-						log(lvl, "added to ClassLoader.usrPaths");
-					}
-				} catch (IllegalAccessException ex) {
-					log(-1, ex.getMessage());
-				} catch (IllegalArgumentException ex) {
-					log(-1, ex.getMessage());
-				}
-				return true;
-//				//check the new path
-//				if (!contained) {
-//					try {
-//						System.loadLibrary(checkLibWindows);
-//					} catch (java.lang.UnsatisfiedLinkError ex) {
-//						log(-1, "adding to ClassLoader.usrPaths did not work:\n" + ex.getMessage());
-//						System.exit(1);
-//					}
+//  private File checkLibsDir(String path) {
+//    String memx = mem;
+//    mem = "checkLibsDir";
+//    File dir = null;
+//    if (path != null) {
+//      log(lvl, "trying: " + path);
+//      if (Settings.isWindows() && !initDone) {
+//        log(lvl, "Running on Windows - checking system path!");
+//        String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
+//        if (syspath == null) {
+//          Sikulix.terminate(999);
+//        } else {
+//          path = (new File(path).getAbsolutePath()).replaceAll("/", "\\");
+//          if (!syspath.toUpperCase().contains(path.toUpperCase())) {
+//            if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", path + ";" + syspath)) {
+//              Sikulix.terminate(999);
+//            }
+//            log(lvl, "Added libs dir to path: " + path);
+//            syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
+//            if (!syspath.toUpperCase().contains(path.toUpperCase())) {
+//              log(-1, "Adding to path did not work:\n%s", syspath);
+//              Sikulix.terminate(999);
+//            }
+//            log(lvl, syspath.substring(0, Math.min(path.length()+50, syspath.length())) + "...");
+//          }
+//        }
+//				if (!checkJavaUsrPath()) {
+//					usrPathProblem = true;
 //				}
-			}
-		}
-		return false;
-	}
-
-  private File checkLibsDir(String path) {
-    String memx = mem;
-    mem = "checkLibsDir";
-    File dir = null;
-    if (path != null) {
-      log(lvl, "trying: " + path);
-      if (Settings.isWindows() && !initDone) {
-        log(lvl, "Running on Windows - checking system path!");
-        String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
-        if (syspath == null) {
-          Sikulix.terminate(999);
-        } else {
-          path = (new File(path).getAbsolutePath()).replaceAll("/", "\\");
-          if (!syspath.toUpperCase().contains(path.toUpperCase())) {
-            if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", path + ";" + syspath)) {
-              Sikulix.terminate(999);
-            }
-            log(lvl, "Added libs dir to path: " + path);
-            syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
-            if (!syspath.toUpperCase().contains(path.toUpperCase())) {
-              log(-1, "Adding to path did not work:\n%s", syspath);
-              Sikulix.terminate(999);
-            }
-            log(lvl, syspath.substring(0, Math.min(path.length()+50, syspath.length())) + "...");
-          }
-        }
-				if (!checkJavaUsrPath()) {
-					usrPathProblem = true;
-				}
-      }
-      if (System.getProperty("sikuli.DoNotExport") != null) {
-        dir = new File(path);
-      } else {
-        File checkFile = (new File(FileManager.slashify(path, true) + checkFileName));
-        if (checkFile.exists()) {
-          if ((new File(jarPath)).lastModified() > checkFile.lastModified()) {
-            log(lvl + 1, "libs folder outdated!");
-          } else {
-            //convenience: jawt.dll in libsdir avoids need for java/bin in system path
-            if (Settings.isWindows()) {
-              String lib = "jawt.dll";
-              try {
-                extractResource(javahome + "bin/" + lib, new File(libPath, lib), false);
-                log(lvl + 1, "copied to libs: jawt.dll");
-              } catch (IOException ex) {
-                log(-1, "Fatal error 107: problem copying " + lib + "\n" + ex.getMessage());
-                Sikulix.terminate(107);
-              }
-            }
-            loadLib(checkLib);
-            log(lvl, "Using libs at: " + path);
-            dir = new File(path);
-          }
-        } else {
-          if (Settings.isWindows()) {
-            // might be wrong arch
-            if ((new File(FileManager.slashify(path, true) + checkFileNameW32)).exists()
-                    || (new File(FileManager.slashify(path, true) + checkFileNameW64)).exists()) {
-              log(lvl + 1, "libs dir contains wrong arch for " + osarch);
-            }
-          } else {
-            log(-1, "Not a valid libs dir for SikuliX (" + osarch + "): " + path);
-          }
-        }
-      }
-    }
-    mem = memx;
-    return dir;
-  }
+//      }
+//      if (System.getProperty("sikuli.DoNotExport") != null) {
+//        dir = new File(path);
+//      } else {
+//        File checkFile = (new File(FileManager.slashify(path, true) + checkFileName));
+//        if (checkFile.exists()) {
+//          if ((new File(jarPath)).lastModified() > checkFile.lastModified()) {
+//            log(lvl + 1, "libs folder outdated!");
+//          } else {
+//            //convenience: jawt.dll in libsdir avoids need for java/bin in system path
+//            if (Settings.isWindows()) {
+//              String lib = "jawt.dll";
+//              try {
+//                extractResource(javahome + "bin/" + lib, new File(libPath, lib), false);
+//                log(lvl + 1, "copied to libs: jawt.dll");
+//              } catch (IOException ex) {
+//                log(-1, "Fatal error 107: problem copying " + lib + "\n" + ex.getMessage());
+//                Sikulix.terminate(107);
+//              }
+//            }
+//            loadLib(checkLib);
+//            log(lvl, "Using libs at: " + path);
+//            dir = new File(path);
+//          }
+//        } else {
+//          if (Settings.isWindows()) {
+//            // might be wrong arch
+//            if ((new File(FileManager.slashify(path, true) + checkFileNameW32)).exists()
+//                    || (new File(FileManager.slashify(path, true) + checkFileNameW64)).exists()) {
+//              log(lvl + 1, "libs dir contains wrong arch for " + osarch);
+//            }
+//          } else {
+//            log(-1, "Not a valid libs dir for SikuliX (" + osarch + "): " + path);
+//          }
+//        }
+//      }
+//    }
+//    mem = memx;
+//    return dir;
+//  }
+  
+//	private boolean checkJavaUsrPath() {
+//		if (Settings.isWindows() && libPath != null) {
+//			log(lvl, "checking ClassLoader.usrPaths having: %s", libPath);
+//			Field usrPathsField = null;
+//			try {
+//				usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
+//			} catch (NoSuchFieldException ex) {
+//				log(-1, ex.getMessage());
+//			} catch (SecurityException ex) {
+//				log(-1, ex.getMessage());
+//			}
+//			boolean contained = false;
+//			if (usrPathsField != null) {
+//				usrPathsField.setAccessible(true);
+//				try {
+//					//get array of paths
+//					String[] javapaths = (String[]) usrPathsField.get(null);
+//					//check if the path to add is already present
+//					for (String p : javapaths) {
+//						if (FileManager.pathEquals(p, libPath)) {
+//							contained = true;
+//							break;
+//						}
+//					}
+//					//add the new path
+//					if (!contained) {
+//						final String[] newPaths = Arrays.copyOf(javapaths, javapaths.length + 1);
+//						newPaths[newPaths.length - 1] = libPath;
+//						usrPathsField.set(null, newPaths);
+//						log(lvl, "added to ClassLoader.usrPaths");
+//					}
+//				} catch (IllegalAccessException ex) {
+//					log(-1, ex.getMessage());
+//				} catch (IllegalArgumentException ex) {
+//					log(-1, ex.getMessage());
+//				}
+//				return true;
+////				//check the new path
+////				if (!contained) {
+////					try {
+////						System.loadLibrary(checkLibWindows);
+////					} catch (java.lang.UnsatisfiedLinkError ex) {
+////						log(-1, "adding to ClassLoader.usrPaths did not work:\n" + ex.getMessage());
+////						System.exit(1);
+////					}
+////				}
+//			}
+//		}
+//		return false;
+//	}
+//
+//  private boolean isFatJar() {
+//    if (extractingFromJar) {
+//      try {
+//        ZipInputStream zip = new ZipInputStream(jarURL.openStream());
+//        ZipEntry ze;
+//        while ((ze = zip.getNextEntry()) != null) {
+//          String entryName = ze.getName();
+//          if (entryName.startsWith(libSourcebase)) {
+//            return true;
+//          }
+//        }
+//      } catch (IOException e) {
+//        return false;
+//      }
+//    }
+//    return false;
+//  }
+//
+//  public File getLibsDir() {
+//    return libsDir;
+//  }
+//</editor-fold>
 
   public boolean export(URL fromURL, String res, String targetPath) {
     currentURL = fromURL;
