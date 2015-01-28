@@ -271,12 +271,14 @@ public class RunTime {
   public String javaShow = "not-set";
   public int javaArch = 32;
   public int javaVersion = 0;
+  public String javahome = FileManager.slashify(System.getProperty("java.home"), false);
   public String osName = "NotKnown";
   public String sysName = "NotKnown";
   public String osVersion = "";
   private String appType = null;
 
 //</editor-fold>
+  
 //<editor-fold defaultstate="collapsed" desc="global init">
   private void init(Type typ) {
 
@@ -501,7 +503,15 @@ public class RunTime {
       if (!addToWindowsSystemPath(fLibsFolder)) {
         terminate(1, "Problems setting up on Windows - see errors");
       }
+      String lib = "jawt.dll";
+      File fJawtDll = new File(fLibsFolder, lib);
+      FileManager.deleteFileOrFolder(fJawtDll);
+      FileManager.xcopy(new File(javahome + "/bin/" + lib), fJawtDll);
+      if (!fJawtDll.exists()) {
+        terminate(1, "problem copying %s", fJawtDll);
+      }
     }
+    
     areLibsExported = true;
   }
 //</editor-fold>  
@@ -1226,6 +1236,7 @@ public class RunTime {
   }
 
 //</editor-fold>
+  
 //<editor-fold defaultstate="collapsed" desc="handling resources from classpath">
   /**
    * export all resource files from the given subtree on classpath to the given folder retaining the subtree<br>
@@ -1296,7 +1307,8 @@ public class RunTime {
         return null;
       }
       try {
-        uaJar = new URL("jar", null, faJar.getAbsolutePath());
+        uaJar = new URL("jar", null, "file:" + aJar);
+        logp("%s", uaJar);
       } catch (MalformedURLException ex) {
         log(-1, "extractResourcesToFolderFromJar: bad URL for:\n%s", faJar);
         return null;
@@ -1532,7 +1544,7 @@ public class RunTime {
    */
   public String[] resourceListAsSikulixContentFromJar(String aJar, String folder, File targetFolder, FilenameFilter filter) {
     List<String> contentList = extractResourcesToFolderFromJar(aJar, folder, null, filter);
-    if (contentList == null) {
+    if (contentList == null || contentList.size()  == 0) {
       log(-1, "resourceListAsSikulixContentFromJar: did not work: %s", folder);
       return null;
     }

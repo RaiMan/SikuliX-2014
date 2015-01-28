@@ -1129,12 +1129,12 @@ public class RunSetup {
 			} else {
 				copyFromDownloads(libDownloaded, libsWin, jarsList[6]);
 			}
-      String libsWin = "sikulixlibs/windows";
-      
+
+      String libsWin = "sikulixlibs/windows";     
       folderLibsWin = new File(workDir, libsWin);
       FileManager.resetFolder(folderLibsWin);
-      runTime.addToClasspath(jarsList[6]);
-      if (null == runTime.resourceListAsSikulixContentFromJar(jarsList[6], libsWin, folderLibsWin, null)) {
+      String aJar = "/" + FileManager.slashify(jarsList[6], false);
+      if (null == runTime.resourceListAsSikulixContentFromJar(aJar, libsWin, folderLibsWin, null)) {
         terminate("libswin content list not created", 999);
       }
       addonFileList[2] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
