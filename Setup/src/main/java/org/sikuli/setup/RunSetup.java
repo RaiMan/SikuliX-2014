@@ -153,8 +153,8 @@ public class RunSetup {
 	private static boolean visionProvided = false;
 	private static boolean grabKeyProvided = false;
 	private static boolean shouldExport = false;
-	private static String[] libsFileList = new String[]{null, null, null, null, null};
-	private static String[] libsFilePrefix = new String[]{null, null, null, null, null};
+	private static String[] addonFileList = new String[]{null, null, null, null, null};
+	private static String[] addonFilePrefix = new String[]{null, null, null, null, null};
 	private static String libOpenCVcore = "";
 	private static String libOpenCVimgproc = "";
 	private static String libOpenCVhighgui = "";
@@ -1134,8 +1134,11 @@ public class RunSetup {
       folderLibsWin = new File(workDir, libsWin);
       FileManager.resetFolder(folderLibsWin);
       runTime.addToClasspath(jarsList[6]);
-      runTime.resourceListAsSikulixContent(libsWin, folderLibsWin, null);
-      addFilesToJar.put(new File(folderLibsWin, runTime.fpContent).getAbsolutePath(), libsWin);
+      if (null == runTime.resourceListAsSikulixContentFromJar(jarsList[6], libsWin, folderLibsWin, null)) {
+        terminate("libswin content list not created", 999);
+      }
+      addonFileList[2] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
+      addonFilePrefix[2] = libsWin; 
 		}
 
 		if (forSystemMac || forAllSystems) {
@@ -1254,17 +1257,17 @@ public class RunSetup {
 				shouldPackLibs = false;
 			}
 			if (!shouldPackLibs) {
-				libsFileList[0] = new File(folderLibsLux, libVision).getAbsolutePath();
-				libsFileList[1] = new File(folderLibsLux, libGrabKey).getAbsolutePath();
+				addonFileList[0] = new File(folderLibsLux, libVision).getAbsolutePath();
+				addonFileList[1] = new File(folderLibsLux, libGrabKey).getAbsolutePath();
 				for (int i = 0; i < 2; i++) {
-					if (!new File(libsFileList[i]).exists()) {
-						libsFileList[i] = null;
+					if (!new File(addonFileList[i]).exists()) {
+						addonFileList[i] = null;
 					}
 				}
-				String libPrefix = "META-INF/libs/linux/libs" + osarch;
+				String libPrefix = "sikulixlibs/linux/libs" + osarch;
 				log(lvl, "Provided libs will be stored at %s", libPrefix);
-				libsFilePrefix[0] = libPrefix;
-				libsFilePrefix[1] = libPrefix;
+				addonFilePrefix[0] = libPrefix;
+				addonFilePrefix[1] = libPrefix;
 			}
 		}
 
@@ -1324,13 +1327,17 @@ public class RunSetup {
 		if (getTess) {
 			jarsList[2] = (new File(workDir, localTess)).getAbsolutePath();
 		}
+    
+    if (forSystemWin) {
+      
+    }
 
 		if (success && getAPI) {
 			log1(lvl, "adding needed stuff to sikulixapi.jar");
 			localJar = (new File(workDir, localAPI)).getAbsolutePath();
 			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
 			success &= FileManager.buildJar("#"+targetJar, jarsList,
-							libsFileList, libsFilePrefix, libsFilter);
+							addonFileList, addonFilePrefix, libsFilter);
 			success &= handleTempAfter(targetJar, localJar);
 		}
 
@@ -1349,7 +1356,7 @@ public class RunSetup {
 			}
 			targetJar = (new File(workDir, localTemp)).getAbsolutePath();
 			success &= FileManager.buildJar(
-							targetJar, jarsList, libsFileList, libsFilePrefix, libsFilter);
+							targetJar, jarsList, addonFileList, addonFilePrefix, libsFilter);
 			success &= handleTempAfter(targetJar, localJar);
 
 			if (Settings.isMac()) {
