@@ -1025,11 +1025,11 @@ public class RunSetup {
       logPlus(lvl, "processing commandfiles");
       splash = showSplash("Now processing commandfiles.", "please wait - may take some seconds ...");
       if (Settings.isWindows()) {
-        loader.export(runningJarURL, "Commands/windows#" + runsikulix + ".cmd", workDir);
+        runTime.extractResourceToFile("Commands/windows", runsikulix + ".cmd", fWorkDir);
       } else if (isLinux) {
-        loader.export(runningJarURL, "Commands/linux#" + runsikulix, workDir);
-        ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x", new File(workDir, runsikulix).getAbsolutePath()});
-        ResourceLoader.get().runcmd(new String[]{"chmod", "ugo+x", new File(workDir, localIDE).getAbsolutePath()});
+        runTime.extractResourceToFile("Commands/linux", runsikulix, fWorkDir);
+        new File(fWorkDir, runsikulix).setExecutable(true);
+        new File(fWorkDir, localIDE).setExecutable(true);
       }
       closeSplash(splash);
     }
@@ -1102,9 +1102,7 @@ public class RunSetup {
                 + "Check the error log at " + (logfile == null ? "printout" : logfile));
         terminate("Functional test IDE did not work", 1);
       }
-      if (!runTime.fLibsFolder.exists()) {
-        runTime.makeLibsFolder();
-      }
+      runTime.makeLibsFolder();
       if (runTime.fLibsFolder.exists() && getTess) {
         runTime.extractResourcesToFolder("sikulixtessdata/",
                 new File(runTime.fLibsFolder, "tessdata"), null);

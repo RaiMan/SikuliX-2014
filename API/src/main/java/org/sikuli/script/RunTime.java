@@ -400,7 +400,7 @@ public class RunTime {
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="libs export">
-  public boolean makeLibsFolder() {
+  public void makeLibsFolder() {
     fLibsFolder = new File(fTempPath, "SikulixLibs_" + sxBuildStamp);
     if (testing) {
       logp("***** for testing: delete libsfolder");
@@ -430,13 +430,12 @@ public class RunTime {
           FileManager.deleteFileOrFolder(new File(fTempPath, entry));
         }
       }
-      return true;
     }
-    return false;
   }
   
   private void libsExport(Type typ) {
-    boolean shouldExport = makeLibsFolder();
+    boolean shouldExport = false;
+    makeLibsFolder();
     URL uLibsFrom = null;
     log(lvl, "exists libs folder at: %s", fLibsFolder);
     if (!checkLibs(fLibsFolder)) {
@@ -1282,7 +1281,7 @@ public class RunTime {
         if (!subFolder.isEmpty()) {
           eFile = new File(subFolder, eFile).getPath();
         }
-        if (extractResourceToFile(fpRessources, eFile, fFolder, eFile)) {
+        if (extractResourceToFile(fpRessources, eFile, fFolder)) {
           log(lvl + 1, "extractResourceToFile done: %s", eFile);
           count++;
         } else {
@@ -1347,6 +1346,18 @@ public class RunTime {
   }
 
   /**
+   * store a resource found on classpath to a file in the given folder with same filename
+   *
+   * @param inPrefix a subtree found in classpath
+   * @param inFile the filename combined with the prefix on classpath
+   * @param outDir a folder where to export
+   * @return success
+   */
+  public boolean extractResourceToFile(String inPrefix, String inFile, File outDir) {
+    return extractResourceToFile(inPrefix, inFile, outDir, "");
+  }
+
+  /**
    * store a resource found on classpath to a file in the given folder
    *
    * @param inPrefix a subtree found in classpath
@@ -1368,7 +1379,7 @@ public class RunTime {
       if (aIS == null) {
         throw new IOException("resource not accessible");
       }
-      File out = new File(outDir, inFile);
+      File out = outFile.isEmpty() ? new File(outDir, inFile) : new File(outDir, inFile);
       if (!out.getParentFile().exists()) {
         out.getParentFile().mkdirs();
       }
