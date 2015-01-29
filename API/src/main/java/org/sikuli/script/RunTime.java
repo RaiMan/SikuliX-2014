@@ -470,12 +470,15 @@ public class RunTime {
         if (testingWinApp || testSwitch()) {
           logp("***** for testing: exporting from classes");
         } else {
-
           logp("***** for testing: exporting from jar");
           shouldAddLibsJar = true;
         }
       }
-      if (shouldAddLibsJar || (fSxProject != null && RunTime.Type.SETUP.equals(typ))) {
+      if (null != isOnClasspath("sikulix.jar") || null != isOnClasspath("sikulixapi.jar")) {
+        shouldAddLibsJar = false;
+        fpLibsFrom = "";
+      }
+      if (shouldAddLibsJar) {
         fpLibsFrom = new File(fSxProject,
                 String.format("Libs%s/target/sikulixlibs%s-1.1.0.jar", sysShort, sysShort)).getAbsolutePath();
       }
@@ -1769,7 +1772,7 @@ public class RunTime {
     String zPath;
     int prefix = fpRessource.length();
     fpRessource += !fpRessource.isEmpty() ? "/" : "";
-    String current = files.get(nFiles++);
+    String current = "/";
     boolean shouldStop = false;
     try {
       zJar = new ZipInputStream(new URL(fpJar).openStream());
@@ -1798,7 +1801,7 @@ public class RunTime {
             log(-1, "extractResourcesToFolderFromJar: only ressource folders allowed - use filter");
             return false;
           }
-          logp(lvl, "copying: %s", zPath);
+          logp(localLevel, "copying: %s", zPath);
           File out = new File(fFolder, zPath.substring(prefix));
           if (!out.getParentFile().exists()) {
             out.getParentFile().mkdirs();
@@ -1902,10 +1905,10 @@ public class RunTime {
   }
 
   /**
-   * check wether a classpath entry contains the given identifying string, stops on first match
+   * check whether a classpath entry contains the given identifying string, stops on first match
    *
    * @param artefact the identifying string
-   * @return the absolute path of the entry found
+   * @return the absolute path of the entry found - null if not found
    */
   public String isOnClasspath(String artefact) {
     artefact = FileManager.slashify(artefact, false).toUpperCase();

@@ -1065,7 +1065,7 @@ public class RunSetup {
                   new File(runTime.fLibsFolder, "tessdata"), null);
           getTess = false;
         }        
-        runTime.extractResourcesToFolderFromJar("sikulixapi", "Lib", new File(fWorkDir, "Lib"), null);
+        runTime.extractResourcesToFolderFromJar("sikulixapi.jar", "Lib", new File(fWorkDir, "Lib"), null);
         Class sysclass = URLClassLoader.class;
         Class SikuliCL = sysclass.forName("org.sikuli.script.Sikulix");
         log(lvl, "class found: " + SikuliCL.toString());
@@ -1180,7 +1180,7 @@ public class RunSetup {
     log(lvl,
             "... SikuliX Setup seems to have ended successfully ;-)");
 
-    System.exit(0);
+    System.exit(RunTime.testing ? 1 : 0);
   }
 
 //<editor-fold defaultstate="collapsed" desc="helpers for Linux build">
