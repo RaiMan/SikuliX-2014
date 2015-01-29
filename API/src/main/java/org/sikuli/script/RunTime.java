@@ -39,12 +39,12 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.ResourceLoader;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.SysJNA;
 
 /**
- * INTERNAL USE: Intended to concentrate all, that is needed at startup of sikulix or sikulixapi
+ * Intended to concentrate all, that is needed at startup of sikulix or sikulixapi
+ * and may be at runtime by SikuliX or any caller
  */
 public class RunTime {
 
@@ -142,11 +142,12 @@ public class RunTime {
       if (dl > 0 && Debug.getDebugLevel() < 2) {
         Debug.setDebugLevel(dl);
       }
-      if (Type.SETUP.equals(typ)) {
-        Debug.setDebugLevel(3);
-      }
       if (Debug.getDebugLevel() > 1) {
         runTime.dumpOptions();
+      }
+
+      if (Type.SETUP.equals(typ)) {
+        Debug.setDebugLevel(3);
       }
 
       Settings.init(); // force Settings initialization
@@ -260,6 +261,7 @@ public class RunTime {
   public String fpContent = "sikulixcontent";
 
   public boolean runningJar = true;
+  public boolean runningInProject = false;
   public boolean runningWindows = false;
   public boolean runningMac = false;
   public boolean runningLinux = false;
@@ -277,6 +279,7 @@ public class RunTime {
   private String appType = null;
 
 //</editor-fold>
+  
 //<editor-fold defaultstate="collapsed" desc="global init">
   private void init(Type typ) {
 
@@ -338,10 +341,12 @@ public class RunTime {
         fSxProject = fSxBase.getParentFile().getParentFile();
         log(lvl, "not jar - supposing Maven project: %s", fSxProject);
         appType = "in Maven project from classes";
+        runningInProject = true;
       } else if ("target".equals(fSxBase.getName())) {
         fSxProject = fSxBase.getParentFile().getParentFile();
         log(lvl, "folder target detected - supposing Maven project: %s", fSxProject);
         appType = "in Maven project from some jar";
+        runningInProject = true;
       } else {
         if (runningWindows) {
           if (jn.endsWith(".exe")) {
@@ -394,9 +399,7 @@ public class RunTime {
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="libs export">
-  private void libsExport(Type typ) {
-    boolean shouldExport = false;
-    URL uLibsFrom = null;
+  public boolean makeLibsFolder() {
     fLibsFolder = new File(fTempPath, "SikulixLibs_" + sxBuildStamp);
     if (testing) {
       logp("***** for testing: delete libsfolder");
@@ -426,8 +429,14 @@ public class RunTime {
           FileManager.deleteFileOrFolder(new File(fTempPath, entry));
         }
       }
-      shouldExport = true;
+      return true;
     }
+    return false;
+  }
+  
+  private void libsExport(Type typ) {
+    boolean shouldExport = makeLibsFolder();
+    URL uLibsFrom = null;
     log(lvl, "exists libs folder at: %s", fLibsFolder);
     if (!checkLibs(fLibsFolder)) {
       FileManager.deleteFileOrFolder(fLibsFolder);
@@ -1226,6 +1235,7 @@ public class RunTime {
   }
 
 //</editor-fold>
+  
 //<editor-fold defaultstate="collapsed" desc="handling resources from classpath">
   /**
    * export all resource files from the given subtree on classpath to the given folder retaining the subtree<br>
@@ -1825,6 +1835,21 @@ public class RunTime {
     }
     return baos.toByteArray();
   }
+  
+  public class oneFileFilter implements FilenameFilter {    
+    String aFile;
+    public oneFileFilter(String aFileGiven) {
+      aFile = aFileGiven;
+    }
+    @Override
+    public boolean accept(File dir, String name) {
+      if (name.contains(aFile)) {
+        return true;
+      }
+      return false;
+    }
+  }
+
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="classpath handling">

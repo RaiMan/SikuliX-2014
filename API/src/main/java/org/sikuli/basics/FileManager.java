@@ -499,8 +499,11 @@ public class FileManager {
   }
 
   public static boolean xcopy(File fSrc, File fDest) {
+    if (fSrc == null || fDest == null) {
+      return false;
+    }
     try {
-		doXcopy(fSrc, fDest, null);
+      doXcopy(fSrc, fDest, null);
     } catch (Exception ex) {
       log(lvl, "xcopy from: %s\nto: %s\n%s", fSrc, fDest, ex); 
       return false;
@@ -509,8 +512,11 @@ public class FileManager {
 	}
 
   public static boolean xcopy(File fSrc, File fDest, FileFilter filter) {
+    if (fSrc == null || fDest == null) {
+      return false;
+    }
     try {
-		doXcopy(fSrc, fDest, filter);
+      doXcopy(fSrc, fDest, filter);
     } catch (Exception ex) {
       log(lvl, "xcopy from: %s\nto: %s\n%s", fSrc, fDest, ex); 
       return false;

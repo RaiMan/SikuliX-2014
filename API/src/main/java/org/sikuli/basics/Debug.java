@@ -663,19 +663,21 @@ public class Debug {
 	 * @param message text or format string
 	 * @param args for use with format string
 	 */
-	public static void logx(int level, String message, Object... args) {
+	public static String logx(int level, String message, Object... args) {
+    String sout = "";
     if (level == -1 || level == -100) {
-      log(level, errorPrefix, message, args);
+      sout = log(level, errorPrefix, message, args);
     } else if (level == -2) {
-      log(level, actionPrefix, message, args);
+      sout = log(level, actionPrefix, message, args);
     } else {
-      log(level, debugPrefix, message, args);
+      sout = log(level, debugPrefix, message, args);
     }
+    return sout;
   }
 
-  private static synchronized void log(int level, String prefix, String message, Object... args) {
+  private static synchronized String log(int level, String prefix, String message, Object... args) {
 //TODO replace the hack -99 to filter user logs
-    String sout;
+    String sout = "";
     String stime = "";
     if (level <= DEBUG_LEVEL) {
       if (Settings.LogTime && level != -99) {
@@ -683,30 +685,29 @@ public class Debug {
       }
 			prefix = "[" + prefix + stime + "] ";
       sout = String.format(message, args);
+      boolean isRedirected = false;
 			if (level > -99) {
-				if (doRedirect(CallbackType.DEBUG, prefix, sout, null)) {
-          return;
-        }
+				isRedirected = doRedirect(CallbackType.DEBUG, prefix, sout, null);
+			} else if (level == -99) {
+				isRedirected = doRedirect(CallbackType.USER, prefix, sout, null);
 			}
-			if (level == -99) {
-				if (doRedirect(CallbackType.USER, prefix, sout, null)) {
-          return;
+      if (!isRedirected) {
+        if (level == -99 && printoutuser != null) {
+          printoutuser.print(prefix + sout);
+          printoutuser.println();
+        } else if (printout != null) {
+          printout.print(prefix + sout);
+          printout.println();
+        } else {
+          System.out.print(prefix + sout);
+          System.out.println();
         }
-			}
-			if (level == -99 && printoutuser != null) {
-        printoutuser.print(prefix + sout);
-        printoutuser.println();
-      } else if (printout != null) {
-        printout.print(prefix + sout);
-        printout.println();
-      } else {
-        System.out.print(prefix + sout);
-        System.out.println();
+        if (level == -1 || level == -100 || level > 2) {
+          out(prefix + sout);
+        }
       }
-			if (level == -1 || level == -100 || level > 2) {
-				out(prefix + sout);
-			}
     }
+    return prefix + sout;
   }
 
   /**
