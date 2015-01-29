@@ -1,9 +1,10 @@
 package org.sikuli.script;
 
+import java.awt.Desktop;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.lang.reflect.Method;
-import java.net.URL;
+import java.net.URI;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 
@@ -93,9 +94,38 @@ public class Tests {
     rt.dumpClassPath();
     Screen s = new Screen();
     ImagePath.add(imagePath);
-    s.exists("SikuliLogo");
-    s.exists("SikuliLogo");
-    s.highlight(-2);
+    String browser = "Google Chrome";
+    if (Desktop.isDesktopSupported()) {
+      String lp = "https://launchpad.net/sikuli";
+      Desktop dt = Desktop.getDesktop();
+      if (dt.isSupported(Desktop.Action.BROWSE)) {
+        try{
+        dt.browse(new URI(lp));
+        } catch (Exception ex) {
+          rt.terminate(1, "Desktop.browse: %s", lp);
+        }
+        App appBrowser = new App(browser);
+        while (null == appBrowser.window()) {
+          s.wait(1.0);
+        }
+      }
+    }
+    App.focus(browser);
+    s.wait(1.0);
+    Region win = App.focusedWindow();
+    win.highlight(2);
+    if (null != s.exists("SikuliLogo")) {
+      s.exists("SikuliLogo", 0);
+      s.highlight(-2);
+      if (rt.runningWindows) {
+        s.write("#A.#F4.");
+      } else if (rt.runningMac) {
+        s.write("#M.q");        
+      } else {
+        s.write("#C.q");
+      }
+      s.wait(1.0);
+    }
     logp("******** ending test");
   }
 

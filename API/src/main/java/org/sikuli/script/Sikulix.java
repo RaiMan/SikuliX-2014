@@ -98,19 +98,7 @@ public class Sikulix {
       rt = RunTime.get();
       Debug.on(3);
      
-      File workDir = new File(rt.fSxProject, "Setup/target/Setup");
-      File fTarget = new File(workDir,"stuff/tessdata");
-      //fTarget = null;
-      String source = "META-INF/libs/tessdata"; ///eng.cube.bigrams";
-//      source = "Lib/sikulix.r";
-      List<String> content;
-      String[] arrContent;
-
-      boolean success = addFromProject("Setup", "Setup/sikulixapi.jar");
-      FileManager.deleteFileOrFolder(fTarget);
-      content = rt.extractResourcesToFolderFromJar("sikulixapi.jar", source, fTarget, null);
-//      content = rt.extractResourcesToFolder(source, fTarget, null);
-      rt.terminate(1,"");
+      rt.terminate(1,"nothing to test");
 
       if (rt.runningWinApp) {        
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
