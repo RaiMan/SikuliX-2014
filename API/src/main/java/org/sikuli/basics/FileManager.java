@@ -953,7 +953,9 @@ public class FileManager {
 					@Override
 					public boolean accept(File dir, String name) {
 						if ((name.endsWith(".png") || name.endsWith(".jpg") || name.endsWith(".jpeg"))) {
-							return true;
+							if (!name.startsWith("_")) {
+                return true;
+              }
 						}
 						return false;
 					}
@@ -1335,7 +1337,10 @@ public class FileManager {
 	 * @return true if same file or folder
 	 */
 	public static boolean pathEquals(String path1, String path2) {
-    return (new File(path1)).equals(new File(path2));
+    File f1 = new File(path1);
+    File f2 = new File(path2);
+    boolean isEqual = f1.equals(f2);
+    return isEqual;
   }
 
 }

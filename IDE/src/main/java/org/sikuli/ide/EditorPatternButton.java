@@ -23,7 +23,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 	public static final int DEFAULT_NUM_MATCHES = 50;
 	static final float DEFAULT_SIMILARITY = 0.7f;
 	private String _imgFilename, _thumbFname, _imgFilenameSaved;
-  private Image _image = null;
+  private Image _image;
   private JLabel patternImageIcon = null;
 	private EditorPane _pane;
 	private float _similarity, _similaritySaved;
@@ -41,19 +41,23 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
   private EditorPatternLabel _lbl;
 
   protected EditorPatternButton(EditorPane pane) {
+    this._image = null;
 		init(pane, null, null);
 	}
 
 	public EditorPatternButton(EditorPane pane, String imgFilename) {
+    this._image = null;
 		init(pane, imgFilename, null);
 	}
 
 	private EditorPatternButton(EditorPane pane, Image img) {
+    this._image = null;
 		init(pane, null, img);
 	}
 
   protected EditorPatternButton(EditorPatternLabel lbl) {
     super();
+    this._image = null;
     _lbl = lbl;
     _imgFilename = _lbl.getFile();
 		_exact = false;
@@ -247,7 +251,8 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
       if (_image != null) {
         img = _image.get();
       } else {
-        Debug.error("EditorPatternButton: createThumbnailImage: not using Image for: " + imgFname);
+        
+//TODO ????        Debug.error("EditorPatternButton: createThumbnailImage: not using Image for: " + imgFname);
         img = ImageIO.read(new File(imgFname));
       }
 			int w = img.getWidth(null), h = img.getHeight(null);
