@@ -75,22 +75,20 @@ public class Sikulix {
 
     System.out.println("********** Running Sikulix.main");
 
-    int dl = RunTime.checkArgs(args);
+    int dl = RunTime.checkArgs(args, RunTime.Type.API);
     if (dl > -1) {
       testNumber = dl;
+      Debug.on(3);
     }
     
-    if (RunTime.testing) {
-     rt = RunTime.get();
-     testNumber = rt.getOptionNumber("testing.test", -1);
-    }
+    rt = RunTime.get();
+    testNumber = rt.getOptionNumber("testing.test", -1);
 
     if (testNumber > -1) {
       rt = RunTime.get();
       if (!rt.testing) {
         rt.show();
         rt.testing = true;
-        Debug.on(3);
       }            
       Tests.runTest(testNumber);
       System.exit(1);

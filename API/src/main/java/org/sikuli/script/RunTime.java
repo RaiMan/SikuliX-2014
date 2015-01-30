@@ -227,7 +227,7 @@ public class RunTime {
   public static boolean testing = false;
   public static boolean testingWinApp = false;
 
-  private Type runType = Type.INIT;
+  public Type runType = Type.INIT;
 
   public String sxBuild = "";
   public String sxBuildStamp = "";
@@ -2187,7 +2187,7 @@ public class RunTime {
     }
   }
 
-  public static int checkArgs(String[] args) {
+  public static int checkArgs(String[] args, Type typ) {
     int debugLevel = -1;
     List<String> options = new ArrayList<String>();
     options.addAll(Arrays.asList(args));

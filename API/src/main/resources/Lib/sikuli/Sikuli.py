@@ -4,6 +4,8 @@
 
 from __future__ import with_statement
 from org.sikuli.basics import Debug
+from org.sikuli.script import RunTime
+RUNTIME = RunTime.get()
 Debug.log(3, "Jython: sikuli: Sikuli: starting init")
 import time
 import __builtin__
@@ -83,6 +85,11 @@ try:
 	from org.sikuli.scriptrunner import ScriptRunner
 except:
   pass
+
+##
+# a token to check the availability 
+#
+SIKULIX_IS_WORKING = sys.version.split("(")[0]
 
 ##
 # some support for handling unicode and strings

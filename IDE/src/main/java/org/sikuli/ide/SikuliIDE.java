@@ -141,7 +141,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     start = (new Date()).getTime();
     
-    int debuglevel = RunTime.checkArgs(args);
+    RunTime.checkArgs(args, RunTime.Type.IDE);
     runTime = RunTime.get(RunTime.Type.IDE);
         
     getInstance();
@@ -157,7 +157,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       System.exit(1);
     }
 
-    if (debuglevel < 0 && cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
+    if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
       cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
       if (cmdValue == null) {
         Debug.setDebugLevel(3);
@@ -321,7 +321,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
     tabPane.setSelectedIndex(0);
 
-    Debug.log(3, "Sikuli-IDE startup: " + ((new Date()).getTime() - start));
+    Debug.info("IDE startup: %4.1f seconds", (new Date().getTime() - start)/1000.0);
     setVisible(true);
     _mainSplitPane.setDividerLocation(0.6);
     return; // as breakpoint

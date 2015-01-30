@@ -35,7 +35,7 @@ import org.sikuli.script.Sikulix;
 
 public class ScriptRunner {
   
-  static RunTime runTime = RunTime.get();
+  public static RunTime runTime = RunTime.get();
 
 	private static final String me = "ScriptRunner: ";
   private static final int lvl = 3;
@@ -79,6 +79,7 @@ public class ScriptRunner {
   private static int runnerID = -1;
   private static Map<String, RemoteRunner> remoteRunners = new HashMap<String, RemoteRunner>();
   
+  //<editor-fold defaultstate="collapsed" desc="remote runner support">
   public static void startRemoteRunner(String[] args) {
     int port = getPort(args.length > 0 ? args[0] : null);
     try {
@@ -121,7 +122,7 @@ public class ScriptRunner {
     }
     log(lvl, "Remote: now stopped on port: " + port);
   }
-
+  
   private static int getPort(String p) {
     int port;
     int pDefault = 50000;
@@ -139,14 +140,14 @@ public class ScriptRunner {
     }
     return port;
   }
-
+  
   private static class HandleClient implements Runnable {
-
+    
     private volatile boolean keepRunning;
     Thread thread;
     Socket socket;
     Boolean shouldStop = false;
-
+    
     public HandleClient(Socket sock) {
       init(sock);
     }
@@ -165,7 +166,7 @@ public class ScriptRunner {
     public boolean getShouldStop() {
       return shouldStop;
     }
-
+    
     @Override
     public void run() {
       String e;
@@ -190,7 +191,7 @@ public class ScriptRunner {
               send((new Integer(retVal)));
             } else if (e.toLowerCase().startsWith("system")) {
               getSystem();
-            } 
+            }
           }
         } catch (Exception ex) {
           ScriptRunner.log(-1, "Exception while processing\n" + ex.getMessage());
@@ -229,8 +230,8 @@ public class ScriptRunner {
         out.writeObject(o);
         out.flush();
         if (o instanceof ImageIcon) {
-          ScriptRunner.log(lvl,"returned: Image(%dx%d)", 
-                  ((ImageIcon) o).getIconWidth(), ((ImageIcon) o).getIconHeight());          
+          ScriptRunner.log(lvl,"returned: Image(%dx%d)",
+                  ((ImageIcon) o).getIconWidth(), ((ImageIcon) o).getIconHeight());
         } else {
           ScriptRunner.log(lvl,"returned: "  + o);
         }
@@ -238,7 +239,7 @@ public class ScriptRunner {
         ScriptRunner.log(-1, "send: writeObject: Exception: " + ex.getMessage());
       }
     }
-
+    
     public void stopRunning() {
       ScriptRunner.log(lvl,"stop client handling requested");
       try {
@@ -275,6 +276,7 @@ public class ScriptRunner {
     }
     return 0;
   }
+//</editor-fold>
     
   public static void initScriptingSupport() {
     if (isReady) {
@@ -329,180 +331,6 @@ public class ScriptRunner {
     isReady = true;
   }
 
-  public static boolean hasTypeRunner(String type) {
-    return supportedRunner.containsKey(type);
-  }
-
-  public static void runningInteractive() {
-    isRunningInteractive = true;
-  }
-
-  public static boolean getRunningInteractive() {
-    return isRunningInteractive;
-  }
-
-  private static boolean isRunningScript = false;
-
-  /**
-   * INTERNAL USE: run scripts when sikulix.jar is used on commandline with args -r, -t or -i<br>
-   * If you want to use it the args content must be according to the Sikulix command line parameter rules<br>
-   * use run(script, args) to run one script from a script or Java program
-   * @param args parameters given on commandline
-   */
-  public static void runscript(String[] args) {
-
-    initScriptingSupport();
-    IScriptRunner currentRunner = null;
-
-    if (args != null && args.length > 1 && args[0].startsWith("-testSetup")) {
-      currentRunner = getRunner(null, args[1]);
-      if (currentRunner == null) {
-        args[0] = null;
-      } else {
-        String[] stmts = new String[0];
-        if (args.length > 2) {
-          stmts = new String[args.length - 2];
-          for (int i = 0; i < stmts.length; i++) {
-            stmts[i] = args[i+2];
-          }
-        }
-        if (0 != currentRunner.runScript(null, null, stmts, null)) {
-          args[0] = null;
-        }
-      }
-      isRunningScript = false;
-      return;
-    }
-
-    if (isRunningScript) {
-      System.out.println("[error] SikuliScript: can only run one at a time!");
-      return;
-    }
-    isRunningScript = true;
-    
-    CommandArgs cmdArgs = new CommandArgs("SCRIPT");
-    CommandLine cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
-    String cmdValue;
-
-    if (cmdLine == null || cmdLine.getOptions().length == 0) {
-      log(-1, "Did not find any valid option on command line!");
-      cmdArgs.printHelp();
-      System.exit(1);
-    }
-
-    if (cmdLine.hasOption(CommandArgsEnum.HELP.shortname())) {
-      cmdArgs.printHelp();
-      if (currentRunner != null) {
-        System.out.println(currentRunner.getCommandLineHelp());
-      }
-      System.exit(1);
-    }
-
-    if (cmdLine.hasOption(CommandArgsEnum.LOGFILE.shortname())) {
-      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.LOGFILE.longname());
-      if (!Debug.setLogFile(cmdValue == null ? "" : cmdValue)) {
-        System.exit(1);
-      }
-    }
-
-    if (cmdLine.hasOption(CommandArgsEnum.USERLOGFILE.shortname())) {
-      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.USERLOGFILE.longname());
-      if (!Debug.setUserLogFile(cmdValue == null ? "" : cmdValue)) {
-        System.exit(1);
-      }
-    }
-
-    if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
-      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
-      if (cmdValue == null) {
-        Debug.setDebugLevel(3);
-        Settings.LogTime = true;
-        if (!Debug.isLogToFile()) {
-          Debug.setLogFile("");
-        }
-      } else {
-        Debug.setDebugLevel(cmdValue);
-      }
-    }
-
-    runTime.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
-    log(lvl, "CmdOrg: " + System.getenv("SIKULI_COMMAND"));
-    runTime.printArgs();
-
-    // select script runner and/or start interactive session
-    // option is overloaded - might specify runner for -r/-t
-    if (cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
-      System.out.println(String.format(
-              "SikuliX Package Build: %s %s", runTime.getVersionShort(), runTime.SikuliVersionBuild));
-      int exitCode = 0;
-      if (currentRunner == null) {
-        String givenRunnerName = cmdLine.getOptionValue(CommandArgsEnum.INTERACTIVE.longname());
-        if (givenRunnerName == null) {
-          currentRunner = getRunner(null, RDEFAULT);
-        } else {
-          currentRunner = getRunner(null, givenRunnerName);
-          if (currentRunner == null) {
-            System.exit(1);
-          }
-        }
-      }
-      if (!cmdLine.hasOption(CommandArgsEnum.RUN.shortname())
-              && !cmdLine.hasOption(CommandArgsEnum.TEST.shortname())) {
-        exitCode = currentRunner.runInteractive(cmdArgs.getUserArgs());
-        currentRunner.close();
-        Sikulix.endNormal(exitCode);
-      }
-    }
-
-    runAsTest = false;
-
-    if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname())) {
-      runScripts = cmdLine.getOptionValues(CommandArgsEnum.RUN.longname());
-    } else if (cmdLine.hasOption(CommandArgsEnum.TEST.shortname())) {
-      runScripts = cmdLine.getOptionValues(CommandArgsEnum.TEST.longname());
-      log(-1, "Command line option -t: not yet supported! %s", Arrays.asList(args).toString());
-      runAsTest = true;
-//TODO run a script as unittest with HTMLTestRunner
-      System.exit(1);
-    }
-
-    if (runScripts != null && runScripts.length > 0) {
-      int exitCode = 0;
-      for (String givenScriptName : runScripts) {
-        exitCode = new RunBox(runAsTest).executeScript(givenScriptName, cmdArgs.getUserArgs());
-        if ( exitCode == -9999) {
-          continue;
-        }
-      }
-      System.exit(exitCode);
-    } else {
-      log(-1, "Nothing to do with the given commandline options!");
-      cmdArgs.printHelp();
-      System.exit(1);
-    }
-  }
-
-  /**
-   * run a script at scriptPath (.sikuli or .skl)
-   * @param scriptPath absolute or relative to working folder
-   * @param args parameter given to the script
-   * @return exit code
-   */
-  public static int run(String scriptPath, String[] args) {
-    runAsTest = false;
-    initScriptingSupport();
-    return new RunBox(runAsTest).executeScript(scriptPath, args);
-  }
-
-  /**
-   * run a script at scriptPath (.sikuli or .skl)
-   * @param scriptPath absolute or relative to working folder
-   * @return exit code
-   */
-  public static int run(String scriptPath) {
-    return run(scriptPath, new String[0]);
-  }
-
   public static IScriptRunner getRunner(String script, String type) {
     IScriptRunner currentRunner = null;
     String ending = null;
@@ -536,6 +364,181 @@ public class ScriptRunner {
     return currentRunner;
   }
 
+  public static boolean hasTypeRunner(String type) {
+    return supportedRunner.containsKey(type);
+  }
+
+  public static void runningInteractive() {
+    isRunningInteractive = true;
+  }
+
+  public static boolean getRunningInteractive() {
+    return isRunningInteractive;
+  }
+
+  //<editor-fold defaultstate="collapsed" desc="run scripts">
+  private static boolean isRunningScript = false;
+  
+  /**
+   * INTERNAL USE: run scripts when sikulix.jar is used on commandline with args -r, -t or -i<br>
+   * If you want to use it the args content must be according to the Sikulix command line parameter rules<br>
+   * use run(script, args) to run one script from a script or Java program
+   * @param args parameters given on commandline
+   */
+  public static void runscript(String[] args) {
+    
+    initScriptingSupport();
+    IScriptRunner currentRunner = null;
+    
+    if (args != null && args.length > 1 && args[0].startsWith("-testSetup")) {
+      currentRunner = getRunner(null, args[1]);
+      if (currentRunner == null) {
+        args[0] = null;
+      } else {
+        String[] stmts = new String[0];
+        if (args.length > 2) {
+          stmts = new String[args.length - 2];
+          for (int i = 0; i < stmts.length; i++) {
+            stmts[i] = args[i+2];
+          }
+        }
+        if (0 != currentRunner.runScript(null, null, stmts, null)) {
+          args[0] = null;
+        }
+      }
+      isRunningScript = false;
+      return;
+    }
+    
+    if (isRunningScript) {
+      System.out.println("[error] SikuliScript: can only run one at a time!");
+      return;
+    }
+    isRunningScript = true;
+    
+    CommandArgs cmdArgs = new CommandArgs("SCRIPT");
+    CommandLine cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
+    String cmdValue;
+    
+    if (cmdLine == null || cmdLine.getOptions().length == 0) {
+      log(-1, "Did not find any valid option on command line!");
+      cmdArgs.printHelp();
+      System.exit(1);
+    }
+    
+    if (cmdLine.hasOption(CommandArgsEnum.HELP.shortname())) {
+      cmdArgs.printHelp();
+      if (currentRunner != null) {
+        System.out.println(currentRunner.getCommandLineHelp());
+      }
+      System.exit(1);
+    }
+    
+    if (cmdLine.hasOption(CommandArgsEnum.LOGFILE.shortname())) {
+      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.LOGFILE.longname());
+      if (!Debug.setLogFile(cmdValue == null ? "" : cmdValue)) {
+        System.exit(1);
+      }
+    }
+    
+    if (cmdLine.hasOption(CommandArgsEnum.USERLOGFILE.shortname())) {
+      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.USERLOGFILE.longname());
+      if (!Debug.setUserLogFile(cmdValue == null ? "" : cmdValue)) {
+        System.exit(1);
+      }
+    }
+    
+    if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
+      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
+      if (cmdValue == null) {
+        Debug.setDebugLevel(3);
+        Settings.LogTime = true;
+        if (!Debug.isLogToFile()) {
+          Debug.setLogFile("");
+        }
+      } else {
+        Debug.setDebugLevel(cmdValue);
+      }
+    }
+    
+    runTime.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
+    log(lvl, "CmdOrg: " + System.getenv("SIKULI_COMMAND"));
+    runTime.printArgs();
+    
+    // select script runner and/or start interactive session
+    // option is overloaded - might specify runner for -r/-t
+    if (cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
+      System.out.println(String.format(
+              "SikuliX Package Build: %s %s", runTime.getVersionShort(), runTime.SikuliVersionBuild));
+      int exitCode = 0;
+      if (currentRunner == null) {
+        String givenRunnerName = cmdLine.getOptionValue(CommandArgsEnum.INTERACTIVE.longname());
+        if (givenRunnerName == null) {
+          currentRunner = getRunner(null, RDEFAULT);
+        } else {
+          currentRunner = getRunner(null, givenRunnerName);
+          if (currentRunner == null) {
+            System.exit(1);
+          }
+        }
+      }
+      if (!cmdLine.hasOption(CommandArgsEnum.RUN.shortname())
+              && !cmdLine.hasOption(CommandArgsEnum.TEST.shortname())) {
+        exitCode = currentRunner.runInteractive(cmdArgs.getUserArgs());
+        currentRunner.close();
+        Sikulix.endNormal(exitCode);
+      }
+    }
+    
+    runAsTest = false;
+    
+    if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname())) {
+      runScripts = cmdLine.getOptionValues(CommandArgsEnum.RUN.longname());
+    } else if (cmdLine.hasOption(CommandArgsEnum.TEST.shortname())) {
+      runScripts = cmdLine.getOptionValues(CommandArgsEnum.TEST.longname());
+      log(-1, "Command line option -t: not yet supported! %s", Arrays.asList(args).toString());
+      runAsTest = true;
+//TODO run a script as unittest with HTMLTestRunner
+      System.exit(1);
+    }
+    
+    if (runScripts != null && runScripts.length > 0) {
+      int exitCode = 0;
+      for (String givenScriptName : runScripts) {
+        exitCode = new RunBox(runAsTest).executeScript(givenScriptName, cmdArgs.getUserArgs());
+        if ( exitCode == -9999) {
+          continue;
+        }
+      }
+      System.exit(exitCode);
+    } else {
+      log(-1, "Nothing to do with the given commandline options!");
+      cmdArgs.printHelp();
+      System.exit(1);
+    }
+  }
+  
+  /**
+   * run a script at scriptPath (.sikuli or .skl)
+   * @param scriptPath absolute or relative to working folder
+   * @param args parameter given to the script
+   * @return exit code
+   */
+  public static int run(String scriptPath, String[] args) {
+    runAsTest = false;
+    initScriptingSupport();
+    return new RunBox(runAsTest).executeScript(scriptPath, args);
+  }
+  
+  /**
+   * run a script at scriptPath (.sikuli or .skl)
+   * @param scriptPath absolute or relative to working folder
+   * @return exit code
+   */
+  public static int run(String scriptPath) {
+    return run(scriptPath, new String[0]);
+  }
+  
   public static boolean transferScript(String src, String dest) {
     log(lvl, "transferScript: %s\nto: %s", src, dest);
     FileManager.FileFilter filter = new FileManager.FileFilter() {
@@ -564,28 +567,30 @@ public class ScriptRunner {
     log(lvl, "transferScript: completed");
     return true;
   }
-
-	private static String unzipSKL(String fileName) {
-		File file;
-		file = new File(fileName);
-		if (!file.exists()) {
-			log(-1, "unzipSKL: file not found: %s", fileName);
-		}
-		String name = file.getName();
-		name = name.substring(0, name.lastIndexOf('.'));
-		File tmpDir = FileManager.createTempDir();
-		File sikuliDir = new File(tmpDir + File.separator + name + ".sikuli");
-		sikuliDir.mkdir();
-		sikuliDir.deleteOnExit();
-		try {
-			FileManager.unzip(fileName, sikuliDir.getAbsolutePath());
-			return sikuliDir.getAbsolutePath();
-		} catch (IOException e) {
-			log(-1, "unzipSKL: not possible for: %s\n%s", fileName, e.getMessage());
-			return null;
-		}
-	}
-
+//</editor-fold>
+  
+  //<editor-fold defaultstate="collapsed" desc="helpers">
+  private static String unzipSKL(String fileName) {
+    File file;
+    file = new File(fileName);
+    if (!file.exists()) {
+      log(-1, "unzipSKL: file not found: %s", fileName);
+    }
+    String name = file.getName();
+    name = name.substring(0, name.lastIndexOf('.'));
+    File tmpDir = FileManager.createTempDir();
+    File sikuliDir = new File(tmpDir + File.separator + name + ".sikuli");
+    sikuliDir.mkdir();
+    sikuliDir.deleteOnExit();
+    try {
+      FileManager.unzip(fileName, sikuliDir.getAbsolutePath());
+      return sikuliDir.getAbsolutePath();
+    } catch (IOException e) {
+      log(-1, "unzipSKL: not possible for: %s\n%s", fileName, e.getMessage());
+      return null;
+    }
+  }
+  
   private static class FileFilterScript implements FilenameFilter {
     private String _check;
     public FileFilterScript(String check) {
@@ -596,7 +601,8 @@ public class ScriptRunner {
       return fileName.startsWith(_check);
     }
   }
-
+//</editor-fold>
+  
   private static class RunBox {
 
     boolean asTest = false;

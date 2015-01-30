@@ -454,6 +454,14 @@ public class Debug {
     setDebugLevel(level);
   }
   
+  public static boolean is(int level) {
+    return DEBUG_LEVEL >= level;
+  }
+
+  public static int is() {
+    return DEBUG_LEVEL;
+  }
+
   public static void off() {
     setDebugLevel(0);
   }
