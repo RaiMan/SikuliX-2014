@@ -26,15 +26,13 @@ import org.python.util.PythonInterpreter;
 import org.python.util.jython;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.Settings;
 import org.sikuli.script.RunTime;
-import org.sikuli.script.Sikulix;
 
 /**
  * Executes Sikuliscripts written in Python/Jython.
  */
 public class JythonScriptRunner implements IScriptRunner {
-  
+
   private static RunTime runTime = ScriptRunner.runTime;
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
@@ -107,7 +105,7 @@ public class JythonScriptRunner implements IScriptRunner {
 		for (int i = 0; i < jypathLength; i++) {
       String entry = (String) jypath.get(i);
       logp("%2d: %s", i, entry);
-		}    
+		}
   }
 
   List<String> sysPath = new ArrayList<String>();
@@ -118,9 +116,9 @@ public class JythonScriptRunner implements IScriptRunner {
 		for (int i = 0; i < jypathLength; i++) {
       String entry = (String) jypath.get(i);
       sysPath.add(entry);
-		}        
+		}
   }
-  
+
   private void setSysPath() {
 		PyList jypath = interpreter.getSystemState().path;
 		int jypathLength = jypath.__len__();
@@ -142,7 +140,7 @@ public class JythonScriptRunner implements IScriptRunner {
         logp("%2d: %s", i, sysPath.get(i));
       }
       log(lvl, "***** Jython sys.path end");
-		}        
+		}
   }
 
   @Override
@@ -157,12 +155,15 @@ public class JythonScriptRunner implements IScriptRunner {
     try {
       getInterpreter();
       getSysPath();
-      String fpAPI = runTime.isOnClasspath("sikulixapi");
-      if (null == fpAPI) {
-        fpAPI = runTime.isOnClasspath("sikulix.jar");
-        if (null == fpAPI) {
-          runTime.terminate(1, "JythonScriptRunner: no sikulix....jar on classpath");
-        }
+      String fpAPI = null;
+			String[] possibleJars = new String[] {"sikulixapi", "API/target/classes", "sikulix.jar"};
+			for (String aJar : possibleJars) {
+				if (null != (fpAPI = runTime.isOnClasspath(aJar))) {
+					break;
+				}
+			}
+			if (null == fpAPI) {
+				runTime.terminate(1, "JythonScriptRunner: no sikulix....jar on classpath");
       }
       String fpAPILib = new File(fpAPI, "Lib").getAbsolutePath();
       sysPath.add(0, fpAPILib);
@@ -675,7 +676,7 @@ public class JythonScriptRunner implements IScriptRunner {
 		}
 		codeAfter.addAll(Arrays.asList(stmts));
 	}
-  
+
 	/**
 	 * Executes the defined header for the jython script.
 	 *
