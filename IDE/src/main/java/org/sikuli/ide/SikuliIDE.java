@@ -229,6 +229,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
   private void initSikuliIDE(String[] args) {
     prefs = PreferencesUser.getInstance();
+    //prefs.exportPrefs(new File(runTime.fUserDir, "SikulixIDEprefs.txt").getAbsolutePath());
     if (prefs.getUserType() < 0) {
       prefs.setUserType(PreferencesUser.NEWBEE);
       prefs.setIdeSession("");
@@ -473,11 +474,11 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     if (session_str == null && loadScripts == null && macOpenFiles == null) {
       return;
     }
-    List<String> filesToLoad = new ArrayList<String>();
+    List<File> filesToLoad = new ArrayList<File>();
     if (macOpenFiles != null) {
       for (File f : macOpenFiles) {
-        filesToLoad.add(f.getAbsolutePath());
-        restoreScriptFromSession(f.getAbsolutePath());
+        filesToLoad.add(f);
+        restoreScriptFromSession(f);
       }
     }
     if (session_str != null) {
@@ -487,10 +488,10 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
           continue;
         }
         File f = new File(filenames[i]);
-        if (f.exists() && !filesToLoad.contains(f.getAbsolutePath())) {
+        if (f.exists() && !filesToLoad.contains(f)) {
           Debug.log(3, "restore session: %s", f);
-          filesToLoad.add(f.getAbsolutePath());
-          restoreScriptFromSession(f.getAbsolutePath());
+          filesToLoad.add(f);
+          restoreScriptFromSession(f);
         }
       }
     }
@@ -500,20 +501,20 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
           continue;
         }
         File f = new File(loadScripts[i]);
-        if (f.exists() && !filesToLoad.contains(f.getAbsolutePath())) {
+        if (f.exists() && !filesToLoad.contains(f)) {
           Debug.log(3, "preload script: %s", f);
-          filesToLoad.add(f.getAbsolutePath());
-          restoreScriptFromSession(f.getAbsolutePath());
+          filesToLoad.add(f);
+          restoreScriptFromSession(f);
         }
       }
     }
   }
 
-  private boolean restoreScriptFromSession(String file) {
+  private boolean restoreScriptFromSession(File file) {
     EditorPane ep = (new FileAction()).doNew(null, -1);
-    ep.loadFile(file);
+    ep.loadFile(file.getAbsolutePath());
     if (ep.hasEditingFile()) {
-      setCurrentFileTabTitle(file);
+      setCurrentFileTabTitle(file.getAbsolutePath());
       return true;
     }
     log(-1, "restoreScriptFromSession: Can't load: %s", file);
@@ -580,15 +581,10 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
   }
 
-  public void setFileTabTitle(String fname, int tabIndex) {
-    String fullName = fname;
-    if (fname.endsWith("/")) {
-      fname = fname.substring(0, fname.length() - 1);
-    }
-    fname = fname.substring(fname.lastIndexOf("/") + 1);
-    fname = fname.substring(0, fname.lastIndexOf("."));
-    tabPane.setTitleAt(tabIndex, fname);
-    this.setTitle(fullName);
+  public void setFileTabTitle(String fName, int tabIndex) {
+    String sName = new File(fName).getName();
+    tabPane.setTitleAt(tabIndex, sName.substring(0, sName.lastIndexOf(".")));
+    this.setTitle(new File(fName).getAbsolutePath());
   }
 
   public ArrayList<String> getOpenedFilenames() {

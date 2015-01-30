@@ -686,79 +686,7 @@ public class JythonScriptRunner implements IScriptRunner {
 		if (isCompileOnly) {
 			return;
 		}
-		PyList jypath = interpreter.getSystemState().path;
 		PyList jyargv = interpreter.getSystemState().argv;
-		int jypathLength = jypath.__len__();
-		boolean contained = false;
-
-		for (int i = 0; i < jypathLength; i++) {
-			if (!contained && FileManager.pathEquals((String) jypath.get(i), sikuliLibPath)) {
-				contained = true;
-			}
-		}
-		if (!contained) {
-			log(lvl, "executeScriptHeader: adding Jython Lib path to sys.path\n" + sikuliLibPath);
-			String[] jypathNew = new String[jypathLength + 1];
-			jypathNew[0] = (String) jypath.get(0);
-			log(lvl + 1, "executeScriptHeader: before: 0: %s", jypath.get(0));
-			for (int i = 1; i < jypathLength; i++) {
-				log(lvl + 1, "executeScriptHeader: before: %d: %s", i, jypath.get(i));
-				jypathNew[i + 1] = (String) jypath.get(i);
-			}
-			for (int i = 0; i < jypathLength; i++) {
-				jypath.set(i, jypathNew[i]);
-			}
-			jypath.add(jypathNew[jypathNew.length - 1]);
-			for (int i = 0; i < jypathNew.length; i++) {
-				log(lvl + 1, "executeScriptHeader: after: %d: %s", i, jypath.get(i));
-			}
-		}
-
-		String pyPath = System.getenv("PYTHONPATH");
-		String[] pyPaths = null;
-		if (pyPath != null) {
-			if (pyPath.contains(File.pathSeparator)) {
-				pyPaths = pyPath.split(File.pathSeparator);
-			} else {
-				pyPaths = new String[]{pyPath};
-			}
-		}
-		if (pyPaths != null) {
-			for (String p : pyPaths) {
-				log(lvl, "executeBefore: adding PYTHONPATH: %s", p);
-				jypath.add(pyPath);
-			}
-		}
-
-		if (savedpathlen == 0) {
-			savedpathlen = interpreter.getSystemState().path.size();
-			log(lvl + 1, "executeScriptHeader: saved sys.path: %d", savedpathlen);
-		} else if (interpreter.getSystemState().path.size() > savedpathlen) {
-			interpreter.getSystemState().path.remove(savedpathlen,
-							interpreter.getSystemState().path.size());
-		}
-		log(lvl + 1, "executeScriptHeader: at entry: path:");
-		for (Object p : interpreter.getSystemState().path.toArray()) {
-			log(lvl + 1, p.toString());
-		}
-		log(lvl + 1, "executeScriptHeader: at entry: --- end ---");
-
-		if (syspaths != null) {
-			for (String syspath : syspaths) {
-				jypath.add(FileManager.slashify(syspath, false));
-			}
-		}
-
-		for (String line : SCRIPT_HEADER) {
-			log(lvl + 1, "executeScriptHeader: PyInit: %s", line);
-			interpreter.exec(line);
-		}
-		if (codeBefore != null) {
-			for (String line : codeBefore) {
-				interpreter.exec(line);
-			}
-		}
-
 		jyargv.clear();
 		for (String item : sysargv) {
 			jyargv.add(item);

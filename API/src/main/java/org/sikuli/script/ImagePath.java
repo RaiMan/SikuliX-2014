@@ -505,7 +505,7 @@ public class ImagePath {
 			}
     }
 		URL pathURL = null;
-		if (new File(mainPath).exists()) {
+		if (fPath.exists()) {
 			pathURL = FileManager.makeURL(new File(mainPath).getAbsolutePath());
 		} else {
 			Class cls = null;
