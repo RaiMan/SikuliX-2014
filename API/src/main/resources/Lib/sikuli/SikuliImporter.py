@@ -41,9 +41,7 @@ class SikuliImporter:
                     file.close()
         
         def load_module(self, module_name):
-            module_name = _stripPackagePrefix(module_name)
-            ImagePath.add(self.path)
-            Sikuli._addModPath(self.path)
+            module_name = JH.get().loadModulePrepare(module_name, self.path)
             return self._load_module(module_name)
 
     def _find_module(self, module_name, fullpath):
@@ -53,24 +51,11 @@ class SikuliImporter:
         return None
 
     def find_module(self, module_name, package_path):
-        module_path = JH.get().find_module(module_name, package_path, sys.path)
-        if not module_path: return None
-        else: return self.SikuliLoader(module_path)
-
-        module_name = _stripPackagePrefix(module_name)
-        if module_name[0:1] == "*": 
-            return None
-        if package_path:
-            paths = package_path
-        else:
-            paths = sys.path
-        for path in paths:
-            mod = self._find_module(module_name, path)
-            if mod:
-                return mod
-        if Sikuli.load(module_name +".jar"):
-            return None
-        return None
+        module_path = JH.get().findModule(module_name, package_path, sys.path)
+        if not module_path: 
+          return None
+        else: 
+          return self.SikuliLoader(module_path)
 
 sys.meta_path.append(SikuliImporter())
 del SikuliImporter

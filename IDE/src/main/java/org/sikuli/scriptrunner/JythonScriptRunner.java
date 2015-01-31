@@ -54,6 +54,8 @@ public class JythonScriptRunner implements IScriptRunner {
 	 * The PythonInterpreter instance
 	 */
 	private PythonInterpreter interpreter = null;
+  private JythonHelper helper = null;
+  
 	private int savedpathlen = 0;
 	private static final String COMPILE_ONLY = "# COMPILE ONLY";
 	/**
@@ -98,51 +100,6 @@ public class JythonScriptRunner implements IScriptRunner {
 	private boolean isCompileOnly = false;
 	private boolean isFromIDE = false;
 
-  private void dumpState() {
-		PyList jypath = interpreter.getSystemState().path;
-		PyList jyargv = interpreter.getSystemState().argv;
-		int jypathLength = jypath.__len__();
-		for (int i = 0; i < jypathLength; i++) {
-      String entry = (String) jypath.get(i);
-      logp("%2d: %s", i, entry);
-		}
-  }
-
-  List<String> sysPath = new ArrayList<String>();
-  private void getSysPath() {
-    sysPath = new ArrayList<String>();
-		PyList jypath = interpreter.getSystemState().path;
-		int jypathLength = jypath.__len__();
-		for (int i = 0; i < jypathLength; i++) {
-      String entry = (String) jypath.get(i);
-      sysPath.add(entry);
-		}
-  }
-
-  private void setSysPath() {
-		PyList jypath = interpreter.getSystemState().path;
-		int jypathLength = jypath.__len__();
-		for (int i = 0; i < jypathLength && i < sysPath.size(); i++) {
-      jypath.set(i, sysPath.get(i));
-		}
-    if (jypathLength < sysPath.size()) {
-      for (int i = jypathLength; i < sysPath.size(); i++) {
-        jypath.add(sysPath.get(i));
-      }
-    }
-  }
-
-  private void showSysPath() {
-    if (Debug.is(lvl)) {
-      getSysPath();
-      log(lvl, "***** Jython sys.path");
-      for (int i = 0; i < sysPath.size(); i++) {
-        logp("%2d: %s", i, sysPath.get(i));
-      }
-      log(lvl, "***** Jython sys.path end");
-		}
-  }
-
   @Override
   public void init(String[] param) {
     if (runTime.runningWinApp) {
@@ -154,7 +111,8 @@ public class JythonScriptRunner implements IScriptRunner {
 
     try {
       getInterpreter();
-      getSysPath();
+      helper = JythonHelper.set(interpreter);
+      helper.getSysPath();
       String fpAPI = null;
 			String[] possibleJars = new String[] {"sikulixapi", "API/target/classes", "sikulix.jar"};
 			for (String aJar : possibleJars) {
@@ -166,9 +124,9 @@ public class JythonScriptRunner implements IScriptRunner {
 				runTime.terminate(1, "JythonScriptRunner: no sikulix....jar on classpath");
       }
       String fpAPILib = new File(fpAPI, "Lib").getAbsolutePath();
-      sysPath.add(0, fpAPILib);
-      setSysPath();
-      showSysPath();
+      helper.sysPath.add(0, fpAPILib);
+      helper.setSysPath();
+      helper.showSysPath();
       interpreter.exec("from sikuli import *");
       log(3, "running Jython %s", interpreter.eval("SIKULIX_IS_WORKING").toString());
     } catch (Exception ex) {

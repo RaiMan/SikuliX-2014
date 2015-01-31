@@ -588,7 +588,7 @@ public class RunTime {
 
     if (runningMac) {
       System.setProperty("apple.laf.useScreenMenuBar", "true");
-      if (!runningMacApp) {
+      if (!runningMacApp && !runningInProject) {
         if (!Sikulix.popAsk("This use of SikuliX is not supported\n"
                 + "and might lead to misbehavior!\n"
                 + "Click YES to continue (you should be sure)\n"

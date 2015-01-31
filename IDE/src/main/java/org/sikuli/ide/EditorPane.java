@@ -592,7 +592,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	}
 
 	// used at ButtonRun.run
-	protected String getBundlePath() {
+	public String getBundlePath() {
 		return _srcBundlePath;
 	}
 
