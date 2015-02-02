@@ -32,6 +32,7 @@ public class RobotDesktop extends Robot implements IRobot {
   private static String heldKeys = "";
   private static final ArrayList<Integer> heldKeyCodes = new ArrayList<Integer>();
   private Screen scr = null;
+  private static RunTime runTime = RunTime.get();
 
   @Override
   public boolean isRemote() {
@@ -44,7 +45,7 @@ public class RobotDesktop extends Robot implements IRobot {
   }
 
   public RobotDesktop(Screen screen) throws AWTException {
-    super(screen.getGraphicsDevice());
+    super(runTime.getGraphicsDevice(screen.getcurrentID()));
     scr = screen;
   }
 

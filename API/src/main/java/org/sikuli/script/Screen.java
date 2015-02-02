@@ -10,11 +10,8 @@ import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import java.awt.AWTException;
 import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.Robot;
-import org.sikuli.basics.FileManager;
 
 /**
  * A screen represents a physical monitor with its coordinates and size according to the global
@@ -36,17 +33,13 @@ public class Screen extends Region implements EventObserver, IScreen {
     Debug.logx(level, me + message, args);
   }
 
-  protected static GraphicsEnvironment genv = null;
-  protected static GraphicsDevice[] gdevs;
-  protected static Rectangle[] gdevsBounds;
   private static Robot mouseRobot;
-  protected static Screen[] screens;
+  protected static Screen[] screens = null;
   protected static int primaryScreen = -1;
   private static int waitForScreenshot = 300;
   protected IRobot robot = null;
   protected int curID = -1;
   protected int oldID = 0;
-  protected GraphicsDevice curGD = null;
   protected boolean waitPrompt;
   protected OverlayCapturePrompt prompt;
   private final String promptMsg = "Select a region on the screen";
@@ -63,36 +56,17 @@ public class Screen extends Region implements EventObserver, IScreen {
 //    initScreens(false);
 //  }
 
+  public int getcurrentID() {
+    return curID;
+  }
+  
   private static void initScreens(boolean reset) {
-    log(lvl+1, "initScreens: entry");
-    if (genv != null && !reset) {
+    if (screens != null && !reset) {
       return;
     }
-    genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    gdevs = genv.getScreenDevices();
-    gdevsBounds = new Rectangle[gdevs.length];
-    screens = new Screen[gdevs.length];
-    if (gdevs.length == 0) {
-      Debug.error("Screen: initScreens: GraphicsEnvironment has no screens");
-      Sikulix.terminate(999);
-    }
-    primaryScreen = -1;
-    for (int i = 0; i < getNumberScreens(); i++) {
-      gdevsBounds[i] = gdevs[i].getDefaultConfiguration().getBounds();
-      if (gdevsBounds[i].contains(new Point(0, 0))) {
-        if (primaryScreen < 0) {
-          primaryScreen = i;
-          log(lvl, "initScreens: ScreenDevice %d contains (0,0) --- will be used as primary", i);
-      } else {
-          log(lvl, "initScreens: ScreenDevice %d too contains (0,0)!", i);
-        }
-      }
-    }
-    if (primaryScreen < 0) {
-      Debug.log("Screen: initScreens: no ScreenDevice contains (0,0) --- using first ScreenDevice as primary");
-      primaryScreen = 0;
-    }
-    log(lvl+1, "initScreens: after GD evaluation");
+    log(lvl+1, "initScreens: entry");
+    primaryScreen = runTime.mainMonitor;
+    screens = new Screen[runTime.nMonitors];
     for (int i = 0; i < screens.length; i++) {
       screens[i] = new Screen(i, true);
       screens[i].initScreen();
@@ -104,14 +78,6 @@ public class Screen extends Region implements EventObserver, IScreen {
     } catch (AWTException e) {
       Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
       Sikulix.terminate(999);
-    }
-    if (!reset) {
-      log(lvl - 1, "initScreens: basic initialization (%d Screen(s) found)", gdevs.length);
-      log(lvl, "*** monitor configuration (primary: %d) ***", primaryScreen);
-      for (int i = 0; i < gdevs.length; i++) {
-        log(lvl, "%d: %s", i, screens[i].toStringShort());
-      }
-      log(lvl, "*** end monitor configuration ***");
     }
     Mouse.init();
     Keys.init();
@@ -163,9 +129,9 @@ public class Screen extends Region implements EventObserver, IScreen {
    */
   public Screen(int id) {
     super();
-    if (id < 0 || id >= gdevs.length) {
+    if (id < 0 || id >= runTime.nMonitors) {
       Debug.error("Screen(%d) not in valid range 0 to %d - using primary %d",
-							id, gdevs.length - 1, primaryScreen);
+							id, runTime.nMonitors - 1, primaryScreen);
 			curID = primaryScreen;
     } else {
 			curID = id;
@@ -220,7 +186,6 @@ public class Screen extends Region implements EventObserver, IScreen {
   }
 
   private void initScreen() {
-    curGD = gdevs[curID];
     Rectangle bounds = getBounds();
     x = (int) bounds.getX();
     y = (int) bounds.getY();
@@ -261,7 +226,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 //    initScreens();
     Debug.info("*** monitor configuration [ %s Screen(s)] ***", Screen.getNumberScreens());
     Debug.info("*** Primary is Screen %d", primaryScreen);
-    for (int i = 0; i < gdevs.length; i++) {
+    for (int i = 0; i < runTime.nMonitors; i++) {
       Debug.info("Screen %d: %s", i, Screen.getScreen(i).toStringShort());
     }
     Debug.info("*** end monitor configuration ***");
@@ -278,7 +243,7 @@ public class Screen extends Region implements EventObserver, IScreen {
     initScreens(true);
     Debug.info("*** new monitor configuration [ %s Screen(s)] ***", Screen.getNumberScreens());
     Debug.info("*** Primary is Screen %d", primaryScreen);
-    for (int i = 0; i < gdevs.length; i++) {
+    for (int i = 0; i < runTime.nMonitors; i++) {
       Debug.info("Screen %d: %s", i, Screen.getScreen(i).toStringShort());
     }
     Debug.error("*** end new monitor configuration ***");
@@ -292,7 +257,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   }
 
   private static int getValidID(int id) {
-    if (id < 0 || id >= gdevs.length) {
+    if (id < 0 || id >= runTime.nMonitors) {
       Debug.error("Screen: invalid screen id %d - using primary screen", id);
       return primaryScreen;
     }
@@ -304,7 +269,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    * @return number of available screens
    */
   public static int getNumberScreens() {
-    return gdevs.length;
+    return runTime.nMonitors;
   }
 
   /**
@@ -338,7 +303,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    * @return the physical coordinate/size <br>as AWT.Rectangle to avoid mix up with getROI
    */
   public static Rectangle getBounds(int id) {
-    return gdevsBounds[getValidID(id)];
+    return runTime.monitorBounds[getValidID(id)];
   }
 
   /**
@@ -374,14 +339,6 @@ public class Screen extends Region implements EventObserver, IScreen {
   }
 
   /**
-   *
-	 * @return active GraphicsDevice
-   */
-  public GraphicsDevice getGraphicsDevice() {
-    return curGD;
-  }
-
-  /**
    * Gets the Robot of this Screen.
    *
    * @return The Robot for this Screen
@@ -396,7 +353,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 	 */
   @Override
   public Rectangle getBounds() {
-    return gdevsBounds[curID];
+    return runTime.monitorBounds[curID];
   }
 
   /**

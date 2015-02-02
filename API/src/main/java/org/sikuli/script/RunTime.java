@@ -6,7 +6,10 @@
  */
 package org.sikuli.script;
 
+import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -73,7 +76,7 @@ public class RunTime {
   }
 
   public void terminate(int retval, String message, Object... args) {
-    log(-1, "*** terminating: " + message, args);
+    log(-1, " *** terminating: " + message, args);
     System.exit(retval);
   }
 //</editor-fold>
@@ -280,6 +283,13 @@ public class RunTime {
   private String appType = null;
 
 //</editor-fold>
+
+GraphicsEnvironment genv = null;
+GraphicsDevice[] gdevs;
+public Rectangle[] monitorBounds;
+Rectangle rAllMonitors;
+int mainMonitor = -1;
+int nMonitors = 0;
   
 //<editor-fold defaultstate="collapsed" desc="global init">
   private void init(Type typ) {
@@ -316,7 +326,36 @@ public class RunTime {
     fBaseTempPath.mkdirs();
     BaseTempPath = fBaseTempPath.getAbsolutePath();
 //</editor-fold>
-
+    
+//<editor-fold defaultstate="collapsed" desc="monitors">
+    genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+    gdevs = genv.getScreenDevices();
+    nMonitors = gdevs.length;
+    if (nMonitors == 0) {
+      terminate(1, "GraphicsEnvironment has no ScreenDevices");
+    }
+    monitorBounds = new Rectangle[nMonitors];
+    rAllMonitors = null;
+    for (int i = 0; i < nMonitors; i++) {
+      monitorBounds[i] = gdevs[i].getDefaultConfiguration().getBounds();
+      if (null != rAllMonitors) {
+        rAllMonitors = rAllMonitors.union(monitorBounds[i]);
+      }
+      if (monitorBounds[i].contains(new Point(0, 0))) {
+        if (mainMonitor < 0) {
+          mainMonitor = i;
+          log(lvl, "ScreenDevice %d contains (0,0) --- will be used as primary", i);
+      } else {
+          log(lvl, "ScreenDevice %d too contains (0,0)!", i);
+        }
+      }
+      if (mainMonitor < 0) {
+          log(lvl, "No ScreenDevice contains (0,0) --- using 0 as primary: %s", monitorBounds[0]);
+          mainMonitor = 0;
+      }
+    }
+//</editor-fold>
+    
 //<editor-fold defaultstate="collapsed" desc="classpath">        
     try {
       if (Type.IDE.equals(typ)) {
@@ -398,7 +437,7 @@ public class RunTime {
     }
   }
 //</editor-fold>
-
+  
 //<editor-fold defaultstate="collapsed" desc="libs export">
   public void makeLibsFolder() {
     fLibsFolder = new File(fTempPath, "SikulixLibs_" + sxBuildStamp);
@@ -2046,6 +2085,36 @@ public class RunTime {
    */
   public boolean isHeadless() {
     return GraphicsEnvironment.isHeadless();
+  }
+
+  public boolean isMultiMonitor() {
+    return nMonitors > 1;
+  }
+
+  public Rectangle getMonitor(int n) {
+    n = (n<0 || n >= nMonitors) ? mainMonitor : n;
+    return monitorBounds[n];
+  }
+  
+  public Rectangle getAllMonitors() {
+    return rAllMonitors;
+  }
+  
+  public Rectangle hasPoint(Point aPoint) {
+    for (Rectangle rMon : monitorBounds) {
+      if (rMon.contains(aPoint)) {
+        return rMon;
+      }
+    }
+    return null;
+  }
+  
+  public Rectangle hasRectangle(Rectangle aRect) {
+    return hasPoint(aRect.getLocation());
+  }
+  
+  public GraphicsDevice getGraphicsDevice(int id) {
+    return gdevs[id];
   }
 //</editor-fold>
 

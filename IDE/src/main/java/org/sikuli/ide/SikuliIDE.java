@@ -239,26 +239,18 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     _windowSize = prefs.getIdeSize();
     _windowLocation = prefs.getIdeLocation();
 
-    Screen m = (Screen) (new Location(_windowLocation)).getScreen();
-    if (m == null) {
-      String em = "Remembered window not valid.\nGoing to primary screen";
-      log(-1, em);
-      Sikulix.popError(em, "IDE has problems ...");
-      m = Screen.getPrimaryScreen();
+    Rectangle monitor = runTime.hasPoint(_windowLocation);
+    if (monitor == null) {
+      log(-1, "Remembered window not valid. Going to primary screen");
+      monitor = runTime.getMonitor(-1);
       _windowSize.width = 0;
     }
-    Rectangle s = m.getBounds();
-    if (_windowSize.width == 0 || _windowSize.width > s.width
-            || _windowSize.height > s.height) {
-      if (s.width < 1025) {
-        _windowSize = new Dimension(1024, 700);
-        _windowLocation = new Point(0, 0);
-      } else {
-        _windowSize = new Dimension(s.width - 150, s.height - 100);
-        _windowLocation = new Point(75, 0);
-      }
+    if (_windowSize.width == 0) {
+      _windowSize = new Dimension(1024, 700);
+      _windowLocation = new Point(100, 50);
     }
-    setSize(_windowSize);
+    Rectangle win = monitor.intersection(new Rectangle(_windowLocation, _windowSize));
+    setSize(win.getSize());
     setLocation(_windowLocation);
 
 		Debug.log(3, "IDE: Adding components to window");
