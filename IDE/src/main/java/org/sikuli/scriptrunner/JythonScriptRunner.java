@@ -6,6 +6,7 @@
  */
 package org.sikuli.scriptrunner;
 
+import org.sikuli.script.JythonHelper;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PipedInputStream;
@@ -123,7 +124,7 @@ public class JythonScriptRunner implements IScriptRunner {
 				runTime.terminate(1, "JythonScriptRunner: no sikulix....jar on classpath");
       }
       String fpAPILib = new File(fpAPI, "Lib").getAbsolutePath();
-      helper.sysPath.add(0, fpAPILib);
+      helper.putSysPath(fpAPILib, 0);
       helper.setSysPath();
       helper.showSysPath();
       interpreter.exec("from sikuli import *");

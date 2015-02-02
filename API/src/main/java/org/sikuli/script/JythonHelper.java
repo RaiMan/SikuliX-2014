@@ -1,15 +1,16 @@
-package org.sikuli.scriptrunner;
+package org.sikuli.script;
 
 import java.io.File;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import org.python.core.PyList;
-import org.python.util.PythonInterpreter;
+//import org.python.core.PyList;
+//import org.python.util.PythonInterpreter;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.ide.SikuliIDE;
-import org.sikuli.script.ImagePath;
-import org.sikuli.script.RunTime;
+//import org.sikuli.ide.SikuliIDE;
 
 public class JythonHelper {
   
@@ -31,21 +32,45 @@ public class JythonHelper {
 	//</editor-fold>
 
   static JythonHelper instance = null;
-  static PythonInterpreter interpreter = null;
+  static Object interpreter = null;
   List<String> sysPath = new ArrayList<String>();
   int nPathAdded = 0;
   int nPathSaved = -1;
+  static Class[] nc = new Class[0];
+  static Class cInterpreter = null;
+  static Class cList = null;
+  static Method mLen, mGet, mSet, mAdd, mRemove;
+  static Method mGetSystemState;
+  static Field PI_path;
   
   private JythonHelper(){}
   
   public static JythonHelper get() {
     if (instance == null) {
       instance = new JythonHelper();
+      try {
+        cInterpreter = Class.forName("org.python.util.PythonInterpreter");
+        mGetSystemState = cInterpreter.getMethod("getSystemState", nc);
+        Constructor PI_new = cInterpreter.getConstructor(nc);
+        interpreter = PI_new.newInstance(null);
+        cList = Class.forName("org.python.core.PyList");
+        mLen = cList.getMethod("__len__", nc);
+        mGet = cList.getMethod("get", new Class[]{int.class});
+        mSet = cList.getMethod("set", new Class[]{int.class, Object.class});
+        mAdd = cList.getMethod("add", new Class[]{Object.class});
+        mRemove = cList.getMethod("remove", new Class[]{int.class});
+        instance.logp("");
+      } catch (Exception ex) {
+        cInterpreter = null;
+      }  
+    }
+    if (cInterpreter == null) {
+      instance.runTime.terminate(1, "JythonHelper: no Jython on classpath");
     }
     return instance;
   }
 
-  public static JythonHelper set(PythonInterpreter ip) {
+  public static JythonHelper set(Object ip) {
     JythonHelper.get();
     interpreter = ip;
     return instance;
@@ -76,7 +101,7 @@ public class JythonHelper {
       return null;
     }
     log(lvl, "findModule: %s", modName);
-    String fpBundle = SikuliIDE.getInstance().getCurrentCodePane().getBundlePath();
+    String fpBundle = ImagePath.getBundlePath();
     File fParentBundle = null;
     File fModule = null;
     if (fpBundle != null) {
@@ -123,43 +148,58 @@ public class JythonHelper {
     }
     return null;
   }
-  
-  public void dumpState() {
-		PyList jypath = interpreter.getSystemState().path;
-		PyList jyargv = interpreter.getSystemState().argv;
-		int jypathLength = jypath.__len__();
-		for (int i = 0; i < jypathLength; i++) {
-      String entry = (String) jypath.get(i);
-      logp("%2d: %s", i, entry);
-		}
-  }
-
   public void getSysPath() {
     sysPath = new ArrayList<String>();
-		PyList jypath = interpreter.getSystemState().path;
-		int jypathLength = jypath.__len__();
-		for (int i = 0; i < jypathLength; i++) {
-      String entry = (String) jypath.get(i);
-      sysPath.add(entry);
-		}
+    if (null == cInterpreter) {
+      sysPath = null;
+      return;
+    }
+    try {
+      Object aState  = mGetSystemState.invoke(interpreter, (Object[]) null);                
+      Field fPath = aState.getClass().getField("path");
+      Object pyPath = fPath.get(aState);
+      Integer pathLen = (Integer) mLen.invoke(pyPath, (Object[]) null);
+      for (int i = 0; i < pathLen; i++) {
+        String entry = (String) mGet.invoke(pyPath, i);
+        logp("sys.path[%2d] = %s", i, entry);
+        sysPath.add(entry);
+      }
+    } catch (Exception ex) {
+      sysPath = null;
+    }    
   }
 
   public void setSysPath() {
-		PyList jypath = interpreter.getSystemState().path;
-		int jypathLength = jypath.__len__();
-		for (int i = 0; i < jypathLength && i < sysPath.size(); i++) {
-      jypath.set(i, sysPath.get(i));
-		}
-    if (jypathLength < sysPath.size()) {
-      for (int i = jypathLength; i < sysPath.size(); i++) {
-        jypath.add(sysPath.get(i));
-      }
+    if (null == cInterpreter || null == sysPath) {
+      return;
     }
-    if (jypathLength > sysPath.size()) {
-      for (int i = sysPath.size(); i < jypathLength; i++) {
-        jypath.remove(i);
+    try {
+      Object aState  = mGetSystemState.invoke(interpreter, (Object[]) null);                
+      Field fPath = aState.getClass().getField("path");
+      Object pyPath = fPath.get(aState);
+      Integer pathLen = (Integer) mLen.invoke(pyPath, (Object[]) null);
+  		for (int i = 0; i < pathLen && i < sysPath.size(); i++) {
+        String entry = sysPath.get(i);
+        logp("sys.path.set[%2d] = %s", i, entry);
+        mSet.invoke(pyPath, i, entry);
+  		}
+      if (pathLen < sysPath.size()) {
+        for (int i = pathLen; i < sysPath.size(); i++) {
+          String entry = sysPath.get(i);
+          logp("sys.path.add[%2d] = %s", i, entry);
+          mAdd.invoke(pyPath, entry);
+        }
       }
-    }
+      if (pathLen > sysPath.size()) {
+        for (int i = sysPath.size(); i < pathLen; i++) {
+          String entry = (String) mGet.invoke(pyPath, i);
+          logp("sys.path.rem[%2d] = %s", i, entry);
+          mRemove.invoke(pyPath, i);
+        }
+      }
+    } catch (Exception ex) {
+      sysPath = null;
+    }    
   }
   
   public void addSysPath(String fpFolder) {

@@ -7,7 +7,7 @@ import sys
 
 import Sikuli
 from org.sikuli.script import ImagePath
-import org.sikuli.scriptrunner.JythonHelper as JH
+import org.sikuli.script.JythonHelper as JH
 import os
 
 def _stripPackagePrefix(module_name):
