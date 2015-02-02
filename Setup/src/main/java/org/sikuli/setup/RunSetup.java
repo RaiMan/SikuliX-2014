@@ -135,6 +135,9 @@ public class RunSetup {
   private static boolean shouldExport = false;
   private static String[] addonFileList = new String[]{null, null, null, null, null};
   private static String[] addonFilePrefix = new String[]{null, null, null, null, null};
+  private static int addonVision = 0;
+  private static int addonGrabKey = 1;
+  private static int addonWindows = 2;
   private static String libOpenCVcore = "";
   private static String libOpenCVimgproc = "";
   private static String libOpenCVhighgui = "";
@@ -776,8 +779,8 @@ public class RunSetup {
       if (null == runTime.resourceListAsSikulixContentFromJar(aJar, libsWin, folderLibsWin, null)) {
         terminate("libswin content list not created", 999);
       }
-      addonFileList[2] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
-      addonFilePrefix[2] = libsWin;
+      addonFileList[addonWindows] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
+      addonFilePrefix[addonWindows] = libsWin;
     }
 
     if (forSystemMac || forAllSystems) {
@@ -896,8 +899,8 @@ public class RunSetup {
         shouldPackLibs = false;
       }
       if (!shouldPackLibs) {
-        addonFileList[0] = new File(folderLibsLux, libVision).getAbsolutePath();
-        addonFileList[1] = new File(folderLibsLux, libGrabKey).getAbsolutePath();
+        addonFileList[addonVision] = new File(folderLibsLux, libVision).getAbsolutePath();
+        addonFileList[addonGrabKey] = new File(folderLibsLux, libGrabKey).getAbsolutePath();
         for (int i = 0; i < 2; i++) {
           if (!new File(addonFileList[i]).exists()) {
             addonFileList[i] = null;
@@ -905,8 +908,8 @@ public class RunSetup {
         }
         String libPrefix = "sikulixlibs/linux/libs" + osarch;
         log(lvl, "Provided libs will be stored at %s", libPrefix);
-        addonFilePrefix[0] = libPrefix;
-        addonFilePrefix[1] = libPrefix;
+        addonFilePrefix[addonVision] = libPrefix;
+        addonFilePrefix[addonGrabKey] = libPrefix;
       }
     }
 
@@ -977,6 +980,8 @@ public class RunSetup {
       targetJar = (new File(workDir, localTemp)).getAbsolutePath();
       success &= FileManager.buildJar("#" + targetJar, jarsList,
               addonFileList, addonFilePrefix, libsFilter);
+      addonFileList[addonWindows] = null;
+      addonFilePrefix[addonWindows] = null;
       success &= handleTempAfter(targetJar, localJar);
     }
 
