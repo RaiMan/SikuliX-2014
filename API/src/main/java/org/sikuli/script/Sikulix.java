@@ -96,8 +96,6 @@ public class Sikulix {
       rt = RunTime.get();
       Debug.on(3);
      
-      rt.terminate(1,"nothing to test");
-
       if (rt.runningWinApp) {        
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
         try {
@@ -107,8 +105,9 @@ public class Sikulix {
           popup("Uuups :-(\n" + ex.getMessage(), rt.fSxBaseJar.getName());
         }
         popup("Hello World\nNothing else to do ( yet ;-)", rt.fSxBaseJar.getName());
+        System.exit(1);
       }
-      System.out.println("nothing to do (yet)");
+      rt.terminate(1,"Sikulix::main: nothing to test");
     }
   }
   

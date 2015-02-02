@@ -33,6 +33,8 @@ public class JythonHelper {
   static JythonHelper instance = null;
   static PythonInterpreter interpreter = null;
   List<String> sysPath = new ArrayList<String>();
+  int nPathAdded = 0;
+  int nPathSaved = -1;
   
   private JythonHelper(){}
   
@@ -102,10 +104,7 @@ public class JythonHelper {
     if (nDot > -1) {
       modName = modName.substring(nDot + 1);
     }
-    if (!hasSysPath(modPath)) {
-      sysPath.add(0, modPath);
-      setSysPath();
-    }
+    addSysPath(modPath);
     ImagePath.add(modPath);
     return modName;
   }
@@ -156,10 +155,47 @@ public class JythonHelper {
         jypath.add(sysPath.get(i));
       }
     }
+    if (jypathLength > sysPath.size()) {
+      for (int i = sysPath.size(); i < jypathLength; i++) {
+        jypath.remove(i);
+      }
+    }
   }
   
   public void addSysPath(String fpFolder) {
-    
+    if (!hasSysPath(fpFolder)) {
+      sysPath.add(0, fpFolder);
+      setSysPath();
+      nPathAdded++;
+    }
+  }
+  
+  public void putSysPath(String fpFolder, int n) {
+    if (n < 0 || n > sysPath.size())
+      sysPath.add(0, fpFolder);
+      setSysPath();
+      nPathAdded++;
+  }
+  
+  public void addSysPath(File fFolder) {
+    addSysPath(fFolder.getAbsolutePath());
+  }
+  
+  public void insertSysPath(File fFolder) {
+    getSysPath();
+    sysPath.add((nPathSaved > -1 ? nPathSaved : 0), fFolder.getAbsolutePath());
+    setSysPath();
+    nPathSaved = -1;
+  }
+  
+  public void removeSysPath(File fFolder) {
+    int n;
+    if (-1 < (n = getSysPathEntry(fFolder))) {
+      sysPath.remove(n);
+      nPathSaved = n;
+      setSysPath();
+      nPathAdded = nPathAdded == 0 ? 0 : nPathAdded--;
+    }
   }
   
   public boolean hasSysPath(String fpFolder) {
@@ -170,6 +206,18 @@ public class JythonHelper {
       }
     }
     return false;
+  }
+  
+  public int getSysPathEntry(File fFolder) {
+    getSysPath();
+    int n = 0;
+    for (String fpPath : sysPath) {
+      if (FileManager.pathEquals(fpPath, fFolder.getAbsolutePath())) {
+        return n;
+      }
+      n++;
+    }
+    return -1;
   }
   
   public File existsSysPathModule(String modname) {
@@ -184,8 +232,6 @@ public class JythonHelper {
     return fModule;
   }
   
-  
-
   public void showSysPath() {
     if (Debug.is(lvl)) {
       getSysPath();
@@ -196,8 +242,4 @@ public class JythonHelper {
       log(lvl, "***** Jython sys.path end");
 		}
   }
-  
-  
-
-  
 }

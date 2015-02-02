@@ -13,7 +13,6 @@ import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.python.core.Py;
@@ -139,13 +138,13 @@ public class JythonScriptRunner implements IScriptRunner {
 	 * Executes the jythonscript
 	 *
 	 * @param pyFile The file containing the script
-	 * @param imagePath The directory containing the images
+	 * @param fScriptPath The directory containing the images
 	 * @param argv The arguments passed by the --args parameter
 	 * @param forIDE
 	 * @return The exitcode
 	 */
 	@Override
-	public int runScript(File pyFile, File imagePath, String[] argv, String[] forIDE) {
+	public int runScript(File pyFile, File fScriptPath, String[] argv, String[] forIDE) {
 		if (null == pyFile) {
 			//run the Python statements from argv (special for setup functional test)
 			executeScriptHeader(null);
@@ -164,23 +163,20 @@ public class JythonScriptRunner implements IScriptRunner {
 		if (isFromIDE && forIDE.length > 1 && forIDE[0] != null ) {
 			isCompileOnly = forIDE[0].toUpperCase().equals(COMPILE_ONLY);
 		}
+    JythonHelper.get().insertSysPath(fScriptPath);
 		pyFile = new File(pyFile.getAbsolutePath());
 		fillSysArgv(pyFile, argv);
 		int exitCode = 0;
 		if (isFromIDE) {
 			executeScriptHeader(new String[]{forIDE[0]});
 			exitCode = runPython(pyFile, null, forIDE);
+      JythonHelper.get().removeSysPath(fScriptPath);
 		} else {
 			executeScriptHeader(new String[]{
 				pyFile.getParent(),
 				pyFile.getParentFile().getParent()});
 			exitCode = runPython(pyFile, null, new String[]{pyFile.getParentFile().getAbsolutePath()});
 		}
-		log(lvl + 1, "runScript: at exit: path:");
-		for (Object p : interpreter.getSystemState().path.toArray()) {
-			log(lvl + 1, "runScript: " + p.toString());
-		}
-		log(lvl + 1, "runScript: at exit: --- end ---");
 		return exitCode;
 	}
 
@@ -642,6 +638,15 @@ public class JythonScriptRunner implements IScriptRunner {
 	 */
 	private void executeScriptHeader(String[] syspaths) {
 // TODO implement compile only
+    for (String line : SCRIPT_HEADER) {
+			log(lvl + 1, "executeScriptHeader: %s", line);
+			interpreter.exec(line);
+		}
+		if (codeBefore != null) {
+			for (String line : codeBefore) {
+				interpreter.exec(line);
+			}
+		}
 		if (isCompileOnly) {
 			return;
 		}
