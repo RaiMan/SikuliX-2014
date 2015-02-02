@@ -100,7 +100,7 @@ public class JythonHelper {
     if (modName.endsWith(".*")) {
       return null;
     }
-    log(lvl, "findModule: %s", modName);
+    log(lvl + 1, "findModule: %s", modName);
     String fpBundle = ImagePath.getBundlePath();
     File fParentBundle = null;
     File fModule = null;
@@ -124,7 +124,7 @@ public class JythonHelper {
 //  Sikuli._addModPath(self.path)
 //  return self._load_module(module_name)
 
-    log(lvl, "loadModulePrepare: %s", modName);
+    log(lvl + 1, "loadModulePrepare: %s", modName);
     int nDot = modName.lastIndexOf(".");
     if (nDot > -1) {
       modName = modName.substring(nDot + 1);
@@ -161,7 +161,7 @@ public class JythonHelper {
       Integer pathLen = (Integer) mLen.invoke(pyPath, (Object[]) null);
       for (int i = 0; i < pathLen; i++) {
         String entry = (String) mGet.invoke(pyPath, i);
-        logp("sys.path[%2d] = %s", i, entry);
+        log(lvl + 1, "sys.path[%2d] = %s", i, entry);
         sysPath.add(entry);
       }
     } catch (Exception ex) {
@@ -180,20 +180,20 @@ public class JythonHelper {
       Integer pathLen = (Integer) mLen.invoke(pyPath, (Object[]) null);
   		for (int i = 0; i < pathLen && i < sysPath.size(); i++) {
         String entry = sysPath.get(i);
-        logp("sys.path.set[%2d] = %s", i, entry);
+        log(lvl + 1, "sys.path.set[%2d] = %s", i, entry);
         mSet.invoke(pyPath, i, entry);
   		}
       if (pathLen < sysPath.size()) {
         for (int i = pathLen; i < sysPath.size(); i++) {
           String entry = sysPath.get(i);
-          logp("sys.path.add[%2d] = %s", i, entry);
+          log(lvl + 1, "sys.path.add[%2d] = %s", i, entry);
           mAdd.invoke(pyPath, entry);
         }
       }
       if (pathLen > sysPath.size()) {
         for (int i = sysPath.size(); i < pathLen; i++) {
           String entry = (String) mGet.invoke(pyPath, i);
-          logp("sys.path.rem[%2d] = %s", i, entry);
+          log(lvl + 1, "sys.path.rem[%2d] = %s", i, entry);
           mRemove.invoke(pyPath, i);
         }
       }
