@@ -10,7 +10,6 @@ import java.awt.Dimension;
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.List;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -95,7 +94,7 @@ public class Sikulix {
     } else {
       rt = RunTime.get();
       Debug.on(3);
-     
+      
       if (rt.runningWinApp) {        
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
         try {
