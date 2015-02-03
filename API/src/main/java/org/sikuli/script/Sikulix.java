@@ -104,6 +104,7 @@ public class Sikulix {
       //rt.dumpClassPath();
       //Debug.on(4);
       SikulixForJython.get();
+      //new org.sikuli.basics.SikulixForJython();
       String stuff = rt.resourceListAsString("Lib/sikuli", null);
       if (rt.runningWinApp) {        
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
