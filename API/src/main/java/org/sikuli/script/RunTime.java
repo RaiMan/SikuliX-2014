@@ -1475,6 +1475,10 @@ int nMonitors = 0;
     }
     return out;
   }
+  
+  public URL resourceLocation(String folder) {
+    return clsRef.getResource(folder);
+  }
 
   private List<String> resourceList(String folder, FilenameFilter filter) {
     List<String> files = new ArrayList<String>();

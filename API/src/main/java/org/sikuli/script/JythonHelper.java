@@ -18,17 +18,22 @@ public class JythonHelper {
   
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static final String me = "JythonSupport: ";
-	private int lvl = 3;
-	private void log(int level, String message, Object... args) {
+	private static int lvl = 3;
+	protected void log(int level, String message, Object... args) {
 		Debug.logx(level,	me + message, args);
 	}
-  private void logp(String message, Object... args) {
+  protected void logp(String message, Object... args) {
     if (runTime.runningWinApp) {
       log(0, message, args);
     } else {
       System.out.println(String.format(message, args));
     }
   }
+
+  protected void terminate(int retVal, String msg, Object... args) {
+    runTime.terminate(retVal, me + msg, args);
+  }
+
 	//</editor-fold>
 
   static JythonHelper instance = null;
@@ -48,6 +53,7 @@ public class JythonHelper {
   public static JythonHelper get() {
     if (instance == null) {
       instance = new JythonHelper();
+      instance.log(lvl, "init: starting");
       try {
         cInterpreter = Class.forName("org.python.util.PythonInterpreter");
         mGetSystemState = cInterpreter.getMethod("getSystemState", nc);
@@ -59,10 +65,10 @@ public class JythonHelper {
         mSet = cList.getMethod("set", new Class[]{int.class, Object.class});
         mAdd = cList.getMethod("add", new Class[]{Object.class});
         mRemove = cList.getMethod("remove", new Class[]{int.class});
-        instance.logp("");
       } catch (Exception ex) {
         cInterpreter = null;
       }  
+      instance.log(lvl, "init: success");
     }
     if (cInterpreter == null) {
       instance.runTime.terminate(1, "JythonHelper: no Jython on classpath");
@@ -76,10 +82,6 @@ public class JythonHelper {
     return instance;
   }
   
-  private static void print(String message, Object... args) {
-    System.out.println(String.format(message, args));
-  }
-
   public String findModule(String modName, Object packPath, Object sysPath) {
 
 //  module_name = _stripPackagePrefix(module_name)
@@ -148,6 +150,7 @@ public class JythonHelper {
     }
     return null;
   }
+  
   public void getSysPath() {
     sysPath = new ArrayList<String>();
     if (null == cInterpreter) {
