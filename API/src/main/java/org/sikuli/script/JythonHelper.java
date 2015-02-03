@@ -211,10 +211,13 @@ public class JythonHelper {
   }
   
   public void putSysPath(String fpFolder, int n) {
-    if (n < 0 || n > sysPath.size())
-      sysPath.add(0, fpFolder);
+    if (n < 1 || n > sysPath.size()) {
+      addSysPath(fpFolder);
+    } else {
+      sysPath.add(n, fpFolder);
       setSysPath();
       nPathAdded++;
+    }
   }
   
   public void addSysPath(File fFolder) {
