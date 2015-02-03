@@ -29,7 +29,7 @@ public class TextRecognizer {
   static RunTime runTime = RunTime.get();
 
   private static TextRecognizer _instance = null;
-  private static boolean _init_succeeded = false;
+  private static boolean initSuccess = false;
 	private static int lvl = 3;
 
   static {
@@ -41,39 +41,36 @@ public class TextRecognizer {
   }
 
   private void init() {
-    String path;
-    File fpath = null;
+    File fTessdataPath = null;
+    initSuccess = false;
     if (Settings.OcrDataPath != null) {
-      path = FileManager.slashify(Settings.OcrDataPath, true);
-      fpath = new File(path, "tessdata");
-      if (!fpath.exists()) {
-        ResourceLoader.get().export("META-INF#libs/tessdata/", fpath.getAbsolutePath());
+      fTessdataPath = new File(FileManager.slashify(Settings.OcrDataPath, false), "tessdata");
+      initSuccess = fTessdataPath.exists();
+    }
+    if(!initSuccess) {
+      fTessdataPath = new File(runTime.fLibsFolder, "tessdata");
+      if (!fTessdataPath.exists()) {
+        if (!(initSuccess = (null != runTime.extractResourcesToFolder("sikulixtessdata/", fTessdataPath, null)))) {
+          Debug.error("TextRecognizer: init: export tessdata not possible - run setup with option 3");
+        }
       }
-      if (!fpath.exists()) {
-				Debug.log(lvl, "Trying to download Tesseract language pack eng, "
-								+ "since not available yet at:\n%s", Settings.OcrDataPath);
-			}
-      if (!fpath.exists()) {
-        Debug.error("TextRecognizer not working: tessdata folder not available at %s\n", path);
-        Settings.OcrTextRead = false;
-        Settings.OcrTextSearch = false;
-        fpath = null;
-      }
-			if (fpath != null) {
-				Vision.initOCR(FileManager.slashify(Settings.OcrDataPath, true));
-				_init_succeeded = true;
-				Debug.log(lvl, "TextRecognizer: init OK: using as data folder:\n" + fpath.getAbsolutePath());
-			}
-    } else {
-			Debug.error("TextRecognizer: init: not possible: Settings.OcrDataPath not set");
 		}
+    if (!initSuccess) {
+      Debug.error("TextRecognizer not working: tessdata folder not available at %s\n", fTessdataPath);
+      Settings.OcrTextRead = false;
+      Settings.OcrTextSearch = false;
+    } else {
+      Settings.OcrDataPath = fTessdataPath.getParent();
+      Vision.initOCR(FileManager.slashify(Settings.OcrDataPath, true));
+      Debug.log(lvl, "TextRecognizer: init OK: using as data folder:\n%s", Settings.OcrDataPath);
+    }
   }
 
   public static TextRecognizer getInstance() {
     if (_instance == null) {
       _instance = new TextRecognizer();
     }
-    if (!_init_succeeded) {
+    if (!initSuccess) {
       return null;
     }
     return _instance;
@@ -113,7 +110,7 @@ public class TextRecognizer {
   }
 
   public String recognize(BufferedImage img) {
-    if (_init_succeeded) {
+    if (initSuccess) {
       Mat mat = Image.convertBufferedImageToMat(img);
       return Vision.recognize(mat).trim();
     } else {
@@ -127,7 +124,7 @@ public class TextRecognizer {
   }
 
   public String recognizeWord(BufferedImage img) {
-    if (_init_succeeded) {
+    if (initSuccess) {
       Mat mat = Image.convertBufferedImageToMat(img);
       return Vision.recognizeWord(mat).trim();
     } else {

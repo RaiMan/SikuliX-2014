@@ -42,7 +42,7 @@ public class Settings {
 	/**
 	 * location of folder Tessdata
 	 */
-	public static String OcrDataPath;
+	public static String OcrDataPath = null;
 	/**
 	 * standard place in the net to get information about extensions<br>
 	 * needs a file extensions.json with content<br>
