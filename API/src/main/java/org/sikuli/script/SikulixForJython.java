@@ -42,7 +42,8 @@ public class SikulixForJython {
         fpSikuliStuff = new File(fpSikuliStuff, "/Lib").getAbsolutePath();
       } else {
         fpSikuliStuff = new File(uSikuliStuff.getPath()).getAbsolutePath();
-        fpSikuliStuff = fpSikuliStuff.substring(0, fpSikuliStuff.length() - libSikuli.length()) + "/Lib";
+        fpSikuliStuff = new File(fpSikuliStuff.substring(0, 
+                fpSikuliStuff.length() - libSikuli.length()), "Lib").getAbsolutePath();
       }
       if (!helper.hasSysPath(fpSikuliStuff)) {
         helper.log(lvl, "sikuli/*.py not found on current Jython::sys.path");
@@ -51,12 +52,10 @@ public class SikulixForJython {
           helper.terminate(1, "not possible to add to Jython::sys.path:\n%s", fpSikuliStuff);
         }
         helper.log(lvl, "added as Jython::sys.path[0]:\n%s", fpSikuliStuff);
+      } else {
+        helper.log(lvl, "sikuli/*.py is on Jython::sys.path at:\n%s", fpSikuliStuff);
       }
-    } else {
-      fpSikuliStuff = fSikuliStuff.getAbsolutePath();
-      helper.log(lvl, "sikuli/*.py is on Jython::sys.path at:\n%s", 
-              fpSikuliStuff.substring(0, fpSikuliStuff.length() - libSikuli.length()) + "/Lib");
-    }    
+    }     
     helper.log(lvl, "SikulixForJython: init: success");
   }
 

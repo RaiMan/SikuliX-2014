@@ -99,8 +99,9 @@ public class Sikulix {
       log(0, "%s", rt.fSxBaseJar);
       log(0, jythonJar);
       rt.addToClasspath(jythonJar);
-      //addFromProject("API", "sikulixapi-1.1.0.jar");
-//      JythonHelper.get().addSysPath("/Users/raimundhocke/SikuliX/SikuliX-2014/API/target/classes/Lib");
+      addFromProject("API", "sikulixapi-1.1.0.jar");
+      //JythonHelper.get().addSysPath("/Users/raimundhocke/SikuliX/SikuliX-2014/API/target/classes/Lib");
+      JythonHelper.get().addSysPath("C:/Users/RaiMan/Documents/GitHub/SikuliX-2014/API/target/sikulixapi-1.1.0.jar/Lib");
       //rt.dumpClassPath();
       //Debug.on(4);
       SikulixForJython.get();
