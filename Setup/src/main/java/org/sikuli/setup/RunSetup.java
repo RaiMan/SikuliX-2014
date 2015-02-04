@@ -41,11 +41,12 @@ import org.sikuli.basics.ResourceLoader;
 import org.sikuli.script.RunTime;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.Sikulix;
+import org.sikuli.util.LinuxSupport;
+import static org.sikuli.util.LinuxSupport.buildVision;
 
 public class RunSetup {
 
   private static String downloadedFiles;
-  private static URL runningJarURL;
   private static boolean noSetup = false;
   private static boolean backUpExists = false;
   private static String workDir;
@@ -114,42 +115,16 @@ public class RunSetup {
   private static boolean isLinux = false;
 
   // -MF $externals/$fn.o.d -o $externals/$fn.o $src/Vision/$fn
-  private static boolean buildComplete = true;
-  private static String buildCppMods = "-MF %s.o.d -o %s.o %s";
-  private static String buildFolderSrc = "Build/Source";
-  private static String buildFolderInclude = "Build/Include";
-  private static String[] buildSrcFiles
-          = new String[]{"cvgui.cpp", "finder.cpp",
-            "pyramid-template-matcher.cpp", "sikuli-debug.cpp", "tessocr.cpp",
-            "vision.cpp", "visionJAVA_wrap.cxx"};
-  private static String buildCppFix = "g++ -c -O3 -fPIC -MMD -MP %s "; // $includeParm
-  private static String buildFolder = "Build";
-  private static String buildFolderStuff = "Build/Stuff";
-  private static String buildCompile = "";
-  private static String buildLink = "g++ -shared -s -fPIC -dynamic ";
   private static boolean libsProvided = false;
-  private static String libVision = "libVisionProxy.so";
-  private static String libGrabKey = "libJXGrabKey.so";
-  private static boolean visionProvided = false;
-  private static boolean grabKeyProvided = false;
-  private static boolean shouldExport = false;
   private static String[] addonFileList = new String[]{null, null, null, null, null};
   private static String[] addonFilePrefix = new String[]{null, null, null, null, null};
   private static int addonVision = 0;
   private static int addonGrabKey = 1;
   private static int addonWindows = 2;
-  private static String libOpenCVcore = "";
-  private static String libOpenCVimgproc = "";
-  private static String libOpenCVhighgui = "";
-  private static String libTesseract = "";
   private static boolean libSearched = false;
   private static boolean checkSuccess = true;
-  private static boolean opencvAvail = true;
-  private static boolean tessAvail = true;
-  private static String cmdError = "*** error ***";
   private static boolean shouldBuildVision = false;
   private static boolean notests = false;
-  private static String currentlib;
   private static boolean clean = false;
   private static File winLibs = null;
   private static RunTime runTime;
@@ -198,7 +173,7 @@ public class RunSetup {
 
     CodeSource codeSrc = RunSetup.class.getProtectionDomain().getCodeSource();
     if (codeSrc != null && codeSrc.getLocation() != null) {
-      runningJarURL = codeSrc.getLocation();
+      codeSrc.getLocation();
     } else {
       log(-1, "Fatal Error 201: Not possible to accessjar file for RunSetup.class");
       Sikulix.terminate(201);
@@ -338,12 +313,7 @@ public class RunSetup {
 
     osarch = "" + runTime.javaArch;
     if (runTime.runningLinux) {
-      String result = runTime.runcmd("lsb_release -i -r -s");
-      linuxDistro = result.replaceAll("\n", " ").trim();
-      if (linuxDistro.contains("*** error ***")) {
-        log(-1, "command returns error: lsb_release -i -r -s\n%s", result);
-        linuxDistro = "***UNKNOWN***";
-      }
+      linuxDistro = LinuxSupport.getLinuxDistro();
       logPlus(lvl, "LinuxDistro: %s (%s-Bit)", linuxDistro, osarch);
       isLinux = true;
     }
@@ -389,22 +359,21 @@ public class RunSetup {
     folderLibs = new File(workDir, "Downloads/sikulixlibs");
     folderLibsWin = new File(folderLibs, "windows");
     folderLibsLux = new File(folderLibs, "linux");
+    LinuxSupport.setWorkDir(workDir);
+    LinuxSupport.setLibsDir(folderLibsLux);
+    LinuxSupport.setLogToFile(logToFile);
 
     //TODO Windows 8 HKLM/SOFTWARE/JavaSoft add Prefs ????
     boolean success;
-    if (isLinux && !libsProvided) {
-      visionProvided = new File(folderLibsLux, libVision).exists();
-      grabKeyProvided = new File(folderLibsLux, libGrabKey).exists();
-      if (visionProvided || grabKeyProvided) {
-        success = popAsk(String.format("Found a libs folder at\n%s\n"
-                + "Click YES to use the contained libs "
-                + "for setup (be sure they are useable).\n"
-                + "Click NO to make a clean setup (libs are deleted).", folderLibsLux));
-        if (success) {
-          libsProvided = true;
-        } else {
-          FileManager.resetFolder(folderLibsLux);
-        }
+    if (!libsProvided && LinuxSupport.existsLibs()) {
+      if (popAsk(String.format("Found a libs folder at\n%s\n"
+              + "Click YES to use the contained libs "
+              + "for setup (be sure they are useable).\n"
+              + "Click NO to make a clean setup (libs are deleted).", folderLibsLux))) 
+      {
+        libsProvided = true;
+      } else {
+        FileManager.resetFolder(folderLibsLux);
       }
     }
 
@@ -673,91 +642,29 @@ public class RunSetup {
       } else {
         copyFromDownloads(libDownloaded, libsLux, jarsList[8]);
       }
-      // check bundled and/or provided libs
-      if (!folderLibsLux.exists()) {
-        folderLibsLux.mkdirs();
+      boolean shouldBuildVisionNow = LinuxSupport.processLibs1(jarsList[8], osarch);
+      libsProvided = LinuxSupport.processLibs2();
+      boolean shouldTerminate = false;
+      if (shouldBuildVisionNow) {
+        logPlus(-1, "A bundled lib could not be checked or does not work.");
+        if (!popAsk("The bundled/provided libVisionProxy.so might not work."
+                + "\nShould we try to build it now?"
+                + "\nClick YES to try a build"
+                + "\nClick NO to terminate and correct the problems.")) {
+          shouldTerminate = true;
+          shouldBuildVisionNow = false;
+        }
       }
-      if (!folderLibsLux.exists()) {
-        log(-1, "Linux: check useability of libs: problems with libs folder\n%s", folderLibsLux);
-      } else {
-        String[] libsExport = new String[]{null, null};
-        String[] libsCheck = new String[]{null, null};
-        if (!new File(folderLibsLux, libVision).exists()) {
-          libsExport[0] = libVision;
-          shouldExport = true;
-        }
-        if (!new File(folderLibsLux, libGrabKey).exists()) {
-          libsExport[1] = libGrabKey;
-          shouldExport = true;
-        }
-        if (shouldExport) {
-          for (String exLib : libsExport) {
-            if (exLib == null) {
-              continue;
-            }
-            currentlib = exLib;
-            FileManager.unpackJar(jarsList[8], folderLibsLux.getAbsolutePath(),
-                    false, true, new FileManager.JarFileFilter() {
-                      @Override
-                      public boolean accept(ZipEntry entry, String jarname) {
-                        if (entry.getName().contains("libs" + osarch + "/" + currentlib)) {
-                          return true;
-                        }
-                        return false;
-                      }
-                    });
-          }
-        }
-        libsCheck[0] = new File(folderLibsLux, libVision).getAbsolutePath();
-        libsCheck[1] = new File(folderLibsLux, libGrabKey).getAbsolutePath();
-        File fLibCheck;
-        boolean shouldTerminate = false;
-        boolean shouldBuildVisionNow = false;
-        for (int i = 0; i < libsCheck.length; i++) {
-          fLibCheck = new File(libsCheck[i]);
-          if (fLibCheck.exists()) {
-            if (!checklibs(fLibCheck)) {
-//TODO why? JXGrabKey unresolved: pthread
-              if (i == 0) {
-                if (libsExport[i] == null) {
-                  logPlus(-1, "provided %s might not be useable on this Linux - see log", fLibCheck.getName());
-                } else {
-                  logPlus(-1, "bundled %s might not be useable on this Linux - see log", fLibCheck.getName());
-                }
-                shouldBuildVisionNow = true;
-              }
-            }
-          } else {
-            log(-1, "check not possible for\n%s", fLibCheck);
-          }
-        }
-        for (String exLib : libsExport) {
-          if (exLib == null) {
-            libsProvided = true;
-            continue;
-          }
-          FileManager.deleteFileOrFolder(new File(folderLibsLux, exLib).getAbsolutePath());
-        }
-        if (shouldBuildVisionNow) {
-          logPlus(-1, "A bundled lib could not be checked or does not work.");
-          if (!popAsk("The bundled/provided libVisionProxy.so might not work."
-                  + "\nShould we try to build it now?"
-                  + "\nClick YES to try a build"
-                  + "\nClick NO to terminate and correct the problems.")) {
-            shouldTerminate = true;
-            shouldBuildVisionNow = false;
-          }
-        }
-        if (shouldBuildVisionNow || (hasOptions && shouldBuildVision)) {
-          logPlus(lvl, "Trying to build libVisionProxy.so");
-          shouldTerminate |= !buildVision(jarsList[8]);
-        }
-        if (!libsProvided) {
-          FileManager.deleteFileOrFolder(folderLibsLux.getAbsolutePath());
-        }
-        if (shouldTerminate) {
-          terminate("Correct the problems with the bundled/provided libs and try again");
-        }
+      if (shouldBuildVisionNow || (hasOptions && shouldBuildVision)) {
+        logPlus(lvl, "Trying to build libVisionProxy.so");
+        libsProvided = buildVision(jarsList[8]);
+        shouldTerminate |= !libsProvided;
+      }
+      if (!libsProvided) {
+        FileManager.deleteFileOrFolder(folderLibsLux.getAbsolutePath());
+      }
+      if (shouldTerminate) {
+        terminate("Correct the problems with the bundled/provided libs and try again");
       }
     }
 		//</editor-fold>
@@ -899,8 +806,8 @@ public class RunSetup {
         shouldPackLibs = false;
       }
       if (!shouldPackLibs) {
-        addonFileList[addonVision] = new File(folderLibsLux, libVision).getAbsolutePath();
-        addonFileList[addonGrabKey] = new File(folderLibsLux, libGrabKey).getAbsolutePath();
+        addonFileList[addonVision] = new File(folderLibsLux, LinuxSupport.libVision).getAbsolutePath();
+        addonFileList[addonGrabKey] = new File(folderLibsLux, LinuxSupport.libGrabKey).getAbsolutePath();
         for (int i = 0; i < 2; i++) {
           if (!new File(addonFileList[i]).exists()) {
             addonFileList[i] = null;
@@ -939,19 +846,19 @@ public class RunSetup {
           }
         }
         if (forSystemLux || forAllSystems) {
-          if (!shouldPackLibs && entry.getName().contains(libVision)
+          if (!shouldPackLibs && entry.getName().contains(LinuxSupport.libVision)
                   && entry.getName().contains("libs" + osarch)) {
-            if (new File(folderLibsLux, libVision).exists()) {
-              log(lvl, "Found provided lib: %s (libs%s)", libVision, osarch);
+            if (new File(folderLibsLux, LinuxSupport.libVision).exists()) {
+              log(lvl, "Found provided lib: %s (libs%s)", LinuxSupport.libVision, osarch);
               return false;
             } else {
               return true;
             }
           }
-          if (!shouldPackLibs && entry.getName().contains(libGrabKey)
+          if (!shouldPackLibs && entry.getName().contains(LinuxSupport.libGrabKey)
                   && entry.getName().contains("libs" + osarch)) {
-            if (new File(folderLibsLux, libGrabKey).exists()) {
-              log(lvl, "Found provided lib: %s (libs%s)", libGrabKey, osarch);
+            if (new File(folderLibsLux, LinuxSupport.libGrabKey).exists()) {
+              log(lvl, "Found provided lib: %s (libs%s)", LinuxSupport.libGrabKey, osarch);
               return false;
             } else {
               return true;
@@ -1185,281 +1092,6 @@ public class RunSetup {
 
     System.exit(RunTime.testing ? 1 : 0);
   }
-
-//<editor-fold defaultstate="collapsed" desc="helpers for Linux build">
-  private static boolean checklibs(File lib) {
-    String cmdRet;
-    String[] retLines;
-    
-    if (!libSearched) {
-      logPlus(lvl, "checking: availability of OpenCV and Tesseract");
-      logPlus(lvl, "checking: scanning loader cache (ldconfig -p)");
-      cmdRet = ResourceLoader.get().runcmd("ldconfig -p");
-      if (cmdRet.contains(cmdError)) {
-        logPlus(-1, "checking: ldconfig returns error:\ns", cmdRet);
-        checkSuccess = false;
-      } else {
-        String[] libs = cmdRet.split("\n");
-        for (String libx : libs) {
-          libx = libx.trim();
-          if (!libx.startsWith("lib")) {
-            continue;
-          }
-          if (libx.startsWith("libopencv_core.so.")) {
-            libOpenCVcore = libx.split("=>")[1].trim();
-          } else if (libx.startsWith("libopencv_highgui.so.")) {
-            libOpenCVhighgui = libx.split("=>")[1].trim();
-          } else if (libx.startsWith("libopencv_imgproc.so.")) {
-            libOpenCVimgproc = libx.split("=>")[1].trim();
-          } else if (libx.startsWith("libtesseract.so.")) {
-            libTesseract = libx.split("=>")[1].trim();
-          }
-        }
-        if (libOpenCVcore == null || libOpenCVhighgui == null || libOpenCVimgproc == null) {
-          logPlus(-1, "checking: OpenCV not in loader cache (see doc-note on OpenCV)");
-          opencvAvail = checkSuccess = false;
-        } else {
-          logPlus(lvl, "checking: found OpenCV libs:\n%s\n%s\n%s",
-                  libOpenCVcore, libOpenCVhighgui, libOpenCVimgproc);
-        }
-        if (libTesseract == null) {
-          logPlus(-1, "checking: Tesseract not in loader cache (see doc-note on Tesseract)");
-          tessAvail = checkSuccess = false;
-        } else {
-          logPlus(lvl, "checking: found Tesseract lib:\n%s", libTesseract);
-        }
-      }
-      
-      // checking wmctrl, xdotool
-      cmdRet = ResourceLoader.get().runcmd("wmctrl -m");
-      if (cmdRet.contains(cmdError)) {
-        logPlus(-1, "checking: wmctrl not available or not working");
-      } else {
-        logPlus(lvl, "checking: wmctrl seems to be available");
-      }
-      cmdRet = ResourceLoader.get().runcmd("xdotool version");
-      if (cmdRet.contains(cmdError)) {
-        logPlus(-1, "checking: xdotool not available or not working");
-      } else {
-        logPlus(lvl, "checking: xdotool seems to be available");
-      }
-      
-      libSearched = true;
-    }
-    
-    logPlus(lvl, "checking\n%s", lib);
-    // readelf -d lib
-    // 0x0000000000000001 (NEEDED)             Shared library: [libtesseract.so.3]
-    cmdRet = ResourceLoader.get().runcmd("readelf -d " + lib);
-    if (cmdRet.contains(cmdError)) {
-      logPlus(-1, "checking: readelf returns error:\ns", cmdRet);
-      checkSuccess = false;
-    } else {
-      retLines = cmdRet.split("\n");
-      String libsNeeded = "";
-      for (String line : retLines) {
-        if (line.contains("(NEEDED)")) {
-          line = line.split("\\[")[1].replace("]", "");
-          libsNeeded += line + ":";
-        }
-      }
-      log(lvl, libsNeeded);
-    }
-    
-    if (!runLdd(lib)) {
-      checkSuccess = false;
-    }
-    
-    return checkSuccess;
-  }
-  
-  private static boolean runLdd(File lib) {
-    // ldd -r lib
-    // undefined symbol: _ZN2cv3MatC1ERKS0_RKNS_5Rect_IiEE	(./libVisionProxy.so)
-    String cmdRet = ResourceLoader.get().runcmd("ldd -r " + lib);
-    String[] retLines;
-    boolean success = true;
-    retLines = cmdRet.split("\n");
-    String libName = lib.getName();
-    String libsMissing = "";
-    for (String line : retLines) {
-      if (line.contains("undefined symbol:") && line.contains(libName)) {
-        line = line.split("symbol:")[1].trim().split("\\s")[0];
-        libsMissing += line + ":";
-      }
-    }
-    if (libsMissing.isEmpty()) {
-      logPlus(lvl, "checking: should work: %s", libName);
-    } else {
-      logPlus(-1, "checking: might not work, has undefined symbols: %s", libName);
-      log(lvl, "%s", libsMissing);
-      success = false;
-    }
-    return success;
-  }
-  
-  private static boolean buildVision(String srcjar) {
-    File build = new File(workDir, buildFolder);
-    File source = new File(workDir, buildFolderSrc);
-    File stuff = new File(workDir, buildFolderStuff);
-    File incl = new File(workDir, buildFolderInclude);
-    
-    File javaHome = new File(System.getProperty("java.home"));
-    logPlus(lvl, "home of java: %s", javaHome);
-    File javaInclude = null;
-    File javaIncludeLinux = null;
-    
-    logPlus(lvl, "starting inline build: libVisionProxy.so");
-    
-    if (!new File(javaHome, "bin/javac").exists()) {
-      javaHome = javaHome.getParentFile();
-    }
-    if (!new File(javaHome, "bin/javac").exists()) {
-      javaHome = null;
-    }
-    if (javaHome != null) {
-      javaInclude = new File(javaHome, "include");
-      javaIncludeLinux = new File(javaInclude, "linux");
-      if (!new File(javaInclude, "jni.h").exists()) {
-        javaHome = null;
-      }
-    }
-    
-    String buildInclude = "";
-    String inclUsr = "/usr/include";
-    String inclUsrLocal = "/usr/local/include";
-    
-    boolean exportIncludeJava = false;
-    if (javaHome == null) {
-      //log(lvl, "JDK: not found - set JAVA_HOME to a valid JDK");
-      //buildComplete = false;
-      logPlus(lvl, "buildVision: JDK: not found - using the bundled include files");
-      buildInclude += " -I" + incl.getAbsolutePath();
-      exportIncludeJava = true;
-    } else {
-      log(lvl, "JDK: found at: %s", javaHome);
-      buildInclude += String.format("-I%s -I%s ",
-              javaInclude.getAbsolutePath(), javaIncludeLinux.getAbsolutePath());
-    }
-    
-    boolean exportIncludeOpenCV = false;
-    boolean exportIncludeTesseract = false;
-    
-    String inclLib = "opencv2";
-    if (!new File(inclUsr, inclLib).exists() && !new File(inclUsrLocal, inclLib).exists()) {
-      logPlus(lvl, "buildVision: opencv-include: not found - using the bundled include files");
-      exportIncludeOpenCV = true;
-      if (!exportIncludeJava) {
-        buildInclude += " -I" + incl.getAbsolutePath();
-      }
-    }
-    
-    inclLib = "tesseract";
-    if (!new File(inclUsr, inclLib).exists() && !new File(inclUsrLocal, inclLib).exists()) {
-      logPlus(lvl, "buildVision: tesseract-include: not found - using the bundled include files");
-      exportIncludeTesseract = true;
-      if (!exportIncludeOpenCV && !exportIncludeJava) {
-        buildInclude += " -I" + incl.getAbsolutePath();
-      }
-    }
-    
-    if (!exportIncludeOpenCV || !exportIncludeTesseract) {
-      buildInclude += " -I" + inclUsr + " -I" + inclUsrLocal;
-    }
-    
-    String mfFile;
-    String srcFile;
-    log(lvl, "buildVision: setting up the compile commands");
-    for (String sFile : buildSrcFiles) {
-      buildCompile += String.format("echo ----- %s\n", sFile);
-      buildCompile += String.format(buildCppFix, buildInclude);
-      mfFile = new File(stuff, sFile).getAbsolutePath();
-      srcFile = new File(source, sFile).getAbsolutePath();
-      buildCompile += String.format(buildCppMods, mfFile, mfFile, srcFile);
-      buildCompile += "\n";
-      buildLink += mfFile + ".o ";
-    }
-    log(lvl, "buildVision: setting up the link command");
-    buildLink += libOpenCVcore + " ";
-    buildLink += libOpenCVhighgui + " ";
-    buildLink += libOpenCVimgproc + " ";
-    buildLink += libTesseract + " ";
-    String libVisionPath = new File(build, libVision).getAbsolutePath();
-    buildLink += "-o " + libVisionPath;
-    
-    File cmdFile = new File(build, "runBuild");
-    ResourceLoader rl = ResourceLoader.forJar(srcjar);
-    if (rl != null) {
-      FileManager.deleteFileOrFolder(build.getAbsolutePath());
-      build.mkdirs();
-      source.mkdirs();
-      stuff.mkdirs();
-      
-      PrintStream out = null;
-      log(lvl, "-------------- content of created build script");
-      try {
-        out = new PrintStream(new FileOutputStream(cmdFile));
-        out.println("echo ----------- COMPILING");
-        out.print(buildCompile);
-        log(lvl, "----------- COMPILING\n%s", buildCompile);
-        out.println("echo ----------- LINKING");
-        out.println(buildLink);
-        log(lvl, "----------- LINKING\n%s\n----------- SCRIPT END", buildLink);
-        out.close();
-        logPlus(lvl, "buildVision: build script written to: %s", cmdFile);
-      } catch (Exception ex) {
-        logPlus(-1, "buildVision: cannot write %s", cmdFile);
-        return false;
-      }
-      rl.export("srcnativelibs/Vision#", source.getAbsolutePath());
-      if (exportIncludeJava) {
-        rl.export("srcnativelibs/VisionInclude/Java#", incl.getAbsolutePath());
-      }
-      if (exportIncludeOpenCV) {
-        rl.export("srcnativelibs/VisionInclude/OpenCV#", incl.getAbsolutePath());
-      }
-      if (exportIncludeTesseract) {
-        rl.export("srcnativelibs/VisionInclude/Tesseract#", incl.getAbsolutePath());
-      }
-      cmdFile.setExecutable(true);
-    } else {
-      logPlus(-1, "buildVision: cannot export lib sources");
-      return false;
-    }
-    
-    JFrame spl = null;
-    if (opencvAvail && tessAvail) {
-      spl = showSplash(libVision, "running build script");
-      logPlus(lvl, "buildVision: running build script");
-      String cmdRet = rl.runcmd(cmdFile.getAbsolutePath());
-      if (cmdRet.contains(cmdError)) {
-        logPlus(-1, "buildVision: build script returns error:\n%s", cmdRet);
-        closeSplash(spl);
-        return false;
-      } else {
-        logPlus(lvl, "buildVision: checking created libVisionProxy.so");
-        if (!runLdd(new File(libVisionPath))) {
-          logPlus(-1, "------- output of the build run\n%s", cmdRet);
-          closeSplash(spl);
-          return false;
-        }
-      }
-    }
-    try {
-      folderLibsLux.mkdirs();
-      FileManager.xcopy(libVisionPath, new File(folderLibsLux, libVision).getAbsolutePath());
-    } catch (IOException ex) {
-      logPlus(-1, "could not copy built libVisionProxy.so to libs folder\n%s", ex.getMessage());
-      closeSplash(spl);
-      return false;
-    }
-    libsProvided = true;
-    closeSplash(spl);
-    logPlus(lvl, "ending inline build: success: libVisionProxy.so");
-    return true;
-  }
-  
-//</editor-fold>
   
   private static void runScriptTest(String[] testargs) {
     try {
