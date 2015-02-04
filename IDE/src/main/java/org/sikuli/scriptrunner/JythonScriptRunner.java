@@ -6,7 +6,7 @@
  */
 package org.sikuli.scriptrunner;
 
-import org.sikuli.script.JythonHelper;
+import org.sikuli.util.JythonHelper;
 import java.io.File;
 import java.io.InputStream;
 import java.io.PipedInputStream;

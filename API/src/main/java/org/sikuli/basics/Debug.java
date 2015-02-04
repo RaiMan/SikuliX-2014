@@ -344,9 +344,9 @@ public class Debug {
     if (fileName != null) {
       if ("".equals(fileName)) {
         if (Settings.isMacApp) {
-          fileName = "SikuliLog.txt";
+          fileName = "SikulixLog.txt";
         } else {
-          fileName = FileManager.slashify(System.getProperty("user.dir"), true) + "SikuliLog.txt";
+          fileName = FileManager.slashify(System.getProperty("user.dir"), true) + "SikulixLog.txt";
         }
       }
       try {
@@ -451,6 +451,10 @@ public class Debug {
   }
   
   public static void on(int level) {
+    setDebugLevel(level);
+  }
+  
+  public static void on(String level) {
     setDebugLevel(level);
   }
   
@@ -564,6 +568,9 @@ public class Debug {
 			}
       log(-1, actionPrefix, message, args);
     }
+    if (is(3)) {
+      logx(3, message, args);
+    }
   }
 
   /**
@@ -589,6 +596,9 @@ public class Debug {
 				return;
 			}
       log(-1, infoPrefix, message, args);
+    }
+    if (is(3)) {
+      logx(3, message, args);
     }
   }
 
@@ -677,6 +687,8 @@ public class Debug {
       sout = log(level, errorPrefix, message, args);
     } else if (level == -2) {
       sout = log(level, actionPrefix, message, args);
+    } else if (level == -3) {
+      sout = log(level, "", message, args);
     } else {
       sout = log(level, debugPrefix, message, args);
     }
@@ -691,7 +703,9 @@ public class Debug {
       if (Settings.LogTime && level != -99) {
         stime = String.format(" (%s)", df.format(new Date()));
       }
-			prefix = "[" + prefix + stime + "] ";
+			if (!prefix.isEmpty()) {
+        prefix = "[" + prefix + stime + "] ";
+      }
       sout = String.format(message, args);
       boolean isRedirected = false;
 			if (level > -99) {

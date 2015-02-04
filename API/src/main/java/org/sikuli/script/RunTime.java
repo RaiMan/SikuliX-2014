@@ -62,11 +62,7 @@ public class RunTime {
   }
 
   private void logp(String message, Object... args) {
-    if (runningWinApp) {
-      log(0, message, args);
-    } else {
-      System.out.println(String.format(message, args));
-    }
+    Debug.logx(-3, message, args);
   }
 
   private void logp(int level, String message, Object... args) {
@@ -2261,7 +2257,7 @@ int nMonitors = 0;
   }
 
   public static int checkArgs(String[] args, Type typ) {
-    int debugLevel = -1;
+    int debugLevel = -99;
     List<String> options = new ArrayList<String>();
     options.addAll(Arrays.asList(args));
     for (int n = 0; n < options.size(); n++) {
@@ -2270,16 +2266,22 @@ int nMonitors = 0;
         continue;
       }
       if (opt.startsWith("-d")) {
-        int nD = -1;
+        debugLevel = -1;
         try {
-          nD = n + 1 == options.size() ? 1 : Integer.decode(options.get(n + 1));
+          debugLevel = n + 1 == options.size() ? -1 : Integer.decode(options.get(n + 1));
         } catch (Exception ex) {
-          nD = 1;
+          debugLevel = -1;
         }
-        if (nD > -1) {
-          debugLevel = nD;
-          Debug.setDebugLevel(nD);
+        if (debugLevel > -1) {
+          Debug.on(debugLevel);
         }
+      }
+      if (Type.IDE.equals(typ) && debugLevel == -1) {
+        Debug.on(3);
+        Debug.log(3, "RunTime: option -d detected --- log goes to SikulixLog.txt");
+        Debug.setLogFile("");
+        Settings.LogTime = true;
+        System.setProperty("sikuli.console", "false");
       }
     }
     return debugLevel;

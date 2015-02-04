@@ -157,12 +157,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
       cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
-      if (cmdValue == null) {
-        Debug.setDebugLevel(3);
-        Debug.setLogFile("");
-        Settings.LogTime = true;
-      } else {
-        Debug.setDebugLevel(cmdValue);
+      if (cmdValue != null) {
+        Debug.on(cmdValue);
       }
     }
 

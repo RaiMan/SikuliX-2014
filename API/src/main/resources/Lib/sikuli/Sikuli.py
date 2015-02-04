@@ -80,7 +80,6 @@ Debug.log(4, "Jython: sikuli: Sikuli: import Sikulix")
 from org.sikuli.script import Sikulix
 
 Debug.log(4, "Jython: sikuli: Sikuli: import ScriptRunner")
-
 try:
 	from org.sikuli.scriptrunner import ScriptRunner
 except:

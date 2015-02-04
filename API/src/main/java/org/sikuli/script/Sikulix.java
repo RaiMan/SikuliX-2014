@@ -6,6 +6,7 @@
  */
 package org.sikuli.script;
 
+import org.sikuli.util.JythonHelper;
 import java.awt.Dimension;
 import java.io.File;
 import java.net.URL;
@@ -78,6 +79,8 @@ public class Sikulix {
     if (dl > -1) {
       testNumber = dl;
       Debug.on(3);
+    } else {
+      testNumber = -1;
     }
     
     rt = RunTime.get();

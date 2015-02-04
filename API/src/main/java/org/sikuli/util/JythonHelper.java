@@ -1,4 +1,4 @@
-package org.sikuli.script;
+package org.sikuli.util;
 
 import java.io.File;
 import java.lang.reflect.Constructor;
@@ -10,6 +10,8 @@ import java.util.List;
 //import org.python.util.PythonInterpreter;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.script.ImagePath;
+import org.sikuli.script.RunTime;
 //import org.sikuli.ide.SikuliIDE;
 
 public class JythonHelper {
@@ -19,21 +21,23 @@ public class JythonHelper {
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static final String me = "JythonSupport: ";
 	private static int lvl = 3;
-	protected void log(int level, String message, Object... args) {
+	public void log(int level, String message, Object... args) {
 		Debug.logx(level,	me + message, args);
 	}
-  protected void logp(String message, Object... args) {
-    if (runTime.runningWinApp) {
-      log(0, message, args);
-    } else {
-      System.out.println(String.format(message, args));
+
+  private void logp(String message, Object... args) {
+    Debug.logx(-3, message, args);
+  }
+
+  private void logp(int level, String message, Object... args) {
+    if (level <= Debug.getDebugLevel()) {
+      logp(message, args);
     }
   }
 
-  protected void terminate(int retVal, String msg, Object... args) {
+  public void terminate(int retVal, String msg, Object... args) {
     runTime.terminate(retVal, me + msg, args);
   }
-
 	//</editor-fold>
 
   static JythonHelper instance = null;
@@ -283,7 +287,7 @@ public class JythonHelper {
       getSysPath();
       log(lvl, "***** Jython sys.path");
       for (int i = 0; i < sysPath.size(); i++) {
-        logp("%2d: %s", i, sysPath.get(i));
+        logp(lvl, "%2d: %s", i, sysPath.get(i));
       }
       log(lvl, "***** Jython sys.path end");
 		}
