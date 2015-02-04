@@ -56,6 +56,7 @@ public class RunTime {
   private int lvl = 3;
   private int minLvl = lvl;
   private static String preLogMessages = "";
+  public String runCmdError = "*** error ***";
 
   private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -2178,7 +2179,7 @@ int nMonitors = 0;
 //      runcmd(new String[]{"chmod", "ugo+x", args[0]});
 //    }
     String result = "";
-    String error = "*** error ***\n";
+    String error = runCmdError + "\n";
     boolean hasError = false;
     int retVal;
     try {

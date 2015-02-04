@@ -1,3 +1,9 @@
+/*
+ * Copyright 2010-2015, Sikuli.org, sikulix.com
+ * Released under the MIT License.
+ *
+ * RaiMan 2015
+ */
 package org.sikuli.util;
 
 import java.io.File;
