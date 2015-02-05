@@ -78,7 +78,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   private JXCollapsiblePane _cmdList;
   private SikuliIDEStatusBar _status = null;
   private ButtonCapture _btnCapture;
-  private ButtonRun _btnRun, _btnRunViz;
+  private ButtonRun _btnRun = null, _btnRunViz = null;
   private boolean ideIsRunningScript = false;
   private JXSearchField _searchField;
   private JMenuBar _menuBar = new JMenuBar();
@@ -216,6 +216,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       log(-1, "Problem loading UIManager!\nError: %s", e.getMessage());
     }
 
+    sikulixIDE.initHotkeys();
 		ScriptRunner.initScriptingSupport();
 		IDESupport.initIDESupport();
     sikulixIDE.initSikuliIDE(args);
@@ -289,14 +290,12 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     c.doLayout();
 
     initShortcutKeys();
-    initHotkeys();
     setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
     initWindowListener();
     initTooltip();
 
     autoCheckUpdate();
 
-    _inited = true;
     try {
       getCurrentCodePane().requestFocus();
     } catch (Exception e) {
@@ -311,6 +310,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     Debug.info("IDE startup: %4.1f seconds", (new Date().getTime() - start)/1000.0);
     setVisible(true);
     _mainSplitPane.setDividerLocation(0.6);
+    _inited = true;
     return; // as breakpoint
   }
 
@@ -2481,8 +2481,10 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   public void onQuickCapture(String arg) {
-    Debug.log(3, "QuickCapture");
-    _btnCapture.capture(0);
+    if (isInited()) {
+      Debug.log(3, "QuickCapture");
+      _btnCapture.capture(0);
+    }
   }
 
   public void removeStopHotkey() {
@@ -2500,8 +2502,15 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
   public void onStopRunning() {
     Debug.log(3, "StopRunning after AbortKey");
-    _btnRun.stopRunning();
-    _btnRunViz.stopRunning();
+    if (_btnRun != null) {
+      _btnRun.stopRunning();
+    }
+    if (_btnRunViz != null) {
+      _btnRunViz.stopRunning();
+    }
+    if (_btnRun == null && _btnRunViz == null) {
+      System.exit(1);
+    }
     org.sikuli.script.Sikulix.cleanUp(-1);
     this.setVisible(true);
   }
