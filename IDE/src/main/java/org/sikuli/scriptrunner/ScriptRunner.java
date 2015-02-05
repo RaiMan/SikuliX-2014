@@ -332,6 +332,7 @@ public class ScriptRunner {
   }
 
   public static IScriptRunner getRunner(String script, String type) {
+    initScriptingSupport();
     IScriptRunner currentRunner = null;
     String ending = null;
     if (script != null) {
@@ -387,7 +388,11 @@ public class ScriptRunner {
    */
   public static void runscript(String[] args) {
     
-    initScriptingSupport();
+    if (isRunningScript) {
+      System.out.println("[error] SikuliScript: can only run one at a time!");
+      return;
+    }
+
     IScriptRunner currentRunner = null;
     
     if (args != null && args.length > 1 && args[0].startsWith("-testSetup")) {
@@ -410,10 +415,6 @@ public class ScriptRunner {
       return;
     }
     
-    if (isRunningScript) {
-      System.out.println("[error] SikuliScript: can only run one at a time!");
-      return;
-    }
     isRunningScript = true;
     
     CommandArgs cmdArgs = new CommandArgs("SCRIPT");
@@ -504,9 +505,10 @@ public class ScriptRunner {
     
     if (runScripts != null && runScripts.length > 0) {
       int exitCode = 0;
+      initScriptingSupport();
       for (String givenScriptName : runScripts) {
         exitCode = new RunBox(runAsTest).executeScript(givenScriptName, cmdArgs.getUserArgs());
-        if ( exitCode == -9999) {
+        if (exitCode == -9999) {
           continue;
         }
       }
@@ -696,7 +698,7 @@ public class ScriptRunner {
 					}
 				}
 				if (ScriptRunner.getRunner(null, runType) == null) {
-					log(-1, "No script supported by available runners in project %s", scrProject);
+					log(-1, "No supported script for available runners in project:\n%s", scrProject);
 					return null;
 				}
 			} else if ("jar".equals(scriptType)) {
