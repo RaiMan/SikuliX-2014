@@ -44,6 +44,7 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.scriptrunner.IScriptRunner;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
+import org.sikuli.idesupport.IDESplash;
 import org.sikuli.idesupport.IIDESupport;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.RunTime;
@@ -109,9 +110,29 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   private boolean showAbout = true;
   private boolean showPrefs = true;
   private boolean showQuit = true;
+  IDESplash ideSplash = null;
+  boolean idePause = false;
+  int waitBeforeVisible = 0;
   
+  private synchronized boolean setPause(Boolean state) {
+    if (state != null) {
+      idePause = state;
+    }
+    return idePause;
+  }
+  
+  private boolean getPause() {
+    return setPause(null);
+  }
 
-  static {
+  private void waitPause() {
+    if (getPause()) {
+      ideSplash.setVisible(false);
+      Sikulix.popup("Sorry, no options here yet!\nClick OK to continue!");
+      ideSplash.showAction(" ");
+      ideSplash.setVisible(true);
+      waitBeforeVisible = 2;
+    }
   }
 
   private SikuliIDE() {
@@ -144,7 +165,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         
     getInstance();
     log(3, "running with Locale: %s", SikuliIDEI18N.getLocaleShow());
-
+    
  		sikulixIDE.initNativeSupport();
 
     CommandArgs cmdArgs = new CommandArgs("IDE");
@@ -155,16 +176,25 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       System.exit(1);
     }
 
+    if (cmdLine.hasOption("h")) {
+      cmdArgs.printHelp();
+      System.exit(0);
+    }
+
+    if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname())
+            || cmdLine.hasOption(CommandArgsEnum.TEST.shortname())
+            || cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
+      log(lvl, "Switching to ScriptRunner with option -r, -t or -i");
+      ScriptRunner.runscript(args);
+    }
+
+    sikulixIDE.ideSplash = new IDESplash(runTime);
+
     if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
       cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
       if (cmdValue != null) {
         Debug.on(cmdValue);
       }
-    }
-
-    if (cmdLine.hasOption("h")) {
-      cmdArgs.printHelp();
-      System.exit(0);
     }
 
     if (cmdLine.hasOption("c")) {
@@ -190,13 +220,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       log(lvl, "requested to load: %s", loadScripts);
     }
 
-    if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname())
-            || cmdLine.hasOption(CommandArgsEnum.TEST.shortname())
-            || cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
-      log(lvl, "Switching to ScriptRunner with option -r, -t or -i");
-      ScriptRunner.runscript(args);
-    }
-
 //TODO how to differentiate open and run for doubleclick/drop scripts
     if (macOpenFiles != null) {
       for (File f : macOpenFiles) {
@@ -217,12 +240,16 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
 
     sikulixIDE.initHotkeys();
+    sikulixIDE.ideSplash.showAction("Interrupt with SHIFT-ALT-C");
+    sikulixIDE.ideSplash.showStep("Init ScriptingSupport");
+
 		ScriptRunner.initScriptingSupport();
 		IDESupport.initIDESupport();
     sikulixIDE.initSikuliIDE(args);
   }
 
   private void initSikuliIDE(String[] args) {
+    sikulixIDE.ideSplash.showStep("Reading Preferences");
     prefs = PreferencesUser.getInstance();
     //prefs.exportPrefs(new File(runTime.fUserDir, "SikulixIDEprefs.txt").getAbsolutePath());
     if (prefs.getUserType() < 0) {
@@ -248,6 +275,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     setSize(win.getSize());
     setLocation(_windowLocation);
 
+    sikulixIDE.ideSplash.showStep("Init Window");
 		Debug.log(3, "IDE: Adding components to window");
     initMenuBars(this);
     final Container c = getContentPane();
@@ -294,6 +322,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     initWindowListener();
     initTooltip();
 
+    sikulixIDE.ideSplash.showStep("Check for Updates");
     autoCheckUpdate();
 
     try {
@@ -301,6 +330,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     } catch (Exception e) {
     }
 
+    waitPause();
+    sikulixIDE.ideSplash.showStep("Restore last Session");    
     restoreSession(0);
     if (tabPane.getTabCount() == 0) {
       (new FileAction()).doNew(null);
@@ -308,10 +339,18 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     tabPane.setSelectedIndex(0);
 
     Debug.info("IDE startup: %4.1f seconds", (new Date().getTime() - start)/1000.0);
+    if (waitBeforeVisible > 0) {
+      try {
+        Thread.sleep(1000 * waitBeforeVisible);
+      } catch (InterruptedException ex) {
+      }
+    }
+    sikulixIDE.ideSplash.setVisible(false);
+    sikulixIDE.ideSplash.dispose();
+    sikulixIDE.ideSplash = null;
     setVisible(true);
     _mainSplitPane.setDividerLocation(0.6);
     _inited = true;
-    return; // as breakpoint
   }
 
   private void initNativeSupport() {
@@ -2156,11 +2195,13 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       srunner.execBefore(new String[]{"Settings.setShowActions(Settings.FALSE)"});
     }
 
-    public void stopRunning() {
+    public boolean stopRunning() {
       if (_runningThread != null) {
         _runningThread.interrupt();
         _runningThread.stop();
+        return true;
       }
+      return false;
     }
 
     private void initTooltip() {
@@ -2501,18 +2542,25 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   public void onStopRunning() {
-    Debug.log(3, "StopRunning after AbortKey");
+    Debug.log(3, "AbortKey was pressed");
+    boolean shouldCleanUp = true;
     if (_btnRun != null) {
-      _btnRun.stopRunning();
+      shouldCleanUp &= _btnRun.stopRunning();
     }
     if (_btnRunViz != null) {
-      _btnRunViz.stopRunning();
+      shouldCleanUp &= _btnRunViz.stopRunning();
     }
     if (_btnRun == null && _btnRunViz == null) {
-      System.exit(1);
+      ideSplash.showAction("... accepted - please wait ...");
+      setPause(true);
+      return;
     }
-    org.sikuli.script.Sikulix.cleanUp(-1);
-    this.setVisible(true);
+    if (shouldCleanUp) {
+      org.sikuli.script.Sikulix.cleanUp(-1);
+      this.setVisible(true);
+    } else {
+      Debug.log(3, "AbortKey was pressed, but nothing to stop here ;-)");
+    }
   }
 
   private void initHotkeys() {
