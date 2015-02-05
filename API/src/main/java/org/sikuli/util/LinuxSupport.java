@@ -8,12 +8,14 @@ package org.sikuli.util;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.zip.ZipEntry;
 import javax.swing.JFrame;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.basics.FileManager.FileFilter;
 import org.sikuli.basics.ResourceLoader;
 import org.sikuli.script.RunTime;
 
@@ -107,7 +109,7 @@ public class LinuxSupport {
     return new File(fLibs, libVision).exists() || new File(fLibs, libGrabKey).exists();
   }
   
-  static class LibsFilter implements FileManager.JarFileFilter {    
+  static class LibsFilter implements FilenameFilter {    
     String libName = "";
     String osArch = "";
     public LibsFilter(String name, String arch) {
@@ -115,8 +117,8 @@ public class LinuxSupport {
       osArch = arch;
     }
     @Override
-    public boolean accept(ZipEntry entry, String jarname) {
-      if (entry.getName().contains("libs" + osArch + "/" + libName)) {
+    public boolean accept(File dir, String name) {
+      if (dir.getName().contains("libs" +  osArch) && name.contains(libName)) {
         return true;
       }
       return false;
@@ -130,7 +132,7 @@ public class LinuxSupport {
     if (!fLibs.exists()) {
       fLibs.mkdirs();
     }
-    if (!fLibs.exists()) {
+    if (fLibs.exists()) {
       if (!new File(fLibs, libVision).exists()) {
         libsExport[0] = libVision;
         shouldExport = true;
@@ -144,7 +146,8 @@ public class LinuxSupport {
           if (exLib == null) {
             continue;
           }
-          FileManager.unpackJar(libsJar, fLibs.getAbsolutePath(), false, true, new LibsFilter(exLib, osArch));
+          runTime.extractResourcesToFolderFromJar(libsJar, "/sikulixlibs/linux", fLibs, new LibsFilter(exLib, osArch));
+//          FileManager.unpackJar(libsJar, fLibs.getAbsolutePath(), false, true, new LibsFilter(exLib, osArch));
         }
       }
       libsCheck[0] = new File(fLibs, libVision).getAbsolutePath();
@@ -388,8 +391,8 @@ public class LinuxSupport {
     buildLink += "-o " + libVisionPath;
     
     File cmdFile = new File(build, "runBuild");
-    ResourceLoader rl = ResourceLoader.forJar(srcjar);
-    if (rl != null) {
+//    ResourceLoader rl = ResourceLoader.forJar(srcjar);
+//    if (rl != null) {
       FileManager.deleteFileOrFolder(build.getAbsolutePath());
       build.mkdirs();
       source.mkdirs();
@@ -411,18 +414,27 @@ public class LinuxSupport {
         logPlus(-1, "buildVision: cannot write %s", cmdFile);
         return false;
       }
-      rl.export("srcnativelibs/Vision#", source.getAbsolutePath());
+      boolean success = true;
+      success &= (null != runTime.extractResourcesToFolderFromJar(srcjar, 
+              "/srcnativelibs/Vision", source, null));
+//      rl.export("srcnativelibs/Vision#", source.getAbsolutePath());
       if (exportIncludeJava) {
-        rl.export("srcnativelibs/VisionInclude/Java#", incl.getAbsolutePath());
+        success &= (null != runTime.extractResourcesToFolderFromJar(srcjar, 
+                "/srcnativelibs/VisionInclude/Java", incl, null));
+//        rl.export("srcnativelibs/VisionInclude/Java#", incl.getAbsolutePath());
       }
       if (exportIncludeOpenCV) {
-        rl.export("srcnativelibs/VisionInclude/OpenCV#", incl.getAbsolutePath());
+        success &= (null != runTime.extractResourcesToFolderFromJar(srcjar, 
+                "/srcnativelibs/VisionInclude/OpenCV", incl, null));
+//        rl.export("srcnativelibs/VisionInclude/OpenCV#", incl.getAbsolutePath());
       }
       if (exportIncludeTesseract) {
-        rl.export("srcnativelibs/VisionInclude/Tesseract#", incl.getAbsolutePath());
+        success &= (null != runTime.extractResourcesToFolderFromJar(srcjar, 
+                "/srcnativelibs/VisionInclude/Tesseract", incl, null));
+//        rl.export("srcnativelibs/VisionInclude/Tesseract#", incl.getAbsolutePath());
       }
       cmdFile.setExecutable(true);
-    } else {
+    if (!success) {
       logPlus(-1, "buildVision: cannot export lib sources");
       return false;
     }
@@ -430,7 +442,7 @@ public class LinuxSupport {
     JFrame spl = null;
     if (opencvAvail && tessAvail) {
       logPlus(lvl, "buildVision: running build script");
-      String cmdRet = rl.runcmd(cmdFile.getAbsolutePath());
+      String cmdRet = runTime.runcmd(cmdFile.getAbsolutePath());
       if (cmdRet.contains(runTime.runCmdError)) {
         logPlus(-1, "buildVision: build script returns error:\n%s", cmdRet);
         return false;
