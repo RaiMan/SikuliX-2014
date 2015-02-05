@@ -240,7 +240,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
 
     sikulixIDE.initHotkeys();
-    sikulixIDE.ideSplash.showAction("Interrupt with SHIFT-ALT-C");
+    sikulixIDE.ideSplash.showAction("Interrupt with " + HotkeyManager.getInstance().getHotKeyText("Abort"));
     sikulixIDE.ideSplash.showStep("Init ScriptingSupport");
 
 		ScriptRunner.initScriptingSupport();
