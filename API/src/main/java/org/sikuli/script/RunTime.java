@@ -250,6 +250,8 @@ public class RunTime {
   public File fWorkDir = null;
   public File fTestFolder = null;
   public File fTestFile = null;
+  public File fAppPath = null;
+  public File fSikulixAppPath = null;
 
   private File fOptions = null;
   private Properties options = null;
@@ -322,6 +324,33 @@ int nMonitors = 0;
     fBaseTempPath = new File(fTempPath, "Sikulix");
     fBaseTempPath.mkdirs();
     BaseTempPath = fBaseTempPath.getAbsolutePath();
+    
+    String msg = "";
+    if (runningWindows) {
+      msg = "init: Windows %APPDATA% not valid (null or empty) or is not accessible";
+      tmpdir = System.getenv("APPDATA");
+      if (tmpdir != null && !tmpdir.isEmpty()) {
+        fAppPath = new File(tmpdir);
+      } else {
+      }
+    } else if (runningMac) {
+      msg = "init: Mac ~/Library/Application Support does not exist or is not accessible";
+      fAppPath = new File(fUserDir, "Library/Application Support");
+    } else if (runningLinux) {
+      msg = "init: Linux /usr/local/share does not exist or is not accessible";
+      fAppPath = new File("/usr/local/share");
+    }
+    fSikulixAppPath = new File(fAppPath, "Sikulix");
+    try {
+      if (!fSikulixAppPath.exists()) {
+        fSikulixAppPath.mkdirs();
+      }
+      if (!fSikulixAppPath.exists()) {
+        terminate (1, msg);
+      }
+    } catch (Exception ex) {
+      terminate (1, msg);
+    }
 //</editor-fold>
     
 //<editor-fold defaultstate="collapsed" desc="monitors">
@@ -441,7 +470,11 @@ int nMonitors = 0;
   
 //<editor-fold defaultstate="collapsed" desc="libs export">
   public void makeLibsFolder() {
-    fLibsFolder = new File(fTempPath, "SikulixLibs_" + sxBuildStamp);
+    if (runningLinux) {
+      fLibsFolder = new File(fSikulixAppPath, "SikulixLibs_" + sxBuildStamp);
+    } else {
+      fLibsFolder = new File(fTempPath, "SikulixLibs_" + sxBuildStamp);
+    }
     if (testing) {
       logp("***** for testing: delete libsfolder");
       FileManager.deleteFileOrFolder(fLibsFolder);
@@ -682,6 +715,7 @@ int nMonitors = 0;
     logp("java.io.tmpdir: %s", fTempPath);
     logp("running %dBit on %s (%s) %s", javaArch, osName, osVersion, appType);
     logp(javaShow);
+    logp("app data folder: %s", fSikulixAppPath);
     logp("libs folder: %s", fLibsFolder);
     if (runningJar) {
       logp("executing jar: %s", fSxBaseJar);
