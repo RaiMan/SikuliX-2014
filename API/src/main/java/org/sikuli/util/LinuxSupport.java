@@ -108,23 +108,7 @@ public class LinuxSupport {
   public static boolean existsLibs() {
     return new File(fLibs, libVision).exists() || new File(fLibs, libGrabKey).exists();
   }
-  
-  static class LibsFilter implements FilenameFilter {    
-    String libName = "";
-    String osArch = "";
-    public LibsFilter(String name, String arch) {
-      libName = name;
-      osArch = arch;
-    }
-    @Override
-    public boolean accept(File dir, String name) {
-      if (dir.getName().contains("libs" +  osArch) && name.contains(libName)) {
-        return true;
-      }
-      return false;
-    }
-  }
-  
+    
   public static boolean processLibs1(String libsJar, final String osArch) {
     boolean shouldExport = false;
     boolean shouldBuildVisionNow = false;
@@ -146,7 +130,8 @@ public class LinuxSupport {
           if (exLib == null) {
             continue;
           }
-          runTime.extractResourcesToFolderFromJar(libsJar, "/sikulixlibs/linux", fLibs, new LibsFilter(exLib, osArch));
+          runTime.extractResourcesToFolderFromJar(libsJar, "/sikulixlibs/linux/libs" + osArch,
+                  fLibs, null);
 //          FileManager.unpackJar(libsJar, fLibs.getAbsolutePath(), false, true, new LibsFilter(exLib, osArch));
         }
       }
@@ -273,6 +258,7 @@ public class LinuxSupport {
       checkSuccess = false;
     }
     
+//    return false; // for testing
     return checkSuccess;
   }
   
@@ -439,7 +425,6 @@ public class LinuxSupport {
       return false;
     }
     
-    JFrame spl = null;
     if (opencvAvail && tessAvail) {
       logPlus(lvl, "buildVision: running build script");
       String cmdRet = runTime.runcmd(cmdFile.getAbsolutePath());
