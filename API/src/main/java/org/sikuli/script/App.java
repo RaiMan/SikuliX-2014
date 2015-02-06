@@ -53,7 +53,7 @@ public class App {
 			RunTime.loadLibrary(libName);
 		}
     appsWindows = new HashMap<Type, String>();
-    appsWindows.put(Type.EDITOR, "Editor");
+    appsWindows.put(Type.EDITOR, "Notepad");
     appsWindows.put(Type.BROWSER, "Google Chrome");
     appsWindows.put(Type.VIEWER, "");
     appsMac = new HashMap<Type, String>();
@@ -79,6 +79,24 @@ public class App {
             win = app.window();
             aRegion.click(win);
             aRegion.write("#M.a#B.");
+            return win;
+          } else {
+            app.open();
+            win = app.waitForWindow();
+            app.focus();
+            aRegion.wait(0.5);
+            aRegion.click(win);
+            return win;
+          }
+        }      
+        if (runTime.runningWindows) {
+          app = new App(appsWindows.get(appType));
+          if (app.window() != null) {
+            app.focus();
+            aRegion.wait(0.5);
+            win = app.window();
+            aRegion.click(win);
+            aRegion.write("#C.a#B.");
             return win;
           } else {
             app.open();
