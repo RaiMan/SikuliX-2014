@@ -200,7 +200,7 @@ public class RobotDesktop extends Robot implements IRobot {
     if (keys != null && !"".equals(keys)) {
       for (int i = 0; i < keys.length(); i++) {
         if (heldKeys.indexOf(keys.charAt(i)) == -1) {
-          Debug.log(5, "press: " + keys.charAt(i));
+          Debug.log(4, "press: " + keys.charAt(i));
           typeChar(keys.charAt(i), IRobot.KeyMode.PRESS_ONLY);
           heldKeys += keys.charAt(i);
         }
@@ -222,7 +222,7 @@ public class RobotDesktop extends Robot implements IRobot {
       for (int i = 0; i < keys.length(); i++) {
         int pos;
         if ((pos = heldKeys.indexOf(keys.charAt(i))) != -1) {
-          Debug.log(5, "release: " + keys.charAt(i));
+          Debug.log(4, "release: " + keys.charAt(i));
           typeChar(keys.charAt(i), IRobot.KeyMode.RELEASE_ONLY);
           heldKeys = heldKeys.substring(0, pos)
                   + heldKeys.substring(pos + 1);
@@ -270,7 +270,7 @@ public class RobotDesktop extends Robot implements IRobot {
 
   @Override
   public void typeChar(char character, KeyMode mode) {
-    Debug.log(3, "Robot: doType: %s ( %d )",
+    Debug.log(4, "Robot: doType: %s ( %d )",
             KeyEvent.getKeyText(Key.toJavaKeyCode(character)[0]).toString(),
             Key.toJavaKeyCode(character)[0]);
     doType(mode, Key.toJavaKeyCode(character));
@@ -279,7 +279,7 @@ public class RobotDesktop extends Robot implements IRobot {
 
   @Override
   public void typeKey(int key) {
-    Debug.log(3, "Robot: doType: %s ( %d )", KeyEvent.getKeyText(key), key);
+    Debug.log(4, "Robot: doType: %s ( %d )", KeyEvent.getKeyText(key), key);
     if (Settings.isMac()) {
       if (key == Key.toJavaKeyCodeFromText("#N.")) {
         doType(KeyMode.PRESS_ONLY, Key.toJavaKeyCodeFromText("#C."));

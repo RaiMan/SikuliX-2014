@@ -164,7 +164,9 @@ public class JythonScriptRunner implements IScriptRunner {
 		if (isFromIDE && forIDE.length > 1 && forIDE[0] != null ) {
 			isCompileOnly = forIDE[0].toUpperCase().equals(COMPILE_ONLY);
 		}
-    JythonHelper.get().insertSysPath(fScriptPath);
+    if (isFromIDE) {
+      JythonHelper.get().insertSysPath(fScriptPath);
+    }
 		pyFile = new File(pyFile.getAbsolutePath());
 		fillSysArgv(pyFile, argv);
 		int exitCode = 0;

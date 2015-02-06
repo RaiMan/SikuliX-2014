@@ -123,21 +123,35 @@ public abstract class HotkeyManager {
    * @return success
    */
   public boolean addHotkey(String hotkeyType, HotkeyListener callback) {
-    PreferencesUser pref;
+    PreferencesUser pref = PreferencesUser.getInstance();
     if (hotkeyType == HotkeyTypeCapture) {
-      pref = PreferencesUser.getInstance();
       HotkeyTypeCaptureKey = pref.getCaptureHotkey();
       HotkeyTypeCaptureMod = pref.getCaptureHotkeyModifiers();
       return installHotkey(HotkeyTypeCaptureKey, HotkeyTypeCaptureMod, callback, hotkeyType);
     } else if (hotkeyType == HotkeyTypeAbort) {
-      pref = PreferencesUser.getInstance();
       HotkeyTypeAbortKey = pref.getStopHotkey();
       HotkeyTypeAbortMod = pref.getStopHotkeyModifiers();
       return installHotkey(HotkeyTypeAbortKey, HotkeyTypeAbortMod, callback, hotkeyType);
     } else {
-      Debug.error("HotkeyManager: addHotkey: using HotkeyType as %s not supported yet", hotkeyType);
+      Debug.error("HotkeyManager: addHotkey: HotkeyType %s not supported", hotkeyType);
       return false;
     }
+  }
+  
+  public String getHotKeyText(String hotkeyType) {
+    PreferencesUser pref = PreferencesUser.getInstance();
+    String key = "";
+    String mod = "";
+    if (hotkeyType == HotkeyTypeCapture) {
+      key = getKeyCodeText(pref.getCaptureHotkey());
+      mod = getKeyModifierText(pref.getCaptureHotkeyModifiers());
+    } else if (hotkeyType == HotkeyTypeAbort) {
+      key = getKeyCodeText(pref.getStopHotkey());
+      mod = getKeyModifierText(pref.getStopHotkeyModifiers());
+    } else {
+      Debug.error("HotkeyManager: getHotKeyText: HotkeyType %s not supported", hotkeyType);
+    }
+    return mod + " " + key;
   }
 
   /**
