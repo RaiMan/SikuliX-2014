@@ -283,7 +283,7 @@ public class RunTime {
 
 GraphicsEnvironment genv = null;
 GraphicsDevice[] gdevs;
-public Rectangle[] monitorBounds;
+public Rectangle[] monitorBounds = null;
 Rectangle rAllMonitors;
 int mainMonitor = -1;
 int nMonitors = 0;
@@ -325,31 +325,35 @@ int nMonitors = 0;
 //</editor-fold>
     
 //<editor-fold defaultstate="collapsed" desc="monitors">
-    genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
-    gdevs = genv.getScreenDevices();
-    nMonitors = gdevs.length;
-    if (nMonitors == 0) {
-      terminate(1, "GraphicsEnvironment has no ScreenDevices");
-    }
-    monitorBounds = new Rectangle[nMonitors];
-    rAllMonitors = null;
-    for (int i = 0; i < nMonitors; i++) {
-      monitorBounds[i] = gdevs[i].getDefaultConfiguration().getBounds();
-      if (null != rAllMonitors) {
-        rAllMonitors = rAllMonitors.union(monitorBounds[i]);
+    if (!isHeadless()) {
+      genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      gdevs = genv.getScreenDevices();
+      nMonitors = gdevs.length;
+      if (nMonitors == 0) {
+        terminate(1, "GraphicsEnvironment has no ScreenDevices");
       }
-      if (monitorBounds[i].contains(new Point(0, 0))) {
+      monitorBounds = new Rectangle[nMonitors];
+      rAllMonitors = null;
+      for (int i = 0; i < nMonitors; i++) {
+        monitorBounds[i] = gdevs[i].getDefaultConfiguration().getBounds();
+        if (null != rAllMonitors) {
+          rAllMonitors = rAllMonitors.union(monitorBounds[i]);
+        }
+        if (monitorBounds[i].contains(new Point(0, 0))) {
+          if (mainMonitor < 0) {
+            mainMonitor = i;
+            log(lvl, "ScreenDevice %d contains (0,0) --- will be used as primary", i);
+        } else {
+            log(lvl, "ScreenDevice %d too contains (0,0)!", i);
+          }
+        }
         if (mainMonitor < 0) {
-          mainMonitor = i;
-          log(lvl, "ScreenDevice %d contains (0,0) --- will be used as primary", i);
-      } else {
-          log(lvl, "ScreenDevice %d too contains (0,0)!", i);
+            log(lvl, "No ScreenDevice contains (0,0) --- using 0 as primary: %s", monitorBounds[0]);
+            mainMonitor = 0;
         }
       }
-      if (mainMonitor < 0) {
-          log(lvl, "No ScreenDevice contains (0,0) --- using 0 as primary: %s", monitorBounds[0]);
-          mainMonitor = 0;
-      }
+    } else {
+      log(lvl, "running in headless environment");
     }
 //</editor-fold>
     
@@ -2093,15 +2097,24 @@ int nMonitors = 0;
   }
 
   public Rectangle getMonitor(int n) {
+    if (isHeadless()) {
+      return new Rectangle(0, 0, 1, 1);
+    }
     n = (n<0 || n >= nMonitors) ? mainMonitor : n;
     return monitorBounds[n];
   }
   
   public Rectangle getAllMonitors() {
+    if (isHeadless()) {
+      return new Rectangle(0, 0, 1, 1);
+    }
     return rAllMonitors;
   }
   
   public Rectangle hasPoint(Point aPoint) {
+    if (isHeadless()) {
+      return new Rectangle(0, 0, 1, 1);
+    }
     for (Rectangle rMon : monitorBounds) {
       if (rMon.contains(aPoint)) {
         return rMon;
@@ -2111,6 +2124,9 @@ int nMonitors = 0;
   }
   
   public Rectangle hasRectangle(Rectangle aRect) {
+    if (isHeadless()) {
+      return new Rectangle(0, 0, 1, 1);
+    }
     return hasPoint(aRect.getLocation());
   }
   

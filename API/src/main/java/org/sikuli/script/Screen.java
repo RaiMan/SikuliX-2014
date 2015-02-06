@@ -303,7 +303,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    * @return the physical coordinate/size <br>as AWT.Rectangle to avoid mix up with getROI
    */
   public static Rectangle getBounds(int id) {
-    return runTime.monitorBounds[getValidID(id)];
+    return runTime.getMonitor(getValidID(id));
   }
 
   /**
@@ -353,7 +353,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 	 */
   @Override
   public Rectangle getBounds() {
-    return runTime.monitorBounds[curID];
+    return runTime.getMonitor(curID);
   }
 
   /**
