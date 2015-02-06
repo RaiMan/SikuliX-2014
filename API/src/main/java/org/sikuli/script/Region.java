@@ -3594,7 +3594,7 @@ public class Region {
     Settings.TypeDelay = 0.0;
     robot.typeStarts();
     for (int i = 0; i < text.length(); i++) {
-      log(lvl, "write: (%d) %s", i, text.substring(i));
+      log(lvl + 1, "write: (%d) %s", i, text.substring(i));
       c = text.charAt(i);
       token = null;
       boolean isModifier = false;
@@ -3618,9 +3618,9 @@ public class Region {
       }
       Integer key = -1;
       if (token == null) {
-        log(3, "%d: %s", i, c);
+        log(lvl + 1, "write: %d: %s", i, c);
       } else {
-        log(lvl, "write: token at %d: %s", i, token);
+        log(lvl + 1, "write: token at %d: %s", i, token);
         int repeat = 0;
         if (token.toUpperCase().startsWith("#W")) {
           if (token.length() > 3) {
@@ -3632,9 +3632,9 @@ public class Region {
             }
             if ((token.startsWith("#W") && t > 60) || pause > 20) {
               pause = 20 + (t > 1000 ? 1000 : t);
-              log(lvl, "write: type delay: " + t);
+              log(lvl + 1, "write: type delay: " + t);
             } else {
-              log(lvl, "write: wait: " + t);
+              log(lvl + 1, "write: wait: " + t);
               robot.delay((t < 60 ? t * 1000 : t));
             }
             continue;
@@ -3657,9 +3657,9 @@ public class Region {
         }
         if (-1 < (key = Key.toJavaKeyCodeFromText(token))) {
           if (repeat > 0) {
-            log(3, "write: %s Repeating: %d", token, repeat);
+            log(lvl + 1, "write: %s Repeating: %d", token, repeat);
           } else {
-            log(3, "write: %s", tokenSave);
+            log(lvl + 1, "write: %s", tokenSave);
             repeat = 1;
           }
           i += tokenSave.length() - 1;
@@ -3680,7 +3680,7 @@ public class Region {
         }
       }
       if (!modifier.isEmpty()) {
-        log(3, "write: modifier + " + modifier);
+        log(lvl + 1, "write: modifier + " + modifier);
         for (int n = 0; n < modifier.length(); n++) {
           robot.keyDown(Key.toJavaKeyCodeFromText(String.format("#%s.", modifier.substring(n, n + 1))));
         }
@@ -3691,7 +3691,7 @@ public class Region {
         robot.typeChar(c, IRobot.KeyMode.PRESS_RELEASE);
       }
       if (!modifier.isEmpty()) {
-        log(3, "write: modifier - " + modifier);
+        log(lvl + 1, "write: modifier - " + modifier);
         for (int n = 0; n < modifier.length(); n++) {
           robot.keyUp(Key.toJavaKeyCodeFromText(String.format("#%s.", modifier.substring(n, n + 1))));
         }

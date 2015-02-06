@@ -97,19 +97,12 @@ public class Sikulix {
     } else {
       rt = RunTime.get();
       Debug.on(3);
+      Settings.InfoLogs = false;
+      Settings.ActionLogs = false;
       
-      String jythonJar = rt.SikuliLocalRepo + rt.SikuliJythonMaven; 
-      log(0, "%s", rt.fSxBaseJar);
-      log(0, jythonJar);
-      rt.addToClasspath(jythonJar);
-      addFromProject("API", "sikulixapi-1.1.0.jar");
-      //JythonHelper.get().addSysPath("/Users/raimundhocke/SikuliX/SikuliX-2014/API/target/classes/Lib");
-      JythonHelper.get().addSysPath("C:/Users/RaiMan/Documents/GitHub/SikuliX-2014/API/target/sikulixapi-1.1.0.jar/Lib");
-      //rt.dumpClassPath();
-      //Debug.on(4);
-      SikulixForJython.get();
-      //new org.sikuli.basics.SikulixForJython();
-      String stuff = rt.resourceListAsString("Lib/sikuli", null);
+      Region eWin = App.start(App.Type.EDITOR);
+      eWin.write("Jump\nJump and Run\nRun and Jump");
+
       if (rt.runningWinApp) {        
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
         try {
