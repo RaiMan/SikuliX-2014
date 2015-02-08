@@ -2563,7 +2563,10 @@ public class Region {
           }
         }
         if (findingText) {
-          f.findAllText((String) ptn);
+					if (TextRecognizer.getInstance() != null) {
+						log(lvl, "doFindAll: Switching to TextSearch");
+            f.findAllText((String) ptn);
+          }
         }
       } else if (ptn instanceof Pattern) {
         if (((Pattern) ptn).isValid()) {

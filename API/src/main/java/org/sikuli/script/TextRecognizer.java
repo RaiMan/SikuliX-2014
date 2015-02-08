@@ -48,8 +48,8 @@ public class TextRecognizer {
       initSuccess = fTessdataPath.exists();
     }
     if(!initSuccess) {
-      fTessdataPath = new File(runTime.fLibsFolder, "tessdata");
-      if (!fTessdataPath.exists()) {
+      fTessdataPath = new File(runTime.fSikulixAppPath, "SikulixTesseract/tessdata");
+      if (!(initSuccess = fTessdataPath.exists())) {
         if (!(initSuccess = (null != runTime.extractResourcesToFolder("sikulixtessdata/", fTessdataPath, null)))) {
           Debug.error("TextRecognizer: init: export tessdata not possible - run setup with option 3");
         }
