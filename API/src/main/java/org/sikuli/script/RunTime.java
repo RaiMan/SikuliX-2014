@@ -137,6 +137,32 @@ public class RunTime {
 
       debugLevelSaved = Debug.getDebugLevel();
       debugLogfileSaved = Debug.logfile;
+      
+      String aFolder = System.getProperty("user.home");
+      if (aFolder == null || aFolder.isEmpty() || !(runTime.fUserDir = new File(aFolder)).exists()) {
+        runTime.terminate(-1, "JavaSystemProperty::user.home not valid");
+      }
+
+      aFolder = System.getProperty("user.dir");
+      if (aFolder == null || aFolder.isEmpty() || !(runTime.fWorkDir = new File(aFolder)).exists()) {
+        runTime.terminate(-1, "JavaSystemProperty::user.dir not valid");
+      }
+      
+      File fDebug = new File(runTime.fUserDir, "SikulixDebug.txt");
+      if (fDebug.exists()) {
+        if (Debug.getDebugLevel() == 0) {
+          Debug.setDebugLevel(3);
+        }
+        Debug.setLogFile(fDebug.getAbsolutePath());
+        if (Type.IDE.equals(typ)) {
+          System.setProperty("sikuli.console", "false");
+        }
+        runTime.logp("auto-debugging with level %d into:\n%s", Debug.getDebugLevel(), fDebug);
+      }
+
+      runTime.fTestFolder = new File(runTime.fUserDir, "SikulixTest");
+      runTime.fTestFile = new File(runTime.fTestFolder, "SikulixTest.txt");
+      
       runTime.loadOptions(typ);
       int dl = runTime.getOptionNumber("debug.level");
       if (dl > 0 && Debug.getDebugLevel() < 2) {
@@ -256,6 +282,7 @@ public class RunTime {
   private File fOptions = null;
   private Properties options = null;
   private String fnOptions = "SikulixOptions.txt";
+  private String fnPrefs = "SikulixPreferences.txt";
 
   public File fSxBase = null;
   public File fSxBaseJar = null;
@@ -321,35 +348,42 @@ int nMonitors = 0;
     } else {
       terminate(1, "init: java.io.tmpdir not valid (null or empty");
     }
+    for (String aFile : fTempPath.list()) {
+      if (aFile.startsWith("Sikulix")) {
+        FileManager.deleteFileOrFolder(new File(fTempPath, aFile));
+      }
+    }
     fBaseTempPath = new File(fTempPath, "Sikulix");
     fBaseTempPath.mkdirs();
     BaseTempPath = fBaseTempPath.getAbsolutePath();
     
     String msg = "";
+    fSikulixAppPath = new File("NotAvailable");
     if (runningWindows) {
-      msg = "init: Windows %APPDATA% not valid (null or empty) or is not accessible";
+      msg = "init: Windows: %APPDATA% not valid (null or empty) or is not accessible:\n%s";
       tmpdir = System.getenv("APPDATA");
       if (tmpdir != null && !tmpdir.isEmpty()) {
         fAppPath = new File(tmpdir);
-      } else {
-      }
+        fSikulixAppPath = new File(fAppPath, "Sikulix");
+      } 
     } else if (runningMac) {
-      msg = "init: Mac ~/Library/Application Support does not exist or is not accessible";
+      msg = "init: Mac: SikulxAppData does not exist or is not accessible:\n%s";
       fAppPath = new File(fUserDir, "Library/Application Support");
+      fSikulixAppPath = new File(fAppPath, "Sikulix");
     } else if (runningLinux) {
-      msg = "init: Linux /usr/local/share does not exist or is not accessible";
-      fAppPath = new File("/usr/local/share");
+      fAppPath = fUserDir;
+      fSikulixAppPath = new File(fAppPath, ".Sikulix");
+      msg = "init: Linux: SikulxAppData does not exist or is not accessible:\n%s";
     }
-    fSikulixAppPath = new File(fAppPath, "Sikulix");
     try {
       if (!fSikulixAppPath.exists()) {
         fSikulixAppPath.mkdirs();
       }
       if (!fSikulixAppPath.exists()) {
-        terminate (1, msg);
+        terminate (1, msg, fSikulixAppPath);
       }
     } catch (Exception ex) {
-      terminate (1, msg);
+      terminate (1, msg + "\n" + ex.toString(), fSikulixAppPath);
     }
 //</editor-fold>
     
@@ -470,11 +504,7 @@ int nMonitors = 0;
   
 //<editor-fold defaultstate="collapsed" desc="libs export">
   public void makeLibsFolder() {
-    if (runningLinux) {
-      fLibsFolder = new File(fSikulixAppPath, "SikulixLibs_" + sxBuildStamp);
-    } else {
-      fLibsFolder = new File(fTempPath, "SikulixLibs_" + sxBuildStamp);
-    }
+    fLibsFolder = new File(fSikulixAppPath, "SikulixLibs_" + sxBuildStamp);
     if (testing) {
       logp("***** for testing: delete libsfolder");
       FileManager.deleteFileOrFolder(fLibsFolder);
@@ -904,39 +934,6 @@ int nMonitors = 0;
 
 //<editor-fold defaultstate="collapsed" desc="options handling">
   private void loadOptions(Type typ) {
-
-    String tmpdir = System.getProperty("user.home");
-    if (tmpdir != null && !tmpdir.isEmpty()) {
-      fUserDir = new File(tmpdir);
-    } else {
-      fUserDir = new File(fTempPath, "SikuliXuser_" + userName);
-      FileManager.resetFolder(runTime.fUserDir);
-      log(-1, "init: user.home not valid (null or empty) - using empty:\n%s", fUserDir);
-    }
-    fTestFolder = new File(fUserDir, "SikulixTest");
-    fTestFile = new File(fTestFolder, "SikulixTest.txt");
-
-    tmpdir = System.getProperty("user.dir");
-    if (tmpdir != null && !tmpdir.isEmpty()) {
-      fWorkDir = new File(tmpdir);
-    } else {
-      fWorkDir = new File(fTempPath, "SikuliXwork");
-      FileManager.resetFolder(fWorkDir);
-      log(-1, "init: user.dir (working folder) not valid (null or empty) - using empty:\n%s", fWorkDir);
-    }
-
-    File fDebug = new File(fUserDir, "SikulixDebug.txt");
-    if (fDebug.exists()) {
-      if (Debug.getDebugLevel() == 0) {
-        Debug.setDebugLevel(3);
-      }
-      Debug.setLogFile(fDebug.getAbsolutePath());
-      if (Type.IDE.equals(typ)) {
-        System.setProperty("sikuli.console", "false");
-      }
-      logp("auto-debugging with level %d into %s", Debug.getDebugLevel(), fDebug);
-    }
-
     fOptions = new File(fWorkDir, fnOptions);
     if (!fOptions.exists()) {
       fOptions = new File(fUserDir, fnOptions);
@@ -952,7 +949,7 @@ int nMonitors = 0;
         options.load(is);
         is.close();
       } catch (Exception ex) {
-        log(-1, "while checking Options file: %s", fOptions);
+        log(-1, "while checking Options file:\n%s", fOptions);
         fOptions = null;
         options = null;
       }
