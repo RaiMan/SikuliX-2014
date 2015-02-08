@@ -6,11 +6,11 @@
  */
 package org.sikuli.script;
 
-import org.sikuli.util.JythonHelper;
 import java.awt.Dimension;
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.Iterator;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -71,7 +71,7 @@ public class Sikulix {
    *
    * @param args currently only -d is evaluated
    */
-  public static void main(String[] args) {
+  public static void main(String[] args) throws FindFailed {
 
     System.out.println("********** Running Sikulix.main");
 
@@ -100,8 +100,20 @@ public class Sikulix {
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
       
+      Settings.OcrTextSearch = true;
       Region eWin = App.start(App.Type.EDITOR);
-      eWin.write("Jump\nJump and Run\nRun and Jump");
+      eWin.write("\n Jump\n\n Jump and Run\n\nRun and Jump\n");
+      Region reg = eWin;
+      while (true) {
+        Match ms = reg.exists("Jump", 0);
+        if (ms == null) {
+          break;
+        }
+        ms.highlight(2);
+        ms.x = eWin.x;
+        ms.w = eWin.w;
+        reg = eWin.intersection(ms.below());
+      }
 
       if (rt.runningWinApp) {        
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
