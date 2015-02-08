@@ -515,23 +515,41 @@ int nMonitors = 0;
         terminate(1, "libs folder not available: " + fLibsFolder.toString());
       }
       log(lvl, "new libs folder at: %s", fLibsFolder);
-      String[] fpList = fTempPath.list(new FilenameFilter() {
-        @Override
-        public boolean accept(File dir, String name) {
-          if (name.contains("SikulixLibs")) {
-            return true;
-          }
-          return false;
+    }
+    String[] fpList = fTempPath.list(new FilenameFilter() {
+      @Override
+      public boolean accept(File dir, String name) {
+        if (name.contains("SikulixLibs")) {
+          return true;
         }
-      });
-      if (fpList.length > 1) {
-        log(lvl, "deleting obsolete libs folders");
-        for (String entry : fpList) {
-          if (entry.endsWith(sxBuildStamp)) {
-            continue;
-          }
-          FileManager.deleteFileOrFolder(new File(fTempPath, entry));
+        return false;
+      }
+    });
+    if (fpList.length > 1) {
+      log(lvl, "deleting obsolete libs folders");
+      for (String entry : fpList) {
+        if (entry.endsWith(sxBuildStamp)) {
+          continue;
         }
+        FileManager.deleteFileOrFolder(new File(fTempPath, entry));
+      }
+    }
+    fpList = fSikulixAppPath.list(new FilenameFilter() {
+      @Override
+      public boolean accept(File dir, String name) {
+        if (name.contains("SikulixLibs")) {
+          return true;
+        }
+        return false;
+      }
+    });
+    if (fpList.length > 1) {
+      log(lvl, "deleting obsolete libs folders");
+      for (String entry : fpList) {
+        if (entry.endsWith(sxBuildStamp)) {
+          continue;
+        }
+        FileManager.deleteFileOrFolder(new File(fSikulixAppPath, entry));
       }
     }
   }
