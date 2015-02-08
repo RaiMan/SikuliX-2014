@@ -969,11 +969,6 @@ public class RunSetup {
       try {
         log(lvl, "trying to run org.sikuli.script.Sikulix.testSetup()");
         runTime.makeLibsFolder();
-        if (runTime.fLibsFolder.exists() && getTess) {
-          runTime.extractResourcesToFolder("sikulixtessdata/",
-                  new File(runTime.fLibsFolder, "tessdata"), null);
-          getTess = false;
-        }        
         runTime.extractResourcesToFolderFromJar("sikulixapi.jar", "Lib", new File(fWorkDir, "Lib"), null);
         Class sysclass = URLClassLoader.class;
         Class SikuliCL = sysclass.forName("org.sikuli.script.Sikulix");
@@ -1012,11 +1007,6 @@ public class RunSetup {
         terminate("Functional test IDE did not work", 1);
       }
       runTime.makeLibsFolder();
-      if (runTime.fLibsFolder.exists() && getTess) {
-        runTime.extractResourcesToFolder("sikulixtessdata/",
-                new File(runTime.fLibsFolder, "tessdata"), null);
-        getTess = false;
-      }        
       String testMethod;
       if (getJython) {
         if (hasOptions) {
