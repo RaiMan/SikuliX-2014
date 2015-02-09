@@ -44,6 +44,7 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.SysJNA;
+import org.sikuli.util.LinuxSupport;
 
 /**
  * Intended to concentrate all, that is needed at startup of sikulix or sikulixapi
@@ -348,14 +349,52 @@ int nMonitors = 0;
     } else {
       terminate(1, "init: java.io.tmpdir not valid (null or empty");
     }
+    fBaseTempPath = new File(fTempPath, "Sikulix");
+    BaseTempPath = fBaseTempPath.getAbsolutePath();
+    
+    if (Type.IDE.equals(typ)) {
+      fBaseTempPath.mkdirs();
+      isRunning = new File(BaseTempPath, isRunningFilename);
+      try {
+        isRunning.createNewFile();
+        isRunningFile = new FileOutputStream(isRunning);
+        if (null == isRunningFile.getChannel().tryLock()) {
+          Sikulix.popError("Terminating on FatalError: IDE already running");
+          System.exit(1);
+        }
+      } catch (Exception ex) {
+        Sikulix.popError("Terminating on FatalError: cannot access IDE lock for/n" + isRunning);
+        System.exit(1);
+      }
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+        @Override
+        public void run() {
+          log(lvl, "final cleanup");
+          if (isRunning != null) {
+            try {
+              isRunningFile.close();
+            } catch (IOException ex) {
+            }
+            isRunning.delete();
+          }
+          FileManager.cleanTemp();
+        }
+      });
+    }
+
     for (String aFile : fTempPath.list()) {
       if (aFile.startsWith("Sikulix")) {
-        FileManager.deleteFileOrFolder(new File(fTempPath, aFile));
+        FileManager.deleteFileOrFolder(new File(fTempPath, aFile), new FileManager.FileFilter() {
+          @Override
+          public boolean accept(File entry) {
+            if (entry.getName().contains(isRunningFilename)) {
+              return false;
+            }
+            return true;
+          }
+        });
       }
     }
-    fBaseTempPath = new File(fTempPath, "Sikulix");
-    fBaseTempPath.mkdirs();
-    BaseTempPath = fBaseTempPath.getAbsolutePath();
     
     String msg = "";
     fSikulixAppPath = new File("NotAvailable");
@@ -648,40 +687,12 @@ int nMonitors = 0;
 //</editor-fold>  
 
 //<editor-fold defaultstate="collapsed" desc="init for IDE">
-  private File isRunning = null;
-  private FileOutputStream isRunningFile = null;
-
+  File isRunning = null;
+  FileOutputStream isRunningFile = null;
+  String isRunningFilename = "sikuli-ide-isrunning";
+  
   private void initIDEbefore() {
     log(lvl, "initIDEbefore: entering");
-    Runtime.getRuntime().addShutdownHook(new Thread() {
-      @Override
-      public void run() {
-        log(lvl, "final cleanup");
-        if (isRunning != null) {
-          try {
-            isRunningFile.close();
-          } catch (IOException ex) {
-          }
-          isRunning.delete();
-        }
-        FileManager.cleanTemp();
-      }
-    });
-
-    new File(BaseTempPath).mkdirs();
-    isRunning = new File(BaseTempPath, "sikuli-ide-isrunning");
-    try {
-      isRunning.createNewFile();
-      isRunningFile = new FileOutputStream(isRunning);
-      if (null == isRunningFile.getChannel().tryLock()) {
-        Sikulix.popError("Terminating on FatalError: IDE already running");
-        System.exit(1);
-      }
-    } catch (Exception ex) {
-      Sikulix.popError("Terminating on FatalError: cannot access IDE lock for/n" + isRunning);
-      System.exit(1);
-    }
-
     if (jreVersion.startsWith("1.6")) {
       String jyversion = "";
       Properties prop = new Properties();
@@ -861,6 +872,9 @@ int nMonitors = 0;
     log(level, msg, libName);
     if (vLib) {
       return true;
+    }
+    if (runningLinux) {
+      if (!LinuxSupport.runLdd(new File(fLibsFolder, libName)));
     }
     try {
       System.load(new File(fLibsFolder, libName).getAbsolutePath());
