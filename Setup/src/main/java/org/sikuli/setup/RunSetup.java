@@ -539,7 +539,11 @@ public class RunSetup {
       if (!proxyMsg.isEmpty()) {
         msg += proxyMsg + "\n";
       }
-      msg += "\n--- Native support libraries for " + runTime.osName + " (sikulixlibs...)\n";
+      if (forAllSystems)
+        msg += "\n--- Native support libraries for all systems (sikulixlibs...)\n";
+      else {
+        msg += "\n--- Native support libraries for " + runTime.osName + " (sikulixlibs...)\n";
+      }
       if (getIDE) {
         downloadedFiles += downloadIDE + " ";
         downloadedFiles += downloadAPI + " ";
@@ -639,29 +643,31 @@ public class RunSetup {
       } else {
         copyFromDownloads(libDownloaded, libsLux, jarsList[8]);
       }
-      boolean shouldBuildVisionNow = LinuxSupport.processLibs1(jarsList[8], osarch);
-      libsProvided = LinuxSupport.processLibs2();
-      boolean shouldTerminate = false;
-      if (shouldBuildVisionNow) {
-        logPlus(-1, "A bundled lib could not be checked or does not work.");
-        if (!popAsk("The bundled/provided libVisionProxy.so might not work."
-                + "\nShould we try to build it now?"
-                + "\nClick YES to try a build"
-                + "\nClick NO to terminate and correct the problems.")) {
-          shouldTerminate = true;
-          shouldBuildVisionNow = false;
+      if (isLinux) {
+        boolean shouldBuildVisionNow = LinuxSupport.processLibs1(jarsList[8], osarch);
+        libsProvided = LinuxSupport.processLibs2();
+        boolean shouldTerminate = false;
+        if (shouldBuildVisionNow) {
+          logPlus(-1, "A bundled lib could not be checked or does not work.");
+          if (!popAsk("The bundled/provided libVisionProxy.so might not work."
+                  + "\nShould we try to build it now?"
+                  + "\nClick YES to try a build"
+                  + "\nClick NO to terminate and correct the problems.")) {
+            shouldTerminate = true;
+            shouldBuildVisionNow = false;
+          }
         }
-      }
-      if (shouldBuildVisionNow || (hasOptions && shouldBuildVision)) {
-        logPlus(lvl, "Trying to build libVisionProxy.so");
-        libsProvided = buildVision(jarsList[8]);
-        shouldTerminate |= !libsProvided;
-      }
-      if (!libsProvided) {
-        FileManager.deleteFileOrFolder(folderLibsLux.getAbsolutePath());
-      }
-      if (shouldTerminate) {
-        terminate("Correct the problems with the bundled/provided libs and try again");
+        if (shouldBuildVisionNow || (hasOptions && shouldBuildVision)) {
+          logPlus(lvl, "Trying to build libVisionProxy.so");
+          libsProvided = buildVision(jarsList[8]);
+          shouldTerminate |= !libsProvided;
+        }
+        if (!libsProvided) {
+          FileManager.deleteFileOrFolder(folderLibsLux.getAbsolutePath());
+        }
+        if (shouldTerminate) {
+          terminate("Correct the problems with the bundled/provided libs and try again");
+        }
       }
     }
 		//</editor-fold>
@@ -676,15 +682,17 @@ public class RunSetup {
 				copyFromDownloads(libDownloaded, libsWin, jarsList[6]);
 			}
 
-      String libsWin = "sikulixlibs/windows";     
-      folderLibsWin = new File(workDir, libsWin);
-      FileManager.resetFolder(folderLibsWin);
-      String aJar = "/" + FileManager.slashify(jarsList[6], false);
-      if (null == runTime.resourceListAsSikulixContentFromJar(aJar, libsWin, folderLibsWin, null)) {
-        terminate("libswin content list not created", 999);
+      if (!forAllSystems) {
+        String libsWin = "sikulixlibs/windows";     
+        folderLibsWin = new File(workDir, libsWin);
+        FileManager.resetFolder(folderLibsWin);
+        String aJar = "/" + FileManager.slashify(jarsList[6], false);
+        if (null == runTime.resourceListAsSikulixContentFromJar(aJar, libsWin, folderLibsWin, null)) {
+          terminate("libswin content list not created", 999);
+        }
+        addonFileList[addonWindows] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
+        addonFilePrefix[addonWindows] = libsWin;
       }
-      addonFileList[addonWindows] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
-      addonFilePrefix[addonWindows] = libsWin;
     }
 
     if (forSystemMac || forAllSystems) {
@@ -821,25 +829,27 @@ public class RunSetup {
     FileManager.JarFileFilter libsFilter = new FileManager.JarFileFilter() {
       @Override
       public boolean accept(ZipEntry entry, String jarname) {
-        if (forSystemWin) {
-          if (entry.getName().startsWith("sikulixlibs/mac")
-                  || entry.getName().startsWith("sikulixlibs/linux")
-                  || entry.getName().endsWith("sikulixfoldercontent")
-                  || entry.getName().startsWith("jxgrabkey")) {
-            return false;
-          }
-        } else if (forSystemMac) {
-          if (entry.getName().startsWith("sikulixlibs/windows")
-                  || entry.getName().startsWith("sikulixlibs/linux")
-                  || entry.getName().startsWith("com.melloware.jintellitype")
-                  || entry.getName().startsWith("jxgrabkey")) {
-            return false;
-          }
-        } else if (forSystemLux) {
-          if (entry.getName().startsWith("sikulixlibs/windows")
-                  || entry.getName().startsWith("sikulixlibs/mac")
-                  || entry.getName().startsWith("com.melloware.jintellitype")) {
-            return false;
+        if (!forAllSystems) {
+          if (forSystemWin) {
+            if (entry.getName().startsWith("sikulixlibs/mac")
+                    || entry.getName().startsWith("sikulixlibs/linux")
+                    || entry.getName().endsWith("sikulixfoldercontent")
+                    || entry.getName().startsWith("jxgrabkey")) {
+              return false;
+            }
+          } else if (forSystemMac) {
+            if (entry.getName().startsWith("sikulixlibs/windows")
+                    || entry.getName().startsWith("sikulixlibs/linux")
+                    || entry.getName().startsWith("com.melloware.jintellitype")
+                    || entry.getName().startsWith("jxgrabkey")) {
+              return false;
+            }
+          } else if (forSystemLux) {
+            if (entry.getName().startsWith("sikulixlibs/windows")
+                    || entry.getName().startsWith("sikulixlibs/mac")
+                    || entry.getName().startsWith("com.melloware.jintellitype")) {
+              return false;
+            }
           }
         }
         if (forSystemLux || forAllSystems) {
@@ -956,6 +966,7 @@ public class RunSetup {
     FileManager.deleteFileOrFolder(folderLibsWin);
 
     //<editor-fold defaultstate="collapsed" desc="api test">
+    boolean runAPITest = false;
     if (getAPI && !notests && !runTime.isHeadless()) {
       logPlus(lvl, "Trying to run functional test: JAVA-API");
       splash = showSplash("Trying to run functional test(s)", "Java-API: org.sikuli.script.Sikulix.testSetup()");
@@ -994,6 +1005,7 @@ public class RunSetup {
                 + "Check the error log at " + (logfile == null ? "printout" : logfile));
         terminate("Functional test Java-API did not work", 1);
       }
+      runAPITest = true;
     }
     //</editor-fold>
 
@@ -1006,7 +1018,9 @@ public class RunSetup {
                 + "Check the error log at " + (logfile == null ? "printout" : logfile));
         terminate("Functional test IDE did not work", 1);
       }
-      runTime.makeLibsFolder();
+      if (!runAPITest) {
+        runTime.makeLibsFolder();
+      }
       String testMethod;
       if (getJython) {
         if (hasOptions) {
