@@ -78,8 +78,67 @@ public class Image {
   private static Map<String, URL> imageNames = Collections.synchronizedMap(new HashMap<String, URL>());
   private static int KB = 1024;
   private static int MB = KB * KB;
-  private static int currentMemory = 0;
   private final static String isBImg = "__BufferedImage__";
+
+  private static long currentMemory = 0;
+  
+  private static synchronized long currentMemoryChange(long size, long max) {
+    long maxMemory = max;
+    if (max > -1) {
+      maxMemory = Settings.getImageCache() * MB;
+      currentMemory += size;
+    }
+    if (currentMemory > maxMemory) {
+      Image first;
+      while (images.size() > 0 && currentMemory > maxMemory) {
+        first = images.remove(0);
+        first.bimg = null;
+        currentMemory -= first.bsize;
+      }
+      if (maxMemory == 0) {
+        currentMemory = 0;
+      } else {
+        currentMemory = Math.max(0, currentMemory);
+      }
+    }
+    if (size < 0) {
+      currentMemory = Math.max(0, currentMemory);
+    }
+    return currentMemory;
+  }
+  
+  private static long currentMemoryUp(long size) {
+    return currentMemoryChange(size, -1);
+  }
+  
+  private static long currentMemoryDown(long size) {
+    currentMemory -= size;
+    currentMemory = Math.max(0, currentMemory);
+    return currentMemoryChange(-size, -1);
+  }
+  private static long currentMemoryDownUp(int sizeOld, int sizeNew) {
+    currentMemoryDown(sizeOld);
+    return currentMemoryUp(sizeNew);
+  }
+    
+  private static boolean isCaching() {
+    return Settings.getImageCache() > 0;
+  }
+
+  public static void clearCache(int maxSize) {
+    currentMemoryChange(0, maxSize);
+  }
+
+  public static void reload(String fpImage) {
+    URL uImage = FileManager.makeURL(fpImage);
+    if (imageFiles.containsKey(uImage)) {
+      Image image = imageFiles.get(uImage);
+      int sizeOld = image.bsize;
+      if (null != image.loadAgain()) {
+        currentMemoryDownUp(sizeOld, image.bsize);
+      }
+    }
+  }
 
 //<editor-fold defaultstate="collapsed" desc="imageName">
   private String imageName = null;
@@ -126,7 +185,7 @@ public class Image {
     return this;
   }
 
-  private long bsize = 0;
+  private int bsize = 0;
   private int bwidth = -1;
   private int bheight = -1;
 //</editor-fold>
@@ -388,12 +447,9 @@ public class Image {
           bsize = bImage.getData().getDataBuffer().getSize();
         }
         log(lvl, "loaded: %s (%s)", imageName, fileURL);
-        int maxMemory = Settings.getImageCache() * MB;
-        if (maxMemory > 0) {
-          currentMemory += bsize;
-          if (currentMemory > maxMemory) {
-            clearCache(maxMemory);
-          }
+        if (isCaching()) {
+          int maxMemory = Settings.getImageCache() * MB;
+          currentMemoryUp(bsize);
           bimg = bImage;
           images.add(this);
           log(lvl, "cached: %s (%d KB) (# %d KB %d -- %d %% of %d MB)",
@@ -407,21 +463,30 @@ public class Image {
     }
     return bImage;
   }
-
-  public static void clearCache(int maxSize) {
-    Image first;
-    while (images.size() > 0 && currentMemory > maxSize) {
-      first = images.remove(0);
-      first.bimg = null;
-      currentMemory -= first.bsize;
+  
+  private BufferedImage loadAgain() {
+    BufferedImage bImage = null;
+    if (fileURL != null) {
+      bimg = null;
+      try {
+        bImage = ImageIO.read(fileURL);
+      } catch (Exception e) {
+        if (!beSilent) {
+          log(-1, "could not be loaded again: %s", fileURL);
+        }
+				imageFiles.remove(fileURL);
+        return null;
+      }
+      imageFiles.put(fileURL, this);
+      imageNames.put(imageName, fileURL);
+      bwidth = bImage.getWidth();
+      bheight = bImage.getHeight();
+      bsize = bImage.getData().getDataBuffer().getSize();
+      log(lvl, "loaded again: %s (%s)", imageName, fileURL);
     }
-    if (maxSize == 0) {
-      currentMemory = 0;
-    } else {
-      currentMemory = Math.max(0, currentMemory);
-    }
+    return bImage;
   }
-
+  
   private Image copy() {
     Image imgTarget = new Image();
     imgTarget.setImageName(imageName);
@@ -751,10 +816,9 @@ public class Image {
         if (imagePurgeList.contains(img)) {
           bit.remove();
           log(lvl + 1, "purge: bimg: %s", img);
-          currentMemory -= img.bsize;
+          currentMemoryDown(img.bsize);
         }
       }
-      currentMemory = Math.max(0, currentMemory);
     }
     for (String name : imageNamePurgeList) {
       imageNames.remove(name);
