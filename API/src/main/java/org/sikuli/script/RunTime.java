@@ -86,6 +86,10 @@ public class RunTime {
   private RunTime() {
   }
 
+  public static synchronized RunTime get(Type typ) {
+    return get(typ, null);
+  }
+
   /**
    * INTERNAL USE to initialize the runtime environment for SikuliX<br>
    * for public use: use RunTime.get() to get the existing instance
@@ -93,9 +97,24 @@ public class RunTime {
    * @param typ IDE or API
    * @return the RunTime singleton instance
    */
-  public static synchronized RunTime get(Type typ) {
+  public static synchronized RunTime get(Type typ, String[] clArgs) {
     if (runTime == null) {
       runTime = new RunTime();
+      
+      if (null != clArgs) {
+        int debugLevel = checkArgs(clArgs, typ);
+        if (Type.IDE.equals(typ)) {
+          if(debugLevel == -1) {
+            Debug.on(3);
+            Debug.log(3, "RunTime: option -d detected --- log goes to SikulixLog.txt");
+            Debug.setLogFile("");
+            Settings.LogTime = true;
+            System.setProperty("sikuli.console", "false");
+          } else if (debugLevel == 999) {
+            runTime.runningScripts = true;
+          }
+        }
+      }
 
 //<editor-fold defaultstate="collapsed" desc="versions">
       String vJava = System.getProperty("java.runtime.version");
@@ -308,6 +327,8 @@ public class RunTime {
   public String sysName = "NotKnown";
   public String osVersion = "";
   private String appType = null;
+  public int debuglevelAPI = -1;
+  private boolean runningScripts = false;
 
 //</editor-fold>
 
@@ -352,7 +373,7 @@ int nMonitors = 0;
     fBaseTempPath = new File(fTempPath, "Sikulix");
     BaseTempPath = fBaseTempPath.getAbsolutePath();
     
-    if (Type.IDE.equals(typ)) {
+    if (Type.IDE.equals(typ) && !runningScripts) {
       fBaseTempPath.mkdirs();
       isRunning = new File(BaseTempPath, isRunningFilename);
       try {
@@ -991,6 +1012,32 @@ int nMonitors = 0;
       }
       log(lvl, "found Options file at: %s", fOptions);
     }
+    for (Object oKey : options.keySet()) {
+      String sKey = (String) oKey;
+      String[] parts = sKey.split("\\.");
+      if (parts.length == 1) {
+        continue;
+      }
+      String sClass = parts[0];
+      String sAttr = parts[1];
+      Class cClass = null;
+      Field cField = null;
+      Class ccField = null;
+      if (sClass.contains("Settings")) {
+        try {
+          cClass = Class.forName("org.sikuli.basics.Settings");
+          cField = cClass.getField(sAttr);
+          ccField = cField.getType();
+          if (ccField.getName() == "boolean") {
+            cField.setBoolean(null, isOption(sKey));
+          } else if (ccField.getName() == "int"){
+            cField.setInt(null, getOptionNumber(sKey));
+          } else if (ccField.getName() == "String") {
+            cField.set(null, getOption(sKey));
+          }
+        } catch (Exception ex) {}
+      }
+    }
   }
 
   /**
@@ -1030,14 +1077,7 @@ int nMonitors = 0;
    * @return true only if option exists and has yes or true (not case-sensitive), in all other cases false
    */
   public boolean isOption(String pName) {
-    if (options == null) {
-      return false;
-    }
-    String pVal = options.getProperty(pName, "false").toLowerCase();
-    if (pVal.isEmpty() || pVal.contains("yes") || pVal.contains("true")) {
-      return true;
-    }
-    return false;
+    return isOption(pName, false);
   }
 
   /**
@@ -2338,6 +2378,7 @@ int nMonitors = 0;
 
   public static int checkArgs(String[] args, Type typ) {
     int debugLevel = -99;
+    boolean runningScriptsWithIDE = false;
     List<String> options = new ArrayList<String>();
     options.addAll(Arrays.asList(args));
     for (int n = 0; n < options.size(); n++) {
@@ -2355,14 +2396,12 @@ int nMonitors = 0;
         if (debugLevel > -1) {
           Debug.on(debugLevel);
         }
+      } else if (opt.startsWith("-r") || opt.startsWith("-t")) {
+        runningScriptsWithIDE = true;
       }
-      if (Type.IDE.equals(typ) && debugLevel == -1) {
-        Debug.on(3);
-        Debug.log(3, "RunTime: option -d detected --- log goes to SikulixLog.txt");
-        Debug.setLogFile("");
-        Settings.LogTime = true;
-        System.setProperty("sikuli.console", "false");
-      }
+    }
+    if (Type.IDE.equals(typ) && runningScriptsWithIDE) {
+      return 999;
     }
     return debugLevel;
   }
