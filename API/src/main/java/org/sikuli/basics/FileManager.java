@@ -43,6 +43,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
+import org.sikuli.script.Image;
 import org.sikuli.script.Sikulix;
 
 /**
@@ -335,26 +336,28 @@ public class FileManager {
   }
 
   public static File createTempDir(String path) {
-    File tempDir = new File(RunTime.get().BaseTempPath, path);
-    log(lvl, "createTempDir: %s", tempDir);
-    if (!tempDir.exists()) {
-      tempDir.mkdirs();
+    File fTempDir = new File(RunTime.get().BaseTempPath, path);
+    log(lvl, "createTempDir:\n%s", fTempDir);
+    if (!fTempDir.exists()) {
+      fTempDir.mkdirs();
+    } else {
+      FileManager.resetFolder(fTempDir);
     }
-    if (!tempDir.exists()) {
-      log(-1, "createTempDir: %s", tempDir);
+    if (!fTempDir.exists()) {
+      log(-1, "createTempDir: not possible: %s", fTempDir);
       return null;
     }
-    return tempDir;
+    return fTempDir;
   }
 
   public static File createTempDir() {
     Random rand = new Random();
     int randomInt = 1 + rand.nextInt();
-    File tempDir = createTempDir("tmp-" + randomInt + ".sikuli");
-    if (null != tempDir) {
-      tempDir.deleteOnExit();
+    File fTempDir = createTempDir("tmp-" + randomInt + ".sikuli");
+    if (null != fTempDir) {
+      fTempDir.deleteOnExit();
     }
-    return tempDir;
+    return fTempDir;
   }
 
   public static void deleteTempDir(String path) {
@@ -478,8 +481,7 @@ public class FileManager {
     return null;
   }
 
-  public static void unzip(String zip, String path)
-          throws IOException, FileNotFoundException {
+  public static void unzip(String zip, String path) throws IOException, FileNotFoundException {
     final int BUF_SIZE = 2048;
     FileInputStream fis = new FileInputStream(zip);
     ZipInputStream zis = new ZipInputStream(new BufferedInputStream(fis));
@@ -496,6 +498,41 @@ public class FileManager {
       dest.close();
     }
     zis.close();
+  }
+  
+  public static boolean unzip(File fZip, File fTarget) {
+    String fpZip = null;
+    String fpTarget = null;
+    try {
+      fpZip = fZip.getCanonicalPath();
+      if (!fZip.exists()) {
+        log(-1, "unzip: source not found:\n%s", fpZip);
+        return false;
+      }
+      fTarget.mkdirs();
+      fpTarget = fTarget.getCanonicalPath();
+      if (!fZip.exists()) {
+        log(-1, "unzip: target not found:\n%s", fTarget);
+        return false;
+      }
+      final int BUF_SIZE = 2048;
+      ZipInputStream isZip = new ZipInputStream(new BufferedInputStream(new FileInputStream(fZip)));
+      ZipEntry entry;
+      while ((entry = isZip.getNextEntry()) != null) {
+        int count;
+        byte data[] = new byte[BUF_SIZE];
+        FileOutputStream fos = new FileOutputStream(new File(fTarget, entry.getName()));
+        BufferedOutputStream dest = new BufferedOutputStream(fos, BUF_SIZE);
+        while ((count = isZip.read(data, 0, BUF_SIZE)) != -1) {
+          dest.write(data, 0, count);
+        }
+        dest.close();
+      }
+      isZip.close();
+    } catch (Exception ex) {
+      log(-1, "unzip: not possible: source:\n%s\ntarget:\n%s\n%s", fpZip, fpTarget, ex);
+    }
+    return true;
   }
 
   public static boolean xcopy(File fSrc, File fDest) {
@@ -716,8 +753,25 @@ public class FileManager {
 		return slashify(filename, false);
 	}
 
-	public static String normalizeAbsolute(String filename) {
-		return slashify(new File(slashify(filename, false)).getAbsolutePath(), false);
+	public static String normalizeAbsolute(String filename, boolean withTrailingSlash) {
+    filename = slashify(filename, false);
+    String jarSuffix = "";
+    int nJarSuffix;
+    if (-1 < (nJarSuffix = filename.indexOf(".jar!/"))) {
+      jarSuffix = filename.substring(nJarSuffix + 4);
+      filename = filename.substring(0, nJarSuffix + 4);
+    }
+    File aFile = new File(filename);
+    try {
+      filename = aFile.getCanonicalPath();
+      aFile = new File(filename);
+    } catch (Exception ex) {
+    }
+    String fpFile = aFile.getAbsolutePath();
+    if (!fpFile.startsWith("/")) {
+      fpFile = "/" + fpFile;
+    }
+		return slashify(fpFile + jarSuffix, withTrailingSlash);
 	}
 
 	public static boolean isFilenameDotted(String name) {
@@ -748,7 +802,7 @@ public class FileManager {
   public static URL makeURL(String fName, String type) {
     try {
       if ("file".equals(type)) {
-        fName = normalizeAbsolute(new File(fName).getPath());
+        fName = normalizeAbsolute(fName, false);
         if (!fName.startsWith("/")) {
           fName = "/" + fName;
         }
@@ -878,43 +932,52 @@ public class FileManager {
     }
   }
 
-  public static String saveImage(BufferedImage img, String filename, String bundlePath) {
+  public static String saveImage(BufferedImage img, String sImage, String bundlePath) {
     final int MAX_ALT_NUM = 3;
     String fullpath = bundlePath;
-    File path = new File(fullpath);
-    if (!path.exists()) {
-      path.mkdir();
+    File fBundle = new File(fullpath);
+    if (!fBundle.exists()) {
+      fBundle.mkdir();
     }
-    if (!filename.endsWith(".png")) {
-      filename += ".png";
+    if (!sImage.endsWith(".png")) {
+      sImage += ".png";
     }
-    File f = new File(path, filename);
+    File fImage = new File(fBundle, sImage);
+    boolean shouldReload = false;
     int count = 0;
-    String msg = f.getName() + " exists - using ";
+    String msg = fImage.getName() + " exists - using ";
     while (count < MAX_ALT_NUM) {
-      if (f.exists()) {
-        f = new File(path, FileManager.getAltFilename(f.getName()));
+      if (fImage.exists()) {
+        if (Settings.OverwriteImages) {
+          shouldReload = true;
+          break;
+        } else {
+          fImage = new File(fBundle, FileManager.getAltFilename(fImage.getName()));
+        }
       } else {
         if (count > 0) {
-          Debug.log(msg + f.getName() + " (Utils.saveImage)");
+          Debug.log(msg + fImage.getName() + " (Utils.saveImage)");
         }
         break;
       }
       count++;
     }
     if (count >= MAX_ALT_NUM) {
-      f = new File(path, Settings.getTimestamp() + ".png");
-      Debug.log(msg + f.getName() + " (Utils.saveImage)");
+      fImage = new File(fBundle, Settings.getTimestamp() + ".png");
+      Debug.log(msg + fImage.getName() + " (Utils.saveImage)");
     }
-    fullpath = f.getAbsolutePath();
-    fullpath = fullpath.replaceAll("\\\\", "/");
+    String fpImage = fImage.getAbsolutePath();
+    fpImage = fpImage.replaceAll("\\\\", "/");
     try {
-      ImageIO.write(img, "png", new File(fullpath));
+      ImageIO.write(img, "png", new File(fpImage));
     } catch (IOException e) {
-      Debug.error("Util.saveImage: Problem trying to save image file: %s\n%s", fullpath, e.getMessage());
+      Debug.error("Util.saveImage: Problem trying to save image file: %s\n%s", fpImage, e.getMessage());
       return null;
     }
-    return fullpath;
+    if (shouldReload) {
+      Image.reload(fpImage);
+    }
+    return fpImage;
   }
 
   //TODO consolidate with FileManager and Settings
@@ -1265,6 +1328,82 @@ public class FileManager {
     FileInputStream in = new FileInputStream(file);
     bufferedWrite(in, jar);
     in.close();
+  }
+
+  //<editor-fold defaultstate="collapsed" desc="helpers">
+  public static File[] getScriptFile(File fScriptFolder) {
+    if (fScriptFolder == null) {
+      return null;
+    }
+    String scriptName;
+    String scriptType = "";
+    String fpUnzippedSkl = null;
+    File[] content = null;
+    
+    if (fScriptFolder.getName().endsWith(".skl") || fScriptFolder.getName().endsWith(".zip")) {
+      fpUnzippedSkl = FileManager.unzipSKL(fScriptFolder.getAbsolutePath());
+      if (fpUnzippedSkl == null) {
+        return null;
+      }
+      scriptType = "sikuli-zipped";
+      fScriptFolder = new File(fpUnzippedSkl);
+    }
+    
+    int pos = fScriptFolder.getName().lastIndexOf(".");
+    if (pos == -1) {
+      scriptName = fScriptFolder.getName();
+      scriptType = "sikuli-plain";
+      fScriptFolder = new File(fScriptFolder.getAbsolutePath() + ".sikuli");
+    } else {
+      scriptName = fScriptFolder.getName().substring(0, pos);
+      scriptType = fScriptFolder.getName().substring(pos + 1);
+    }
+    if (!fScriptFolder.exists()) {
+      log(-1, "Not a valid Sikuli script project: " + fScriptFolder.getAbsolutePath());
+      return null;
+    }
+    if (scriptType.startsWith("sikuli")) {
+      content = fScriptFolder.listFiles(new FileFilterScript(scriptName + "."));
+      if (content == null || content.length == 0) {
+        log(-1, "Script project %s \n has no script file %s.xxx", fScriptFolder, scriptName);
+        return null;
+      }
+    } else if ("jar".equals(scriptType)) {
+      log(-1, "Sorry, script projects as jar-files are not yet supported;");
+      //TODO try to load and run as extension
+      return null; // until ready
+    }
+    return content;
+  }
+  
+  private static class FileFilterScript implements FilenameFilter {
+    private String _check;
+    public FileFilterScript(String check) {
+      _check = check;
+    }
+    @Override
+    public boolean accept(File dir, String fileName) {
+      return fileName.startsWith(_check);
+    }
+  }
+  
+  public static String unzipSKL(String fpSkl) {
+    File fSkl = new File(fpSkl);
+    if (!fSkl.exists()) {
+      log(-1, "unzipSKL: file not found: %s", fpSkl);
+    }
+    String name = fSkl.getName();
+    name = name.substring(0, name.lastIndexOf('.'));
+    File fSikuliDir = FileManager.createTempDir(name + ".sikuli");
+    if (null != fSikuliDir) {
+      fSikuliDir.deleteOnExit();
+      FileManager.unzip(fSkl, fSikuliDir);
+    }
+    if (null == fSikuliDir) {
+      log(-1, "unzipSKL: not possible for:\n%s", fpSkl);
+      return null;
+    }
+    return fSikuliDir.getAbsolutePath();
   }
 
   public interface JarFileFilter {
