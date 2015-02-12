@@ -31,7 +31,7 @@ import org.sikuli.basics.Settings;
  * - any location as a valid URL, from where image files can be loaded<br>
  */
 public class ImagePath {
-  
+
   static RunTime runTime = RunTime.get();
 
   private static final String me = "ImagePath: ";
@@ -239,6 +239,7 @@ public class ImagePath {
           }
         } else {
           //TODO support for http image path
+          fURL = FileManager.getURLForContentFromURL(path.pathURL, fname);
           log(-1, "find: URL not supported: " + path.pathURL);
 					return fURL;
         }

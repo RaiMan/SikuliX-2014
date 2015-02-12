@@ -499,7 +499,7 @@ public class FileManager {
     }
     zis.close();
   }
-  
+
   public static boolean unzip(File fZip, File fTarget) {
     String fpZip = null;
     String fpTarget = null;
@@ -542,7 +542,7 @@ public class FileManager {
     try {
       doXcopy(fSrc, fDest, null);
     } catch (Exception ex) {
-      log(lvl, "xcopy from: %s\nto: %s\n%s", fSrc, fDest, ex); 
+      log(lvl, "xcopy from: %s\nto: %s\n%s", fSrc, fDest, ex);
       return false;
     }
     return true;
@@ -555,7 +555,7 @@ public class FileManager {
     try {
       doXcopy(fSrc, fDest, filter);
     } catch (Exception ex) {
-      log(lvl, "xcopy from: %s\nto: %s\n%s", fSrc, fDest, ex); 
+      log(lvl, "xcopy from: %s\nto: %s\n%s", fSrc, fDest, ex);
       return false;
     }
     return true;
@@ -605,15 +605,15 @@ public class FileManager {
 			}
 		}
   }
-  
+
   private static String makeFileListString;
   private static String makeFileListPrefix;
-  
+
   public static String makeFileList(File path, String prefix) {
     makeFileListPrefix = prefix;
     return makeFileListDo(path, true);
   }
-  
+
   private static String makeFileListDo(File path, boolean starting) {
     String x;
     if (starting) {
@@ -851,8 +851,16 @@ public class FileManager {
     } else if ("file".equals(uRes.getProtocol())) {
       aURL = makeURL(new File(slashify(uRes.getPath(), false), slashify(fName, false)).getPath(), uRes.getProtocol());
     } else if ("http".equals(uRes.getProtocol())) {
-      return null;
-    } 
+      String sRes = uRes.toString();
+			if (!sRes.endsWith("/")) {
+				sRes += "/";
+			}
+			try {
+				return new URL(sRes + fName);
+			} catch (Exception ex) {
+				return null;
+			}
+    }
     try {
       if (aURL != null) {
         aURL.getContent();
@@ -1339,7 +1347,7 @@ public class FileManager {
     String scriptType = "";
     String fpUnzippedSkl = null;
     File[] content = null;
-    
+
     if (fScriptFolder.getName().endsWith(".skl") || fScriptFolder.getName().endsWith(".zip")) {
       fpUnzippedSkl = FileManager.unzipSKL(fScriptFolder.getAbsolutePath());
       if (fpUnzippedSkl == null) {
@@ -1348,7 +1356,7 @@ public class FileManager {
       scriptType = "sikuli-zipped";
       fScriptFolder = new File(fpUnzippedSkl);
     }
-    
+
     int pos = fScriptFolder.getName().lastIndexOf(".");
     if (pos == -1) {
       scriptName = fScriptFolder.getName();
@@ -1375,7 +1383,7 @@ public class FileManager {
     }
     return content;
   }
-  
+
   private static class FileFilterScript implements FilenameFilter {
     private String _check;
     public FileFilterScript(String check) {
@@ -1386,7 +1394,7 @@ public class FileManager {
       return fileName.startsWith(_check);
     }
   }
-  
+
   public static String unzipSKL(String fpSkl) {
     File fSkl = new File(fpSkl);
     if (!fSkl.exists()) {
@@ -1455,7 +1463,7 @@ public class FileManager {
     }
     return true;
   }
-  
+
   private static synchronized void bufferedWrite(InputStream in, OutputStream out) throws IOException {
     byte[] buffer = new byte[1024 * 512];
     int read;

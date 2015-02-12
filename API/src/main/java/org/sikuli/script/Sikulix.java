@@ -7,9 +7,12 @@
 package org.sikuli.script;
 
 import java.awt.Dimension;
+import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
+import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -31,6 +34,9 @@ import org.sikuli.basics.Settings;
 public class Sikulix {
 
   private static int lvl = 3;
+	private static String imgLink = "http://www.sikulix.com/uploads/1/4/2/8/14281286";
+	private static String imgHttp = "1389888228.jpg";
+	private static String imgNet = imgLink + "/" + imgHttp;
 
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "Sikulix: " + message, args);
@@ -60,7 +66,7 @@ public class Sikulix {
   }
 
   private static RunTime rt = null;
-  public static int testNumber = 0;
+  public static int testNumber = -1;
 
   /**
    * checking parameter -d on commandline<br>
@@ -81,7 +87,7 @@ public class Sikulix {
     } else {
       testNumber = -1;
     }
-    
+
     rt = RunTime.get();
     testNumber = rt.getOptionNumber("testing.test", -1);
 
@@ -90,7 +96,7 @@ public class Sikulix {
       if (!rt.testing) {
         rt.show();
         rt.testing = true;
-      }            
+      }
       Tests.runTest(testNumber);
       System.exit(1);
     } else {
@@ -98,23 +104,22 @@ public class Sikulix {
       Debug.on(3);
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
-      
-      Settings.OcrTextSearch = true;
-      Region eWin = App.start(App.Type.EDITOR);
-      eWin.write("\n Jump\n\n Jump and Run\n\nRun and Jump\n");
-      Region reg = eWin;
-      while (true) {
-        Match ms = reg.exists("Jump", 0);
-        if (ms == null) {
-          break;
-        }
-        ms.highlight(2);
-        ms.x = eWin.x;
-        ms.w = eWin.w;
-        reg = eWin.intersection(ms.below());
-      }
 
-      if (rt.runningWinApp) {        
+			URL uTest = null;
+			try {
+				uTest = new URL(imgLink);
+				URL uImage = FileManager.makeURL(uTest, imgHttp);
+				log(0, "URL: %s", uTest);
+//				BufferedImage bImg = ImageIO.read(uTest);
+//				log(0, "Image: %s", bImg);
+//				Image img = new Image(bImg);
+//        Screen scr = new Screen();
+//				scr.find(img).highlight(2);
+//				scr.find(img).highlight(2);
+			} catch (Exception ex) {
+				log(-1, "%s", ex);
+			}
+      if (rt.runningWinApp) {
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
         try {
         Screen scr = new Screen();
@@ -128,7 +133,7 @@ public class Sikulix {
       rt.terminate(1,"Sikulix::main: nothing to test");
     }
   }
-  
+
   private static boolean addFromProject(String project, String aJar) {
     File aFile = null;
     if (rt.fSxProject == null) {
