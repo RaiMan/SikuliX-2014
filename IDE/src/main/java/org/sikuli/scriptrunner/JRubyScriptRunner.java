@@ -198,7 +198,7 @@ public class JRubyScriptRunner implements IScriptRunner {
     } catch (ClassNotFoundException ex) {
       return null;
     }
-		return ScriptRunner.RRUBY;
+		return ScriptingSupport.RRUBY;
 	}
 
 	@Override
@@ -563,7 +563,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 		try {
 			PipedOutputStream pout = new PipedOutputStream(pin[0]);
 			PrintStream ps = new PrintStream(pout, true);
-      if (!ScriptRunner.systemRedirected) {
+      if (!ScriptingSupport.systemRedirected) {
         System.setOut(ps);
       }
 			interpreter.setOutput(ps);
@@ -574,7 +574,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 		try {
 			PipedOutputStream pout = new PipedOutputStream(pin[1]);
 			PrintStream ps = new PrintStream(pout, true);
-      if (!ScriptRunner.systemRedirected) {
+      if (!ScriptingSupport.systemRedirected) {
         System.setErr(ps);
       }
 			interpreter.setError(ps);

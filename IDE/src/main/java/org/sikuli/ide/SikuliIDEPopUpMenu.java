@@ -15,7 +15,7 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.script.Image;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.Sikulix;
-import org.sikuli.scriptrunner.ScriptRunner;
+import org.sikuli.scriptrunner.ScriptingSupport;
 
 public class SikuliIDEPopUpMenu extends JPopupMenu {
 
@@ -222,7 +222,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 			String error = "";
 			EditorPane cp = SikuliIDE.getInstance().getCurrentCodePane();
       if (selOptionsType == null) {
-        Set<String> types = ScriptRunner.typeEndings.keySet();
+        Set<String> types = ScriptingSupport.typeEndings.keySet();
         selOptionsType = new String[types.size()];
         int i = 0;
         for (String e : types) {
@@ -244,7 +244,7 @@ public class SikuliIDEPopUpMenu extends JPopupMenu {
 				SikuliIDE.getStatusbar().setCurrentContentType(currentType);
 				return;
 			}
-			String targetEnding = ScriptRunner.typeEndings.get(targetType);
+			String targetEnding = ScriptingSupport.typeEndings.get(targetType);
 			if (cp.getText().length() > 0) {
 //				if (!cp.reparseCheckContent()) {
 					if (!Sikulix.popAsk(String.format(

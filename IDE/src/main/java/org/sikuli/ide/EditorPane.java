@@ -39,7 +39,7 @@ import org.sikuli.script.Image;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.Sikulix;
 import org.sikuli.scriptrunner.IScriptRunner;
-import org.sikuli.scriptrunner.ScriptRunner;
+import org.sikuli.scriptrunner.ScriptingSupport;
 import org.sikuli.syntaxhighlight.ResolutionException;
 import org.sikuli.syntaxhighlight.grammar.Lexer;
 import org.sikuli.syntaxhighlight.grammar.Token;
@@ -118,16 +118,16 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 		log(lvl, "initBeforeLoad: %s", scriptType);
 		if (scriptType == null) {
-			scriptType = ScriptRunner.EDEFAULT;
+			scriptType = ScriptingSupport.EDEFAULT;
 			paneIsEmpty = true;
 		}
 
-		if (ScriptRunner.EPYTHON.equals(scriptType)) {
-			scrType = ScriptRunner.CPYTHON;
+		if (ScriptingSupport.EPYTHON.equals(scriptType)) {
+			scrType = ScriptingSupport.CPYTHON;
 			_indentationLogic = SikuliIDE.getIDESupport(scriptType).getIndentationLogic();
 			_indentationLogic.setTabWidth(pref.getTabWidth());
-		} else if (ScriptRunner.ERUBY.equals(scriptType)) {
-			scrType = ScriptRunner.CRUBY;
+		} else if (ScriptingSupport.ERUBY.equals(scriptType)) {
+			scrType = ScriptingSupport.CRUBY;
 			_indentationLogic = null;
 		}
 
@@ -184,7 +184,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		}
 		SikuliIDE.getStatusbar().setCurrentContentType(getSikuliContentType());
 		log(lvl, "InitTab: (%s)", getSikuliContentType());
-		if (!ScriptRunner.hasTypeRunner(getSikuliContentType())) {
+		if (!ScriptingSupport.hasTypeRunner(getSikuliContentType())) {
 			Sikulix.popup("No installed runner supports (" + getSikuliContentType() + ")\n"
 							+ "Trying to run the script will crash IDE!", "... serious problem detected!");
 		}
@@ -261,9 +261,9 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	public void loadFile(String filename) {
 		log(lvl, "loadfile: %s", filename);
 		filename = FileManager.slashify(filename, false);
-		setSrcBundle(filename + "/");
 		File script = new File(filename);
-		_editingFile = ScriptRunner.getScriptFile(script);
+		setSrcBundle(filename + "/");
+		_editingFile = ScriptingSupport.getScriptFile(script);
 		if (_editingFile != null) {
 			scriptType = _editingFile.getAbsolutePath().substring(_editingFile.getAbsolutePath().lastIndexOf(".") + 1);
 			initBeforeLoad(scriptType);
@@ -377,7 +377,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		log(lvl, "saveAsBundle: " + getSrcBundle());
 		bundlePath = FileManager.slashify(bundlePath, true);
 		if (_srcBundlePath != null) {
-			if (!ScriptRunner.transferScript(_srcBundlePath, bundlePath)) {
+			if (!ScriptingSupport.transferScript(_srcBundlePath, bundlePath)) {
 				log(-1, "saveAsBundle: did not work - ");
 			}
 		}
@@ -387,7 +387,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			_srcBundleTemp = false;
 		}
 		setSrcBundle(bundlePath);
-		_editingFile = createSourceFile(bundlePath, "." + ScriptRunner.typeEndings.get(sikuliContentType));
+		_editingFile = createSourceFile(bundlePath, "." + ScriptingSupport.typeEndings.get(sikuliContentType));
 		writeSrcFile();
 		reparse();
 	}
@@ -413,7 +413,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			(new File(snameDir, sname)).delete();
 		}
 		if (PreferencesUser.getInstance().getAtSaveCleanBundle()) {
-			if (!sikuliContentType.equals(ScriptRunner.CPYTHON)) {
+			if (!sikuliContentType.equals(ScriptingSupport.CPYTHON)) {
 				log(lvl, "delete-not-used-images for %s using Python string syntax", sikuliContentType);
 			}
 			cleanBundle();
@@ -578,6 +578,11 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	}
 
 	private void setSrcBundle(String newBundlePath) {
+    try {
+      newBundlePath = new File(newBundlePath).getCanonicalPath();
+    } catch (Exception ex) {
+      return;
+    }
 		_srcBundlePath = newBundlePath;
 		ImagePath.setBundlePath(_srcBundlePath);
 	}
@@ -645,7 +650,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 //TODO convertSrcToHtml has to be completely revised
 	private void convertSrcToHtml(String bundle) {
-		IScriptRunner runner = ScriptRunner.getRunner(null, "jython");
+		IScriptRunner runner = ScriptingSupport.getRunner(null, "jython");
 		if (runner != null) {
 			runner.doSomethingSpecial("convertSrcToHtml", new String[]{bundle});
 		}
@@ -873,7 +878,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 //TODO not clear what this is for LOL (SikuliIDEPopUpMenu.doSetType)
 	public boolean reparseCheckContent() {
-		if (this.getText().contains(ScriptRunner.TypeCommentToken)) {
+		if (this.getText().contains(ScriptingSupport.TypeCommentToken)) {
 			return true;
 		}
 		return false;

@@ -33,7 +33,7 @@ import org.sikuli.script.ImagePath;
 import org.sikuli.script.RunTime;
 import org.sikuli.script.Sikulix;
 
-public class ScriptRunner {
+public class ScriptingSupport {
   
   public static RunTime runTime = RunTime.get();
 
@@ -68,6 +68,7 @@ public class ScriptRunner {
 
   private static String[] runScripts = null;
   private static String[] testScripts = null;
+  private static int lastReturnCode = 0;
 
   private static boolean isReady = false;
   
@@ -155,7 +156,7 @@ public class ScriptRunner {
     private void init(Socket sock) {
       socket = sock;
       if (in == null || out == null) {
-        ScriptRunner.log(-1, "communication not established");
+        ScriptingSupport.log(-1, "communication not established");
         System.exit(1);
       }
       thread = new Thread(this, "HandleClient");
@@ -170,18 +171,18 @@ public class ScriptRunner {
     @Override
     public void run() {
       String e;
-      ScriptRunner.log(lvl,"now handling client: " + socket);
+      ScriptingSupport.log(lvl,"now handling client: " + socket);
       while (keepRunning) {
         try {
           e = in.nextLine();
           if (e != null) {
-            ScriptRunner.log(lvl,"processing: " + e);
+            ScriptingSupport.log(lvl,"processing: " + e);
             if (e.contains("EXIT")) {
               stopRunning();
               in.close();
               out.close();
               if (e.contains("STOP")) {
-                ScriptRunner.log(lvl,"stop server requested");
+                ScriptingSupport.log(lvl,"stop server requested");
                 shouldStop = true;
               }
               return;
@@ -194,7 +195,7 @@ public class ScriptRunner {
             }
           }
         } catch (Exception ex) {
-          ScriptRunner.log(-1, "Exception while processing\n" + ex.getMessage());
+          ScriptingSupport.log(-1, "Exception while processing\n" + ex.getMessage());
           stopRunning();
         }
       }
@@ -230,22 +231,22 @@ public class ScriptRunner {
         out.writeObject(o);
         out.flush();
         if (o instanceof ImageIcon) {
-          ScriptRunner.log(lvl,"returned: Image(%dx%d)",
+          ScriptingSupport.log(lvl,"returned: Image(%dx%d)",
                   ((ImageIcon) o).getIconWidth(), ((ImageIcon) o).getIconHeight());
         } else {
-          ScriptRunner.log(lvl,"returned: "  + o);
+          ScriptingSupport.log(lvl,"returned: "  + o);
         }
       } catch (IOException ex) {
-        ScriptRunner.log(-1, "send: writeObject: Exception: " + ex.getMessage());
+        ScriptingSupport.log(-1, "send: writeObject: Exception: " + ex.getMessage());
       }
     }
     
     public void stopRunning() {
-      ScriptRunner.log(lvl,"stop client handling requested");
+      ScriptingSupport.log(lvl,"stop client handling requested");
       try {
         socket.close();
       } catch (IOException ex) {
-        ScriptRunner.log(-1, "fatal: socket not closeable");
+        ScriptingSupport.log(-1, "fatal: socket not closeable");
         System.exit(1);
       }
       keepRunning = false;
@@ -278,7 +279,7 @@ public class ScriptRunner {
   }
 //</editor-fold>
     
-  public static void initScriptingSupport() {
+  public static void init() {
     if (isReady) {
       return;
     }
@@ -332,7 +333,7 @@ public class ScriptRunner {
   }
 
   public static IScriptRunner getRunner(String script, String type) {
-    initScriptingSupport();
+    init();
     IScriptRunner currentRunner = null;
     String ending = null;
     if (script != null) {
@@ -389,7 +390,7 @@ public class ScriptRunner {
   public static void runscript(String[] args) {
     
     if (isRunningScript) {
-      System.out.println("[error] SikuliScript: can only run one at a time!");
+      log(-1, "can run only one script at a time!");
       return;
     }
 
@@ -469,22 +470,20 @@ public class ScriptRunner {
     // select script runner and/or start interactive session
     // option is overloaded - might specify runner for -r/-t
     if (cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
-      System.out.println(String.format(
-              "SikuliX Package Build: %s %s", runTime.getVersionShort(), runTime.SikuliVersionBuild));
-      int exitCode = 0;
-      if (currentRunner == null) {
-        String givenRunnerName = cmdLine.getOptionValue(CommandArgsEnum.INTERACTIVE.longname());
-        if (givenRunnerName == null) {
-          currentRunner = getRunner(null, RDEFAULT);
-        } else {
-          currentRunner = getRunner(null, givenRunnerName);
-          if (currentRunner == null) {
-            System.exit(1);
-          }
-        }
-      }
       if (!cmdLine.hasOption(CommandArgsEnum.RUN.shortname())
               && !cmdLine.hasOption(CommandArgsEnum.TEST.shortname())) {
+        int exitCode = 0;
+        if (currentRunner == null) {
+          String givenRunnerName = cmdLine.getOptionValue(CommandArgsEnum.INTERACTIVE.longname());
+          if (givenRunnerName == null) {
+            currentRunner = getRunner(null, RDEFAULT);
+          } else {
+            currentRunner = getRunner(null, givenRunnerName);
+          }
+        }
+        if (currentRunner == null) {
+          System.exit(1);
+        }
         exitCode = currentRunner.runInteractive(cmdArgs.getUserArgs());
         currentRunner.close();
         Sikulix.endNormal(exitCode);
@@ -492,7 +491,6 @@ public class ScriptRunner {
     }
     
     runAsTest = false;
-    
     if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname())) {
       runScripts = cmdLine.getOptionValues(CommandArgsEnum.RUN.longname());
     } else if (cmdLine.hasOption(CommandArgsEnum.TEST.shortname())) {
@@ -505,12 +503,13 @@ public class ScriptRunner {
     
     if (runScripts != null && runScripts.length > 0) {
       int exitCode = 0;
-      initScriptingSupport();
       for (String givenScriptName : runScripts) {
-        exitCode = new RunBox(runAsTest).executeScript(givenScriptName, cmdArgs.getUserArgs());
-        if (exitCode == -9999) {
-          continue;
+        if (lastReturnCode == -1) {
+          log(lvl, "Exit code -1: Terminating multi-script-run");
+          break;
         }
+        exitCode = new RunBox(givenScriptName, cmdArgs.getUserArgs(), runAsTest).run();
+        lastReturnCode = exitCode;
       }
       System.exit(exitCode);
     } else {
@@ -528,8 +527,11 @@ public class ScriptRunner {
    */
   public static int run(String scriptPath, String[] args) {
     runAsTest = false;
-    initScriptingSupport();
-    return new RunBox(runAsTest).executeScript(scriptPath, args);
+    init();
+    String savePath = ImagePath.getBundlePath();
+    int retVal = new RunBox(scriptPath, args, runAsTest).run();
+    ImagePath.setBundlePath(savePath);
+    return retVal;
   }
   
   /**
@@ -572,147 +574,99 @@ public class ScriptRunner {
 //</editor-fold>
   
   //<editor-fold defaultstate="collapsed" desc="helpers">
-  private static String unzipSKL(String fileName) {
-    File file;
-    file = new File(fileName);
-    if (!file.exists()) {
-      log(-1, "unzipSKL: file not found: %s", fileName);
-    }
-    String name = file.getName();
-    name = name.substring(0, name.lastIndexOf('.'));
-    File tmpDir = FileManager.createTempDir();
-    File sikuliDir = new File(tmpDir + File.separator + name + ".sikuli");
-    sikuliDir.mkdir();
-    sikuliDir.deleteOnExit();
-    try {
-      FileManager.unzip(fileName, sikuliDir.getAbsolutePath());
-      return sikuliDir.getAbsolutePath();
-    } catch (IOException e) {
-      log(-1, "unzipSKL: not possible for: %s\n%s", fileName, e.getMessage());
-      return null;
-    }
+  public static void setProject() {
+    RunBox.setProject();
   }
   
-  private static class FileFilterScript implements FilenameFilter {
-    private String _check;
-    public FileFilterScript(String check) {
-      _check = check;
+  public static int getLastReturnCode() {
+    return lastReturnCode;
+  }
+  
+  public static File getScriptFile(File fScriptFolder) {
+    if (fScriptFolder == null) {
+      return null;
     }
-    @Override
-    public boolean accept(File dir, String fileName) {
-      return fileName.startsWith(_check);
+    File[] content = FileManager.getScriptFile(fScriptFolder);
+    if (null == content) {
+      return null;
     }
+    File fScript = null;
+    init();
+    String runType = null;
+    for (File aFile : content) {
+      for (String suffix : EndingTypes.keySet()) {
+        if (!aFile.getName().endsWith("." + suffix)) {
+          continue;
+        }
+        fScript = aFile;
+        runType = suffix;
+        break;
+      }
+      if (fScript != null) {
+        break;
+      }
+    }
+    if (getRunner(null, runType) == null) {
+      log(-1, "No supported script for available runners in project:\n%s", fScriptFolder);
+      return null;
+    }
+    return fScript;
   }
 //</editor-fold>
   
   private static class RunBox {
 
+    static File scriptProject = null;
+
     boolean asTest = false;
+    String givenScriptName = "";
+    String[] args = new String[0];
 
-		File scriptProject;
-
-    private RunBox(boolean isTest) {
+    private RunBox(String givenName, String[] givenArgs, boolean isTest) {
+      givenScriptName = givenName;
+      args = givenArgs;
       asTest = isTest;
     }
 
-    private int executeScript(String givenScriptName, String[] args) {
+    private static void setProject() {
+      if (scriptProject == null) {
+        scriptProject = new File(FileManager.normalizeAbsolute(ImagePath.getBundlePath(), false)).getParentFile();
+      }
+    }
+
+    private int run() {
       int exitCode;
+      log(lvl, "givenScriptName:\n%s", givenScriptName);
+      if (-1 == FileManager.slashify(givenScriptName, false).indexOf("/") && RunBox.scriptProject != null) {
+        givenScriptName = new File(scriptProject, givenScriptName).getPath();
+      }
       if (givenScriptName.endsWith(".skl")) {
-        givenScriptName = ScriptRunner.unzipSKL(givenScriptName);
+        givenScriptName = FileManager.unzipSKL(givenScriptName);
         if (givenScriptName == null) {
-          log(-1, me + "not possible to make .skl runnable!");
+          log(-1, "not possible to make .skl runnable");
           return -9999;
         }
       }
-      log(lvl, "givenScriptName: " + givenScriptName);
-      File sf = new File(givenScriptName);
-      File script = getScriptFile(sf);
-      if (script == null) {
+      File fScript = getScriptFile(new File(givenScriptName));
+      if (fScript == null) {
         return -9999;
       }
-      IScriptRunner currentRunner = getRunner(script.getName(), null);
-      ImagePath.setBundlePath(script.getParent());
-      log(lvl, "Trying to run script: " + script.getAbsolutePath());
+      fScript = new File(FileManager.normalizeAbsolute(fScript.getPath(), true));
+      if (null == scriptProject) {
+        scriptProject = fScript.getParentFile().getParentFile();
+      }
+      log(lvl, "Trying to run script:\n%s", fScript);
+      IScriptRunner currentRunner = getRunner(fScript.getName(), null);
+      ImagePath.setBundlePath(fScript.getParent());
       if (asTest) {
-        exitCode = currentRunner.runTest(script, null, args, null);
+        exitCode = currentRunner.runTest(fScript, null, args, null);
       } else {
-        exitCode = currentRunner.runScript(script, null, args, null);
+        exitCode = currentRunner.runScript(fScript, null, args, null);
       }
       currentRunner.close();
       return exitCode;
     }
-
-		private static File getScriptFile(File scrProject) {
-			if (scrProject == null) {
-				return null;
-			}
-			if (scrProject.getPath().contains("..")) {
-				ScriptRunner.log(-1, "Sorry, project paths with double-dot path elements are not supported: /n%s", scrProject.getPath());
-				return null;
-			}
-
-			String script;
-			String scriptType = "";
-			File scriptFile = null;
-			String sklPath = null;
-
-			if (scrProject.getName().endsWith(".skl") || scrProject.getName().endsWith(".zip")) {
-				sklPath = ScriptRunner.unzipSKL(scrProject.getAbsolutePath());
-				if (sklPath == null) {
-					return null;
-				}
-				scriptType = "sikuli-zipped";
-				scrProject = new File(sklPath);
-			}
-			int pos = scrProject.getName().lastIndexOf(".");
-			if (pos == -1) {
-				script = scrProject.getName();
-				scriptType = "sikuli-plain";
-				scrProject = new File(scrProject.getAbsolutePath() + ".sikuli");
-			} else {
-				script = scrProject.getName().substring(0, pos);
-				scriptType = scrProject.getName().substring(pos + 1);
-			}
-			if (!scrProject.exists()) {
-				ScriptRunner.log(-1, "Not a valid Sikuli script project: " + scrProject.getAbsolutePath());
-				return null;
-			}
-			if (scriptType.startsWith("sikuli")) {
-				File[] content = scrProject.listFiles(new FileFilterScript(script + "."));
-				if (content == null || content.length == 0) {
-					ScriptRunner.log(-1, "Script project %s \n has no script file %s.xxx", scrProject, script);
-					return null;
-				}
-				String runType = null;
-				for (File f : content) {
-					for (String suffix : ScriptRunner.EndingTypes.keySet()) {
-						if (!f.getName().endsWith("." + suffix)) {
-							continue;
-						}
-						scriptFile = f;
-						runType = suffix;
-						break;
-					}
-					if (scriptFile != null) {
-						break;
-					}
-				}
-				if (ScriptRunner.getRunner(null, runType) == null) {
-					log(-1, "No supported script for available runners in project:\n%s", scrProject);
-					return null;
-				}
-			} else if ("jar".equals(scriptType)) {
-				ScriptRunner.log(-1, "Sorry, script projects as jar-files are not yet supported;");
-				//TODO try to load and run as extension
-				return null; // until ready
-			}
-			return scriptFile;
-		}
   }
-
-	public static File getScriptFile(File scriptProject) {
-		return new RunBox(false).getScriptFile(scriptProject);
-	}
 }
 
 

@@ -33,7 +33,7 @@ import org.sikuli.script.RunTime;
  */
 public class JythonScriptRunner implements IScriptRunner {
 
-  private static RunTime runTime = ScriptRunner.runTime;
+  private static RunTime runTime = ScriptingSupport.runTime;
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static final String me = "JythonScriptRunner: ";
@@ -172,6 +172,7 @@ public class JythonScriptRunner implements IScriptRunner {
 		int exitCode = 0;
 		if (isFromIDE) {
 			executeScriptHeader(new String[]{forIDE[0]});
+      ScriptingSupport.setProject();
 			exitCode = runPython(pyFile, null, forIDE);
       JythonHelper.get().removeSysPath(fScriptPath);
 		} else {
@@ -210,7 +211,7 @@ public class JythonScriptRunner implements IScriptRunner {
       }
     } catch (Exception e) {
       java.util.regex.Pattern p
-              = java.util.regex.Pattern.compile("SystemExit: ([0-9]+)");
+              = java.util.regex.Pattern.compile("SystemExit: (-?[0-9]+)");
       Matcher matcher = p.matcher(e.toString());
 //TODO error stop I18N
       if (matcher.find()) {
@@ -447,7 +448,7 @@ public class JythonScriptRunner implements IScriptRunner {
     } catch (ClassNotFoundException ex) {
       return null;
     }
-		return ScriptRunner.RPYTHON;
+		return ScriptingSupport.RPYTHON;
 	}
 
 	/**
@@ -666,7 +667,7 @@ public class JythonScriptRunner implements IScriptRunner {
 		try {
 			PipedOutputStream pout = new PipedOutputStream(pin[0]);
 			PrintStream ps = new PrintStream(pout, true);
-      if (!ScriptRunner.systemRedirected) {
+      if (!ScriptingSupport.systemRedirected) {
   			System.setOut(ps);
       }
 			py.setOut(ps);
@@ -677,7 +678,7 @@ public class JythonScriptRunner implements IScriptRunner {
 		try {
 			PipedOutputStream eout = new PipedOutputStream(pin[1]);
 			PrintStream eps = new PrintStream(eout, true);
-      if (!ScriptRunner.systemRedirected) {
+      if (!ScriptingSupport.systemRedirected) {
         System.setErr(eps);
       }
 			py.setErr(eps);

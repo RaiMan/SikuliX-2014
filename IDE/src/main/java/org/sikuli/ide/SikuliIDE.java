@@ -48,7 +48,7 @@ import org.sikuli.idesupport.IDESplash;
 import org.sikuli.idesupport.IIDESupport;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.RunTime;
-import org.sikuli.scriptrunner.ScriptRunner;
+import org.sikuli.scriptrunner.ScriptingSupport;
 import org.sikuli.idesupport.IDESupport;
 import org.sikuli.script.Key;
 import org.sikuli.script.Sikulix;
@@ -160,8 +160,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     start = (new Date()).getTime();
     
-    RunTime.checkArgs(args, RunTime.Type.IDE);
-    runTime = RunTime.get(RunTime.Type.IDE);
+    runTime = RunTime.get(RunTime.Type.IDE, args);
         
     getInstance();
     log(3, "running with Locale: %s", SikuliIDEI18N.getLocaleShow());
@@ -185,7 +184,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
             || cmdLine.hasOption(CommandArgsEnum.TEST.shortname())
             || cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
       log(lvl, "Switching to ScriptRunner with option -r, -t or -i");
-      ScriptRunner.runscript(args);
+      ScriptingSupport.runscript(args);
     }
 
     sikulixIDE.ideSplash = new IDESplash(runTime);
@@ -224,7 +223,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     if (macOpenFiles != null) {
       for (File f : macOpenFiles) {
         if (f.getName().endsWith(".sikuli") || f.getName().endsWith(".skl")) {
-          ScriptRunner.runscript(new String[]{"-r", f.getAbsolutePath()});
+          ScriptingSupport.runscript(new String[]{"-r", f.getAbsolutePath()});
         }
       }
     }
@@ -243,7 +242,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     sikulixIDE.ideSplash.showAction("Interrupt with " + HotkeyManager.getInstance().getHotKeyText("Abort"));
     sikulixIDE.ideSplash.showStep("Init ScriptingSupport");
 
-		ScriptRunner.initScriptingSupport();
+		ScriptingSupport.init();
 		IDESupport.initIDESupport();
     sikulixIDE.initSikuliIDE(args);
   }
@@ -2120,7 +2119,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 					File scriptFile = null;
 					try {
 						if (codePane.isDirty()) {
-							scriptFile = FileManager.createTempFile(ScriptRunner.typeEndings.get(cType));
+							scriptFile = FileManager.createTempFile(ScriptingSupport.typeEndings.get(cType));
 							if (scriptFile == null) {
 								log(-1, "runCurrentScript: temp file for running not available");
 								return;
@@ -2140,7 +2139,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 						if (path != null && !codePane.isSourceBundleTemp()) {
 							parent = path.getParent();
 						}
-						IScriptRunner srunner = ScriptRunner.getRunner(null, cType);
+						IScriptRunner srunner = ScriptingSupport.getRunner(null, cType);
 						if (srunner == null) {
 							log(-1, "runCurrentScript: Could not load a script runner for: %s", cType);
 							return;
