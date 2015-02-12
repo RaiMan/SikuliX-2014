@@ -464,7 +464,7 @@ public class ImagePath {
 				imagePaths.set(0, path);
 				Settings.BundlePath = path.getPath();
 				bundlePath = path;
-				log(3, "new BundlePath: " + path);
+				log(lvl, "new BundlePath:\n%s", path);
 				return true;
 			}
 		}
@@ -492,33 +492,25 @@ public class ImagePath {
 		return bundlePath.getPath();
   }
 
-  private static PathEntry makePathURL(String mainPath, String altPath) {
-		if (mainPath == null || mainPath.isEmpty()) {
+  private static PathEntry makePathURL(String fpMainPath, String fpAltPath) {
+		if (fpMainPath == null || fpMainPath.isEmpty()) {
 			return null;
 		}
-		File fPath = new File(mainPath);
-    if (fPath.isAbsolute()) {
-      if (fPath.exists()) {
-        return new PathEntry(mainPath, FileManager.makeURL(mainPath));
-      } else {
-				return null;
-			}
-    }
 		URL pathURL = null;
-		if (fPath.exists()) {
-			pathURL = FileManager.makeURL(new File(mainPath).getAbsolutePath());
+		if (new File(fpMainPath).exists()) {
+			pathURL = FileManager.makeURL(fpMainPath);
 		} else {
 			Class cls = null;
 			String klassName;
-			String subPath = "";
-			int n = mainPath.indexOf("/");
+			String fpSubPath = "";
+			int n = fpMainPath.indexOf("/");
 			if (n > 0) {
-				klassName = mainPath.substring(0, n);
-				if (n < mainPath.length() - 2) {
-					subPath = mainPath.substring(n + 1);
+				klassName = fpMainPath.substring(0, n);
+				if (n < fpMainPath.length() - 2) {
+					fpSubPath = fpMainPath.substring(n + 1);
 				}
 			} else {
-				klassName = mainPath;
+				klassName = fpMainPath;
 			}
 			try {
 				cls = Class.forName(klassName);
@@ -530,21 +522,21 @@ public class ImagePath {
 				if (codeSrc != null && codeSrc.getLocation() != null) {
 					URL jarURL = codeSrc.getLocation();
 					if (runTime.runningWinApp || jarURL.getPath().endsWith(".jar")) {
-						pathURL = FileManager.makeURL(jarURL.toString() + "!/" + subPath, "jar");
+						pathURL = FileManager.makeURL(jarURL.toString() + "!/" + fpSubPath, "jar");
 					} else {
-						if (altPath == null || altPath.isEmpty()) {
-							altPath = jarURL.getPath();
+						if (fpAltPath == null || fpAltPath.isEmpty()) {
+							fpAltPath = jarURL.getPath();
 						}
-						File ap = new File(altPath, subPath);
-						if (ap.exists()) {
-							pathURL = FileManager.makeURL(ap.getAbsolutePath());
+						File fAltPath = new File(fpAltPath, fpSubPath);
+						if (fAltPath.exists()) {
+							pathURL = FileManager.makeURL(fAltPath.getAbsolutePath());
 						}
 					}
 				}
 			}
 		}
     if (pathURL != null) {
-      return new PathEntry(mainPath, pathURL);
+      return new PathEntry(fpMainPath, pathURL);
     }
     return null;
   }

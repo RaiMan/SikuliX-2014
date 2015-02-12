@@ -10,7 +10,6 @@ import java.awt.Dimension;
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.Iterator;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -76,7 +75,7 @@ public class Sikulix {
     System.out.println("********** Running Sikulix.main");
 
     int dl = RunTime.checkArgs(args, RunTime.Type.API);
-    if (dl > -1) {
+    if (dl > -1 && dl < 999) {
       testNumber = dl;
       Debug.on(3);
     } else {
