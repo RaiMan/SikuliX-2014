@@ -100,7 +100,7 @@ public class RunTime {
   public static synchronized RunTime get(Type typ, String[] clArgs) {
     if (runTime == null) {
       runTime = new RunTime();
-      
+
       if (null != clArgs) {
         int debugLevel = checkArgs(clArgs, typ);
         if (Type.IDE.equals(typ)) {
@@ -157,7 +157,7 @@ public class RunTime {
 
       debugLevelSaved = Debug.getDebugLevel();
       debugLogfileSaved = Debug.logfile;
-      
+
       String aFolder = System.getProperty("user.home");
       if (aFolder == null || aFolder.isEmpty() || !(runTime.fUserDir = new File(aFolder)).exists()) {
         runTime.terminate(-1, "JavaSystemProperty::user.home not valid");
@@ -167,7 +167,7 @@ public class RunTime {
       if (aFolder == null || aFolder.isEmpty() || !(runTime.fWorkDir = new File(aFolder)).exists()) {
         runTime.terminate(-1, "JavaSystemProperty::user.dir not valid");
       }
-      
+
       File fDebug = new File(runTime.fUserDir, "SikulixDebug.txt");
       if (fDebug.exists()) {
         if (Debug.getDebugLevel() == 0) {
@@ -182,7 +182,7 @@ public class RunTime {
 
       runTime.fTestFolder = new File(runTime.fUserDir, "SikulixTest");
       runTime.fTestFile = new File(runTime.fTestFolder, "SikulixTest.txt");
-      
+
       runTime.loadOptions(typ);
       int dl = runTime.getOptionNumber("debug.level");
       if (dl > 0 && Debug.getDebugLevel() < 2) {
@@ -338,7 +338,7 @@ public Rectangle[] monitorBounds = null;
 Rectangle rAllMonitors;
 int mainMonitor = -1;
 int nMonitors = 0;
-  
+
 //<editor-fold defaultstate="collapsed" desc="global init">
   private void init(Type typ) {
 
@@ -372,7 +372,7 @@ int nMonitors = 0;
     }
     fBaseTempPath = new File(fTempPath, "Sikulix");
     BaseTempPath = fBaseTempPath.getAbsolutePath();
-    
+
     if (Type.IDE.equals(typ) && !runningScripts) {
       fBaseTempPath.mkdirs();
       isRunning = new File(BaseTempPath, isRunningFilename);
@@ -416,7 +416,7 @@ int nMonitors = 0;
         });
       }
     }
-    
+
     String msg = "";
     fSikulixAppPath = new File("NotAvailable");
     if (runningWindows) {
@@ -425,7 +425,7 @@ int nMonitors = 0;
       if (tmpdir != null && !tmpdir.isEmpty()) {
         fAppPath = new File(tmpdir);
         fSikulixAppPath = new File(fAppPath, "Sikulix");
-      } 
+      }
     } else if (runningMac) {
       msg = "init: Mac: SikulxAppData does not exist or is not accessible:\n%s";
       fAppPath = new File(fUserDir, "Library/Application Support");
@@ -446,7 +446,7 @@ int nMonitors = 0;
       terminate (1, msg + "\n" + ex.toString(), fSikulixAppPath);
     }
 //</editor-fold>
-    
+
 //<editor-fold defaultstate="collapsed" desc="monitors">
     if (!isHeadless()) {
       genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -479,8 +479,8 @@ int nMonitors = 0;
       log(lvl, "running in headless environment");
     }
 //</editor-fold>
-    
-//<editor-fold defaultstate="collapsed" desc="classpath">        
+
+//<editor-fold defaultstate="collapsed" desc="classpath">
     try {
       if (Type.IDE.equals(typ)) {
         clsRef = Class.forName("org.sikuli.ide.SikuliIDE");
@@ -561,7 +561,7 @@ int nMonitors = 0;
     }
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="libs export">
   public void makeLibsFolder() {
     fLibsFolder = new File(fSikulixAppPath, "SikulixLibs_" + sxBuildStamp);
@@ -613,7 +613,7 @@ int nMonitors = 0;
       }
     }
   }
-  
+
   private void libsExport(Type typ) {
     boolean shouldExport = false;
     makeLibsFolder();
@@ -702,16 +702,16 @@ int nMonitors = 0;
         terminate(1, "problem copying %s", fJawtDll);
       }
     }
-    
+
     areLibsExported = true;
   }
-//</editor-fold>  
+//</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="init for IDE">
   File isRunning = null;
   FileOutputStream isRunningFile = null;
   String isRunningFilename = "sikuli-ide-isrunning";
-  
+
   private void initIDEbefore() {
     log(lvl, "initIDEbefore: entering");
     if (jreVersion.startsWith("1.6")) {
@@ -1012,32 +1012,34 @@ int nMonitors = 0;
       }
       log(lvl, "found Options file at: %s", fOptions);
     }
-    for (Object oKey : options.keySet()) {
-      String sKey = (String) oKey;
-      String[] parts = sKey.split("\\.");
-      if (parts.length == 1) {
-        continue;
-      }
-      String sClass = parts[0];
-      String sAttr = parts[1];
-      Class cClass = null;
-      Field cField = null;
-      Class ccField = null;
-      if (sClass.contains("Settings")) {
-        try {
-          cClass = Class.forName("org.sikuli.basics.Settings");
-          cField = cClass.getField(sAttr);
-          ccField = cField.getType();
-          if (ccField.getName() == "boolean") {
-            cField.setBoolean(null, isOption(sKey));
-          } else if (ccField.getName() == "int"){
-            cField.setInt(null, getOptionNumber(sKey));
-          } else if (ccField.getName() == "String") {
-            cField.set(null, getOption(sKey));
-          }
-        } catch (Exception ex) {}
-      }
-    }
+		if (hasOptions()) {
+			for (Object oKey : options.keySet()) {
+				String sKey = (String) oKey;
+				String[] parts = sKey.split("\\.");
+				if (parts.length == 1) {
+					continue;
+				}
+				String sClass = parts[0];
+				String sAttr = parts[1];
+				Class cClass = null;
+				Field cField = null;
+				Class ccField = null;
+				if (sClass.contains("Settings")) {
+					try {
+						cClass = Class.forName("org.sikuli.basics.Settings");
+						cField = cClass.getField(sAttr);
+						ccField = cField.getType();
+						if (ccField.getName() == "boolean") {
+							cField.setBoolean(null, isOption(sKey));
+						} else if (ccField.getName() == "int"){
+							cField.setInt(null, getOptionNumber(sKey));
+						} else if (ccField.getName() == "String") {
+							cField.set(null, getOption(sKey));
+						}
+					} catch (Exception ex) {}
+				}
+			}
+		}
   }
 
   /**
@@ -1389,7 +1391,7 @@ int nMonitors = 0;
   }
 
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="handling resources from classpath">
   /**
    * export all resource files from the given subtree on classpath to the given folder retaining the subtree<br>
@@ -1579,7 +1581,7 @@ int nMonitors = 0;
     }
     return out;
   }
-  
+
   public URL resourceLocation(String folder) {
     return clsRef.getResource(folder);
   }
@@ -2006,8 +2008,8 @@ int nMonitors = 0;
     }
     return baos.toByteArray();
   }
-  
-  public class oneFileFilter implements FilenameFilter {    
+
+  public class oneFileFilter implements FilenameFilter {
     String aFile;
     public oneFileFilter(String aFileGiven) {
       aFile = aFileGiven;
@@ -2206,14 +2208,14 @@ int nMonitors = 0;
     n = (n<0 || n >= nMonitors) ? mainMonitor : n;
     return monitorBounds[n];
   }
-  
+
   public Rectangle getAllMonitors() {
     if (isHeadless()) {
       return new Rectangle(0, 0, 1, 1);
     }
     return rAllMonitors;
   }
-  
+
   public Rectangle hasPoint(Point aPoint) {
     if (isHeadless()) {
       return new Rectangle(0, 0, 1, 1);
@@ -2225,14 +2227,14 @@ int nMonitors = 0;
     }
     return null;
   }
-  
+
   public Rectangle hasRectangle(Rectangle aRect) {
     if (isHeadless()) {
       return new Rectangle(0, 0, 1, 1);
     }
     return hasPoint(aRect.getLocation());
   }
-  
+
   public GraphicsDevice getGraphicsDevice(int id) {
     return gdevs[id];
   }
