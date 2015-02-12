@@ -336,6 +336,7 @@ public class Settings {
 	public static boolean FALSE = false;
 
 	private static boolean ShowActions = false;
+  public static boolean OverwriteImages = false;
 
 	public static boolean isShowActions() {
 		return ShowActions;
