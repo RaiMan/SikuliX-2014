@@ -37,7 +37,7 @@ public class ScriptingSupport {
   
   public static RunTime runTime = RunTime.get();
 
-	private static final String me = "ScriptRunner: ";
+	private static final String me = "ScriptingSupport: ";
   private static final int lvl = 3;
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, me + message, args);

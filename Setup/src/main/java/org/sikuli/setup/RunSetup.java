@@ -1096,8 +1096,7 @@ public class RunSetup {
   
   private static void runScriptTest(String[] testargs) {
     try {
-      Class sysclass = URLClassLoader.class;
-      Class scriptRunner = sysclass.forName("org.sikuli.scriptrunner.ScriptRunner");
+      Class scriptRunner = Class.forName("org.sikuli.scriptrunner.ScriptingSupport");
       Method mGetApplication = scriptRunner.getDeclaredMethod("runscript",
               new Class[]{String[].class});
       mGetApplication.invoke(null, new Object[]{testargs});

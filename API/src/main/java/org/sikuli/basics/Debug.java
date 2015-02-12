@@ -122,7 +122,7 @@ public class Debug {
 			return false;
 		}
     try {
-      Class Scripting = Class.forName("org.sikuli.scriptrunner.ScriptRunner");
+      Class Scripting = Class.forName("org.sikuli.scriptrunner.ScriptingSupport");
       Method getRunner = Scripting.getMethod("getRunner",
               new Class[]{String.class, String.class});
       scriptRunner = getRunner.invoke(Scripting, new Object[]{null, "jython"});
