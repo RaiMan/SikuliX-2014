@@ -79,11 +79,12 @@ import SikuliImporter
 Debug.log(4, "Jython: sikuli: Sikuli: import Sikulix")
 from org.sikuli.script import Sikulix
 
-Debug.log(4, "Jython: sikuli: Sikuli: import ScriptRunner")
+Debug.log(4, "Jython: sikuli: Sikuli: import ScriptingSupport")
 try:
-	from org.sikuli.scriptrunner import ScriptRunner
+	from org.sikuli.scriptrunner import ScriptingSupport
 except:
   pass
+from org.sikuli.script import Runner
 
 ##
 # a token to check the availability 
