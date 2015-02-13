@@ -856,8 +856,13 @@ public class FileManager {
 				sRes += "/";
 			}
 			try {
-				return new URL(sRes + fName);
-			} catch (Exception ex) {
+				aURL = new URL(sRes + fName);
+				if (1 == isUrlUseabel(aURL)) {
+					return aURL;
+				} else {
+					return null;
+				}
+			} catch (MalformedURLException ex) {
 				return null;
 			}
     }
@@ -871,6 +876,28 @@ public class FileManager {
     }
     return aURL;
   }
+
+	public static int isUrlUseabel(URL aURL) {
+		try {
+			HttpURLConnection.setFollowRedirects(false);
+			HttpURLConnection con = (HttpURLConnection) aURL.openConnection();
+			con.setInstanceFollowRedirects(false);
+			con.setRequestMethod("HEAD");
+			int retval = con.getResponseCode();
+//				HttpURLConnection.HTTP_BAD_METHOD 405
+//				HttpURLConnection.HTTP_NOT_FOUND 404
+			if (retval == HttpURLConnection.HTTP_OK) {
+				return 1;
+			} else if (retval == HttpURLConnection.HTTP_NOT_FOUND) {
+				return 0;
+			} else {
+				return -1;
+			}
+		} catch (Exception ex) {
+			return -1;
+		}
+
+	}
 
 	public static boolean checkJarContent(String jarPath, String jarContent) {
 		URL jpu = makeURL(jarPath, "jar");

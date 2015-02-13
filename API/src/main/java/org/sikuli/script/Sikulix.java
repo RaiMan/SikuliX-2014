@@ -108,34 +108,14 @@ public class Sikulix {
 			URL uTest = null;
 			try {
         imgLink = "http://download.sikuli.de/images";
-        imgHttp = "SikuliLogo.png";        
-				uTest = new URL(imgLink);
-				URL uImage = FileManager.getURLForContentFromURL(uTest, imgHttp);
-        int retval;
-        boolean ok = false;
-        try {
-          HttpURLConnection.setFollowRedirects(false);
-          HttpURLConnection con = (HttpURLConnection) uImage.openConnection();
-          con.setInstanceFollowRedirects(false);
-          con.setRequestMethod("HEAD");
-          retval = con.getResponseCode();
-          ok = (retval == HttpURLConnection.HTTP_OK);
-          log(0, "URL: %s (%d)", uImage, retval);
-        } catch (Exception e) {
-          log(-1, "%s", e);
-          ok = false;
-        }
-        if (!ok) {
-          System.exit(1);
-        }
-        BufferedImage bImg = ImageIO.read(uImage);
-        if (bImg != null) {
-          Image img = new Image(bImg);
-          Screen scr = new Screen();
-          scr.find(img).highlight(2);
-          scr.find(img).highlight(2);
-          Image.dump();
-        }
+				String imgFolder = "download.sikuli.de/images";
+        imgHttp = "SikuliLogo.png";
+				ImagePath.addHTTP(imgFolder);
+				Image img = Image.create(imgHttp);
+				Screen scr = new Screen();
+				scr.find(img).highlight(2);
+				scr.find(img).highlight(2);
+				Image.dump();
 			} catch (Exception ex) {
 				log(-1, "%s", ex);
 			}

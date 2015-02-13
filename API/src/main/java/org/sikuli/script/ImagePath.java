@@ -69,7 +69,7 @@ public class ImagePath {
 			if (pathURL == null) {
 				return "-- empty --";
 			}
-			return pathURL.getPath();
+			return pathURL.toExternalForm();
 		}
 
 		public boolean isFile() {
@@ -84,6 +84,13 @@ public class ImagePath {
 				return false;
 			}
 			return "jar".equals(pathURL.getProtocol());
+		}
+
+		public boolean isHTTP() {
+			if (pathURL == null) {
+				return false;
+			}
+			return pathURL.getProtocol().startsWith("http");
 		}
 
 		public boolean exists() {
@@ -211,6 +218,7 @@ public class ImagePath {
    */
   public static URL find(String fname) {
     URL fURL = null;
+		String proto = "";
     fname = FileManager.normalize(fname);
     if (new File(fname).isAbsolute()) {
       if (new File(fname).exists()) {
@@ -227,19 +235,18 @@ public class ImagePath {
         if (path == null) {
           continue;
         }
-        if ("file".equals(path.pathURL.getProtocol())) {
+				proto = path.pathURL.getProtocol();
+				if ("file".equals(proto)) {
           fURL = FileManager.makeURL(path.pathURL, fname);
           if (new File(fURL.getPath()).exists()) {
             break;
           }
-        } else if ("jar".equals(path.pathURL.getProtocol())) {
+        } else if ("jar".equals(proto) || proto.startsWith("http")) {
           fURL = FileManager.getURLForContentFromURL(path.pathURL, fname);
           if (fURL != null) {
             break;
           }
         } else {
-          //TODO support for http image path
-          fURL = FileManager.getURLForContentFromURL(path.pathURL, fname);
           log(-1, "find: URL not supported: " + path.pathURL);
 					return fURL;
         }
@@ -303,6 +310,32 @@ public class ImagePath {
    */
   public static boolean add(String mainPath) {
     return add(mainPath, null);
+  }
+
+  /**
+   * create a new PathEntry from the given net resource folder accessible via HTTP at
+   * end of the current image path<br>
+	 * BE AWARE:<br>
+	 * Files stored in the given remote folder must allow HTTP HEAD-requests (checked)<br>
+	 * redirections are not followed (suppressed)
+   *
+   * @param pathHTTP folder address like siteaddress or siteaddress/folder/subfolder (e.g. download.sikuli.de/images)
+   * @return true if successful otherwise false
+   */
+  public static boolean addHTTP(String pathHTTP) {
+		try {
+			pathHTTP = FileManager.slashify(pathHTTP, false);
+			URL aURL = new URL("http://" + pathHTTP);
+			if (0 != FileManager.isUrlUseabel(new URL(aURL.toString() +
+							"/THIS_FILE_SHOULD_RETURN_404"))) {
+				return false;
+			}
+      imagePaths.add(new PathEntry(pathHTTP, aURL));
+		} catch (Exception ex) {
+			log (-1, "addHTTP: not possible: %s\n%s", pathHTTP, ex);
+			return false;
+		}
+		return true;
   }
 
   /**
