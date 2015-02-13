@@ -62,7 +62,7 @@ public class FileManager {
   private static SplashFrame _progress = null;
   private static final String EXECUTABLE = "#executable";
 
-  private static int tryGetFileSize(URL url) {
+  public static int tryGetFileSize(URL url) {
     HttpURLConnection conn = null;
     try {
       if (getProxy() != null) {
