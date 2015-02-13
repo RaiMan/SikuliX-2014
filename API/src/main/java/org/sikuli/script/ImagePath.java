@@ -10,6 +10,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.security.CodeSource;
 import java.util.ArrayList;
@@ -69,6 +70,10 @@ public class ImagePath {
 			if (pathURL == null) {
 				return "-- empty --";
 			}
+			if (isFile())
+				try {
+					return pathURL.toURI().getPath();
+				} catch (URISyntaxException ex) {}
 			return pathURL.toExternalForm();
 		}
 
@@ -330,7 +335,13 @@ public class ImagePath {
 							"/THIS_FILE_SHOULD_RETURN_404"))) {
 				return false;
 			}
-      imagePaths.add(new PathEntry(pathHTTP, aURL));
+			PathEntry path = new PathEntry(pathHTTP, aURL);
+      if (hasPath(path) < 0) {
+        log(lvl, "add: %s", path);
+        imagePaths.add(path);
+      } else {
+        log(lvl, "duplicate not added: %s", path);
+      }
 		} catch (Exception ex) {
 			log (-1, "addHTTP: not possible: %s\n%s", pathHTTP, ex);
 			return false;
@@ -354,8 +365,8 @@ public class ImagePath {
    * @return true if successful otherwise false
    */
   public static boolean add(String mainPath, String altPath) {
-		mainPath = FileManager.normalize(mainPath);
-		altPath = FileManager.normalize(altPath);
+		mainPath = FileManager.normalizeAbsolute(mainPath, false);
+		altPath = FileManager.normalizeAbsolute(altPath, false);
     PathEntry path = makePathURL(mainPath, altPath);
     if (path != null) {
       if (hasPath(path) < 0) {
@@ -374,7 +385,7 @@ public class ImagePath {
 
   private static int hasPath(PathEntry path) {
     PathEntry pe = imagePaths.get(0);
-    if (pe == null) {
+    if (imagePaths.size() == 1 && pe == null) {
       return -1;
     }
     if (pe.equals(path)) {
@@ -485,9 +496,9 @@ public class ImagePath {
 		PathEntry path = null;
 		if (bPath == null) {
 			// called on first find, if bundlepath still null
-			path = makePathURL(FileManager.normalize(Settings.BundlePath), null);
+			path = makePathURL(FileManager.normalizeAbsolute(Settings.BundlePath, false), null);
 		} else {
-			path = makePathURL(FileManager.normalize(bPath), null);
+			path = makePathURL(FileManager.normalizeAbsolute(bPath, false), null);
 		}
 		if (path != null && path.isFile()) {
       if (bundleEquals(path)) {
