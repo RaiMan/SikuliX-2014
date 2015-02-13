@@ -8,8 +8,8 @@ package org.sikuli.script;
 
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.File;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.CodeSource;
 import javax.imageio.ImageIO;
@@ -107,15 +107,35 @@ public class Sikulix {
 
 			URL uTest = null;
 			try {
+        imgLink = "http://download.sikuli.de/images";
+        imgHttp = "SikuliLogo.png";        
 				uTest = new URL(imgLink);
-				URL uImage = FileManager.makeURL(uTest, imgHttp);
-				log(0, "URL: %s", uTest);
-//				BufferedImage bImg = ImageIO.read(uTest);
-//				log(0, "Image: %s", bImg);
-//				Image img = new Image(bImg);
-//        Screen scr = new Screen();
-//				scr.find(img).highlight(2);
-//				scr.find(img).highlight(2);
+				URL uImage = FileManager.getURLForContentFromURL(uTest, imgHttp);
+        int retval;
+        boolean ok = false;
+        try {
+          HttpURLConnection.setFollowRedirects(false);
+          HttpURLConnection con = (HttpURLConnection) uImage.openConnection();
+          con.setInstanceFollowRedirects(false);
+          con.setRequestMethod("HEAD");
+          retval = con.getResponseCode();
+          ok = (retval == HttpURLConnection.HTTP_OK);
+          log(0, "URL: %s (%d)", uImage, retval);
+        } catch (Exception e) {
+          log(-1, "%s", e);
+          ok = false;
+        }
+        if (!ok) {
+          System.exit(1);
+        }
+        BufferedImage bImg = ImageIO.read(uImage);
+        if (bImg != null) {
+          Image img = new Image(bImg);
+          Screen scr = new Screen();
+          scr.find(img).highlight(2);
+          scr.find(img).highlight(2);
+          Image.dump();
+        }
 			} catch (Exception ex) {
 				log(-1, "%s", ex);
 			}
@@ -617,5 +637,9 @@ public class Sikulix {
    */
   public static void prefRemove() {
     PreferencesUser.getInstance().removeAll(prefNonSikuli);
+  }
+
+  private static Exception Exception() {
+    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 }
