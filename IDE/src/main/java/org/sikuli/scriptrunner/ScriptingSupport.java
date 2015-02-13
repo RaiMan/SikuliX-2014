@@ -15,6 +15,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -34,7 +35,7 @@ import org.sikuli.script.RunTime;
 import org.sikuli.script.Sikulix;
 
 public class ScriptingSupport {
-  
+
   public static RunTime runTime = RunTime.get();
 
 	private static final String me = "ScriptingSupport: ";
@@ -71,7 +72,7 @@ public class ScriptingSupport {
   private static int lastReturnCode = 0;
 
   private static boolean isReady = false;
-  
+
   private static ServerSocket server = null;
   private static boolean isHandling = false;
   private static boolean shouldStop = false;
@@ -79,7 +80,7 @@ public class ScriptingSupport {
   private static Scanner in = null;
   private static int runnerID = -1;
   private static Map<String, RemoteRunner> remoteRunners = new HashMap<String, RemoteRunner>();
-  
+
   //<editor-fold defaultstate="collapsed" desc="remote runner support">
   public static void startRemoteRunner(String[] args) {
     int port = getPort(args.length > 0 ? args[0] : null);
@@ -123,7 +124,7 @@ public class ScriptingSupport {
     }
     log(lvl, "Remote: now stopped on port: " + port);
   }
-  
+
   private static int getPort(String p) {
     int port;
     int pDefault = 50000;
@@ -141,18 +142,18 @@ public class ScriptingSupport {
     }
     return port;
   }
-  
+
   private static class HandleClient implements Runnable {
-    
+
     private volatile boolean keepRunning;
     Thread thread;
     Socket socket;
     Boolean shouldStop = false;
-    
+
     public HandleClient(Socket sock) {
       init(sock);
     }
-    
+
     private void init(Socket sock) {
       socket = sock;
       if (in == null || out == null) {
@@ -163,11 +164,11 @@ public class ScriptingSupport {
       keepRunning = true;
       thread.start();
     }
-    
+
     public boolean getShouldStop() {
       return shouldStop;
     }
-    
+
     @Override
     public void run() {
       String e;
@@ -205,7 +206,7 @@ public class ScriptingSupport {
         stopRunning();
       }
     }
-    
+
     private void getSystem() {
       String os = System.getProperty("os.name").toLowerCase();
       if (os.startsWith("mac")) {
@@ -221,11 +222,11 @@ public class ScriptingSupport {
       GraphicsDevice[] gdevs = genv.getScreenDevices();
       send(os + " " + gdevs.length);
     }
-    
+
     private int runScript(String command) {
       return 0;
     }
-    
+
     private void send(Object o) {
       try {
         out.writeObject(o);
@@ -240,7 +241,7 @@ public class ScriptingSupport {
         ScriptingSupport.log(-1, "send: writeObject: Exception: " + ex.getMessage());
       }
     }
-    
+
     public void stopRunning() {
       ScriptingSupport.log(lvl,"stop client handling requested");
       try {
@@ -252,7 +253,7 @@ public class ScriptingSupport {
       keepRunning = false;
     }
   }
-  
+
   public static String getRemoteRunner(String adr, String p) {
     RemoteRunner rr = new RemoteRunner(adr, p);
     String rname = null;
@@ -264,11 +265,11 @@ public class ScriptingSupport {
     }
     return rname;
   }
-  
+
   static synchronized String getNextRunnerName() {
     return String.format("remoterunner%d", runnerID++);
   }
-  
+
   public int runRemote(String rname, String script, String[] args) {
     RemoteRunner rr = remoteRunners.get(rname);
     if (rr == null) {
@@ -278,7 +279,7 @@ public class ScriptingSupport {
     return 0;
   }
 //</editor-fold>
-    
+
   public static void init() {
     if (isReady) {
       return;
@@ -380,7 +381,7 @@ public class ScriptingSupport {
 
   //<editor-fold defaultstate="collapsed" desc="run scripts">
   private static boolean isRunningScript = false;
-  
+
   /**
    * INTERNAL USE: run scripts when sikulix.jar is used on commandline with args -r, -t or -i<br>
    * If you want to use it the args content must be according to the Sikulix command line parameter rules<br>
@@ -388,14 +389,14 @@ public class ScriptingSupport {
    * @param args parameters given on commandline
    */
   public static void runscript(String[] args) {
-    
+
     if (isRunningScript) {
       log(-1, "can run only one script at a time!");
       return;
     }
 
     IScriptRunner currentRunner = null;
-    
+
     if (args != null && args.length > 1 && args[0].startsWith("-testSetup")) {
       currentRunner = getRunner(null, args[1]);
       if (currentRunner == null) {
@@ -415,19 +416,19 @@ public class ScriptingSupport {
       isRunningScript = false;
       return;
     }
-    
+
     isRunningScript = true;
-    
+
     CommandArgs cmdArgs = new CommandArgs("SCRIPT");
     CommandLine cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
     String cmdValue;
-    
+
     if (cmdLine == null || cmdLine.getOptions().length == 0) {
       log(-1, "Did not find any valid option on command line!");
       cmdArgs.printHelp();
       System.exit(1);
     }
-    
+
     if (cmdLine.hasOption(CommandArgsEnum.HELP.shortname())) {
       cmdArgs.printHelp();
       if (currentRunner != null) {
@@ -435,21 +436,21 @@ public class ScriptingSupport {
       }
       System.exit(1);
     }
-    
+
     if (cmdLine.hasOption(CommandArgsEnum.LOGFILE.shortname())) {
       cmdValue = cmdLine.getOptionValue(CommandArgsEnum.LOGFILE.longname());
       if (!Debug.setLogFile(cmdValue == null ? "" : cmdValue)) {
         System.exit(1);
       }
     }
-    
+
     if (cmdLine.hasOption(CommandArgsEnum.USERLOGFILE.shortname())) {
       cmdValue = cmdLine.getOptionValue(CommandArgsEnum.USERLOGFILE.longname());
       if (!Debug.setUserLogFile(cmdValue == null ? "" : cmdValue)) {
         System.exit(1);
       }
     }
-    
+
     if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
       cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
       if (cmdValue == null) {
@@ -462,11 +463,11 @@ public class ScriptingSupport {
         Debug.setDebugLevel(cmdValue);
       }
     }
-    
+
     runTime.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
     log(lvl, "CmdOrg: " + System.getenv("SIKULI_COMMAND"));
     runTime.printArgs();
-    
+
     // select script runner and/or start interactive session
     // option is overloaded - might specify runner for -r/-t
     if (cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
@@ -489,7 +490,7 @@ public class ScriptingSupport {
         Sikulix.endNormal(exitCode);
       }
     }
-    
+
     runAsTest = false;
     if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname())) {
       runScripts = cmdLine.getOptionValues(CommandArgsEnum.RUN.longname());
@@ -500,7 +501,7 @@ public class ScriptingSupport {
 //TODO run a script as unittest with HTMLTestRunner
       System.exit(1);
     }
-    
+
     if (runScripts != null && runScripts.length > 0) {
       int exitCode = 0;
       for (String givenScriptName : runScripts) {
@@ -518,7 +519,7 @@ public class ScriptingSupport {
       System.exit(1);
     }
   }
-  
+
   /**
    * run a script at scriptPath (.sikuli or .skl)
    * @param scriptPath absolute or relative to working folder
@@ -533,7 +534,7 @@ public class ScriptingSupport {
     ImagePath.setBundlePath(savePath);
     return retVal;
   }
-  
+
   /**
    * run a script at scriptPath (.sikuli or .skl)
    * @param scriptPath absolute or relative to working folder
@@ -542,7 +543,7 @@ public class ScriptingSupport {
   public static int run(String scriptPath) {
     return run(scriptPath, new String[0]);
   }
-  
+
   public static boolean transferScript(String src, String dest) {
     log(lvl, "transferScript: %s\nto: %s", src, dest);
     FileManager.FileFilter filter = new FileManager.FileFilter() {
@@ -572,16 +573,16 @@ public class ScriptingSupport {
     return true;
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="helpers">
   public static void setProject() {
     RunBox.setProject();
   }
-  
+
   public static int getLastReturnCode() {
     return lastReturnCode;
   }
-  
+
   public static File getScriptFile(File fScriptFolder) {
     if (fScriptFolder == null) {
       return null;
@@ -613,17 +614,19 @@ public class ScriptingSupport {
     return fScript;
   }
 //</editor-fold>
-  
+
   private static class RunBox {
 
     static File scriptProject = null;
 
     boolean asTest = false;
     String givenScriptName = "";
+		URL givenScriptHTTP = null;
     String[] args = new String[0];
 
     private RunBox(String givenName, String[] givenArgs, boolean isTest) {
       givenScriptName = givenName;
+			if (givenName.contains(":"));
       args = givenArgs;
       asTest = isTest;
     }
