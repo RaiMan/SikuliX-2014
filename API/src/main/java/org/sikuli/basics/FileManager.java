@@ -318,6 +318,34 @@ public class FileManager {
     return target;
   }
 
+  public static String downloadURLtoString(URL uSrc) {
+    String target = "";
+    InputStream reader = null;
+    try {
+      if (getProxy() != null) {
+        reader = uSrc.openConnection(getProxy()).getInputStream();
+      } else {
+        reader = uSrc.openConnection().getInputStream();
+      }
+      byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
+      int bytesRead = 0;
+      while ((bytesRead = reader.read(buffer)) > 0) {
+        target += (new String(Arrays.copyOfRange(buffer, 0, bytesRead), Charset.forName("utf-8")));
+      }
+    } catch (Exception ex) {
+      log(-1, "problems while downloading\n" + ex.getMessage());
+      target = null;
+    } finally {
+      if (reader != null) {
+        try {
+          reader.close();
+        } catch (IOException ex) {
+        }
+      }
+    }
+    return target;
+  }
+
   /**
    * open the given url in the standard browser
    *
@@ -879,9 +907,9 @@ public class FileManager {
 
 	public static int isUrlUseabel(URL aURL) {
 		try {
-			HttpURLConnection.setFollowRedirects(false);
+//			HttpURLConnection.setFollowRedirects(false);
 			HttpURLConnection con = (HttpURLConnection) aURL.openConnection();
-			con.setInstanceFollowRedirects(false);
+//			con.setInstanceFollowRedirects(false);
 			con.setRequestMethod("HEAD");
 			int retval = con.getResponseCode();
 //				HttpURLConnection.HTTP_BAD_METHOD 405
@@ -889,6 +917,8 @@ public class FileManager {
 			if (retval == HttpURLConnection.HTTP_OK) {
 				return 1;
 			} else if (retval == HttpURLConnection.HTTP_NOT_FOUND) {
+				return 0;
+			} else if (retval == HttpURLConnection.HTTP_FORBIDDEN) {
 				return 0;
 			} else {
 				return -1;
@@ -1394,7 +1424,7 @@ public class FileManager {
       scriptType = fScriptFolder.getName().substring(pos + 1);
     }
     if (!fScriptFolder.exists()) {
-      log(-1, "Not a valid Sikuli script project: " + fScriptFolder.getAbsolutePath());
+      log(-1, "Not a valid Sikuli script project:\n%s", fScriptFolder.getAbsolutePath());
       return null;
     }
     if (scriptType.startsWith("sikuli")) {

@@ -9,7 +9,6 @@ package org.sikuli.scriptrunner;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -618,15 +617,82 @@ public class ScriptingSupport {
   private static class RunBox {
 
     static File scriptProject = null;
+    static URL uScriptProject = null;
 
     boolean asTest = false;
+    String givenScriptHost = "";
+    String givenScriptFolder = "";
     String givenScriptName = "";
-		URL givenScriptHTTP = null;
+    String givenScriptScript = "";
+    String givenScriptType = "sikuli";
+    String givenScriptScriptType = RDEFAULT;
+		URL uGivenScript = null;
+    URL uGivenScriptFile = null;
+    boolean givenScriptExists = true;
     String[] args = new String[0];
 
     private RunBox(String givenName, String[] givenArgs, boolean isTest) {
       givenScriptName = givenName;
-			if (givenName.contains(":"));
+      String[] parts;
+      if (givenName.contains(":")) {
+        parts = givenName.split(":");
+        givenScriptHost = parts[0];
+        if (parts.length > 1 && !parts[1].isEmpty()) {
+          givenScriptName = new File(parts[1]).getName();
+          String fpFolder = new File(parts[1]).getParent();
+          if (null != fpFolder && !fpFolder.isEmpty()) {
+            givenScriptFolder = FileManager.slashify(fpFolder, true);
+            if (givenScriptFolder.startsWith("/")) {
+              givenScriptFolder = givenScriptFolder.substring(1);
+            }
+          }
+        }        
+      }
+      boolean sameFolder = givenScriptName.startsWith("./");
+      if (sameFolder) {
+        givenScriptName = givenScriptName.substring(2);
+      }      
+      if (givenScriptName.contains(".")) {
+        parts = givenScriptName.split("\\.");
+        givenScriptScript = parts[0];
+        givenScriptType = parts[1];
+      } else {
+        givenScriptScript = givenScriptName;
+      }
+      if (sameFolder && scriptProject != null) {
+          givenScriptName = new File(scriptProject, givenScriptName).getPath();
+      } else if (sameFolder && uScriptProject != null) {
+        givenScriptHost = uScriptProject.getHost();
+        givenScriptFolder = uScriptProject.getPath().substring(1);
+      } else if (scriptProject == null && givenScriptHost.isEmpty()) {
+        String fpParent = new File(givenScriptName).getParent();
+        if (fpParent == null || fpParent.isEmpty()) {
+          scriptProject = null;
+        } else {
+          scriptProject = new File(givenScriptName).getParentFile();
+        }
+      }
+      if (!givenScriptHost.isEmpty()) {
+        try {
+          uGivenScript = new URL("http://" + givenScriptHost + "/" + givenScriptFolder + givenScriptName);
+          if (-1 < FileManager.isUrlUseabel(uGivenScript)) {
+            givenScriptScriptType = RPYTHON;
+            uGivenScriptFile = new URL(uGivenScript.toString() + "/" + givenScriptScript + ".py.txt");
+            if (1 > FileManager.isUrlUseabel(uGivenScriptFile)) {
+              givenScriptScriptType = RRUBY;
+              uGivenScriptFile = new URL(uGivenScript.toString() + "/" + givenScriptScript + ".rb.txt");
+              if (1 > FileManager.isUrlUseabel(uGivenScriptFile)) {
+                givenScriptExists = false;
+              }
+            }
+          }
+          if (givenScriptExists && uScriptProject == null) {
+            uScriptProject = new URL("http://" + givenScriptHost + "/" + givenScriptFolder);
+          }
+        } catch (Exception ex) {
+          givenScriptExists = false;
+        }
+      }
       args = givenArgs;
       asTest = isTest;
     }
@@ -638,35 +704,49 @@ public class ScriptingSupport {
     }
 
     private int run() {
-      int exitCode;
-      log(lvl, "givenScriptName:\n%s", givenScriptName);
-      if (-1 == FileManager.slashify(givenScriptName, false).indexOf("/") && RunBox.scriptProject != null) {
-        givenScriptName = new File(scriptProject, givenScriptName).getPath();
-      }
-      if (givenScriptName.endsWith(".skl")) {
-        givenScriptName = FileManager.unzipSKL(givenScriptName);
-        if (givenScriptName == null) {
-          log(-1, "not possible to make .skl runnable");
+      int exitCode = -1;
+      IScriptRunner currentRunner = null;
+      if (uGivenScript != null) {
+        if (givenScriptExists) {
+          log(lvl, "givenScriptName:\n%s", uGivenScript);
+          String script = FileManager.downloadURLtoString(uGivenScriptFile);
+          currentRunner = getRunner(null, givenScriptScriptType);
+          if (currentRunner != null) {
+            ImagePath.add(uGivenScript);
+            exitCode = currentRunner.runScript(null, null, new String[] {script}, null);
+          }
+        } else {
+          log(lvl, "givenScriptName not available:\n%s", uGivenScript);
+          exitCode = -9999;
+        }
+      } else {
+        log(lvl, "givenScriptName:\n%s", givenScriptName);
+        if (givenScriptName.endsWith(".skl")) {
+          givenScriptName = FileManager.unzipSKL(givenScriptName);
+          if (givenScriptName == null) {
+            log(-1, "not possible to make .skl runnable");
+            return -9999;
+          }
+        }
+        File fScript = getScriptFile(new File(givenScriptName));
+        if (fScript == null) {
           return -9999;
         }
+        fScript = new File(FileManager.normalizeAbsolute(fScript.getPath(), true));
+        log(lvl, "Trying to run script:\n%s", fScript);
+        currentRunner = getRunner(fScript.getName(), null);
+        if (currentRunner != null) {
+          ImagePath.setBundlePath(fScript.getParent());
+          if (asTest) {
+            exitCode = currentRunner.runTest(fScript, null, args, null);
+          } else {
+            exitCode = currentRunner.runScript(fScript, null, args, null);
+          }
+        }
       }
-      File fScript = getScriptFile(new File(givenScriptName));
-      if (fScript == null) {
-        return -9999;
+      if (currentRunner != null) {
+        currentRunner.close();
       }
-      fScript = new File(FileManager.normalizeAbsolute(fScript.getPath(), true));
-      if (null == scriptProject) {
-        scriptProject = fScript.getParentFile().getParentFile();
-      }
-      log(lvl, "Trying to run script:\n%s", fScript);
-      IScriptRunner currentRunner = getRunner(fScript.getName(), null);
-      ImagePath.setBundlePath(fScript.getParent());
-      if (asTest) {
-        exitCode = currentRunner.runTest(fScript, null, args, null);
-      } else {
-        exitCode = currentRunner.runScript(fScript, null, args, null);
-      }
-      currentRunner.close();
       return exitCode;
     }
   }

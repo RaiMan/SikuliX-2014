@@ -329,8 +329,13 @@ public class ImagePath {
    */
   public static boolean addHTTP(String pathHTTP) {
 		try {
+      String proto = "http://";
+      String protos = "https://";
+      if (pathHTTP.startsWith(proto) || pathHTTP.startsWith(protos)) {
+        proto = "";
+      }
 			pathHTTP = FileManager.slashify(pathHTTP, false);
-			URL aURL = new URL("http://" + pathHTTP);
+			URL aURL = new URL(proto + pathHTTP);
 			if (0 != FileManager.isUrlUseabel(new URL(aURL.toString() +
 							"/THIS_FILE_SHOULD_RETURN_404"))) {
 				return false;
@@ -365,9 +370,13 @@ public class ImagePath {
    * @return true if successful otherwise false
    */
   public static boolean add(String mainPath, String altPath) {
-		mainPath = FileManager.normalizeAbsolute(mainPath, false);
-		altPath = FileManager.normalizeAbsolute(altPath, false);
-    PathEntry path = makePathURL(mainPath, altPath);
+    PathEntry path = null;
+    if (mainPath.contains(":")) {
+      return addHTTP(mainPath.replaceFirst(":", "/"));
+    }
+    mainPath = FileManager.normalizeAbsolute(mainPath, false);
+    altPath = FileManager.normalizeAbsolute(altPath, false);
+    path = makePathURL(mainPath, altPath);
     if (path != null) {
       if (hasPath(path) < 0) {
         log(lvl, "add: %s", path);
