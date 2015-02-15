@@ -4,7 +4,7 @@
  *
  * modified RaiMan 2013
  */
-package org.sikuli.ide;
+package org.sikuli.util;
 
 import java.util.ArrayList;
 import java.util.List;

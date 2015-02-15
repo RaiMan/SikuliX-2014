@@ -6,6 +6,8 @@
  */
 package org.sikuli.ide;
 
+import org.sikuli.util.CommandArgsEnum;
+import org.sikuli.util.CommandArgs;
 import com.explodingpixels.macwidgets.MacUtils;
 import java.awt.*;
 import java.awt.datatransfer.Clipboard;
@@ -51,6 +53,7 @@ import org.sikuli.script.RunTime;
 import org.sikuli.scriptrunner.ScriptingSupport;
 import org.sikuli.idesupport.IDESupport;
 import org.sikuli.script.Key;
+import org.sikuli.script.Runner;
 import org.sikuli.script.Sikulix;
 
 public class SikuliIDE extends JFrame implements InvocationHandler {
@@ -682,6 +685,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     Settings.Highlight = prefs.getPrefMoreHighlight();
     Settings.OcrTextSearch = prefs.getPrefMoreTextSearch();
     Settings.OcrTextRead = prefs.getPrefMoreTextOCR();
+    runTime.resetProject();
     return true;
   }
 
@@ -2119,7 +2123,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 					File scriptFile = null;
 					try {
 						if (codePane.isDirty()) {
-							scriptFile = FileManager.createTempFile(ScriptingSupport.typeEndings.get(cType));
+							scriptFile = FileManager.createTempFile(Runner.typeEndings.get(cType));
 							if (scriptFile == null) {
 								log(-1, "runCurrentScript: temp file for running not available");
 								return;

@@ -27,6 +27,7 @@ import org.python.util.jython;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.script.RunTime;
+import org.sikuli.script.Runner;
 
 /**
  * Executes Sikuliscripts written in Python/Jython.
@@ -448,7 +449,7 @@ public class JythonScriptRunner implements IScriptRunner {
     } catch (ClassNotFoundException ex) {
       return null;
     }
-		return ScriptingSupport.RPYTHON;
+		return Runner.RPYTHON;
 	}
 
 	/**

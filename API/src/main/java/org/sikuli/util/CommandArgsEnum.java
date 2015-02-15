@@ -4,7 +4,7 @@
  *
  * modified RaiMan 2014
  */
-package org.sikuli.ide;
+package org.sikuli.util;
 
 /**
  * Enum that stores the info about the commandline args

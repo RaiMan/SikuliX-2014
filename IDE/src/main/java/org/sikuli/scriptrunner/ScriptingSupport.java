@@ -15,7 +15,6 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -23,14 +22,12 @@ import java.util.Scanner;
 import java.util.ServiceConfigurationError;
 import java.util.ServiceLoader;
 import javax.swing.ImageIcon;
-import org.apache.commons.cli.CommandLine;
-import org.sikuli.ide.CommandArgs;
-import org.sikuli.ide.CommandArgsEnum;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.RunTime;
+import org.sikuli.script.Runner;
 import org.sikuli.script.Sikulix;
 
 public class ScriptingSupport {
@@ -49,18 +46,6 @@ public class ScriptingSupport {
 	private static Map<String, IScriptRunner> supportedRunner = new HashMap<String, IScriptRunner>();
   public static boolean systemRedirected = false;
 
-	public static Map<String, String> EndingTypes = new HashMap<String, String>();
-	public static Map<String, String> typeEndings = new HashMap<String, String>();
-	public static String CPYTHON = "text/python";
-	public static String CRUBY = "text/ruby";
-	public static String CPLAIN = "text/plain";
-	public static String EPYTHON = "py";
-	public static String ERUBY = "rb";
-	public static String EPLAIN = "txt";
-	public static String RPYTHON = "jython";
-	public static String RRUBY = "jruby";
-	public static String RDEFAULT = "NotDefined";
-	public static String EDEFAULT = EPYTHON;
 	public static String TypeCommentToken = "---SikuliX---";
 	public static String TypeCommentDefault = "# This script uses %s " + TypeCommentToken + "\n";
 
@@ -285,12 +270,6 @@ public class ScriptingSupport {
     }
 		log(lvl, "initScriptingSupport: enter");
     if (scriptRunner.isEmpty()) {
-      EndingTypes.put("py", CPYTHON);
-      EndingTypes.put("rb", CRUBY);
-      EndingTypes.put("txt", CPLAIN);
-      for (String k : EndingTypes.keySet()) {
-        typeEndings.put(EndingTypes.get(k), k);
-      }
       ServiceLoader<IScriptRunner> rloader = ServiceLoader.load(IScriptRunner.class);
       Iterator<IScriptRunner> rIterator = rloader.iterator();
       while (rIterator.hasNext()) {
@@ -318,17 +297,17 @@ public class ScriptingSupport {
       }
       System.exit(1);
     } else {
-      RDEFAULT = (String) scriptRunner.keySet().toArray()[0];
-      EDEFAULT = scriptRunner.get(RDEFAULT).getFileEndings()[0];
+      Runner.RDEFAULT = (String) scriptRunner.keySet().toArray()[0];
+      Runner.EDEFAULT = scriptRunner.get(Runner.RDEFAULT).getFileEndings()[0];
       for (IScriptRunner r : scriptRunner.values()) {
         for (String e : r.getFileEndings()) {
-          if (!supportedRunner.containsKey(EndingTypes.get(e))) {
-            supportedRunner.put(EndingTypes.get(e), r);
+          if (!supportedRunner.containsKey(Runner.EndingTypes.get(e))) {
+            supportedRunner.put(Runner.EndingTypes.get(e), r);
           }
         }
       }
     }
-		log(lvl, "initScriptingSupport: exit with defaultrunner: %s (%s)", RDEFAULT, EDEFAULT);
+		log(lvl, "initScriptingSupport: exit with defaultrunner: %s (%s)", Runner.RDEFAULT, Runner.EDEFAULT);
     isReady = true;
   }
 
@@ -337,7 +316,7 @@ public class ScriptingSupport {
     IScriptRunner currentRunner = null;
     String ending = null;
     if (script != null) {
-      for (String suffix : EndingTypes.keySet()) {
+      for (String suffix : Runner.EndingTypes.keySet()) {
         if (script.endsWith(suffix)) {
           ending = suffix;
           break;
@@ -348,9 +327,9 @@ public class ScriptingSupport {
       if (currentRunner != null) {
         return currentRunner;
       }
-      ending = typeEndings.get(type);
+      ending = Runner.typeEndings.get(type);
       if (ending == null) {
-        if (EndingTypes.containsKey(type)) {
+        if (Runner.EndingTypes.containsKey(type)) {
           ending = type;
         }
       }
@@ -362,6 +341,9 @@ public class ScriptingSupport {
           break;
         }
       }
+    }
+    if (currentRunner == null) {
+      log(-1, "getRunner: no runner found for:\n%s", (script == null ? type : script));
     }
     return currentRunner;
   }
@@ -415,107 +397,41 @@ public class ScriptingSupport {
       isRunningScript = false;
       return;
     }
+    
+    runScripts = Runner.evalArgs(args);
 
     isRunningScript = true;
 
-    CommandArgs cmdArgs = new CommandArgs("SCRIPT");
-    CommandLine cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
-    String cmdValue;
-
-    if (cmdLine == null || cmdLine.getOptions().length == 0) {
-      log(-1, "Did not find any valid option on command line!");
-      cmdArgs.printHelp();
-      System.exit(1);
-    }
-
-    if (cmdLine.hasOption(CommandArgsEnum.HELP.shortname())) {
-      cmdArgs.printHelp();
-      if (currentRunner != null) {
-        System.out.println(currentRunner.getCommandLineHelp());
+    if (runTime.runningInteractive) {
+      int exitCode = 0;
+      if (currentRunner == null) {
+        String givenRunnerName = runTime.interactiveRunner;
+        if (givenRunnerName == null) {
+          currentRunner = getRunner(null, Runner.RDEFAULT);
+        } else {
+          currentRunner = getRunner(null, givenRunnerName);
+        }
       }
-      System.exit(1);
-    }
-
-    if (cmdLine.hasOption(CommandArgsEnum.LOGFILE.shortname())) {
-      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.LOGFILE.longname());
-      if (!Debug.setLogFile(cmdValue == null ? "" : cmdValue)) {
+      if (currentRunner == null) {
         System.exit(1);
       }
-    }
-
-    if (cmdLine.hasOption(CommandArgsEnum.USERLOGFILE.shortname())) {
-      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.USERLOGFILE.longname());
-      if (!Debug.setUserLogFile(cmdValue == null ? "" : cmdValue)) {
-        System.exit(1);
-      }
-    }
-
-    if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
-      cmdValue = cmdLine.getOptionValue(CommandArgsEnum.DEBUG.longname());
-      if (cmdValue == null) {
-        Debug.setDebugLevel(3);
-        Settings.LogTime = true;
-        if (!Debug.isLogToFile()) {
-          Debug.setLogFile("");
-        }
-      } else {
-        Debug.setDebugLevel(cmdValue);
-      }
-    }
-
-    runTime.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
-    log(lvl, "CmdOrg: " + System.getenv("SIKULI_COMMAND"));
-    runTime.printArgs();
-
-    // select script runner and/or start interactive session
-    // option is overloaded - might specify runner for -r/-t
-    if (cmdLine.hasOption(CommandArgsEnum.INTERACTIVE.shortname())) {
-      if (!cmdLine.hasOption(CommandArgsEnum.RUN.shortname())
-              && !cmdLine.hasOption(CommandArgsEnum.TEST.shortname())) {
-        int exitCode = 0;
-        if (currentRunner == null) {
-          String givenRunnerName = cmdLine.getOptionValue(CommandArgsEnum.INTERACTIVE.longname());
-          if (givenRunnerName == null) {
-            currentRunner = getRunner(null, RDEFAULT);
-          } else {
-            currentRunner = getRunner(null, givenRunnerName);
-          }
-        }
-        if (currentRunner == null) {
-          System.exit(1);
-        }
-        exitCode = currentRunner.runInteractive(cmdArgs.getUserArgs());
-        currentRunner.close();
-        Sikulix.endNormal(exitCode);
-      }
-    }
-
-    runAsTest = false;
-    if (cmdLine.hasOption(CommandArgsEnum.RUN.shortname())) {
-      runScripts = cmdLine.getOptionValues(CommandArgsEnum.RUN.longname());
-    } else if (cmdLine.hasOption(CommandArgsEnum.TEST.shortname())) {
-      runScripts = cmdLine.getOptionValues(CommandArgsEnum.TEST.longname());
-      log(-1, "Command line option -t: not yet supported! %s", Arrays.asList(args).toString());
-      runAsTest = true;
-//TODO run a script as unittest with HTMLTestRunner
-      System.exit(1);
+      exitCode = currentRunner.runInteractive(runTime.getSikuliArgs());
+      currentRunner.close();
+      Sikulix.endNormal(exitCode);
     }
 
     if (runScripts != null && runScripts.length > 0) {
       int exitCode = 0;
+      runAsTest = runTime.runningTests;
       for (String givenScriptName : runScripts) {
         if (lastReturnCode == -1) {
           log(lvl, "Exit code -1: Terminating multi-script-run");
           break;
         }
-        exitCode = new RunBox(givenScriptName, cmdArgs.getUserArgs(), runAsTest).run();
+        exitCode = new RunBox(givenScriptName, runTime.getSikuliArgs(), runAsTest).run();
         lastReturnCode = exitCode;
       }
       System.exit(exitCode);
-    } else {
-      log(-1, "Nothing to do with the given commandline options!");
-      cmdArgs.printHelp();
-      System.exit(1);
     }
   }
 
@@ -553,7 +469,7 @@ public class ScriptingSupport {
         } else if (entry.getName().endsWith(".$py.class")) {
           return false;
         } else {
-          for (String ending : EndingTypes.keySet()) {
+          for (String ending : Runner.EndingTypes.keySet()) {
             if (entry.getName().endsWith("." + ending)) {
               return false;
             }
@@ -582,124 +498,43 @@ public class ScriptingSupport {
     return lastReturnCode;
   }
 
-  public static File getScriptFile(File fScriptFolder) {
-    if (fScriptFolder == null) {
-      return null;
-    }
-    File[] content = FileManager.getScriptFile(fScriptFolder);
-    if (null == content) {
-      return null;
-    }
-    File fScript = null;
-    init();
-    String runType = null;
-    for (File aFile : content) {
-      for (String suffix : EndingTypes.keySet()) {
-        if (!aFile.getName().endsWith("." + suffix)) {
-          continue;
-        }
-        fScript = aFile;
-        runType = suffix;
-        break;
-      }
-      if (fScript != null) {
-        break;
-      }
-    }
-    if (getRunner(null, runType) == null) {
-      log(-1, "No supported script for available runners in project:\n%s", fScriptFolder);
-      return null;
-    }
-    return fScript;
-  }
-//</editor-fold>
 
   private static class RunBox {
 
-    static File scriptProject = null;
-    static URL uScriptProject = null;
 
     boolean asTest = false;
+    String[] args = new String[0];
+
     String givenScriptHost = "";
     String givenScriptFolder = "";
     String givenScriptName = "";
     String givenScriptScript = "";
     String givenScriptType = "sikuli";
-    String givenScriptScriptType = RDEFAULT;
+    String givenScriptScriptType = Runner.RDEFAULT;
 		URL uGivenScript = null;
     URL uGivenScriptFile = null;
     boolean givenScriptExists = true;
-    String[] args = new String[0];
 
     private RunBox(String givenName, String[] givenArgs, boolean isTest) {
-      givenScriptName = givenName;
-      String[] parts;
-      if (givenName.contains(":")) {
-        parts = givenName.split(":");
-        givenScriptHost = parts[0];
-        if (parts.length > 1 && !parts[1].isEmpty()) {
-          givenScriptName = new File(parts[1]).getName();
-          String fpFolder = new File(parts[1]).getParent();
-          if (null != fpFolder && !fpFolder.isEmpty()) {
-            givenScriptFolder = FileManager.slashify(fpFolder, true);
-            if (givenScriptFolder.startsWith("/")) {
-              givenScriptFolder = givenScriptFolder.substring(1);
-            }
-          }
-        }        
-      }
-      boolean sameFolder = givenScriptName.startsWith("./");
-      if (sameFolder) {
-        givenScriptName = givenScriptName.substring(2);
-      }      
-      if (givenScriptName.contains(".")) {
-        parts = givenScriptName.split("\\.");
-        givenScriptScript = parts[0];
-        givenScriptType = parts[1];
-      } else {
-        givenScriptScript = givenScriptName;
-      }
-      if (sameFolder && scriptProject != null) {
-          givenScriptName = new File(scriptProject, givenScriptName).getPath();
-      } else if (sameFolder && uScriptProject != null) {
-        givenScriptHost = uScriptProject.getHost();
-        givenScriptFolder = uScriptProject.getPath().substring(1);
-      } else if (scriptProject == null && givenScriptHost.isEmpty()) {
-        String fpParent = new File(givenScriptName).getParent();
-        if (fpParent == null || fpParent.isEmpty()) {
-          scriptProject = null;
-        } else {
-          scriptProject = new File(givenScriptName).getParentFile();
-        }
-      }
-      if (!givenScriptHost.isEmpty()) {
-        try {
-          uGivenScript = new URL("http://" + givenScriptHost + "/" + givenScriptFolder + givenScriptName);
-          if (-1 < FileManager.isUrlUseabel(uGivenScript)) {
-            givenScriptScriptType = RPYTHON;
-            uGivenScriptFile = new URL(uGivenScript.toString() + "/" + givenScriptScript + ".py.txt");
-            if (1 > FileManager.isUrlUseabel(uGivenScriptFile)) {
-              givenScriptScriptType = RRUBY;
-              uGivenScriptFile = new URL(uGivenScript.toString() + "/" + givenScriptScript + ".rb.txt");
-              if (1 > FileManager.isUrlUseabel(uGivenScriptFile)) {
-                givenScriptExists = false;
-              }
-            }
-          }
-          if (givenScriptExists && uScriptProject == null) {
-            uScriptProject = new URL("http://" + givenScriptHost + "/" + givenScriptFolder);
-          }
-        } catch (Exception ex) {
-          givenScriptExists = false;
-        }
-      }
+      Object[] vars = Runner.runBoxInit(givenName, RunTime.scriptProject, RunTime.uScriptProject);
+      givenScriptHost = (String) vars[0];
+      givenScriptFolder = (String) vars[1];
+      givenScriptName = (String) vars[2];
+      givenScriptScript = (String) vars[3];
+      givenScriptType = (String) vars[4];
+      givenScriptScriptType = (String) vars[5];
+      uGivenScript = (URL) vars[6];
+      uGivenScriptFile = (URL) vars[7];
+      givenScriptExists = (Boolean) vars[8];
+      RunTime.scriptProject = (File) vars[9];
+      RunTime.uScriptProject = (URL) vars[10];
       args = givenArgs;
       asTest = isTest;
     }
 
     private static void setProject() {
-      if (scriptProject == null) {
-        scriptProject = new File(FileManager.normalizeAbsolute(ImagePath.getBundlePath(), false)).getParentFile();
+      if (RunTime.scriptProject == null) {
+        RunTime.scriptProject = new File(FileManager.normalizeAbsolute(ImagePath.getBundlePath(), false)).getParentFile();
       }
     }
 
@@ -728,12 +563,15 @@ public class ScriptingSupport {
             return -9999;
           }
         }
-        File fScript = getScriptFile(new File(givenScriptName));
+        File fScript = Runner.getScriptFile(new File(givenScriptName));
         if (fScript == null) {
           return -9999;
         }
         fScript = new File(FileManager.normalizeAbsolute(fScript.getPath(), true));
         log(lvl, "Trying to run script:\n%s", fScript);
+        if (fScript.getName().endsWith(".js")) {
+          return Runner.runjs(fScript, givenScriptScript, args);
+        }
         currentRunner = getRunner(fScript.getName(), null);
         if (currentRunner != null) {
           ImagePath.setBundlePath(fScript.getParent());

@@ -80,10 +80,12 @@ Debug.log(4, "Jython: sikuli: Sikuli: import Sikulix")
 from org.sikuli.script import Sikulix
 
 Debug.log(4, "Jython: sikuli: Sikuli: import ScriptingSupport")
+SCRIPT_SUPPORT = True
 try:
 	from org.sikuli.scriptrunner import ScriptingSupport
 except:
-  pass
+  SCRIPT_SUPPORT = False
+
 from org.sikuli.script import Runner
 
 ##
@@ -432,10 +434,26 @@ def exit(code=0):
 
 ## ----------------------------------------------------------------------
 # Runs the given string command.
-# @param msg The given string command.
+# @param cmd The given string command.
 # @return Returns the output from the executed command.
 def run(cmd):
     return Sikulix.run(cmd)
+
+# Runs the script given by absolute or relative path (./ same folder as calling script)
+# @param script The given script path.
+# @args the parameters for the called script (sys.argv)
+# @return returns the scripts return code given with exit(n)
+def runScript(script, *args):
+    if SCRIPT_SUPPORT:
+        return ScriptingSupport.run(script, args)
+    else:
+        return Runner.run(script, args)
+
+def getLastReturnCode():
+    if SCRIPT_SUPPORT:
+        return ScriptingSupport.getLastReturnCode()
+    else:
+        return Runner.getLastReturnCode()
 
 ##
 # helper functions, that can be used when sorting lists of regions

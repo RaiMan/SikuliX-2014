@@ -38,6 +38,7 @@ import org.jruby.javasupport.JavaUtil;
 import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
 import org.sikuli.script.RunTime;
+import org.sikuli.script.Runner;
 import org.sikuli.script.Sikulix;
 
 public class JRubyScriptRunner implements IScriptRunner {
@@ -198,7 +199,7 @@ public class JRubyScriptRunner implements IScriptRunner {
     } catch (ClassNotFoundException ex) {
       return null;
     }
-		return ScriptingSupport.RRUBY;
+		return Runner.RRUBY;
 	}
 
 	@Override

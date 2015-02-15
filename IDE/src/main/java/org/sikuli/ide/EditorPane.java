@@ -37,6 +37,7 @@ import org.sikuli.idesupport.IIndentationLogic;
 import org.sikuli.script.Location;
 import org.sikuli.script.Image;
 import org.sikuli.script.ImagePath;
+import org.sikuli.script.Runner;
 import org.sikuli.script.Sikulix;
 import org.sikuli.scriptrunner.IScriptRunner;
 import org.sikuli.scriptrunner.ScriptingSupport;
@@ -118,16 +119,16 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 		log(lvl, "initBeforeLoad: %s", scriptType);
 		if (scriptType == null) {
-			scriptType = ScriptingSupport.EDEFAULT;
+			scriptType = Runner.EDEFAULT;
 			paneIsEmpty = true;
 		}
 
-		if (ScriptingSupport.EPYTHON.equals(scriptType)) {
-			scrType = ScriptingSupport.CPYTHON;
+		if (Runner.EPYTHON.equals(scriptType)) {
+			scrType = Runner.CPYTHON;
 			_indentationLogic = SikuliIDE.getIDESupport(scriptType).getIndentationLogic();
 			_indentationLogic.setTabWidth(pref.getTabWidth());
-		} else if (ScriptingSupport.ERUBY.equals(scriptType)) {
-			scrType = ScriptingSupport.CRUBY;
+		} else if (Runner.ERUBY.equals(scriptType)) {
+			scrType = Runner.CRUBY;
 			_indentationLogic = null;
 		}
 
@@ -263,7 +264,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		filename = FileManager.slashify(filename, false);
 		File script = new File(filename);
 		setSrcBundle(filename + "/");
-		_editingFile = ScriptingSupport.getScriptFile(script);
+		_editingFile = Runner.getScriptFile(script);
 		if (_editingFile != null) {
 			scriptType = _editingFile.getAbsolutePath().substring(_editingFile.getAbsolutePath().lastIndexOf(".") + 1);
 			initBeforeLoad(scriptType);
@@ -387,7 +388,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			_srcBundleTemp = false;
 		}
 		setSrcBundle(bundlePath);
-		_editingFile = createSourceFile(bundlePath, "." + ScriptingSupport.typeEndings.get(sikuliContentType));
+		_editingFile = createSourceFile(bundlePath, "." + Runner.typeEndings.get(sikuliContentType));
 		writeSrcFile();
 		reparse();
 	}
@@ -413,7 +414,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 			(new File(snameDir, sname)).delete();
 		}
 		if (PreferencesUser.getInstance().getAtSaveCleanBundle()) {
-			if (!sikuliContentType.equals(ScriptingSupport.CPYTHON)) {
+			if (!sikuliContentType.equals(Runner.CPYTHON)) {
 				log(lvl, "delete-not-used-images for %s using Python string syntax", sikuliContentType);
 			}
 			cleanBundle();

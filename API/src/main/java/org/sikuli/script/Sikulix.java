@@ -7,12 +7,9 @@
 package org.sikuli.script;
 
 import java.awt.Dimension;
-import java.awt.image.BufferedImage;
 import java.io.File;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.CodeSource;
-import javax.imageio.ImageIO;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -89,10 +86,13 @@ public class Sikulix {
     }
 
     rt = RunTime.get();
-    testNumber = rt.getOptionNumber("testing.test", -1);
+    testNumber = rt.getOptionNumber("testing.test", testNumber);
 
-    if (testNumber > -1) {
-      rt = RunTime.get();
+    if (dl == 999) {
+      int exitCode = Runner.runScripts(args);
+      cleanUp(exitCode);
+      System.exit(exitCode);
+    } else if (testNumber > -1) {
       if (!rt.testing) {
         rt.show();
         rt.testing = true;
@@ -105,20 +105,6 @@ public class Sikulix {
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
 
-			URL uTest = null;
-			try {
-        imgLink = "http://download.sikuli.de/images";
-				String imgFolder = "download.sikuli.de/images";
-        imgHttp = "SikuliLogo.png";
-				ImagePath.addHTTP(imgFolder);
-				Image img = Image.create(imgHttp);
-				Screen scr = new Screen();
-				scr.find(img).highlight(2);
-				scr.find(img).highlight(2);
-				Image.dump();
-			} catch (Exception ex) {
-				log(-1, "%s", ex);
-			}
       if (rt.runningWinApp) {
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
         try {

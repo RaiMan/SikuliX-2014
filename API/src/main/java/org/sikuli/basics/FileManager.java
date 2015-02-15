@@ -1394,8 +1394,7 @@ public class FileManager {
     bufferedWrite(in, jar);
     in.close();
   }
-
-  //<editor-fold defaultstate="collapsed" desc="helpers">
+  
   public static File[] getScriptFile(File fScriptFolder) {
     if (fScriptFolder == null) {
       return null;
@@ -1418,12 +1417,23 @@ public class FileManager {
     if (pos == -1) {
       scriptName = fScriptFolder.getName();
       scriptType = "sikuli-plain";
-      fScriptFolder = new File(fScriptFolder.getAbsolutePath() + ".sikuli");
     } else {
       scriptName = fScriptFolder.getName().substring(0, pos);
       scriptType = fScriptFolder.getName().substring(pos + 1);
     }
+    
+    boolean success = true;
     if (!fScriptFolder.exists()) {
+      if ("sikuli-plain".equals(scriptType)) {
+        fScriptFolder = new File(fScriptFolder.getAbsolutePath() + ".sikuli");
+        if (!fScriptFolder.exists()) {
+          success = false;
+        }
+      } else {
+        success = false;
+      }
+    }
+    if (!success) {
       log(-1, "Not a valid Sikuli script project:\n%s", fScriptFolder.getAbsolutePath());
       return null;
     }

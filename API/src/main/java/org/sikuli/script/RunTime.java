@@ -51,13 +51,23 @@ import org.sikuli.util.LinuxSupport;
  * and may be at runtime by SikuliX or any caller
  */
 public class RunTime {
+  public static File scriptProject = null;
+  public static URL uScriptProject = null;
+  public static void resetProject() {
+    scriptProject = null;
+    uScriptProject = null;    
+  }
 
 //<editor-fold defaultstate="collapsed" desc="logging">
   private final String me = "RunTime%s: ";
   private int lvl = 3;
   private int minLvl = lvl;
   private static String preLogMessages = "";
+
   public String runCmdError = "*** error ***";
+  public boolean runningInteractive = false;
+  public boolean runningTests = false;
+  public String interactiveRunner;
 
   private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -2380,7 +2390,7 @@ int nMonitors = 0;
 
   public static int checkArgs(String[] args, Type typ) {
     int debugLevel = -99;
-    boolean runningScriptsWithIDE = false;
+    boolean runningScripts = false;
     List<String> options = new ArrayList<String>();
     options.addAll(Arrays.asList(args));
     for (int n = 0; n < options.size(); n++) {
@@ -2399,10 +2409,10 @@ int nMonitors = 0;
           Debug.on(debugLevel);
         }
       } else if (opt.startsWith("-r") || opt.startsWith("-t")) {
-        runningScriptsWithIDE = true;
+        runningScripts = true;
       }
     }
-    if (Type.IDE.equals(typ) && runningScriptsWithIDE) {
+    if (runningScripts) {
       return 999;
     }
     return debugLevel;
