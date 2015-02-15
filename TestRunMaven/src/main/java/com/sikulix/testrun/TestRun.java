@@ -22,7 +22,7 @@ public class TestRun {
     Debug.setDebugLevel(3);
     Screen s = Sikulix.init();
     ImagePath.add("com.sikulix.testrun.TestRun/images/images.sikuli");
-		s.wait("nightly.PNG", 30);
+		s.wait("nightly.png", 30);
 		Sikulix.popup("returned from wait");
 
 //    testListText(s);

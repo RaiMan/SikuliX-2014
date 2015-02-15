@@ -374,8 +374,6 @@ public class ImagePath {
     if (mainPath.contains(":")) {
       return addHTTP(mainPath.replaceFirst(":", "/"));
     }
-    mainPath = FileManager.normalizeAbsolute(mainPath, false);
-    altPath = FileManager.normalizeAbsolute(altPath, false);
     path = makePathURL(mainPath, altPath);
     if (path != null) {
       if (hasPath(path) < 0) {
@@ -551,8 +549,8 @@ public class ImagePath {
 			return null;
 		}
 		URL pathURL = null;
-		if (new File(fpMainPath).exists()) {
-			pathURL = FileManager.makeURL(fpMainPath);
+		if (new File(FileManager.normalizeAbsolute(fpMainPath, false)).exists()) {
+			pathURL = FileManager.makeURL(FileManager.normalizeAbsolute(fpMainPath, false));
 		} else {
 			Class cls = null;
 			String klassName;
@@ -581,9 +579,9 @@ public class ImagePath {
 						if (fpAltPath == null || fpAltPath.isEmpty()) {
 							fpAltPath = jarURL.getPath();
 						}
-						File fAltPath = new File(fpAltPath, fpSubPath);
-						if (fAltPath.exists()) {
-							pathURL = FileManager.makeURL(fAltPath.getAbsolutePath());
+						if (new File(FileManager.normalizeAbsolute(fpAltPath, false), fpSubPath).exists()) {
+              File fAltPath = new File(FileManager.normalizeAbsolute(fpAltPath, false), fpSubPath);
+							pathURL = FileManager.makeURL(fAltPath.getPath());
 						}
 					}
 				}
