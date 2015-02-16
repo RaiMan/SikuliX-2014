@@ -64,7 +64,8 @@ public class RunTime {
   private int minLvl = lvl;
   private static String preLogMessages = "";
 
-  public String runCmdError = "*** error ***";
+  public final static String runCmdError = "*****error*****";
+  public final static String NL = System.lineSeparator();
   public boolean runningInteractive = false;
   public boolean runningTests = false;
   public String interactiveRunner;
@@ -2310,7 +2311,7 @@ int nMonitors = 0;
 //      runcmd(new String[]{"chmod", "ugo+x", args[0]});
 //    }
     String result = "";
-    String error = runCmdError + "\n";
+    String error = runCmdError + NL;
     boolean hasError = false;
     int retVal;
     try {
@@ -2325,13 +2326,13 @@ int nMonitors = 0;
       String s;
       while ((s = stdInput.readLine()) != null) {
         if (!s.isEmpty()) {
-          result += s + "\n";
+          result += s + NL;
         }
       }
       if ((s = stdError.readLine()) != null) {
         hasError = true;
         if (!s.isEmpty()) {
-          error += s + "\n";
+          error += s + NL;
         }
       }
       process.waitFor();
@@ -2343,7 +2344,7 @@ int nMonitors = 0;
       retVal = 9999;
       hasError = true;
     }
-    result = String.format("%d\n%s", retVal, result);
+    result = String.format("%d%s%s", retVal, NL, result);
     if (hasError) {
       result += error;
     }
