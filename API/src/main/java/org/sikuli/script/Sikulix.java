@@ -10,6 +10,7 @@ import java.awt.Dimension;
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.Enumeration;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -104,6 +105,21 @@ public class Sikulix {
       Debug.on(3);
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
+      
+      App.focus("NetBeans");
+      File aFile = rt.fSxProject;
+      rt.addToClasspath(new File(aFile, "Setup/target/Setup/sikulix.jar").getPath());
+      String aClass = "org.sikuli.ide.SikuliIDE";
+      String res = "sikulixtessdata/sikulixcontent";
+      URL aURL = rt.resourceLocation(res, aClass);
+      Screen s = new Screen();
+      ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
+      Image.dump();
+      Match m = s.find("netblogo");
+//      s.hover();
+      Settings.OcrTextRead = true;
+      String t = m.right(1000).highlight(2).text();
+      log(3, "|%s|", t);
 
       if (rt.runningWinApp) {
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());

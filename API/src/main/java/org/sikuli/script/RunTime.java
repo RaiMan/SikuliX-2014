@@ -296,6 +296,8 @@ public class RunTime {
   public String BaseTempPath = "";
 
   private Class clsRef = RunTime.class;
+  private Class clsRefBase = clsRef;
+
   private List<URL> classPath = new ArrayList<URL>();
   public File fTempPath = null;
   public File fBaseTempPath = null;
@@ -1404,6 +1406,20 @@ int nMonitors = 0;
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="handling resources from classpath">
+  protected List<String> extractTessData(File folder) {
+    List<String> files = new ArrayList<String>();
+    String tessdata = "/sikulixtessdata";
+    URL uContentList = clsRef.getResource(tessdata + "/" + fpContent);
+    clsRef = clsRefBase;
+    if (uContentList != null) {
+      files = doResourceListWithList(tessdata, files, null);
+      if (files.size() > 0) {
+        return doExtractToFolderWithList(tessdata, folder, files);
+      }
+      return null;
+    }
+    return files;
+  }
   /**
    * export all resource files from the given subtree on classpath to the given folder retaining the subtree<br>
    * to export a specific file from classpath use extractResourceToFile or extractResourceToString
@@ -1422,6 +1438,10 @@ int nMonitors = 0;
     if (fFolder == null) {
       return content;
     }
+    return doExtractToFolderWithList(fpRessources, fFolder, content);
+  }
+  
+  private List<String> doExtractToFolderWithList(String fpRessources, File fFolder, List<String> content) {
     int count = 0;
     int ecount = 0;
     String subFolder = "";
@@ -1593,20 +1613,45 @@ int nMonitors = 0;
     return out;
   }
 
-  public URL resourceLocation(String folder) {
-    return clsRef.getResource(folder);
+  public URL resourceLocation(String folderOrFile) {
+    if (!folderOrFile.startsWith("/")) {
+      folderOrFile = "/" + folderOrFile;
+    }
+    return clsRef.getResource(folderOrFile);
   }
 
+  /**
+   * INTERNAL USE: only for testing - not threadsafe !!!
+   * @param folderOrFile the resource relative to root
+   * @param clsRef the reference class on classpath
+   * @return the ressource URL or null if not found
+   */
+  public URL resourceLocation(String folderOrFile, String cls) {
+    if (!folderOrFile.startsWith("/")) {
+      folderOrFile = "/" + folderOrFile;
+    }
+    try {
+      Class clsRef = Class.forName(cls);
+      URL aURL = clsRef.getResource(folderOrFile);
+      if (aURL != null) {
+        this.clsRef = clsRef;
+        return aURL;
+      }
+    } catch (Exception ex) {}
+    return null;
+  }
+  
   private List<String> resourceList(String folder, FilenameFilter filter) {
     List<String> files = new ArrayList<String>();
     if (!folder.startsWith("/")) {
       folder = "/" + folder;
     }
-    URL uFolder = clsRef.getResource(folder);
+    URL uFolder = resourceLocation(folder);
     if (uFolder == null) {
       return files;
     }
     URL uContentList = clsRef.getResource(folder + "/" + fpContent);
+    clsRef = clsRefBase;
     if (uContentList != null) {
       return doResourceListWithList(folder, files, filter);
     }
@@ -2138,14 +2183,14 @@ int nMonitors = 0;
    */
   public boolean addToClasspath(String jarOrFolder) {
     URL uJarOrFolder = FileManager.makeURL(jarOrFolder);
+    if (!new File(jarOrFolder).exists()) {
+      log(-1, "addToClasspath: does not exist - not added:\n%s", jarOrFolder);
+      return false;
+    }
     if (isOnClasspath(uJarOrFolder)) {
       return true;
     }
-    log(lvl, "addToClasspath: %s", uJarOrFolder);
-    if (!new File(jarOrFolder).exists()) {
-      log(-1, "does not exist - not added");
-      return false;
-    }
+    log(lvl, "addToClasspath:\n%s", uJarOrFolder);
     Method method;
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     Class sysclass = URLClassLoader.class;
