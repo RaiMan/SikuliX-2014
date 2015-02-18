@@ -414,6 +414,10 @@ public class Screen extends Region implements EventObserver, IScreen {
     return capture(rect);
   }
 
+  public ScreenImage captureforHighlight(int x, int y, int w, int h) {
+    return robot.captureScreen(new Rectangle(x, y, w, h));
+  }
+
   /**
    * create a ScreenImage with given rectangle on this screen.
    *

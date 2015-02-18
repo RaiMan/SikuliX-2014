@@ -46,7 +46,7 @@ public class Sikulix {
     System.out.println(String.format(msg, args));
   }
 
-  private static void terminate(int retVal, String msg, Object... args ) {
+  private static void terminate(int retVal, String msg, Object... args) {
     p(msg, args);
     System.exit(retVal);
   }
@@ -125,7 +125,11 @@ public class Sikulix {
       FileManager.resetFolder(fResults);
       String fpResults = fResults.getPath();
 
-      App.focus("Google Chrome");
+      if (Settings.isMac()) {
+        App.focus("Safari");
+      } else {
+        App.focus("Google Chrome");
+      }
       String raimanlogo = "raimanlogo";
       Match mFound = null;
       try {
@@ -143,6 +147,7 @@ public class Sikulix {
           p("mFound: %s", mFound);
           p("mFound.Image: %s", mFound.getImage());
           p("mFound.ImageFile: %s", mFound.getImageFilename());
+          winBrowser.highlight(-1);
           winBrowser.click();
           winBrowser.getLastScreenImageFile(fpResults, image + "screen.png");
         } else {
@@ -155,6 +160,7 @@ public class Sikulix {
           p("mFound: %s", mFound);
           p("mFound.Image: %s", mFound.getImage());
           p("mFound.ImageFile: %s", mFound.getImageFilename());
+          winBrowser.highlight(-1);
           winBrowser.getLastScreenImageFile(fpResults, image + "screen.png");
         } else {
           terminate(1, "missing: %s", image);

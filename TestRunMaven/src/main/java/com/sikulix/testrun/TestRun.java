@@ -7,6 +7,7 @@ import java.net.URI;
 import org.sikuli.script.*;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.basics.Settings;
 
 public class TestRun {
 
@@ -30,7 +31,11 @@ public class TestRun {
     FileManager.deleteFileOrFolder(fpResults);
     fResults.mkdirs();
 
-    App.focus("Google Chrome");
+    if (Settings.isMac()) {
+      App.focus("Safari");
+    } else {
+      App.focus("Google Chrome");      
+    }
     String raimanlogo = "raimanlogo";
     Match mFound = null;
     try {
