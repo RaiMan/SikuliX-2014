@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.net.URI;
 import org.sikuli.script.*;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
 
 public class TestRun {
 
@@ -25,8 +26,9 @@ public class TestRun {
 
     ImagePath.add(TestRun.class.getCanonicalName() + "/ImagesAPI.sikuli");
     File fResults = new File(System.getProperty("user.home"), "TestResults");
-    fResults.mkdirs();
     String fpResults = fResults.getPath();
+    FileManager.deleteFileOrFolder(fpResults);
+    fResults.mkdirs();
 
     App.focus("Google Chrome");
     String raimanlogo = "raimanlogo";
