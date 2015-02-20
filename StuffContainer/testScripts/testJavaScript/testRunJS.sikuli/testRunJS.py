@@ -1,0 +1,1 @@
+runScript("./testjs")

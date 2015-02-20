@@ -6,10 +6,13 @@
  */
 package org.sikuli.script;
 
+import java.awt.Desktop;
 import java.awt.Dimension;
 import java.io.File;
+import java.net.URI;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.Enumeration;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -31,12 +34,21 @@ import org.sikuli.basics.Settings;
 public class Sikulix {
 
   private static int lvl = 3;
-	private static String imgLink = "http://www.sikulix.com/uploads/1/4/2/8/14281286";
-	private static String imgHttp = "1389888228.jpg";
-	private static String imgNet = imgLink + "/" + imgHttp;
+  private static String imgLink = "http://www.sikulix.com/uploads/1/4/2/8/14281286";
+  private static String imgHttp = "1389888228.jpg";
+  private static String imgNet = imgLink + "/" + imgHttp;
 
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "Sikulix: " + message, args);
+  }
+
+  private static void p(String msg, Object... args) {
+    System.out.println(String.format(msg, args));
+  }
+
+  private static void terminate(int retVal, String msg, Object... args) {
+    p(msg, args);
+    System.exit(retVal);
   }
 
   private static boolean runningFromJar;
@@ -101,22 +113,78 @@ public class Sikulix {
       System.exit(1);
     } else {
       rt = RunTime.get();
-      Debug.on(3);
+      //Debug.on(3);
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
+
+      Screen s = new Screen();
+      Debug.on(3);
+
+      ImagePath.add(Sikulix.class.getCanonicalName() + "/ImagesAPI.sikuli");
+      File fResults = new File(System.getProperty("user.home"), "SikulixScreenImages");
+      FileManager.resetFolder(fResults);
+      String fpResults = fResults.getPath();
+
+      if (Settings.isMac()) {
+        App.focus("Safari");
+      } else {
+        App.focus("Google Chrome");
+      }
+      String raimanlogo = "raimanlogo";
+      Match mFound = null;
+      try {
+        if (null == s.exists(raimanlogo, 0)) {
+          Desktop.getDesktop().browse(new URI("http://sikulix.com"));
+          s.wait(raimanlogo, 10);
+        }
+        s.hover();
+
+        Region winBrowser = App.focusedWindow();
+
+        String image = "btnnightly";
+        mFound = winBrowser.exists(image);
+        if (null != mFound) {
+          p("mFound: %s", mFound);
+          p("mFound.Image: %s", mFound.getImage());
+          p("mFound.ImageFile: %s", mFound.getImageFilename());
+          winBrowser.highlight(-1);
+          winBrowser.click();
+          winBrowser.getLastScreenImageFile(fpResults, image + "screen.png");
+        } else {
+          terminate(1, "missing: %s", image);
+          System.exit(1);
+        }
+        image = "nightly";
+        mFound = winBrowser.exists(image, 10);
+        if (null != mFound) {
+          p("mFound: %s", mFound);
+          p("mFound.Image: %s", mFound.getImage());
+          p("mFound.ImageFile: %s", mFound.getImageFilename());
+          winBrowser.highlight(-1);
+          winBrowser.getLastScreenImageFile(fpResults, image + "screen.png");
+        } else {
+          terminate(1, "missing: %s", image);
+        }
+      } catch (Exception ex) {
+        terminate(1, "some problems");
+      }
+      s.write("#C.w");
+      s.wait(2f);
+      App.focus("NetBeans");
+      System.exit(1);
 
       if (rt.runningWinApp) {
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
         try {
-        Screen scr = new Screen();
-        scr.find(new Image(scr.userCapture("grab something to find"))).highlight(3);
+          Screen scr = new Screen();
+          scr.find(new Image(scr.userCapture("grab something to find"))).highlight(3);
         } catch (Exception ex) {
           popup("Uuups :-(\n" + ex.getMessage(), rt.fSxBaseJar.getName());
         }
         popup("Hello World\nNothing else to do ( yet ;-)", rt.fSxBaseJar.getName());
         System.exit(1);
       }
-      rt.terminate(1,"Sikulix::main: nothing to test");
+      rt.terminate(1, "Sikulix::main: nothing to test");
     }
   }
 

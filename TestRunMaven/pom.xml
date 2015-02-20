@@ -11,9 +11,10 @@
 	</properties>
 
 	<repositories>
-		<repository>  <!-- OSSRH: com.sikulix -->
-			<id>com-sikulix</id>
-			<name>com-sikulix</name>
+		<repository>  
+      <!-- OSSRH: com.sikulix -->
+			<name>com.sikulix</name> 
+			<id>com.sikulix</id>
 			<url>https://oss.sonatype.org/content/groups/public</url>
 			<layout>default</layout>
 			<releases>
@@ -31,7 +32,7 @@
 		<dependency>
 			<groupId>com.sikulix</groupId>
 			<artifactId>sikulixapi</artifactId>
-			<version>1.1.0</version>
+			<version>1.1.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 

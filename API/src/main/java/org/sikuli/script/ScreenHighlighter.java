@@ -196,7 +196,7 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
   }
 
   private void captureScreen(int x, int y, int w, int h) {
-    ScreenImage img = _scr.capture(x, y, w, h);
+    ScreenImage img = ((Screen)_scr).captureforHighlight(x, y, w, h);
     _screen = img.getImage();
     float scaleFactor = .6f;
     RescaleOp op = new RescaleOp(scaleFactor, 0, null);
