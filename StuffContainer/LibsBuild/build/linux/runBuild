@@ -1,17 +1,47 @@
+jvmdir=/usr/lib/jvm/java-7-openjdk-amd64
+
+opencvinclude=
+opencvlib=/usr/lib/x86_64-linux-gnu
+
+tesseractinclude=
+tesseractlib=/usr/lib
+
+work=`pwd`
+source=$work/Source
+build=$work/Build
+stuff=$build/Stuff
+rmdir -f -R $build
+mkdir $build
+mkdir $stuff
+
 echo ----------- COMPILING
-echo ----- cvgui.cpp
-g++ -c -O3 -fPIC -MMD -MP -I/usr/lib/jvm/java-7-openjdk-amd64/include -I/usr/lib/jvm/java-7-openjdk-amd64/include/linux  -I/usr/include -I/usr/local/include -MF /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/cvgui.cpp.o.d -o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/cvgui.cpp.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Source/cvgui.cpp
-echo ----- finder.cpp
-g++ -c -O3 -fPIC -MMD -MP -I/usr/lib/jvm/java-7-openjdk-amd64/include -I/usr/lib/jvm/java-7-openjdk-amd64/include/linux  -I/usr/include -I/usr/local/include -MF /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/finder.cpp.o.d -o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/finder.cpp.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Source/finder.cpp
-echo ----- pyramid-template-matcher.cpp
-g++ -c -O3 -fPIC -MMD -MP -I/usr/lib/jvm/java-7-openjdk-amd64/include -I/usr/lib/jvm/java-7-openjdk-amd64/include/linux  -I/usr/include -I/usr/local/include -MF /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/pyramid-template-matcher.cpp.o.d -o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/pyramid-template-matcher.cpp.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Source/pyramid-template-matcher.cpp
-echo ----- sikuli-debug.cpp
-g++ -c -O3 -fPIC -MMD -MP -I/usr/lib/jvm/java-7-openjdk-amd64/include -I/usr/lib/jvm/java-7-openjdk-amd64/include/linux  -I/usr/include -I/usr/local/include -MF /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/sikuli-debug.cpp.o.d -o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/sikuli-debug.cpp.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Source/sikuli-debug.cpp
-echo ----- tessocr.cpp
-g++ -c -O3 -fPIC -MMD -MP -I/usr/lib/jvm/java-7-openjdk-amd64/include -I/usr/lib/jvm/java-7-openjdk-amd64/include/linux  -I/usr/include -I/usr/local/include -MF /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/tessocr.cpp.o.d -o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/tessocr.cpp.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Source/tessocr.cpp
-echo ----- vision.cpp
-g++ -c -O3 -fPIC -MMD -MP -I/usr/lib/jvm/java-7-openjdk-amd64/include -I/usr/lib/jvm/java-7-openjdk-amd64/include/linux  -I/usr/include -I/usr/local/include -MF /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/vision.cpp.o.d -o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/vision.cpp.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Source/vision.cpp
-echo ----- visionJAVA_wrap.cxx
-g++ -c -O3 -fPIC -MMD -MP -I/usr/lib/jvm/java-7-openjdk-amd64/include -I/usr/lib/jvm/java-7-openjdk-amd64/include/linux  -I/usr/include -I/usr/local/include -MF /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/visionJAVA_wrap.cxx.o.d -o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/visionJAVA_wrap.cxx.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Source/visionJAVA_wrap.cxx
+
+if [ "opencvinclude" != "" ]; then
+  includeplus="-Iopencvinclude "
+fi
+if [ "opencvinclude" != "" ]; then
+  includeplus="$includeplus -Iopencvinclude "
+fi
+includefinal="-I/usr/include -I/usr/local/include $includeplus"
+
+for mod in cvgui.cpp finder.cpp pyramid-template-matcher.cpp sikuli-debug.cpp \
+    tessocr.cpp vision.cpp visionJAVA_wrap.cxx
+do
+	echo ----- $mod
+	g++ -c -O3 -fPIC -MMD -MP \
+			-I$jvmdir/include \
+			-I$jvmdir/include/linux  \
+			$includefinal
+			-MF $stuff/$mod.o.d \
+			-o $stuff/$mod.o \
+			$source/$mod
+  mods = "$mods $stuff/$mod.o "
+done
+
 echo ----------- LINKING
-g++ -shared -s -fPIC -dynamic /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/cvgui.cpp.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/finder.cpp.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/pyramid-template-matcher.cpp.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/sikuli-debug.cpp.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/tessocr.cpp.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/vision.cpp.o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/Stuff/visionJAVA_wrap.cxx.o /usr/lib/x86_64-linux-gnu/libopencv_core.so.2.4 /usr/lib/x86_64-linux-gnu/libopencv_highgui.so.2.4 /usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.2.4 /usr/lib/libtesseract.so.3 -o /home/raiman/SikuliX-2014/Setup/target/Setup/Build/libVisionProxy.so
+g++ -shared -s -fPIC -dynamic $mods \
+    $opencvlib/libopencv_core.so.2.4 \
+    $opencvlib/usr/lib/x86_64-linux-gnu/libopencv_highgui.so.2.4 \
+    $opencvlib/usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.2.4 \
+    $tesseractlib/libtesseract.so.3 \
+    -o $work/libVisionProxy.so
