@@ -10,7 +10,7 @@ work=`pwd`
 source=$work/Source
 build=$work/Build
 stuff=$build/Stuff
-rmdir -f -R $build
+rm -R -f $build
 mkdir $build
 mkdir $stuff
 
@@ -31,17 +31,17 @@ do
 	g++ -c -O3 -fPIC -MMD -MP \
 			-I$jvmdir/include \
 			-I$jvmdir/include/linux  \
-			$includefinal
+			$includefinal \
 			-MF $stuff/$mod.o.d \
 			-o $stuff/$mod.o \
 			$source/$mod
-  mods = "$mods $stuff/$mod.o "
+  mods="$mods $stuff/$mod.o "
 done
 
 echo ----------- LINKING
 g++ -shared -s -fPIC -dynamic $mods \
     $opencvlib/libopencv_core.so.2.4 \
-    $opencvlib/usr/lib/x86_64-linux-gnu/libopencv_highgui.so.2.4 \
-    $opencvlib/usr/lib/x86_64-linux-gnu/libopencv_imgproc.so.2.4 \
+    $opencvlib/libopencv_highgui.so.2.4 \
+    $opencvlib/libopencv_imgproc.so.2.4 \
     $tesseractlib/libtesseract.so.3 \
-    -o $work/libVisionProxy.so
+    -o $build/libVisionProxy.so
