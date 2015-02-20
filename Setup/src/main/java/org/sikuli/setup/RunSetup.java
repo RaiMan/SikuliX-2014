@@ -39,7 +39,6 @@ import org.sikuli.script.RunTime;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.Sikulix;
 import org.sikuli.util.LinuxSupport;
-import static org.sikuli.util.LinuxSupport.buildVision;
 
 public class RunSetup {
 
@@ -314,7 +313,7 @@ public class RunSetup {
       logPlus(lvl, "LinuxDistro: %s (%s-Bit)", linuxDistro, osarch);
       isLinux = true;
     }
-    
+
     if (runTime.runningInProject) {
       if (!hasOptions || clean) {
         if (noSetup) {
@@ -366,7 +365,7 @@ public class RunSetup {
       if (popAsk(String.format("Found a libs folder at\n%s\n"
               + "Click YES to use the contained libs "
               + "for setup (be sure they are useable).\n"
-              + "Click NO to make a clean setup (libs are deleted).", folderLibsLux))) 
+              + "Click NO to make a clean setup (libs are deleted).", folderLibsLux)))
       {
         libsProvided = true;
       } else {
@@ -495,7 +494,7 @@ public class RunSetup {
 //			} catch (Exception ex) {
 //			}
 //			FileManager.deleteFileOrFolder(fPrefs.getAbsolutePath());
-      
+
 
 //<editor-fold defaultstate="collapsed" desc="evaluate setup options">
       if (winSU.option1.isSelected()) {
@@ -522,7 +521,7 @@ public class RunSetup {
 //        if (winSU.option7.isSelected()) {
 //          getRServer = true;
 //        }
-      
+
       if (((getTess || forAllSystems) && !(getIDE || getAPI))) {
         popError("You only selected Option 3 !\n"
                 + "This is currently not supported.\n"
@@ -532,10 +531,10 @@ public class RunSetup {
       msg = "The following file(s) will be downloaded to\n"
               + workDir + "\n";
     }
-    
+
     downloadedFiles = "";
     if (getIDE || getAPI || getRServer) {
-      
+
       if (!proxyMsg.isEmpty()) {
         msg += proxyMsg + "\n";
       }
@@ -591,7 +590,7 @@ public class RunSetup {
         }
       }
     }
-    
+
     if (getIDE || getAPI || getRServer) {
       msg += "\n\nOnly click NO, if you want to terminate setup now!\n"
               + "Click YES even if you want to use local copies in Downloads!";
@@ -603,7 +602,7 @@ public class RunSetup {
       terminate("");
     }
 //</editor-fold>
-    
+
     ResourceLoader loader = ResourceLoader.get();
     String localTemp = "sikulixtemp.jar";
     String[] jarsList = new String[]{
@@ -659,7 +658,7 @@ public class RunSetup {
         }
         if (shouldBuildVisionNow || (hasOptions && shouldBuildVision)) {
           logPlus(lvl, "Trying to build libVisionProxy.so");
-          libsProvided = buildVision(jarsList[8]);
+          libsProvided = LinuxSupport.buildVision(jarsList[8]);
           shouldTerminate |= !libsProvided;
         }
         if (!libsProvided) {
@@ -683,7 +682,7 @@ public class RunSetup {
 			}
 
       if (!forAllSystems) {
-        String libsWin = "sikulixlibs/windows";     
+        String libsWin = "sikulixlibs/windows";
         folderLibsWin = new File(workDir, libsWin);
         FileManager.resetFolder(folderLibsWin);
         String aJar = "/" + FileManager.slashify(jarsList[6], false);
@@ -1093,7 +1092,7 @@ public class RunSetup {
 
     System.exit(RunTime.testing ? 1 : 0);
   }
-  
+
   private static void runScriptTest(String[] testargs) {
     try {
       Class scriptRunner = Class.forName("org.sikuli.scriptrunner.ScriptingSupport");
