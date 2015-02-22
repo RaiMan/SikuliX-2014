@@ -1,4 +1,4 @@
-package org.sikuli.util;
+package org.sikuli.script;
 
 import java.awt.Desktop;
 import java.io.File;
@@ -7,11 +7,6 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.script.App;
-import org.sikuli.script.ImagePath;
-import org.sikuli.script.Region;
-import org.sikuli.script.RunTime;
-import org.sikuli.script.Screen;
 
 public class Tests {
 

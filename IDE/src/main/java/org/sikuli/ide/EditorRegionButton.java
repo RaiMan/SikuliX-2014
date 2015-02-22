@@ -10,13 +10,13 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import javax.swing.*;
-import org.sikuli.util.OverlayCapturePrompt;
+import org.sikuli.script.OverlayCapturePrompt;
 import org.sikuli.script.IScreen;
 import org.sikuli.script.Region;
 import org.sikuli.script.ScreenImage;
-import org.sikuli.util.EventSubject;
+import org.sikuli.script.EventSubject;
 import org.sikuli.basics.Debug;
-import org.sikuli.util.EventObserver;
+import org.sikuli.script.EventObserver;
 
 class EditorRegionButton extends JButton implements ActionListener, EventObserver {
 

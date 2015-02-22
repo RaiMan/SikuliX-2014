@@ -6,12 +6,6 @@
  */
 package org.sikuli.basics;
 
-/**
- *
- * use org.sikuli.script.HotkeyListener instead
- * @deprecated
- */
-@Deprecated
 public abstract class HotkeyListener {
 
   /**
@@ -26,7 +20,7 @@ public abstract class HotkeyListener {
    *
    * @param e HotkeyEvent
    */
-  public void invokeHotkeyPressed(final HotkeyEvent e) {
+  protected void invokeHotkeyPressed(final HotkeyEvent e) {
     Thread hotkeyThread = new Thread() {
       @Override
       public void run() {

@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
+import org.sikuli.basics.HotkeyListener;
+import org.sikuli.basics.HotkeyManager;
 
 /**
  * this class implements an interface to the Java key system

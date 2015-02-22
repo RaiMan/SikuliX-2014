@@ -4,10 +4,8 @@
  *
  * modified RaiMan
  */
-package org.sikuli.util;
+package org.sikuli.script;
 
-import org.sikuli.util.EventObserver;
-import org.sikuli.util.EventSubject;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import java.awt.Color;

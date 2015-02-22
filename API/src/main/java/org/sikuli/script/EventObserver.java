@@ -4,7 +4,7 @@
  *
  * modified RaiMan
  */
-package org.sikuli.util;
+package org.sikuli.script;
 
 /**
  * INTRENAL USE

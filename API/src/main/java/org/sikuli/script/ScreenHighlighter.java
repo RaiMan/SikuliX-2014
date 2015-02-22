@@ -4,9 +4,8 @@
  *
  * modified RaiMan
  */
-package org.sikuli.util;
+package org.sikuli.script;
 
-import org.sikuli.util.OverlayTransparentWindow;
 import org.sikuli.basics.Animator;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
@@ -16,11 +15,6 @@ import java.awt.image.*;
 import java.util.HashSet;
 import java.util.Set;
 import java.lang.reflect.Field;
-import org.sikuli.script.IScreen;
-import org.sikuli.script.Location;
-import org.sikuli.script.Region;
-import org.sikuli.script.Screen;
-import org.sikuli.script.ScreenImage;
 
 /**
  * INTERNAL USE produces and manages the red framed rectangles from Region.highlight()

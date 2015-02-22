@@ -6,7 +6,7 @@ package org.sikuli.ide;
 
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import org.sikuli.util.OverlayTransparentWindow;
+import org.sikuli.script.OverlayTransparentWindow;
 
 /**
  *
