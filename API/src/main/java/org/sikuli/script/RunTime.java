@@ -43,7 +43,7 @@ import java.util.zip.ZipInputStream;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
-import org.sikuli.basics.SysJNA;
+import org.sikuli.util.SysJNA;
 import org.sikuli.util.LinuxSupport;
 
 /**
@@ -795,6 +795,14 @@ int nMonitors = 0;
    */
   public boolean isRunningFromJar() {
     return runningJar;
+  }
+  
+  public boolean isJava8() {
+    return javaVersion > 7;
+  }
+
+  public boolean isJava7() {
+    return javaVersion > 6;
   }
 
   public void show() {

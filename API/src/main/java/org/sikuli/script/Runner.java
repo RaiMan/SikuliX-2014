@@ -39,6 +39,12 @@ public class Runner {
   private static String[] runScripts = null;
   private static String[] testScripts = null;
   private static int lastReturnCode = 0;
+  
+  private static String beforeJSjava8 = "load(\"nashorn:mozilla_compat.js\");";
+  private static String beforeJS = 
+          "importPackage(Packages.org.sikuli.script); " +
+          "importClass(Packages.org.sikuli.basics.Debug); " +
+          "importClass(Packages.org.sikuli.basics.Settings);";
 
   static {
       EndingTypes.put(EPYTHON, CPYTHON);
@@ -198,12 +204,19 @@ public class Runner {
   static ScriptEngine jsRunner = null;
   
   public static int runjs(File fScript, String scriptName, String[] args) {
+    String initSikulix = "";
     if (jsRunner == null) {
       jsFactory = new ScriptEngineManager();
       jsRunner = jsFactory.getEngineByName("JavaScript");
       if (jsRunner != null) {
         log(lvl, "ScriptingEngine started: JavaScript (ending .js)");
-      } 
+      } else {
+        runTime.terminate(1, "ScriptingEngine for JavaScript not available");
+      }
+      if (runTime.isJava8()) {
+        initSikulix += beforeJSjava8;
+      }
+      initSikulix += beforeJS;
     }
     try {
       File innerBundle = new File(fScript.getParentFile(), scriptName + ".sikuli");
@@ -211,6 +224,9 @@ public class Runner {
         ImagePath.setBundlePath(innerBundle.getCanonicalPath());
       } else {
         ImagePath.setBundlePath(fScript.getParent());
+      }
+      if (!initSikulix.isEmpty()) {
+        jsRunner.eval(initSikulix);
       }
       jsRunner.eval(new java.io.FileReader(fScript));
     } catch (Exception ex) {
