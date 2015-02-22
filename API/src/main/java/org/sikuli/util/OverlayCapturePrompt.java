@@ -4,14 +4,21 @@
  *
  * modified RaiMan
  */
-package org.sikuli.script;
+package org.sikuli.util;
 
+import org.sikuli.util.EventObserver;
+import org.sikuli.util.EventSubject;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
 import org.sikuli.natives.SysUtil;
+import org.sikuli.script.IScreen;
+import org.sikuli.script.Location;
+import org.sikuli.script.Screen;
+import org.sikuli.script.ScreenImage;
+import org.sikuli.script.ScreenUnion;
 
 /**
  * INTERNAL USE implements the screen overlay used with the capture feature

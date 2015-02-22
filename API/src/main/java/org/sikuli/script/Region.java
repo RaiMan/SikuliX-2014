@@ -6,6 +6,7 @@
  */
 package org.sikuli.script;
 
+import org.sikuli.util.ScreenHighlighter;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;

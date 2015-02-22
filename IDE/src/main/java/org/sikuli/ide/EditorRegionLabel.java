@@ -15,9 +15,9 @@ import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
-import org.sikuli.script.EventObserver;
-import org.sikuli.script.EventSubject;
-import org.sikuli.script.OverlayCapturePrompt;
+import org.sikuli.util.EventObserver;
+import org.sikuli.util.EventSubject;
+import org.sikuli.util.OverlayCapturePrompt;
 import org.sikuli.script.ScreenImage;
 
 /**

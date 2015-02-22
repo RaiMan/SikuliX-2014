@@ -6,6 +6,8 @@
  */
 package org.sikuli.script;
 
+import org.sikuli.util.Tests;
+import org.sikuli.util.ScreenHighlighter;
 import java.awt.Desktop;
 import java.awt.Dimension;
 import java.io.File;
@@ -23,7 +25,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.HotkeyManager;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.ResourceLoader;
 import org.sikuli.basics.Settings;

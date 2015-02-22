@@ -6,6 +6,10 @@
  */
 package org.sikuli.script;
 
+import org.sikuli.util.ScreenHighlighter;
+import org.sikuli.util.OverlayCapturePrompt;
+import org.sikuli.util.EventSubject;
+import org.sikuli.util.EventObserver;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import java.awt.AWTException;

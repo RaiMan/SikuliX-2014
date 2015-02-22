@@ -6,8 +6,6 @@
  */
 package org.sikuli.script;
 
-import org.sikuli.basics.HotkeyListener;
-import org.sikuli.basics.HotkeyManager;
 import org.sikuli.basics.OS;
 import org.sikuli.natives.OSUtil;
 import org.sikuli.basics.Settings;
