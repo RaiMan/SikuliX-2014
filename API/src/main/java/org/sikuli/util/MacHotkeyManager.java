@@ -4,8 +4,10 @@
  *
  * modified RaiMan 2013
  */
-package org.sikuli.basics;
+package org.sikuli.util;
 
+import org.sikuli.script.HotkeyManager;
+import org.sikuli.script.HotkeyListener;
 import org.sikuli.script.RunTime;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;

@@ -4,14 +4,8 @@
  *
  * modified RaiMan 2014
  */
-package org.sikuli.basics;
+package org.sikuli.script;
 
-/**
- *
- * use org.sikuli.script.HotkeyListener instead
- * @deprecated
- */
-@Deprecated
 public abstract class HotkeyListener {
 
   /**
