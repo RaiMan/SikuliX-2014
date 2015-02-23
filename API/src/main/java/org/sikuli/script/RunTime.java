@@ -126,19 +126,28 @@ public class RunTime {
           }
         }
       }
-
+      if (Type.API.equals(typ)) {
+        Debug.init();
+      }
+      
 //<editor-fold defaultstate="collapsed" desc="versions">
       String vJava = System.getProperty("java.runtime.version");
       String vVM = System.getProperty("java.vm.version");
       String vClass = System.getProperty("java.class.version");
       String vSysArch = System.getProperty("os.arch");
-      runTime.javaVersion = Integer.parseInt(vJava.substring(2, 3));
       if (vSysArch.contains("64")) {
         runTime.javaArch = 64;
       }
-
-      runTime.javaShow = String.format("java %d-%d version %s vm %s class %s arch %s",
-              runTime.javaVersion, runTime.javaArch, vJava, vVM, vClass, vSysArch);
+      try {
+        runTime.javaVersion = Integer.parseInt(vJava.substring(2, 3));
+        runTime.javaShow = String.format("java %d-%d version %s vm %s class %s arch %s",
+                runTime.javaVersion, runTime.javaArch, vJava, vVM, vClass, vSysArch);
+      } catch (Exception ex) {
+        runTime.log(-1, "Java version not detected (using 7): %s", vJava);
+        runTime.javaVersion = 7;
+        runTime.javaShow = String.format("java ?7?-%d version %s vm %s class %s arch %s",
+                runTime.javaArch, vJava, vVM, vClass, vSysArch);
+      }
 
       if (Debug.getDebugLevel() > runTime.minLvl) {
         runTime.dumpSysProps();

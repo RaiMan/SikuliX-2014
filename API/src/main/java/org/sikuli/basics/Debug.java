@@ -91,6 +91,12 @@ public class Debug {
     setLogFile(null);
     setUserLogFile(null);
   }
+  
+  public static void init() {
+    if (DEBUG_LEVEL > 0) {
+      logx(DEBUG_LEVEL, "Debug.init: from sikuli.Debug: on: %d", DEBUG_LEVEL);
+    }
+  }
 
 	/**
 	 * A logger object that is intended, to get Sikuli's log messages per redirection
