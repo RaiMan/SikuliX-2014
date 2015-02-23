@@ -226,7 +226,12 @@ public class Runner {
         ImagePath.setBundlePath(fScript.getParent());
       }
       if (!initSikulix.isEmpty()) {
+        String commands = runTime.extractResourceToString("JavaScript", "commands.js", "");
+        if (commands != null) {
+          initSikulix += commands;
+        }
         jsRunner.eval(initSikulix);
+        initSikulix = "";
       }
       jsRunner.eval(new java.io.FileReader(fScript));
     } catch (Exception ex) {

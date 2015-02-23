@@ -231,8 +231,10 @@ public class Mouse {
   }
 
   protected static int click(Location loc, int buttons, int modifiers, boolean dblClick, Region region) {
+    boolean shouldMove = true;
     if (loc == null) {
-      return 0;
+      shouldMove = false;
+      loc = at();
     }
     IRobot r = loc.getRobotForPoint("click");
     if (r == null) {
@@ -240,7 +242,9 @@ public class Mouse {
     }
     device.use(region);
     Debug.action(getClickMsg(loc, buttons, modifiers, dblClick));
-    r.smoothMove(loc);
+    if (shouldMove) {
+      r.smoothMove(loc);
+    }
     r.clickStarts();
     r.pressModifiers(modifiers);
     int pause = Settings.ClickDelay > 1 ? 1 : (int) (Settings.ClickDelay * 1000);

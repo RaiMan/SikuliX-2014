@@ -2207,6 +2207,10 @@ public class Region {
    * @throws FindFailed if the Find operation finally failed
    */
   public <PSI> Match wait(PSI target) throws FindFailed {
+    if (target instanceof Float || target instanceof Double) {
+      wait(0.0 + ((Double) target));
+      return null;
+    }
     return wait(target, autoWaitTimeout);
   }
 
@@ -3113,7 +3117,7 @@ public class Region {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Mouse actions - clicking">
-  private Location checkMatch() {
+  public Location checkMatch() {
     if (lastMatch != null) {
       return lastMatch.getTarget();
     }
