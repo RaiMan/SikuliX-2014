@@ -4,7 +4,7 @@
  *
  * modified RaiMan 2013
  */
-package org.sikuli.util;
+package org.sikuli.basics;
 
 import org.sikuli.script.HotkeyEvent;
 import org.sikuli.script.HotkeyManager;
@@ -14,6 +14,10 @@ import java.util.*;
 import jxgrabkey.HotkeyConflictException;
 import jxgrabkey.JXGrabKey;
 import org.sikuli.basics.Debug;
+import org.sikuli.script.HotkeyEvent;
+import org.sikuli.script.HotkeyListener;
+import org.sikuli.script.HotkeyManager;
+import org.sikuli.script.RunTime;
 
 public class LinuxHotkeyManager extends HotkeyManager {
    static{

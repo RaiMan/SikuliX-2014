@@ -4,13 +4,16 @@
  *
  * modified RaiMan 2013
  */
-package org.sikuli.util;
+package org.sikuli.basics;
 
 import org.sikuli.script.HotkeyManager;
 import org.sikuli.script.HotkeyListener;
 import org.sikuli.script.RunTime;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
+import org.sikuli.script.HotkeyListener;
+import org.sikuli.script.HotkeyManager;
+import org.sikuli.script.RunTime;
 
 // http://lists.apple.com/archives/mac-games-dev/2001/Sep/msg00113.html
 // full key table: http://www.mactech.com/articles/mactech/Vol.04/04.12/Macinkeys/

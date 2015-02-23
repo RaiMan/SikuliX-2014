@@ -140,7 +140,7 @@ public abstract class HotkeyManager {
       return false;
     }
   }
-  
+
   public String getHotKeyText(String hotkeyType) {
     PreferencesUser pref = PreferencesUser.getInstance();
     String key = "";
