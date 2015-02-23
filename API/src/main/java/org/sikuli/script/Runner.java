@@ -35,13 +35,13 @@ public class Runner {
   public static String RRUBY = "jruby";
   public static String RJSCRIPT = "JavaScript";
   public static String RDEFAULT = "NotDefined";
-  
+
   private static String[] runScripts = null;
   private static String[] testScripts = null;
   private static int lastReturnCode = 0;
-  
+
   private static String beforeJSjava8 = "load(\"nashorn:mozilla_compat.js\");";
-  private static String beforeJS = 
+  private static String beforeJS =
           "importPackage(Packages.org.sikuli.script); " +
           "importClass(Packages.org.sikuli.basics.Debug); " +
           "importClass(Packages.org.sikuli.basics.Settings);";
@@ -55,11 +55,11 @@ public class Runner {
         typeEndings.put(EndingTypes.get(k), k);
       }
   }
-  
+
   static void log(int level, String message, Object... args) {
     Debug.logx(level, me + message, args);
   }
-  
+
   public static String[] evalArgs(String[] args) {
     CommandArgs cmdArgs = new CommandArgs("SCRIPT");
     CommandLine cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
@@ -157,7 +157,7 @@ public class Runner {
   public static int getLastReturnCode() {
     return lastReturnCode;
   }
-  
+
   static int runScripts(String[] args) {
     runScripts = Runner.evalArgs(args);
     int exitCode = 0;
@@ -175,7 +175,7 @@ public class Runner {
     }
     return exitCode;
   }
-  
+
   public static File getScriptFile(File fScriptFolder) {
     if (fScriptFolder == null) {
       return null;
@@ -199,10 +199,10 @@ public class Runner {
     }
     return fScript;
   }
-  
+
   static ScriptEngineManager jsFactory = null;
   static ScriptEngine jsRunner = null;
-  
+
   public static int runjs(File fScript, String scriptName, String[] args) {
     String initSikulix = "";
     if (jsRunner == null) {
@@ -270,6 +270,10 @@ public class Runner {
     if (sameFolder) {
       givenScriptName = givenScriptName.substring(2);
     }
+		if (givenScriptName.startsWith("JS*")) {
+			givenScriptName = givenScriptName.substring(3);
+			givenScriptName = new File(runTime.fSxProjectTestScriptsJS, givenScriptName).getPath();
+		}
     String scriptName = new File(givenScriptName).getName();
     if (scriptName.contains(".")) {
       parts = scriptName.split("\\.");
@@ -324,7 +328,7 @@ public class Runner {
     RunTime runTime = RunTime.get();
     boolean asTest = false;
     String[] args = new String[0];
-    
+
     String givenScriptHost = "";
     String givenScriptFolder = "";
     String givenScriptName = "";

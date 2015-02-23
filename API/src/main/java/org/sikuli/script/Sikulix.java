@@ -14,7 +14,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.Enumeration;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;

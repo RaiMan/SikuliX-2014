@@ -55,7 +55,7 @@ public class RunTime {
   public static URL uScriptProject = null;
   public static void resetProject() {
     scriptProject = null;
-    uScriptProject = null;    
+    uScriptProject = null;
   }
 
 //<editor-fold defaultstate="collapsed" desc="logging">
@@ -129,7 +129,7 @@ public class RunTime {
       if (Type.API.equals(typ)) {
         Debug.init();
       }
-      
+
 //<editor-fold defaultstate="collapsed" desc="versions">
       String vJava = System.getProperty("java.runtime.version");
       String vVM = System.getProperty("java.vm.version");
@@ -329,6 +329,7 @@ public class RunTime {
   public File fSxBase = null;
   public File fSxBaseJar = null;
   public File fSxProject = null;
+	public File fSxProjectTestScriptsJS = null;
   public String fpContent = "sikulixcontent";
 
   public boolean runningJar = true;
@@ -553,6 +554,7 @@ int nMonitors = 0;
     } else {
       terminate(1, "no valid Java context for SikuliX available (java.security.CodeSource.getLocation() is null)");
     }
+		fSxProjectTestScriptsJS = new File(fSxProject, "StuffContainer/testScripts/testJavaScript");
 //</editor-fold>
 
     if (!Type.SETUP.equals(typ)) {
@@ -805,7 +807,7 @@ int nMonitors = 0;
   public boolean isRunningFromJar() {
     return runningJar;
   }
-  
+
   public boolean isJava8() {
     return javaVersion > 7;
   }
@@ -1457,7 +1459,7 @@ int nMonitors = 0;
     }
     return doExtractToFolderWithList(fpRessources, fFolder, content);
   }
-  
+
   private List<String> doExtractToFolderWithList(String fpRessources, File fFolder, List<String> content) {
     int count = 0;
     int ecount = 0;
@@ -1657,7 +1659,7 @@ int nMonitors = 0;
     } catch (Exception ex) {}
     return null;
   }
-  
+
   private List<String> resourceList(String folder, FilenameFilter filter) {
     List<String> files = new ArrayList<String>();
     if (!folder.startsWith("/")) {
