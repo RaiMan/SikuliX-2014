@@ -2,16 +2,11 @@
  * Copyright 2010-2014, Sikuli.org, sikulix.com
  * Released under the MIT License.
  *
- * RaiMan 2013, 2015
+ * modified RaiMan 2013
  */
 package org.sikuli.basics;
 
-/**
- *
- * use org.sikuli.script.HotkeyEvent instead
- * @deprecated
- */
-@Deprecated
+
 public class HotkeyEvent {
    public int keyCode;
    public int modifiers;

@@ -215,7 +215,7 @@ module Sikulix
 
   # TODO: check it after Env Java-class refactoring
   java_import org.sikuli.script.Env
-  java_import org.sikuli.script.HotkeyListener
+  java_import org.sikuli.basics.HotkeyListener
 
   class Env  # :nodoc: all
     class RHotkeyListener < HotkeyListener

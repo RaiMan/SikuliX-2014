@@ -6,6 +6,7 @@
  */
 package org.sikuli.script;
 
+import org.sikuli.basics.HotkeyManager;
 import org.sikuli.util.Tests;
 import org.sikuli.util.ScreenHighlighter;
 import java.awt.Desktop;
