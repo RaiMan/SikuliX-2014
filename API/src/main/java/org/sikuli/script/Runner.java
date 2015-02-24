@@ -158,23 +158,27 @@ public class Runner {
     return lastReturnCode;
   }
 
-  static int runScripts(String[] args) {
-    runScripts = Runner.evalArgs(args);
-    int exitCode = 0;
-    if (runScripts != null && runScripts.length > 0) {
-      boolean runAsTest = runTime.runningTests;
-      for (String givenScriptName : runScripts) {
-        if (lastReturnCode == -1) {
-          log(lvl, "Exit code -1: Terminating multi-script-run");
-          break;
-        }
-        RunBox rb = new RunBox(givenScriptName, runTime.getSikuliArgs(), runAsTest);
-        exitCode = rb.run();
-        lastReturnCode = exitCode;
-      }
-    }
-    return exitCode;
-  }
+	static int runScripts(String[] args) {
+		runScripts = Runner.evalArgs(args);
+		int exitCode = 0;
+		if (runScripts != null && runScripts.length > 0) {
+			if (runScripts[0].contains("RunnerServer")) {
+				RunnerServer.start(null);
+			} else {
+				boolean runAsTest = runTime.runningTests;
+				for (String givenScriptName : runScripts) {
+					if (lastReturnCode == -1) {
+						log(lvl, "Exit code -1: Terminating multi-script-run");
+						break;
+					}
+					RunBox rb = new RunBox(givenScriptName, runTime.getSikuliArgs(), runAsTest);
+					exitCode = rb.run();
+					lastReturnCode = exitCode;
+				}
+			}
+		}
+		return exitCode;
+	}
 
   public static File getScriptFile(File fScriptFolder) {
     if (fScriptFolder == null) {
@@ -200,23 +204,13 @@ public class Runner {
     return fScript;
   }
 
-  static ScriptEngineManager jsFactory = null;
   static ScriptEngine jsRunner = null;
 
   public static int runjs(File fScript, String scriptName, String[] args) {
     String initSikulix = "";
     if (jsRunner == null) {
-      jsFactory = new ScriptEngineManager();
-      jsRunner = jsFactory.getEngineByName("JavaScript");
-      if (jsRunner != null) {
-        log(lvl, "ScriptingEngine started: JavaScript (ending .js)");
-      } else {
-        runTime.terminate(1, "ScriptingEngine for JavaScript not available");
-      }
-      if (runTime.isJava8()) {
-        initSikulix += beforeJSjava8;
-      }
-      initSikulix += beforeJS;
+			jsRunner = initjs();
+			initSikulix = prologjs(initSikulix);
     }
     try {
       File innerBundle = new File(fScript.getParentFile(), scriptName + ".sikuli");
@@ -226,10 +220,7 @@ public class Runner {
         ImagePath.setBundlePath(fScript.getParent());
       }
       if (!initSikulix.isEmpty()) {
-        String commands = runTime.extractResourceToString("JavaScript", "commands.js", "");
-        if (commands != null) {
-          initSikulix += commands;
-        }
+				initSikulix = prologjs(initSikulix);
         jsRunner.eval(initSikulix);
         initSikulix = "";
       }
@@ -239,6 +230,33 @@ public class Runner {
     }
     return 0;
   }
+
+	public static ScriptEngine initjs() {
+		ScriptEngineManager jsFactory = new ScriptEngineManager();
+		ScriptEngine jsr = jsFactory.getEngineByName("JavaScript");
+		if (jsr != null) {
+			log(lvl, "ScriptingEngine started: JavaScript (ending .js)");
+		} else {
+			runTime.terminate(1, "ScriptingEngine for JavaScript not available");
+		}
+		return jsr;
+	}
+
+	public static String prologjs(String before) {
+		String after = before;
+		if (after.isEmpty()) {
+			if (runTime.isJava8()) {
+				after += beforeJSjava8;
+			}
+			after += beforeJS;
+		} else {
+			String commands = runTime.extractResourceToString("JavaScript", "commands.js", "");
+			if (commands != null) {
+				after += commands;
+			}
+		}
+		return after;
+	}
 
   public static Object[] runBoxInit(String givenName, File scriptProject, URL uScriptProject) {
     String givenScriptHost = "";

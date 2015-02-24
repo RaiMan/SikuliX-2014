@@ -1,39 +1,91 @@
-use = function (arg1) {
-  return Commands.call("use", arg1);
+SIKULIX = RunTime.get();
+
+USEJSON = false;
+
+jsonOn = function() {
+	USEJSON = true;
+	Debug.log(3, "JSON: Now returning JSONized objects");
+}
+
+jsonOff = function() {
+	USEJSON = false;
+	Debug.log(3, "JSON: Now returning normal objects");
+}
+
+isNull = function(aObj) {
+	if (!Commands.isJSON(aObj)) {
+		return aObj == null;
+	}
+	return Commands.fromJSON(aObj) == null;
+}
+
+fromJSON = function(aObj) {
+	if (!Commands.isJSON(aObj)) {
+		return aObj;
+	}
+	return Commands.fromJSON(aObj);
+}
+
+getArgsForJ = function(args) {
+	var jargs = java.lang.reflect.Array.newInstance(java.lang.Object, args.length);
+	for(n = 0; n < args.length; n++) {
+		jargs[n] = args[n];
+	}
+	return jargs;
+}
+
+makeRetVal = function(aObj) {
+	if (!USEJSON) {
+		return aObj;
+	} else {
+		try {
+			return aObj.toJSON();
+		} catch (ex) {
+		}
+		try {
+			return "[\"" + aObj.getClass().getName() + ", \"" + aObj.toString + "\"]";
+		} catch (ex) {
+			return "[\"NULL\"]";
+		}
+	}
+}
+
+use = function () {
+  return makeRetVal(Commands.call("use", getArgsForJ(arguments)));
 };
 
-wait = function (arg1, arg2, arg3) {
-  return Commands.call("wait", arg1, arg2, arg3);
+wait = function () {
+  return makeRetVal(Commands.call("wait", getArgsForJ(arguments)));
 };
 
-waitVanish = function (arg1, arg2, arg3) {
-  return Commands.call("waitVanish", arg1, arg2, arg3);
+waitVanish = function () {
+  return makeRetVal(Commands.call("waitVanish", getArgsForJ(arguments)));
 };
 
-exists = function (arg1, arg2, arg3) {
-  return Commands.call("exists", arg1, arg2, arg3);
+exists = function () {
+  return makeRetVal(Commands.call("exists", getArgsForJ(arguments)));
 };
 
-click = function (arg1, arg2, arg3, arg4, arg5, arg6) {
-  return Commands.call("click", arg1, arg2, arg3, arg4, arg5, arg6);
+click = function () {
+  return makeRetVal(Commands.call("click", getArgsForJ(arguments)));
 };
 
-doubleClick = function (arg1, arg2, arg3, arg4, arg5, arg6) {
-  return Commands.call("doubleClick", arg1, arg2, arg3, arg4, arg5, arg6);
+doubleClick = function () {
+  return makeRetVal(Commands.call("doubleClick", getArgsForJ(arguments)));
 };
 
-rightClick = function (arg1, arg2, arg3, arg4, arg5, arg6) {
-  return Commands.call("rightClick", arg1, arg2, arg3, arg4, arg5, arg6);
+rightClick = function () {
+  return makeRetVal(Commands.call("rightClick", getArgsForJ(arguments)));
 };
 
-hover = function (arg1, arg2, arg3, arg4, arg5, arg6) {
-  return Commands.call("hover", arg1, arg2, arg3, arg4, arg5, arg6);
+hover = function () {
+  return makeRetVal(Commands.call("hover", getArgsForJ(arguments)));
 };
 
-type = function(arg1, arg2, arg3, arg4, arg5, arg6) {
-  return Commands.call("type", arg1, arg2, arg3, arg4, arg5, arg6);
+type = function() {
+  return makeRetVal(Commands.call("type", getArgsForJ(arguments)));
 };
 
-paste = function(arg1, arg2, arg3, arg4, arg5, arg6) {
-  return Commands.call("paste", arg1, arg2, arg3, arg4, arg5, arg6);
+paste = function() {
+  return makeRetVal(Commands.call("paste", getArgsForJ(arguments)));
 };
