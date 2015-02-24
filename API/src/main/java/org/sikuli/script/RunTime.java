@@ -134,9 +134,12 @@ public class RunTime {
       String vJava = System.getProperty("java.runtime.version");
       String vVM = System.getProperty("java.vm.version");
       String vClass = System.getProperty("java.class.version");
-      String vSysArch = System.getProperty("os.arch");
-      if (vSysArch.contains("64")) {
-        runTime.javaArch = 64;
+      String vSysArch = System.getProperty("sikuli.arch");
+      if (null != vSysArch) {
+        vSysArch = System.getProperty("os.arch");
+      }      
+      if (vSysArch != null && vSysArch.contains("32")) {
+        runTime.javaArch = 32;
       }
       try {
         runTime.javaVersion = Integer.parseInt(vJava.substring(2, 3));
@@ -147,6 +150,8 @@ public class RunTime {
         runTime.javaVersion = 7;
         runTime.javaShow = String.format("java ?7?-%d version %s vm %s class %s arch %s",
                 runTime.javaArch, vJava, vVM, vClass, vSysArch);
+        runTime.logp(runTime.javaShow);
+        runTime.dumpSysProps();
       }
 
       if (Debug.getDebugLevel() > runTime.minLvl) {
@@ -343,7 +348,7 @@ public class RunTime {
   private final String osNameSysProp = System.getProperty("os.name");
   private final String osVersionSysProp = System.getProperty("os.version");
   public String javaShow = "not-set";
-  public int javaArch = 32;
+  public int javaArch = 64;
   public int javaVersion = 0;
   public String javahome = FileManager.slashify(System.getProperty("java.home"), false);
   public String osName = "NotKnown";
@@ -599,6 +604,8 @@ int nMonitors = 0;
         terminate(1, "libs folder not available: " + fLibsFolder.toString());
       }
       log(lvl, "new libs folder at: %s", fLibsFolder);
+    } else {
+      log(lvl, "exists libs folder at: %s", fLibsFolder);
     }
     String[] fpList = fTempPath.list(new FilenameFilter() {
       @Override
@@ -610,7 +617,7 @@ int nMonitors = 0;
       }
     });
     if (fpList.length > 1) {
-      log(lvl, "deleting obsolete libs folders");
+      log(lvl, "deleting obsolete libs folders in Temp");
       for (String entry : fpList) {
         if (entry.endsWith(sxBuildStamp)) {
           continue;
@@ -628,7 +635,7 @@ int nMonitors = 0;
       }
     });
     if (fpList.length > 1) {
-      log(lvl, "deleting obsolete libs folders");
+      log(lvl, "deleting obsolete libs folders in AppPath");
       for (String entry : fpList) {
         if (entry.endsWith(sxBuildStamp)) {
           continue;
@@ -642,7 +649,6 @@ int nMonitors = 0;
     boolean shouldExport = false;
     makeLibsFolder();
     URL uLibsFrom = null;
-    log(lvl, "exists libs folder at: %s", fLibsFolder);
     if (!checkLibs(fLibsFolder)) {
       FileManager.deleteFileOrFolder(fLibsFolder);
       fLibsFolder.mkdirs();
@@ -715,8 +721,9 @@ int nMonitors = 0;
       libsLoaded.put(aFile, false);
     }
     if (runningWindows) {
-      if (!addToWindowsSystemPath(fLibsFolder)) {
-        terminate(1, "Problems setting up on Windows - see errors");
+      addToWindowsSystemPath(fLibsFolder);
+      if (!checkJavaUsrPath(fLibsFolder)) {
+        log(-1, "Problems setting up on Windows - see errors - might not work and crash later");
       }
       String lib = "jawt.dll";
       File fJawtDll = new File(fLibsFolder, lib);
@@ -951,7 +958,7 @@ int nMonitors = 0;
     return true;
   }
 
-  private boolean addToWindowsSystemPath(File fLibsFolder) {
+  private void addToWindowsSystemPath(File fLibsFolder) {
     String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
     if (syspath == null) {
       terminate(1, "addToWindowsSystemPath: cannot access system path");
@@ -969,10 +976,6 @@ int nMonitors = 0;
         log(lvl, "addToWindowsSystemPath: added to systempath:\n%s", libsPath);
       }
     }
-    if (!checkJavaUsrPath(fLibsFolder)) {
-      return false;
-    }
-    return true;
   }
 
   private boolean checkJavaUsrPath(File fLibsFolder) {
