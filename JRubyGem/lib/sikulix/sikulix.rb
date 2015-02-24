@@ -111,7 +111,7 @@ module Sikulix
 
   # Initializes connections to remote machines
   # *args - sequence of address[:port] strings. Default port - 5900
-  # example: 
+  # example:
   # initVNCPool("192.168.2.3:5901", "192.168.4.3")
   def initVNCPool(*args)
     if @connection_controller
@@ -215,7 +215,7 @@ module Sikulix
 
   # TODO: check it after Env Java-class refactoring
   java_import org.sikuli.script.Env
-  java_import org.sikuli.basics.HotkeyListener
+  java_import org.sikuli.script.HotkeyListener
 
   class Env  # :nodoc: all
     class RHotkeyListener < HotkeyListener

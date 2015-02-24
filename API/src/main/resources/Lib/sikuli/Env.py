@@ -1,7 +1,7 @@
 # Copyright 2010-2014, Sikuli.org, sikulix.com
 # Released under the MIT License.
-from org.sikuli.basics import HotkeyListener
-from org.sikuli.basics import HotkeyManager
+from org.sikuli.script import HotkeyListener
+from org.sikuli.script import HotkeyManager
 from org.sikuli.script import Env as JEnv
 
 class Env(JEnv):
