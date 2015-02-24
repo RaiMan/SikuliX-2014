@@ -6,6 +6,7 @@
  */
 package org.sikuli.script;
 
+import org.sikuli.basics.HotkeyManager;
 import org.sikuli.util.Tests;
 import org.sikuli.util.ScreenHighlighter;
 import java.awt.Desktop;
@@ -14,7 +15,6 @@ import java.io.File;
 import java.net.URI;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.Enumeration;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -114,65 +114,11 @@ public class Sikulix {
       System.exit(1);
     } else {
       rt = RunTime.get();
-      //Debug.on(3);
+      Debug.on(3);
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
 
-      Screen s = new Screen();
-      Debug.on(3);
-
-      ImagePath.add(Sikulix.class.getCanonicalName() + "/ImagesAPI.sikuli");
-      File fResults = new File(System.getProperty("user.home"), "SikulixScreenImages");
-      FileManager.resetFolder(fResults);
-      String fpResults = fResults.getPath();
-
-      if (Settings.isMac()) {
-        App.focus("Safari");
-      } else {
-        App.focus("Google Chrome");
-      }
-      String raimanlogo = "raimanlogo";
-      Match mFound = null;
-      try {
-        if (null == s.exists(raimanlogo, 0)) {
-          Desktop.getDesktop().browse(new URI("http://sikulix.com"));
-          s.wait(raimanlogo, 10);
-        }
-        s.hover();
-
-        Region winBrowser = App.focusedWindow();
-
-        String image = "btnnightly";
-        mFound = winBrowser.exists(image);
-        if (null != mFound) {
-          p("mFound: %s", mFound);
-          p("mFound.Image: %s", mFound.getImage());
-          p("mFound.ImageFile: %s", mFound.getImageFilename());
-          winBrowser.highlight(-1);
-          winBrowser.click();
-          winBrowser.getLastScreenImageFile(fpResults, image + "screen.png");
-        } else {
-          terminate(1, "missing: %s", image);
-          System.exit(1);
-        }
-        image = "nightly";
-        mFound = winBrowser.exists(image, 10);
-        if (null != mFound) {
-          p("mFound: %s", mFound);
-          p("mFound.Image: %s", mFound.getImage());
-          p("mFound.ImageFile: %s", mFound.getImageFilename());
-          winBrowser.highlight(-1);
-          winBrowser.getLastScreenImageFile(fpResults, image + "screen.png");
-        } else {
-          terminate(1, "missing: %s", image);
-        }
-      } catch (Exception ex) {
-        terminate(1, "some problems");
-      }
-      s.write("#C.w");
-      s.wait(2f);
-      App.focus("NetBeans");
-      System.exit(1);
+			RunnerClient runner = new RunnerClient("192.168.2.114", "50000");
 
       if (rt.runningWinApp) {
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());

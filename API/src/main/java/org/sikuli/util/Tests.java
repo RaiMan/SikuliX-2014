@@ -7,11 +7,14 @@ import java.lang.reflect.Method;
 import java.net.URI;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.basics.Settings;
 import org.sikuli.script.App;
 import org.sikuli.script.ImagePath;
+import org.sikuli.script.Match;
 import org.sikuli.script.Region;
 import org.sikuli.script.RunTime;
 import org.sikuli.script.Screen;
+import org.sikuli.script.Sikulix;
 
 public class Tests {
 
@@ -30,6 +33,15 @@ public class Tests {
     } else {
       System.out.println(String.format(message, args));
     }
+  }
+
+  private static void p(String msg, Object... args) {
+    System.out.println(String.format(msg, args));
+  }
+
+  private static void terminate(int retVal, String msg, Object... args) {
+    p(msg, args);
+    System.exit(retVal);
   }
 
   public static void runTest(int testNumber) {
@@ -125,7 +137,7 @@ public class Tests {
       if (rt.runningWindows) {
         s.write("#A.#F4.");
       } else if (rt.runningMac) {
-        s.write("#M.q");        
+        s.write("#M.q");
       } else {
         s.write("#C.q");
       }
@@ -222,4 +234,62 @@ public class Tests {
     }
     return false;
   }
+
+	private static void lastScreenImageTest() {
+      Screen s = new Screen();
+      Debug.on(3);
+
+      ImagePath.add(Sikulix.class.getCanonicalName() + "/ImagesAPI.sikuli");
+      File fResults = new File(System.getProperty("user.home"), "SikulixScreenImages");
+      FileManager.resetFolder(fResults);
+      String fpResults = fResults.getPath();
+
+      if (Settings.isMac()) {
+        App.focus("Safari");
+      } else {
+        App.focus("Google Chrome");
+      }
+      String raimanlogo = "raimanlogo";
+      Match mFound = null;
+      try {
+        if (null == s.exists(raimanlogo, 0)) {
+          Desktop.getDesktop().browse(new URI("http://sikulix.com"));
+          s.wait(raimanlogo, 10);
+        }
+        s.hover();
+
+        Region winBrowser = App.focusedWindow();
+
+        String image = "btnnightly";
+        mFound = winBrowser.exists(image);
+        if (null != mFound) {
+          p("mFound: %s", mFound);
+          p("mFound.Image: %s", mFound.getImage());
+          p("mFound.ImageFile: %s", mFound.getImageFilename());
+          winBrowser.highlight(-1);
+          winBrowser.click();
+          winBrowser.getLastScreenImageFile(fpResults, image + "screen.png");
+        } else {
+          terminate(1, "missing: %s", image);
+          System.exit(1);
+        }
+        image = "nightly";
+        mFound = winBrowser.exists(image, 10);
+        if (null != mFound) {
+          p("mFound: %s", mFound);
+          p("mFound.Image: %s", mFound.getImage());
+          p("mFound.ImageFile: %s", mFound.getImageFilename());
+          winBrowser.highlight(-1);
+          winBrowser.getLastScreenImageFile(fpResults, image + "screen.png");
+        } else {
+          terminate(1, "missing: %s", image);
+        }
+      } catch (Exception ex) {
+        terminate(1, "some problems");
+      }
+      s.write("#C.w");
+      s.wait(2f);
+      App.focus("NetBeans");
+      System.exit(1);
+	}
 }

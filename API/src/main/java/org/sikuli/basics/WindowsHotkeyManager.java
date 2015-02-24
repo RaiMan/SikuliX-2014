@@ -4,11 +4,8 @@
  *
  * modified RaiMan 2013
  */
-package org.sikuli.util;
+package org.sikuli.basics;
 
-import org.sikuli.script.HotkeyEvent;
-import org.sikuli.script.HotkeyManager;
-import org.sikuli.script.HotkeyListener;
 import com.melloware.jintellitype.JIntellitype;
 import java.util.*;
 import org.sikuli.basics.Debug;

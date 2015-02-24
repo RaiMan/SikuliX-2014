@@ -6,12 +6,6 @@
  */
 package org.sikuli.basics;
 
-/**
- *
- * use org.sikuli.script.HotkeyListener instead
- * @deprecated
- */
-@Deprecated
 public abstract class HotkeyListener {
 
   /**

@@ -28,7 +28,7 @@ import java.awt.Robot;
  * <br>The so called primary screen is the one with top left (0,0) and has id 0.
  */
 public class Screen extends Region implements EventObserver, IScreen {
-  
+
   static RunTime runTime = RunTime.get();
 
   private static String me = "Screen: ";
@@ -63,7 +63,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   public int getcurrentID() {
     return curID;
   }
-  
+
   private static void initScreens(boolean reset) {
     if (screens != null && !reset) {
       return;
@@ -569,4 +569,10 @@ public class Screen extends Region implements EventObserver, IScreen {
             curID, (int) r.getX(), (int) r.getY(),
             (int) r.getWidth(), (int) r.getHeight());
   }
+
+	@Override
+	public String toJSON() {
+    Rectangle r = getBounds();
+		return String.format("[\"S\", %d, %d, %d, %d, %d]", r.x, r.y, r.width, r.height, curID);
+	}
 }

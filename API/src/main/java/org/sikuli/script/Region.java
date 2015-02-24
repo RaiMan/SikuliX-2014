@@ -24,7 +24,7 @@ import edu.unh.iol.dlc.VNCScreen;
  *
  */
 public class Region {
-  
+
   static RunTime runTime = RunTime.get();
 
   private static String me = "Region: ";
@@ -160,6 +160,10 @@ public class Region {
   public String toStringShort() {
     return String.format("R[%d,%d %dx%d]@S(%s)", x, y, w, h, (getScreen() == null ? "?" : getScreen().getID()));
   }
+
+	public String toJSON() {
+		return String.format("[\"R\", %d, %d, %d, %d]", x, y, w, h);
+	}
 
   //<editor-fold defaultstate="collapsed" desc="OFF: Specials for scripting environment">
   /*
@@ -2870,11 +2874,11 @@ public class Region {
       observer = new ObserverCallBack(observer, obsType);
     }
     String name = Observing.add(this, (ObserverCallBack) observer, obsType, targetThreshhold);
-    log(lvl, "%s: observer %s %s: %s with: %s", toStringShort(), obsType, 
+    log(lvl, "%s: observer %s %s: %s with: %s", toStringShort(), obsType,
             (observer == null ? "" : " with callback"), name, targetThreshhold);
     return name;
   }
-  
+
   /**
    * a subsequently started observer in this region should wait for the target to vanish
    * and notify the given observer about this event<br>
@@ -2922,7 +2926,7 @@ public class Region {
    * @return the event's name
    */
   public String onChange(int threshold, Object observer) {
-    return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels), 
+    return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels),
             observer, ObserveEvent.Type.CHANGE);
   }
 
@@ -2934,7 +2938,7 @@ public class Region {
    * @return the event's name
    */
   public String onChange(int threshold) {
-    return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels), 
+    return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels),
             null, ObserveEvent.Type.CHANGE);
   }
 
@@ -2969,7 +2973,7 @@ public class Region {
    * @return the event's name
    */
   public String onChangeJ(int threshold, Object observer) {
-    return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels), 
+    return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels),
             observer, ObserveEvent.Type.CHANGE);
   }
 
