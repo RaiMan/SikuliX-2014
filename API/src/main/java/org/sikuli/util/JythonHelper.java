@@ -12,13 +12,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-//import org.python.core.PyList;
-//import org.python.util.PythonInterpreter;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.RunTime;
-//import org.sikuli.ide.SikuliIDE;
 
 public class JythonHelper {
   
@@ -54,6 +51,11 @@ public class JythonHelper {
   static Class[] nc = new Class[0];
   static Class cInterpreter = null;
   static Class cList = null;
+  static Class cPy = null;
+  static Class cPyFunction = null;
+  static Class cPyInstance = null;
+  static Class cPyObject = null;
+  static Class cPyString = null;
   static Method mLen, mGet, mSet, mAdd, mRemove;
   static Method mGetSystemState;
   static Field PI_path;
@@ -70,6 +72,11 @@ public class JythonHelper {
         Constructor PI_new = cInterpreter.getConstructor(nc);
         interpreter = PI_new.newInstance(null);
         cList = Class.forName("org.python.core.PyList");
+        cPy = Class.forName("org.python.core.Py");
+        cPyFunction = Class.forName("org.python.core.PyFunction");
+        cPyInstance = Class.forName("org.python.core.PyInstance");
+        cPyObject = Class.forName("org.python.core.PyObject");
+        cPyString = Class.forName("org.python.core.PyString");
         mLen = cList.getMethod("__len__", nc);
         mGet = cList.getMethod("get", new Class[]{int.class});
         mSet = cList.getMethod("set", new Class[]{int.class, Object.class});
@@ -297,5 +304,119 @@ public class JythonHelper {
       }
       log(lvl, "***** Jython sys.path end");
 		}
+  }
+
+  public boolean runObserveCallback(Object[] args) {
+    PyFunction func = new PyFunction(args[0]);
+    boolean success = true;
+    try {
+      func.__call__((new Py()).java2py(args[1]));
+    } catch (Exception ex) {
+      if (!"<lambda>".equals(func.__name__)) {
+        log(-1, "runObserveCallback: jython invoke: %s", ex.getMessage());
+        return false;
+      }
+      success = false;
+    }
+    if (success) {
+      return true;
+    }
+    try {
+      func.__call__();
+    } catch (Exception ex) {
+      log(-1, "runObserveCallback: jython invoke <lambda>: %s", ex.getMessage());
+      return false;
+    }
+    return true;
+  }
+  
+  class PyFunction {
+    public String __name__;
+    Object func = null;
+    public PyFunction(Object f) {
+      func = f;
+    }
+    void __call__(Object arg) {
+    }
+    void __call__() {
+    }      
+  }
+
+  class Py {
+    Object java2py(Object arg) {
+      return new Object();
+    }
+  }
+  
+  class PyInstance {
+    Object inst = null;
+    public PyInstance(Object i) {
+      inst = i;
+    }
+    Object __getattr__(String n) {
+      return null;
+    }
+    public void invoke(String mName, Object arg) {
+      
+    }
+  }
+  
+  class PyString {
+    String aString = "";
+    public PyString(String s) {
+      aString = s;
+    }
+    public void invoke(String mName, Object arg) {
+      
+    }
+  }
+  
+  public boolean runLoggerCallback(Object[] args, String scriptingType) {
+    PyInstance inst = new PyInstance(args[0]);
+    String mName = (String) args[1];
+    String msg = (String) args[2];
+    Object method = inst.__getattr__(mName);
+    if (method == null || !method.getClass().getName().contains("PyMethod")) {
+      log(-100, "runLoggerCallback: Object: %s, Method not found: %s", inst, mName);
+      return false;
+    }
+    try {
+      PyString pmsg = new PyString(msg);
+      inst.invoke(mName, pmsg);
+    } catch (Exception ex) {
+      log(-100, "runLoggerCallback: invoke: %s", ex.getMessage());
+      return false;
+    }
+    return true;
+  }
+
+  //TODO implement generalized callback
+  public boolean runCallback(Object[] args, String scriptingType) {
+    PyInstance inst = (PyInstance) args[0];
+    String mName = (String) args[1];
+    Object method = inst.__getattr__(mName);
+    if (method == null || !method.getClass().getName().contains("PyMethod")) {
+      log(-1, "runCallback: Object: %s, Method not found: %s", inst, mName);
+      return false;
+    }
+    try {
+      PyString pmsg = new PyString("not yet supported");
+      inst.invoke(mName, pmsg);
+    } catch (Exception ex) {
+      log(-1, "runCallback: invoke: %s", ex.getMessage());
+      return false;
+    }
+    return true;
+  }
+
+  public boolean checkCallback(Object[] args, String scriptingType) {
+    PyInstance inst = (PyInstance) args[0];
+    String mName = (String) args[1];
+    Object method = inst.__getattr__(mName);
+    if (method == null || !method.getClass().getName().contains("PyMethod")) {
+      log(-100, "checkCallback: Object: %s, Method not found: %s", inst, mName);
+      return false;
+    }
+    return true;
   }
 }

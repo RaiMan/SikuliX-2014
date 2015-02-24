@@ -532,78 +532,78 @@ public class JythonScriptRunner implements IScriptRunner {
 		}
 	}
 
-	private boolean checkCallback(Object[] args) {
-		PyInstance inst = (PyInstance) args[0];
-		String mName = (String) args[1];
-		PyObject method = inst.__getattr__(mName);
-		if (method == null || !method.getClass().getName().contains("PyMethod")) {
-  		log(-100, "checkCallback: Object: %s, Method not found: %s", inst, mName);
-			return false;
-		}
-		return true;
-	}
+  private boolean checkCallback(Object[] args) {
+    PyInstance inst = (PyInstance) args[0];
+    String mName = (String) args[1];
+    PyObject method = inst.__getattr__(mName);
+    if (method == null || !method.getClass().getName().contains("PyMethod")) {
+      log(-100, "checkCallback: Object: %s, Method not found: %s", inst, mName);
+      return false;
+    }
+    return true;
+  }
 
-	private boolean runLoggerCallback(Object[] args) {
-		PyInstance inst = (PyInstance) args[0];
-		String mName = (String) args[1];
-		String msg = (String) args[2];
-		PyObject method = inst.__getattr__(mName);
-		if (method == null || !method.getClass().getName().contains("PyMethod")) {
-  		log(-100, "runLoggerCallback: Object: %s, Method not found: %s", inst, mName);
-			return false;
-		}
-		try {
-			PyString pmsg = new PyString(msg);
-			inst.invoke(mName, pmsg);
-		} catch (Exception ex) {
-			log(-100, "runLoggerCallback: invoke: %s", ex.getMessage());
-			return false;
-		}
-		return true;
-	}
-
+  private boolean runLoggerCallback(Object[] args) {
+    PyInstance inst = (PyInstance) args[0];
+    String mName = (String) args[1];
+    String msg = (String) args[2];
+    PyObject method = inst.__getattr__(mName);
+    if (method == null || !method.getClass().getName().contains("PyMethod")) {
+      log(-100, "runLoggerCallback: Object: %s, Method not found: %s", inst, mName);
+      return false;
+    }
+    try {
+      PyString pmsg = new PyString(msg);
+      inst.invoke(mName, pmsg);
+    } catch (Exception ex) {
+      log(-100, "runLoggerCallback: invoke: %s", ex.getMessage());
+      return false;
+    }
+    return true;
+  }
+  
   private boolean runObserveCallback(Object[] args) {
     PyFunction func = (PyFunction) args[0];
     boolean success = true;
-		try {
+    try {
       ((PyFunction) args[0]).__call__(Py.java2py(args[1]));
-		} catch (Exception ex) {
+    } catch (Exception ex) {
       if (!"<lambda>".equals(func.__name__)) {
         log(-1, "runObserveCallback: jython invoke: %s", ex.getMessage());
         return false;
       }
-			success = false;
-		}
+      success = false;
+    }
     if (success) {
       return true;
     }
-		try {
+    try {
       ((PyFunction) args[0]).__call__();
-		} catch (Exception ex) {
+    } catch (Exception ex) {
       log(-1, "runObserveCallback: jython invoke <lambda>: %s", ex.getMessage());
       return false;
     }
     return true;
-	}
+  }
 
-//TODO implement generalized callback
+  //TODO implement generalized callback
   private boolean runCallback(Object[] args) {
-		PyInstance inst = (PyInstance) args[0];
-		String mName = (String) args[1];
-		PyObject method = inst.__getattr__(mName);
-		if (method == null || !method.getClass().getName().contains("PyMethod")) {
-  		log(-1, "runCallback: Object: %s, Method not found: %s", inst, mName);
-			return false;
-		}
-		try {
-			PyString pmsg = new PyString("not yet supported");
-			inst.invoke(mName, pmsg);
-		} catch (Exception ex) {
-			log(-1, "runCallback: invoke: %s", ex.getMessage());
-			return false;
-		}
-		return true;
-	}
+    PyInstance inst = (PyInstance) args[0];
+    String mName = (String) args[1];
+    PyObject method = inst.__getattr__(mName);
+    if (method == null || !method.getClass().getName().contains("PyMethod")) {
+      log(-1, "runCallback: Object: %s, Method not found: %s", inst, mName);
+      return false;
+    }
+    try {
+      PyString pmsg = new PyString("not yet supported");
+      inst.invoke(mName, pmsg);
+    } catch (Exception ex) {
+      log(-1, "runCallback: invoke: %s", ex.getMessage());
+      return false;
+    }
+    return true;
+  }
 
 //TODO revise the before/after concept (to support IDE reruns)
 	/**
