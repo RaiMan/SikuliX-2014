@@ -135,12 +135,18 @@ public class RunTime {
       String vVM = System.getProperty("java.vm.version");
       String vClass = System.getProperty("java.class.version");
       String vSysArch = System.getProperty("sikuli.arch");
-      if (null != vSysArch) {
+      if (null == vSysArch) {
         vSysArch = System.getProperty("os.arch");
+      } else {
+        runTime.log(runTime.lvl, "SystemProperty given: sikuli.arch=%s", vSysArch);
       }      
-      if (vSysArch != null && vSysArch.contains("32")) {
-        runTime.javaArch = 32;
-      }
+      if (vSysArch != null) {
+        if (vSysArch.contains("64")) {
+          runTime.javaArch = 64;
+        }
+      } else {
+        runTime.log(runTime.lvl, "Java arch (32 or 64 Bit) not detected nor given - using %d Bit", runTime.javaArch);
+      } 
       try {
         runTime.javaVersion = Integer.parseInt(vJava.substring(2, 3));
         runTime.javaShow = String.format("java %d-%d version %s vm %s class %s arch %s",
@@ -348,7 +354,7 @@ public class RunTime {
   private final String osNameSysProp = System.getProperty("os.name");
   private final String osVersionSysProp = System.getProperty("os.version");
   public String javaShow = "not-set";
-  public int javaArch = 64;
+  public int javaArch = 32;
   public int javaVersion = 0;
   public String javahome = FileManager.slashify(System.getProperty("java.home"), false);
   public String osName = "NotKnown";
