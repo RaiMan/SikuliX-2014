@@ -5,7 +5,6 @@ import org.junit.Test;
 import org.junit.Ignore;
 import org.junit.BeforeClass;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.Settings;
 
 public class APITest {
 

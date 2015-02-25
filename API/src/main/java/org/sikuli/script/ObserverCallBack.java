@@ -9,6 +9,7 @@ package org.sikuli.script;
 import java.lang.reflect.Method;
 import java.util.EventListener;
 import org.sikuli.basics.Debug;
+import org.sikuli.util.JythonHelper;
 
 /**
  * Use this class to implement call back methods for the Region observers
@@ -28,39 +29,42 @@ import org.sikuli.basics.Debug;
  see {@link ObserveEvent} about the features available in the callback function
  */
 public class ObserverCallBack implements EventListener {
-  
+
   Object callback = null;
   ObserveEvent.Type obsType = ObserveEvent.Type.GENERIC;
   Object scriptRunner = null;
   String scriptRunnerType = null;
   Method doSomethingSpecial = null;
-  
-  public ObserverCallBack(Object callback, ObserveEvent.Type obsType) {
-    this.callback = callback;
-    this.obsType = obsType;
-    try {
-      if (callback.getClass().getName().contains("org.python")) {
-        scriptRunnerType = "jython";
-      } else if (callback.getClass().getName().contains("org.jruby")) {
-        scriptRunnerType = "jruby";
-      }
-      if (scriptRunnerType != null) {
-        Class Scripting = Class.forName("org.sikuli.scriptrunner.ScriptingSupport");
-        Method getRunner = Scripting.getMethod("getRunner",
-                new Class[]{String.class, String.class});
-        scriptRunner = getRunner.invoke(Scripting, new Object[]{null, scriptRunnerType});
-        if (scriptRunner != null) {
-          doSomethingSpecial = scriptRunner.getClass().getMethod("doSomethingSpecial",
-                  new Class[]{String.class, Object[].class});
-        }
-      } else {
-        Debug.error("ObserverCallBack: no valid callback: %s", callback);
-      }
-    } catch (Exception ex) {
-      Debug.error("ObserverCallBack: %s init: we have problems\n%s", scriptRunnerType, ex.getMessage());
-      scriptRunner = null;
-    }
-  }
+
+	public ObserverCallBack(Object callback, ObserveEvent.Type obsType) {
+		this.callback = callback;
+		this.obsType = obsType;
+		if (callback.getClass().getName().contains("org.python")) {
+			scriptRunnerType = "jython";
+			scriptRunner = JythonHelper.get();
+		} else {
+			try {
+				if (callback.getClass().getName().contains("org.jruby")) {
+					scriptRunnerType = "jruby";
+				}
+				if (scriptRunnerType != null) {
+					Class Scripting = Class.forName("org.sikuli.scriptrunner.ScriptingSupport");
+					Method getRunner = Scripting.getMethod("getRunner",
+									new Class[]{String.class, String.class});
+					scriptRunner = getRunner.invoke(Scripting, new Object[]{null, scriptRunnerType});
+					if (scriptRunner != null) {
+						doSomethingSpecial = scriptRunner.getClass().getMethod("doSomethingSpecial",
+										new Class[]{String.class, Object[].class});
+					}
+				} else {
+					Debug.error("ObserverCallBack: no valid callback: %s", callback);
+				}
+			} catch (Exception ex) {
+				Debug.error("ObserverCallBack: %s init: ScriptRunner not available for %s", scriptRunnerType);
+				scriptRunner = null;
+			}
+		}
+	}
 
   public void appeared(ObserveEvent e) {
     if (scriptRunner != null && ObserveEvent.Type.APPEAR.equals(obsType)) {
@@ -85,22 +89,26 @@ public class ObserverCallBack implements EventListener {
       run(e);
     }
   }
-  
+
   private void run(ObserveEvent e) {
     boolean success = true;
-    String msg = "IScriptRunner: doSomethingSpecial returned false";
-    try {
-      if (scriptRunner != null) {
-        Object[] args = new Object[] {callback, e};
-        success = (Boolean) doSomethingSpecial.invoke(scriptRunner, new Object[]{"runObserveCallback", args});
-      }
-    } catch (Exception ex) {
-      success = false;
-      msg = ex.getMessage();
-    }
-    if (!success) {
-      Debug.error("ObserverCallBack: problem with scripting handler: %s\n%s\n%s", scriptRunner, callback, msg);
-    }
+		Object[] args = new Object[] {callback, e};
+		if (scriptRunnerType == "jython") {
+			((JythonHelper) scriptRunner).runObserveCallback(args);
+		} else {
+			String msg = "IScriptRunner: doSomethingSpecial returned false";
+			try {
+				if (scriptRunner != null) {
+					success = (Boolean) doSomethingSpecial.invoke(scriptRunner, new Object[]{"runObserveCallback", args});
+				}
+			} catch (Exception ex) {
+				success = false;
+				msg = ex.getMessage();
+			}
+			if (!success) {
+				Debug.error("ObserverCallBack: problem with scripting handler: %s\n%s\n%s", scriptRunner, callback, msg);
+			}
+		}
   }
 
   public ObserverCallBack() {

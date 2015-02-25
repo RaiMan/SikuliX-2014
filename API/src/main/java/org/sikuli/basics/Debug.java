@@ -12,7 +12,7 @@ import java.lang.reflect.Method;
 import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Date;
-import org.sikuli.script.RunTime;
+import org.sikuli.util.JythonHelper;
 
 /**
  * Debug is a utility class that wraps println statements and allows more or less command line
@@ -32,7 +32,7 @@ import org.sikuli.script.RunTime;
  * This solution is NOT threadsafe !!!
  */
 public class Debug {
-  
+
   private static int DEBUG_LEVEL = 0;
 	private static boolean loggerRedirectSupported = true;
   private long _beginTime = 0;
@@ -68,7 +68,6 @@ public class Debug {
 	private static boolean isJython;
 	private static boolean isJRuby;
   private static Object scriptRunner = null;
-  private static Method doSomethingSpecial = null;
 
 	private static PrintStream redirectedOut = null, redirectedErr = null;
 
@@ -91,7 +90,7 @@ public class Debug {
     setLogFile(null);
     setUserLogFile(null);
   }
-  
+
   public static void init() {
     if (DEBUG_LEVEL > 0) {
       logx(DEBUG_LEVEL, "Debug.init: from sikuli.Debug: on: %d", DEBUG_LEVEL);
@@ -127,21 +126,8 @@ public class Debug {
 			loggerRedirectSupported=false;
 			return false;
 		}
-    try {
-      Class Scripting = Class.forName("org.sikuli.scriptrunner.ScriptingSupport");
-      Method getRunner = Scripting.getMethod("getRunner",
-              new Class[]{String.class, String.class});
-      scriptRunner = getRunner.invoke(Scripting, new Object[]{null, "jython"});
-      if (scriptRunner != null) {
-        doSomethingSpecial = scriptRunner.getClass().getMethod("doSomethingSpecial",
-                new Class[]{String.class, Object[].class});
-      }
-  		privateLogger = logger;
-    } catch (Exception ex) {
-      log(-1, "setLogger: Jython init: we have problems\n%s", ex.getMessage());
-      scriptRunner = null;
-    }
-		return scriptRunner != null;
+		privateLogger = logger;
+		return true;
 	}
 
 	/**
@@ -178,7 +164,7 @@ public class Debug {
 		}
 		if (isJython) {
 			Object[] args = new Object[]{privateLogger, mName, type.toString()};
-			if (!checkCallback(args)) {
+			if (!JythonHelper.get().checkCallback(args)) {
 				logx(3, "Debug: setLogger: Jython: checkCallback returned: %s", args[0]);
 				return false;
 			}
@@ -223,28 +209,7 @@ public class Debug {
 		return false;
 	}
 
-  private static boolean checkCallback(Object[] args) {
-    return runnerDoSomethingSpecial("checkCallback", args);
-  }
-
-  private static boolean runCallback(String pln, String msg) {
-    return runnerDoSomethingSpecial("runLoggerCallback", new Object[]{privateLogger, pln, msg});
-  }
-
-  private static boolean runnerDoSomethingSpecial(String action, Object[] args) {
-    if (scriptRunner == null) {
-      return false;
-    }
-    try {
-      Object ret = doSomethingSpecial.invoke(scriptRunner, new Object[]{action, args});
-      return (Boolean) ret;
-    } catch (Exception ex) {
-      log(-100, "Debug.runnerDoSomethingSpecial: Fatal Error 999: could not be run!");
-      System.exit(999);
-    }
-    return false;
-  }
-  /**
+	/**
 	 * specify the target method for redirection of Sikuli's user log messages [user]<br>
 	 * must be the name of an instance method of the previously defined logger and<br>
 	 * must accept exactly one string parameter, that contains the info message
@@ -455,15 +420,15 @@ public class Debug {
       Settings.DebugLogs = false;
     }
   }
-  
+
   public static void on(int level) {
     setDebugLevel(level);
   }
-  
+
   public static void on(String level) {
     setDebugLevel(level);
   }
-  
+
   public static boolean is(int level) {
     return DEBUG_LEVEL >= level;
   }
@@ -475,7 +440,7 @@ public class Debug {
   public static void off() {
     setDebugLevel(0);
   }
-  
+
   /**
    * set debug level to given number value as string (ignored if invalid)
    *
@@ -530,7 +495,7 @@ public class Debug {
 					msg = String.format(prefix + message, args);
 				}
 				if (isJython) {
-					success = runCallback(pln, msg);
+					success = JythonHelper.get().runLoggerCallback(new Object[]{privateLogger, pln, msg});
 				} else if (isJRuby) {
 					success = false;
 				} else {

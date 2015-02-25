@@ -2857,20 +2857,9 @@ public class Region {
     return onEvent(target, null, ObserveEvent.Type.APPEAR);
   }
 
-  /**
-   *INTERNAL USE ONLY: for use with scripting API bridges
-   * @param <PSI> Pattern, String or Image
-   * @param target Pattern, String or Image
-   * @param observer ObserverCallBack
-   * @return the event's name
-   */
-  public <PSI> String onAppearJ(PSI target, Object observer) {
-    return onEvent(target, observer, ObserveEvent.Type.APPEAR);
-  }
-
   private <PSIC> String onEvent(PSIC targetThreshhold, Object observer, ObserveEvent.Type obsType) {
-    if (observer.getClass().getName().contains("org.python") ||
-            observer.getClass().getName().contains("org.jruby") ) {
+    if (observer != null && (observer.getClass().getName().contains("org.python") ||
+            observer.getClass().getName().contains("org.jruby"))) {
       observer = new ObserverCallBack(observer, obsType);
     }
     String name = Observing.add(this, (ObserverCallBack) observer, obsType, targetThreshhold);
@@ -2903,17 +2892,6 @@ public class Region {
    */
   public <PSI> String onVanish(PSI target) {
     return onEvent(target, null, ObserveEvent.Type.VANISH);
-  }
-
-  /**
-   *INTERNAL USE ONLY: for use with scripting API bridges
-   * @param <PSI> Pattern, String or Image
-   * @param target Pattern, String or Image
-   * @param observer ObserverCallBack
-   * @return the event's name
-   */
-  public <PSI> String onVanishJ(PSI target, Object observer) {
-    return onEvent(target, observer, ObserveEvent.Type.VANISH);
   }
 
   /**
@@ -2966,16 +2944,41 @@ public class Region {
     return onEvent(Settings.ObserveMinChangedPixels, null, ObserveEvent.Type.CHANGE);
   }
 
-  /**
-   *INTERNAL USE ONLY: for use with scripting API bridges
-   * @param threshold min pixel size - 0 = ObserveMinChangedPixels
-   * @param observer ObserverCallBack
-   * @return the event's name
-   */
-  public String onChangeJ(int threshold, Object observer) {
-    return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels),
-            observer, ObserveEvent.Type.CHANGE);
-  }
+//<editor-fold defaultstate="collapsed" desc="obsolete">
+//	/**
+//	 *INTERNAL USE ONLY: for use with scripting API bridges
+//	 * @param <PSI> Pattern, String or Image
+//	 * @param target Pattern, String or Image
+//	 * @param observer ObserverCallBack
+//	 * @return the event's name
+//	 */
+//	public <PSI> String onAppearJ(PSI target, Object observer) {
+//		return onEvent(target, observer, ObserveEvent.Type.APPEAR);
+//	}
+//
+//	/**
+//	 *INTERNAL USE ONLY: for use with scripting API bridges
+//	 * @param <PSI> Pattern, String or Image
+//	 * @param target Pattern, String or Image
+//	 * @param observer ObserverCallBack
+//	 * @return the event's name
+//	 */
+//	public <PSI> String onVanishJ(PSI target, Object observer) {
+//		return onEvent(target, observer, ObserveEvent.Type.VANISH);
+//	}
+//
+//	/**
+//	 *INTERNAL USE ONLY: for use with scripting API bridges
+//	 * @param threshold min pixel size - 0 = ObserveMinChangedPixels
+//	 * @param observer ObserverCallBack
+//	 * @return the event's name
+//	 */
+//	public String onChangeJ(int threshold, Object observer) {
+//		return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels),
+//						observer, ObserveEvent.Type.CHANGE);
+//	}
+//
+//</editor-fold>
 
   public String onChangeDo(int threshold, Object observer) {
     String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.CHANGE, threshold);
