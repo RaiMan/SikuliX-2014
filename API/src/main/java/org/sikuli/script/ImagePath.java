@@ -70,11 +70,11 @@ public class ImagePath {
 			if (pathURL == null) {
 				return "-- empty --";
 			}
-			if (isFile())
-				try {
-					return pathURL.toURI().getPath();
-				} catch (URISyntaxException ex) {}
-			return pathURL.toExternalForm();
+      String uPath = pathURL.toExternalForm();
+			if (isFile() && uPath.startsWith("file:")) {
+        uPath = uPath.substring(5);
+      }
+			return uPath;
 		}
 
 		public boolean isFile() {
@@ -534,14 +534,25 @@ public class ImagePath {
   }
 
   /**
-   *
+   * no trailing path separator
    * @return the current bundle path (might be the fallback working folder)
    */
   public static String getBundlePath() {
     if (bundlePath == null) {
       setBundlePath(null);
     }
-		return bundlePath.getPath();
+		return FileManager.slashify(bundlePath.getPath(), false);
+  }
+
+  /**
+   * no trailing path separator
+   * @return the current bundle path (might be the fallback working folder)
+   */
+  public static String getBundleFolder() {
+    if (bundlePath == null) {
+      setBundlePath(null);
+    }
+		return FileManager.slashify(bundlePath.getPath(), true);
   }
 
   private static PathEntry makePathURL(String fpMainPath, String fpAltPath) {

@@ -177,9 +177,10 @@ def resetImagePath(path = None):
 # Sikuli IDE sets this to the path of the bundle of source code (.sikuli)
 # automatically. If you write Sikuli scripts using Sikuli IDE, you should
 # know what you are doing.
+# returns true if path is valid and exists, false otherwise (no changes) 
 #
 def setBundlePath(path):
-    ImagePath.setBundlePath(path)
+    return ImagePath.setBundlePath(path)
 
 ##
 # return the current bundlepath (usually the folder .sikuli) 
