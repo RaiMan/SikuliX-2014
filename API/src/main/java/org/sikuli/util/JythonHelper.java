@@ -53,6 +53,7 @@ public class JythonHelper {
   static Class cList = null;
   static Class cPy = null;
   static Class cPyFunction = null;
+  static Class cPyMethod = null;
   static Class cPyInstance = null;
   static Class cPyObject = null;
   static Class cPyString = null;
@@ -74,6 +75,7 @@ public class JythonHelper {
         cList = Class.forName("org.python.core.PyList");
         cPy = Class.forName("org.python.core.Py");
         cPyFunction = Class.forName("org.python.core.PyFunction");
+        cPyMethod = Class.forName("org.python.core.PyMethod");
         cPyInstance = Class.forName("org.python.core.PyInstance");
         cPyObject = Class.forName("org.python.core.PyObject");
         cPyString = Class.forName("org.python.core.PyString");
@@ -140,12 +142,22 @@ public class JythonHelper {
 		Method mCall1 = null;
     public PyFunction(Object f) {
       func = f;
-			cPyFunction.cast(func);
 			try {
+				cPyFunction.cast(func);
 				mCall = cPyFunction.getMethod("__call__");
 				mCall1 = cPyFunction.getMethod("__call__", cPyObject);
 			} catch (Exception ex) {
-				noOp();
+				func = null;
+			}
+			if (func == null) {
+				try {
+					func = f;
+					cPyMethod.cast(func);
+					mCall = cPyMethod.getMethod("__call__");
+					mCall1 = cPyMethod.getMethod("__call__", cPyObject);
+				} catch (Exception ex) {
+					func = null;
+				}
 			}
     }
     void __call__(Object arg) {
