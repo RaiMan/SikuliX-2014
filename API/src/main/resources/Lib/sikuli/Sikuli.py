@@ -87,6 +87,7 @@ except:
   SCRIPT_SUPPORT = False
 
 from org.sikuli.script import Runner
+from org.sikuli.util import JythonHelper
 
 ##
 # a token to check the availability 
@@ -121,24 +122,7 @@ def ucode(s):
 #  2. bundle path
 #
 def load(jar):
-    def _load(abspath):
-        if os.path.exists(abspath):
-            if not abspath in sys.path:
-                sys.path.append(abspath)
-            return True
-        return False
-
-    if _load(jar):
-        return True
-    path = getBundlePath()
-    if path:
-        jarInBundle = os.path.join(path, jar)
-        if _load(jarInBundle):
-            return True
-    path = ExtensionManager.getInstance().getLoadPath(jar)
-    if path and _load(path):
-        return True
-    return False
+    return JythonHelper.get().load(jar)
 
 ## ----------------------------------------------------------------------
 # append the given path sys.path if not yet contained

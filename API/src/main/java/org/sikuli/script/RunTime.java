@@ -331,6 +331,7 @@ public class RunTime {
   public File fTestFile = null;
   public File fAppPath = null;
   public File fSikulixAppPath = null;
+  public File fSikulixExtensions = null;
 
   private File fOptions = null;
   private Properties options = null;
@@ -469,9 +470,11 @@ int nMonitors = 0;
       fSikulixAppPath = new File(fAppPath, ".Sikulix");
       msg = "init: Linux: SikulxAppData does not exist or is not accessible:\n%s";
     }
+    fSikulixExtensions = new File(fSikulixAppPath, "Extensions");
     try {
       if (!fSikulixAppPath.exists()) {
         fSikulixAppPath.mkdirs();
+        fSikulixExtensions.mkdir();
       }
       if (!fSikulixAppPath.exists()) {
         terminate (1, msg, fSikulixAppPath);
@@ -479,6 +482,7 @@ int nMonitors = 0;
     } catch (Exception ex) {
       terminate (1, msg + "\n" + ex.toString(), fSikulixAppPath);
     }
+    
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="monitors">

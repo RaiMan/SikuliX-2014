@@ -13,7 +13,9 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.ExtensionManager;
 import org.sikuli.basics.FileManager;
+import org.sikuli.basics.Settings;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.RunTime;
 
@@ -291,6 +293,63 @@ public class JythonHelper {
     JythonHelper.get();
     interpreter = ip;
     return instance;
+  }
+  
+  public boolean load(String fpJarOrFolder) {
+//##
+//# loads a Sikuli extension (.jar) from
+//#  1. user's sikuli data path
+//#  2. bundle path
+//#
+//def load(jar):
+//    def _load(abspath):
+//        if os.path.exists(abspath):
+//            if not abspath in sys.path:
+//                sys.path.append(abspath)
+//            return True
+//        return False
+//    
+//    if JythonHelper.load(jar):
+//        return True
+//
+//    if _load(jar):
+//        return True
+//    path = getBundlePath()
+//    if path:
+//        jarInBundle = os.path.join(path, jar)
+//        if _load(jarInBundle):
+//            return True
+//    path = ExtensionManager.getInstance().getLoadPath(jar)
+//    if path and _load(path):
+//        return True
+//    return False
+    log(lvl, "load: to be loaded:\n%s", fpJarOrFolder);
+    String fpBundle = ImagePath.getBundlePath();
+    File fJar = new File(FileManager.normalizeAbsolute(fpJarOrFolder, false));
+    if (!fJar.exists()) {
+      fJar = new File(fpBundle, fpJarOrFolder);
+      fJar = new File(FileManager.normalizeAbsolute(fJar.getPath(), false));
+      if (!fJar.exists()) {
+        fJar = new File(runTime.fSikulixExtensions, fpJarOrFolder);
+        if (!fJar.exists()) {
+          fJar = null;
+        }
+      }
+    }
+    if (fJar != null) {
+      if (runTime.addToClasspath(fJar.getPath())) {
+        if (!hasSysPath(fJar.getPath())) {
+          insertSysPath(fJar);
+        }
+      } else {
+        log(-1, "load: not possible");
+        return false;
+      }
+    } else {
+      log(-1, "load: could not be found - even not in bundle nor in extensions");
+      return false;
+    }
+    return true;
   }
 
   public String findModule(String modName, Object packPath, Object sysPath) {

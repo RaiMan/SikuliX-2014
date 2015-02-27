@@ -31,6 +31,7 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Settings;
+import org.sikuli.ide.SikuliIDE;
 
 public class ExtensionManagerFrame extends JFrame {
 

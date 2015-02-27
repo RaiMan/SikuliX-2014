@@ -402,14 +402,14 @@ public class Settings {
 		String home, sikuliPath;
 		if (isWindows()) {
 			home = System.getenv("APPDATA");
-			sikuliPath = "Sikuli";
+			sikuliPath = "Sikulix";
 		} else if (isMac()) {
 			home = System.getProperty("user.home")
 							+ "/Library/Application Support";
-			sikuliPath = "Sikuli";
+			sikuliPath = "Sikulix";
 		} else {
 			home = System.getProperty("user.home");
-			sikuliPath = ".sikuli";
+			sikuliPath = ".Sikulix";
 		}
 		File fHome = new File(home, sikuliPath);
 		return fHome.getAbsolutePath();
@@ -419,7 +419,7 @@ public class Settings {
 	 * @return absolute path to the user's extension path
 	 */
 	public static String getUserExtPath() {
-		String ret = getSikuliDataPath() + File.separator + "extensions";
+		String ret = getSikuliDataPath() + File.separator + "Extensions";
 		File f = new File(ret);
 		if (!f.exists()) {
 			f.mkdirs();
