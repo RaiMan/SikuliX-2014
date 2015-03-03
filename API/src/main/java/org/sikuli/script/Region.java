@@ -3832,6 +3832,7 @@ public class Region {
     if (target != null && 0 == click(target, 0)) {
       return 0;
     }
+    Debug profiler = Debug.startTimer("Region.type");
     if (text != null && !"".equals(text)) {
       String showText = "";
       for (int i = 0; i < text.length(); i++) {
@@ -3853,9 +3854,11 @@ public class Region {
       }
       Debug.action("%s TYPE \"%s\"", modText, showText);
       log(lvl, "%s TYPE \"%s\"", modText, showText);
+      profiler.lap("before getting Robot");
       IRobot r = getRobotForRegion();
       int pause = 20 + (Settings.TypeDelay > 1 ? 1000 : (int) (Settings.TypeDelay * 1000));
       Settings.TypeDelay = 0.0;
+      profiler.lap("before typing");      
       r.typeStarts();
       for (int i = 0; i < text.length(); i++) {
         r.pressModifiers(modifiers);
@@ -3864,7 +3867,9 @@ public class Region {
         r.delay(pause);
       }
       r.typeEnds();
+      profiler.lap("after typing, before waitForIdle");
       r.waitForIdle();
+      profiler.end();
       return 1;
     }
 

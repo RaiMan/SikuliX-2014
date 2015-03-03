@@ -231,6 +231,7 @@ public class Mouse {
   }
 
   protected static int click(Location loc, int buttons, int modifiers, boolean dblClick, Region region) {
+    Debug profiler = Debug.startTimer("Mouse.click");
     boolean shouldMove = true;
     if (loc == null) {
       shouldMove = false;
@@ -238,12 +239,15 @@ public class Mouse {
     }
     IRobot r = loc.getRobotForPoint("click");
     if (r == null) {
+      profiler.end();
       return 0;
     }
     device.use(region);
+    profiler.lap("after use");
     Debug.action(getClickMsg(loc, buttons, modifiers, dblClick));
     if (shouldMove) {
       r.smoothMove(loc);
+      profiler.lap("after move");
     }
     r.clickStarts();
     r.pressModifiers(modifiers);
@@ -262,7 +266,9 @@ public class Mouse {
     r.releaseModifiers(modifiers);
     r.clickEnds();
     r.waitForIdle();
+    profiler.lap("before let");
     device.let(region);
+    profiler.end();
     return 1;
   }
 
