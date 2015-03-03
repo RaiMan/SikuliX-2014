@@ -7,6 +7,11 @@ import java.lang.reflect.Method;
 public class Commands {
 
   private static Region scr = new Screen();
+  private static RunTime runTime = RunTime.get();
+  
+  public static boolean isNashorn() {
+    return runTime.isJava8();
+  }
 
   public static Object call(String function, Object... args) {
     Method m = null;
@@ -61,9 +66,15 @@ public class Commands {
 
 	private static double getNumber(Object aObj, Double deflt) {
 		Double val = deflt;
-		if (aObj instanceof Integer || aObj instanceof Long || aObj instanceof Float || aObj instanceof Double) {
+		if (aObj instanceof Integer) {
+			val = 0.0 + (Integer) aObj;
+		} else if (aObj instanceof Long) {
+			val = 0.0 + (Long) aObj;
+    } else if (aObj instanceof Float) {
+			val = 0.0 + (Float) aObj;
+    } else if (aObj instanceof Double) {
 			val = (Double) aObj;
-		}
+    }
 		return val;
 	}
 
@@ -118,18 +129,19 @@ public class Commands {
         argsOK = false;
       }
     }
-		if (argsOK && len > 1 && isNumber(args[1])) {
-			timeout = getNumber(args[1]);
-		} else if (argsOK && len > 2 && isNumber(args[2])) {
-			score = (float) getNumber(args) / 100.0f;
-			if (score < 0.7) {
-				score = 0.7f;
-			} else if (score > 0.99) {
-				score = 0.99f;
-			}
-		} else {
-			argsOK = false;
-		}
+    if (argsOK && len > 1) {
+      if (len > 2 && isNumber(args[2])) {
+        score = (float) getNumber(args[2]) / 100.0f;
+        if (score < 0.7) {
+          score = 0.7f;
+        } else if (score > 0.99) {
+          score = 0.99f;
+        }
+      }
+      if (len > 1 && isNumber(args[1])) {
+        timeout = getNumber(args[1]);
+      }
+    }
     if (!argsOK) {
       throw new UnsupportedOperationException(
               "Commands.wait: parameters: String:image, float:timeout, int:score");
@@ -222,10 +234,7 @@ public class Commands {
 
 	public static boolean isJSON(Object aObj) {
 		if (aObj instanceof String) {
-			if (((String) aObj).startsWith("[\"")) {
-				return true;
-			}
-			return false;
+			return ((String) aObj).startsWith("[\"");
 		}
 		return false;
 	}

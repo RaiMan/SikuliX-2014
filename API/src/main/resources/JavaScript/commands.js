@@ -5,34 +5,39 @@ USEJSON = false;
 jsonOn = function() {
 	USEJSON = true;
 	Debug.log(3, "JSON: Now returning JSONized objects");
-}
+};
 
 jsonOff = function() {
 	USEJSON = false;
 	Debug.log(3, "JSON: Now returning normal objects");
-}
+};
 
 isNull = function(aObj) {
 	if (!Commands.isJSON(aObj)) {
 		return aObj == null;
 	}
 	return Commands.fromJSON(aObj) == null;
-}
+};
 
 fromJSON = function(aObj) {
 	if (!Commands.isJSON(aObj)) {
 		return aObj;
 	}
 	return Commands.fromJSON(aObj);
-}
+};
 
 getArgsForJ = function(args) {
-	var jargs = java.lang.reflect.Array.newInstance(java.lang.Object, args.length);
-	for(n = 0; n < args.length; n++) {
-		jargs[n] = args[n];
-	}
+  var jargs;
+  if (Commands.isNashorn()) {
+    jargs = Java.to(args);
+  } else {
+    jargs = java.lang.reflect.Array.newInstance(java.lang.Object, args.length);
+    for(n = 0; n < args.length; n++) {
+      jargs[n] = args[n];
+    }
+  }
 	return jargs;
-}
+};
 
 makeRetVal = function(aObj) {
 	if (!USEJSON) {
@@ -48,7 +53,7 @@ makeRetVal = function(aObj) {
 			return "[\"NULL\"]";
 		}
 	}
-}
+};
 
 use = function () {
   return makeRetVal(Commands.call("use", getArgsForJ(arguments)));

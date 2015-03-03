@@ -118,7 +118,7 @@ public class Sikulix {
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
 
-			RunnerClient runner = new RunnerClient("192.168.2.114", "50000");
+//			RunnerClient runner = new RunnerClient("192.168.2.114", "50000");
 
       if (rt.runningWinApp) {
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
