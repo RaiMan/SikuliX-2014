@@ -33,12 +33,12 @@ import org.sikuli.basics.Debug;
 /**
  * The VNCClient class controls all of the messages between
  * the client and the server.
- * 
+ *
  * @author Mike Johnson
  *
  */
 public class VNCClient {
-	
+
 	/*
      * Below are the fields and objects associated with the handshaking phase
      */
@@ -72,9 +72,9 @@ public class VNCClient {
         	Debug.log(3, "Error: IO Exception"+e);
         }
     }
-    
+
 //Handshaking Phase*****************************************************************************/
-    
+
     /* Below are all of the methods associated with the establishing the VNC
      * Connection.
      */
@@ -87,29 +87,13 @@ public class VNCClient {
      *
      */
     protected void protocolHandshake()throws IOException{
-        MARKER:
-        try{
-            String protocolVersion = in.readLine();
-            version = Integer.parseInt(protocolVersion.substring(10, 11));
-            switch (version){
-                case 3:break;
-                case 7:break;
-                case 8:break;
-                default:
-                	Debug.log(3, 
-                        "Error: Unrecognized protocol version," +
-                        " closing connection"+version);
-                    socket.close();
-                    break MARKER;
-            }
-            out.write(protocolVersion+"\n");
-            out.flush();
-            out = null; //so it gets collected
-            in = null;
-        }
-        catch(NumberFormatException n){
-        	Debug.log(3, "Error: Number Format Exception"+n);
-        }
+       String protocolVersion = in.readLine();
+       VersionParser parser = new VersionParser(protocolVersion);
+       final ProtocolVersion parse = parser.parse();
+       final String replyCode = parse.getReplyCode();
+       out.write(replyCode+"\n");
+       out.flush();
+       version = Character.getNumericValue(replyCode.charAt(10));
     }
 
     /**
@@ -216,7 +200,7 @@ public class VNCClient {
         try{
             int securityResult = dataIn.readInt();
             if(securityResult == 1){
-            	Debug.log(3, 
+            	Debug.log(3,
                         "Error: Server reported an error, closing connection");
                 socket.close();
             }
@@ -242,8 +226,8 @@ public class VNCClient {
     /**
      * Method that listens to the ServerInit message and records information
      * about the framebuffer.
-     * 
-     * @return framebuffer information 
+     *
+     * @return framebuffer information
      */
     protected synchronized int[] listenServerInit() throws IOException,
     InterruptedException{
@@ -266,10 +250,10 @@ public class VNCClient {
         dataIn.readUnsignedByte();
         return data;
     }
-    
+
     /**
      * Method that reads the desktop name of the remote host.
-     * 
+     *
      * @return The name of the desktop
      * @throws IOException
      */
@@ -279,15 +263,15 @@ public class VNCClient {
         dataIn.read(stringBytes); //desktopName
         return new String(stringBytes,"UTF-8");
     }
-	
+
 //VNC Messages****************************************************************/
-    
+
     /* Below are all of the methods the VNC Client can perform once connected.
      */
-    
+
     /**
      * The SetPixelFormat message sets the format of the raw pixel data sent
-     * across the network by the VNC Server. See RFB 3.8 standard for 
+     * across the network by the VNC Server. See RFB 3.8 standard for
      * SelPixelFormat message.
      *
      * @param bpp The number of bits per pixel
@@ -324,7 +308,7 @@ public class VNCClient {
         bef = be;
         dataOut.flush();
     }
-    
+
     /**
      * Sets the encoding of the pixel data sent by the server. See standard
      * for details of encoding type.
@@ -354,7 +338,7 @@ public class VNCClient {
      * @param h Height of desired region
      * @throws IOException If there is a socket error
      */
-    protected void framebufferUpdateRequest(boolean flag, 
+    protected void framebufferUpdateRequest(boolean flag,
     		int incremental,short x, short y,
             short w, short h) throws IOException{
     	if(flag == true){
@@ -454,40 +438,40 @@ public class VNCClient {
         }
         dataOut.flush();
     }
-    
+
     /**
      * Reads a single unsigned byte off of the wire
-     * 
+     *
      * @return int the unsigned byte
      * @throws IOException
      */
     protected synchronized int readByte() throws IOException{
     	return dataIn.readUnsignedByte();
     }
-    
+
     /**
      * Reads an unsigned short off of the wire
-     * 
+     *
      * @return int the unsigned short
      * @throws IOException
      */
     protected synchronized int readShort() throws IOException{
     	return dataIn.readUnsignedShort();
     }
-    
+
     /**
      * Reads an int off of the wire
-     * 
+     *
      * @return int the int
      * @throws IOException
      */
     protected synchronized int readInt() throws IOException{
     	return dataIn.readInt();
     }
-    
+
     /**
      * Reads truecolor 32 bit data off of the wire
-     * 
+     *
      * @param length of the data
      * @return int[] the data
      * @throws IOException
@@ -510,22 +494,22 @@ public class VNCClient {
     			input[j] = dataIn.readUnsignedByte();
     			dataIn.readUnsignedByte();
     		}
-		}	
+		}
 		return input;
 	}
-    
+
     /**
      * Closes the connection
-     * 
+     *
      * @throws IOException
      */
     protected void close() throws IOException{
     	socket.close();
     }
-    
+
     /**
      * Returns true if there is data waiting to be read from the socket
-     * 
+     *
      * @return
      * @throws IOException
      */
@@ -535,7 +519,7 @@ public class VNCClient {
     	}
     	return false;
     }
-    
+
     /**
      * Returns the VNCClient Object as a string
      */
