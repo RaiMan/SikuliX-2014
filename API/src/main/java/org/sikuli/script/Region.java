@@ -3645,7 +3645,7 @@ public class Region {
               t = Integer.parseInt(token.substring(2, token.length() - 1));
             } catch (NumberFormatException ex) {
             }
-            if ((token.startsWith("#W") && t > 60)) {
+            if ((token.startsWith("#w") && t > 60)) {
               pause = 20 + (t > 1000 ? 1000 : t);
               log(lvl + 1, "write: type delay: " + t);
             } else {
