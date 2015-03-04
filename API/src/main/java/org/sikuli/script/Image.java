@@ -81,10 +81,10 @@ public class Image {
   private final static String isBImg = "__BufferedImage__";
 
   private static long currentMemory = 0;
-  
+
   private static synchronized long currentMemoryChange(long size, long max) {
     long maxMemory = max;
-    if (max > -1) {
+    if (max < 0) {
       maxMemory = Settings.getImageCache() * MB;
       currentMemory += size;
     }
@@ -106,21 +106,22 @@ public class Image {
     }
     return currentMemory;
   }
-  
+
   private static long currentMemoryUp(long size) {
     return currentMemoryChange(size, -1);
   }
-  
+
   private static long currentMemoryDown(long size) {
     currentMemory -= size;
     currentMemory = Math.max(0, currentMemory);
     return currentMemoryChange(-size, -1);
   }
-  private static long currentMemoryDownUp(int sizeOld, int sizeNew) {
+
+	private static long currentMemoryDownUp(int sizeOld, int sizeNew) {
     currentMemoryDown(sizeOld);
     return currentMemoryUp(sizeNew);
   }
-    
+
   private static boolean isCaching() {
     return Settings.getImageCache() > 0;
   }
@@ -463,7 +464,7 @@ public class Image {
     }
     return bImage;
   }
-  
+
   private BufferedImage loadAgain() {
     BufferedImage bImage = null;
     if (fileURL != null) {
@@ -486,7 +487,7 @@ public class Image {
     }
     return bImage;
   }
-  
+
   private Image copy() {
     Image imgTarget = new Image();
     imgTarget.setImageName(imageName);

@@ -50,7 +50,7 @@ public class Observer {
   private int numChangeCallBacks = 0;
   private int numChangeObservers = 0;
   private static boolean shouldStopOnFirstEvent = false;
-  
+
   private Observer() {
   }
 
@@ -80,7 +80,7 @@ public class Observer {
       shouldStopOnFirstEvent = true;
     }
   }
-  
+
   protected void setStopOnFirstEvent() {
     shouldStopOnFirstEvent = true;
   }
@@ -88,7 +88,7 @@ public class Observer {
   protected String[] getNames() {
     return eventNames.keySet().toArray(new String[0]);
   }
-  
+
   protected void setActive(String name, boolean state) {
     if (eventNames.containsKey(me)) {
       if (state) {
@@ -98,7 +98,7 @@ public class Observer {
       }
     }
   }
-  
+
   protected int getCount(String name) {
     return eventCounts.get(name);
   }
@@ -144,7 +144,7 @@ public class Observer {
     eventMatches.remove(name);
     eventRepeatWaitTimes.remove(name);
   }
-  
+
   protected boolean hasObservers() {
     return eventNames.size() > 0;
   }
@@ -167,7 +167,7 @@ public class Observer {
       } else if (obsType == ObserveEvent.Type.GENERIC) {
         ((ObserverCallBack) callBack).happened(observeEvent);
       }
-    }    
+    }
   }
 
   private boolean checkPatterns(ScreenImage simg) {
@@ -237,10 +237,10 @@ public class Observer {
       }
       if (hasMatch) {
         eventMatches.put(name, match);
-        log(lvl + 1, "(%s): %s match: %s in:%s", eventTypes.get(name), ptn.toString(), 
+        log(lvl + 1, "(%s): %s match: %s in:%s", eventTypes.get(name), ptn.toString(),
                 match.toStringShort(), observedRegion.toStringShort());
       } else if (eventStates.get(ptn) == State.FIRST) {
-        log(lvl + 1, "(%s): %s match: %s in:%s", eventTypes.get(name), ptn.toString(), 
+        log(lvl + 1, "(%s): %s match: %s in:%s", eventTypes.get(name), ptn.toString(),
                 match.toStringShort(), observedRegion.toStringShort());
         eventStates.put(name, State.UNKNOWN);
       }
@@ -264,7 +264,7 @@ public class Observer {
     }
     return patternsToCheck();
   }
-  
+
   private boolean patternsToCheck () {
     for (String name : eventNames.keySet()) {
       if (eventTypes.get(name) == ObserveEvent.Type.CHANGE) {
@@ -277,7 +277,7 @@ public class Observer {
     }
     return false;
   }
-  
+
   protected void repeat(String name, long secs) {
     eventStates.put(name, State.REPEAT);
     if (secs <= 0) {
@@ -367,7 +367,7 @@ public class Observer {
     for (String name : eventNames.keySet()) {
       if (eventTypes.get(name) != ObserveEvent.Type.CHANGE) {
         continue;
-      } 
+      }
       n = (Integer) eventNames.get(name);
       List<Match> changes = new ArrayList<Match>();
       for (int i = 0; i < results.size(); i++) {

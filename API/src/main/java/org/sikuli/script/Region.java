@@ -2317,7 +2317,7 @@ public class Region {
         RepeatableFind rf = new RepeatableFind(target);
         if (rf.repeat(timeout)) {
           lastMatch = rf.getMatch();
-          Image img = getImage(target);
+          Image img = rf._image;
           lastMatch.setImage(img);
           if (img != null) {
             img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
