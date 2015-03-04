@@ -3911,7 +3911,9 @@ public class Region {
    * @throws FindFailed if not found
    */
   public <PFRML> int paste(PFRML target, String text) throws FindFailed {
-    click(target, 0);
+    if (target != null) {
+      click(target, 0);
+    }
     if (text != null) {
       App.setClipboard(text);
       int mod = Key.getHotkeyModifier();
