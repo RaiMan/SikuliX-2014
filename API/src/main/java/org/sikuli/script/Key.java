@@ -446,14 +446,14 @@ public class Key {
   public static boolean isRepeatable(String token) {
     int key = toJavaKeyCodeFromText(token);
     switch (key) {
-      case Key.C_UP: return true;
-      case Key.C_RIGHT: return true;
-      case Key.C_DOWN: return true;
-      case Key.C_LEFT: return true;
-      case Key.C_NEXT: return true;
-      case '\t': return true;
-      case '\n': return true;
-      case '\b': return true;
+      case KeyEvent.VK_UP: return true;
+      case KeyEvent.VK_DOWN: return true;
+      case KeyEvent.VK_RIGHT: return true;
+      case KeyEvent.VK_LEFT: return true;
+      case -KeyEvent.VK_TAB: return true;
+      case KeyEvent.VK_TAB: return true;
+      case KeyEvent.VK_ENTER: return true;
+      case KeyEvent.VK_BACK_SPACE: return true;
     }
     return false;
   }
