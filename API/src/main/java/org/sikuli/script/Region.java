@@ -3645,7 +3645,7 @@ public class Region {
               t = Integer.parseInt(token.substring(2, token.length() - 1));
             } catch (NumberFormatException ex) {
             }
-            if ((token.startsWith("#W") && t > 60) || pause > 20) {
+            if ((token.startsWith("#W") && t > 60)) {
               pause = 20 + (t > 1000 ? 1000 : t);
               log(lvl + 1, "write: type delay: " + t);
             } else {
@@ -3858,7 +3858,7 @@ public class Region {
       IRobot r = getRobotForRegion();
       int pause = 20 + (Settings.TypeDelay > 1 ? 1000 : (int) (Settings.TypeDelay * 1000));
       Settings.TypeDelay = 0.0;
-      profiler.lap("before typing");      
+      profiler.lap("before typing");
       r.typeStarts();
       for (int i = 0; i < text.length(); i++) {
         r.pressModifiers(modifiers);
