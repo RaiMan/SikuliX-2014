@@ -17,7 +17,7 @@ import org.sikuli.basics.Debug;
  * @author RaiMan
  */
 public class Device {
-  
+
   static RunTime runTime = RunTime.get();
 
   private static String me = "Device: ";
@@ -27,7 +27,7 @@ public class Device {
   }
 
   private Object device = null;
-  private String devName = "Device";  
+  private String devName = "Device";
 
   protected boolean inUse = false;
   protected boolean keep = false;
@@ -46,12 +46,17 @@ public class Device {
 
   protected Device(Mouse m) {
     device = m;
-    devName = "Mouse"; 
+    devName = "Mouse";
   }
 
   protected Device(Keys k) {
     device = k;
-    devName = "KeyBoard"; 
+    devName = "KeyBoard";
+  }
+
+  protected Device(Screen s) {
+    device = s;
+    devName = "Screen";
   }
 
   public boolean isInUse() {
@@ -65,6 +70,19 @@ public class Device {
   public boolean isBlocked() {
     return blocked;
   }
+
+	public boolean isNotLocal(Object owner) {
+		if (owner instanceof Region) {
+      if (((Region) owner).isOtherScreen()) {
+        return true;
+      }
+    } else if (owner instanceof Location) {
+      if (((Location) owner).isOtherScreen()) {
+        return true;
+      }
+    }
+		return false;
+	}
 
   /**
    * to block the device globally <br>
@@ -107,21 +125,19 @@ public class Device {
    * @param ownerGiven Object
    * @return success (false means: not blocked currently for this owner)
    */
-  public boolean unblock(Object ownerGiven) {
-    if (ownerGiven == null) {
-      ownerGiven = device;
-    } else if (ownerGiven instanceof Region) {
-      if (((Region) ownerGiven).isOtherScreen()) {
-        return false;
-      }
-    }
-    if (blocked && owner == ownerGiven) {
-      blocked = false;
-      let(ownerGiven);
-      return true;
-    }
-    return false;
-  }
+	public boolean unblock(Object ownerGiven) {
+		if (ownerGiven == null) {
+			ownerGiven = device;
+		} else if (isNotLocal(ownerGiven)) {
+			return false;
+		}
+		if (blocked && owner == ownerGiven) {
+			blocked = false;
+			let(ownerGiven);
+			return true;
+		}
+		return false;
+	}
 
   protected boolean use() {
     return use(null);
@@ -130,11 +146,9 @@ public class Device {
   protected synchronized boolean use(Object owner) {
     if (owner == null) {
       owner = this;
-    } else if (owner instanceof Region) {
-      if (((Region) owner).isOtherScreen()) {
-        return false;
-      }
-    }
+		} else if (isNotLocal(owner)) {
+			return false;
+		}
     if ((blocked || inUse) && this.owner == owner) {
       return true;
     }
@@ -161,11 +175,9 @@ public class Device {
   protected synchronized boolean keep(Object ownerGiven) {
     if (ownerGiven == null) {
       ownerGiven = this;
-    } else if (ownerGiven instanceof Region) {
-      if (((Region) ownerGiven).isOtherScreen()) {
-        return false;
-      }
-    }
+		} else if (isNotLocal(ownerGiven)) {
+			return false;
+		}
     if (inUse && owner == ownerGiven) {
       keep = true;
       log(lvl + 1, "%s: use keep: %s", devName, ownerGiven);
@@ -181,11 +193,9 @@ public class Device {
   protected synchronized boolean let(Object owner) {
     if (owner == null) {
       owner = this;
-    } else if (owner instanceof Region) {
-      if (((Region) owner).isOtherScreen()) {
-        return false;
-      }
-    }
+		} else if (isNotLocal(owner)) {
+			return false;
+		}
     if (inUse && this.owner == owner) {
       if (keep) {
         keep = false;
@@ -225,8 +235,16 @@ public class Device {
         showMousePos(pos.getPoint());
       }
       if (mouseMovedResponse == MouseMovedPause) {
-//TODO implement 2
-        return;
+				while (pos.x > 0 && pos.y > 0) {
+					delay(500);
+					pos = getLocation();
+					showMousePos(pos.getPoint());
+				}
+				if (pos.x < 1) {
+					return;
+				}
+				log(-1, "Terminating in MouseMovedResponse = Pause");
+				Sikulix.endError(1);
       }
       if (mouseMovedResponse == MouseMovedAction) {
 //TODO implement 3
