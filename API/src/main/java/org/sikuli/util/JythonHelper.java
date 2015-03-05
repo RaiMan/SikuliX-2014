@@ -13,9 +13,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.ExtensionManager;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.Settings;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.RunTime;
 
@@ -294,7 +292,7 @@ public class JythonHelper {
     interpreter = ip;
     return instance;
   }
-  
+
   public boolean load(String fpJarOrFolder) {
 //##
 //# loads a Sikuli extension (.jar) from
@@ -308,7 +306,7 @@ public class JythonHelper {
 //                sys.path.append(abspath)
 //            return True
 //        return False
-//    
+//
 //    if JythonHelper.load(jar):
 //        return True
 //

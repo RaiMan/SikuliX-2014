@@ -626,7 +626,7 @@ int nMonitors = 0;
         return false;
       }
     });
-    if (fpList.length > 1) {
+    if (fpList.length > 0) {
       log(lvl, "deleting obsolete libs folders in Temp");
       for (String entry : fpList) {
         if (entry.endsWith(sxBuildStamp)) {
@@ -944,6 +944,7 @@ int nMonitors = 0;
       return true;
     }
     if (runningLinux) {
+//TODO Linux build on the fly ???? sikulixapi.jar from Maven !!!!
       if (!LinuxSupport.runLdd(new File(fLibsFolder, libName)));
     }
     try {
@@ -1461,7 +1462,8 @@ int nMonitors = 0;
    * @param filter implementation of interface FilenameFilter or null for no filtering
    * @return the filtered list of files (compact sikulixcontent format)
    */
-  public List<String> extractResourcesToFolder(String fpRessources, File fFolder, FilenameFilter filter) {
+
+	public List<String> extractResourcesToFolder(String fpRessources, File fFolder, FilenameFilter filter) {
     List<String> content = null;
     content = resourceList(fpRessources, filter);
     if (content == null) {
