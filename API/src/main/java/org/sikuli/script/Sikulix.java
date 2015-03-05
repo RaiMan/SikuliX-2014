@@ -9,10 +9,8 @@ package org.sikuli.script;
 import org.sikuli.basics.HotkeyManager;
 import org.sikuli.util.Tests;
 import org.sikuli.util.ScreenHighlighter;
-import java.awt.Desktop;
 import java.awt.Dimension;
 import java.io.File;
-import java.net.URI;
 import java.net.URL;
 import java.security.CodeSource;
 import javax.swing.Box;
@@ -26,7 +24,6 @@ import javax.swing.JTextArea;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.PreferencesUser;
-import org.sikuli.basics.ResourceLoader;
 import org.sikuli.basics.Settings;
 
 /**
@@ -98,7 +95,6 @@ public class Sikulix {
       testNumber = -1;
     }
 
-    rt = RunTime.get();
     testNumber = rt.getOptionNumber("testing.test", testNumber);
 
     if (dl == 999) {
@@ -357,7 +353,7 @@ public class Sikulix {
   }
 
   public static String run(String[] cmd) {
-    return ResourceLoader.get().runcmd(cmd);
+    return rt.runcmd(cmd);
   }
 
   public static void popError(String message) {

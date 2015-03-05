@@ -12,16 +12,15 @@ import java.io.IOException;
 import java.io.PrintStream;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.basics.ResourceLoader;
 import org.sikuli.script.RunTime;
 
 /**
- * INTERNAL USE: all things needed with Linux at setup or runtime 
+ * INTERNAL USE: all things needed with Linux at setup or runtime
  */
 public class LinuxSupport {
-  
+
   static final RunTime runTime = RunTime.get();
-  
+
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static final String me = "LinuxSupport: ";
 	private static int lvl = 3;
@@ -46,19 +45,19 @@ public class LinuxSupport {
       System.out.println(sout);
     }
   }
-  
+
   private static boolean logToFile = false;
   public static void setLogToFile(boolean state) {
     logToFile = state;
   }
 	//</editor-fold>
-  
+
   static File fWorkDir = null;
   static File fLibs = null;
   public static final String libVision = "libVisionProxy.so";
-  public static final String libGrabKey = "libJXGrabKey.so";  
+  public static final String libGrabKey = "libJXGrabKey.so";
   static boolean libSearched = false;
-  
+
   private static String libOpenCVcore = "";
   private static String libOpenCVimgproc = "";
   private static String libOpenCVhighgui = "";
@@ -96,15 +95,15 @@ public class LinuxSupport {
   public static void setWorkDir(String workDir) {
     fWorkDir = new File(workDir);
   }
-  
+
   public static void setLibsDir(File libsDir) {
     fLibs = libsDir;
   }
-  
+
   public static boolean existsLibs() {
     return new File(fLibs, libVision).exists() || new File(fLibs, libGrabKey).exists();
   }
-    
+
   public static boolean processLibs1(String libsJar, final String osArch) {
     boolean shouldExport = false;
     boolean shouldBuildVisionNow = false;
@@ -157,7 +156,7 @@ public class LinuxSupport {
     }
     return shouldBuildVisionNow;
   }
-  
+
   public static boolean processLibs2() {
     boolean libsProvided = false;
     for (String exLib : libsExport) {
@@ -169,16 +168,16 @@ public class LinuxSupport {
     }
     return libsProvided;
   }
-  
+
   public static boolean checklibs(File lib) {
     String cmdRet;
     String[] retLines;
     boolean checkSuccess = true;
-    
+
     if (!libSearched) {
       logPlus(lvl, "checking: availability of OpenCV and Tesseract");
       logPlus(lvl, "checking: scanning loader cache (ldconfig -p)");
-      cmdRet = ResourceLoader.get().runcmd("ldconfig -p");
+      cmdRet = runTime.runcmd("ldconfig -p");
       if (cmdRet.contains(runTime.runCmdError)) {
         logPlus(-1, "checking: ldconfig returns error:\ns", cmdRet);
         checkSuccess = false;
@@ -213,28 +212,28 @@ public class LinuxSupport {
           logPlus(lvl, "checking: found Tesseract lib:\n%s", libTesseract);
         }
       }
-      
+
       // checking wmctrl, xdotool
-      cmdRet = ResourceLoader.get().runcmd("wmctrl -m");
+      cmdRet = runTime.runcmd("wmctrl -m");
       if (cmdRet.contains(runTime.runCmdError)) {
         logPlus(-1, "checking: wmctrl not available or not working");
       } else {
         logPlus(lvl, "checking: wmctrl seems to be available");
       }
-      cmdRet = ResourceLoader.get().runcmd("xdotool version");
+      cmdRet = runTime.runcmd("xdotool version");
       if (cmdRet.contains(runTime.runCmdError)) {
         logPlus(-1, "checking: xdotool not available or not working");
       } else {
         logPlus(lvl, "checking: xdotool seems to be available");
       }
-      
+
       libSearched = true;
     }
-    
+
     logPlus(lvl, "checking\n%s", lib);
     // readelf -d lib
     // 0x0000000000000001 (NEEDED)             Shared library: [libtesseract.so.3]
-    cmdRet = ResourceLoader.get().runcmd("readelf -d " + lib);
+    cmdRet = runTime.runcmd("readelf -d " + lib);
     if (cmdRet.contains(runTime.runCmdError)) {
       logPlus(-1, "checking: readelf returns error:\ns", cmdRet);
       checkSuccess = false;
@@ -249,19 +248,19 @@ public class LinuxSupport {
       }
       log(lvl, libsNeeded);
     }
-    
+
     if (!runLdd(lib)) {
       checkSuccess = false;
     }
-    
+
 //    return false; // for testing
     return checkSuccess;
   }
-  
+
   public static boolean runLdd(File lib) {
     // ldd -r lib
     // undefined symbol: _ZN2cv3MatC1ERKS0_RKNS_5Rect_IiEE	(./libVisionProxy.so)
-    String cmdRet = ResourceLoader.get().runcmd("ldd -r " + lib);
+    String cmdRet = runTime.runcmd("ldd -r " + lib);
     String[] retLines;
     boolean success = true;
     retLines = cmdRet.split("\n");
@@ -282,20 +281,20 @@ public class LinuxSupport {
     }
     return success;
   }
-  
+
   public static boolean buildVision(String srcjar) {
     File build = new File(fWorkDir, buildFolder);
     File source = new File(fWorkDir, buildFolderSrc);
     File stuff = new File(fWorkDir, buildFolderStuff);
     File incl = new File(fWorkDir, buildFolderInclude);
-    
+
     File javaHome = new File(System.getProperty("java.home"));
     logPlus(lvl, "home of java: %s", javaHome);
     File javaInclude = null;
     File javaIncludeLinux = null;
-  
+
     logPlus(lvl, "starting inline build: libVisionProxy.so");
-    
+
     if (!new File(javaHome, "bin/javac").exists()) {
       javaHome = javaHome.getParentFile();
     }
@@ -309,11 +308,11 @@ public class LinuxSupport {
         javaHome = null;
       }
     }
-    
+
     String buildInclude = "";
     String inclUsr = "/usr/include";
     String inclUsrLocal = "/usr/local/include";
-    
+
     boolean exportIncludeJava = false;
     if (javaHome == null) {
       //log(lvl, "JDK: not found - set JAVA_HOME to a valid JDK");
@@ -326,10 +325,10 @@ public class LinuxSupport {
       buildInclude += String.format("-I%s -I%s ",
               javaInclude.getAbsolutePath(), javaIncludeLinux.getAbsolutePath());
     }
-    
+
     boolean exportIncludeOpenCV = false;
     boolean exportIncludeTesseract = false;
-    
+
     String inclLib = "opencv2";
     if (!new File(inclUsr, inclLib).exists() && !new File(inclUsrLocal, inclLib).exists()) {
       logPlus(lvl, "buildVision: opencv-include: not found - using the bundled include files");
@@ -338,7 +337,7 @@ public class LinuxSupport {
         buildInclude += " -I" + incl.getAbsolutePath();
       }
     }
-    
+
     inclLib = "tesseract";
     if (!new File(inclUsr, inclLib).exists() && !new File(inclUsrLocal, inclLib).exists()) {
       logPlus(lvl, "buildVision: tesseract-include: not found - using the bundled include files");
@@ -347,11 +346,11 @@ public class LinuxSupport {
         buildInclude += " -I" + incl.getAbsolutePath();
       }
     }
-    
+
     if (!exportIncludeOpenCV || !exportIncludeTesseract) {
       buildInclude += " -I" + inclUsr + " -I" + inclUsrLocal;
     }
-    
+
     String mfFile;
     String srcFile;
     log(lvl, "buildVision: setting up the compile commands");
@@ -371,7 +370,7 @@ public class LinuxSupport {
     buildLink += libTesseract + " ";
     String libVisionPath = new File(build, libVision).getAbsolutePath();
     buildLink += "-o " + libVisionPath;
-    
+
     File cmdFile = new File(build, "runBuild");
 //    ResourceLoader rl = ResourceLoader.forJar(srcjar);
 //    if (rl != null) {
@@ -379,7 +378,7 @@ public class LinuxSupport {
       build.mkdirs();
       source.mkdirs();
       stuff.mkdirs();
-      
+
       PrintStream out = null;
       log(lvl, "-------------- content of created build script");
       try {
@@ -397,21 +396,21 @@ public class LinuxSupport {
         return false;
       }
       boolean success = true;
-      success &= (null != runTime.extractResourcesToFolderFromJar(srcjar, 
+      success &= (null != runTime.extractResourcesToFolderFromJar(srcjar,
               "/srcnativelibs/Vision", source, null));
 //      rl.export("srcnativelibs/Vision#", source.getAbsolutePath());
       if (exportIncludeJava) {
-        success &= (null != runTime.extractResourcesToFolderFromJar(srcjar, 
+        success &= (null != runTime.extractResourcesToFolderFromJar(srcjar,
                 "/srcnativelibs/VisionInclude/Java", incl, null));
 //        rl.export("srcnativelibs/VisionInclude/Java#", incl.getAbsolutePath());
       }
       if (exportIncludeOpenCV) {
-        success &= (null != runTime.extractResourcesToFolderFromJar(srcjar, 
+        success &= (null != runTime.extractResourcesToFolderFromJar(srcjar,
                 "/srcnativelibs/VisionInclude/OpenCV", incl, null));
 //        rl.export("srcnativelibs/VisionInclude/OpenCV#", incl.getAbsolutePath());
       }
       if (exportIncludeTesseract) {
-        success &= (null != runTime.extractResourcesToFolderFromJar(srcjar, 
+        success &= (null != runTime.extractResourcesToFolderFromJar(srcjar,
                 "/srcnativelibs/VisionInclude/Tesseract", incl, null));
 //        rl.export("srcnativelibs/VisionInclude/Tesseract#", incl.getAbsolutePath());
       }
@@ -420,7 +419,7 @@ public class LinuxSupport {
       logPlus(-1, "buildVision: cannot export lib sources");
       return false;
     }
-    
+
     if (opencvAvail && tessAvail) {
       logPlus(lvl, "buildVision: running build script");
       String cmdRet = runTime.runcmd(cmdFile.getAbsolutePath());
@@ -445,5 +444,5 @@ public class LinuxSupport {
     logPlus(lvl, "ending inline build: success: libVisionProxy.so");
     return true;
   }
-  
+
 }

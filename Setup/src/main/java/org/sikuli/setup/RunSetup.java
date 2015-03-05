@@ -34,7 +34,6 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.SplashFrame;
 import org.sikuli.basics.PreferencesUser;
-import org.sikuli.basics.ResourceLoader;
 import org.sikuli.script.RunTime;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.Sikulix;
@@ -603,7 +602,6 @@ public class RunSetup {
     }
 //</editor-fold>
 
-    ResourceLoader loader = ResourceLoader.get();
     String localTemp = "sikulixtemp.jar";
     String[] jarsList = new String[]{
       null, // ide

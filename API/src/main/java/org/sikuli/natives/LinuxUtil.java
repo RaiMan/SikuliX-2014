@@ -9,7 +9,7 @@ package org.sikuli.natives;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.io.*;
-import org.sikuli.basics.ResourceLoader;
+import org.sikuli.script.RunTime;
 
 public class LinuxUtil implements OSUtil {
 
@@ -18,12 +18,12 @@ public class LinuxUtil implements OSUtil {
 
 	@Override
 	public String getLibName() {
-		String cmdRet = ResourceLoader.get().runcmd("wmctrl -m");
+		String cmdRet = RunTime.get().runcmd("wmctrl -m");
 		if (cmdRet.contains("*** error ***")) {
 			System.out.println("[error] checking: wmctrl not available or not working");
 			wmctrlAvail = false;
 		}
-		cmdRet = ResourceLoader.get().runcmd("xdotool version");
+		cmdRet = RunTime.get().runcmd("xdotool version");
 		if (cmdRet.contains("*** error ***")) {
 			System.out.println("[error] checking: xdotool not available or not working");
 			xdoToolAvail = false;

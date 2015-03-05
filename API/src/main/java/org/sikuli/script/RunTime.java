@@ -139,14 +139,14 @@ public class RunTime {
         vSysArch = System.getProperty("os.arch");
       } else {
         runTime.log(runTime.lvl, "SystemProperty given: sikuli.arch=%s", vSysArch);
-      }      
+      }
       if (vSysArch != null) {
         if (vSysArch.contains("64")) {
           runTime.javaArch = 64;
         }
       } else {
         runTime.log(runTime.lvl, "Java arch (32 or 64 Bit) not detected nor given - using %d Bit", runTime.javaArch);
-      } 
+      }
       try {
         runTime.javaVersion = Integer.parseInt(vJava.substring(2, 3));
         runTime.javaShow = String.format("java %d-%d version %s vm %s class %s arch %s",
@@ -482,7 +482,7 @@ int nMonitors = 0;
     } catch (Exception ex) {
       terminate (1, msg + "\n" + ex.toString(), fSikulixAppPath);
     }
-    
+
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="monitors">
@@ -2382,11 +2382,11 @@ int nMonitors = 0;
       }
       args = argsx.toArray(new String[0]);
     }
-//    if (args[0].startsWith("#")) {
-//      String pgm = args[0].substring(1);
-//      args[0] = (new File(libsDir, pgm)).getAbsolutePath();
-//      runcmd(new String[]{"chmod", "ugo+x", args[0]});
-//    }
+    if (args[0].startsWith("#")) {
+      String pgm = args[0].substring(1);
+      args[0] = (new File(pgm)).getAbsolutePath();
+      runcmd(new String[]{"chmod", "ugo+x", args[0]});
+    }
     String result = "";
     String error = runCmdError + NL;
     boolean hasError = false;
