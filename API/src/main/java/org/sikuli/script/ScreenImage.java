@@ -48,6 +48,14 @@ public class ScreenImage {
 		w = (int) roi.getWidth();
 		h = (int) roi.getHeight();
 	}
+  
+  public ScreenImage getSub(Rectangle sub) {
+    if (!_roi.contains(sub)) {
+      return this;
+    }
+    BufferedImage img = _img.getSubimage(sub.x - x, sub.y - y, sub.width, sub.height);
+    return new ScreenImage(sub, img);
+  }
 
 	/**
 	 * creates the PNG tempfile only when needed.
@@ -110,6 +118,7 @@ public class ScreenImage {
     try {
       File tmp = new File(path, name);
       createFile(tmp);
+      Debug.log(3, "ScreenImage.getFile:\n%s", tmp);
     } catch (IOException iOException) {
       Debug.error("ScreenImage.getFile: IOException", iOException);
       return null;

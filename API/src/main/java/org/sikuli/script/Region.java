@@ -2508,6 +2508,7 @@ public class Region {
   }
 
   private Finder checkLastSeenAndCreateFinder(Image img, double findTimeout, Pattern ptn) {
+    ScreenImage simg = getScreen().capture(this);
     if (!Settings.UseImageFinder && Settings.CheckLastSeen && null != img.getLastSeen()) {
       Region r = Region.create(img.getLastSeen());
       if (this.contains(r)) {
@@ -2515,7 +2516,7 @@ public class Region {
         if (this.scr instanceof VNCScreen) {
           f = new Finder(new VNCScreen().capture(r), r);
         } else {
-          f = new Finder(new Screen().capture(r), r);
+          f = new Finder(simg.getSub(r.getRect()), r);
         }
         if (ptn == null) {
           f.find(new Pattern(img).similar(Settings.CheckLastSeenSimilar));
@@ -2538,7 +2539,7 @@ public class Region {
       f.setFindTimeout(findTimeout);
       return f;
     } else {
-      return new Finder(getScreen().capture(x, y, w, h), this);
+      return new Finder(simg, this);
     }
   }
 
