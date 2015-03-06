@@ -3,12 +3,31 @@ package org.sikuli.script;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.lang.reflect.Method;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.Settings;
 
 public class Commands {
 
+  private static int lvl = 2;
+  private static void log(int level, String message, Object... args) {
+    Debug.logx(level, "Commands: " + message, args);
+  }
+	private static void logCmd(String cmd, Object... args) {
+		String msg = cmd + ": ";
+		if (args.length == 0) {
+			log(lvl, msg + "no-args");
+		} else {
+			for (int i = 0; i < args.length; i++) {
+				msg += "%s ";
+			}
+			log(lvl, msg, args);
+		}
+	}
+	int i = 0;
+
   private static Region scr = new Screen();
   private static RunTime runTime = RunTime.get();
-  
+
   public static boolean isNashorn() {
     return runTime.isJava8();
   }
@@ -83,6 +102,7 @@ public class Commands {
 	}
 
 	public static Region use(Object... args) {
+		logCmd("use", args);
     int len = args.length;
     int nScreen = -1;
     if (len == 0 || len > 1) {
@@ -102,6 +122,11 @@ public class Commands {
   }
 
   public static Match wait(Object... args) throws FindFailed {
+		logCmd("wait", args);
+		return waitx(args);
+	}
+
+	private static Match waitx(Object... args) throws FindFailed {
     int len = args.length;
     String image = "";
     float score = 0.0f;
@@ -163,14 +188,19 @@ public class Commands {
 	}
 
   public static Match exists(Object... args) {
+		logCmd("exists", args);
     Match match = null;
     try {
-      match = wait(args);
+      match = waitx(args);
     } catch (Exception ex) {}
     return match;
   }
 
   public static Location hover(Object... args) {
+		logCmd("hover", args);
+		return hoverx(args);
+	}
+  private static Location hoverx(Object... args) {
     int len = args.length;
     if (len < 4) {
       Object aObj = args[0];
@@ -211,19 +241,22 @@ public class Commands {
   }
 
   public static Location click(Object... args) {
-    Location loc = hover(args);
+		logCmd("click", args);
+    Location loc = hoverx(args);
     Mouse.click(null, Button.LEFT, 0, false, null);
     return Mouse.at();
   }
 
   public static Location doubleClick(Object... args) {
-    Location loc = hover(args);
+		logCmd("doubleClick", args);
+    Location loc = hoverx(args);
     Mouse.click(null, Button.LEFT, 0, true, null);
     return Mouse.at();
   }
 
   public static Location rightClick(Object... args) {
-    Location loc = hover(args);
+		logCmd("rightClick", args);
+    Location loc = hoverx(args);
     Mouse.click(null, Button.RIGHT, 0, false, null);
     return Mouse.at();
   }

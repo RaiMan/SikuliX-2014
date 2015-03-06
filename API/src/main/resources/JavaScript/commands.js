@@ -19,7 +19,7 @@ isNull = function(aObj) {
 	return Commands.fromJSON(aObj) == null;
 };
 
-fromJSON = function(aObj) {
+json = function(aObj) {
 	if (!Commands.isJSON(aObj)) {
 		return aObj;
 	}
