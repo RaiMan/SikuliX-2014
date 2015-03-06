@@ -332,6 +332,7 @@ public class RunTime {
   public File fAppPath = null;
   public File fSikulixAppPath = null;
   public File fSikulixExtensions = null;
+  public File fSikulixLib = null;
 
   private File fOptions = null;
   private Properties options = null;
@@ -471,6 +472,7 @@ int nMonitors = 0;
       msg = "init: Linux: SikulxAppData does not exist or is not accessible:\n%s";
     }
     fSikulixExtensions = new File(fSikulixAppPath, "Extensions");
+    fSikulixLib = new File(fSikulixAppPath, "Lib");
     try {
       if (!fSikulixAppPath.exists()) {
         fSikulixAppPath.mkdirs();
@@ -607,8 +609,10 @@ int nMonitors = 0;
     if (testing) {
       logp("***** for testing: delete libsfolder");
       FileManager.deleteFileOrFolder(fLibsFolder);
+      FileManager.deleteFileOrFolder(fSikulixLib);
     }
     if (!fLibsFolder.exists()) {
+      fSikulixLib.mkdir();
       fLibsFolder.mkdirs();
       if (!fLibsFolder.exists()) {
         terminate(1, "libs folder not available: " + fLibsFolder.toString());
@@ -661,7 +665,9 @@ int nMonitors = 0;
     URL uLibsFrom = null;
     if (!checkLibs(fLibsFolder)) {
       FileManager.deleteFileOrFolder(fLibsFolder);
+      FileManager.deleteFileOrFolder(fSikulixLib);
       fLibsFolder.mkdirs();
+      fSikulixLib.mkdir();
       shouldExport = true;
       if (!fLibsFolder.exists()) {
         terminate(1, "libs folder not available: " + fLibsFolder.toString());
@@ -743,7 +749,9 @@ int nMonitors = 0;
         terminate(1, "problem copying %s", fJawtDll);
       }
     }
-
+    if (shouldExport) {
+      extractResourcesToFolder("Lib", fSikulixLib, null);
+    }
     areLibsExported = true;
   }
 //</editor-fold>

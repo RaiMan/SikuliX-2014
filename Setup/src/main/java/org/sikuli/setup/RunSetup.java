@@ -976,8 +976,6 @@ public class RunSetup {
       }
       try {
         log(lvl, "trying to run org.sikuli.script.Sikulix.testSetup()");
-        runTime.makeLibsFolder();
-        runTime.extractResourcesToFolderFromJar("sikulixapi.jar", "Lib", new File(fWorkDir, "Lib"), null);
         Class sysclass = URLClassLoader.class;
         Class SikuliCL = sysclass.forName("org.sikuli.script.Sikulix");
         log(lvl, "class found: " + SikuliCL.toString());
