@@ -92,8 +92,8 @@ public class LinuxSupport {
     return linuxDistro;
   }
 
-  public static void setWorkDir(String workDir) {
-    fWorkDir = new File(workDir);
+  public static void setWorkDir(File workDir) {
+    fWorkDir = workDir;
   }
 
   public static void setLibsDir(File libsDir) {
