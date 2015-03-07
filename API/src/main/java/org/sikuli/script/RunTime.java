@@ -69,6 +69,9 @@ public class RunTime {
   public boolean runningInteractive = false;
   public boolean runningTests = false;
   public String interactiveRunner;
+  public File fSikulixDownloadsGeneric = null;
+  public File fSikulixDownloadsBuild = null;
+  public File fSikulixSetup;
 
   private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -473,14 +476,17 @@ int nMonitors = 0;
     }
     fSikulixExtensions = new File(fSikulixAppPath, "Extensions");
     fSikulixLib = new File(fSikulixAppPath, "Lib");
+    fSikulixDownloadsGeneric = new File(fSikulixAppPath, "SikulixDownloads");
+    fSikulixSetup = new File(fSikulixAppPath, "SikulixSetup");
     try {
       if (!fSikulixAppPath.exists()) {
         fSikulixAppPath.mkdirs();
-        fSikulixExtensions.mkdir();
       }
       if (!fSikulixAppPath.exists()) {
         terminate (1, msg, fSikulixAppPath);
       }
+      fSikulixExtensions.mkdir();
+      fSikulixDownloadsGeneric.mkdir();
     } catch (Exception ex) {
       terminate (1, msg + "\n" + ex.toString(), fSikulixAppPath);
     }
@@ -604,16 +610,19 @@ int nMonitors = 0;
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="libs export">
-  public void makeLibsFolder() {
+  public void makeFolders() {
     fLibsFolder = new File(fSikulixAppPath, "SikulixLibs_" + sxBuildStamp);
+    fSikulixDownloadsBuild = new File(fSikulixAppPath, "SikulixDownloads_" + sxBuildStamp);
     if (testing) {
-      logp("***** for testing: delete libsfolder");
+      logp("***** for testing: delete libsfolder/Lib/Downloads");
       FileManager.deleteFileOrFolder(fLibsFolder);
       FileManager.deleteFileOrFolder(fSikulixLib);
+      FileManager.deleteFileOrFolder(fSikulixDownloadsBuild);
     }
     if (!fLibsFolder.exists()) {
       fSikulixLib.mkdir();
       fLibsFolder.mkdirs();
+      fSikulixDownloadsBuild.mkdir();
       if (!fLibsFolder.exists()) {
         terminate(1, "libs folder not available: " + fLibsFolder.toString());
       }
@@ -642,7 +651,8 @@ int nMonitors = 0;
     fpList = fSikulixAppPath.list(new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {
-        if (name.contains("SikulixLibs")) {
+        if (name.contains("SikulixLibs") ||
+            name.contains("SikulixDownloads_")) {
           return true;
         }
         return false;
@@ -661,7 +671,7 @@ int nMonitors = 0;
 
   private void libsExport(Type typ) {
     boolean shouldExport = false;
-    makeLibsFolder();
+    makeFolders();
     URL uLibsFrom = null;
     if (!checkLibs(fLibsFolder)) {
       FileManager.deleteFileOrFolder(fLibsFolder);
@@ -1458,8 +1468,9 @@ int nMonitors = 0;
         return doExtractToFolderWithList(tessdata, folder, files);
       }
       return null;
+    } else {
+      return extractResourcesToFolder("sikulixtessdata", folder, null);
     }
-    return files;
   }
   /**
    * export all resource files from the given subtree on classpath to the given folder retaining the subtree<br>
