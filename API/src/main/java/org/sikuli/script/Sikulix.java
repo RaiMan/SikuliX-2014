@@ -24,7 +24,6 @@ import javax.swing.JTextArea;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.PreferencesUser;
-import org.sikuli.basics.ResourceLoader;
 import org.sikuli.basics.Settings;
 
 /**
@@ -32,11 +31,11 @@ import org.sikuli.basics.Settings;
  */
 public class Sikulix {
 
-  private static int lvl = 3;
   private static String imgLink = "http://www.sikulix.com/uploads/1/4/2/8/14281286";
   private static String imgHttp = "1389888228.jpg";
   private static String imgNet = imgLink + "/" + imgHttp;
 
+  private static int lvl = 3;
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "Sikulix: " + message, args);
   }
@@ -54,6 +53,8 @@ public class Sikulix {
   private static String jarPath;
   private static String jarParentPath;
   private static final String prefNonSikuli = "nonSikuli_";
+  private static RunTime rt = null;
+  public static int testNumber = -1;
 
   static {
     rt = RunTime.get();
@@ -72,9 +73,6 @@ public class Sikulix {
       }
     }
   }
-
-  private static RunTime rt = null;
-  public static int testNumber = -1;
 
   /**
    * checking parameter -d on commandline<br>
@@ -96,7 +94,6 @@ public class Sikulix {
       testNumber = -1;
     }
 
-    rt = RunTime.get();
     testNumber = rt.getOptionNumber("testing.test", testNumber);
 
     if (dl == 999) {
@@ -355,7 +352,7 @@ public class Sikulix {
   }
 
   public static String run(String[] cmd) {
-    return ResourceLoader.get().runcmd(cmd);
+    return rt.runcmd(cmd);
   }
 
   public static void popError(String message) {

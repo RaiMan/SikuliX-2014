@@ -2135,7 +2135,7 @@ public class Region {
 		}
     while (true) {
       try {
-        log(2, "find: waiting 0 secs for %s to appear in %s", targetStr, this.toStringShort());
+        log(3, "find: waiting 0 secs for %s to appear in %s", targetStr, this.toStringShort());
         lastMatch = doFind(target, null);
       } catch (IOException ex) {
         if (ex instanceof IOException) {
@@ -2154,7 +2154,7 @@ public class Region {
 	      log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
         return lastMatch;
       }
-	    log(2, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
+	    log(3, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
       if (!handleFindFailed(target)) {
         return null;
       }
@@ -2236,7 +2236,7 @@ public class Region {
 		}
     while (true) {
       try {
-        log(2, "find: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
+        log(3, "find: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
         rf = new RepeatableFind(target);
         rf.repeat(timeout);
         lastMatch = rf.getMatch();
@@ -2256,7 +2256,7 @@ public class Region {
         log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
         break;
       }
-	    log(2, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
+	    log(3, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
       if (!handleFindFailed(target)) {
         return null;
       }
@@ -2313,7 +2313,7 @@ public class Region {
 		}
     while (true) {
       try {
-        log(2, "exists: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
+        log(3, "exists: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
         RepeatableFind rf = new RepeatableFind(target);
         if (rf.repeat(timeout)) {
           lastMatch = rf.getMatch();
@@ -2337,7 +2337,7 @@ public class Region {
         }
       }
     }
-    log(2, "exists: %s has not appeared [%d msec]", targetStr, lastFindTime);
+    log(3, "exists: %s has not appeared [%d msec]", targetStr, lastFindTime);
     return null;
   }
 

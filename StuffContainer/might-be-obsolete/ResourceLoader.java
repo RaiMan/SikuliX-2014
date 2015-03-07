@@ -26,11 +26,12 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import org.sikuli.script.RunTime;
 //import org.sikuli.script.RunTime;
 import org.sikuli.script.Sikulix;
 
 public class ResourceLoader {
-  
+
   private static ResourceLoader resourceLoader = null;
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
@@ -104,7 +105,7 @@ public class ResourceLoader {
 
 	private boolean initDone = false;
 	private boolean usrPathProblem = false;
-  
+
   private ResourceLoader() {
 //    log0(lvl, "SikuliX Package Build: %s %s", RunTime.get().getVersionShort(), RunTime.get().SikuliVersionBuild);
     cl = this.getClass().getClassLoader();
@@ -142,42 +143,44 @@ public class ResourceLoader {
     return resourceLoader;
   }
 
-  public static ResourceLoader forJar(String jarName) {
-    ResourceLoader rl = get();
-    URL jar = null;
-    if (new File(jarName).isAbsolute()) {
-      try {
-        jar = new URL("file", null, jarName);
-      } catch (MalformedURLException ex) {
-        log(-1, "%s", ex);
-      }
-    } else {
-      jar = getJarFromClasspath(jarName);
-    }
-    if (jar != null) {
-      rl.setCurrentJar(jar);
-      return rl;
-    } else {
-      return null;
-    }
-  }
+//<editor-fold defaultstate="collapsed" desc="obsolete">
+//public static ResourceLoader forJar(String jarName) {
+//    ResourceLoader rl = get();
+//    URL jar = null;
+//    if (new File(jarName).isAbsolute()) {
+//      try {
+//        jar = new URL("file", null, jarName);
+//      } catch (MalformedURLException ex) {
+//        log(-1, "%s", ex);
+//      }
+//    } else {
+//      jar = getJarFromClasspath(jarName);
+//    }
+//    if (jar != null) {
+//      rl.setCurrentJar(jar);
+//      return rl;
+//    } else {
+//      return null;
+//    }
+//  }
 
-  private static URL getJarFromClasspath(String jarName) {
-    URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
-    URL[] urls = sysLoader.getURLs();
-    URL jarurl = null;
-    for (URL url : urls) {
-      if (url.getPath().toLowerCase().contains(jarName)) {
-        jarurl = url;
-        break;
-      }
-    }
-    return jarurl;
-  }
-
-  private void setCurrentJar(URL jar) {
-    currentURL = jar;
-  }
+//  private static URL getJarFromClasspath(String jarName) {
+//    URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
+//    URL[] urls = sysLoader.getURLs();
+//    URL jarurl = null;
+//    for (URL url : urls) {
+//      if (url.getPath().toLowerCase().contains(jarName)) {
+//        jarurl = url;
+//        break;
+//      }
+//    }
+//    return jarurl;
+//  }
+//
+//  private void setCurrentJar(URL jar) {
+//    currentURL = jar;
+//  }
+//</editor-fold>
 
 	public URL setApiJarURL(String pURL) {
     apiJarURL = null;
@@ -191,22 +194,22 @@ public class ResourceLoader {
 //<editor-fold defaultstate="collapsed" desc="now implemented in RunTime">
 //  public boolean check(String what) {
 //    mem = "check";
-//    
+//
 //    if (!what.equals(Settings.SIKULI_LIB)) {
 //      log(-1, "Currently only Sikuli libs supported!");
 //      return false;
 //    }
-//    
+//
 //    if (initDone) {
 //      return true;
 //    }
-//    
+//
 //    if (libPath == null || libsDir == null) {
 //      libPath = null;
 //      libsDir = null;
 //      File libsfolder;
 //      String libspath;
-//      
+//
 //      if (System.getProperty("sikuli.DoNotExport") == null && !isFatJar() && !Settings.isWinApp) {
 //        libsURL = null;
 ////TODO evaluation of running situation should be put in one place
@@ -247,13 +250,13 @@ public class ResourceLoader {
 //          Sikulix.terminate(999);
 //        }
 //      }
-//      
+//
 //      // check the bit-arch
 //      osarch = System.getProperty("os.arch");
 //      log(lvl - 1, "we are running on arch: " + osarch);
 //      javahome = FileManager.slashify(System.getProperty("java.home"), true);
 //      log(lvl - 1, "using Java at: " + javahome);
-//      
+//
 //      if (userhome != null) {
 //        if (Settings.isWindows()) {
 //          userSikuli = System.getenv("USERPROFILE");
@@ -264,7 +267,7 @@ public class ResourceLoader {
 //          userSikuli = FileManager.slashify(userhome, true) + prefixSikuli;
 //        }
 //      }
-//      
+//
 //      //  Mac specific
 //      if (Settings.isMac()) {
 //        if (!osarch.contains("64")) {
@@ -279,7 +282,7 @@ public class ResourceLoader {
 ////          libPathFallBack = libPathMac;
 ////        }
 //      }
-//      
+//
 //      // Windows specific
 //      if (Settings.isWindows()) {
 //        if (osarch.contains("64")) {
@@ -301,7 +304,7 @@ public class ResourceLoader {
 //        }
 //        checkLib = "VisionProxy";
 //      }
-//      
+//
 //      // Linux specific
 //      if (Settings.isLinux()) {
 //        if (osarch.contains("64")) {
@@ -313,7 +316,7 @@ public class ResourceLoader {
 //        }
 //        checkLib = "VisionProxy";
 //      }
-//      
+//
 //      if (!Settings.isWinApp && !Settings.runningSetup) {
 //        // check Java property sikuli.home
 //        if (sikhomeProp != null) {
@@ -324,7 +327,7 @@ public class ResourceLoader {
 //          log(lvl, "Exists Property.sikuli.Home? %s: %s", libPath == null ? "NO" : "YES", libspath);
 //          libsDir = checkLibsDir(libPath);
 //        }
-//        
+//
 //        // check environmenet SIKULIX_HOME
 //        if (libPath == null && sikhomeEnv != null) {
 //          libspath = FileManager.slashify(sikhomeEnv, true) + "libs";
@@ -334,7 +337,7 @@ public class ResourceLoader {
 //          log(lvl, "Exists Environment.SIKULIX_HOME? %s: %s", libPath == null ? "NO" : "YES", libspath);
 //          libsDir = checkLibsDir(libPath);
 //        }
-//        
+//
 //        // check parent folder of jar file
 //        if (libPath == null && jarPath != null) {
 //          if (extractingFromJar) {
@@ -366,7 +369,7 @@ public class ResourceLoader {
 //            log(lvl, "not running from jar: " + jarParentPath);
 //          }
 //        }
-//        
+//
 //        // check the users home folder
 //        if (!Settings.runningSetup && !runningSikulixapi && libPath == null && userSikuli != null) {
 //          File ud = new File(userSikuli, suffixLibs);
@@ -377,7 +380,7 @@ public class ResourceLoader {
 //                  ud.getAbsolutePath());
 //          libsDir = checkLibsDir(libPath);
 //        }
-//        
+//
 //        // check the working directory and its parent
 //        if (!Settings.runningSetup && !runningSikulixapi && libPath == null && userdir != null) {
 //          File wd = new File(userdir);
@@ -396,7 +399,7 @@ public class ResourceLoader {
 //                  wd.getAbsolutePath());
 //          libsDir = checkLibsDir(libPath);
 //        }
-//        
+//
 //        if (!Settings.runningSetup && !runningSikulixapi && libPath == null && libPathFallBack != null) {
 //          libPath = libPathFallBack;
 //          log(lvl, "Checking available fallback for libs folder: " + libPath);
@@ -404,7 +407,7 @@ public class ResourceLoader {
 //        }
 //      }
 //    }
-//    
+//
 //    if (libsDir == null && libPath != null) {
 //      log(lvl, "libs dir is empty, has wrong content or is outdated");
 //      log(lvl, "Trying to extract libs to: " + libPath);
@@ -430,12 +433,12 @@ public class ResourceLoader {
 //        libsDir = checkLibsDir(libPath);
 //      }
 //    }
-//    
+//
 //    //<editor-fold defaultstate="collapsed" desc="libs dir finally invalid">
 //    if (libPath == null && !Settings.isWinApp) {
 //      log(-1, "No valid libs path available until now!");
 //      File jarPathLibs = null;
-//      
+//
 //      if (libPath == null && jarParentPath != null) {
 //        if ((jarPath.endsWith(".jar") && libsURL == null) || apiJarURL != null) {
 //          log(-2, "Please wait! Trying to extract libs to jar parent folder: \n" + jarParentPath);
@@ -471,7 +474,7 @@ public class ResourceLoader {
 //      }
 //    }
 //    //</editor-fold>
-//    
+//
 //    if (Settings.isWinApp) {
 //      String osArchNum = osarch.contains("64") ? "64" : "32";
 //      log(lvl, "isWinApp: checking libs folder");
@@ -496,7 +499,7 @@ public class ResourceLoader {
 //        Sikulix.terminate(999);
 //      }
 //    }
-//    
+//
 //    if (Settings.isLinux()) {
 //      File libsLinux = new File(libsDir.getParent(), "libsLinux/libVisionProxy.so");
 //      if (libsLinux.exists()) {
@@ -510,7 +513,7 @@ public class ResourceLoader {
 //        }
 //      }
 //    }
-//    
+//
 ////    if (itIsJython) {
 ////      export("Lib/sikuli", libsDir.getParent());
 ////      itIsJython = false;
@@ -522,11 +525,11 @@ public class ResourceLoader {
 //        Settings.OcrDataPath = "/usr/local/share";
 //      }
 //    }
-//    
+//
 //    initDone = true;
 //    return libsDir != null;
 //  }
-  
+
 //  private File checkLibsDir(String path) {
 //    String memx = mem;
 //    mem = "checkLibsDir";
@@ -596,7 +599,7 @@ public class ResourceLoader {
 //    mem = memx;
 //    return dir;
 //  }
-  
+
 //	private boolean checkJavaUsrPath() {
 //		if (Settings.isWindows() && libPath != null) {
 //			log(lvl, "checking ClassLoader.usrPaths having: %s", libPath);
@@ -772,73 +775,76 @@ public class ResourceLoader {
   }
 
   public String runcmd(String args[]) {
-    if (args.length == 0) {
-      return "";
-    }
-    if (args.length == 1) {
-      String separator = "\"";
-      ArrayList<String> argsx = new ArrayList<String>();
-      StringTokenizer toks;
-      String tok;
-      String cmd = args[0];
-      if (Settings.isWindows()) {
-        cmd = cmd.replaceAll("\\\\ ", "%20;");
-      }
-      toks = new StringTokenizer(cmd);
-      while (toks.hasMoreTokens()) {
-        tok = toks.nextToken(" ");
-        if (tok.length() == 0) {
-          continue;
-        }
-        if (separator.equals(tok)) {
-          continue;
-        }
-        if (tok.startsWith(separator)) {
-          if (tok.endsWith(separator)) {
-            tok = tok.substring(1, tok.length() - 1);
-          } else {
-            tok = tok.substring(1);
-            tok += toks.nextToken(separator);
-          }
-        }
-        argsx.add(tok.replaceAll("%20;", " "));
-      }
-      args = argsx.toArray(new String[0]);
-    }
-    if (args[0].startsWith("#")) {
-      String pgm = args[0].substring(1);
-      args[0] = (new File(libsDir, pgm)).getAbsolutePath();
-      runcmd(new String[]{"chmod", "ugo+x", args[0]});
-    }
-    String memx = mem;
-    mem = "runcmd";
-    String result = "";
-    String error = "*** error ***" + NL;
-    try {
-			if (lvl <= Debug.getDebugLevel()) {
-				log(lvl, Sikulix.arrayToString(args));
-			} else {
-				Debug.info("runcmd: " + Sikulix.arrayToString(args));
-			}
-      Process process = Runtime.getRuntime().exec(args);
-      BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
-      BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-      String s;
-      while ((s = stdInput.readLine()) != null) {
-        if (!s.isEmpty()) {
-          result += s + NL;
-        }
-      }
-      if ((s = stdError.readLine()) != null) {
-        result = error + result;
-        result += s;
-      }
-    } catch (Exception e) {
-      log(-1, "fatal error: " + e.getMessage());
-      result = error + e.getMessage();
-    }
-    mem = memx;
-    return result;
+		return RunTime.get().runcmd(args);
+//<editor-fold defaultstate="collapsed" desc="obsolete">
+//		if (args.length == 0) {
+//      return "";
+//    }
+//    if (args.length == 1) {
+//      String separator = "\"";
+//      ArrayList<String> argsx = new ArrayList<String>();
+//      StringTokenizer toks;
+//      String tok;
+//      String cmd = args[0];
+//      if (Settings.isWindows()) {
+//        cmd = cmd.replaceAll("\\\\ ", "%20;");
+//      }
+//      toks = new StringTokenizer(cmd);
+//      while (toks.hasMoreTokens()) {
+//        tok = toks.nextToken(" ");
+//        if (tok.length() == 0) {
+//          continue;
+//        }
+//        if (separator.equals(tok)) {
+//          continue;
+//        }
+//        if (tok.startsWith(separator)) {
+//          if (tok.endsWith(separator)) {
+//            tok = tok.substring(1, tok.length() - 1);
+//          } else {
+//            tok = tok.substring(1);
+//            tok += toks.nextToken(separator);
+//          }
+//        }
+//        argsx.add(tok.replaceAll("%20;", " "));
+//      }
+//      args = argsx.toArray(new String[0]);
+//    }
+//    if (args[0].startsWith("#")) {
+//      String pgm = args[0].substring(1);
+//      args[0] = (new File(libsDir, pgm)).getAbsolutePath();
+//      runcmd(new String[]{"chmod", "ugo+x", args[0]});
+//    }
+//    String memx = mem;
+//    mem = "runcmd";
+//    String result = "";
+//    String error = "*** error ***" + NL;
+//    try {
+//			if (lvl <= Debug.getDebugLevel()) {
+//				log(lvl, Sikulix.arrayToString(args));
+//			} else {
+//				Debug.info("runcmd: " + Sikulix.arrayToString(args));
+//			}
+//      Process process = Runtime.getRuntime().exec(args);
+//      BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
+//      BufferedReader stdError = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+//      String s;
+//      while ((s = stdInput.readLine()) != null) {
+//        if (!s.isEmpty()) {
+//          result += s + NL;
+//        }
+//      }
+//      if ((s = stdError.readLine()) != null) {
+//        result = error + result;
+//        result += s;
+//      }
+//    } catch (Exception e) {
+//      log(-1, "fatal error: " + e.getMessage());
+//      result = error + e.getMessage();
+//    }
+//    mem = memx;
+//    return result;
+//</editor-fold>
   }
 
   /**

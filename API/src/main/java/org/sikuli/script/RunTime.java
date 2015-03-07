@@ -69,6 +69,9 @@ public class RunTime {
   public boolean runningInteractive = false;
   public boolean runningTests = false;
   public String interactiveRunner;
+  public File fSikulixDownloadsGeneric = null;
+  public File fSikulixDownloadsBuild = null;
+  public File fSikulixSetup;
 
   private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -139,14 +142,14 @@ public class RunTime {
         vSysArch = System.getProperty("os.arch");
       } else {
         runTime.log(runTime.lvl, "SystemProperty given: sikuli.arch=%s", vSysArch);
-      }      
+      }
       if (vSysArch != null) {
         if (vSysArch.contains("64")) {
           runTime.javaArch = 64;
         }
       } else {
         runTime.log(runTime.lvl, "Java arch (32 or 64 Bit) not detected nor given - using %d Bit", runTime.javaArch);
-      } 
+      }
       try {
         runTime.javaVersion = Integer.parseInt(vJava.substring(2, 3));
         runTime.javaShow = String.format("java %d-%d version %s vm %s class %s arch %s",
@@ -332,6 +335,7 @@ public class RunTime {
   public File fAppPath = null;
   public File fSikulixAppPath = null;
   public File fSikulixExtensions = null;
+  public File fSikulixLib = null;
 
   private File fOptions = null;
   private Properties options = null;
@@ -471,18 +475,22 @@ int nMonitors = 0;
       msg = "init: Linux: SikulxAppData does not exist or is not accessible:\n%s";
     }
     fSikulixExtensions = new File(fSikulixAppPath, "Extensions");
+    fSikulixLib = new File(fSikulixAppPath, "Lib");
+    fSikulixDownloadsGeneric = new File(fSikulixAppPath, "SikulixDownloads");
+    fSikulixSetup = new File(fSikulixAppPath, "SikulixSetup");
     try {
       if (!fSikulixAppPath.exists()) {
         fSikulixAppPath.mkdirs();
-        fSikulixExtensions.mkdir();
       }
       if (!fSikulixAppPath.exists()) {
         terminate (1, msg, fSikulixAppPath);
       }
+      fSikulixExtensions.mkdir();
+      fSikulixDownloadsGeneric.mkdir();
     } catch (Exception ex) {
       terminate (1, msg + "\n" + ex.toString(), fSikulixAppPath);
     }
-    
+
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="monitors">
@@ -602,14 +610,19 @@ int nMonitors = 0;
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="libs export">
-  public void makeLibsFolder() {
+  public void makeFolders() {
     fLibsFolder = new File(fSikulixAppPath, "SikulixLibs_" + sxBuildStamp);
+    fSikulixDownloadsBuild = new File(fSikulixAppPath, "SikulixDownloads_" + sxBuildStamp);
     if (testing) {
-      logp("***** for testing: delete libsfolder");
+      logp("***** for testing: delete libsfolder/Lib/Downloads");
       FileManager.deleteFileOrFolder(fLibsFolder);
+      FileManager.deleteFileOrFolder(fSikulixLib);
+      FileManager.deleteFileOrFolder(fSikulixDownloadsBuild);
     }
     if (!fLibsFolder.exists()) {
+      fSikulixLib.mkdir();
       fLibsFolder.mkdirs();
+      fSikulixDownloadsBuild.mkdir();
       if (!fLibsFolder.exists()) {
         terminate(1, "libs folder not available: " + fLibsFolder.toString());
       }
@@ -626,7 +639,7 @@ int nMonitors = 0;
         return false;
       }
     });
-    if (fpList.length > 1) {
+    if (fpList.length > 0) {
       log(lvl, "deleting obsolete libs folders in Temp");
       for (String entry : fpList) {
         if (entry.endsWith(sxBuildStamp)) {
@@ -638,7 +651,8 @@ int nMonitors = 0;
     fpList = fSikulixAppPath.list(new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {
-        if (name.contains("SikulixLibs")) {
+        if (name.contains("SikulixLibs") ||
+            name.contains("SikulixDownloads_")) {
           return true;
         }
         return false;
@@ -657,11 +671,13 @@ int nMonitors = 0;
 
   private void libsExport(Type typ) {
     boolean shouldExport = false;
-    makeLibsFolder();
+    makeFolders();
     URL uLibsFrom = null;
     if (!checkLibs(fLibsFolder)) {
       FileManager.deleteFileOrFolder(fLibsFolder);
+      FileManager.deleteFileOrFolder(fSikulixLib);
       fLibsFolder.mkdirs();
+      fSikulixLib.mkdir();
       shouldExport = true;
       if (!fLibsFolder.exists()) {
         terminate(1, "libs folder not available: " + fLibsFolder.toString());
@@ -743,7 +759,9 @@ int nMonitors = 0;
         terminate(1, "problem copying %s", fJawtDll);
       }
     }
-
+    if (shouldExport) {
+      extractResourcesToFolder("Lib", fSikulixLib, null);
+    }
     areLibsExported = true;
   }
 //</editor-fold>
@@ -944,6 +962,7 @@ int nMonitors = 0;
       return true;
     }
     if (runningLinux) {
+//TODO Linux build on the fly ???? sikulixapi.jar from Maven !!!!
       if (!LinuxSupport.runLdd(new File(fLibsFolder, libName)));
     }
     try {
@@ -1449,8 +1468,9 @@ int nMonitors = 0;
         return doExtractToFolderWithList(tessdata, folder, files);
       }
       return null;
+    } else {
+      return extractResourcesToFolder("sikulixtessdata", folder, null);
     }
-    return files;
   }
   /**
    * export all resource files from the given subtree on classpath to the given folder retaining the subtree<br>
@@ -1461,7 +1481,8 @@ int nMonitors = 0;
    * @param filter implementation of interface FilenameFilter or null for no filtering
    * @return the filtered list of files (compact sikulixcontent format)
    */
-  public List<String> extractResourcesToFolder(String fpRessources, File fFolder, FilenameFilter filter) {
+
+	public List<String> extractResourcesToFolder(String fpRessources, File fFolder, FilenameFilter filter) {
     List<String> content = null;
     content = resourceList(fpRessources, filter);
     if (content == null) {
@@ -2382,11 +2403,11 @@ int nMonitors = 0;
       }
       args = argsx.toArray(new String[0]);
     }
-//    if (args[0].startsWith("#")) {
-//      String pgm = args[0].substring(1);
-//      args[0] = (new File(libsDir, pgm)).getAbsolutePath();
-//      runcmd(new String[]{"chmod", "ugo+x", args[0]});
-//    }
+    if (args[0].startsWith("#")) {
+      String pgm = args[0].substring(1);
+      args[0] = (new File(pgm)).getAbsolutePath();
+      runcmd(new String[]{"chmod", "ugo+x", args[0]});
+    }
     String result = "";
     String error = runCmdError + NL;
     boolean hasError = false;

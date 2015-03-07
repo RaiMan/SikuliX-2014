@@ -10,7 +10,6 @@ import java.awt.image.BufferedImage;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.ResourceLoader;
 import java.io.*;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +24,7 @@ import org.sikuli.natives.Vision;
  * Will be rewritten for use of Tess4J - Java only implementation
  */
 public class TextRecognizer {
-  
+
   static RunTime runTime = RunTime.get();
 
   private static TextRecognizer _instance = null;
@@ -50,7 +49,6 @@ public class TextRecognizer {
     if(!initSuccess) {
       fTessdataPath = new File(runTime.fSikulixAppPath, "SikulixTesseract/tessdata");
       if (!(initSuccess = fTessdataPath.exists())) {
-//        if (!(initSuccess = (null != runTime.extractResourcesToFolder("sikulixtessdata", fTessdataPath, null)))) {
         if (!(initSuccess = (null != runTime.extractTessData(fTessdataPath)))) {
           Debug.error("TextRecognizer: init: export tessdata not possible - run setup with option 3");
         }
