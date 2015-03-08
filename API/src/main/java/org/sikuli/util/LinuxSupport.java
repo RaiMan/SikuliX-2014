@@ -33,12 +33,6 @@ public class LinuxSupport {
     Debug.logx(-3, message, args);
   }
 
-  private static void logp(int level, String message, Object... args) {
-    if (level <= Debug.getDebugLevel()) {
-      logp(message, args);
-    }
-  }
-
   private static void logPlus(int level, String message, Object... args) {
     String sout = Debug.logx(level, me + ": " + message, args);
     if (logToFile) {
@@ -53,7 +47,6 @@ public class LinuxSupport {
 	//</editor-fold>
 
   static File fWorkDir = null;
-  private static final String buildFolder = "Build";
   private static final String buildFolderSrc = "Build/Source";
   private static final String buildFolderInclude = "Build/Include";
   private static final String buildFolderTarget = "Build/Target";
@@ -68,14 +61,6 @@ public class LinuxSupport {
   private static String libTesseract = "";
   private static boolean opencvAvail = true;
   private static boolean tessAvail = true;
-  private static final String buildCppMods = "-MF %s.o.d -o %s.o %s";
-  private static final String[] buildSrcFiles
-          = new String[]{"cvgui.cpp", "finder.cpp",
-            "pyramid-template-matcher.cpp", "sikuli-debug.cpp", "tessocr.cpp",
-            "vision.cpp", "visionJAVA_wrap.cxx"};
-  private static final String buildCppFix = "g++ -c -O3 -fPIC -MMD -MP %s "; // $includeParm
-  private static String buildCompile = "";
-  private static String buildLink = "g++ -shared -s -fPIC -dynamic ";
   private static final String[] libsExport = new String[]{null, null};
   private static final String[] libsCheck = new String[]{null, null};
 
@@ -127,7 +112,6 @@ public class LinuxSupport {
           }
           runTime.extractResourcesToFolderFromJar(libsJar, "/sikulixlibs/linux/libs" + osArch,
                   fLibs, null);
-//          FileManager.unpackJar(libsJar, fLibs.getAbsolutePath(), false, true, new LibsFilter(exLib, osArch));
         }
       }
       libsCheck[0] = new File(fLibs, libVision).getAbsolutePath();
@@ -286,34 +270,50 @@ public class LinuxSupport {
     File fTarget = new File(fWorkDir, buildFolderTarget);
     File fSource = new File(fWorkDir, buildFolderSrc);
     File fInclude = new File(fWorkDir, buildFolderInclude);
+    fInclude.mkdirs();
+    File fSaveLib = fWorkDir;
+    fWorkDir = fTarget.getParentFile();
 
-    File javaHome = new File(System.getProperty("java.home"));
+    File[] javas = new File[2];
+    javas[0] = new File(System.getProperty("java.home"));
+    javas[1] = new File(System.getenv("JAVA_HOME"));
+
     logPlus(lvl, "starting inline build: libVisionProxy.so");
-    logPlus(lvl, "java.home from environment: %s", javaHome);
-  
-    if (!new File(javaHome, "bin/javac").exists()) {
-      javaHome = javaHome.getParentFile();
-    }
-    if (!new File(javaHome, "bin/javac").exists()) {
-      javaHome = null;
-    }
-    if (javaHome != null) {
-      if (!new File(javaHome, "include/jni.h").exists()) {
-        javaHome = null;
+    logPlus(lvl, "java.home from java props: %s", javas[0]);
+    logPlus(lvl, "JAVA_HOME from environment: %s", javas[1]);
+    
+    File javaHome = null;    
+    for (File jh : javas) {
+      if (jh == null) {
+        continue;
+      }
+      if (!new File(jh, "bin/javac").exists()) {
+        jh = jh.getParentFile();
+      }
+      if (!new File(jh, "bin/javac").exists()) {
+        jh = null;
+      }
+      if (jh != null) {
+        if (new File(jh, "include/jni.h").exists()) {
+          javaHome = jh;
+          break;
+        }
       }
     }
+    if (javaHome == null) {
+      logPlus(-1, "buildVision: no valid Java JDK available nor found");
+      return false;
+    }
+    logPlus(lvl, "JDK: found at: %s", javaHome);
+
+    File cmdFile = new File(fWorkDir, "runBuild");
+    String libVisionPath = new File(fTarget, libVision).getAbsolutePath();
+    String sRunBuild = runTime.extractResourceToString("/Support/Linux", "runBuild", "");
+
+    sRunBuild = sRunBuild.replace("#jdkdir#", javaHome.getAbsolutePath());
 
     String inclUsr = "/usr/include";
     String inclUsrLocal = "/usr/local/include";
-
-    boolean exportIncludeJava = false;
-    if (javaHome == null) {
-      logPlus(lvl, "buildVision: JDK: not found - using the bundled include files");
-      exportIncludeJava = true;
-    } else {
-      log(lvl, "JDK: found at: %s", javaHome);
-    }
-
     boolean exportIncludeOpenCV = false;
     boolean exportIncludeTesseract = false;
 
@@ -328,20 +328,10 @@ public class LinuxSupport {
       logPlus(lvl, "buildVision: tesseract-include: not found - using the bundled include files");
       exportIncludeTesseract = true;
     }
-
-    File cmdFile = new File(fWorkDir, "runBuild");
-    String libVisionPath = new File(fTarget, libVision).getAbsolutePath();
-    String sRunBuild = runTime.extractResourceToString("/Support/Linux", "runBuild", "");
-
-    log(lvl, "-------------- content of created build script");
-
+    
     boolean success = true;
     success &= (null != runTime.extractResourcesToFolderFromJar(srcjar,
             "/srcnativelibs/Vision", fSource, null));
-    if (exportIncludeJava) {
-      success &= (null != runTime.extractResourcesToFolderFromJar(srcjar,
-              "/srcnativelibs/VisionInclude/Java", fInclude, null));
-    }
     if (exportIncludeOpenCV) {
       success &= (null != runTime.extractResourcesToFolderFromJar(srcjar,
               "/srcnativelibs/VisionInclude/OpenCV", fInclude, null));
@@ -350,13 +340,27 @@ public class LinuxSupport {
       success &= (null != runTime.extractResourcesToFolderFromJar(srcjar,
               "/srcnativelibs/VisionInclude/Tesseract", fInclude, null));
     }
-    cmdFile.setExecutable(true);
     if (!success) {
-      logPlus(-1, "buildVision: cannot export lib sources");
-      return false;
+      logPlus(-1, "buildVision: cannot export bundled sources");
     }
-
+    
     if (opencvAvail && tessAvail) {
+      sRunBuild = sRunBuild.replace("#opencvcore#", libOpenCVcore);
+      sRunBuild = sRunBuild.replace("#opencvimgproc#", libOpenCVimgproc);
+      sRunBuild = sRunBuild.replace("#opencvhighgui#", libOpenCVhighgui);
+      sRunBuild = sRunBuild.replace("#tesseractlib#", libTesseract);
+      sRunBuild = sRunBuild.replace("#work#", fWorkDir.getAbsolutePath());
+      logPlus(lvl, "**** content of build script:\n%s\n**** content end", sRunBuild);
+      try {
+        PrintStream psCmdFile = new PrintStream(cmdFile);
+        psCmdFile.print(sRunBuild);
+        psCmdFile.close();
+      } catch (Exception ex) {
+        logPlus(-1, "buildVision: problem writing command file:\n%s", cmdFile);
+        return false;
+      }
+      cmdFile.setExecutable(true);
+
       logPlus(lvl, "buildVision: running build script");
       String cmdRet = runTime.runcmd(cmdFile.getAbsolutePath());
       if (cmdRet.contains(runTime.runCmdError)) {
@@ -370,14 +374,17 @@ public class LinuxSupport {
         }
       }
     }
+    File newLib = new File(fLibs, libVision);
+    File saveLib = new File(fSaveLib, libVision);
     try {
       fLibs.mkdirs();
-      FileManager.xcopy(libVisionPath, new File(fLibs, libVision).getAbsolutePath());
+      FileManager.xcopy(libVisionPath, saveLib.getAbsolutePath());
+      FileManager.xcopy(libVisionPath, newLib.getAbsolutePath());
     } catch (IOException ex) {
       logPlus(-1, "could not copy built libVisionProxy.so to libs folder\n%s", ex.getMessage());
       return false;
     }
-    logPlus(lvl, "ending inline build: success: libVisionProxy.so");
+    logPlus(lvl, "ending inline build: success:\n%s", newLib);
     return true;
   }
 
