@@ -1,6 +1,3 @@
-# no longer used from here
-# moved to API/resources/Support/Linux
-
 #jvmdir=/usr/lib/jvm/java-7-openjdk-amd64
 jvmdir=
 
