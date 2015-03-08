@@ -14,9 +14,9 @@ tesseractlib=
 #work=`pwd`
 work=
 source=$work/Source
-build=$work/Build
+buildinclude=$work/Include
+build=$work/Target
 stuff=$build/Stuff
-buildinclude="-I$build/Include "
 
 rm -R -f $build
 mkdir $build
@@ -30,7 +30,7 @@ fi
 if [ "$tesseractinclude" != "" ]; then
   includeplus="$includeplus -I$tesseractinclude "
 fi
-includefinal="-I/usr/include -I/usr/local/include $includeplus $buildinclude"
+includefinal="-I/usr/include -I/usr/local/include $includeplus -I$buildinclude"
 
 for mod in cvgui.cpp finder.cpp pyramid-template-matcher.cpp sikuli-debug.cpp \
     tessocr.cpp vision.cpp visionJAVA_wrap.cxx

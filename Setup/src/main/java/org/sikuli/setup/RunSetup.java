@@ -660,18 +660,13 @@ public class RunSetup {
 			} else {
 				copyFromDownloads(libDownloaded, libsWin, jarsList[6]);
 			}
-
-      if (!forAllSystems) {
-        String libsWin = "sikulixlibs/windows";
-        folderLibsWin = new File(workDir, libsWin);
-        FileManager.resetFolder(folderLibsWin);
-        String aJar = "/" + FileManager.slashify(jarsList[6], false);
-        if (null == runTime.resourceListAsSikulixContentFromJar(aJar, libsWin, folderLibsWin, null)) {
-          terminate("libswin content list not created", 999);
-        }
-        addonFileList[addonWindows] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
-        addonFilePrefix[addonWindows] = libsWin;
+      FileManager.resetFolder(folderLibsWin);
+      String aJar = "/" + FileManager.slashify(jarsList[6], false);
+      if (null == runTime.resourceListAsSikulixContentFromJar(aJar, libsWin, folderLibsWin, null)) {
+        terminate("libswin content list could not be created", 999);
       }
+      addonFileList[addonWindows] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
+      addonFilePrefix[addonWindows] = libsWin;
     }
 
     if (forSystemMac || forAllSystems) {
