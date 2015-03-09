@@ -40,7 +40,12 @@ getArgsForJ = function(args) {
 };
 
 makeRetVal = function(aObj) {
-	if (!USEJSON) {
+  Commands.restoreUsed();
+  return makeRetValDo(aObj);
+};
+
+makeRetValDo = function(aObj) {
+  if (!USEJSON) {
 		return aObj;
 	} else {
 		try {
@@ -56,7 +61,11 @@ makeRetVal = function(aObj) {
 };
 
 use = function () {
-  return makeRetVal(Commands.call("use", getArgsForJ(arguments)));
+  return makeRetValDo(Commands.call("use", getArgsForJ(arguments)));
+};
+
+use1 = function () {
+  return makeRetValDo(Commands.call("use1", getArgsForJ(arguments)));
 };
 
 wait = function () {
@@ -89,6 +98,10 @@ hover = function () {
 
 type = function() {
   return makeRetVal(Commands.call("type", getArgsForJ(arguments)));
+};
+
+write = function() {
+  return makeRetVal(Commands.call("write", getArgsForJ(arguments)));
 };
 
 paste = function() {

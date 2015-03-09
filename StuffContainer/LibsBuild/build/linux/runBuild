@@ -1,28 +1,39 @@
-jvmdir=/usr/lib/jvm/java-7-openjdk-amd64
+# no longer used from here
+# moved to API/resources/Support/Linux
+
+#jvmdir=/usr/lib/jvm/java-7-openjdk-amd64
+jvmdir=
 
 opencvinclude=
-opencvlib=/usr/lib/x86_64-linux-gnu
+
+#opencvlib=/usr/lib/x86_64-linux-gnu
+opencvlib=
 
 tesseractinclude=
-tesseractlib=/usr/lib
 
-work=`pwd`
+#tesseractlib=/usr/lib
+tesseractlib=
+
+#work=`pwd`
+work=
 source=$work/Source
 build=$work/Build
 stuff=$build/Stuff
+buildinclude="-I$build/Include "
+
 rm -R -f $build
 mkdir $build
 mkdir $stuff
 
 echo ----------- COMPILING
 
-if [ "opencvinclude" != "" ]; then
-  includeplus="-Iopencvinclude "
+if [ "$opencvinclude" != "" ]; then
+  includeplus="-I$opencvinclude "
 fi
-if [ "opencvinclude" != "" ]; then
-  includeplus="$includeplus -Iopencvinclude "
+if [ "$tesseractinclude" != "" ]; then
+  includeplus="$includeplus -I$tesseractinclude "
 fi
-includefinal="-I/usr/include -I/usr/local/include $includeplus"
+includefinal="-I/usr/include -I/usr/local/include $includeplus $buildinclude"
 
 for mod in cvgui.cpp finder.cpp pyramid-template-matcher.cpp sikuli-debug.cpp \
     tessocr.cpp vision.cpp visionJAVA_wrap.cxx

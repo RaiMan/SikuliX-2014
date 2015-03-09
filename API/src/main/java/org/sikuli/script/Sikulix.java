@@ -25,6 +25,7 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
+import org.sikuli.util.LinuxSupport;
 
 /**
  * global services for package API
@@ -112,6 +113,13 @@ public class Sikulix {
       Debug.on(3);
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
+      
+      Screen s = new Screen();
+      
+//      File fJarLibsLux = new File(rt.fSikulixDownloadsBuild, "sikulixlibslux-1.1.0.jar");
+//      String fpJarLibsLux = fJarLibsLux.getAbsolutePath();
+//      boolean shouldBuild = LinuxSupport.processLibs(fpJarLibsLux);
+//      boolean buildOK = LinuxSupport.buildVision(fpJarLibsLux);
 
 //			RunnerClient runner = new RunnerClient("192.168.2.114", "50000");
 

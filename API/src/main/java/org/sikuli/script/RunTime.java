@@ -69,6 +69,11 @@ public class RunTime {
   public boolean runningInteractive = false;
   public boolean runningTests = false;
   public String interactiveRunner;
+  public File fSikulixDownloadsGeneric = null;
+  public File fSikulixDownloadsBuild = null;
+  public File fSikulixSetup;
+  public File fLibsProvided;
+  public File fLibsLocal;
 
   private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -183,6 +188,12 @@ public class RunTime {
         runTime.runningLinux = true;
       } else {
         runTime.terminate(-1, "running on not supported System: %s (%s)", os, runTime.osVersion);
+      }
+      if (runTime.runningWindows) {
+        runTime.fpJarLibs += "windows";
+      } else {
+        runTime.fpJarLibs += runTime.sysName + "/libs" + runTime.javaArch;
+        runTime.fpSysLibs = runTime.fpJarLibs.substring(1);
       }
 //</editor-fold>
 
@@ -323,6 +334,7 @@ public class RunTime {
   public File fBaseTempPath = null;
   public File fLibsFolder = null;
   public String fpJarLibs = "/sikulixlibs/";
+  public String fpSysLibs = null;
   boolean areLibsExported = false;
   private Map<String, Boolean> libsLoaded = new HashMap<String, Boolean>();
   public File fUserDir = null;
@@ -332,6 +344,7 @@ public class RunTime {
   public File fAppPath = null;
   public File fSikulixAppPath = null;
   public File fSikulixExtensions = null;
+  public File fSikulixLib = null;
 
   private File fOptions = null;
   private Properties options = null;
@@ -471,14 +484,20 @@ int nMonitors = 0;
       msg = "init: Linux: SikulxAppData does not exist or is not accessible:\n%s";
     }
     fSikulixExtensions = new File(fSikulixAppPath, "Extensions");
+    fSikulixLib = new File(fSikulixAppPath, "Lib");
+    fSikulixDownloadsGeneric = new File(fSikulixAppPath, "SikulixDownloads");
+    fSikulixSetup = new File(fSikulixAppPath, "SikulixSetup");
+    fLibsProvided = new File(fSikulixAppPath, fpSysLibs);
+    fLibsLocal = fLibsProvided.getParentFile().getParentFile();
     try {
       if (!fSikulixAppPath.exists()) {
         fSikulixAppPath.mkdirs();
-        fSikulixExtensions.mkdir();
       }
       if (!fSikulixAppPath.exists()) {
         terminate (1, msg, fSikulixAppPath);
       }
+      fSikulixExtensions.mkdir();
+      fSikulixDownloadsGeneric.mkdir();
     } catch (Exception ex) {
       terminate (1, msg + "\n" + ex.toString(), fSikulixAppPath);
     }
@@ -602,14 +621,19 @@ int nMonitors = 0;
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="libs export">
-  public void makeLibsFolder() {
+  public void makeFolders() {
     fLibsFolder = new File(fSikulixAppPath, "SikulixLibs_" + sxBuildStamp);
+    fSikulixDownloadsBuild = new File(fSikulixAppPath, "SikulixDownloads_" + sxBuildStamp);
     if (testing) {
-      logp("***** for testing: delete libsfolder");
+      logp("***** for testing: delete libsfolder/Lib/Downloads");
       FileManager.deleteFileOrFolder(fLibsFolder);
+      FileManager.deleteFileOrFolder(fSikulixLib);
+      FileManager.deleteFileOrFolder(fSikulixDownloadsBuild);
     }
     if (!fLibsFolder.exists()) {
+      fSikulixLib.mkdir();
       fLibsFolder.mkdirs();
+      fSikulixDownloadsBuild.mkdir();
       if (!fLibsFolder.exists()) {
         terminate(1, "libs folder not available: " + fLibsFolder.toString());
       }
@@ -638,7 +662,8 @@ int nMonitors = 0;
     fpList = fSikulixAppPath.list(new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {
-        if (name.contains("SikulixLibs")) {
+        if (name.contains("SikulixLibs") ||
+            name.contains("SikulixDownloads_")) {
           return true;
         }
         return false;
@@ -657,11 +682,13 @@ int nMonitors = 0;
 
   private void libsExport(Type typ) {
     boolean shouldExport = false;
-    makeLibsFolder();
+    makeFolders();
     URL uLibsFrom = null;
     if (!checkLibs(fLibsFolder)) {
       FileManager.deleteFileOrFolder(fLibsFolder);
+      FileManager.deleteFileOrFolder(fSikulixLib);
       fLibsFolder.mkdirs();
+      fSikulixLib.mkdir();
       shouldExport = true;
       if (!fLibsFolder.exists()) {
         terminate(1, "libs folder not available: " + fLibsFolder.toString());
@@ -671,10 +698,7 @@ int nMonitors = 0;
       String sysShort = "win";
       if (!runningWinApp && !testingWinApp) {
         sysShort = runningOn.toString().toLowerCase();
-        fpJarLibs += sysName + "/libs" + javaArch;
-      } else {
-        fpJarLibs += "windows";
-      }
+      } 
       String fpLibsFrom = "";
       if (runningJar) {
         fpLibsFrom = fSxBaseJar.getAbsolutePath();
@@ -694,7 +718,7 @@ int nMonitors = 0;
           shouldAddLibsJar = true;
         }
       }
-      if (null != isOnClasspath("sikulix.jar") || null != isOnClasspath("sikulixapi.jar")) {
+      if (null != isJarOnClasspath("sikulix")) {
         shouldAddLibsJar = false;
         fpLibsFrom = "";
       }
@@ -743,7 +767,9 @@ int nMonitors = 0;
         terminate(1, "problem copying %s", fJawtDll);
       }
     }
-
+    if (shouldExport) {
+      extractResourcesToFolder("Lib", fSikulixLib, null);
+    }
     areLibsExported = true;
   }
 //</editor-fold>
@@ -939,23 +965,33 @@ int nMonitors = 0;
       level++;
       msg += " already loaded";
     }
-    log(level, msg, libName);
     if (vLib) {
+      log(level, msg, libName);
       return true;
     }
-    if (runningLinux) {
-//TODO Linux build on the fly ???? sikulixapi.jar from Maven !!!!
-      if (!LinuxSupport.runLdd(new File(fLibsFolder, libName)));
+    boolean shouldTerminate = false;
+    Error loadError = null;
+    while (!shouldTerminate) {
+      shouldTerminate = true;
+      loadError = null;
+      try {
+        System.load(new File(fLibsFolder, libName).getAbsolutePath());
+      } catch (Error e) {
+        loadError = e;
+        if (runningLinux) {
+          log(-1, msg + " not usable: \n%s", libName, loadError);
+          shouldTerminate = !LinuxSupport.checkAllLibs();
+        }
+      }
     }
-    try {
-      System.load(new File(fLibsFolder, libName).getAbsolutePath());
-    } catch (Error e) {
+    if (loadError != null) {
       log(-1, "Problematic lib: %s (...TEMP...)", fLib);
       log(-1, "%s loaded, but it might be a problem with needed dependent libraries\nERROR: %s",
-              libName, e.getMessage().replace(fLib.getAbsolutePath(), "...TEMP..."));
+              libName, loadError.getMessage().replace(fLib.getAbsolutePath(), "...TEMP..."));
       terminate(1, "problem with native library: " + libName);
     }
     libsLoaded.put(libName, true);
+    log(level, msg, libName);
     return true;
   }
 
@@ -1450,8 +1486,9 @@ int nMonitors = 0;
         return doExtractToFolderWithList(tessdata, folder, files);
       }
       return null;
+    } else {
+      return extractResourcesToFolder("sikulixtessdata", folder, null);
     }
-    return files;
   }
   /**
    * export all resource files from the given subtree on classpath to the given folder retaining the subtree<br>
@@ -2160,7 +2197,7 @@ int nMonitors = 0;
    * @param artefact the identifying string
    * @return the absolute path of the entry found - null if not found
    */
-  public String isOnClasspath(String artefact) {
+  private String isOnClasspath(String artefact, boolean isJar) {
     artefact = FileManager.slashify(artefact, false).toUpperCase();
     String cpe = null;
     if (classPath.isEmpty()) {
@@ -2169,11 +2206,24 @@ int nMonitors = 0;
     for (URL entry : classPath) {
       String sEntry = FileManager.slashify(new File(entry.getPath()).getPath(), false);
       if (sEntry.toUpperCase().contains(artefact)) {
+        if (isJar) {
+          if (!sEntry.toUpperCase().endsWith(".JAR")) {
+            continue;
+          }
+        }
         cpe = new File(entry.getPath()).getPath();
         break;
       }
     }
     return cpe;
+  }
+
+  public String isJarOnClasspath(String artefact) {
+    return isOnClasspath(artefact, true);
+  }
+  
+  public String isOnClasspath(String artefact) {
+    return isOnClasspath(artefact, false);
   }
 
   public URL fromClasspath(String artefact) {
