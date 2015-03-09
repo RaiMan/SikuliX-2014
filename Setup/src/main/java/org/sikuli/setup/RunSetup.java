@@ -128,6 +128,7 @@ public class RunSetup {
   private static RunTime runTime;
   private static Map<String, String> addFilesToJar = new HashMap<String, String>();
   private static File fDownloadsGenericApp;
+	private static boolean useLibsProvided = false;
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static void logp(String message, Object... args) {
@@ -380,7 +381,7 @@ public class RunSetup {
               + "for setup (be sure they are useable).\n"
               + "Click NO to make a clean setup (libs are deleted).", folderLibsLux)))
       {
-        libsProvided = true;
+        useLibsProvided = true;
       } else {
         FileManager.resetFolder(folderLibsLux);
       }
@@ -619,13 +620,12 @@ public class RunSetup {
         copyFromDownloads(libDownloaded, libsLux, jarsList[8]);
       }
       if (isLinux) {
-				runTime.addToClasspath(jarsList[8]);
-				runTime.dumpClassPath("sikulix");
-				boolean shouldTerminate = false;
+				if (!libsProvided) {
+					runTime.addToClasspath(jarsList[8]);
+					runTime.dumpClassPath("sikulix");
+				}
 				RunTime.loadLibrary(LinuxSupport.slibVision);
-        if (shouldTerminate) {
-          terminate("Correct the problems with the bundled/provided/built libs and try again");
-        }
+				useLibsProvided = LinuxSupport.shouldUseProvided;
       }
     }
 		//</editor-fold>
@@ -762,7 +762,7 @@ public class RunSetup {
     }
 
     if (isLinux) {
-      if (libsProvided) {
+      if (libsProvided || useLibsProvided) {
         shouldPackLibs = false;
       }
       if (!shouldPackLibs) {

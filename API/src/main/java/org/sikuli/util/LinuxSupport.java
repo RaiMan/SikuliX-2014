@@ -27,6 +27,7 @@ public class LinuxSupport {
 	private static int lvl = 3;
   private static boolean isCopiedProvided = false;
   private static boolean haveBuilt = false;
+	public static boolean shouldUseProvided = false;
 //  private static String osArch;
 	public static void log(int level, String message, Object... args) {
 		Debug.logx(level,	me + message, args);
@@ -267,6 +268,7 @@ public class LinuxSupport {
         success &= buildVision();
       }
     }
+		shouldUseProvided = success;
     return success;
   }
 
