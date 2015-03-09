@@ -40,7 +40,7 @@ import org.sikuli.script.Sikulix;
 import org.sikuli.util.LinuxSupport;
 
 public class RunSetup {
-  
+
   private static File fDownloadsGeneric = null;
   private static File fDownloadsBuild = null;
 
@@ -336,7 +336,7 @@ public class RunSetup {
         } else {
           log(lvl, "have to create Setup folder before running setup");
         }
-        
+
         if (!createSetupFolder(fWorkDir)) {
           log(-1, "createSetupFolder: did not work- terminating");
           System.exit(1);
@@ -371,7 +371,6 @@ public class RunSetup {
     folderLibs = runTime.fLibsLocal;
     folderLibsWin = new File(folderLibs, "windows");
     folderLibsLux = runTime.fLibsProvided;
-    LinuxSupport.setLogToFile(logToFile);
 
     //TODO Windows 8 HKLM/SOFTWARE/JavaSoft add Prefs ????
     boolean success;
@@ -608,10 +607,10 @@ public class RunSetup {
     File libDownloaded;
     String libDownloadedName;
 
-    //<editor-fold defaultstate="collapsed" desc="we are on Linux">
+    //<editor-fold defaultstate="collapsed" desc="download for Linux">
     if (forSystemLux || forAllSystems) {
       jarsList[8] = new File(workDir, libsLux + ".jar").getAbsolutePath();
-      
+
       libDownloadedName = libsLux + "-" + version + ".jar";
       libDownloaded = downloadedAlready(dlDirGeneric, dlDirBuild, libDownloadedName, libsLux);
       if (libDownloaded == null) {
@@ -620,28 +619,12 @@ public class RunSetup {
         copyFromDownloads(libDownloaded, libsLux, jarsList[8]);
       }
       if (isLinux) {
-        boolean shouldBuildVisionNow = LinuxSupport.processLibs(jarsList[8]);
-        boolean shouldTerminate = false;
-        if (shouldBuildVisionNow) {
-          logPlus(-1, "A bundled lib could not be checked or does not work.");
-          if (!popAsk("The bundled/provided libVisionProxy.so might not work."
-                  + "\nShould we try to build it now?"
-                  + "\nClick YES to try a build"
-                  + "\nClick NO to terminate and correct the problems.")) {
-            shouldTerminate = true;
-            shouldBuildVisionNow = false;
-          }
-        }
-        if (shouldBuildVisionNow || (hasOptions && shouldBuildVision)) {
-          logPlus(lvl, "Trying to build libVisionProxy.so");
-          libsProvided = LinuxSupport.buildVision(jarsList[8]);
-          shouldTerminate |= !libsProvided;
-        }
-        if (!libsProvided) {
-          FileManager.deleteFileOrFolder(folderLibsLux.getAbsolutePath());
-        }
+				runTime.addToClasspath(jarsList[8]);
+				runTime.dumpClassPath("sikulix");
+				boolean shouldTerminate = false;
+				RunTime.loadLibrary(LinuxSupport.slibVision);
         if (shouldTerminate) {
-          terminate("Correct the problems with the bundled/provided libs and try again");
+          terminate("Correct the problems with the bundled/provided/built libs and try again");
         }
       }
     }
@@ -1433,7 +1416,7 @@ public class RunSetup {
               + "\nClick YES, if you want to use this for setup processing\n\n"
               + "... or click NO, to download a fresh copy")) {
         return artefact;
-      } 
+      }
     }
     if (path2 != null) {
       artefact = new File(path2, item);

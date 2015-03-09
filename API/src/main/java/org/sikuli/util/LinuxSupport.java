@@ -42,7 +42,8 @@ public class LinuxSupport {
   private static final String buildFolderInclude = "Build/Include";
   private static final String buildFolderTarget = "Build/Target";
   static File fLibs = runTime.fLibsFolder;
-  public static final String libVision = "libVisionProxy.so";
+  public static final String slibVision = "libVisionProxy";
+  public static final String libVision = slibVision + ".so";
   public static final String libGrabKey = "libJXGrabKey.so";
   static boolean libSearched = false;
 
@@ -77,7 +78,7 @@ public class LinuxSupport {
 //  }
 
   public static boolean existsLibs() {
-    return new File(runTime.fLibsProvided, libVision).exists() || 
+    return new File(runTime.fLibsProvided, libVision).exists() ||
             new File(runTime.fLibsProvided, libGrabKey).exists();
   }
 
@@ -118,7 +119,7 @@ public class LinuxSupport {
     }
     return shouldBuildVisionNow;
   }
-  
+
   public static boolean checkNeeded() {
     String cmdRet;
     boolean checkSuccess = true;
@@ -236,7 +237,7 @@ public class LinuxSupport {
 //    return false; // for testing
     return checkSuccess;
   }
-  
+
   public static boolean checkAllLibs() {
     boolean success = false;
     if (!isCopiedProvided) {
@@ -286,8 +287,8 @@ public class LinuxSupport {
     log(lvl, "starting inline build: libVisionProxy.so");
     log(lvl, "java.home from java props: %s", javas[0]);
     log(lvl, "JAVA_HOME from environment: %s", javas[1]);
-    
-    File javaHome = null;    
+
+    File javaHome = null;
     for (File jh : javas) {
       if (jh == null) {
         continue;
@@ -333,7 +334,7 @@ public class LinuxSupport {
       log(lvl, "buildVision: tesseract-include: not found - using the bundled include files");
       exportIncludeTesseract = true;
     }
-    
+
     boolean success = true;
     success &= (null != runTime.extractResourcesToFolder(
             "/srcnativelibs/Vision", fSource, null));
@@ -348,7 +349,7 @@ public class LinuxSupport {
     if (!success) {
       log(-1, "buildVision: cannot export bundled sources");
     }
-    
+
       sRunBuild = sRunBuild.replace("#opencvcore#", libOpenCVcore);
       sRunBuild = sRunBuild.replace("#opencvimgproc#", libOpenCVimgproc);
       sRunBuild = sRunBuild.replace("#opencvhighgui#", libOpenCVhighgui);
@@ -406,8 +407,8 @@ public class LinuxSupport {
     });
     boolean success = false;
     if (toCopy != null) {
-      for (String aLib : toCopy) {      
-        success |= FileManager.xcopy(new File(runTime.fLibsProvided, aLib), 
+      for (String aLib : toCopy) {
+        success |= FileManager.xcopy(new File(runTime.fLibsProvided, aLib),
                 new File(fLibsFolder, aLib));
       }
     }
