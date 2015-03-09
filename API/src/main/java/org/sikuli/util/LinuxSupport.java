@@ -43,8 +43,8 @@ public class LinuxSupport {
   private static final String buildFolderInclude = "Build/Include";
   private static final String buildFolderTarget = "Build/Target";
   static File fLibs = runTime.fLibsFolder;
-  public static final String slibVision = "libVisionProxy";
-  public static final String libVision = slibVision + ".so";
+  public static final String slibVision = "VisionProxy";
+  public static final String libVision = "lib" + slibVision + ".so";
   public static final String libGrabKey = "libJXGrabKey.so";
   static boolean libSearched = false;
 
@@ -183,7 +183,7 @@ public class LinuxSupport {
     String cmdRet = runTime.runcmd("ldd -r " + lib);
     String[] retLines;
     boolean success = true;
-    retLines = cmdRet.split("\n");
+    retLines = cmdRet.split("continued: build on the fly on Linux at runtime: if bundled do not work, looking for provided - if these do not work, try to build. setup not ready yet. \n");
     String libName = lib.getName();
     String libsMissing = "";
     for (String line : retLines) {
@@ -241,7 +241,7 @@ public class LinuxSupport {
 
   public static boolean checkAllLibs() {
     boolean success = false;
-    if (!isCopiedProvided) {
+    if (!isCopiedProvided && !runTime.useLibsProvided) {
       success = true;
       String[] allLibs = runTime.fLibsProvided.list(new FilenameFilter() {
         @Override

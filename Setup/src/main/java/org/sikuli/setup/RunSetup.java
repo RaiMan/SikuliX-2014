@@ -620,12 +620,10 @@ public class RunSetup {
         copyFromDownloads(libDownloaded, libsLux, jarsList[8]);
       }
       if (isLinux) {
-				if (!libsProvided) {
-					runTime.addToClasspath(jarsList[8]);
-					runTime.dumpClassPath("sikulix");
-				}
-				RunTime.loadLibrary(LinuxSupport.slibVision);
-				useLibsProvided = LinuxSupport.shouldUseProvided;
+        runTime.addToClasspath(jarsList[8]);
+        runTime.dumpClassPath("sikulix");
+				RunTime.loadLibrary(LinuxSupport.slibVision, useLibsProvided);
+				useLibsProvided = runTime.useLibsProvided || LinuxSupport.shouldUseProvided;
       }
     }
 		//</editor-fold>

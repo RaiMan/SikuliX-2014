@@ -64,7 +64,7 @@ public class RunTime {
   private int minLvl = lvl;
   private static String preLogMessages = "";
 
-  public final static String runCmdError = "*****error*****";
+  public final static String runCmdError = "*****error**useLibsProvided***";
   public final static String NL = System.lineSeparator();
   public boolean runningInteractive = false;
   public boolean runningTests = false;
@@ -74,6 +74,7 @@ public class RunTime {
   public File fSikulixSetup;
   public File fLibsProvided;
   public File fLibsLocal;
+  public boolean useLibsProvided = false;
 
   private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -754,6 +755,10 @@ int nMonitors = 0;
     for (String aFile : fLibsFolder.list()) {
       libsLoaded.put(aFile, false);
     }
+    if (useLibsProvided) {
+      log(lvl, "Linux: requested to use provided libs - copying");
+      LinuxSupport.copyProvidedLibs(fLibsFolder);
+    }
     if (runningWindows) {
       addToWindowsSystemPath(fLibsFolder);
       if (!checkJavaUsrPath(fLibsFolder)) {
@@ -938,6 +943,17 @@ int nMonitors = 0;
    */
   public static void loadLibrary(String libname) {
     RunTime.get().loadLib(libname);
+  }
+
+  /**
+   * INTERNAL USE: load a native library from the libs folder
+   *
+   * @param libname name of library without prefix/suffix/ending
+   */
+  public static void loadLibrary(String libname, boolean useLibsProvided) {
+    RunTime rt = RunTime.get();
+    rt.useLibsProvided = useLibsProvided;
+    rt.loadLib(libname);
   }
 
   private boolean loadLib(String libName) {
