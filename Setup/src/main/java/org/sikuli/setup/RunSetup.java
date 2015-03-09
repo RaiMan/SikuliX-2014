@@ -368,11 +368,9 @@ public class RunSetup {
     File localJarIDE = new File(fWorkDir, localIDE);
     File localJarAPI = new File(fWorkDir, localAPI);
 
-    folderLibs = new File(fDownloadsGeneric, "sikulixlibs");
+    folderLibs = runTime.fLibsLocal;
     folderLibsWin = new File(folderLibs, "windows");
-    folderLibsLux = new File(folderLibs, "linux");
-    LinuxSupport.setWorkDir(fWorkDir);
-    LinuxSupport.setLibsDir(folderLibsLux);
+    folderLibsLux = runTime.fLibsProvided;
     LinuxSupport.setLogToFile(logToFile);
 
     //TODO Windows 8 HKLM/SOFTWARE/JavaSoft add Prefs ????
@@ -622,8 +620,7 @@ public class RunSetup {
         copyFromDownloads(libDownloaded, libsLux, jarsList[8]);
       }
       if (isLinux) {
-        boolean shouldBuildVisionNow = LinuxSupport.processLibs1(jarsList[8], osarch);
-        libsProvided = LinuxSupport.processLibs2();
+        boolean shouldBuildVisionNow = LinuxSupport.processLibs(jarsList[8]);
         boolean shouldTerminate = false;
         if (shouldBuildVisionNow) {
           logPlus(-1, "A bundled lib could not be checked or does not work.");

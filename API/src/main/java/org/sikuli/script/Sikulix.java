@@ -114,16 +114,13 @@ public class Sikulix {
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
       
-      File fSikulixDownloadsGenericLibs = 
-              new File(rt.fSikulixDownloadsGeneric, "sikulixlibs/linux");
-      File fJarLibsLux = new File(rt.fSikulixDownloadsBuild, "sikulixlibslux-1.1.0.jar");
-      String fpJarLibsLux = fJarLibsLux.getAbsolutePath();
-      fSikulixDownloadsGenericLibs.mkdirs();
-      LinuxSupport.setWorkDir(fSikulixDownloadsGenericLibs);
-      LinuxSupport.setLibsDir(rt.fLibsFolder);
-      boolean shouldBuild = LinuxSupport.processLibs1(fpJarLibsLux, "" + rt.javaArch);
-      boolean libsprovided = LinuxSupport.processLibs2();
-      boolean buildOK = LinuxSupport.buildVision(fpJarLibsLux);
+      Screen s = new Screen();
+      
+//      File fJarLibsLux = new File(rt.fSikulixDownloadsBuild, "sikulixlibslux-1.1.0.jar");
+//      String fpJarLibsLux = fJarLibsLux.getAbsolutePath();
+//      boolean shouldBuild = LinuxSupport.processLibs(fpJarLibsLux);
+//      boolean buildOK = LinuxSupport.buildVision(fpJarLibsLux);
+
 //			RunnerClient runner = new RunnerClient("192.168.2.114", "50000");
 
       if (rt.runningWinApp) {
