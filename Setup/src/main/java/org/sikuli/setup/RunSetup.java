@@ -102,6 +102,7 @@ public class RunSetup {
   private static boolean forSystemLux = false;
   private static String libsMac = "sikulixlibsmac";
   private static String libsWin = "sikulixlibswin";
+  private static String libsWinInJar = "sikulixlibs/windows";
   private static String libsLux = "sikulixlibslux";
   private static String apiJarName = "sikulixapi";
   private static File folderLibs;
@@ -640,7 +641,7 @@ public class RunSetup {
 			}
       FileManager.resetFolder(folderLibsWin);
       String aJar = "/" + FileManager.slashify(jarsList[6], false);
-      if (null == runTime.resourceListAsSikulixContentFromJar(aJar, libsWin, folderLibsWin, null)) {
+      if (null == runTime.resourceListAsSikulixContentFromJar(aJar, libsWinInJar, folderLibsWin, null)) {
         terminate("libswin content list could not be created", 999);
       }
       addonFileList[addonWindows] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();

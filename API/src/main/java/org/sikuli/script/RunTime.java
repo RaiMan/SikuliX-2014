@@ -190,12 +190,8 @@ public class RunTime {
       } else {
         runTime.terminate(-1, "running on not supported System: %s (%s)", os, runTime.osVersion);
       }
-      if (runTime.runningWindows) {
-        runTime.fpJarLibs += "windows";
-      } else {
-        runTime.fpJarLibs += runTime.sysName + "/libs" + runTime.javaArch;
-        runTime.fpSysLibs = runTime.fpJarLibs.substring(1);
-      }
+      runTime.fpJarLibs += runTime.sysName + "/libs" + runTime.javaArch;
+      runTime.fpSysLibs = runTime.fpJarLibs.substring(1);
 //</editor-fold>
 
       debugLevelSaved = Debug.getDebugLevel();
@@ -484,12 +480,6 @@ int nMonitors = 0;
       fSikulixAppPath = new File(fAppPath, ".Sikulix");
       msg = "init: Linux: SikulxAppData does not exist or is not accessible:\n%s";
     }
-    fSikulixExtensions = new File(fSikulixAppPath, "Extensions");
-    fSikulixLib = new File(fSikulixAppPath, "Lib");
-    fSikulixDownloadsGeneric = new File(fSikulixAppPath, "SikulixDownloads");
-    fSikulixSetup = new File(fSikulixAppPath, "SikulixSetup");
-    fLibsProvided = new File(fSikulixAppPath, fpSysLibs);
-    fLibsLocal = fLibsProvided.getParentFile().getParentFile();
     try {
       if (!fSikulixAppPath.exists()) {
         fSikulixAppPath.mkdirs();
@@ -497,6 +487,12 @@ int nMonitors = 0;
       if (!fSikulixAppPath.exists()) {
         terminate (1, msg, fSikulixAppPath);
       }
+      fSikulixExtensions = new File(fSikulixAppPath, "Extensions");
+      fSikulixLib = new File(fSikulixAppPath, "Lib");
+      fSikulixDownloadsGeneric = new File(fSikulixAppPath, "SikulixDownloads");
+      fSikulixSetup = new File(fSikulixAppPath, "SikulixSetup");
+      fLibsProvided = new File(fSikulixAppPath, fpSysLibs);
+      fLibsLocal = fLibsProvided.getParentFile().getParentFile();
       fSikulixExtensions.mkdir();
       fSikulixDownloadsGeneric.mkdir();
     } catch (Exception ex) {
@@ -592,6 +588,10 @@ int nMonitors = 0;
 		fSxProjectTestScriptsJS = new File(fSxProject, "StuffContainer/testScripts/testJavaScript");
 //</editor-fold>
 
+    if (runningWinApp || testingWinApp) {
+      runTime.fpJarLibs += "windows";
+      runTime.fpSysLibs = runTime.fpJarLibs.substring(1) + "/libs" + runTime.javaArch;
+    }
     if (!Type.SETUP.equals(typ)) {
       libsExport(typ);
     }
