@@ -21,7 +21,7 @@ public class TestRun {
   private static void p(String msg, Object... args) {
     System.out.println(String.format(msg, args));
   }
-  
+
   private static void terminate(int retVal, String msg, Object... args ) {
     p(msg, args);
     System.exit(retVal);
@@ -30,21 +30,13 @@ public class TestRun {
   public static void main(String[] args) throws FindFailed, IOException {
 
     Debug.on(3);
-    
-    HotkeyManager.getInstance()._addHotkey(KeyEvent.VK_2, KeyEvent.SHIFT_MASK + KeyEvent.CTRL_MASK, new HotkeyListener() {
-          @Override
-          public void hotkeyPressed(HotkeyEvent e) {
-            p("hotkey pressed");
-            shouldExit = true;
-          }
-    });
-    
-    while (!shouldExit) {
-      s.wait(1f);
-    }
+
+    ImagePath.add(TestRun.class.getCanonicalName() + "/ImagesAPI.sikuli");
+		s.find("SikuliLogo");
+		s.highlight(-2);
 
   }
-  
+
   public static void test1() {
     ImagePath.add(TestRun.class.getCanonicalName() + "/ImagesAPI.sikuli");
     File fResults = new File(System.getProperty("user.home"), "TestResults");
@@ -55,7 +47,7 @@ public class TestRun {
     if (Settings.isMac()) {
       App.focus("Safari");
     } else {
-      App.focus("Google Chrome");      
+      App.focus("Google Chrome");
     }
     String raimanlogo = "raimanlogo";
     Match mFound = null;
