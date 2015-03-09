@@ -108,6 +108,24 @@ public class App {
           }
         }      
       } else if (Type.BROWSER.equals(appType)) {
+        if (runTime.runningWindows) {
+          app = new App(appsWindows.get(appType));
+          if (app.window() != null) {
+            app.focus();
+            aRegion.wait(0.5);
+            win = app.window();
+            aRegion.click(win);
+//            aRegion.write("#C.a#B.");
+            return win;
+          } else {
+            app.open();
+            win = app.waitForWindow();
+            app.focus();
+            aRegion.wait(0.5);
+            aRegion.click(win);
+            return win;
+          }
+        }      
         return null;
       } else if (Type.VIEWER.equals(appType)) {
         return null;

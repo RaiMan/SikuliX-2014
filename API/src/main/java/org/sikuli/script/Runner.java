@@ -270,7 +270,7 @@ public class Runner {
     URL uGivenScriptFile = null;
     givenScriptName = givenName;
     String[] parts;
-    if (givenName.contains(":")) {
+    if (givenName.contains(":") && givenName.indexOf(":") > 3) {
       parts = givenName.split(":");
       givenScriptHost = parts[0];
       if (parts.length > 1 && !parts[1].isEmpty()) {

@@ -114,7 +114,7 @@ public class Sikulix {
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
       
-      Screen s = new Screen();
+//      Screen s = new Screen();
       
 //      File fJarLibsLux = new File(rt.fSikulixDownloadsBuild, "sikulixlibslux-1.1.0.jar");
 //      String fpJarLibsLux = fJarLibsLux.getAbsolutePath();
