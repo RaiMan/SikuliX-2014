@@ -905,6 +905,14 @@ public class FileManager {
     return aURL;
   }
 
+	public static int isUrlUseabel(String sURL) {
+		try {
+			return isUrlUseabel(new URL(sURL));
+		} catch (Exception ex) {
+			return -1;
+		}
+	}
+	
 	public static int isUrlUseabel(URL aURL) {
 		try {
 //			HttpURLConnection.setFollowRedirects(false);
@@ -1394,7 +1402,7 @@ public class FileManager {
     bufferedWrite(in, jar);
     in.close();
   }
-  
+
   public static File[] getScriptFile(File fScriptFolder) {
     if (fScriptFolder == null) {
       return null;
@@ -1421,7 +1429,7 @@ public class FileManager {
       scriptName = fScriptFolder.getName().substring(0, pos);
       scriptType = fScriptFolder.getName().substring(pos + 1);
     }
-    
+
     boolean success = true;
     if (!fScriptFolder.exists()) {
       if ("sikuli-plain".equals(scriptType)) {

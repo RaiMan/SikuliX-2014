@@ -397,7 +397,7 @@ public class ScriptingSupport {
       isRunningScript = false;
       return;
     }
-    
+
     runScripts = Runner.evalArgs(args);
 
     isRunningScript = true;
@@ -570,7 +570,7 @@ public class ScriptingSupport {
         fScript = new File(FileManager.normalizeAbsolute(fScript.getPath(), true));
         log(lvl, "Trying to run script:\n%s", fScript);
         if (fScript.getName().endsWith(".js")) {
-          return Runner.runjs(fScript, givenScriptScript, args);
+          return Runner.runjs(fScript, null, givenScriptScript, args);
         }
         currentRunner = getRunner(fScript.getName(), null);
         if (currentRunner != null) {

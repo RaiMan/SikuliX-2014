@@ -206,25 +206,33 @@ public class Runner {
 
   static ScriptEngine jsRunner = null;
 
-  public static int runjs(File fScript, String scriptName, String[] args) {
+  public static int runjs(File fScript, URL script, String scriptName, String[] args) {
     String initSikulix = "";
     if (jsRunner == null) {
 			jsRunner = initjs();
 			initSikulix = prologjs(initSikulix);
     }
     try {
-      File innerBundle = new File(fScript.getParentFile(), scriptName + ".sikuli");
-      if (innerBundle.exists()) {
-        ImagePath.setBundlePath(innerBundle.getCanonicalPath());
-      } else {
-        ImagePath.setBundlePath(fScript.getParent());
-      }
-      if (!initSikulix.isEmpty()) {
+			if (null != fScript) {
+				File innerBundle = new File(fScript.getParentFile(), scriptName + ".sikuli");
+				if (innerBundle.exists()) {
+					ImagePath.setBundlePath(innerBundle.getCanonicalPath());
+				} else {
+					ImagePath.setBundlePath(fScript.getParent());
+				}
+			} else {
+				ImagePath.addHTTP(script.toExternalForm());
+			}
+			if (!initSikulix.isEmpty()) {
 				initSikulix = prologjs(initSikulix);
-        jsRunner.eval(initSikulix);
-        initSikulix = "";
-      }
-      jsRunner.eval(new java.io.FileReader(fScript));
+				jsRunner.eval(initSikulix);
+				initSikulix = "";
+			}
+			if (null != fScript) {
+				jsRunner.eval(new java.io.FileReader(fScript));
+			} else {
+				jsRunner.eval(scriptName);
+			}
     } catch (Exception ex) {
       log(-1, "not possible:\n%s", ex);
     }
@@ -269,11 +277,14 @@ public class Runner {
     URL uGivenScript = null;
     URL uGivenScriptFile = null;
     givenScriptName = givenName;
-    String[] parts;
-    if (givenName.contains(":") && givenName.indexOf(":") > 3) {
-      parts = givenName.split(":");
-      givenScriptHost = parts[0];
-      if (parts.length > 1 && !parts[1].isEmpty()) {
+    String[] parts = null;
+		int isNet;
+    if (-1 < (isNet = givenName.indexOf("://"))) {
+			String payload = givenName.substring(isNet+3);
+			payload = payload.replaceFirst("/", "#");
+			parts = payload.split("#");
+			if (parts.length > 1 && !parts[1].isEmpty()) {
+				givenScriptHost = parts[0];
         givenScriptName = new File(parts[1]).getName();
         String fpFolder = new File(parts[1]).getParent();
         if (null != fpFolder && !fpFolder.isEmpty()) {
@@ -283,58 +294,67 @@ public class Runner {
           }
         }
       }
-    }
-    boolean sameFolder = givenScriptName.startsWith("./");
-    if (sameFolder) {
-      givenScriptName = givenScriptName.substring(2);
-    }
-		if (givenScriptName.startsWith("JS*")) {
-			givenScriptName = givenScriptName.substring(3);
-			givenScriptName = new File(runTime.fSxProjectTestScriptsJS, givenScriptName).getPath();
-		}
-    String scriptName = new File(givenScriptName).getName();
-    if (scriptName.contains(".")) {
-      parts = scriptName.split("\\.");
-      givenScriptScript = parts[0];
-      givenScriptType = parts[1];
+			String scriptLocation = givenName;
+			givenScriptExists = false;
+			if (givenScriptHost.contains("github.com")) {
+				givenScriptHost = "https://raw.githubusercontent.com/";
+				givenScriptFolder = givenScriptFolder.replace("tree/", "");
+				givenScriptScript = givenScriptName + "/" + givenScriptName + ".js";
+				givenScriptScriptType = RJSCRIPT;
+				scriptLocation = givenScriptHost + givenScriptFolder + givenScriptScript;
+				String content = "";
+				if (0 < FileManager.isUrlUseabel(scriptLocation)) {
+					content = FileManager.downloadURLtoString(scriptLocation);
+				} else {
+					givenScriptExists = false;
+				}
+				if (!content.isEmpty()) {
+					givenScriptType = "JS-NET";
+					givenScriptScript = content;
+					givenScriptExists = true;
+					try {
+						uGivenScript = new URL(givenScriptHost + givenScriptFolder + givenScriptName);
+					} catch (Exception ex) {
+						givenScriptExists = false;
+					}
+				}
+			}
+			if (!givenScriptExists) {
+				runTime.terminate(-1, "given script location not supported or not valid:\n%s", scriptLocation);
+			}
     } else {
-      givenScriptScript = scriptName;
-    }
-    if (sameFolder && scriptProject != null) {
-      givenScriptName = new File(scriptProject, givenScriptName).getPath();
-    } else if (sameFolder && uScriptProject != null) {
-      givenScriptHost = uScriptProject.getHost();
-      givenScriptFolder = uScriptProject.getPath().substring(1);
-    } else if (scriptProject == null && givenScriptHost.isEmpty()) {
-      String fpParent = new File(givenScriptName).getParent();
-      if (fpParent == null || fpParent.isEmpty()) {
-        scriptProject = null;
-      } else {
-        scriptProject = new File(givenScriptName).getParentFile();
-      }
-    }
-    if (!givenScriptHost.isEmpty()) {
-      try {
-        uGivenScript = new URL("http://" + givenScriptHost + "/" + givenScriptFolder + givenScriptName);
-        if (-1 < FileManager.isUrlUseabel(uGivenScript)) {
-          givenScriptScriptType = RPYTHON;
-          uGivenScriptFile = new URL(uGivenScript.toString() + "/" + givenScriptScript + ".py.txt");
-          if (1 > FileManager.isUrlUseabel(uGivenScriptFile)) {
-            givenScriptScriptType = RRUBY;
-            uGivenScriptFile = new URL(uGivenScript.toString() + "/" + givenScriptScript + ".rb.txt");
-            if (1 > FileManager.isUrlUseabel(uGivenScriptFile)) {
-              givenScriptExists = false;
-            }
-          }
-        }
-        if (givenScriptExists && uScriptProject == null) {
-          uScriptProject = new URL("http://" + givenScriptHost + "/" + givenScriptFolder);
-        }
-      } catch (Exception ex) {
-        givenScriptExists = false;
-      }
-    }
-    Object[] vars = new Object[]{givenScriptHost, givenScriptFolder, givenScriptName, givenScriptScript, givenScriptType, givenScriptScriptType, uGivenScript, uGivenScriptFile, givenScriptExists, scriptProject, uScriptProject};
+			boolean sameFolder = givenScriptName.startsWith("./");
+			if (sameFolder) {
+				givenScriptName = givenScriptName.substring(2);
+			}
+			if (givenScriptName.startsWith("JS*")) {
+				givenScriptName = givenScriptName.substring(3);
+				givenScriptName = new File(runTime.fSxProjectTestScriptsJS, givenScriptName).getPath();
+			}
+			String scriptName = new File(givenScriptName).getName();
+			if (scriptName.contains(".")) {
+				parts = scriptName.split("\\.");
+				givenScriptScript = parts[0];
+				givenScriptType = parts[1];
+			} else {
+				givenScriptScript = scriptName;
+			}
+			if (sameFolder && scriptProject != null) {
+				givenScriptName = new File(scriptProject, givenScriptName).getPath();
+			} else if (sameFolder && uScriptProject != null) {
+				givenScriptHost = uScriptProject.getHost();
+				givenScriptFolder = uScriptProject.getPath().substring(1);
+			} else if (scriptProject == null && givenScriptHost.isEmpty()) {
+				String fpParent = new File(givenScriptName).getParent();
+				if (fpParent == null || fpParent.isEmpty()) {
+					scriptProject = null;
+				} else {
+					scriptProject = new File(givenScriptName).getParentFile();
+				}
+			}
+		}
+    Object[] vars = new Object[]{givenScriptHost, givenScriptFolder, givenScriptName, givenScriptScript, givenScriptType,
+			givenScriptScriptType, uGivenScript, uGivenScriptFile, givenScriptExists, scriptProject, uScriptProject};
     return vars;
   }
 
@@ -389,20 +409,24 @@ public class Runner {
 //          return -9999;
 //        }
       }
-      File fScript = Runner.getScriptFile(new File(givenScriptName));
-      if (fScript == null) {
-        return -9999;
-      }
-      if (!fScript.getName().endsWith(EJSCRIPT)) {
-        log(-1, "only supported currently: %s\n%s", RJSCRIPT, fScript);
-        return -9999;
-      }
-      fScript = new File(FileManager.normalizeAbsolute(fScript.getPath(), true));
-      if (null == RunTime.scriptProject) {
-        RunTime.scriptProject = fScript.getParentFile().getParentFile();
-      }
-      log(lvl, "Trying to run script:\n%s", fScript);
-      exitCode = Runner.runjs(fScript, givenScriptScript, args);
+			if ("JS-NET".equals(givenScriptType)) {
+				exitCode = Runner.runjs(null, uGivenScript, givenScriptScript, args);
+			} else {
+				File fScript = Runner.getScriptFile(new File(givenScriptName));
+				if (fScript == null) {
+					return -9999;
+				}
+				if (!fScript.getName().endsWith(EJSCRIPT)) {
+					log(-1, "only supported currently: %s\n%s", RJSCRIPT, fScript);
+					return -9999;
+				}
+				fScript = new File(FileManager.normalizeAbsolute(fScript.getPath(), true));
+				if (null == RunTime.scriptProject) {
+					RunTime.scriptProject = fScript.getParentFile().getParentFile();
+				}
+				log(lvl, "Trying to run script:\n%s", fScript);
+				exitCode = Runner.runjs(fScript, null, givenScriptScript, args);
+			}
       return exitCode;
     }
   }
