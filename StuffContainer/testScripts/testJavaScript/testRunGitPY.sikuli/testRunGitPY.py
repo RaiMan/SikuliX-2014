@@ -1,5 +1,1 @@
 runScript("git*showcasePY")
-ImagePath.reset()
-runScript("git*showcaseRB")
-ImagePath.reset()
-runScript("git*showcaseJS")
