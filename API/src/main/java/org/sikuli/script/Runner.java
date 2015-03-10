@@ -24,6 +24,7 @@ public class Runner {
   public static Map<String, String> typeEndings = new HashMap<String, String>();
   public static String ERUBY = "rb";
   public static String EPYTHON = "py";
+  public static String NPYTHON = "py.txt";
   public static String EJSCRIPT = "js";
   public static String EPLAIN = "txt";
   public static String EDEFAULT = EPYTHON;
@@ -48,6 +49,7 @@ public class Runner {
 
   static {
       EndingTypes.put(EPYTHON, CPYTHON);
+      EndingTypes.put(NPYTHON, CPYTHON);
       EndingTypes.put(ERUBY, CRUBY);
       EndingTypes.put(EJSCRIPT, CJSCRIPT);
       EndingTypes.put(EPLAIN, CPLAIN);
