@@ -300,6 +300,7 @@ public class Runner {
       }
 			String scriptLocation = givenName;
 			givenScriptExists = false;
+      String content = "";
       if (givenScriptHost.contains("github.com")) {
         givenScriptHost = "https://raw.githubusercontent.com/";
         givenScriptFolder = givenScriptFolder.replace("tree/", "");
@@ -309,10 +310,17 @@ public class Runner {
             runTime.terminate(1, ".zip from git not yet supported\n%s", scriptLocation);
           }
         } else {
+          for (String suffix : Runner.EndingTypes.keySet()) {
+            givenScriptScript = givenScriptName + "/" + givenScriptName + "." + suffix;
+            scriptLocation = givenScriptHost + givenScriptFolder + givenScriptScript;
+            if (0 < FileManager.isUrlUseabel(scriptLocation)) {
+              content = FileManager.downloadURLtoString(scriptLocation);
+              break;
+            }
+          }
           givenScriptScript = givenScriptName + "/" + givenScriptName + ".js";
           givenScriptScriptType = RJSCRIPT;
           scriptLocation = givenScriptHost + givenScriptFolder + givenScriptScript;
-          String content = "";
           if (0 < FileManager.isUrlUseabel(scriptLocation)) {
             content = FileManager.downloadURLtoString(scriptLocation);
           } else {
