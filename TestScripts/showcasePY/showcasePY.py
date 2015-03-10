@@ -14,10 +14,8 @@ use(r.below(100))
 click("quickstart")
 use()
 wait(3)
-if RunTime.get().runningMac:
+
+if RUNTIME.runningMac:
   write("#M.w")
 else:
   write("#C.w")
-
-
-

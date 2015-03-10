@@ -15,6 +15,5 @@ main = function() {
 	closeBrowserWindow();
 };
 
-Sikulix.popup("Hello from a JavaScript script ;-)");
-Debug.on(3);
+Sikulix.popup("Hello from git showcase JavaScript");
 main();
