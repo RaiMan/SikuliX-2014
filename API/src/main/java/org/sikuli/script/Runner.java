@@ -267,6 +267,7 @@ public class Runner {
 	}
 
   public static Object[] runBoxInit(String givenName, File scriptProject, URL uScriptProject) {
+    String gitScripts = "https://github.com/RaiMan/SikuliX-2014/tree/master/TestScripts/"; 
     String givenScriptHost = "";
     String givenScriptFolder = "";
     String givenScriptName = "";
@@ -279,6 +280,9 @@ public class Runner {
     givenScriptName = givenName;
     String[] parts = null;
 		int isNet;
+    if (givenName.toLowerCase().startsWith("git*")) {
+      givenName = gitScripts + givenName.substring(4);
+    }
     if (-1 < (isNet = givenName.indexOf("://"))) {
 			String payload = givenName.substring(isNet+3);
 			payload = payload.replaceFirst("/", "#");
@@ -328,8 +332,7 @@ public class Runner {
 				givenScriptName = givenScriptName.substring(2);
 			}
 			if (givenScriptName.startsWith("JS*")) {
-				givenScriptName = givenScriptName.substring(3);
-				givenScriptName = new File(runTime.fSxProjectTestScriptsJS, givenScriptName).getPath();
+				givenScriptName = new File(runTime.fSxProjectTestScriptsJS, givenScriptName.substring(3)).getPath();
 			}
 			String scriptName = new File(givenScriptName).getName();
 			if (scriptName.contains(".")) {

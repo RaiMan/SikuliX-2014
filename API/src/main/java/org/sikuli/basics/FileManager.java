@@ -878,7 +878,7 @@ public class FileManager {
       return makeURL(uRes, fName);
     } else if ("file".equals(uRes.getProtocol())) {
       aURL = makeURL(new File(slashify(uRes.getPath(), false), slashify(fName, false)).getPath(), uRes.getProtocol());
-    } else if ("http".equals(uRes.getProtocol())) {
+    } else if (uRes.getProtocol().startsWith("http")) {
       String sRes = uRes.toString();
 			if (!sRes.endsWith("/")) {
 				sRes += "/";
