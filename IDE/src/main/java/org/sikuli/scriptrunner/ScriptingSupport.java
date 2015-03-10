@@ -549,8 +549,8 @@ public class ScriptingSupport {
           if (null == scriptRunner.get(givenScriptScriptType)) {
             log(-1, "running from net not supported for %s\n%s", givenScriptScriptType, uGivenScript);
           } else {
-            ImagePath.add(uGivenScript);
-            exitCode = currentRunner.runScript(null, null, new String[] {givenScriptScript}, null);
+            ImagePath.addHTTP(uGivenScript.toExternalForm());
+            exitCode = scriptRunner.get(givenScriptScriptType).runScript(null, null, new String[] {givenScriptScript}, null);
           }
         }
       }
