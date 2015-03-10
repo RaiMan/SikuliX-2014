@@ -89,8 +89,10 @@ except:
 from org.sikuli.script import Runner
 from org.sikuli.util import JythonHelper
 
+RUNTIME = RunTime.get()
+
 ##
-# a token to check the availability 
+# a token to check the availability
 #
 SIKULIX_IS_WORKING = sys.version.split("(")[0]
 
@@ -161,13 +163,13 @@ def resetImagePath(path = None):
 # Sikuli IDE sets this to the path of the bundle of source code (.sikuli)
 # automatically. If you write Sikuli scripts using Sikuli IDE, you should
 # know what you are doing.
-# returns true if path is valid and exists, false otherwise (no changes) 
+# returns true if path is valid and exists, false otherwise (no changes)
 #
 def setBundlePath(path):
     return ImagePath.setBundlePath(path)
 
 ##
-# return the current bundlepath (usually the folder .sikuli) 
+# return the current bundlepath (usually the folder .sikuli)
 # or None if no bundlepath is defined
 # no trailing path sep
 #
@@ -175,7 +177,7 @@ def getBundlePath():
     return ImagePath.getBundlePath()
 
 ##
-# return the current bundlepath (usually the folder .sikuli) 
+# return the current bundlepath (usually the folder .sikuli)
 # or None if no bundlepath is defined
 # with a trailing path separator (for string concatenation)
 #
@@ -213,7 +215,7 @@ def getParentFolder():
 def makePath(*paths):
   if len(paths) == 0: return None
   path = paths[0]
-  if len(paths) > 1: 
+  if len(paths) > 1:
     for p in paths[1:]:
       path = os.path.join(path, p)
   if path[-1] == Settings.getFilePathSeperator():

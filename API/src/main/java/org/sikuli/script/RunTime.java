@@ -699,7 +699,7 @@ int nMonitors = 0;
       String sysShort = "win";
       if (!runningWinApp && !testingWinApp) {
         sysShort = runningOn.toString().toLowerCase();
-      } 
+      }
       String fpLibsFrom = "";
       if (runningJar) {
         fpLibsFrom = fSxBaseJar.getAbsolutePath();
@@ -2226,6 +2226,9 @@ int nMonitors = 0;
           if (!sEntry.toUpperCase().endsWith(".JAR")) {
             continue;
           }
+					if (!new File(sEntry).getName().contains(artefact)) {
+						continue;
+					}
         }
         cpe = new File(entry.getPath()).getPath();
         break;
@@ -2237,7 +2240,7 @@ int nMonitors = 0;
   public String isJarOnClasspath(String artefact) {
     return isOnClasspath(artefact, true);
   }
-  
+
   public String isOnClasspath(String artefact) {
     return isOnClasspath(artefact, false);
   }

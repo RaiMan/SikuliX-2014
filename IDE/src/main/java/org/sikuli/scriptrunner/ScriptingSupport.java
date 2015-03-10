@@ -546,23 +546,13 @@ public class ScriptingSupport {
         if (Runner.RJSCRIPT.equals(givenScriptScriptType)) {
           exitCode = Runner.runjs(null, uGivenScript, givenScriptScript, args);
         } else {
-          if (null == scriptRunner.get(givenScriptScriptType)) {
+					currentRunner = scriptRunner.get(givenScriptScriptType);
+          if (null == currentRunner) {
             log(-1, "running from net not supported for %s\n%s", givenScriptScriptType, uGivenScript);
           } else {
-            ImagePath.add(uGivenScript);
+            ImagePath.addHTTP(uGivenScript.toExternalForm());
             exitCode = currentRunner.runScript(null, null, new String[] {givenScriptScript}, null);
           }
-        }
-      }
-      if (uGivenScript != null) {
-        if (givenScriptExists) {
-          String script = FileManager.downloadURLtoString(uGivenScriptFile);
-          currentRunner = getRunner(null, givenScriptScriptType);
-          if (currentRunner != null) {
-          }
-        } else {
-          log(lvl, "givenScriptName not available:\n%s", uGivenScript);
-          exitCode = -9999;
         }
       } else {
         log(lvl, "givenScriptName:\n%s", givenScriptName);
