@@ -300,31 +300,38 @@ public class Runner {
       }
 			String scriptLocation = givenName;
 			givenScriptExists = false;
-			if (givenScriptHost.contains("github.com")) {
-				givenScriptHost = "https://raw.githubusercontent.com/";
-				givenScriptFolder = givenScriptFolder.replace("tree/", "");
-				givenScriptScript = givenScriptName + "/" + givenScriptName + ".js";
-				givenScriptScriptType = RJSCRIPT;
-				scriptLocation = givenScriptHost + givenScriptFolder + givenScriptScript;
-				String content = "";
-				if (0 < FileManager.isUrlUseabel(scriptLocation)) {
-					content = FileManager.downloadURLtoString(scriptLocation);
-				} else {
-					givenScriptExists = false;
-				}
-				if (!content.isEmpty()) {
-					givenScriptType = "JS-NET";
-					givenScriptScript = content;
-					givenScriptExists = true;
-					try {
-						uGivenScript = new URL(givenScriptHost + givenScriptFolder + givenScriptName);
-					} catch (Exception ex) {
-						givenScriptExists = false;
-					}
-				}
-			}
+      if (givenScriptHost.contains("github.com")) {
+        givenScriptHost = "https://raw.githubusercontent.com/";
+        givenScriptFolder = givenScriptFolder.replace("tree/", "");
+        if (givenScriptName.endsWith(".zip")) {
+          scriptLocation = givenScriptHost + givenScriptFolder + givenScriptName;          
+          if (0 < FileManager.isUrlUseabel(scriptLocation)) {
+            runTime.terminate(1, ".zip from git not yet supported\n%s", scriptLocation);
+          }
+        } else {
+          givenScriptScript = givenScriptName + "/" + givenScriptName + ".js";
+          givenScriptScriptType = RJSCRIPT;
+          scriptLocation = givenScriptHost + givenScriptFolder + givenScriptScript;
+          String content = "";
+          if (0 < FileManager.isUrlUseabel(scriptLocation)) {
+            content = FileManager.downloadURLtoString(scriptLocation);
+          } else {
+            givenScriptExists = false;
+          }
+          if (!content.isEmpty()) {
+            givenScriptType = "JS-NET";
+            givenScriptScript = content;
+            givenScriptExists = true;
+            try {
+              uGivenScript = new URL(givenScriptHost + givenScriptFolder + givenScriptName);
+            } catch (Exception ex) {
+              givenScriptExists = false;
+            }
+          }
+        }
+      }
 			if (!givenScriptExists) {
-				runTime.terminate(-1, "given script location not supported or not valid:\n%s", scriptLocation);
+				runTime.terminate(1, "given script location not supported or not valid:\n%s", scriptLocation);
 			}
     } else {
 			boolean sameFolder = givenScriptName.startsWith("./");

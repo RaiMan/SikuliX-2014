@@ -50,7 +50,7 @@
     </dependency>
     <dependency>
       <groupId>com.sikulix</groupId>
-      <artifactId>sikulixjygments</artifactId>
+      <artifactId>sxjygments</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

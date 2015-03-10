@@ -541,6 +541,9 @@ public class ScriptingSupport {
     private int run() {
       int exitCode = -1;
       IScriptRunner currentRunner = null;
+      if (givenScriptType == "JS-NET") {
+				return Runner.runjs(null, uGivenScript, givenScriptScript, args);        
+      }
       if (uGivenScript != null) {
         if (givenScriptExists) {
           log(lvl, "givenScriptName:\n%s", uGivenScript);
