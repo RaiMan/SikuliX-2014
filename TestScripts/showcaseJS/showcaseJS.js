@@ -12,17 +12,7 @@ main = function() {
 	use1(r.below(100));
 	click("quickstart");
 	wait(3);
-	closeApp();
-};
-
-closeApp = function() {
-	if (RunTime.get().runningMac) {
-		write("#M.q");
-	} else if (RunTime.get().runningWindows) {
-		write("#A.#F4.");
-	} else {
-		write("#C.q");
-	};
+	closeBrowserWindow();
 };
 
 Sikulix.popup("Hello from a JavaScript script ;-)");

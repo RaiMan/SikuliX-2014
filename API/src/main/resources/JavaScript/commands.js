@@ -107,3 +107,21 @@ write = function() {
 paste = function() {
   return makeRetVal(Commands.call("paste", getArgsForJ(arguments)));
 };
+
+closeApp = function() {
+	if (RunTime.get().runningMac) {
+		write("#M.q");
+	} else if (RunTime.get().runningWindows) {
+		write("#A.#F4.");
+	} else {
+		write("#C.q");
+	};
+};
+
+closeBrowserWindow = function() {
+	if (RunTime.get().runningMac) {
+		write("#M.w");
+	} else {
+		write("#C.w");
+	};
+};
