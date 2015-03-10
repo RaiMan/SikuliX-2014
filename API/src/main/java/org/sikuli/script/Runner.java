@@ -20,11 +20,11 @@ public class Runner {
   static final int lvl = 3;
   static final RunTime runTime = RunTime.get();
 
-  public static Map<String, String> EndingTypes = new HashMap<String, String>();
+  public static Map<String, String> endingTypes = new HashMap<String, String>();
   public static Map<String, String> typeEndings = new HashMap<String, String>();
+  public static Map<String, String> runnerTypes = new HashMap<String, String>();
   public static String ERUBY = "rb";
   public static String EPYTHON = "py";
-  public static String NPYTHON = "py.txt";
   public static String EJSCRIPT = "js";
   public static String EPLAIN = "txt";
   public static String EDEFAULT = EPYTHON;
@@ -48,14 +48,16 @@ public class Runner {
           "importClass(Packages.org.sikuli.basics.Settings);";
 
   static {
-      EndingTypes.put(EPYTHON, CPYTHON);
-      EndingTypes.put(NPYTHON, CPYTHON);
-      EndingTypes.put(ERUBY, CRUBY);
-      EndingTypes.put(EJSCRIPT, CJSCRIPT);
-      EndingTypes.put(EPLAIN, CPLAIN);
-      for (String k : EndingTypes.keySet()) {
-        typeEndings.put(EndingTypes.get(k), k);
+      endingTypes.put(EPYTHON, CPYTHON);
+      endingTypes.put(ERUBY, CRUBY);
+      endingTypes.put(EJSCRIPT, CJSCRIPT);
+      endingTypes.put(EPLAIN, CPLAIN);
+      for (String k : endingTypes.keySet()) {
+        typeEndings.put(endingTypes.get(k), k);
       }
+      runnerTypes.put(EPYTHON, RPYTHON);
+      runnerTypes.put(ERUBY, RRUBY);
+      runnerTypes.put(EJSCRIPT, RJSCRIPT);
   }
 
   static void log(int level, String message, Object... args) {
@@ -192,7 +194,7 @@ public class Runner {
     }
     File fScript = null;
     for (File aFile : content) {
-      for (String suffix : Runner.EndingTypes.keySet()) {
+      for (String suffix : Runner.endingTypes.keySet()) {
         if (!aFile.getName().endsWith("." + suffix)) {
           continue;
         }
@@ -312,24 +314,17 @@ public class Runner {
             runTime.terminate(1, ".zip from git not yet supported\n%s", scriptLocation);
           }
         } else {
-          for (String suffix : Runner.EndingTypes.keySet()) {
+          for (String suffix : endingTypes.keySet()) {
             givenScriptScript = givenScriptName + "/" + givenScriptName + "." + suffix;
             scriptLocation = givenScriptHost + givenScriptFolder + givenScriptScript;
+            givenScriptScriptType = runnerTypes.get(suffix);
             if (0 < FileManager.isUrlUseabel(scriptLocation)) {
               content = FileManager.downloadURLtoString(scriptLocation);
               break;
             }
           }
-          givenScriptScript = givenScriptName + "/" + givenScriptName + ".js";
-          givenScriptScriptType = RJSCRIPT;
-          scriptLocation = givenScriptHost + givenScriptFolder + givenScriptScript;
-          if (0 < FileManager.isUrlUseabel(scriptLocation)) {
-            content = FileManager.downloadURLtoString(scriptLocation);
-          } else {
-            givenScriptExists = false;
-          }
           if (!content.isEmpty()) {
-            givenScriptType = "JS-NET";
+            givenScriptType = "NET";
             givenScriptScript = content;
             givenScriptExists = true;
             try {
@@ -337,11 +332,13 @@ public class Runner {
             } catch (Exception ex) {
               givenScriptExists = false;
             }
+          } else {
+            givenScriptExists = false;
           }
         }
       }
 			if (!givenScriptExists) {
-				runTime.terminate(1, "given script location not supported or not valid:\n%s", scriptLocation);
+				log(-1, "given script location not supported or not valid:\n%s", scriptLocation);
 			}
     } else {
 			boolean sameFolder = givenScriptName.startsWith("./");
@@ -429,8 +426,12 @@ public class Runner {
 //          return -9999;
 //        }
       }
-			if ("JS-NET".equals(givenScriptType)) {
-				exitCode = Runner.runjs(null, uGivenScript, givenScriptScript, args);
+			if ("NET".equals(givenScriptType)) {
+        if (Runner.RJSCRIPT.equals(givenScriptScriptType)) {
+          exitCode = Runner.runjs(null, uGivenScript, givenScriptScript, args);
+        } else {
+          log(-1, "running from net not supported for %s\n%s", givenScriptScriptType, uGivenScript);
+        }
 			} else {
 				File fScript = Runner.getScriptFile(new File(givenScriptName));
 				if (fScript == null) {

@@ -301,8 +301,8 @@ public class ScriptingSupport {
       Runner.EDEFAULT = scriptRunner.get(Runner.RDEFAULT).getFileEndings()[0];
       for (IScriptRunner r : scriptRunner.values()) {
         for (String e : r.getFileEndings()) {
-          if (!supportedRunner.containsKey(Runner.EndingTypes.get(e))) {
-            supportedRunner.put(Runner.EndingTypes.get(e), r);
+          if (!supportedRunner.containsKey(Runner.endingTypes.get(e))) {
+            supportedRunner.put(Runner.endingTypes.get(e), r);
           }
         }
       }
@@ -316,7 +316,7 @@ public class ScriptingSupport {
     IScriptRunner currentRunner = null;
     String ending = null;
     if (script != null) {
-      for (String suffix : Runner.EndingTypes.keySet()) {
+      for (String suffix : Runner.endingTypes.keySet()) {
         if (script.endsWith(suffix)) {
           ending = suffix;
           break;
@@ -329,7 +329,7 @@ public class ScriptingSupport {
       }
       ending = Runner.typeEndings.get(type);
       if (ending == null) {
-        if (Runner.EndingTypes.containsKey(type)) {
+        if (Runner.endingTypes.containsKey(type)) {
           ending = type;
         }
       }
@@ -469,7 +469,7 @@ public class ScriptingSupport {
         } else if (entry.getName().endsWith(".$py.class")) {
           return false;
         } else {
-          for (String ending : Runner.EndingTypes.keySet()) {
+          for (String ending : Runner.endingTypes.keySet()) {
             if (entry.getName().endsWith("." + ending)) {
               return false;
             }
@@ -541,17 +541,24 @@ public class ScriptingSupport {
     private int run() {
       int exitCode = -1;
       IScriptRunner currentRunner = null;
-      if (givenScriptType == "JS-NET") {
-				return Runner.runjs(null, uGivenScript, givenScriptScript, args);        
+      if (givenScriptType == "NET" && givenScriptExists) {
+        log(lvl, "running script from net:\n%s", uGivenScript);
+        if (Runner.RJSCRIPT.equals(givenScriptScriptType)) {
+          exitCode = Runner.runjs(null, uGivenScript, givenScriptScript, args);
+        } else {
+          if (null == scriptRunner.get(givenScriptScriptType)) {
+            log(-1, "running from net not supported for %s\n%s", givenScriptScriptType, uGivenScript);
+          } else {
+            ImagePath.add(uGivenScript);
+            exitCode = currentRunner.runScript(null, null, new String[] {givenScriptScript}, null);
+          }
+        }
       }
       if (uGivenScript != null) {
         if (givenScriptExists) {
-          log(lvl, "givenScriptName:\n%s", uGivenScript);
           String script = FileManager.downloadURLtoString(uGivenScriptFile);
           currentRunner = getRunner(null, givenScriptScriptType);
           if (currentRunner != null) {
-            ImagePath.add(uGivenScript);
-            exitCode = currentRunner.runScript(null, null, new String[] {script}, null);
           }
         } else {
           log(lvl, "givenScriptName not available:\n%s", uGivenScript);
