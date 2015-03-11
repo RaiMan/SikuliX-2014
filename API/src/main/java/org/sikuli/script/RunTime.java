@@ -546,13 +546,14 @@ int nMonitors = 0;
     CodeSource codeSrc = clsRef.getProtectionDomain().getCodeSource();
     String base = null;
     if (codeSrc != null && codeSrc.getLocation() != null) {
-      base = codeSrc.getLocation().getPath();
+      base = FileManager.slashify(codeSrc.getLocation().getPath(), false);
     }
     appType = "from a jar";
     if (base != null) {
       fSxBaseJar = new File(base);
       String jn = fSxBaseJar.getName();
       fSxBase = fSxBaseJar.getParentFile();
+      runTime.log(3, "fSxBase: %s", fSxBase);
       log(lvl, "runs as %s in: %s", jn, fSxBase.getAbsolutePath());
       if (jn.contains("classes")) {
         runningJar = false;
