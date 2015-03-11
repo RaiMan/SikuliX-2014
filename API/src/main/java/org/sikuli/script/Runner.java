@@ -178,12 +178,14 @@ public class Runner {
 					}
 					someJS = runTime.getOption("runsetup", "");
 					if (!someJS.isEmpty()) {
+            log(lvl, "Options.runsetup: %s", someJS);
 						runjs(null, null, someJS, null);
 					}
 					RunBox rb = new RunBox(givenScriptName, runTime.getSikuliArgs(), runAsTest);
 					exitCode = rb.run();
 					someJS = runTime.getOption("runteardown", "");
 					if (!someJS.isEmpty()) {
+            log(lvl, "Options.runteardown: %s", someJS);
 						runjs(null, null, someJS, null);
 					}
 					lastReturnCode = exitCode;

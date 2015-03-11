@@ -1088,8 +1088,9 @@ int nMonitors = 0;
 //<editor-fold defaultstate="collapsed" desc="options handling">
   private void loadOptions(Type typ) {
 		for (File aFile : new File[] {fWorkDir, fUserDir, fSikulixAppPath}) {
+      log(lvl, "loadOptions: check: %s", aFile);
 			fOptions = new File(aFile, fnOptions);
-			if (fOptions.exists()) {
+      if (fOptions.exists()) {
 				break;
 			} else {
 				fOptions = null;
