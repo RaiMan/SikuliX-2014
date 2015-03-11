@@ -213,6 +213,7 @@ public class JythonHelper {
 		}
   }
 
+//TODO check signature (instance method)
   public boolean checkCallback(Object[] args) {
     PyInstance inst = new PyInstance(args[0]);
     String mName = (String) args[1];
