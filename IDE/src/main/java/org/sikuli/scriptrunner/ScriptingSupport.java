@@ -376,6 +376,15 @@ public class ScriptingSupport {
       return;
     }
 
+    runScripts = Runner.evalArgs(args);
+		if (runScripts.length > 0) {
+			String scriptName = runScripts[0];
+			if (scriptName != null && !scriptName.isEmpty() && scriptName.startsWith("git*")) {
+				run(scriptName, runTime.getSikuliArgs());
+				return;
+			}
+		}
+
     IScriptRunner currentRunner = null;
 
     if (args != null && args.length > 1 && args[0].startsWith("-testSetup")) {
