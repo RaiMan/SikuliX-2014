@@ -1336,7 +1336,7 @@ int nMonitors = 0;
    */
   public void dumpOptions() {
     if (hasOptions()) {
-      logp("*** options dump %s", (fOptions != null ? "" : fOptions));
+      logp("*** options dump:\n%s", (fOptions == null ? "" : fOptions));
       for (String sOpt : getOptions().keySet()) {
         logp("%s = %s", sOpt, getOption(sOpt));
       }

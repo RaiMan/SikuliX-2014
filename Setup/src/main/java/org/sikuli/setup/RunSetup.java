@@ -178,7 +178,7 @@ public class RunSetup {
     }
     downloadJython = new File(runTime.SikuliJythonMaven).getName();
     downloadJRuby = new File(runTime.SikuliJRubyMaven).getName();
-  
+
 //    CodeSource codeSrc = RunSetup.class.getProtectionDomain().getCodeSource();
 //    if (codeSrc != null && codeSrc.getLocation() != null) {
 //      codeSrc.getLocation();
@@ -683,10 +683,10 @@ public class RunSetup {
       if (libDownloaded == null) {
         downloadOK &= downloadJarFromMavenSx(libDownloadedName, dlDirBuild, null, libDownloadedName);
       } else {
-        copyFromDownloads(libDownloaded, libDownloadedName, jarsList[7]);
+        copyFromDownloads(libDownloaded, libDownloadedName, localJar);
       }
     }
-    
+
     if (getIDE) {
       localJar = new File(workDir, localIDE).getAbsolutePath();
       dlOK = download(runTime.downloadBaseDir, dlDirGeneric, dlDirBuild, downloadIDE, localJar, "IDE/Scripting");
@@ -702,7 +702,7 @@ public class RunSetup {
         downloadOK &= downloadJarFromMaven(runTime.SikuliJythonMaven, dlDirGeneric, dlDirGenericApp, targetJar, "Jython");
       }
     }
-    
+
     if (getJRuby) {
       targetJar = new File(workDir, localJRuby).getAbsolutePath();
       downloadOK &= downloadJarFromMaven(runTime.SikuliJRubyMaven, dlDirGeneric, dlDirGenericApp, targetJar, "JRuby");
@@ -1465,7 +1465,7 @@ public class RunSetup {
     }
     return artefact;
   }
-  
+
   private static File downloadedAlreadyAsk(String path, String item, String itemName, String folderName) {
     File artefact = new File(path, item);
     if (artefact.exists()) {
@@ -1523,11 +1523,11 @@ public class RunSetup {
     }
     return mPath + mJar;
   }
-  
+
   private static String getMavenJarName(String src) {
     return new File(getMavenJarPath(src)).getName();
   }
-  
+
   private static boolean downloadJarFromMavenSx(String src, String targetDir,
           String targetJar, String itemName) {
     String fpJar;
