@@ -57,6 +57,7 @@ public class RunTime {
     scriptProject = null;
     uScriptProject = null;
   }
+ public static String appDataMsg = "";
 
 //<editor-fold defaultstate="collapsed" desc="logging">
   private final String me = "RunTime%s: ";
@@ -192,10 +193,6 @@ public class RunTime {
       }
       runTime.fpJarLibs += runTime.sysName + "/libs" + runTime.javaArch;
       runTime.fpSysLibs = runTime.fpJarLibs.substring(1);
-//</editor-fold>
-
-      debugLevelSaved = Debug.getDebugLevel();
-      debugLogfileSaved = Debug.logfile;
 
       String aFolder = System.getProperty("user.home");
       if (aFolder == null || aFolder.isEmpty() || !(runTime.fUserDir = new File(aFolder)).exists()) {
@@ -206,6 +203,28 @@ public class RunTime {
       if (aFolder == null || aFolder.isEmpty() || !(runTime.fWorkDir = new File(aFolder)).exists()) {
         runTime.terminate(-1, "JavaSystemProperty::user.dir not valid");
       }
+
+			runTime.fSikulixAppPath = new File("SikulixAppDataNotAvailable");
+			if (runTime.runningWindows) {
+				appDataMsg = "init: Windows: %APPDATA% not valid (null or empty) or is not accessible:\n%s";
+				String tmpdir = System.getenv("APPDATA");
+				if (tmpdir != null && !tmpdir.isEmpty()) {
+					runTime.fAppPath = new File(tmpdir);
+					runTime.fSikulixAppPath = new File(runTime.fAppPath, "Sikulix");
+				}
+			} else if (runTime.runningMac) {
+				appDataMsg = "init: Mac: SikulxAppData does not exist or is not accessible:\n%s";
+				runTime.fAppPath = new File(runTime.fUserDir, "Library/Application Support");
+				runTime.fSikulixAppPath = new File(runTime.fAppPath, "Sikulix");
+			} else if (runTime.runningLinux) {
+				runTime.fAppPath = runTime.fUserDir;
+				runTime.fSikulixAppPath = new File(runTime.fAppPath, ".Sikulix");
+				appDataMsg = "init: Linux: SikulxAppData does not exist or is not accessible:\n%s";
+			}
+//</editor-fold>
+
+      debugLevelSaved = Debug.getDebugLevel();
+      debugLogfileSaved = Debug.logfile;
 
       File fDebug = new File(runTime.fUserDir, "SikulixDebug.txt");
       if (fDebug.exists()) {
@@ -223,11 +242,11 @@ public class RunTime {
       runTime.fTestFile = new File(runTime.fTestFolder, "SikulixTest.txt");
 
       runTime.loadOptions(typ);
-      int dl = runTime.getOptionNumber("debug.level");
+      int dl = runTime.getOptionNumber("Debug.level");
       if (dl > 0 && Debug.getDebugLevel() < 2) {
         Debug.setDebugLevel(dl);
       }
-      if (Debug.getDebugLevel() > 1) {
+      if (Debug.getDebugLevel() == 2) {
         runTime.dumpOptions();
       }
 
@@ -462,30 +481,12 @@ int nMonitors = 0;
       }
     }
 
-    String msg = "";
-    fSikulixAppPath = new File("NotAvailable");
-    if (runningWindows) {
-      msg = "init: Windows: %APPDATA% not valid (null or empty) or is not accessible:\n%s";
-      tmpdir = System.getenv("APPDATA");
-      if (tmpdir != null && !tmpdir.isEmpty()) {
-        fAppPath = new File(tmpdir);
-        fSikulixAppPath = new File(fAppPath, "Sikulix");
-      }
-    } else if (runningMac) {
-      msg = "init: Mac: SikulxAppData does not exist or is not accessible:\n%s";
-      fAppPath = new File(fUserDir, "Library/Application Support");
-      fSikulixAppPath = new File(fAppPath, "Sikulix");
-    } else if (runningLinux) {
-      fAppPath = fUserDir;
-      fSikulixAppPath = new File(fAppPath, ".Sikulix");
-      msg = "init: Linux: SikulxAppData does not exist or is not accessible:\n%s";
-    }
     try {
       if (!fSikulixAppPath.exists()) {
         fSikulixAppPath.mkdirs();
       }
       if (!fSikulixAppPath.exists()) {
-        terminate (1, msg, fSikulixAppPath);
+        terminate (1, appDataMsg, fSikulixAppPath);
       }
       fSikulixExtensions = new File(fSikulixAppPath, "Extensions");
       fSikulixLib = new File(fSikulixAppPath, "Lib");
@@ -496,7 +497,7 @@ int nMonitors = 0;
       fSikulixExtensions.mkdir();
       fSikulixDownloadsGeneric.mkdir();
     } catch (Exception ex) {
-      terminate (1, msg + "\n" + ex.toString(), fSikulixAppPath);
+      terminate (1, appDataMsg + "\n" + ex.toString(), fSikulixAppPath);
     }
 
 //</editor-fold>
@@ -1086,13 +1087,14 @@ int nMonitors = 0;
 
 //<editor-fold defaultstate="collapsed" desc="options handling">
   private void loadOptions(Type typ) {
-    fOptions = new File(fWorkDir, fnOptions);
-    if (!fOptions.exists()) {
-      fOptions = new File(fUserDir, fnOptions);
-      if (!fOptions.exists()) {
-        fOptions = null;
-      }
-    }
+		for (File aFile : new File[] {fWorkDir, fUserDir, fSikulixAppPath}) {
+			fOptions = new File(aFile, fnOptions);
+			if (fOptions.exists()) {
+				break;
+			} else {
+				fOptions = null;
+			}
+		}
     if (fOptions != null) {
       options = new Properties();
       try {
@@ -1132,10 +1134,16 @@ int nMonitors = 0;
 							cField.setBoolean(null, isOption(sKey));
 						} else if (ccField.getName() == "int"){
 							cField.setInt(null, getOptionNumber(sKey));
+						} else if (ccField.getName() == "float"){
+							cField.setInt(null, getOptionNumber(sKey));
+						} else if (ccField.getName() == "double"){
+							cField.setInt(null, getOptionNumber(sKey));
 						} else if (ccField.getName() == "String") {
 							cField.set(null, getOption(sKey));
 						}
-					} catch (Exception ex) {}
+					} catch (Exception ex) {
+						log(-1, "loadOptions: not possible: %s = %s", sKey, options.getProperty(sKey));
+					}
 				}
 			}
 		}
@@ -1213,7 +1221,7 @@ int nMonitors = 0;
     if (options == null) {
       return "";
     }
-    String pVal = options.getProperty(pName, "").toLowerCase();
+    String pVal = options.getProperty(pName, "");
     return pVal;
   }
 
@@ -1233,7 +1241,7 @@ int nMonitors = 0;
       options.setProperty(pName, sDefault);
       return sDefault;
     }
-    String pVal = options.getProperty(pName, sDefault).toLowerCase();
+    String pVal = options.getProperty(pName, sDefault);
     if (pVal.isEmpty()) {
       options.setProperty(pName, sDefault);
       return sDefault;
@@ -1266,7 +1274,7 @@ int nMonitors = 0;
     if (options == null) {
       return 0;
     }
-    String pVal = options.getProperty(pName, "0").toLowerCase();
+    String pVal = options.getProperty(pName, "0");
     int nVal = 0;
     try {
       nVal = Integer.decode(pVal);
@@ -1287,7 +1295,7 @@ int nMonitors = 0;
     if (options == null) {
       return nDefault;
     }
-    String pVal = options.getProperty(pName, nDefault.toString()).toLowerCase();
+    String pVal = options.getProperty(pName, nDefault.toString());
     int nVal = nDefault;
     try {
       nVal = Integer.decode(pVal);

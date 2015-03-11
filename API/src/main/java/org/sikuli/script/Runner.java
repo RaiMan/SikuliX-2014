@@ -164,6 +164,7 @@ public class Runner {
 
 	static int runScripts(String[] args) {
 		runScripts = Runner.evalArgs(args);
+		String someJS = "";
 		int exitCode = 0;
 		if (runScripts != null && runScripts.length > 0) {
 			if (runScripts[0].contains("RunnerServer")) {
@@ -175,8 +176,16 @@ public class Runner {
 						log(lvl, "Exit code -1: Terminating multi-script-run");
 						break;
 					}
+					someJS = runTime.getOption("runsetup", "");
+					if (!someJS.isEmpty()) {
+						runjs(null, null, someJS, null);
+					}
 					RunBox rb = new RunBox(givenScriptName, runTime.getSikuliArgs(), runAsTest);
 					exitCode = rb.run();
+					someJS = runTime.getOption("runteardown", "");
+					if (!someJS.isEmpty()) {
+						runjs(null, null, someJS, null);
+					}
 					lastReturnCode = exitCode;
 				}
 			}
@@ -224,7 +233,7 @@ public class Runner {
 				} else {
 					ImagePath.setBundlePath(fScript.getParent());
 				}
-			} else {
+			} else if (script != null) {
 				ImagePath.addHTTP(script.toExternalForm());
 			}
 			if (!initSikulix.isEmpty()) {
@@ -271,7 +280,7 @@ public class Runner {
 	}
 
   public static Object[] runBoxInit(String givenName, File scriptProject, URL uScriptProject) {
-    String gitScripts = "https://github.com/RaiMan/SikuliX-2014/tree/master/TestScripts/"; 
+    String gitScripts = "https://github.com/RaiMan/SikuliX-2014/tree/master/TestScripts/";
     String givenScriptHost = "";
     String givenScriptFolder = "";
     String givenScriptName = "";
@@ -309,7 +318,7 @@ public class Runner {
         givenScriptHost = "https://raw.githubusercontent.com/";
         givenScriptFolder = givenScriptFolder.replace("tree/", "");
         if (givenScriptName.endsWith(".zip")) {
-          scriptLocation = givenScriptHost + givenScriptFolder + givenScriptName;          
+          scriptLocation = givenScriptHost + givenScriptFolder + givenScriptName;
           if (0 < FileManager.isUrlUseabel(scriptLocation)) {
             runTime.terminate(1, ".zip from git not yet supported\n%s", scriptLocation);
           }
