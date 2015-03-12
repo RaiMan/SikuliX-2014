@@ -134,7 +134,8 @@ public class Sikulix {
         popup("Hello World\nNothing else to do ( yet ;-)", rt.fSxBaseJar.getName());
         System.exit(1);
       }
-      String runSomeJS = inputText("enter some JavaScript (know what you do - may silently die ;-)", "API:Runner", 10, 60);
+      String runSomeJS = inputText("enter some JavaScript (know what you do - may silently die ;-)"
+              + "\nexample: run(\"git*\") will run the JavaScript showcase from GitHub", "API:Runner", 10, 60);
       if (runSomeJS.isEmpty()) {
         popup("Nothing to do!", "API:Runner");
       } else {
