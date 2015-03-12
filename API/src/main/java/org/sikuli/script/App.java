@@ -6,6 +6,7 @@
  */
 package org.sikuli.script;
 
+import java.awt.Desktop;
 import java.awt.Rectangle;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
@@ -19,6 +20,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.util.HashMap;
@@ -145,6 +148,18 @@ public class App {
       seconds -= 0.5;
     }
     return win;
+  }
+  
+  public boolean openLink(String url) {
+    if (!Desktop.isDesktopSupported()) {
+      return false;
+    }
+    try {
+      Desktop.getDesktop().browse(new URI(url));
+    } catch (Exception ex) {
+      return false;
+    }
+    return true;
   }
 
   private static Region asRegion(Rectangle r) {

@@ -1486,7 +1486,7 @@ public class RunSetup {
       terminate("Unable to copy from Downloads: "
               + artefact.getAbsolutePath() + "\n" + ex.getMessage());
     }
-    log(lvl, "Copied from Downloads: " + item);
+    logPlus(lvl, "Copied from Downloads: " + item);
   }
 
   private static String getMavenJarPath(String src) {

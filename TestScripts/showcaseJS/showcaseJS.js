@@ -1,13 +1,8 @@
 main = function() {
-	importClass(java.awt.Desktop);
-	importClass(java.net.URI);
-
-	if (!Desktop.isDesktopSupported()) {
-		return;
-	}
-	dt = Desktop.getDesktop();
-	dt.browse(new URI("http://sikulix.com"));
-
+  worked = App.openLink("http://sikulix.com");
+  if (!worked) {
+    return false;
+  }
 	r = wait("sxpower", 5);
 	use1(r.below(100));
 	click("quickstart");
