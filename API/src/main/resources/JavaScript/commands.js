@@ -60,39 +60,51 @@ makeRetValDo = function(aObj) {
 	}
 };
 
-use = function () {
+run = function() {
+  if (arguments.length < 1) {
+    return;
+  }
+  jargs = getArgsForJ(arguments);
+  if (arguments.length > 1) {
+    Runner.run(jargs[0]);    
+  } else {
+    Runner.run(jargs[0]);
+  }
+}
+
+use = function() {
   return makeRetValDo(Commands.call("use", getArgsForJ(arguments)));
 };
 
-use1 = function () {
+use1 = function() {
   return makeRetValDo(Commands.call("use1", getArgsForJ(arguments)));
 };
 
-wait = function () {
+wait = function() {
   return makeRetVal(Commands.call("wait", getArgsForJ(arguments)));
 };
 
-waitVanish = function () {
+waitVanish = function() {
   return makeRetVal(Commands.call("waitVanish", getArgsForJ(arguments)));
 };
 
-exists = function () {
+exists = function() {
   return makeRetVal(Commands.call("exists", getArgsForJ(arguments)));
 };
 
-click = function () {
+click = function() {
   return makeRetVal(Commands.call("click", getArgsForJ(arguments)));
 };
 
-doubleClick = function () {
+doubleClick = function() {
   return makeRetVal(Commands.call("doubleClick", getArgsForJ(arguments)));
 };
 
-rightClick = function () {
+rightClick = function() {
   return makeRetVal(Commands.call("rightClick", getArgsForJ(arguments)));
 };
 
-hover = function () {
+hover = function() {
   return makeRetVal(Commands.call("hover", getArgsForJ(arguments)));
 };
 

@@ -165,10 +165,10 @@ public class RunSetup {
 //TODO wrong if version number parts have more than one digit
     minorversion = runTime.getVersionShort().substring(0, 5);
     majorversion = runTime.getVersionShort().substring(0, 3);
-    if (runTime.runningInProject || !runTime.fSxBaseJar.getPath().contains(localSetup)) {
+    localSetup = "sikulixsetup-" + artefactPrefix + ".jar";
+    if (runTime.runningInProject || runTime.fSxBaseJar.getPath().contains(localSetup)) {
       downloadIDE = artefactPrefix + "-1.jar";
       downloadAPI = artefactPrefix + "-2.jar";
-      localSetup = "sikulixsetup-" + artefactPrefix + ".jar";
     } else {
 //TODO change when sikulix.jar is on OSSRH
 //    downloadIDE = getMavenJarName("sikulix");

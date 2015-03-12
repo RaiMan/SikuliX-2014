@@ -296,7 +296,11 @@ public class Runner {
     String[] parts = null;
 		int isNet;
     if (givenName.toLowerCase().startsWith("git*")) {
-      givenName = gitScripts + givenName.substring(4);
+      if (givenName.length() == 4) {
+        givenName = gitScripts + "showcase";
+      } else {
+        givenName = gitScripts + givenName.substring(4);
+      }
     }
     if (-1 < (isNet = givenName.indexOf("://"))) {
 			String payload = givenName.substring(isNet+3);
