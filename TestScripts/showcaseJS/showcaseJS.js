@@ -1,5 +1,5 @@
 main = function() {
-  link = "http://sikulix.co";
+  link = "http://sikulix.com";
   worked = App.openLink(link);
   if (!worked) {
     Debug.error("App.openLink(%s): did not work", link);
