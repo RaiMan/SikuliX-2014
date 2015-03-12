@@ -110,10 +110,10 @@ public class RunSetup {
   private static File folderLibsLux;
   private static String linuxDistro = "*** testing Linux ***";
   private static String osarch;
+
 //TODO set true to test on Mac
   private static boolean isLinux = false;
 
-  // -MF $externals/$fn.o.d -o $externals/$fn.o $src/Vision/$fn
   private static boolean libsProvided = false;
   private static String[] addonFileList = new String[]{null, null, null, null, null};
   private static String[] addonFilePrefix = new String[]{null, null, null, null, null};
@@ -131,6 +131,7 @@ public class RunSetup {
   private static File fDownloadsGenericApp;
 	private static boolean useLibsProvided = false;
   private static File fDownloadsObsolete;
+  private static boolean runningWithProject = false;
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static void logp(String message, Object... args) {
@@ -167,6 +168,9 @@ public class RunSetup {
     majorversion = runTime.getVersionShort().substring(0, 3);
     localSetup = "sikulixsetup-" + artefactPrefix + ".jar";
     if (runTime.runningInProject || runTime.fSxBaseJar.getPath().contains(localSetup)) {
+      if (runTime.fSxBaseJar.getPath().contains(localSetup)) {
+        runningWithProject = true;
+      }
       downloadIDE = artefactPrefix + "-1.jar";
       downloadAPI = artefactPrefix + "-2.jar";
     } else {
@@ -1469,12 +1473,19 @@ public class RunSetup {
   private static File downloadedAlreadyAsk(String path, String item, String itemName, String folderName) {
     File artefact = new File(path, item);
     if (artefact.exists()) {
+      if (runningWithProject) {
+        return artefact;
+      }
       if (popAsk(folderName + " folder has: " + itemName + "\n"
               + artefact.getAbsolutePath()
               + "\nClick YES, if you want to use this for setup processing\n\n"
               + "... or click NO, to ignore and finally download a fresh copy")) {
         return artefact;
       }
+    }
+    if (runningWithProject) {
+      terminate(String.format("invalid use of %s:\n jar %s not found in: \n%s/Downloads...", 
+              localSetup, itemName, runTime.fSikulixAppPath));
     }
     return null;
   }
