@@ -1,6 +1,8 @@
 main = function() {
-  worked = App.openLink("http://sikulix.com");
+  link = "http://sikulix.co";
+  worked = App.openLink(link);
   if (!worked) {
+    Debug.error("App.openLink(%s): did not work", link);
     return false;
   }
 	r = wait("sxpower", 5);

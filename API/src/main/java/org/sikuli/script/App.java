@@ -150,7 +150,7 @@ public class App {
     return win;
   }
   
-  public boolean openLink(String url) {
+  public static boolean openLink(String url) {
     if (!Desktop.isDesktopSupported()) {
       return false;
     }
