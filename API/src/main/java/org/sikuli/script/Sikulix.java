@@ -114,6 +114,8 @@ public class Sikulix {
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
       
+      String f = new File(rt.tessData.get("eng")).getName();
+      
 //      Screen s = new Screen();
       
 //      File fJarLibsLux = new File(rt.fSikulixDownloadsBuild, "sikulixlibslux-1.1.0.jar");
