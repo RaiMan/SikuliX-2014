@@ -46,4 +46,42 @@
 			 <url>${sikulix.deploy.target}</url>
 		 </repository>
 	 </distributionManagement>
+
+  <dependencies>
+    <dependency>
+      <groupId>com.sikulix</groupId>
+      <artifactId>sikulixapi</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>clean package</defaultGoal>
+    <plugins>
+      <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <version>2.4</version>
+        <configuration>
+          <archive>
+            <manifest>
+              <mainClass>org.sikuli.script.Sikulix</mainClass>
+            </manifest>
+          </archive>
+          <descriptors>
+            <descriptor>../Setup/src/main/resources/plain.xml</descriptor>
+          </descriptors>
+<!--          <finalName>sikulixsetupAPI-${project.version}</finalName>-->
+        </configuration>
+        <executions>
+          <execution>
+            <id>make-assembly</id>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>
