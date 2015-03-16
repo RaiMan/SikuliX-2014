@@ -17,7 +17,7 @@
 
 	<packaging>jar</packaging>
 
-	<name>SikuliX Java API</name>
+	<name>SikuliX API</name>
 	<description>... for visual testing and automation</description>
 	<url>http://www.sikulix.com</url>
 

@@ -17,7 +17,7 @@
 
 	<packaging>jar</packaging>
 
-	<name>SikuliX Java API Libs Linux</name>
+	<name>SikuliX Libs Linux</name>
 	<description>supporting native libraries for Linux</description>
 	<url>http://www.sikulix.com</url>
 

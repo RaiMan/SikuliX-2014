@@ -17,7 +17,7 @@
 
 	<packaging>jar</packaging>
 
-	<name>SikuliX Java API Libs Mac</name>
+	<name>SikuliX Libs Mac</name>
 	<description>supporting native libraries for Mac</description>
 	<url>http://www.sikulix.com</url>
 

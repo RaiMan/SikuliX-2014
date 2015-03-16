@@ -22,6 +22,9 @@
 		<module>Libsmac</module>
 		<module>Libslux</module>
 		<module>API</module>
+		<module>SetupAPI</module>
+		<module>SetupIDE</module>
+		<module>Setup</module>
 	</modules>
 
 </project>

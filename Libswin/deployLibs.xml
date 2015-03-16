@@ -17,7 +17,7 @@
 
 	<packaging>jar</packaging>
 
-	<name>SikuliX Java API Libs</name>
+	<name>SikuliX Libs Windows</name>
 	<description>supporting native libraries for Windows</description>
 	<url>http://www.sikulix.com</url>
 
