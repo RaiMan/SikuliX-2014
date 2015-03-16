@@ -144,13 +144,6 @@
 		</dependency>
 	</dependencies>
 
-	<distributionManagement>
-		<repository>
-			<id>sikulix.deploy</id>
-			<url>${sikulix.deploy.target}</url>
-		</repository>
-	</distributionManagement>
-
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<sikulixvmaj>1</sikulixvmaj>
