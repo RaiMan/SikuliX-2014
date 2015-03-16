@@ -42,6 +42,13 @@
 		<url>git@github.com:RaiMan/SikuliX-2014.git</url>
 	</scm>
 
+ <distributionManagement>
+		<repository>
+			<id>sikulix.deploy</id>
+			<url>${sikulix.deploy.target}</url>
+		</repository>
+	</distributionManagement>
+
 	<repositories>
 		<repository>  <!-- com.sikulix.sikulixapi: jxgrabkey -->
 			<id>uni-due.de</id>
