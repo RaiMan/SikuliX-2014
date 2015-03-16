@@ -2224,16 +2224,16 @@ int nMonitors = 0;
    * @return the absolute path of the entry found - null if not found
    */
   private String isOnClasspath(String artefact, boolean isJar) {
-    artefact = FileManager.slashify(artefact, false).toUpperCase();
+    artefact = FileManager.slashify(artefact, false);
     String cpe = null;
     if (classPath.isEmpty()) {
       storeClassPath();
     }
     for (URL entry : classPath) {
       String sEntry = FileManager.slashify(new File(entry.getPath()).getPath(), false);
-      if (sEntry.toUpperCase().contains(artefact)) {
+      if (sEntry.contains(artefact)) {
         if (isJar) {
-          if (!sEntry.toUpperCase().endsWith(".JAR")) {
+          if (!sEntry.endsWith(".jar")) {
             continue;
           }
 					if (!new File(sEntry).getName().contains(artefact)) {

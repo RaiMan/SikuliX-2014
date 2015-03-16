@@ -19,6 +19,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -116,7 +117,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   IDESplash ideSplash = null;
   boolean idePause = false;
   int waitBeforeVisible = 0;
-  
+    
   private synchronized boolean setPause(Boolean state) {
     if (state != null) {
       idePause = state;
@@ -131,7 +132,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   private void waitPause() {
     if (getPause()) {
       ideSplash.setVisible(false);
-      Sikulix.popup("Sorry, no options here yet!\nClick OK to continue!");
+      Sikulix.popup("No options yet!\nClick OK to continue!",
+              String.format("%s-%s", runTime.getVersionShort(), runTime.sxBuildStamp));
       ideSplash.showAction(" ");
       ideSplash.setVisible(true);
       waitBeforeVisible = 2;
@@ -159,8 +161,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   public static RunTime runTime;
-  public static void main(String[] args) {
-
+  public static void run(String[] args) {
+    
     start = (new Date()).getTime();
     
     runTime = RunTime.get(RunTime.Type.IDE, args);

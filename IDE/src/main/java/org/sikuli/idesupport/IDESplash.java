@@ -16,7 +16,7 @@ public class IDESplash extends JFrame {
   JLabel step;
 
   public IDESplash(RunTime rt) {
-    init(runTime);
+    init(rt);
   }
 
   void init(RunTime rt) {
@@ -39,8 +39,12 @@ public class IDESplash extends JFrame {
     step.setAlignmentX(CENTER_ALIGNMENT);
     pane.add(step);
     pane.add(new JLabel(" "));
+    JLabel version = new JLabel(String.format("%s-%s", rt.getVersionShort(), rt.sxBuildStamp));
+    version.setAlignmentX(CENTER_ALIGNMENT);
+    pane.add(version);
+    pane.add(new JLabel(" "));
     pack();
-    setSize(200, 130);
+    setSize(200, 155);
     setLocationRelativeTo(null);
     setAlwaysOnTop(true);
     setVisible(true);

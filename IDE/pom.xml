@@ -83,7 +83,7 @@
 				<configuration>
 					<archive>
 						<manifest>
-							<mainClass>org.sikuli.ide.SikuliIDE</mainClass>
+							<mainClass>org.sikuli.ide.Sikulix</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -93,7 +93,7 @@
 				<artifactId>exec-maven-plugin</artifactId>
 				<version>1.2.1</version>
 				<configuration>
-					<mainClass>org.sikuli.ide.SikuliIDE</mainClass>
+					<mainClass>org.sikuli.ide.Sikulix</mainClass>
 				</configuration>
 			</plugin>
 		</plugins>

@@ -1,5 +1,14 @@
+#!/bin/bash
 PROPS='-Xmx512M -Dfile.encoding=UTF-8'
-sjar=/Applications/Sikulix.app/Contents/Java/sikulix.jar
+
+rundir=`dirname $0`
+sjar=$rundir/SikuliX.app/Contents/Java/sikulix.jar
+if [ ! -e $sjar ]; then
+  sjar=$rundir/Contents/Java/sikulix.jar
+fi
+if [ ! -e $sjar ]; then
+  sjar=/Applications/SikuliX.app/Contents/Java/sikulix.jar
+fi
 
 if [ "$1" = "" ]; then
   echo "Error: terminating: no parameters provided (at least -r or -i)"

@@ -125,10 +125,10 @@
 		<module>Libsmac</module>
 		<module>Libswin</module>
 		<module>API</module>
-		<module>APIPlus</module>
+		<module>SetupAPI</module>
 		<module>Jygments4SikuliX</module>
 		<module>IDE</module>
-		<module>IDEPlus</module>
+		<module>SetupIDE</module>
 		<module>Setup</module>
 	</modules>
 

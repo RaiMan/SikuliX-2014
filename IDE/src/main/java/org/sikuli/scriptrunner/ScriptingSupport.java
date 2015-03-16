@@ -401,14 +401,6 @@ public class ScriptingSupport {
     runScripts = Runner.evalArgs(args);
     isRunningScript = true;
 
-    if (runScripts.length > 0) {
-			String scriptName = runScripts[0];
-			if (scriptName != null && !scriptName.isEmpty() && scriptName.startsWith("git*")) {
-				run(scriptName, runTime.getSikuliArgs());
-				return;
-			}
-		}
-
     if (runTime.runningInteractive) {
       int exitCode = 0;
       if (currentRunner == null) {
@@ -426,6 +418,14 @@ public class ScriptingSupport {
       currentRunner.close();
       Sikulix.endNormal(exitCode);
     }
+
+    if (runScripts.length > 0) {
+			String scriptName = runScripts[0];
+			if (scriptName != null && !scriptName.isEmpty() && scriptName.startsWith("git*")) {
+				run(scriptName, runTime.getSikuliArgs());
+				return;
+			}
+		}
 
     if (runScripts != null && runScripts.length > 0) {
       int exitCode = 0;

@@ -35,7 +35,7 @@ public class Runner {
   public static String RPYTHON = "jython";
   public static String RRUBY = "jruby";
   public static String RJSCRIPT = "JavaScript";
-  public static String RDEFAULT = "NotDefined";
+  public static String RDEFAULT = RPYTHON;
 
   private static String[] runScripts = null;
   private static String[] testScripts = null;

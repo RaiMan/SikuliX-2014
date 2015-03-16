@@ -43,7 +43,7 @@
       </dict>
     </array>
     <key>JVMMainClassName</key>
-    <string>org/sikuli/ide/SikuliIDE</string>
+    <string>org/sikuli/ide/Sikulix</string>
     <key>JVMOptions</key>
     <array>
       <string>-Dfile.encoding=UTF-8</string>

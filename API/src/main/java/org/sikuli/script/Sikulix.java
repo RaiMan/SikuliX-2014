@@ -58,11 +58,24 @@ public class Sikulix {
   public static int testNumber = -1;
 
   static {
+    String jarName = "";
+    
+    CodeSource codeSrc =  Sikulix.class.getProtectionDomain().getCodeSource();
+    if (codeSrc != null && codeSrc.getLocation() != null) {
+      jarName = codeSrc.getLocation().getPath();
+    }
+
+    if (jarName.contains("sikulixsetupAPI")) {
+      JOptionPane.showMessageDialog(null, "Not useable!\nRun setup first!", 
+              "sikulixsetupAPI", JOptionPane.ERROR_MESSAGE);
+      System.exit(0);
+    }
+
     rt = RunTime.get();
     if (Debug.getDebugLevel() == 0) {
       Debug.setDebugLevel(1);
     }
-    CodeSource codeSrc = Sikulix.class.getProtectionDomain().getCodeSource();
+
     if (codeSrc != null && codeSrc.getLocation() != null) {
       URL jarURL = codeSrc.getLocation();
       jarPath = FileManager.slashify(new File(jarURL.getPath()).getAbsolutePath(), false);
@@ -110,12 +123,14 @@ public class Sikulix {
       System.exit(1);
     } else {
       rt = RunTime.get();
+      if (rt.fSxBaseJar.getName().contains("setup")) {
+        Sikulix.popError("Not useable!\nRun setup first!");
+        System.exit(0);
+      }
       Debug.on(3);
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
-      
-      String f = new File(rt.tessData.get("eng")).getName();
-      
+            
 //      Screen s = new Screen();
       
 //      File fJarLibsLux = new File(rt.fSikulixDownloadsBuild, "sikulixlibslux-1.1.0.jar");
@@ -136,10 +151,12 @@ public class Sikulix {
         popup("Hello World\nNothing else to do ( yet ;-)", rt.fSxBaseJar.getName());
         System.exit(1);
       }
+      String version = String.format("(%s-%s)", rt.getVersionShort(), rt.sxBuildStamp);
       String runSomeJS = inputText("enter some JavaScript (know what you do - may silently die ;-)"
-              + "\nexample: run(\"git*\") will run the JavaScript showcase from GitHub", "API:Runner", 10, 60);
+              + "\nexample: run(\"git*\") will run the JavaScript showcase from GitHub", 
+              "API::JavaScriptRunner " + version, 10, 60);
       if (runSomeJS.isEmpty()) {
-        popup("Nothing to do!", "API:Runner");
+        popup("Nothing to do!", version);
       } else {
         Runner.runjs(null, null, runSomeJS, null);
       }
