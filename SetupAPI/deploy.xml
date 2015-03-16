@@ -68,7 +68,7 @@
             </manifest>
           </archive>
           <descriptors>
-            <descriptor>../Setup/src/main/resources/plain.xml</descriptor>
+            <descriptor>../Setup/src/main/resources/content/plain.xml</descriptor>
           </descriptors>
 <!--          <finalName>sikulixsetupAPI-${project.version}</finalName>-->
         </configuration>
