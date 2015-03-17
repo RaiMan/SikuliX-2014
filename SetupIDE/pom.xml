@@ -70,7 +70,6 @@
 					<descriptors>
 						<descriptor>../${sikuli.helpers}/ide-fat.xml</descriptor>
 					</descriptors>
-					<finalName>sikulixsetupIDE-${project.version}</finalName>
 				</configuration>
 				<executions>
 					<execution>

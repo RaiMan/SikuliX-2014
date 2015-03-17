@@ -1113,11 +1113,11 @@ public class RunSetup {
     String projectDir = runTime.fSxProject.getAbsolutePath();
     boolean success = true;
 
-    File fSetup = getProjectJarFile(projectDir, "Setup", "sikulixsetup", "-plain.jar");
+    File fSetup = getProjectJarFile(projectDir, "Setup", "sikulixsetup", "-forsetup.jar");
     success &= fSetup != null;
-    File fIDEPlus = getProjectJarFile(projectDir, "SetupIDE", "sikulixsetupIDE", "-ide-fat.jar");
+    File fIDEPlus = getProjectJarFile(projectDir, "SetupIDE", "sikulixsetupIDE", "-forsetup.jar");
     success &= fIDEPlus != null;
-    File fAPIPlus = getProjectJarFile(projectDir, "SetupAPI", "sikulixsetupAPI", "-plain.jar");
+    File fAPIPlus = getProjectJarFile(projectDir, "SetupAPI", "sikulixsetupAPI", "-forsetup.jar");
     success &= fAPIPlus != null;
     File fLibsmac = getProjectJarFile(projectDir, "Libsmac", libsMac, ".jar");
     success &= fLibsmac != null;

@@ -12,10 +12,10 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.sikulix</groupId>
-	<artifactId>sikulixsetup</artifactId>
+	<artifactId>sikulixsetupIDE</artifactId>
 	<version>1.1.0-SNAPSHOT</version>
 
-	<name>SikuliX Setup</name>
+	<name>SikuliX API</name>
 	<description>... for visual testing and automation</description>
 	<url>http://www.sikulix.com</url>
 
