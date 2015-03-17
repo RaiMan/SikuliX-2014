@@ -133,7 +133,7 @@ public class RunSetup {
 
   public static void main(String[] args) throws IOException {
 
-    runTime = RunTime.get(RunTime.Type.SETUP);
+    runTime = RunTime.get(RunTime.Type.SETUP, args);
 
 //    logp("**** command line args: %d", args.length);
 //    if (args.length > 0) {
@@ -146,8 +146,8 @@ public class RunSetup {
 //TODO wrong if version number parts have more than one digit
     minorversion = runTime.getVersionShort().substring(0, 5);
     majorversion = runTime.getVersionShort().substring(0, 3);
-        
-    localSetup = String.format("sikulixsetup-%s-%s.jar", version, runTime.sxBuildStamp);    
+
+    localSetup = String.format("sikulixsetup-%s-%s.jar", version, runTime.sxBuildStamp);
     if (runTime.fSxBaseJar.getPath().contains(localSetup)) {
       runningWithProject = true;
     }
@@ -157,7 +157,7 @@ public class RunSetup {
       downloadIDE = String.format("sikulixsetupIDE-%s-%s.jar", version, runTime.sxBuildStamp);
       downloadAPI = String.format("sikulixsetupAPI-%s-%s.jar", version, runTime.sxBuildStamp);
     } else {
-      localSetup = "sikulixsetup-" + version + ".jar";    
+      localSetup = "sikulixsetup-" + version + ".jar";
       downloadIDE = getMavenJarName("sikulixsetupIDE");
       downloadAPI = getMavenJarName("sikulixsetupAPI");
     }
@@ -597,7 +597,7 @@ public class RunSetup {
     String dlDownloads = fDownloadsObsolete.getAbsolutePath();
     boolean shouldUseDownloads = hasOptions && fDownloadsObsolete.exists();
     String dlDir = shouldUseDownloads ? dlDownloads : dlDirGenericApp;
-    
+
     if (!forSystemWin && !forSystemMac && !forSystemLux) {
       forSystemLux = isLinux;
       if (!isLinux) {
@@ -624,7 +624,7 @@ public class RunSetup {
 				RunTime.loadLibrary(LinuxSupport.slibVision, useLibsProvided);
 				useLibsProvided = runTime.useLibsProvided || LinuxSupport.shouldUseProvided;
       }
-    } 
+    }
 
 		if (forSystemWin || forAllSystems) {
       jarsList[6] = new File(workDir, libsWin + ".jar").getAbsolutePath();
@@ -649,7 +649,7 @@ public class RunSetup {
       fDownloaded = downloadedAlready(sDownloaded, libsMac, true);
       if (fDownloaded == null) {
         fDownloaded = downloadJarFromMavenSx(libsMac, dlDir, libsMac);
-      } 
+      }
       downloadOK &= copyFromDownloads(fDownloaded, libsMac, jarsList[7]);
     }
 		//</editor-fold>
@@ -739,7 +739,7 @@ public class RunSetup {
         fArchiv = download(xTess, dlDirGeneric, null, tessFolder);
         logPlus(lvl, "downloaded: %s", tessFolder);
       } else {
-        logPlus(lvl, "using already downloaded: %s", tessFolder);        
+        logPlus(lvl, "using already downloaded: %s", tessFolder);
       }
       File fTessWork = fArchiv.getParentFile();
       log(lvl, "trying to extract from: %s", xTessName);
@@ -958,13 +958,13 @@ public class RunSetup {
     }
 
     FileManager.deleteFileOrFolder(folderLibsWin);
-    FileManager.deleteFileOrFolder(new File(runTime.fSikulixLib, runTime.fpContent)); 
-    
+    FileManager.deleteFileOrFolder(new File(runTime.fSikulixLib, runTime.fpContent));
+
     //<editor-fold defaultstate="collapsed" desc="api test">
     boolean runAPITest = false;
     if (getAPI && !notests && !runTime.isHeadless()) {
       logPlus(lvl, "Trying to run functional test: JAVA-API");
-      splash = showSplash("Trying to run functional test(s) - wait for the result popup", 
+      splash = showSplash("Trying to run functional test(s) - wait for the result popup",
               "Java-API: org.sikuli.script.Sikulix.testSetup()");
       start += 2000;
       if (!runTime.addToClasspath(localJarAPI.getAbsolutePath())) {
