@@ -47,13 +47,6 @@
 		<url>git@github.com:RaiMan/SikuliX-2014.git</url>
 	</scm>
 
-	<distributionManagement>
-		 <repository>
-			 <id>sikulix.deploy</id>
-			 <url>${sikulix.deploy.local}</url>
-		 </repository>
-	 </distributionManagement>
-
   <dependencies>
     <dependency>
       <groupId>com.sikulix</groupId>

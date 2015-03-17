@@ -51,6 +51,13 @@
 		<module>SetupIDE</module>
 	</modules>
 
+	<distributionManagement>
+		<repository>
+			<id>sikulix.deploy</id>
+			<url>${sikulix.deploy.local}</url>
+		</repository>
+	</distributionManagement>
+
 	<build>
 		<plugins>
 			<plugin>
