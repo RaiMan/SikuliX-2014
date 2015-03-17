@@ -118,9 +118,10 @@ public class RunTime {
   public static synchronized RunTime get(Type typ, String[] clArgs) {
     if (runTime == null) {
       runTime = new RunTime();
+			int debugLevel = 0;
 
       if (null != clArgs) {
-        int debugLevel = checkArgs(clArgs, typ);
+        debugLevel = checkArgs(clArgs, typ);
         if (Type.IDE.equals(typ)) {
           if(debugLevel == -1) {
             Debug.on(3);
@@ -250,7 +251,7 @@ public class RunTime {
         runTime.dumpOptions();
       }
 
-      if (Type.SETUP.equals(typ)) {
+      if (Type.SETUP.equals(typ) && debugLevel != -2) {
         Debug.setDebugLevel(3);
       }
 
@@ -2554,6 +2555,9 @@ int nMonitors = 0;
     options.addAll(Arrays.asList(args));
     for (int n = 0; n < options.size(); n++) {
       String opt = options.get(n);
+			if ("nodebug".equals(opt)) {
+				return -2;
+			}
       if (!opt.startsWith("-")) {
         continue;
       }
