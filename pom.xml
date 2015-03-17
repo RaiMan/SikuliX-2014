@@ -56,7 +56,7 @@
 		-->
 		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
 		<sikuli.minorversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.minorversion>
-		<sikulixjythonversion>2.7-b3</sikulixjythonversion>
+		<sikulixjythonversion>2.7-b4</sikulixjythonversion>
 		<sikulixjrubyversion>1.7.18</sikulixjrubyversion>
 		<sikulixlocalrepo>${settings.localRepository}</sikulixlocalrepo>
 		<sikuli.helpers>Setup/src/main/resources/content</sikuli.helpers>

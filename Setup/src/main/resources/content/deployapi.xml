@@ -11,6 +11,13 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
+	<parent>
+		<groupId>com.sikulix</groupId>
+		<artifactId>sikulixdeploy</artifactId>
+		<version>1.1.0</version>
+		<relativePath>../</relativePath>
+	</parent>
+
 	<groupId>com.sikulix</groupId>
 	<artifactId>sikulixapi</artifactId>
 	<version>1.1.0-SNAPSHOT</version>
@@ -45,7 +52,7 @@
  <distributionManagement>
 		<repository>
 			<id>sikulix.deploy</id>
-			<url>${sikulix.deploy.target}</url>
+			<url>${sikulix.deploy.local}</url>
 		</repository>
 	</distributionManagement>
 
@@ -151,24 +158,6 @@
 		</dependency>
 	</dependencies>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<sikulixvmaj>1</sikulixvmaj>
-		<sikulixvmin>1</sikulixvmin>
-		<sikulixvsub>0</sikulixvsub>
-		<sikulixbeta>0</sikulixbeta>
-		<!--   this decides, where setup downloads from   -->
-		<!--		<sikulixdev>release</sikulixdev>-->
-		<sikulixdev>development</sikulixdev>
-		<!-- TODO: find better solution for beta / non-beta -->
-		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}-Beta${sikulixbeta}</sikuli.usedversion>
-		<!--
-		<sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
-		-->
-		<timestamp>${maven.build.timestamp}</timestamp>
-		<maven.build.timestamp.format>yyyy-MM-dd_HH:mm</maven.build.timestamp.format>
-	</properties>
-
 	<build>
 		<resources>
 			<resource>
@@ -189,56 +178,11 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.1</version>
-				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
-				</configuration>
-			</plugin>
-			<plugin>
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.9.1</version>
 				<configuration>
 					<excludePackageNames>org.opencv.*</excludePackageNames>
-					<show>public</show>
-					<quiet>true</quiet>
 				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.3</version>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>jar-no-fork</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.5</version>
-				<executions>
-					<execution>
-						<id>sign-artifacts</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>sign</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
