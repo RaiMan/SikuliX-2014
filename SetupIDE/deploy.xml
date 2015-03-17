@@ -43,7 +43,7 @@
 	<distributionManagement>
 		 <repository>
 			 <id>sikulix.deploy</id>
-			 <url>${sikulix.deploy.target}</url>
+			 <url>${sikulix.deploy.local}</url>
 		 </repository>
 	 </distributionManagement>
 
