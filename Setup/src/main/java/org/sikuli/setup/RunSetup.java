@@ -189,6 +189,11 @@ public class RunSetup {
     options.addAll(Arrays.asList(args));
 
     //<editor-fold defaultstate="collapsed" desc="options return version">
+    if (args.length > 0 && "stamp".equals(args[0])) {
+      System.out.println(runTime.SikuliProjectVersion + "-" + runTime.sxBuildStamp);
+      System.exit(0);
+    }
+
     if (args.length > 0 && "build".equals(args[0])) {
       System.out.println(runTime.SikuliVersionBuild);
       System.exit(0);
