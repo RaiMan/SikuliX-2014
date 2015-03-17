@@ -21,7 +21,7 @@
   <groupId>com.sikulix</groupId>
   <artifactId>sikulixsetupAPI</artifactId>
   <version>1.1.0</version>
-  
+
   <dependencies>
     <dependency>
       <groupId>com.sikulix</groupId>
@@ -30,32 +30,31 @@
     </dependency>
   </dependencies>
 
-  <build>
-    <defaultGoal>clean package</defaultGoal>
-    <plugins>
-      <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.4</version>
-        <configuration>
-          <archive>
-            <manifest>
-              <mainClass>org.sikuli.script.Sikulix</mainClass>
-            </manifest>
-          </archive>
-          <descriptors>
-            <descriptor>../${sikuli.helpers}/plain.xml</descriptor>
-          </descriptors>
-        </configuration>
-        <executions>
-          <execution>
-            <id>make-assembly</id>
-            <phase>package</phase>
-            <goals>
-              <goal>single</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+	<build>
+		<plugins>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.4</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>org.sikuli.script.Sikulix</mainClass>
+						</manifest>
+					</archive>
+					<descriptors>
+						<descriptor>../${sikuli.helpers}/plain.xml</descriptor>
+					</descriptors>
+				</configuration>
+				<executions>
+					<execution>
+						<id>make-assembly</id>
+						<phase>package</phase>
+						<goals>
+							<goal>single</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
 </project>
