@@ -76,7 +76,6 @@
 					<descriptors>
 						<descriptor>../${sikuli.helpers}/plain.xml</descriptor>
 					</descriptors>
-					<finalName>sikulixsetup-${project.version}</finalName>
 				</configuration>
 				<executions>
 					<execution>
