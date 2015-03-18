@@ -196,12 +196,13 @@ public class RunSetup {
       System.exit(0);
     }
 
-    if (args.length > 0 && "frommaven".equals(args[0])) {
+    if (args.length > 0 && "frommavenforsed".equals(args[0])) {
 			bequiet = true;
-			String name = getMavenJarName(args[2]);
+			String name = getMavenJarPath(args[2]);
 			if (name == null) {
 				name = runTime.dlMavenSnapshot + sikulixMavenGroup;
 			}
+			name = name.replaceAll("/", "\\\\/");
       System.out.println(name);
       System.exit(0);
     }
