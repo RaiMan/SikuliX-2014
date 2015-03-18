@@ -203,7 +203,7 @@ public class RunSetup {
 				name = runTime.dlMavenSnapshot + sikulixMavenGroup;
 			}
       System.out.println(name);
-      System.exit(1);
+      System.exit(0);
     }
 
     if (args.length > 0 && "build".equals(args[0])) {
