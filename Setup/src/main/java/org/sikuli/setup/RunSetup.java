@@ -113,6 +113,8 @@ public class RunSetup {
   private static File fDownloadsObsolete;
   private static boolean runningWithProject = false;
   private static boolean shouldBuildVision = false;
+	private static boolean bequiet = false;
+  private static String sikulixMavenGroup = "com/sikulix/";
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static void logp(String message, Object... args) {
@@ -192,6 +194,16 @@ public class RunSetup {
     if (args.length > 0 && "stamp".equals(args[0])) {
       System.out.println(runTime.SikuliProjectVersion + "-" + runTime.sxBuildStamp);
       System.exit(0);
+    }
+
+    if (args.length > 0 && "frommaven".equals(args[0])) {
+			bequiet = true;
+			String name = getMavenJarName(args[2]);
+			if (name == null) {
+				name = runTime.dlMavenSnapshot + sikulixMavenGroup;
+			}
+      System.out.println(name);
+      System.exit(1);
     }
 
     if (args.length > 0 && "build".equals(args[0])) {
@@ -1479,17 +1491,23 @@ public class RunSetup {
     return true;
   }
 
-  private static String getMavenJarPath(String src) {
+  private static String getMavenJarPath(String givenItem) {
     String mPath;
     String mJar = "";
-    String sikulixMavenGroup = "com/sikulix/";
+		String itemSuffix = "";
+		String item = givenItem;
+		if (item.contains("#")) {
+			String[] parts = item.split("#");
+			item = parts[0];
+			itemSuffix = "-" + parts[1];
+		}
     if (runTime.isVersionRelease()) {
-      mPath = String.format("%s%s/%s/", sikulixMavenGroup, src, version);
-      mJar = String.format("%s-%s.jar", src, version);
+      mPath = String.format("%s%s/%s/", sikulixMavenGroup, item, version);
+      mJar = String.format("%s-%s%s.jar", item, version, itemSuffix);
     } else {
       String dlMavenSnapshotPath = version + "-SNAPSHOT";
       String dlMavenSnapshotXML = "maven-metadata.xml";
-      String dlMavenSnapshotPrefix = String.format("%s%s/%s/", sikulixMavenGroup, src, dlMavenSnapshotPath);
+      String dlMavenSnapshotPrefix = String.format("%s%s/%s/", sikulixMavenGroup, item, dlMavenSnapshotPath);
       String timeStamp = "";
       String buildNumber = "";
       mPath = runTime.dlMavenSnapshot + dlMavenSnapshotPrefix;
@@ -1504,11 +1522,13 @@ public class RunSetup {
         }
       }
       if (!timeStamp.isEmpty() && !buildNumber.isEmpty()) {
-        mJar = String.format("%s-%s-%s-%s.jar", src, version, timeStamp, buildNumber);
+        mJar = String.format("%s-%s-%s-%s%s.jar", item, version, timeStamp, buildNumber, itemSuffix);
         log(lvl, "getMavenJar: %s", mJar);
       } else {
-        log(-1, "Maven download: could not get timestamp or buildnumber from:"
-                + "\n%s\nwith content:\n", xml, xmlContent);
+				if (!bequiet) {
+					log(-1, "Maven download: could not get timestamp or buildnumber for %s from:"
+									+ "\n%s\nwith content:\n%s", givenItem, xml, xmlContent);
+				}
         return null;
       }
     }
