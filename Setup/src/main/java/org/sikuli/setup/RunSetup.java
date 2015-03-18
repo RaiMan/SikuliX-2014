@@ -115,6 +115,7 @@ public class RunSetup {
   private static boolean shouldBuildVision = false;
 	private static boolean bequiet = false;
   private static String sikulixMavenGroup = "com/sikulix/";
+	private static boolean testingMaven = false;
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static void logp(String message, Object... args) {
@@ -154,14 +155,14 @@ public class RunSetup {
       runningWithProject = true;
     }
 
-    if (runTime.runningInProject || runningWithProject) {
+    if (!testingMaven && (runTime.runningInProject || runningWithProject)) {
       runningWithProject = true;
       downloadIDE = String.format("sikulixsetupIDE-%s-%s.jar", version, runTime.sxBuildStamp);
       downloadAPI = String.format("sikulixsetupAPI-%s-%s.jar", version, runTime.sxBuildStamp);
     } else {
       localSetup = "sikulixsetup-" + version + ".jar";
-      downloadIDE = getMavenJarName("sikulixsetupIDE");
-      downloadAPI = getMavenJarName("sikulixsetupAPI");
+      downloadIDE = getMavenJarName("sikulixsetupIDE#forsetup");
+      downloadAPI = getMavenJarName("sikulixsetupAPI#forsetup");
     }
 
     downloadJython = new File(runTime.SikuliJythonMaven).getName();
@@ -321,7 +322,7 @@ public class RunSetup {
     fDownloadsGeneric.mkdirs();
     fDownloadsGenericApp = runTime.fSikulixDownloadsBuild;
     fDownloadsGenericApp.mkdirs();
-    if (runTime.runningInProject) {
+    if (testingMaven || runTime.runningInProject) {
       fWorkDir = runTime.fSikulixSetup;
       fWorkDir.mkdir();
     }
@@ -335,7 +336,7 @@ public class RunSetup {
       isLinux = true;
     }
 
-    if (runTime.runningInProject) {
+    if (!testingMaven && runTime.runningInProject) {
       if (!hasOptions || clean) {
         if (noSetup) {
           log(lvl, "creating Setup folder - not running setup");
@@ -609,6 +610,7 @@ public class RunSetup {
     String targetJar;
     boolean downloadOK = true;
     boolean dlOK = true;
+		downloadOK = true;
 //    String dlDirBuild = fDownloadsBuild.getAbsolutePath();
     String dlDirGenericApp = fDownloadsGenericApp.getAbsolutePath();
     String dlDirGeneric = fDownloadsGeneric.getAbsolutePath();
@@ -663,7 +665,11 @@ public class RunSetup {
 
     if (forSystemMac || forAllSystems) {
       jarsList[7] = new File(workDir, libsMac + ".jar").getAbsolutePath();
-      sDownloaded = libsMac + "-" + version + ".jar";
+			if (!testingMaven && (runTime.runningInProject || runningWithProject)) {
+				sDownloaded = libsMac + "-" + version + ".jar";
+			} else {
+				sDownloaded = getMavenJarName(libsMac);
+			}
       fDownloaded = downloadedAlready(sDownloaded, libsMac, true);
       if (fDownloaded == null) {
         fDownloaded = downloadJarFromMavenSx(libsMac, dlDir, libsMac);
@@ -678,10 +684,10 @@ public class RunSetup {
       localJar = new File(workDir, localAPI).getAbsolutePath();
       fDownloaded = downloadedAlready(downloadAPI, sDownloaded, true);
       if (fDownloaded == null) {
-        fDownloaded = downloadJarFromMavenSx(sDownloaded, dlDir, sDownloaded);
-      } else {
-        downloadOK &= copyFromDownloads(fDownloaded, sDownloaded, localJar);
+        fDownloaded = downloadJarFromMavenSx("sikulixsetupAPI#forsetup", dlDir, sDownloaded);
       }
+      downloadOK &= copyFromDownloads(fDownloaded, sDownloaded, localJar);
+
       if(forSystemWin || forAllSystems) {
         FileManager.resetFolder(runTime.fSikulixLib);
         String aJar = FileManager.normalizeAbsolute(localJar, false);
@@ -696,11 +702,9 @@ public class RunSetup {
     if (getIDE) {
       sDownloaded = "sikulix";
       localJar = new File(workDir, localIDE).getAbsolutePath();
-      downloadOK &= dlOK;
       fDownloaded = downloadedAlready(downloadIDE, sDownloaded, true);
       if (fDownloaded == null) {
-        //runTime.downloadBaseDir if not on Maven
-        downloadJarFromMavenSx(sDownloaded, dlDir, sDownloaded);
+        fDownloaded = downloadJarFromMavenSx("sikulixsetupIDE#forsetup", dlDir, sDownloaded);
       }
       downloadOK &= copyFromDownloads(fDownloaded, sDownloaded, localJar);
     }
