@@ -12,17 +12,20 @@ SikuliX 2014 --- Nightly Builds
 <h3>
 Latest available Build: ${sikuli.usedversion} ${timestamp}nightly
 </h3>
-<hr><br>
+<hr>
+<br>
 <a href="https://github.com/RaiMan/SikuliX-2014/issues?state=closed" target="_blank">Issues might be posted here</a>
-<br><hr>
+<br>
+<hr>
 <br>
 The builds are run on a private Jenkins server with the current development head as available on
 <a href="https://github.com/RaiMan/SikuliX-2014" target="_blank">GitHub</a>.<br>
 The automatic build is planned for about 01:00 am and new builds should be available latest towards 03:00 am. (European/Berlin time)
 <br>
 <hr>
-<h3>BE AWARE:</h3>
+<h3>BE AWARE and TAKE CARE:</h3>
 -- do not mix with a working SikuliX environment, use separate folders<br>
+-- purge everything from environment that has something to do with previous SikuliX versions
 -- run in a way, that your current installation and your work is safe or can be restored<br>
 -- the stuff you get, might have any bugs without notice - so be prepared<br>
 -- in addition to the fix information below, you might inspect the latest commits on
@@ -30,19 +33,39 @@ The automatic build is planned for about 01:00 am and new builds should be avail
 <hr>
 <a href="docs/index.html" target="_blank">View the corresponding JavaDocs of selected classes (relevant for API usage)</a>
 <hr>
-The only file you need to download is:
-<hr>
-(download by clicking this link, store in an empty folder and run by doubleclicking the jar)<br>
-<a href="##sikulixsetup##">sikulixsetup-1.1.0-YYYYMMDD.SSSSSS-NN-forsetup.jar</a><br>
+The only file you need to download is <strong>sikulixsetup-1.1.0-#timestamp#.jar</strong>:
+<br>
+<br>
+(download by clicking this link, store in an preferably empty folder and run by doubleclicking the jar)<br>
+<a href="##sikulixsetup##">sikulixsetup....jar</a><br>
 (on Linux it might be necessary to switch on the executable file attribute)
-<br><br>
+<br>
+<br>
+this setup jar and the other jars look like this after download:<br>
+sikulix...-1.1.0-YYYYMMDD.SSSSSS-NN-forsetup.jar or <br>
+sikulix...-1.1.0-YYYYMMDD.SSSSSS-NN.jar<br>
+DO NOT rename the files - leave them as they are!<br><br>
+The sikulixsetup....jar, sikulix.jar and sikulixapi.jar can be moved whereever you want.<br>
+<br>
+The files downloaded during setup are no longer stored in the folder setup is run in, but in a special Folder of your home folder:<br>
+-- Windows: in the folder Sikulix in the folder pointed to by the environment variable %APPDATA%<br>
+-- Mac: the folder ~/Library/Application Support/Sikulix<br>
+-- Linux: in ~/.Sikulix<br>
+Other folders stored there:
+-- the folder containing the native libraries (SikulixLibs_versionstamp/)
+-- the Lib folder containing the supporting stuff for Jython and JRuby (Lib/)
+-- the folder containing the tessdata stuff (SikulixTesseract/)
+only in case of problems it might be necessary to visit this folder.
+<hr>
+<br>
+<br>
 The needed jars will be downloaded automatically while running setup.<br>
 The referenced downloadpages are:<br>
  -- <a href="https://oss.sonatype.org/content/groups/public/com/sikulix/" target="_blank">OSSRH Snapshot repository (browsable)</a><br>
  -- <a href="http://repo1.maven.org/maven2/" target="_blank">MavenCentral repository (not browsable)</a><br>
  -- <a href="http://tesseract-ocr.googlecode.com/files/" target="_blank">the tessdata file folder on googlecode (not browsable)</a>
-
-<br><br>
+<br>
+<br>
 So you only would need to manually download anything using the below links, if you have problems with setup's inline download.<br>
 In this case you have to download the needed files according to the below information and run setup (so called offline setup)
 <br>
@@ -52,37 +75,39 @@ If you download manually by clicking on the below links, the jars have to be mov
 <br>
 Setup will find the local files and ask you wether to use them instead of downloading fresh versions.<br><br>
 BE AWARE: These files are not useable for any other purpose than being processed by setup<br>
-... and will be moved during setup into the Sikulix application folder down in your home folder (see docs).<br>
-In any case, when rerunning a setup, already downloaded files will always be detected and you are asked wether to reuse.<br>
-
+... and will be moved during setup into the Sikulix special folder down in your home folder (see above).<br>
+In any case, when rerunning a setup, already downloaded files will always be detected and you are asked wether to reuse.
+<br>
 <hr>
 <h4>for offline setup: downloads for setup option 1 (IDE)</h4>
-<a href="##sikulixsetupide##">sikulixsetupIDE-1.1.0-YYYYMMDD.SSSSSS-NN-forsetup.jar</a> to get the SikuliX IDE<br>
-<a href="##sikulixsetupapi##">sikulixsetupAPI-1.1.0-YYYYMMDD.SSSSSS-NN-forsetup.jar</a> (API - SikuliX core features)<br><br>
-
+<a href="##sikulixsetupide##">sikulixsetupIDE</a> to get the SikuliX IDE<br>
+<a href="##sikulixsetupapi##">sikulixsetupAPI</a> (API - SikuliX core features)
+<br>
+<br>
 &nbsp;&nbsp;... to edit/run scripts with the IDE you must have at least one of the following (suboptions 1.1 and 1.2):<br>
 &nbsp;&nbsp;<a href= "http://repo1.maven.org/maven2/org/python/jython-standalone/2.7-b3/jython-standalone-2.7-b4.jar">
 Jython</a> 1.1 for scripting with Python/Jython (is Jython 2.7 and needs Java 7+)<br>
 &nbsp;&nbsp;for use with Java 6 download
-<a href= "http://repo1.maven.org/maven2/org/python/jython-standalone/2.5.4-rc1/jython-standalone-2.5.4-rc1.jar">Jython 2.5</a><br><br>
-
+<a href= "http://repo1.maven.org/maven2/org/python/jython-standalone/2.5.4-rc1/jython-standalone-2.5.4-rc1.jar">Jython 2.5</a>
+<br>
+<br>
 &nbsp;&nbsp;<a href="http://repo1.maven.org/maven2/org/jruby/jruby-complete/1.7.18/jruby-complete-1.7.18.jar">
-JRuby</a> 1.2 for scripting with Ruby/JRuby (is JRuby 1.7.18)<br>
-
+JRuby</a> 1.2 for scripting with Ruby/JRuby (is JRuby 1.7.18)
+<br>
 <h4>for offline setup: download for setup option 2 (API)</h4>
-<a href="##sikulixsetupapi##">sikulixsetupAPI-1.1.0-YYYYMMDD.SSSSSS-NN-forsetup.jar</a>
-For the use of SikuliX with Java and Java aware languages/frameworks<br>
-
+<a href="##sikulixsetupapi##">sikulixsetupAPI</a>
+For the use of SikuliX with Java and Java aware languages/frameworks
+<br>
 <h4>for offline setup: to be downloaded in any case</h4>
 you need the libs package for your system<br>
 - for Windows: <a href="##sikulixlibswin##">sikulixlibswin</a><br>
 - for Mac: <a href="##sikulixlibsmac##">sikulixlibsmac</a><br>
-- for Linux: <a href="##sikulixlibslux##">sikulixlibslux</a><br>
-
+- for Linux: <a href="##sikulixlibslux##">sikulixlibslux</a>
+<br>
 <h4>for offline setup: download for setup option 3</h4>
 you need the tessdata base english package<br>
 - tessdata-eng: <a href="http://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz">tesseract-ocr-3.02.eng.tar.gz</a><br>
-&nbsp;&nbsp;(leave it as is (....tar.gz) - do not uncompress/unpack)
+&nbsp;&nbsp;(leave it as is (....tar.gz) - do not uncompress nor unpack)
 <hr>
 <h3>Status of bug fixes and new features</h3>
 <hr>
