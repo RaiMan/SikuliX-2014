@@ -23,15 +23,15 @@ main = function() {
 	r.below(100).click("stories");
 
 	win = App.focusedWindow();
-  
+
 	click(win.wait("knowhow", 10.0));
 	click(win.wait("topic", 10.0));
 
   r = win.getLastMatch().below(1).below(350).grow(0, 300, 0, 0)
-	r.click(whenFix("reply", r, 5.0));
-  
-  click(whenFix("form", win, 5.0));
-  
+	r.click(whenFix("reply", r, 10.0));
+
+  click(whenFix("form", win, 10.0), -60, 50);
+
   type("Raimund Hocke" + Key.TAB + Key.TAB + Key.TAB)
 	type("Now that I am here, I can go back and start again")
   wait(2);
