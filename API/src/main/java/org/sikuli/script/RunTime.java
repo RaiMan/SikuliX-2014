@@ -597,7 +597,26 @@ int nMonitors = 0;
     }
     if (!Type.SETUP.equals(typ)) {
       libsExport(typ);
-    }
+    } else {
+	    fSikulixDownloadsBuild = new File(fSikulixAppPath, "SikulixDownloads_" + sxBuildStamp);
+			if (!fSikulixDownloadsBuild.exists()) {
+				String[] fpList = fSikulixAppPath.list(new FilenameFilter() {
+					@Override
+					public boolean accept(File dir, String name) {
+						if (name.contains("SikulixDownloads_")) {
+							return true;
+						}
+						return false;
+					}
+				});
+				if (fpList.length > 0) {
+					log(lvl, "renaming versioned downloads folder in AppPath (%s)", fSikulixDownloadsBuild.getName());
+					for (String entry : fpList) {
+						new File(fSikulixAppPath, entry).renameTo(fSikulixDownloadsBuild);
+					}
+				}
+			}
+		}
 
     runType = typ;
     if (Debug.getDebugLevel() == minLvl) {
@@ -627,17 +646,14 @@ int nMonitors = 0;
 //<editor-fold defaultstate="collapsed" desc="libs export">
   public void makeFolders() {
     fLibsFolder = new File(fSikulixAppPath, "SikulixLibs_" + sxBuildStamp);
-    fSikulixDownloadsBuild = new File(fSikulixAppPath, "SikulixDownloads_" + sxBuildStamp);
     if (testing) {
-      logp("***** for testing: delete libsfolder/Lib/Downloads");
+      logp("***** for testing: delete folders SikulixLibs/ and Lib/");
       FileManager.deleteFileOrFolder(fLibsFolder);
       FileManager.deleteFileOrFolder(fSikulixLib);
-      FileManager.deleteFileOrFolder(fSikulixDownloadsBuild);
     }
     if (!fLibsFolder.exists()) {
       fSikulixLib.mkdir();
       fLibsFolder.mkdirs();
-      fSikulixDownloadsBuild.mkdir();
       if (!fLibsFolder.exists()) {
         terminate(1, "libs folder not available: " + fLibsFolder.toString());
       }
@@ -666,8 +682,7 @@ int nMonitors = 0;
     fpList = fSikulixAppPath.list(new FilenameFilter() {
       @Override
       public boolean accept(File dir, String name) {
-        if (name.contains("SikulixLibs") ||
-            name.contains("SikulixDownloads_")) {
+        if (name.contains("SikulixLibs")) {
           return true;
         }
         return false;

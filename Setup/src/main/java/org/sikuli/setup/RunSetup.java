@@ -1131,55 +1131,56 @@ public class RunSetup {
     return item;
   }
 
-  private static boolean createSetupFolder(File fTargetDir) {
-    String projectDir = runTime.fSxProject.getAbsolutePath();
-    boolean success = true;
+	private static boolean createSetupFolder(File fTargetDir) {
+		String projectDir = runTime.fSxProject.getAbsolutePath();
+		boolean success = true;
 
-    File fSetup = getProjectJarFile(projectDir, "Setup", "sikulixsetup", "-forsetup.jar");
-    success &= fSetup != null;
-    File fIDEPlus = getProjectJarFile(projectDir, "SetupIDE", "sikulixsetupIDE", "-forsetup.jar");
-    success &= fIDEPlus != null;
-    File fAPIPlus = getProjectJarFile(projectDir, "SetupAPI", "sikulixsetupAPI", "-forsetup.jar");
-    success &= fAPIPlus != null;
-    File fLibsmac = getProjectJarFile(projectDir, "Libsmac", libsMac, ".jar");
-    success &= fLibsmac != null;
-    File fLibswin = getProjectJarFile(projectDir, "Libswin", libsWin, ".jar");
-    success &= fLibswin != null;
-    File fLibslux = getProjectJarFile(projectDir, "Libslux", libsLux, ".jar");
-    success &= fLibslux != null;
+		File fSetup = getProjectJarFile(projectDir, "Setup", "sikulixsetup", "-forsetup.jar");
+		success &= fSetup != null;
+		File fIDEPlus = getProjectJarFile(projectDir, "SetupIDE", "sikulixsetupIDE", "-forsetup.jar");
+		success &= fIDEPlus != null;
+		File fAPIPlus = getProjectJarFile(projectDir, "SetupAPI", "sikulixsetupAPI", "-forsetup.jar");
+		success &= fAPIPlus != null;
+		File fLibsmac = getProjectJarFile(projectDir, "Libsmac", libsMac, ".jar");
+		success &= fLibsmac != null;
+		File fLibswin = getProjectJarFile(projectDir, "Libswin", libsWin, ".jar");
+		success &= fLibswin != null;
+		File fLibslux = getProjectJarFile(projectDir, "Libslux", libsLux, ".jar");
+		success &= fLibslux != null;
 
-    File fJythonJar = new File(runTime.SikuliJython);
-    if (!noSetup && !fJythonJar.exists()) {
-      log(lvl, "createSetupFolder: missing: " + fJythonJar.getAbsolutePath());
-      success = false;
-    }
-    File fJrubyJar = new File(runTime.SikuliJRuby);
-    if (!noSetup && !fJrubyJar.exists()) {
-      log(lvl, "createSetupFolder: missing " + fJrubyJar.getAbsolutePath());
-      success = false;
-    }
+		File fJythonJar = new File(runTime.SikuliJython);
+		if (!noSetup && !fJythonJar.exists()) {
+			log(lvl, "createSetupFolder: missing: " + fJythonJar.getAbsolutePath());
+			success = false;
+		}
+		File fJrubyJar = new File(runTime.SikuliJRuby);
+		if (!noSetup && !fJrubyJar.exists()) {
+			log(lvl, "createSetupFolder: missing " + fJrubyJar.getAbsolutePath());
+			success = false;
+		}
 
-    if (success) {
-        success &= FileManager.xcopy(fSetup, new File(fTargetDir, localSetup));
-        success &= FileManager.xcopy(fIDEPlus, new File(fDownloadsGenericApp, downloadIDE));
-        success &= FileManager.xcopy(fAPIPlus, new File(fDownloadsGenericApp, downloadAPI));
+		if (success) {
+			FileManager.resetFolder(fDownloadsGenericApp);
+			success &= FileManager.xcopy(fSetup, new File(fTargetDir, localSetup));
+			success &= FileManager.xcopy(fIDEPlus, new File(fDownloadsGenericApp, downloadIDE));
+			success &= FileManager.xcopy(fAPIPlus, new File(fDownloadsGenericApp, downloadAPI));
 
-        for (File fEntry : new File[]{fLibsmac, fLibswin, fLibslux}) {
-          success &= FileManager.xcopy(fEntry, new File(fDownloadsGenericApp, fEntry.getName()));
-        }
+			for (File fEntry : new File[]{fLibsmac, fLibswin, fLibslux}) {
+				success &= FileManager.xcopy(fEntry, new File(fDownloadsGenericApp, fEntry.getName()));
+			}
 
-        if (!noSetup) {
-          success &= FileManager.xcopy(fJythonJar, new File(fDownloadsGeneric, downloadJython));
-          success &= FileManager.xcopy(fJrubyJar, new File(fDownloadsGeneric, downloadJRuby));
-        }
+			if (!noSetup) {
+				success &= FileManager.xcopy(fJythonJar, new File(fDownloadsGeneric, downloadJython));
+				success &= FileManager.xcopy(fJrubyJar, new File(fDownloadsGeneric, downloadJRuby));
+			}
 
 //TODO JRubyAddOns
-        String jrubyAddons = "sikulixjrubyaddons-" + runTime.SikuliProjectVersion + "-plain.jar";
-        File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
+			String jrubyAddons = "sikulixjrubyaddons-" + runTime.SikuliProjectVersion + "-plain.jar";
+			File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
 //        success &= FileManager.xcopy(fJRubyAddOns, new File(fDownloadsGeneric, downloadJRubyAddOns));
-    }
-    return success;
-  }
+		}
+		return success;
+	}
 
   private static File getProjectJarFile(String project, String jarFileDir, String jarFilePre, String jarFileSuf) {
     String jarFileName = getProjectJarFileName(jarFilePre, jarFileSuf);
