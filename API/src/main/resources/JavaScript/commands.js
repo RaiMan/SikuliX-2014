@@ -1,4 +1,4 @@
-SIKULIX = RunTime.get();
+RUNTIME = RunTime.get();
 
 USEJSON = false;
 
