@@ -1,17 +1,21 @@
-<h4>Build: 2015-02-19</h4>
-
-revised: script running in general: -r can have multiple scripts that are run one after the other, 
+<h4>Build: 2015-03-20</h4>
+the next days I will somehow reveal more information about the new or revised features<br>
+<br>
+added: one can now run scripts written in JavaScript (edit not yet supported in IDE)<br>
+revised: script running in general: -r can have multiple scripts that are run one after the other,<br>
 runScript() can be used to run scripts from inside other scripts or from Java including handling of the bundlePath<br>
 added: images and scripts can now be downloaded/run from HTTP accessible locations in the net<br>
-revised: Linux build on the fly for libVisionProxy should be available in API also, 
+revised: Linux build on the fly for libVisionProxy should be available in API also,
 to support this with Maven usage of sikulixapi.jar <br>
 revised: TextRecognizer: maded the tessdata handling more robust, findAll(text) now works<br>
 added: image files whose name start with an _ are protected against image cleaning on save in all cases<br>
-added: sikulixapi.jar can now be bundled with Launch4J to create .exe that only need a JRE, resources and images 
+added: sikulixapi.jar can now be bundled with Launch4J to create .exe that only need a JRE, resources and images
 can be exported or used from the .exe content (bundled in the original jars)<br>
-revised: moved parts of the Sikuli/Jython import handler to the Java level<br> 
-revised: completely reworked the startup for IDE and API usage, now concentratiing all startup requirements in the one 
-singleton class RunTime 
+revised: moved parts of the Sikuli/Jython import handler to the Java level<br>
+revised: completely reworked the startup for IDE and API usage, now concentratiing all startup requirements in the one
+singleton class RunTime<br>
+revised: all Sikulix related stuff besides the jars (setup, IDE and API, can now be moved around freely)
+is now in a system specific Sikulix folder in the home folder<br>
 <h4>Build: 2015-01-14</h4>
 revised: observe: handlers (callback on observe event happened) now directly called from Java in Jython and Jruby
 <h4>Build: 2015-01-12</h4>
