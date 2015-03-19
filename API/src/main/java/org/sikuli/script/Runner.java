@@ -237,6 +237,8 @@ public class Runner {
 				}
 			} else if (script != null) {
 				ImagePath.addHTTP(script.toExternalForm());
+				String sname = new File(script.toExternalForm()).getName();
+				ImagePath.addHTTP(script.toExternalForm() + "/" + sname + ".sikuli");
 			}
 			if (!initSikulix.isEmpty()) {
 				initSikulix = prologjs(initSikulix);

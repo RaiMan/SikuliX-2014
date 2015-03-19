@@ -395,7 +395,7 @@ public class ImagePath {
     if (imagePaths.size() == 1 && pe == null) {
       return -1;
     }
-    if (pe.equals(path)) {
+    if (pe != null && pe.equals(path)) {
       return 0;
     }
     for (PathEntry p : imagePaths.subList(1, imagePaths.size())) {
