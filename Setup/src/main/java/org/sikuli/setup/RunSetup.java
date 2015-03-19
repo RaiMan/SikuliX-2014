@@ -656,7 +656,7 @@ public class RunSetup {
       downloadOK &= copyFromDownloads(fDownloaded, libsWin, jarsList[6]);
       FileManager.resetFolder(folderLibsWin);
       String aJar = FileManager.normalizeAbsolute(jarsList[6], false);
-      if (null == runTime.resourceListAsSikulixContentFromJar(aJar, "Lib", folderLibsWin, null)) {
+      if (null == runTime.resourceListAsSikulixContentFromJar(aJar, "sikulixlibs/windows", folderLibsWin, null)) {
         terminate("libswin content list could not be created", 999);
       }
       addonFileList[addonLibswindows] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
@@ -907,9 +907,12 @@ public class RunSetup {
       targetJar = (new File(workDir, localTemp)).getAbsolutePath();
       success &= FileManager.buildJar("#" + targetJar, jarsList,
               addonFileList, addonFilePrefix, libsFilter);
-      addonFileList[addonLibswindows] = null;
-      addonFilePrefix[addonLibswindows] = null;
       success &= handleTempAfter(targetJar, localJar);
+    }
+    
+    if(getTess) {
+      new File(workDir, localTess).delete();
+      jarsList[2] = null;
     }
 
     if (success && getIDE) {
@@ -926,8 +929,8 @@ public class RunSetup {
         }
       }
       targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-      success &= FileManager.buildJar(
-              targetJar, jarsList, addonFileList, addonFilePrefix, libsFilter);
+      success &= FileManager.buildJar("#" + targetJar, jarsList, 
+              null, null, libsFilter);
       success &= handleTempAfter(targetJar, localJar);
 
       if (Settings.isMac()) {
