@@ -737,7 +737,7 @@ int nMonitors = 0;
           shouldAddLibsJar = true;
         }
       }
-      if (null != isJarOnClasspath("sikulix")) {
+      if (null != isJarOnClasspath("sikulix.jar") || null != isJarOnClasspath("sikulixapi.jar")) {
         shouldAddLibsJar = false;
         fpLibsFrom = "";
       }
