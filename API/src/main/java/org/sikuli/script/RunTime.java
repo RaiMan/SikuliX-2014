@@ -227,7 +227,7 @@ public class RunTime {
       debugLevelSaved = Debug.getDebugLevel();
       debugLogfileSaved = Debug.logfile;
 
-      File fDebug = new File(runTime.fUserDir, "SikulixDebug.txt");
+      File fDebug = new File(runTime.fSikulixAppPath, "SikulixDebug.txt");
       if (fDebug.exists()) {
         if (Debug.getDebugLevel() == 0) {
           Debug.setDebugLevel(3);

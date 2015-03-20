@@ -1,0 +1,7 @@
+Presedence,Sno,STP-testcaseno,Test_id,Scenario,Simulator,Comport
+0,1,STP-GPSBL-001,SimZen-001,general,SimZen,com1
+1,2,STP-GPSBL-002,SimZen-002,general,SimZen,com2
+1,3,STP-GPSBL-003,Simplex-003,gpsblhsiura1,Simplex,com1
+0,4,STP-GPSBL-004,SimZen-004,gpsblhsiura1,SimZen,com1
+1,5,STP-GPSBL-005,Accord-005,general1,Accord,com3
+0,6,STP-GPSBL-006,Ifen-006,general1,Ifen,com1
