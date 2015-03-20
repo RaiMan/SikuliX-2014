@@ -13,7 +13,7 @@ r = wait("sxpower", 5)
 use(r.below(100))
 click("quickstart")
 use()
-wait(3)
+popup("Click OK:\n- to close the browser window\n- and terminate")
 
 if RUNTIME.runningMac:
   write("#M.w")

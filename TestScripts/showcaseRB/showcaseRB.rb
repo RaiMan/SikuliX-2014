@@ -12,7 +12,7 @@ dt.browse(URI.new("http://sikulix.com"))
 
 r = wait("sxpower", 5).below(100)
 r.click("quickstart")
-wait(3.0)
+popup("Click OK:\n- to close the browser window\n- and terminate")
 
 if ($RUNTIME.runningMac)
   write("#M.w")
