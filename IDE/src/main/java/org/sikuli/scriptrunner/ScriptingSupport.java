@@ -419,6 +419,10 @@ public class ScriptingSupport {
       Sikulix.endNormal(exitCode);
     }
 
+		if (runScripts == null) {
+			runTime.terminate(1, "option -r without any script");
+		}
+
     if (runScripts.length > 0) {
 			String scriptName = runScripts[0];
 			if (scriptName != null && !scriptName.isEmpty() && scriptName.startsWith("git*")) {
