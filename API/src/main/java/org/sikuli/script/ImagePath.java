@@ -190,12 +190,14 @@ public class ImagePath {
    */
   public static void dump(int lvl) {
     log(lvl, "ImagePath has %d entries (valid %d)", imagePaths.size(), getCount());
+    String bundle = "(taken as bundle path)";
     for (PathEntry p : imagePaths) {
       if (p == null) {
-        log(lvl, "Path: NULL");
+        log(lvl, "Path: NULL %s", bundle);
       } else {
         log(lvl, "Path: given: %s\nis: %s", p.path, p.getPath());
       }
+      bundle = "";
     }
   }
 
@@ -371,8 +373,9 @@ public class ImagePath {
    */
   public static boolean add(String mainPath, String altPath) {
     PathEntry path = null;
-    if (mainPath.contains(":")) {
-      return addHTTP(mainPath.replaceFirst(":", "/"));
+    File fPath = new File(mainPath);
+    if (!fPath.isAbsolute() && mainPath.contains(":")) {
+      return addHTTP(mainPath);
     }
     path = makePathURL(mainPath, altPath);
     if (path != null) {
@@ -560,9 +563,13 @@ public class ImagePath {
 			return null;
 		}
 		URL pathURL = null;
-		if (new File(FileManager.normalizeAbsolute(fpMainPath, false)).exists()) {
-			pathURL = FileManager.makeURL(FileManager.normalizeAbsolute(fpMainPath, false));
+    File fPath = new File(FileManager.normalizeAbsolute(fpMainPath, false)); 
+		if (fPath.exists()) {
+			pathURL = FileManager.makeURL(fPath.getAbsolutePath());
 		} else {
+      if (fpMainPath.contains("\\")) {
+        return null;
+      }
 			Class cls = null;
 			String klassName;
 			String fpSubPath = "";
