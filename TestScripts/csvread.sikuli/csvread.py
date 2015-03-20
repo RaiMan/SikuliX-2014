@@ -12,7 +12,7 @@ for nR in range(len(mycsv)):
     for nC in range(len(mycsv[nR])):
         print "Row: %d - Col: %d = %s"%(nR, nC, mycsv[nR][nC]) 
 
-print ("*********** rows - cols")
+print ("*********** cols - rows")
 mycsvCols = []
 for nC in range(len(mycsv[0])):
     mycsvCols.append([])
