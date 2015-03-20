@@ -783,10 +783,8 @@ public class RunSetup {
         targetJar = fTargetJar.getAbsolutePath();
         String tessJar = new File(workDir, localTess).getAbsolutePath();
 
-        if (runTime.runningWindows) {
-          success = runTime.addToClasspath(fTessData.getParent());
-          runTime.resourceListAsSikulixContent(tessFolder, fTessData, null);
-        }
+				success = runTime.addToClasspath(fTessData.getParent());
+				runTime.resourceListAsSikulixContent(tessFolder, fTessData, null);
 
         downloadOK &= FileManager.buildJar("#" + targetJar, new String[]{},
                 new String[]{fTessData.getAbsolutePath()},
@@ -909,7 +907,7 @@ public class RunSetup {
               addonFileList, addonFilePrefix, libsFilter);
       success &= handleTempAfter(targetJar, localJar);
     }
-    
+
     if(getTess) {
       new File(workDir, localTess).delete();
       jarsList[2] = null;
@@ -929,7 +927,7 @@ public class RunSetup {
         }
       }
       targetJar = (new File(workDir, localTemp)).getAbsolutePath();
-      success &= FileManager.buildJar("#" + targetJar, jarsList, 
+      success &= FileManager.buildJar("#" + targetJar, jarsList,
               null, null, libsFilter);
       success &= handleTempAfter(targetJar, localJar);
 

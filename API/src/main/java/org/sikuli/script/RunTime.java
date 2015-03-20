@@ -790,7 +790,7 @@ int nMonitors = 0;
         terminate(1, "problem copying %s", fJawtDll);
       }
     }
-    if (shouldExport) {
+    if (shouldExport && !Type.IDE.equals(runType)) {
       extractResourcesToFolder("Lib", fSikulixLib, null);
     }
     areLibsExported = true;
@@ -1529,7 +1529,7 @@ int nMonitors = 0;
       }
       return null;
     } else {
-      return extractResourcesToFolder("sikulixtessdata", folder, null);
+      return extractResourcesToFolder("/sikulixtessdata/", folder, null);
     }
   }
   /**
@@ -1727,6 +1727,7 @@ int nMonitors = 0;
   }
 
   public URL resourceLocation(String folderOrFile) {
+		log(lvl, "resourceLocation: (%s) %s", clsRef, folderOrFile);
     if (!folderOrFile.startsWith("/")) {
       folderOrFile = "/" + folderOrFile;
     }
@@ -1755,12 +1756,14 @@ int nMonitors = 0;
   }
 
   private List<String> resourceList(String folder, FilenameFilter filter) {
+		log(lvl, "resourceList: enter");
     List<String> files = new ArrayList<String>();
     if (!folder.startsWith("/")) {
       folder = "/" + folder;
     }
     URL uFolder = resourceLocation(folder);
     if (uFolder == null) {
+			log(lvl, "resourceList: not found: %s", folder);
       return files;
     }
     URL uContentList = clsRef.getResource(folder + "/" + fpContent);
@@ -1770,6 +1773,7 @@ int nMonitors = 0;
     }
     File fFolder = null;
     try {
+			log(lvl, "resourceList: not jar");
       fFolder = new File(uFolder.toURI());
       String sFolder = uFolder.getPath();
       if (":".equals(sFolder.substring(2, 3))) {
@@ -1796,6 +1800,7 @@ int nMonitors = 0;
       return null;
     }
     String fpFolder = parts[1];
+		log(lvl, "resourceList: as jar");
     return doResourceListJar(uFolder, fpFolder, files, filter);
   }
 

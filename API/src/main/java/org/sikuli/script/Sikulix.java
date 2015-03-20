@@ -59,14 +59,14 @@ public class Sikulix {
 
   static {
     String jarName = "";
-    
+
     CodeSource codeSrc =  Sikulix.class.getProtectionDomain().getCodeSource();
     if (codeSrc != null && codeSrc.getLocation() != null) {
       jarName = codeSrc.getLocation().getPath();
     }
 
     if (jarName.contains("sikulixsetupAPI")) {
-      JOptionPane.showMessageDialog(null, "Not useable!\nRun setup first!", 
+      JOptionPane.showMessageDialog(null, "Not useable!\nRun setup first!",
               "sikulixsetupAPI", JOptionPane.ERROR_MESSAGE);
       System.exit(0);
     }
@@ -130,9 +130,12 @@ public class Sikulix {
       Debug.on(3);
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
-            
+
+			Settings.OcrTextRead = true;
+			TextRecognizer.getInstance();
+			rt.terminate(0, "");
 //      Screen s = new Screen();
-      
+
 //      File fJarLibsLux = new File(rt.fSikulixDownloadsBuild, "sikulixlibslux-1.1.0.jar");
 //      String fpJarLibsLux = fJarLibsLux.getAbsolutePath();
 //      boolean shouldBuild = LinuxSupport.processLibs(fpJarLibsLux);
@@ -153,7 +156,7 @@ public class Sikulix {
       }
       String version = String.format("(%s-%s)", rt.getVersionShort(), rt.sxBuildStamp);
       String runSomeJS = inputText("enter some JavaScript (know what you do - may silently die ;-)"
-              + "\nexample: run(\"git*\") will run the JavaScript showcase from GitHub", 
+              + "\nexample: run(\"git*\") will run the JavaScript showcase from GitHub",
               "API::JavaScriptRunner " + version, 10, 60);
       if (runSomeJS.isEmpty()) {
         popup("Nothing to do!", version);

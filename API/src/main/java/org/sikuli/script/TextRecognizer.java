@@ -53,9 +53,9 @@ public class TextRecognizer {
           Debug.error("TextRecognizer: init: export tessdata not possible - run setup with option 3");
         }
       }
-      if (!new File(fTessdataPath, "eng.traineddata").exists()) {
-        initSuccess = false;
-      }
+		}
+		if (!new File(fTessdataPath, "eng.traineddata").exists()) {
+			initSuccess = false;
 		}
     if (!initSuccess) {
       Debug.error("TextRecognizer not working: tessdata stuff not available at:\n%s", fTessdataPath);
