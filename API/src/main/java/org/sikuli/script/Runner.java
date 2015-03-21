@@ -356,7 +356,17 @@ public class Runner {
       }
 			if (!givenScriptExists) {
 				log(-1, "given script location not supported or not valid:\n%s", scriptLocation);
-			}
+			} else {
+        String header = "# ";
+        String trailer = "\n";
+        if ("JavaScript".equals(givenScriptScriptType)) {
+          header = "/*\n";
+          trailer = "*/\n";
+        }
+        header += scriptLocation + "\n";
+        FileManager.writeStringToFile( header + trailer + content, 
+                new File(runTime.fSikulixStore, "LastScriptFromNet.txt"));
+      }
     } else {
 			boolean sameFolder = givenScriptName.startsWith("./");
 			if (sameFolder) {

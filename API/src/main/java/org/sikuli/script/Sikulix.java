@@ -131,9 +131,6 @@ public class Sikulix {
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
 
-			Settings.OcrTextRead = true;
-			TextRecognizer.getInstance();
-			rt.terminate(0, "");
 //      Screen s = new Screen();
 
 //      File fJarLibsLux = new File(rt.fSikulixDownloadsBuild, "sikulixlibslux-1.1.0.jar");
@@ -155,12 +152,19 @@ public class Sikulix {
         System.exit(1);
       }
       String version = String.format("(%s-%s)", rt.getVersionShort(), rt.sxBuildStamp);
-      String runSomeJS = inputText("enter some JavaScript (know what you do - may silently die ;-)"
-              + "\nexample: run(\"git*\") will run the JavaScript showcase from GitHub",
-              "API::JavaScriptRunner " + version, 10, 60);
+      File lastSession = new File(rt.fSikulixStore, "LastAPIJavaScript.js");
+      String runSomeJS = "";
+      if (lastSession.exists()) {
+        runSomeJS = FileManager.readFileToString(lastSession);
+      }
+      runSomeJS = inputText("enter some JavaScript (know what you do - may silently die ;-)"
+              + "\nexample: run(\"git*\") will run the JavaScript showcase from GitHub"
+              + "\nWhat you enter now will be shown the next time.",
+              "API::JavaScriptRunner " + version, 10, 60, runSomeJS);
       if (runSomeJS.isEmpty()) {
         popup("Nothing to do!", version);
       } else {
+        FileManager.writeStringToFile(runSomeJS, lastSession);
         Runner.runjs(null, null, runSomeJS, null);
       }
     }
@@ -531,6 +535,10 @@ public class Sikulix {
    * @return The user's input including the line breaks.
    */
   public static String inputText(String msg, String title, int lines, int width) {
+    return inputText(msg, title, lines, width, "");
+  }
+  
+  public static String inputText(String msg, String title, int lines, int width, String text) {
     width = Math.max(20, width);
     lines = Math.max(9, lines);
     if ("".equals(title)) {
@@ -541,6 +549,7 @@ public class Sikulix {
     int h = (int) (lines * ta.getFontMetrics(ta.getFont()).getHeight());
     ta.setPreferredSize(new Dimension(w, h));
     ta.setMaximumSize(new Dimension(w, 2 * h));
+    ta.setText(text);
     JScrollPane sp = new JScrollPane(ta);
     sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
     JTextArea tm = new JTextArea(msg);
