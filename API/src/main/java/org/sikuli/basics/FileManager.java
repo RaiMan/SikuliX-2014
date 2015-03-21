@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -1187,18 +1188,48 @@ public class FileManager {
   }
 
   public static boolean writeStringToFile(String text, String path) {
+    return writeStringToFile(text, new File(path));
+  }
+
+  public static boolean writeStringToFile(String text, File fPath) {
     PrintStream out = null;
     try {
-      out = new PrintStream(new FileOutputStream(path));
+      out = new PrintStream(new FileOutputStream(fPath));
       out.print(text);
     } catch (Exception e) {
-      log(-1,"writeStringToFile: did not work: " + path + "\n" + e.getMessage());
+      log(-1,"writeStringToFile: did not work: " + fPath + "\n" + e.getMessage());
     }
     if (out != null) {
       out.close();
       return true;
     }
     return false;
+  }
+
+  public static String readFileToString(File fPath) {
+    try {
+      return doRreadFileToString(fPath);
+    } catch (Exception ex) {
+      return "";
+    }
+  }
+  
+  private static String doRreadFileToString(File fPath) throws IOException {
+    StringBuilder result = new StringBuilder();
+    BufferedReader reader = null;
+    try {
+      reader = new BufferedReader(new FileReader(fPath));
+      char[] buf = new char[1024];
+      int r = 0;
+      while ((r = reader.read(buf)) != -1) {
+        result.append(buf, 0, r);
+      }
+    } finally {
+      if (reader != null) {
+        reader.close();
+      }
+    }
+    return result.toString();
   }
 
   public static boolean packJar(String folderName, String jarName, String prefix) {
