@@ -43,6 +43,7 @@ public class ObserverCallBack implements EventListener {
 			scriptRunnerType = "jython";
 			scriptRunner = JythonHelper.get();
 		} else {
+//TODO implement JRubyHelper
 			try {
 				if (callback.getClass().getName().contains("org.jruby")) {
 					scriptRunnerType = "jruby";
@@ -60,7 +61,7 @@ public class ObserverCallBack implements EventListener {
 					Debug.error("ObserverCallBack: no valid callback: %s", callback);
 				}
 			} catch (Exception ex) {
-				Debug.error("ObserverCallBack: %s init: ScriptRunner not available for %s", scriptRunnerType);
+				Debug.error("ObserverCallBack: %s init: ScriptRunner not available for %s", obsType, scriptRunnerType);
 				scriptRunner = null;
 			}
 		}
