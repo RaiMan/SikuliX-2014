@@ -76,6 +76,7 @@ public class RunTime {
   public File fLibsProvided;
   public File fLibsLocal;
   public boolean useLibsProvided = false;
+  public File fSikulixStore;
 
   private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -222,12 +223,14 @@ public class RunTime {
 				runTime.fSikulixAppPath = new File(runTime.fAppPath, ".Sikulix");
 				appDataMsg = "init: Linux: SikulxAppData does not exist or is not accessible:\n%s";
 			}
+      runTime.fSikulixStore = new File(runTime.fSikulixAppPath, "SikulixStore");
+      runTime.fSikulixStore.mkdirs();
 //</editor-fold>
 
       debugLevelSaved = Debug.getDebugLevel();
       debugLogfileSaved = Debug.logfile;
 
-      File fDebug = new File(runTime.fSikulixAppPath, "SikulixDebug.txt");
+      File fDebug = new File(runTime.fSikulixStore, "SikulixDebug.txt");
       if (fDebug.exists()) {
         if (Debug.getDebugLevel() == 0) {
           Debug.setDebugLevel(3);
@@ -1103,7 +1106,7 @@ int nMonitors = 0;
 
 //<editor-fold defaultstate="collapsed" desc="options handling">
   private void loadOptions(Type typ) {
-		for (File aFile : new File[] {fWorkDir, fUserDir, fSikulixAppPath}) {
+		for (File aFile : new File[] {fWorkDir, fUserDir, fSikulixStore}) {
       log(lvl, "loadOptions: check: %s", aFile);
 			fOptions = new File(aFile, fnOptions);
       if (fOptions.exists()) {
@@ -1521,7 +1524,6 @@ int nMonitors = 0;
     List<String> files = new ArrayList<String>();
     String tessdata = "/sikulixtessdata";
     URL uContentList = clsRef.getResource(tessdata + "/" + fpContent);
-    clsRef = clsRefBase;
     if (uContentList != null) {
       files = doResourceListWithList(tessdata, files, null);
       if (files.size() > 0) {
@@ -1529,7 +1531,7 @@ int nMonitors = 0;
       }
       return null;
     } else {
-      return extractResourcesToFolder("/sikulixtessdata/", folder, null);
+      return extractResourcesToFolder("/sikulixtessdata", folder, null);
     }
   }
   /**
@@ -1734,27 +1736,6 @@ int nMonitors = 0;
     return clsRef.getResource(folderOrFile);
   }
 
-  /**
-   * INTERNAL USE: only for testing - not threadsafe !!!
-   * @param folderOrFile the resource relative to root
-   * @param clsRef the reference class on classpath
-   * @return the ressource URL or null if not found
-   */
-  public URL resourceLocation(String folderOrFile, String cls) {
-    if (!folderOrFile.startsWith("/")) {
-      folderOrFile = "/" + folderOrFile;
-    }
-    try {
-      Class clsRef = Class.forName(cls);
-      URL aURL = clsRef.getResource(folderOrFile);
-      if (aURL != null) {
-        this.clsRef = clsRef;
-        return aURL;
-      }
-    } catch (Exception ex) {}
-    return null;
-  }
-
   private List<String> resourceList(String folder, FilenameFilter filter) {
 		log(lvl, "resourceList: enter");
     List<String> files = new ArrayList<String>();
@@ -1766,24 +1747,23 @@ int nMonitors = 0;
 			log(lvl, "resourceList: not found: %s", folder);
       return files;
     }
+    try {
+      uFolder = new URL(uFolder.toExternalForm().replaceAll(" ", "%20"));
+    } catch (Exception ex) {}
     URL uContentList = clsRef.getResource(folder + "/" + fpContent);
-    clsRef = clsRefBase;
     if (uContentList != null) {
       return doResourceListWithList(folder, files, filter);
     }
     File fFolder = null;
     try {
-			log(lvl, "resourceList: not jar");
       fFolder = new File(uFolder.toURI());
-      String sFolder = uFolder.getPath();
+			log(lvl, "resourceList: having folder: %s", fFolder);
+      String sFolder = FileManager.normalizeAbsolute(fFolder.getPath(), false);
       if (":".equals(sFolder.substring(2, 3))) {
         sFolder = sFolder.substring(1);
       }
-      if (sFolder.endsWith("/")) {
-        sFolder = sFolder.substring(0, sFolder.length() - 1);
-      }
       files.add(sFolder);
-      files = doResourceListFolder(fFolder, files, filter);
+      files = doResourceListFolder(new File(sFolder), files, filter);
       files.remove(0);
       return files;
     } catch (Exception ex) {
@@ -1800,7 +1780,7 @@ int nMonitors = 0;
       return null;
     }
     String fpFolder = parts[1];
-		log(lvl, "resourceList: as jar");
+		log(lvl, "resourceList: having jar: %s", uFolder);
     return doResourceListJar(uFolder, fpFolder, files, filter);
   }
 
