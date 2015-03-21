@@ -70,13 +70,9 @@ public class RunTime {
   public boolean runningInteractive = false;
   public boolean runningTests = false;
   public String interactiveRunner;
-  public File fSikulixDownloadsGeneric = null;
-  public File fSikulixDownloadsBuild = null;
-  public File fSikulixSetup;
   public File fLibsProvided;
   public File fLibsLocal;
   public boolean useLibsProvided = false;
-  public File fSikulixStore;
 
   private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -365,6 +361,10 @@ public class RunTime {
   public File fSikulixAppPath = null;
   public File fSikulixExtensions = null;
   public File fSikulixLib = null;
+  public File fSikulixStore;
+  public File fSikulixDownloadsGeneric = null;
+  public File fSikulixDownloadsBuild = null;
+  public File fSikulixSetup;
 
   private File fOptions = null;
   private Properties options = null;
