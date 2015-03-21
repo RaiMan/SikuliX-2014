@@ -12,6 +12,7 @@ main = function() {
   }
 	use1(r.below(100));
 	click("quickstart");
+  wait(3);
   closeBrowserWindow();
 };
 
