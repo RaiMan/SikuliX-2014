@@ -12,7 +12,6 @@ main = function() {
   }
 	use1(r.below(100));
 	click("quickstart");
-  Sikulix.popup("Click OK:\n- to close the browser window\n- and terminate");
   closeBrowserWindow();
 };
 
