@@ -150,7 +150,7 @@ public class RunSetup {
     minorversion = runTime.getVersionShort().substring(0, 5);
     majorversion = runTime.getVersionShort().substring(0, 3);
 
-    localSetup = String.format("sikulixsetup-%s-%s.jar", version, runTime.sxBuildStamp);
+    localSetup = String.format("sikulixsetup-%s-%s-project.jar", version, runTime.sxBuildStamp);
     if (runTime.fSxBaseJar.getPath().contains(localSetup)) {
       runningWithProject = true;
     }
@@ -1163,6 +1163,15 @@ public class RunSetup {
 		if (success) {
 			FileManager.resetFolder(fDownloadsGenericApp);
 			success &= FileManager.xcopy(fSetup, new File(fTargetDir, localSetup));
+      if (success) {
+        for (String sFile : fTargetDir.list()) {
+          if (sFile.contains("sikulixsetup") && 
+                  sFile.contains("-project") &&
+                  !sFile.contains(localSetup)) {
+            FileManager.deleteFileOrFolder(new File(fTargetDir, sFile));
+          }
+        }
+      }
 			success &= FileManager.xcopy(fIDEPlus, new File(fDownloadsGenericApp, downloadIDE));
 			success &= FileManager.xcopy(fAPIPlus, new File(fDownloadsGenericApp, downloadAPI));
 
@@ -1179,6 +1188,7 @@ public class RunSetup {
 			String jrubyAddons = "sikulixjrubyaddons-" + runTime.SikuliProjectVersion + "-plain.jar";
 			File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
 //        success &= FileManager.xcopy(fJRubyAddOns, new File(fDownloadsGeneric, downloadJRubyAddOns));
+      
 		}
 		return success;
 	}
