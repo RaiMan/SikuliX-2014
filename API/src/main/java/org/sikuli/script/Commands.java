@@ -146,7 +146,18 @@ public class Commands {
 //</editor-fold>
   
 //<editor-fold defaultstate="collapsed" desc="wait/waitVanish/exists">
-  public static Match wait(Object... args) throws FindFailed {
+
+  /**
+   * wait for the given visual to appear within the given wait time 
+   * args [String|Pattern|Double, [Double, [Float]]] (max 3 args)
+   * arg1: String/Pattern to search or double time to wait (rest ignored)
+   * arg2: time to wait in seconds
+   * arg3: minimum similarity to use for search (overwrites Pattern setting)
+   * @param args
+   * @return the match or throws FindFailed
+   * @throws FindFailed
+   */
+    public static Match wait(Object... args) throws FindFailed {
     logCmd("wait", args);
     Object[] realArgs = waitArgs(args);
     return waitx((String) realArgs[0], (Pattern) realArgs[1], (Double) realArgs[2], (Float) realArgs[3]);
@@ -226,7 +237,12 @@ public class Commands {
     return realArgs;
   }
   
-  public static boolean waitVanish(Object... args) throws FindFailed {
+  /**
+   * wait for the given visual to vanish within the given wait time 
+   * @param args see wait()
+   * @return true if not there from beginning or vanished within wait time, false otherwise
+   */
+  public static boolean waitVanish(Object... args) {
     logCmd("waitVanish", args);
     Object aPattern;
     Object[] realArgs = waitArgs(args);
@@ -249,6 +265,11 @@ public class Commands {
     return scr.waitVanish(aPattern);
   }
   
+  /**
+   * wait for the given visual to appear within the given wait time 
+   * @param args see wait()
+   * @return the match or null if not found within wait time (no FindFailed exception)
+   */
   public static Match exists(Object... args) {
     logCmd("exists", args);
     Match match = null;
@@ -266,7 +287,17 @@ public class Commands {
 //</editor-fold>
   
 //<editor-fold defaultstate="collapsed" desc="hover/click/doubleClick/rightClick">
-  public static Location hover(Object... args) {
+
+  /**
+   * move the mouse to the given location with a given offset<br>
+   * 3 parameter configurations:<br>
+   * --1: wait for a visual and move mouse to it (args see wait())<br>
+   * --2: move to the given region/location/match with a given offset
+   * --3: move to the given offset relative to the last match of the region in use
+   * @param args
+   * @return the evaluated location to where the mouse should have moved 
+   */
+    public static Location hover(Object... args) {
     logCmd("hover", args);
     return hoverx(args);
   }
@@ -315,6 +346,11 @@ public class Commands {
     return Mouse.at();
   }
   
+  /**
+   * move the mouse with hover() and click using the left button
+   * @param args see hover()
+   * @return the location, where the click was done
+   */
   public static Location click(Object... args) {
     logCmd("click", args);
     Location loc = hoverx(args);
@@ -322,6 +358,11 @@ public class Commands {
     return Mouse.at();
   }
   
+  /**
+   * move the mouse with hover() and double click using the left button
+   * @param args see hover()
+   * @return the location, where the double click was done
+   */
   public static Location doubleClick(Object... args) {
     logCmd("doubleClick", args);
     Location loc = hoverx(args);
@@ -329,6 +370,11 @@ public class Commands {
     return Mouse.at();
   }
   
+  /**
+   * move the mouse with hover() and do a right click
+   * @param args see hover()
+   * @return the location, where the right click was done
+   */
   public static Location rightClick(Object... args) {
     logCmd("rightClick", args);
     Location loc = hoverx(args);
@@ -338,12 +384,7 @@ public class Commands {
 //</editor-fold>
   
 //<editor-fold defaultstate="collapsed" desc="type/write/paste">
-  public static boolean type(Object... args) {
-    logCmd("type", args);
-    Object[] realArgs = typeArgs(args);
-    return 0 < scr.type((String) realArgs[0]);
-  }
-  
+
   public static boolean paste(Object... args) {
     logCmd("paste", args);
     Object[] realArgs = typeArgs(args);
@@ -367,28 +408,47 @@ public class Commands {
 //</editor-fold>
   
 //<editor-fold defaultstate="collapsed" desc="JSON support">
-  public static boolean isJSON(Object aObj) {
+
+  /**
+   * check wether the given object is in JSON format as ["ID", ...]
+   * @param aObj
+   * @return true if object is in JSON format, false otherwise
+   */
+    public static boolean isJSON(Object aObj) {
     if (aObj instanceof String) {
       return ((String) aObj).startsWith("[\"");
     }
     return false;
   }
   
+  /**
+   * experimental: create the real object from the given JSON<br>
+   * take care: content length not checked if valid (risk for index out of bounds)<br>
+   * planned to be used with a socket/RPC based interface to any framework (e.g. C#)
+   * Region ["R", x, y, w, h]<br>
+   * Location ["L", x, y]<br>
+   * Match ["M", x, y, w, h, score, offx, offy]<br>
+   * Screen ["S", x, y, w, h, id]<br>
+   * Pattern ["P", "imagename", score, offx, offy]
+   * These real objects have a toJSON(), that returns these JSONs
+   * @param aObj
+   * @return the real object, the given object if not one of these JSONs
+   */
   public static Object fromJSON(Object aObj) {
     if (!isJSON(aObj)) {
-      return null;
+      return aObj;
     }
     Object newObj = null;
     String[] json = ((String) aObj).split(",");
     String last = json[json.length-1];
     if (!last.endsWith("]")) {
-      return null;
+      return aObj;
     } else {
       json[json.length-1] = last.substring(0, last.length()-1);
     }
     String oType = json[0].substring(2,3);
     if (!"SRML".contains(oType)) {
-      return null;
+      return aObj;
     }
     if ("S".equals(oType)) {
       aObj = new Screen(intFromJSON(json, 5));
@@ -401,6 +461,10 @@ public class Commands {
       ((Match) newObj).setTarget(intFromJSON(json, 6), intFromJSON(json, 7));
     } else if ("L".equals(oType)) {
       newObj = new Location(locFromJSON(json));
+    } else if ("P".equals(oType)) {
+      newObj = new Pattern(json[1]);
+      ((Pattern) newObj).similar(fltFromJSON(json, 2));
+      ((Pattern) newObj).targetOffset(intFromJSON(json, 3), intFromJSON(json, 4));
     }
     return newObj;
   }
@@ -432,6 +496,14 @@ public class Commands {
   private static int intFromJSON(String[] json, int pos) {
     try {
       return Integer.parseInt(json[pos].trim());
+    } catch (Exception ex) {
+      return 0;
+    }
+  }
+  
+  private static float fltFromJSON(String[] json, int pos) {
+    try {
+      return Float.parseFloat(json[pos].trim());
     } catch (Exception ex) {
       return 0;
     }

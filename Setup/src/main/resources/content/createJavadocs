@@ -27,6 +27,7 @@ echo $apisrc/App.java >>createJavadocsClasses
 echo $apisrc/Env.java >>createJavadocsClasses
 echo $apisrc/Sikulix.java >>createJavadocsClasses
 echo $apisrc/Runner.java >>createJavadocsClasses
+echo $apisrc/Commands.java >>createJavadocsClasses
 echo $basicssrc/Settings.java >>createJavadocsClasses
 echo $basicssrc/Debug.java >>createJavadocsClasses
 javadoc -public -classpath $apijar -d target/docs @createJavadocsClasses
