@@ -336,23 +336,21 @@ public class RunSetup {
       isLinux = true;
     }
 
-    if (!testingMaven && runTime.runningInProject) {
-      if (!hasOptions || clean) {
-        if (noSetup) {
-          log(lvl, "creating Setup folder - not running setup");
-        } else {
-          log(lvl, "have to create Setup folder before running setup");
-        }
-
-        if (!createSetupFolder(fWorkDir)) {
-          log(-1, "createSetupFolder: did not work- terminating");
-          System.exit(1);
-        }
-        if (noSetup) {
-          System.exit(0);
-        }
-        logToFile = false;
+    if (!testingMaven && runningWithProject) {
+      if (noSetup) {
+        log(lvl, "creating Setup folder - not running setup");
+      } else {
+        log(lvl, "have to create Setup folder before running setup");
       }
+
+      if (!createSetupFolder(fWorkDir)) {
+        log(-1, "createSetupFolder: did not work- terminating");
+        System.exit(1);
+      }
+      if (noSetup) {
+        System.exit(0);
+      }
+      logToFile = false;
     }
 
     logToFile = true;
