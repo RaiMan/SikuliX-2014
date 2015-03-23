@@ -1,3 +1,8 @@
+<h4>Build: 2015-03-24</h4>
+added: multi monitor: a visual can now be found on all screens with one op: Screen.all().getRegion().find(someImage) 
+will return a match, that knows it's screen, hence match.getScreen() will return the screen it was found on.
+Take care: is a lengthy operation and costs some memory, so it should be used with care. 
+If the match spans screens, the screen with the biggest part is the winner (should be avoided).
 <h4>Build: 2015-03-22</h4>
 the next days I will somehow reveal more information about the new or revised features<br>
 ... but many features are already in the docs<br>
