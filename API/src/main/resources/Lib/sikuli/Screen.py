@@ -33,6 +33,10 @@ class Screen(Region):
     def getNumberScreens(cls):
         return JScreen.getNumberScreens()
 
+    @classmethod
+    def all(cls):
+        return JScreen.all()
+
 #TODO check wether needed (Region.setROI() resets to bounds too)
 #    def resetROI(self):
 #        # Debug.log(3, "Screen.py: resetROI: %s", self.getScreen())

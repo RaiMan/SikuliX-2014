@@ -406,7 +406,7 @@ def sleep(sec):
 def reset():
   JScreen.resetMonitors();
   use();
-  ALL = JScreen.all()
+  ALL = SCREEN.all().getRegion()
 
 ##
 # shutdown and return given exit code
@@ -517,6 +517,6 @@ def _exposeAllMethods(anyObject, saved, theGlobals, exclude_list):
 
 ############### set SCREEN as primary screen at startup ################
 use()
-ALL = JScreen.all()
+ALL = SCREEN.all().getRegion()
 Debug.log(3, "Jython: sikuli: Sikuli: ending init")
 

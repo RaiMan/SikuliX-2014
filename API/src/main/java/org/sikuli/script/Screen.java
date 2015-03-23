@@ -13,7 +13,6 @@ import org.sikuli.util.EventObserver;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import java.awt.AWTException;
-import java.awt.GraphicsDevice;
 import java.awt.Rectangle;
 import java.awt.Robot;
 
@@ -150,7 +149,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 	 * @param isScreenUnion true/false
 	 */
 	public Screen(boolean isScreenUnion) {
-    super();
+    super(isScreenUnion);
   }
 
 	/**

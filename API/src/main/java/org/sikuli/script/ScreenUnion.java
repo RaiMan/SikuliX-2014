@@ -31,6 +31,10 @@ public class ScreenUnion extends Screen {
     w = _bounds.width;
     h = _bounds.height;
   }
+  
+  public Region getRegion() {
+    return (Region) this;
+  }
 
   @Override
   public int getIdFromPoint(int x, int y) {

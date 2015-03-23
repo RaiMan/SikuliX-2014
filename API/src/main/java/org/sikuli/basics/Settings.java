@@ -10,8 +10,6 @@ import org.sikuli.script.RunTime;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.Proxy;
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Date;
 import org.sikuli.script.Image;
 
@@ -130,10 +128,10 @@ public class Settings {
 	 */
 	public static final String SIKULI_LIB = "*sikuli_lib";
 
-	public static String proxyName;
-	public static String proxyIP;
+	public static String proxyName = "";
+	public static String proxyIP = "";
 	public static InetAddress proxyAddress = null;
-	public static String proxyPort;
+	public static String proxyPort = "";
 	public static boolean proxyChecked = false;
 	public static Proxy proxy = null;
     
@@ -142,12 +140,16 @@ public class Settings {
    * INTERNAL USE: to trigger the initialization
    */
   public static synchronized void init() {
-		// TODO check existence of an extension repository
-    prefs = PreferencesUser.getInstance();
-    proxyName = prefs.get("ProxyName", null);
-    String proxyIP = prefs.get("ProxyIP", null);
-    InetAddress proxyAddress = null;
-    String proxyPort = prefs.get("ProxyPort", null);
+// TODO check existence of an extension repository
+//TODO Windows:
+//Mrz 23, 2015 12:25:43 PM java.util.prefs.WindowsPreferences <init>
+//WARNING: Could not open/create prefs root node Software\JavaSoft\Prefs 
+//at root 0x80000002. Windows RegCreateKeyEx(...) returned error code 5.
+//    prefs = PreferencesUser.getInstance();
+//    proxyName = prefs.get("ProxyName", null);
+//    String proxyIP = prefs.get("ProxyIP", null);
+//    InetAddress proxyAddress = null;
+//    String proxyPort = prefs.get("ProxyPort", null);
 
 //<editor-fold defaultstate="collapsed" desc="moved to RunTime">
 //    SikuliRepo = null;

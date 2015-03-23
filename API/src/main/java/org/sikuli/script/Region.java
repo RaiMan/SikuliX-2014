@@ -94,6 +94,7 @@ public class Region {
   private Iterator<Match> lastMatches = null;
   private long lastSearchTime;
   private long lastFindTime;
+  private boolean isScreenUnion = false;
 
 	/**
 	 * in case of not found the total wait time
@@ -408,6 +409,14 @@ public class Region {
    * internal use only, used for new Screen objects to get the Region behavior
    */
   protected Region() {
+    this.rows = 0;
+  }
+
+  /**
+   * internal use only, used for new Screen objects to get the Region behavior
+   */
+  protected Region(boolean isScreenUnion) {
+    this.isScreenUnion = isScreenUnion;
     this.rows = 0;
   }
 
@@ -769,10 +778,10 @@ public class Region {
 
   // to avoid NPE for Regions being outside any screen
   private IRobot getRobotForRegion() {
-    if (getScreen() == null) {
+    if (getScreen() == null || isScreenUnion) {
       return Screen.getPrimaryScreen().getRobot();
     }
-    return getScreen().getRobot();
+    return getScreen().getRobot(); 
   }
 
   /**
@@ -2434,7 +2443,7 @@ public class Region {
     lastFindTime = (new Date()).getTime();
     ScreenImage simg;
     if (repeating != null && repeating._finder != null) {
-      simg = getScreen().capture(x, y, w, h);
+      simg = getScreen().capture(this);
       f = repeating._finder;
       f.setScreenImage(simg);
       f.setRepeating();
@@ -2511,6 +2520,7 @@ public class Region {
     ScreenImage simg = getScreen().capture(this);
     if (!Settings.UseImageFinder && Settings.CheckLastSeen && null != img.getLastSeen()) {
       Region r = Region.create(img.getLastSeen());
+      float score = (float) (img.getLastSeenScore() - 0.01); 
       if (this.contains(r)) {
         Finder f = null;
         if (this.scr instanceof VNCScreen) {
@@ -2519,13 +2529,9 @@ public class Region {
           f = new Finder(simg.getSub(r.getRect()), r);
         }
         if (ptn == null) {
-          f.find(new Pattern(img).similar(Settings.CheckLastSeenSimilar));
+          f.find(new Pattern(img).similar(score));
         } else {
-          if (ptn.getSimilar() > Settings.CheckLastSeenSimilar) {
-            f.find(ptn);
-          } else {
-            f.find(new Pattern(ptn).similar(Settings.CheckLastSeenSimilar));
-          }
+          f.find(new Pattern(ptn).similar(score));
         }
         if (f.hasNext()) {
           log(lvl, "checkLastSeen: still there");
@@ -2639,7 +2645,7 @@ public class Region {
           return false;
         }
         long after_find = (new Date()).getTime();
-        if (after_find - before_find < MaxTimePerScan) {
+        if (after_find - before_find < MaxTimePerScan) {          
           getRobotForRegion().delay((int) (MaxTimePerScan - (after_find - before_find)));
         } else {
           getRobotForRegion().delay(10);

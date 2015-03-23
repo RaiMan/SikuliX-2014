@@ -9,10 +9,10 @@ if not DT.isDesktopSupported():
 dt = DT.getDesktop()
 dt.browse(URI("http://sikulix.com"))
 
-r = wait("sxpower", 5)
-use(r.below(100))
-click("quickstart")
-use()
+Debug.on(3)
+r = ALL.wait("sxpower.png", 30)
+r.below(100).click("quickstart.png")
+
 popup("Click OK:\n- to close the browser window\n- and terminate")
 
 if RUNTIME.runningMac:

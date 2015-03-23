@@ -131,7 +131,24 @@ public class Sikulix {
       Settings.InfoLogs = false;
       Settings.ActionLogs = false;
 
-//      Screen s = new Screen();
+      Screen s = new Screen();
+      ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
+      ScreenUnion su = Screen.all();
+      Region allScreens = su.getRegion();
+      log(0, "Screen.all().getRegion(): %s", allScreens);
+      
+//      Region reg = su.selectRegion();
+//      reg.find("sxpower");
+//      reg.highlight(-2);
+//      System.exit(1);      
+      
+      boolean test = false;
+      if (test || App.openLink("http://sikulix.com")) {
+//        s.wait(1f);
+        allScreens.wait("sxpower", 10);
+        allScreens.find("sxpower");
+      }
+      System.exit(1);
 
 //      File fJarLibsLux = new File(rt.fSikulixDownloadsBuild, "sikulixlibslux-1.1.0.jar");
 //      String fpJarLibsLux = fJarLibsLux.getAbsolutePath();

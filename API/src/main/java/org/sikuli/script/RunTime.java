@@ -336,7 +336,7 @@ public class RunTime {
   public String sxBuild = "";
   public String sxBuildStamp = "";
   public String jreVersion = java.lang.System.getProperty("java.runtime.version");
-  public Preferences optionsIDE = Preferences.userNodeForPackage(Sikulix.class);
+  public Preferences optionsIDE = null;
   public ClassLoader classLoader = RunTime.class.getClassLoader();
   public String baseJar = "";
   public String userName = "";
@@ -807,6 +807,7 @@ int nMonitors = 0;
 
   private void initIDEbefore() {
     log(lvl, "initIDEbefore: entering");
+    optionsIDE = Preferences.userNodeForPackage(Sikulix.class);
     if (jreVersion.startsWith("1.6")) {
       String jyversion = "";
       Properties prop = new Properties();
