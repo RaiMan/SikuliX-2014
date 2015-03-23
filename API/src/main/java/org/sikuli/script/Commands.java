@@ -29,10 +29,20 @@ public class Commands {
   
   private static RunTime runTime = RunTime.get();
 
+  /**
+   *
+   * @return true if we are on Java 8+
+   */
   public static boolean isNashorn() {
     return runTime.isJava8();
   }
 
+  /**
+   * INTERNAL USE: call interface for JavaScript to be used with predefined functions
+   * @param function the function's name
+   * @param args the parameters
+   * @return the object returned by the function or null
+   */
   public static Object call(String function, Object... args) {
     Method m = null;
     Object retVal = null;
@@ -105,18 +115,37 @@ public class Commands {
 //</editor-fold>
   
 //<editor-fold defaultstate="collapsed" desc="use/use1">
-  public static Region use(Object... args) {
+
+  /**
+   * all following undotted function calls will use the given screen or region 
+   * until this is changed by a later use()<br>
+   * -- no args: use Screen(0) (this is the default after start)<br>
+   * -- a number: use Screen(number), Screen(0) if not valid<br>
+   * -- a region: use the given region<br>
+   * @param args
+   * @return the used region
+   */
+    public static Region use(Object... args) {
     logCmd("use", args);
     scrSaved = null;
     return usex(args);
   }
   
+  /**
+   * same as use(), but only affects the next processed undotted function
+   * after that the use() active before is restored
+   * @param args see use()
+   * @return the used region
+   */
   public static Region use1(Object... args) {
     logCmd("use1", args);
     scrSaved = scr;
     return usex(args);
   }
   
+  /**
+   * INTERNAL USE: restore a saved use() after a use1() 
+   */
   public static void restoreUsed() {
     if (scrSaved != null) {
       scr = scrSaved;
@@ -148,11 +177,11 @@ public class Commands {
 //<editor-fold defaultstate="collapsed" desc="wait/waitVanish/exists">
 
   /**
-   * wait for the given visual to appear within the given wait time 
-   * args [String|Pattern|Double, [Double, [Float]]] (max 3 args)
-   * arg1: String/Pattern to search or double time to wait (rest ignored)
-   * arg2: time to wait in seconds
-   * arg3: minimum similarity to use for search (overwrites Pattern setting)
+   * wait for the given visual to appear within the given wait time<br>
+   * args [String|Pattern|Double, [Double, [Float]]] (max 3 args)<br>
+   * arg1: String/Pattern to search or double time to wait (rest ignored)<br>
+   * arg2: time to wait in seconds<br>
+   * arg3: minimum similarity to use for search (overwrites Pattern setting)<br>
    * @param args
    * @return the match or throws FindFailed
    * @throws FindFailed
@@ -292,7 +321,7 @@ public class Commands {
    * move the mouse to the given location with a given offset<br>
    * 3 parameter configurations:<br>
    * --1: wait for a visual and move mouse to it (args see wait())<br>
-   * --2: move to the given region/location/match with a given offset
+   * --2: move to the given region/location/match with a given offset<br>
    * --3: move to the given offset relative to the last match of the region in use
    * @param args
    * @return the evaluated location to where the mouse should have moved 
@@ -385,12 +414,23 @@ public class Commands {
   
 //<editor-fold defaultstate="collapsed" desc="type/write/paste">
 
+  /**
+   * just doing a currentRegion.paste(text) (see paste())
+   * @param args only one parameter being a String
+   * @return true if paste() returned 1, false otherwise
+   */
+  
   public static boolean paste(Object... args) {
     logCmd("paste", args);
     Object[] realArgs = typeArgs(args);
     return 0 < scr.paste((String) realArgs[0]);
   }
   
+  /**
+   * just doing a currentRegion.write(text) (see write())
+   * @param args only one parameter being a String
+   * @return true if write() returned 1, false otherwise
+   */
   public static boolean write(Object... args) {
     logCmd("write", args);
     Object[] realArgs = typeArgs(args);
@@ -429,10 +469,10 @@ public class Commands {
    * Location ["L", x, y]<br>
    * Match ["M", x, y, w, h, score, offx, offy]<br>
    * Screen ["S", x, y, w, h, id]<br>
-   * Pattern ["P", "imagename", score, offx, offy]
-   * These real objects have a toJSON(), that returns these JSONs
+   * Pattern ["P", "imagename", score, offx, offy]<br>
+   * These real objects have a toJSON(), that returns these JSONs<br>
    * @param aObj
-   * @return the real object, the given object if not one of these JSONs
+   * @return the real object or the given object if it is not one of these JSONs
    */
   public static Object fromJSON(Object aObj) {
     if (!isJSON(aObj)) {

@@ -877,14 +877,25 @@ int nMonitors = 0;
     return runningJar;
   }
 
+  /**
+   *
+   * @return return true if Java version > 7
+   */
   public boolean isJava8() {
     return javaVersion > 7;
   }
 
+  /**
+   *
+   * @return return true if Java version > 6
+   */
   public boolean isJava7() {
     return javaVersion > 6;
   }
 
+  /**
+   * print out some basic information about the current runtime environment
+   */
   public void show() {
     if (hasOptions()) {
       dumpOptions();
