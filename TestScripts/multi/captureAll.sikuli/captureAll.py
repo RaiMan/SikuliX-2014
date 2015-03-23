@@ -1,8 +1,7 @@
 scrs = []
 dir = getBundlePath()
 for n in range(getNumberScreens()):
-  scrs.append(Screen(n))
-for s in scrs:
-  scr = s.getScreen()
+  scrs.append(Screen(n).getScreen())
+for scr in scrs:
   filename = "screen%d" % scr.getID()
-  scr.capture(s).getFile(dir, filename)
+  scr.capture().getFile(dir, filename)
