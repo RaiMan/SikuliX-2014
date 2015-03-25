@@ -13,7 +13,7 @@ import java.net.Socket;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 
-public class RunnerClient {
+public class RunClient {
 
   private ObjectInputStream in = null;
   private OutputStreamWriter out;
@@ -28,7 +28,7 @@ public class RunnerClient {
     log(3, message, args);
   }
 
-  public RunnerClient(String adr, String p) {
+  public RunClient(String adr, String p) {
     init(adr, p);
   }
 
@@ -56,12 +56,9 @@ public class RunnerClient {
       log(-1, "fatal: problem starting pipes:\n", ex.getMessage());
       socketValid = false;
     }
-		if (socketValid) {
-			Object answer = send("START");
-			answer = send("popup(\"Hallo\"");
-			close(true);
+		if (!socketValid) {
+			System.exit(1);
 		}
-		System.exit(1);
   }
 
 

@@ -1,5 +1,6 @@
 package org.sikuli.script;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.InetAddress;
@@ -10,7 +11,7 @@ import javax.script.ScriptEngine;
 import org.sikuli.basics.Debug;
 
 
-public class RunnerServer {
+public class RunServer {
   private static ServerSocket server = null;
   private static ObjectOutputStream out = null;
   private static Scanner in = null;
@@ -29,10 +30,10 @@ public class RunnerServer {
     log(0, message, args);
   }
 
-	private RunnerServer() {
+	private RunServer() {
 	}
 
-  public static void start(String[] args) {
+  public static void main(String[] args) {
 		if (args == null) {
 			args = new String[0];
 		}
@@ -40,13 +41,14 @@ public class RunnerServer {
     try {
       try {
         if (port > 0) {
+					log(3, "Starting: trying port: %d", port);
           server = new ServerSocket(port);
         }
       } catch (Exception ex) {
         log(-1, "Starting: " + ex.getMessage());
       }
       if (server == null) {
-        log(-1, "could not be started on port: " + (args.length > 0 ? args[0] : null));
+        log(-1, "could not be started");
         System.exit(1);
       }
       while (true) {
@@ -80,7 +82,7 @@ public class RunnerServer {
 
   private static int getPort(String p) {
     int port;
-    int pDefault = 50000;
+    int pDefault = 50001;
     if (p != null) {
       try {
         port = Integer.parseInt(p);
@@ -103,6 +105,7 @@ public class RunnerServer {
     Socket socket;
     Boolean shouldStop = false;
 		ScriptEngine jsRunner = null;
+		File scriptFolder = null;
 
     public HandleClient(Socket sock) {
       init(sock);
@@ -111,7 +114,7 @@ public class RunnerServer {
     private void init(Socket sock) {
       socket = sock;
       if (in == null || out == null) {
-        RunnerServer.log(-1, "communication not established");
+        RunServer.log(-1, "communication not established");
         System.exit(1);
       }
       thread = new Thread(this, "HandleClient");
@@ -127,18 +130,19 @@ public class RunnerServer {
     public void run() {
 			Debug.on(3);
       String e;
-      RunnerServer.log("now handling client: " + socket);
+      RunServer.log("now handling client: " + socket);
       while (keepRunning) {
         try {
           e = in.nextLine();
           if (e != null) {
-            RunnerServer.log("processing: " + e);
+            RunServer.log("processing: " + e);
+						boolean success = true;
             if (e.contains("EXIT")) {
               stopRunning();
               in.close();
               out.close();
               if (e.contains("STOP")) {
-                RunnerServer.log("stop server requested");
+                RunServer.log("stop server requested");
                 shouldStop = true;
               }
               return;
@@ -150,15 +154,30 @@ public class RunnerServer {
 								prolog = Runner.prologjs(prolog);
 								jsRunner.eval(prolog);
 							}
+            } else if (e.contains("SDIR")) {
+							scriptFolder = new File(e.substring(5));
+            } else if (e.contains("RUN")) {
+							String script = e.substring(4);
+							File fScript = new File(scriptFolder, script);
+							File fScriptScript = new File(fScript, script + ".js");
+							success &= fScript.exists() && fScriptScript.exists();
+							if (success) {
+								ImagePath.setBundlePath(fScript.getAbsolutePath());
+								if (jsRunner != null) {
+									jsRunner.eval(new java.io.FileReader(fScriptScript));
+								} else {
+									success = false;
+								}
+							}
 						} else {
 							if (jsRunner != null) {
 								jsRunner.eval(e);
 							}
 						}
-						send("ok");
+						send(success ? "ok" : "failed");
           }
         } catch (Exception ex) {
-          RunnerServer.log(-1, "Exception while processing\n" + ex.getMessage());
+          RunServer.log(-1, "Exception while processing\n" + ex.getMessage());
           stopRunning();
         }
       }
@@ -173,18 +192,18 @@ public class RunnerServer {
       try {
         out.writeObject(o);
         out.flush();
-        RunnerServer.log("returned: "  + o);
+        RunServer.log("returned: "  + o);
       } catch (IOException ex) {
-        RunnerServer.log(-1, "send: writeObject: Exception: " + ex.getMessage());
+        RunServer.log(-1, "send: writeObject: Exception: " + ex.getMessage());
       }
     }
 
     public void stopRunning() {
-      RunnerServer.log("stop client handling requested");
+      RunServer.log("stop client handling requested");
       try {
         socket.close();
       } catch (IOException ex) {
-        RunnerServer.log(-1, "fatal: socket not closeable");
+        RunServer.log(-1, "fatal: socket not closeable");
         System.exit(1);
       }
       keepRunning = false;

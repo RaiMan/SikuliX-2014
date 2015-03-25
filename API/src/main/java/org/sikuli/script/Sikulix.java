@@ -134,7 +134,12 @@ public class Sikulix {
 
       Screen s = new Screen();
 
-//			RunnerClient runner = new RunnerClient("192.168.2.114", "50000");
+			RunClient runner = new RunClient("192.168.2.114", "50001");
+			runner.send("START");
+			runner.send("SDIR /Volumes/HD6/rhocke-plus/SikuliX-2014/StuffContainer/testScripts/testJavaScript");
+			runner.send("RUN testRunServer");
+			runner.close(true);
+			System.exit(1);
 
       if (rt.runningWinApp) {
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
@@ -533,7 +538,7 @@ public class Sikulix {
   public static String inputText(String msg, String title, int lines, int width) {
     return inputText(msg, title, lines, width, "");
   }
-  
+
   public static String inputText(String msg, String title, int lines, int width, String text) {
     width = Math.max(20, width);
     lines = Math.max(9, lines);

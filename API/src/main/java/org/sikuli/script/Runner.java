@@ -167,29 +167,25 @@ public class Runner {
 		String someJS = "";
 		int exitCode = 0;
 		if (runScripts != null && runScripts.length > 0) {
-			if (runScripts[0].contains("RunnerServer")) {
-				RunnerServer.start(null);
-			} else {
-				boolean runAsTest = runTime.runningTests;
-				for (String givenScriptName : runScripts) {
-					if (lastReturnCode == -1) {
-						log(lvl, "Exit code -1: Terminating multi-script-run");
-						break;
-					}
-					someJS = runTime.getOption("runsetup", "");
-					if (!someJS.isEmpty()) {
-            log(lvl, "Options.runsetup: %s", someJS);
-						runjs(null, null, someJS, null);
-					}
-					RunBox rb = new RunBox(givenScriptName, runTime.getSikuliArgs(), runAsTest);
-					exitCode = rb.run();
-					someJS = runTime.getOption("runteardown", "");
-					if (!someJS.isEmpty()) {
-            log(lvl, "Options.runteardown: %s", someJS);
-						runjs(null, null, someJS, null);
-					}
-					lastReturnCode = exitCode;
+			boolean runAsTest = runTime.runningTests;
+			for (String givenScriptName : runScripts) {
+				if (lastReturnCode == -1) {
+					log(lvl, "Exit code -1: Terminating multi-script-run");
+					break;
 				}
+				someJS = runTime.getOption("runsetup", "");
+				if (!someJS.isEmpty()) {
+					log(lvl, "Options.runsetup: %s", someJS);
+					runjs(null, null, someJS, null);
+				}
+				RunBox rb = new RunBox(givenScriptName, runTime.getSikuliArgs(), runAsTest);
+				exitCode = rb.run();
+				someJS = runTime.getOption("runteardown", "");
+				if (!someJS.isEmpty()) {
+					log(lvl, "Options.runteardown: %s", someJS);
+					runjs(null, null, someJS, null);
+				}
+				lastReturnCode = exitCode;
 			}
 		}
 		return exitCode;
@@ -364,7 +360,7 @@ public class Runner {
           trailer = "*/\n";
         }
         header += scriptLocation + "\n";
-        FileManager.writeStringToFile( header + trailer + content, 
+        FileManager.writeStringToFile( header + trailer + content,
                 new File(runTime.fSikulixStore, "LastScriptFromNet.txt"));
       }
     } else {

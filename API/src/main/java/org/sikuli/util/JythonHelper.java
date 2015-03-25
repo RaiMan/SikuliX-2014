@@ -331,7 +331,10 @@ public class JythonHelper {
       if (!fJar.exists()) {
         fJar = new File(runTime.fSikulixExtensions, fpJarOrFolder);
         if (!fJar.exists()) {
-          fJar = null;
+					fJar = new File(runTime.fSikulixLib, fpJarOrFolder);
+					if (!fJar.exists()) {
+						fJar = null;
+					}
         }
       }
     }
@@ -345,7 +348,7 @@ public class JythonHelper {
         return false;
       }
     } else {
-      log(-1, "load: could not be found - even not in bundle nor in extensions");
+      log(-1, "load: could not be found - even not in bundle nor in Lib nor in Extensions");
       return false;
     }
     return true;
