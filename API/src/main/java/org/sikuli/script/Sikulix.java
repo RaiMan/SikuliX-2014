@@ -13,6 +13,7 @@ import java.awt.Dimension;
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
+import java.util.Date;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -132,28 +133,6 @@ public class Sikulix {
       Settings.ActionLogs = false;
 
       Screen s = new Screen();
-      ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
-      ScreenUnion su = Screen.all();
-      Region allScreens = su.getRegion();
-      log(0, "Screen.all().getRegion(): %s", allScreens);
-      
-//      Region reg = su.selectRegion();
-//      reg.find("sxpower");
-//      reg.highlight(-2);
-//      System.exit(1);      
-      
-      boolean test = false;
-      if (test || App.openLink("http://sikulix.com")) {
-//        s.wait(1f);
-        allScreens.wait("sxpower", 10);
-        allScreens.find("sxpower");
-      }
-      System.exit(1);
-
-//      File fJarLibsLux = new File(rt.fSikulixDownloadsBuild, "sikulixlibslux-1.1.0.jar");
-//      String fpJarLibsLux = fJarLibsLux.getAbsolutePath();
-//      boolean shouldBuild = LinuxSupport.processLibs(fpJarLibsLux);
-//      boolean buildOK = LinuxSupport.buildVision(fpJarLibsLux);
 
 //			RunnerClient runner = new RunnerClient("192.168.2.114", "50000");
 
@@ -588,19 +567,6 @@ public class Sikulix {
     }
   }
 
-  public static void pause(int time) {
-    try {
-      Thread.sleep(time * 1000);
-    } catch (InterruptedException ex) {
-    }
-  }
-
-  public static void pause(float time) {
-    try {
-      Thread.sleep((int) (time * 1000));
-    } catch (InterruptedException ex) {
-    }
-  }
 
   public static boolean importPrefs(String path) {
     return true;
