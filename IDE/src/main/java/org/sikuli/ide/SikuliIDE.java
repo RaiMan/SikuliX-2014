@@ -2114,7 +2114,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 			}
 			SikuliIDE.getStatusbar().resetMessage();
 			sikulixIDE.setVisible(false);
-      Sikulix.pause(0.1f);
+      RunTime.pause(0.1f);
 			sikulixIDE.setIsRunningScript(true);
 			final IScriptRunner[] srunners = new IScriptRunner[] {null};
 			_runningThread = new Thread() {

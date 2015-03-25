@@ -45,6 +45,7 @@ import java.util.zip.ZipOutputStream;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import org.sikuli.script.Image;
+import org.sikuli.script.ImagePath;
 import org.sikuli.script.Sikulix;
 
 /**
@@ -508,6 +509,25 @@ public class FileManager {
       e.printStackTrace();
     }
     return null;
+  }
+  
+  public static String saveTimedImage(BufferedImage img) {
+    return saveTimedImage(img, ImagePath.getBundlePath(), null);
+  }
+
+  public static String saveTimedImage(BufferedImage img, String path) {
+    return saveTimedImage(img, path, null);
+  }
+  
+  public static String saveTimedImage(BufferedImage img, String path, String name) {
+    RunTime.pause(0.01f);
+    File fImage = new File(path, String.format("%s-%d.png", name, new Date().getTime()));
+    try {
+      ImageIO.write(img, "png", fImage);
+    } catch (Exception ex) {
+      return "";
+    }
+    return fImage.getAbsolutePath();
   }
 
   public static void unzip(String zip, String path) throws IOException, FileNotFoundException {

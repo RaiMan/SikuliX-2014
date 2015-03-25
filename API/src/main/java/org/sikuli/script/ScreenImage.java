@@ -69,36 +69,59 @@ public class ScreenImage {
 		return getFile();
 	}
 
+  /**
+   * INTERNAL USE: use getTimedFile() instead
+   * @return absolute path to stored file
+   */
+	public String getFile() {
+    if (_filename == null) {
+      _filename = save();
+    }
+    return _filename;
+  }
+  
 	/**
 	 * stores the image as PNG file in the standard temp folder
-	 * with a created filename (sikuli-image-#unique-random#.png)
+	 * with a created filename (sikuliximage-timestamp.png)
 	 * if not yet stored before
 	 *
 	 * @return absolute path to stored file
 	 */
-	public String getFile() {
-    if (_filename == null) {
-      _filename = FileManager.saveTmpImage(_img);
-    }
-    return _filename;
+  public String save() {
+    return FileManager.saveTimedImage(_img, RunTime.get().BaseTempPath, "sikuliximage");
   }
-
+  
 	/**
 	 * stores the image as PNG file in the given path
-	 * with a created filename (sikuli-image-#unique-random#.png)
+	 * with a created filename (sikuliximage-timestamp.png)
 	 *
 	 * @param path valid path string
 	 * @return absolute path to stored file
 	 */
   public String getFile(String path) {
-    try {
-      File tmp = File.createTempFile("sikuli-image-", ".png", new File(path));
-      createFile(tmp);
-    } catch (IOException iOException) {
-      Debug.error("ScreenImage.getFile: IOException", iOException);
-      return null;
-    }
-    return _filename;
+    return save(path);
+  }
+
+	/**
+	 * stores the image as PNG file in the given path
+	 * with a created filename (sikuliximage-timestamp.png)
+	 *
+	 * @param path valid path string
+	 * @return absolute path to stored file
+	 */
+  public String save(String path) {
+    return FileManager.saveTimedImage(_img, path, "sikuliximage");
+  }
+
+	/**
+	 * stores the image as PNG file in the given path
+	 * with a created filename (givenName-timestamp.png)
+	 *
+	 * @param path valid path string
+	 * @return absolute path to stored file
+	 */
+  public String save(String path, String name) {
+    return FileManager.saveTimedImage(_img, path, name);
   }
 
 	/**

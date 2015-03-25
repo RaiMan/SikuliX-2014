@@ -3982,4 +3982,16 @@ public class Region {
     return null;
   }
   //</editor-fold>
+  
+  public String saveCapture() {
+    return getScreen().capture(this).save();
+  }
+
+  public String saveCapture(String path) {
+    return getScreen().capture(this).save(path);
+  }
+
+  public String saveCapture(String path, String name) {
+    return getScreen().capture(this).save(path, name);
+  }
 }

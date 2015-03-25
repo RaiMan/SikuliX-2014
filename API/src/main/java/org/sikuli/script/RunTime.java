@@ -59,6 +59,20 @@ public class RunTime {
   }
  public static String appDataMsg = "";
 
+  public static void pause(int time) {
+    try {
+      Thread.sleep(time * 1000);
+    } catch (InterruptedException ex) {
+    }
+  }
+
+  public static void pause(float time) {
+    try {
+      Thread.sleep((int) (time * 1000));
+    } catch (InterruptedException ex) {
+    }
+  }
+
 //<editor-fold defaultstate="collapsed" desc="logging">
   private final String me = "RunTime%s: ";
   private int lvl = 3;
