@@ -151,7 +151,7 @@
 	<distributionManagement>
 		<repository>
 			<id>sikulix.deploy</id>
-			<url>${sikulix.deploy.local}</url>
+			<url>${sikulix.deploy.target}</url>
 		</repository>
 	</distributionManagement>
 
