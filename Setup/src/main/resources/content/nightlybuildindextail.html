@@ -1,4 +1,8 @@
 <h4>Build: 2015-03-24</h4>
+fixed: (I hope ;-) all regression bugs against 1.0.1 in multi monitor environments<br>
+revised: ALL in Jython scripts and Screen.all().getRegion() can now be used, to search on all monitors in the same op 
+(ALL.click(someBotton) will find and click the button, no matter on which monitor it currently is) 
+<h4>Build: 2015-03-24</h4>
 added: multi monitor: a visual can now be found on all screens with one op: Screen.all().getRegion().find(someImage) 
 will return a match, that knows it's screen, hence match.getScreen() will return the screen it was found on.
 Take care: is a lengthy operation and costs some memory, so it should be used with care. 
