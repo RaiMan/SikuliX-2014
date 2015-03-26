@@ -153,11 +153,8 @@ public class Sikulix {
       Settings.ActionLogs = false;
 
       Screen s = new Screen();
-
-			RunClient runner = new RunClient("192.168.2.122", "50001");
-			runner.close(true);
-			System.exit(1);
-
+      ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
+      
       if (rt.runningWinApp) {
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
         try {

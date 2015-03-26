@@ -95,6 +95,7 @@ public class Region {
   private long lastSearchTime;
   private long lastFindTime;
   private boolean isScreenUnion = false;
+  private boolean isVirtual = false;
 
 	/**
 	 * in case of not found the total wait time
@@ -286,8 +287,36 @@ public class Region {
     }
     return loc.setOtherScreen(scr);
   }
+  
+  public static Region virtual(Rectangle rect) {    
+    Region reg = new Region();
+    reg.x = rect.x;
+    reg.y = rect.y;
+    reg.w = rect.width;
+    reg.h = rect.height;
+    reg.setVirtual(true);
+    reg.scr = Screen.getPrimaryScreen();
+    return reg;
+  }
+  
+  /**
+   * INTERNAL USE - EXPERIMENTAL
+   * if true: this region is not bound to any screen 
+   * @return the current state
+   */
+  public boolean isVirtual() {
+    return isVirtual;
+  }
 
-	/**
+  /**
+   * INTERNAL USE - EXPERIMENTAL
+   * @param state if true: this region is not bound to any screen 
+   */
+  public void setVirtual(boolean state) {
+    isVirtual = state;
+  }
+
+  /**
 	 * INTERNAL USE:
 	 * checks wether this region belongs to a non-Desktop screen
 	 * @return true/false

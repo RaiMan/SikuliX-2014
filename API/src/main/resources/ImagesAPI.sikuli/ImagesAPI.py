@@ -5,4 +5,5 @@
 "quickstart.png"
 "raimanlogo.png"
 "sxpower.png"
-"nbicons.png"
+"netbicons.png"
+"firefox.png"

@@ -306,7 +306,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    * @return the physical coordinate/size <br>as AWT.Rectangle to avoid mix up with getROI
    */
   public static Rectangle getBounds(int id) {
-    return runTime.getMonitor(getValidID(id));
+    return new Rectangle(runTime.getMonitor(getValidID(id)));
   }
 
   /**
@@ -356,7 +356,7 @@ public class Screen extends Region implements EventObserver, IScreen {
 	 */
   @Override
   public Rectangle getBounds() {
-    return runTime.getMonitor(curID);
+    return new Rectangle(runTime.getMonitor(curID));
   }
 
   /**
@@ -453,7 +453,7 @@ public class Screen extends Region implements EventObserver, IScreen {
    * @return the image
    */
   public ScreenImage userCapture() {
-    return userCapture(promptMsg);
+    return userCapture("");
   }
 
   /**
@@ -479,20 +479,25 @@ public class Screen extends Region implements EventObserver, IScreen {
       }
     };
     th.start();
+    boolean hasShot = true;
     try {
       int count = 0;
       while (waitPrompt) {
         Thread.sleep(100);
         if (count++ > waitForScreenshot) {
-          return null;
+          hasShot = false;
+          break;
         }
       }
     } catch (InterruptedException e) {
-      e.printStackTrace();
+      hasShot = false;
     }
-    ScreenImage ret = prompt.getSelection();
-    lastScreenImage = ret;
-    prompt.close();
+    ScreenImage ret = null;
+    if (hasShot) {
+      ret = prompt.getSelection();
+      lastScreenImage = ret;
+      prompt.close();
+    }
     return ret;
   }
 
