@@ -100,6 +100,26 @@ public class Sikulix {
   public static void main(String[] args) throws FindFailed {
 
     System.out.println("********** Running Sikulix.main");
+    
+    if (args.length > 1 && args[0].toLowerCase().startsWith("runserver")) {
+      if (args[1].toLowerCase().contains("start")) {
+        RunServer.run(null);
+        System.exit(0);
+      } else {
+        File fRunServer = new File(RunTime.get().fSikulixStore, "RunServer");
+        String theServer = "";
+        if (fRunServer.exists()) {
+          theServer = FileManager.readFileToString(fRunServer).trim();
+          if (!theServer.isEmpty()) {
+            String[] parts = theServer.split(" ");
+            RunClient runner = new RunClient(parts[0].trim(), parts[1].trim());
+            runner.close(true);
+            fRunServer.delete();
+            System.exit(0);
+          }
+        }
+      }
+    }
 
     int dl = RunTime.checkArgs(args, RunTime.Type.API);
     if (dl > -1 && dl < 999) {
@@ -134,10 +154,7 @@ public class Sikulix {
 
       Screen s = new Screen();
 
-			RunClient runner = new RunClient("192.168.2.114", "50001");
-			runner.send("START");
-			runner.send("SDIR /Volumes/HD6/rhocke-plus/SikuliX-2014/StuffContainer/testScripts/testJavaScript");
-			runner.send("RUN testRunServer");
+			RunClient runner = new RunClient("192.168.2.122", "50001");
 			runner.close(true);
 			System.exit(1);
 

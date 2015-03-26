@@ -9,6 +9,7 @@ import java.net.Socket;
 import java.util.Scanner;
 import javax.script.ScriptEngine;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
 
 
 public class RunServer {
@@ -33,7 +34,7 @@ public class RunServer {
 	private RunServer() {
 	}
 
-  public static void main(String[] args) {
+  public static void run(String[] args) {
 		if (args == null) {
 			args = new String[0];
 		}
@@ -52,7 +53,10 @@ public class RunServer {
         System.exit(1);
       }
       while (true) {
-        log("now waiting on port: %d at %s", port, InetAddress.getLocalHost().getHostAddress());
+        String theIP = InetAddress.getLocalHost().getHostAddress();
+        String theServer = String.format("%s %d", theIP, port);
+        FileManager.writeStringToFile(theServer, new File(RunTime.get().fSikulixStore, "RunServer"));
+        log("now waiting on port: %d at %s", port, theIP);
         Socket socket = server.accept();
         out = new ObjectOutputStream(socket.getOutputStream());
         in = new Scanner(socket.getInputStream());
