@@ -43,6 +43,16 @@ public class Device {
   protected int MouseMovedAction = 3;
   protected int mouseMovedResponse = MouseMovedIgnore;
   protected ObserverCallBack mouseMovedCallback = null;
+  protected ObserverCallBack callback = null;
+  private  boolean shouldRunCallback;
+
+  public boolean isShouldRunCallback() {
+    return shouldRunCallback;
+  }
+
+  public void setShouldRunCallback(boolean shouldRunCallback) {
+    this.shouldRunCallback = shouldRunCallback;
+  }
 
   protected Device(Mouse m) {
     device = m;
@@ -160,9 +170,8 @@ public class Device {
     }
     if (!inUse) {
       inUse = true;
-      if (isMouse) {
-        checkLastPos();
-      }
+      checkLastPos();
+      checkShouldRunCallback();
       keep = false;
       this.owner = owner;
       log(lvl + 1, "%s: use start: %s", devName, owner);
@@ -253,6 +262,27 @@ public class Device {
                   lastPos, new Location(pos), null, (new Date()).getTime()));
         }
       }
+    }
+  }
+
+  private void checkShouldRunCallback() {
+    if (shouldRunCallback && callback != null) {
+      callback.happened(new ObserveEvent("DeviceGeneric", ObserveEvent.Type.GENERIC,
+              null, null, null, (new Date()).getTime()));
+    }
+  }
+  
+  /**
+   * what to do if mouse is moved outside Sikuli's mouse protection <br>
+   * only 3 is honored:<br>
+   * in case of event the user provided callBack.happened is called
+   *
+   * @param callBack ObserverCallBack
+   */
+
+  public void setCallback(ObserverCallBack cb) {
+    if (cb != null) {
+      callback = cb;
     }
   }
 
