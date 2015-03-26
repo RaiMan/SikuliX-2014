@@ -36,7 +36,7 @@ public class Screen extends Region implements EventObserver, IScreen {
     Debug.logx(level, me + message, args);
   }
 
-  private static Robot mouseRobot;
+  private static Robot globalRobot;
   protected static Screen[] screens = null;
   protected static int primaryScreen = -1;
   private static int waitForScreenshot = 300;
@@ -76,8 +76,8 @@ public class Screen extends Region implements EventObserver, IScreen {
     }
     try {
       log(lvl+1, "initScreens: getting mouseRobot");
-      mouseRobot = new Robot();
-      mouseRobot.setAutoDelay(10);
+      globalRobot = new Robot();
+      globalRobot.setAutoDelay(10);
     } catch (AWTException e) {
       Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
       Sikulix.terminate(999);
@@ -107,7 +107,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   }
 
   protected static Robot getMouseRobot() {
-    return mouseRobot;
+    return globalRobot;
   }
 
   /**
