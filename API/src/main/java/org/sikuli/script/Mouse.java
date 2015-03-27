@@ -136,10 +136,10 @@ public class Mouse {
    *
    * @param callBack ObserverCallBack
    */
-  public static void setMouseMovedCallback(ObserverCallBack callBack) {
+  public static void setMouseMovedCallback(Object callBack) {
     if (callBack != null) {
       device.mouseMovedResponse = 3;
-      device.mouseMovedCallback = callBack;
+      device.mouseMovedCallback = new ObserverCallBack(callBack, ObserveEvent.Type.GENERIC);
     }
   }
 

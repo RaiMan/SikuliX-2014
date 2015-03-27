@@ -279,9 +279,9 @@ public class Device {
    * @param givenCallBack 
    */
 
-  public void setCallback(ObserverCallBack givenCallBack) {
+  public void setCallback(Object givenCallBack) {
     if (givenCallBack != null) {
-      callback = givenCallBack;
+      callback = new ObserverCallBack(givenCallBack, ObserveEvent.Type.GENERIC);
     }
   }
 
