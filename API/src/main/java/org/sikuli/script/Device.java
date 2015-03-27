@@ -274,15 +274,14 @@ public class Device {
   
   /**
    * what to do if mouse is moved outside Sikuli's mouse protection <br>
-   * only 3 is honored:<br>
    * in case of event the user provided callBack.happened is called
    *
-   * @param callBack ObserverCallBack
+   * @param givenCallBack 
    */
 
-  public void setCallback(ObserverCallBack cb) {
-    if (cb != null) {
-      callback = cb;
+  public void setCallback(ObserverCallBack givenCallBack) {
+    if (givenCallBack != null) {
+      callback = givenCallBack;
     }
   }
 
