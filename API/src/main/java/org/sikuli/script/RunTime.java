@@ -80,7 +80,7 @@ public class RunTime {
   private static String preLogMessages = "";
 
   public final static String runCmdError = "*****error**useLibsProvided***";
-  public final static String NL = System.lineSeparator();
+  public static String NL = "\n";
   public boolean runningInteractive = false;
   public boolean runningTests = false;
   public String interactiveRunner;
@@ -190,6 +190,7 @@ public class RunTime {
         runTime.sysName = "windows";
         runTime.osName = "Windows";
         runTime.runningWindows = true;
+        runTime.NL = "\r\n";
       } else if (os.startsWith("mac")) {
         runTime.runningOn = theSystem.MAC;
         runTime.sysName = "mac";
