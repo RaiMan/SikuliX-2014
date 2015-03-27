@@ -61,6 +61,7 @@ Debug.log(4, "Jython: sikuli: Sikuli: import KeyBoard/Mouse")
 from org.sikuli.script import Key
 from org.sikuli.script import KeyModifier
 from org.sikuli.script.KeyModifier import KEY_CTRL, KEY_SHIFT, KEY_META, KEY_CMD, KEY_WIN, KEY_ALT
+from org.sikuli.script import Device
 from org.sikuli.script import Mouse
 from org.sikuli.script import Keys
 
