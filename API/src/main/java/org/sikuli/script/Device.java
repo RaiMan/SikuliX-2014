@@ -44,7 +44,13 @@ public class Device {
   protected int mouseMovedResponse = MouseMovedIgnore;
   protected ObserverCallBack mouseMovedCallback = null;
   protected ObserverCallBack callback = null;
-  private  boolean shouldRunCallback;
+  private  boolean shouldRunCallback = false;
+	static boolean shouldTerminate = false;
+
+	public static void setShouldTerminate() {
+		shouldTerminate = true;
+		log(lvl, "setShouldTerminate: request issued");
+	}
 
   public boolean isShouldRunCallback() {
     return shouldRunCallback;
@@ -172,6 +178,9 @@ public class Device {
       inUse = true;
       checkLastPos();
       checkShouldRunCallback();
+			if (shouldTerminate) {
+				throw new AssertionError("aborted by unknown source");
+			}
       keep = false;
       this.owner = owner;
       log(lvl + 1, "%s: use start: %s", devName, owner);
@@ -260,6 +269,9 @@ public class Device {
         if (mouseMovedCallback != null) {
           mouseMovedCallback.happened(new ObserveEvent("MouseMoved", ObserveEvent.Type.GENERIC,
                   lastPos, new Location(pos), null, (new Date()).getTime()));
+					if (shouldTerminate) {
+						throw new AssertionError("aborted by Sikulix.MouseMovedCallBack");
+					}
         }
       }
     }
@@ -269,14 +281,17 @@ public class Device {
     if (shouldRunCallback && callback != null) {
       callback.happened(new ObserveEvent("DeviceGeneric", ObserveEvent.Type.GENERIC,
               null, null, null, (new Date()).getTime()));
+			if (shouldTerminate) {
+				throw new AssertionError("aborted by Sikulix.GenericDeviceCallBack");
+			}
     }
   }
-  
+
   /**
    * what to do if mouse is moved outside Sikuli's mouse protection <br>
    * in case of event the user provided callBack.happened is called
    *
-   * @param givenCallBack 
+   * @param givenCallBack
    */
 
   public void setCallback(Object givenCallBack) {
