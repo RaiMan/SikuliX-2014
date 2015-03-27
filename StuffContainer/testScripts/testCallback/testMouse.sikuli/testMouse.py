@@ -1,10 +1,11 @@
 def handler(e):
   print("in handler")
-  exit()
+  Sikulix.terminate(1)
+  print("leaving handler")
   
 Mouse.setMouseMovedCallback(handler)
 
-for i in range(10):
+for i in range(3):
   hover()
   wait(0.5)
   hover(getTopLeft())
