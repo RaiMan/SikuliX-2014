@@ -1,29 +1,34 @@
 <h4>Build: 2015-03-24</h4>
-fixed: (I hope ;-) all regression bugs against 1.0.1 in multi monitor environments<br>
-revised: ALL in Jython scripts and Screen.all().getRegion() can now be used, to search on all monitors in the same op 
-(ALL.click(someBotton) will find and click the button, no matter on which monitor it currently is) 
+fixed: Mac: a problem that made it to not run any longer with Java 6<br>
+revised: MouseMovedCallback feature<br>
+added: set callback handler and request visiting the handler before processing a mouse action (on/off)<br>
+added: request termination with next mouse action throwing an AssertionError
 <h4>Build: 2015-03-24</h4>
-added: multi monitor: a visual can now be found on all screens with one op: Screen.all().getRegion().find(someImage) 
+fixed: (I hope ;-) all regression bugs against 1.0.1 in multi monitor environments<br>
+revised: ALL in Jython scripts and Screen.all().getRegion() can now be used, to search on all monitors in the same op
+(ALL.click(someBotton) will find and click the button, no matter on which monitor it currently is)
+<h4>Build: 2015-03-24</h4>
+added: multi monitor: a visual can now be found on all screens with one op: Screen.all().getRegion().find(someImage)
 will return a match, that knows it's screen, hence match.getScreen() will return the screen it was found on.
-Take care: is a lengthy operation and costs some memory, so it should be used with care. 
+Take care: is a lengthy operation and costs some memory, so it should be used with care.
 If the match spans screens, the screen with the biggest part is the winner (should be avoided).
 <h4>Build: 2015-03-22</h4>
 the next days I will somehow reveal more information about the new or revised features<br>
 ... but many features are already in the docs<br>
 <br>
-a toy: starting sikulixapi.jar with no parameters reveals a simple edit/save/run dialog for JavaScript trials<br> 
-added: SikulixAppData/SikulixStore/SikulixDebug.txt if this file is present at startup, then from beginning 
+a toy: starting sikulixapi.jar with no parameters reveals a simple edit/save/run dialog for JavaScript trials<br>
+added: SikulixAppData/SikulixStore/SikulixDebug.txt if this file is present at startup, then from beginning
 we run with debug level 3 and all messages are written to this file (helpful for startup debugging)<br>
-added: SikulixAppData/SikulixStore/SikulixOptions.txt is a key/value store according 
-to the rules of Java property files, that is loaded at startup. The options might overwrite settings 
+added: SikulixAppData/SikulixStore/SikulixOptions.txt is a key/value store according
+to the rules of Java property files, that is loaded at startup. The options might overwrite settings
 and are available at runtime via getOption... calls (precedence: home folder, work dir, SikulixAppData)<br>
-added: SikuliX now has a central repository (SikulixAppData) for all related stuff 
+added: SikuliX now has a central repository (SikulixAppData) for all related stuff
 in the user's home folder area according according to the standards of the system<br>
-added: running scripts can now be paused/continued and aborted by moving the mouse 
+added: running scripts can now be paused/continued and aborted by moving the mouse
 (detection with next mouse action)<br>
 added: one can now run scripts written in JavaScript (edit not yet supported in IDE)<br>
 revised: script running in general: -r can have multiple scripts that are run one after the other,<br>
-added: runScript() can be used to run scripts from inside other scripts or from Java 
+added: runScript() can be used to run scripts from inside other scripts or from Java
 including handling of the bundlePath<br>
 added: images and scripts can now be downloaded/run from HTTP accessible locations in the net<br>
 revised: Linux build on the fly for libVisionProxy should be available in API also,

@@ -100,6 +100,7 @@ public class Mouse {
     up();
     device.mouseMovedResponse = device.MouseMovedIgnore;
     device.mouseMovedCallback = null;
+		device.callback = null;
     device.lastPos = null;
   }
 

@@ -179,6 +179,7 @@ public class Device {
       checkLastPos();
       checkShouldRunCallback();
 			if (shouldTerminate) {
+				shouldTerminate = false;
 				throw new AssertionError("aborted by unknown source");
 			}
       keep = false;
@@ -270,6 +271,7 @@ public class Device {
           mouseMovedCallback.happened(new ObserveEvent("MouseMoved", ObserveEvent.Type.GENERIC,
                   lastPos, new Location(pos), null, (new Date()).getTime()));
 					if (shouldTerminate) {
+						shouldTerminate = false;
 						throw new AssertionError("aborted by Sikulix.MouseMovedCallBack");
 					}
         }
@@ -282,6 +284,7 @@ public class Device {
       callback.happened(new ObserveEvent("DeviceGeneric", ObserveEvent.Type.GENERIC,
               null, null, null, (new Date()).getTime()));
 			if (shouldTerminate) {
+				shouldTerminate = false;
 				throw new AssertionError("aborted by Sikulix.GenericDeviceCallBack");
 			}
     }
