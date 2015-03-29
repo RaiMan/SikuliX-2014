@@ -336,7 +336,7 @@ public class RunSetup {
       isLinux = true;
     }
 
-    if (!testingMaven && runningWithProject) {
+    if (!testingMaven && runTime.runningInProject) {
       if (noSetup) {
         log(lvl, "creating Setup folder - not running setup");
       } else {
