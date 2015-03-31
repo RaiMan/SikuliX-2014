@@ -252,11 +252,13 @@ public class LinuxSupport {
           return false;
         }
       });
-      for (String sLib : allLibs) {
-        File fSrc = new File(runTime.fLibsProvided, sLib);
-        File fTgt = new File(runTime.fLibsFolder, sLib);
-        success &= FileManager.xcopy(fSrc, fTgt);
-        log(3, "Copy provided lib: %s (%s)", sLib, (success ? "ok" : "did not work"));
+      if (allLibs != null) {
+        for (String sLib : allLibs) {
+          File fSrc = new File(runTime.fLibsProvided, sLib);
+          File fTgt = new File(runTime.fLibsFolder, sLib);
+          success &= FileManager.xcopy(fSrc, fTgt);
+          log(3, "Copy provided lib: %s (%s)", sLib, (success ? "ok" : "did not work"));
+        }
       }
       isCopiedProvided = true;
     } else if (!haveBuilt) {
@@ -268,7 +270,7 @@ public class LinuxSupport {
         success &= buildVision();
       }
     }
-		shouldUseProvided = success;
+    shouldUseProvided = success;
     return success;
   }
 
@@ -342,11 +344,11 @@ public class LinuxSupport {
             "/srcnativelibs/Vision", fSource, null));
     if (exportIncludeOpenCV) {
       success &= (null != runTime.extractResourcesToFolder(
-              "/srcnativelibs/VisionInclude/OpenCV", fInclude, null));
+              "/srcnativelibs/Include/OpenCV", fInclude, null));
     }
     if (exportIncludeTesseract) {
       success &= (null != runTime.extractResourcesToFolder(
-              "/srcnativelibs/VisionInclude/Tesseract", fInclude, null));
+              "/srcnativelibs/Include/Tesseract", fInclude, null));
     }
     if (!success) {
       log(-1, "buildVision: cannot export bundled sources");
