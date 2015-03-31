@@ -3,6 +3,18 @@ import os
 csvFilePath = os.path.join(getBundlePath(), "csvdata.txt")
 csvFile = csv.reader(open(csvFilePath))
 
+Row = 3
+
+def get(Row):    
+  for i in range(Row+1):
+    Row = csvFile.next()  
+  print Row
+  return Row
+
+print get(Row)
+
+exit()
+
 mycsv = [] # empty list
 for row in csvFile:
   mycsv.append(row)
