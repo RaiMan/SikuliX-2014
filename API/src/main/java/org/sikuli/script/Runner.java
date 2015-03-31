@@ -13,6 +13,7 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
 import org.sikuli.util.CommandArgs;
 import org.sikuli.util.CommandArgsEnum;
+import org.sikuli.util.JythonHelper;
 
 public class Runner {
 
@@ -215,6 +216,49 @@ public class Runner {
     return fScript;
   }
 
+  static JythonHelper pyRunner = null;
+
+  public static int runpy(File fScript, URL script, String scriptName, String[] args) {
+    String fpScript = fScript.getAbsolutePath();
+    if (pyRunner == null) {
+      pyRunner = initpy();
+    }
+    if (pyRunner == null) {
+      log(-1, "Running Python scripts not yet supported!");
+      return -999;
+    }
+    String[] newArgs = new String[args.length+1];
+    newArgs[0] = fpScript;
+    for (int i = 0; i < args.length; i++) {
+      newArgs[i+1] = args[i];
+    }
+    pyRunner.setSysArgv(newArgs);
+    pyRunner.execfile(fScript.getAbsolutePath());
+    return 0;
+  }
+  
+  private static JythonHelper initpy() {
+    JythonHelper jh = JythonHelper.get();
+		jh.exec("# -*- coding: utf-8 -*- ");
+    jh.exec("import org.sikuli.basics.SikulixForJython");
+    jh.exec("from sikuli import *");
+    return jh;
+  }
+
+  static Object rbRunner = null;
+
+  public static int runrb(File fScript, URL script, String scriptName, String[] args) {
+    log(-1, "Running Ruby scripts not yet supported!");
+    return -999;
+  }
+
+  static Object txtRunner = null;
+
+  public static int runtxt(File fScript, URL script, String scriptName, String[] args) {
+    log(-1, "Running plain text scripts not yet supported!");
+    return -999;
+  }
+  
   static ScriptEngine jsRunner = null;
 
   public static int runjs(File fScript, URL script, String scriptName, String[] args) {
@@ -393,8 +437,9 @@ public class Runner {
 				}
 			}
 		}
-    Object[] vars = new Object[]{givenScriptHost, givenScriptFolder, givenScriptName, givenScriptScript, givenScriptType,
-			givenScriptScriptType, uGivenScript, uGivenScriptFile, givenScriptExists, scriptProject, uScriptProject};
+    Object[] vars = new Object[]{givenScriptHost, givenScriptFolder, givenScriptName, 
+      givenScriptScript, givenScriptType,	givenScriptScriptType, 
+      uGivenScript, uGivenScriptFile, givenScriptExists, scriptProject, uScriptProject};
     return vars;
   }
 
@@ -460,16 +505,23 @@ public class Runner {
 				if (fScript == null) {
 					return -9999;
 				}
-				if (!fScript.getName().endsWith(EJSCRIPT)) {
-					log(-1, "only supported currently: %s\n%s", RJSCRIPT, fScript);
-					return -9999;
-				}
 				fScript = new File(FileManager.normalizeAbsolute(fScript.getPath(), true));
 				if (null == RunTime.scriptProject) {
 					RunTime.scriptProject = fScript.getParentFile().getParentFile();
 				}
-				log(lvl, "Trying to run script:\n%s", fScript);
-				exitCode = Runner.runjs(fScript, null, givenScriptScript, args);
+        log(lvl, "Trying to run script:\n%s", fScript);
+				if (fScript.getName().endsWith(EJSCRIPT)) {
+          exitCode = Runner.runjs(fScript, null, givenScriptScript, args);
+        } else if (fScript.getName().endsWith(EPYTHON)) {
+          exitCode = Runner.runpy(fScript, null, givenScriptScript, args);
+        } else if (fScript.getName().endsWith(ERUBY)) {
+          exitCode = Runner.runrb(fScript, null, givenScriptScript, args);
+        } else if (fScript.getName().endsWith(EPLAIN)) {
+          exitCode = Runner.runtxt(fScript, null, givenScriptScript, args);
+        } else {
+					log(-1, "Running not supported currently for:\n%s", fScript);
+					return -9999;
+				}
 			}
       return exitCode;
     }

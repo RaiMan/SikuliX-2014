@@ -155,6 +155,9 @@ public class Sikulix {
       Screen s = new Screen();
       ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
       
+      Runner.run("scripts/testpy", new String[] {"parm1"});
+      System.exit(1);
+      
       if (rt.runningWinApp) {
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
         try {

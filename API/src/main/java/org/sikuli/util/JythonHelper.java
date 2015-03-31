@@ -9,6 +9,7 @@ package org.sikuli.util;
 import java.io.File;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +20,7 @@ import org.sikuli.script.RunTime;
 
 public class JythonHelper {
 
-  RunTime runTime = RunTime.get();
+  static RunTime runTime = RunTime.get();
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static final String me = "JythonSupport: ";
@@ -46,9 +47,11 @@ public class JythonHelper {
   static JythonHelper instance = null;
   static Object interpreter = null;
   List<String> sysPath = new ArrayList<String>();
+  List<String> sysArgv = new ArrayList<String>();
   int nPathAdded = 0;
   int nPathSaved = -1;
   static Class[] nc = new Class[0];
+  static Class[] nc1 = new Class[1];
   static Class cInterpreter = null;
   static Class cList = null;
   static Class cPy = null;
@@ -57,8 +60,8 @@ public class JythonHelper {
   static Class cPyInstance = null;
   static Class cPyObject = null;
   static Class cPyString = null;
-  static Method mLen, mGet, mSet, mAdd, mRemove;
-  static Method mGetSystemState;
+  static Method mLen, mGet, mSet, mAdd, mRemove, mClear;
+  static Method mGetSystemState, mExec, mExecfile;
   static Field PI_path;
 
   private JythonHelper(){}
@@ -69,7 +72,22 @@ public class JythonHelper {
       instance.log(lvl, "init: starting");
       try {
         cInterpreter = Class.forName("org.python.util.PythonInterpreter");
+      } catch (Exception ex) {
+        String sJython = new File(runTime.SikuliJython).getName();
+        File fJython = new File(runTime.fSikulixDownloadsGeneric, sJython);
+        if (fJython.exists()) {
+          runTime.addToClasspath(fJython.getAbsolutePath());
+          runTime.dumpClassPath();
+        } else {
+          instance.log(-1, "Not possible to get a Jython on classpath!");
+          cInterpreter = null;
+        }
+      }
+      try {
+        cInterpreter = Class.forName("org.python.util.PythonInterpreter");     
         mGetSystemState = cInterpreter.getMethod("getSystemState", nc);
+        mExec = cInterpreter.getMethod("exec", new Class[] {String.class});
+        mExecfile = cInterpreter.getMethod("execfile", new Class[] {String.class});
         Constructor PI_new = cInterpreter.getConstructor(nc);
         interpreter = PI_new.newInstance(null);
         cList = Class.forName("org.python.core.PyList");
@@ -80,6 +98,7 @@ public class JythonHelper {
         cPyObject = Class.forName("org.python.core.PyObject");
         cPyString = Class.forName("org.python.core.PyString");
         mLen = cList.getMethod("__len__", nc);
+        mClear = cList.getMethod("clear", nc);
         mGet = cList.getMethod("get", new Class[]{int.class});
         mSet = cList.getMethod("set", new Class[]{int.class, Object.class});
         mAdd = cList.getMethod("add", new Class[]{Object.class});
@@ -211,6 +230,24 @@ public class JythonHelper {
 		public Object get() {
 			return pyString;
 		}
+  }
+  
+  public boolean exec(String code) {
+    try {
+      mExec.invoke(interpreter, code);
+    } catch (Exception ex) {
+      return false;
+    }
+    return true;
+  }
+
+  public boolean execfile(String fpScript) {
+    try {
+      mExecfile.invoke(interpreter, fpScript);
+    } catch (Exception ex) {
+      return false;
+    }
+    return true;
   }
 
 //TODO check signature (instance method)
@@ -421,6 +458,44 @@ public class JythonHelper {
       return fPython;
     }
     return null;
+  }
+
+  public void getSysArgv() {
+    sysArgv = new ArrayList<String>();
+    if (null == cInterpreter) {
+      sysArgv = null;
+      return;
+    }
+    try {
+      Object aState  = mGetSystemState.invoke(interpreter, (Object[]) null);
+      Field fArgv = aState.getClass().getField("argv");
+      Object pyArgv = fArgv.get(aState);
+      Integer argvLen = (Integer) mLen.invoke(pyArgv, (Object[]) null);
+      for (int i = 0; i < argvLen; i++) {
+        String entry = (String) mGet.invoke(pyArgv, i);
+        log(lvl + 1, "sys.path[%2d] = %s", i, entry);
+        sysArgv.add(entry);
+      }
+    } catch (Exception ex) {
+      sysArgv = null;
+    }
+  }
+  
+  public void setSysArgv(String[] args) {
+    if (null == cInterpreter || null == sysArgv) {
+      return;
+    }
+    try {
+      Object aState  = mGetSystemState.invoke(interpreter, (Object[]) null);
+      Field fArgv = aState.getClass().getField("argv");
+      Object pyArgv = fArgv.get(aState);
+      mClear.invoke(pyArgv, null);
+      for (String arg : args) {
+        mAdd.invoke(pyArgv, arg);
+      }
+    } catch (Exception ex) {
+      sysArgv = null;
+    }
   }
 
   public void getSysPath() {

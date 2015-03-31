@@ -79,7 +79,7 @@ public class RunTime {
   private int minLvl = lvl;
   private static String preLogMessages = "";
 
-  public final static String runCmdError = "*****error**useLibsProvided***";
+  public final static String runCmdError = "*****error*****";
   public static String NL = "\n";
   public boolean runningInteractive = false;
   public boolean runningTests = false;
