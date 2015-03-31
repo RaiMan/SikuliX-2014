@@ -75,11 +75,11 @@ public class JythonHelper {
       } catch (Exception ex) {
         String sJython = new File(runTime.SikuliJython).getName();
         File fJython = new File(runTime.fSikulixDownloadsGeneric, sJython);
+        instance.log(lvl, "trying to use setup downloaded Jython:\n%s", fJython.getAbsolutePath());
         if (fJython.exists()) {
           runTime.addToClasspath(fJython.getAbsolutePath());
-          runTime.dumpClassPath();
         } else {
-          instance.log(-1, "Not possible to get a Jython on classpath!");
+          instance.log(-1, "Not possible to get a Jython on to the classpath!");
           cInterpreter = null;
         }
       }
@@ -245,6 +245,7 @@ public class JythonHelper {
     try {
       mExecfile.invoke(interpreter, fpScript);
     } catch (Exception ex) {
+      log(-1, "execFile: returns:\n%s", ex.getCause());
       return false;
     }
     return true;

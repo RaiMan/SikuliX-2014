@@ -224,7 +224,7 @@ public class Runner {
       pyRunner = initpy();
     }
     if (pyRunner == null) {
-      log(-1, "Running Python scripts not yet supported!");
+      log(-1, "Running Python scripts:init failed");
       return -999;
     }
     String[] newArgs = new String[args.length+1];
