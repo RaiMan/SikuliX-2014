@@ -284,9 +284,12 @@ public class LinuxSupport {
     File fInclude = new File(fWorkDir, buildFolderInclude);
     fInclude.mkdirs();
 
-    File[] javas = new File[2];
+    File[] javas = new File[] {null, null} ;
     javas[0] = new File(System.getProperty("java.home"));
-    javas[1] = new File(System.getenv("JAVA_HOME"));
+    String jhome = System.getenv("JAVA_HOME");
+    if (jhome != null) {
+      javas[1] = new File(jhome);
+    }
 
     log(lvl, "starting inline build: libVisionProxy.so");
     log(lvl, "java.home from java props: %s", javas[0]);
