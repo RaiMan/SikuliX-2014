@@ -53,6 +53,7 @@ import org.sikuli.util.LinuxSupport;
 public class RunTime {
   public static File scriptProject = null;
   public static URL uScriptProject = null;
+  
   public static void resetProject() {
     scriptProject = null;
     uScriptProject = null;
@@ -201,6 +202,12 @@ public class RunTime {
         runTime.sysName = "linux";
         runTime.osName = "Linux";
         runTime.runningLinux = true;
+        String result = runTime.runcmd("lsb_release -i -r -s");
+        if (result.contains("*** error ***")) {
+          runTime.log(-1, "command returns error: lsb_release -i -r -s\n%s", result);
+        } else {
+          runTime.linuxDistro = result.replaceAll("\n", " ").trim();
+        }
       } else {
         runTime.terminate(-1, "running on not supported System: %s (%s)", os, runTime.osVersion);
       }
@@ -412,6 +419,9 @@ public class RunTime {
   private String appType = null;
   public int debuglevelAPI = -1;
   private boolean runningScripts = false;
+  public String linuxDistro  = "???LINUX???";
+  public String linuxAppSupport = "";
+  public String linuxNeededLibs = "";
 
 //</editor-fold>
 
@@ -717,11 +727,76 @@ int nMonitors = 0;
     }
   }
 
+  private boolean libsLoad(String libName) {
+    if (!areLibsExported) {
+      libsExport(runType);
+    }
+    if (!areLibsExported) {
+      terminate(1, "loadLib: deferred exporting of libs did not work");
+    }
+    if (runningWindows) {
+      libName += ".dll";
+    } else if (runningMac) {
+      libName = "lib" + libName + ".dylib";
+    } else if (runningLinux) {
+      libName = "lib" + libName + ".so";
+    }
+    File fLib = new File(fLibsFolder, libName);
+    Boolean vLib = libsLoaded.get(libName);
+    if (vLib == null || !fLib.exists()) {
+      terminate(1, String.format("lib: %s not available in %s", libName, fLibsFolder));
+    }
+    String msg = "loadLib: %s";
+    int level = lvl;
+    if (vLib) {
+      level++;
+      msg += " already loaded";
+    }
+    if (vLib) {
+      log(level, msg, libName);
+      return true;
+    }
+    boolean shouldTerminate = false;
+    Error loadError = null;
+    while (!shouldTerminate) {
+      shouldTerminate = true;
+      loadError = null;
+      try {
+        System.load(new File(fLibsFolder, libName).getAbsolutePath());
+      } catch (Error e) {
+        loadError = e;
+        if (runningLinux) {
+          log(-1, msg + " not usable: \n%s", libName, loadError);
+          shouldTerminate = !LinuxSupport.checkAllLibs();
+        }
+      }
+    }
+    if (loadError != null) {
+      log(-1, "Problematic lib: %s (...TEMP...)", fLib);
+      log(-1, "%s loaded, but it might be a problem with needed dependent libraries\nERROR: %s",
+              libName, loadError.getMessage().replace(fLib.getAbsolutePath(), "...TEMP..."));
+      terminate(1, "problem with native library: " + libName);
+    }
+    libsLoaded.put(libName, true);
+    log(level, msg, libName);
+    return true;
+  }
+
+  private boolean libsCheck(File flibsFolder) {
+    // 1.1-MadeForSikuliX64M.txt
+    String name = String.format("1.1-MadeForSikuliX%d%s.txt", javaArch, runningOn.toString().substring(0, 1));
+    if (!new File(flibsFolder, name).exists()) {
+      log(lvl, "libs folder empty or has wrong content");
+      return false;
+    }
+    return true;
+  }
+
   private void libsExport(Type typ) {
     boolean shouldExport = false;
     makeFolders();
     URL uLibsFrom = null;
-    if (!checkLibs(fLibsFolder)) {
+    if (!libsCheck(fLibsFolder)) {
       FileManager.deleteFileOrFolder(fLibsFolder);
       FileManager.deleteFileOrFolder(fSikulixLib);
       fLibsFolder.mkdirs();
@@ -812,6 +887,89 @@ int nMonitors = 0;
       extractResourcesToFolder("Lib", fSikulixLib, null);
     }
     areLibsExported = true;
+  }
+//</editor-fold>
+
+//<editor-fold defaultstate="collapsed" desc="native libs handling">
+  /**
+   * INTERNAL USE: load a native library from the libs folder
+   *
+   * @param libname name of library without prefix/suffix/ending
+   */
+  public static void loadLibrary(String libname) {
+    RunTime.get().libsLoad(libname);
+  }
+
+  /**
+   * INTERNAL USE: load a native library from the libs folder
+   *
+   * @param libname name of library without prefix/suffix/ending
+   */
+  public static void loadLibrary(String libname, boolean useLibsProvided) {
+    RunTime rt = RunTime.get();
+    rt.useLibsProvided = useLibsProvided;
+    rt.libsLoad(libname);
+  }
+
+  private void addToWindowsSystemPath(File fLibsFolder) {
+    String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
+    if (syspath == null) {
+      terminate(1, "addToWindowsSystemPath: cannot access system path");
+    } else {
+      String libsPath = (fLibsFolder.getAbsolutePath()).replaceAll("/", "\\");
+      if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
+        if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", libsPath + ";" + syspath)) {
+          Sikulix.terminate(999);
+        }
+        syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
+        if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
+          log(-1, "addToWindowsSystemPath: adding to system path did not work:\n%s", syspath);
+          terminate(1, "addToWindowsSystemPath: did not work - see error");
+        }
+        log(lvl, "addToWindowsSystemPath: added to systempath:\n%s", libsPath);
+      }
+    }
+  }
+
+  private boolean checkJavaUsrPath(File fLibsFolder) {
+    String fpLibsFolder = fLibsFolder.getAbsolutePath();
+    Field usrPathsField = null;
+    boolean contained = false;
+    try {
+      usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
+    } catch (NoSuchFieldException ex) {
+      log(-1, "checkJavaUsrPath: get\n%s", ex);
+    } catch (SecurityException ex) {
+      log(-1, "checkJavaUsrPath: get\n%s", ex);
+    }
+    if (usrPathsField != null) {
+      usrPathsField.setAccessible(true);
+      try {
+        //get array of paths
+        String[] javapaths = (String[]) usrPathsField.get(null);
+        //check if the path to add is already present
+        for (String p : javapaths) {
+          if (new File(p).equals(fLibsFolder)) {
+            contained = true;
+            break;
+          }
+        }
+        //add the new path
+        if (!contained) {
+          final String[] newPaths = Arrays.copyOf(javapaths, javapaths.length + 1);
+          newPaths[newPaths.length - 1] = fpLibsFolder;
+          usrPathsField.set(null, newPaths);
+          log(lvl, "checkJavaUsrPath: added to ClassLoader.usrPaths");
+          contained = true;
+        }
+      } catch (IllegalAccessException ex) {
+        log(-1, "checkJavaUsrPath: set\n%s", ex);
+      } catch (IllegalArgumentException ex) {
+        log(-1, "checkJavaUsrPath: set\n%s", ex);
+      }
+      return contained;
+    }
+    return false;
   }
 //</editor-fold>
 
@@ -916,12 +1074,13 @@ int nMonitors = 0;
     if (hasOptions()) {
       dumpOptions();
     }
-    logp("***** show environment for %s", runType);
+    logp("***** show environment for %s (build %s)", runType, sxBuildStamp);
     logp("user.home: %s", fUserDir);
     logp("user.dir (work dir): %s", fWorkDir);
     logp("user.name: %s", userName);
     logp("java.io.tmpdir: %s", fTempPath);
-    logp("running %dBit on %s (%s) %s", javaArch, osName, osVersion, appType);
+    logp("running %dBit on %s (%s) %s", javaArch, osName, 
+            (linuxDistro.contains("???") ? osVersion : linuxDistro), appType);
     logp(javaShow);
     logp("app data folder: %s", fSikulixAppPath);
     logp("libs folder: %s", fLibsFolder);
@@ -980,154 +1139,6 @@ int nMonitors = 0;
       System.out.println(String.format("%d: %s", i, urls[i]));
     }
     System.out.println("***** System Information Dump ***** end *****");
-  }
-//</editor-fold>
-
-//<editor-fold defaultstate="collapsed" desc="native libs handling">
-  /**
-   * INTERNAL USE: load a native library from the libs folder
-   *
-   * @param libname name of library without prefix/suffix/ending
-   */
-  public static void loadLibrary(String libname) {
-    RunTime.get().loadLib(libname);
-  }
-
-  /**
-   * INTERNAL USE: load a native library from the libs folder
-   *
-   * @param libname name of library without prefix/suffix/ending
-   */
-  public static void loadLibrary(String libname, boolean useLibsProvided) {
-    RunTime rt = RunTime.get();
-    rt.useLibsProvided = useLibsProvided;
-    rt.loadLib(libname);
-  }
-
-  private boolean loadLib(String libName) {
-    if (!areLibsExported) {
-      libsExport(runType);
-    }
-    if (!areLibsExported) {
-      terminate(1, "loadLib: deferred exporting of libs did not work");
-    }
-    if (runningWindows) {
-      libName += ".dll";
-    } else if (runningMac) {
-      libName = "lib" + libName + ".dylib";
-    } else if (runningLinux) {
-      libName = "lib" + libName + ".so";
-    }
-    File fLib = new File(fLibsFolder, libName);
-    Boolean vLib = libsLoaded.get(libName);
-    if (vLib == null || !fLib.exists()) {
-      terminate(1, String.format("lib: %s not available in %s", libName, fLibsFolder));
-    }
-    String msg = "loadLib: %s";
-    int level = lvl;
-    if (vLib) {
-      level++;
-      msg += " already loaded";
-    }
-    if (vLib) {
-      log(level, msg, libName);
-      return true;
-    }
-    boolean shouldTerminate = false;
-    Error loadError = null;
-    while (!shouldTerminate) {
-      shouldTerminate = true;
-      loadError = null;
-      try {
-        System.load(new File(fLibsFolder, libName).getAbsolutePath());
-      } catch (Error e) {
-        loadError = e;
-        if (runningLinux) {
-          log(-1, msg + " not usable: \n%s", libName, loadError);
-          shouldTerminate = !LinuxSupport.checkAllLibs();
-        }
-      }
-    }
-    if (loadError != null) {
-      log(-1, "Problematic lib: %s (...TEMP...)", fLib);
-      log(-1, "%s loaded, but it might be a problem with needed dependent libraries\nERROR: %s",
-              libName, loadError.getMessage().replace(fLib.getAbsolutePath(), "...TEMP..."));
-      terminate(1, "problem with native library: " + libName);
-    }
-    libsLoaded.put(libName, true);
-    log(level, msg, libName);
-    return true;
-  }
-
-  private boolean checkLibs(File flibsFolder) {
-    // 1.1-MadeForSikuliX64M.txt
-    String name = String.format("1.1-MadeForSikuliX%d%s.txt", javaArch, runningOn.toString().substring(0, 1));
-    if (!new File(flibsFolder, name).exists()) {
-      log(lvl, "libs folder empty or has wrong content");
-      return false;
-    }
-    return true;
-  }
-
-  private void addToWindowsSystemPath(File fLibsFolder) {
-    String syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
-    if (syspath == null) {
-      terminate(1, "addToWindowsSystemPath: cannot access system path");
-    } else {
-      String libsPath = (fLibsFolder.getAbsolutePath()).replaceAll("/", "\\");
-      if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
-        if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", libsPath + ";" + syspath)) {
-          Sikulix.terminate(999);
-        }
-        syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
-        if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
-          log(-1, "addToWindowsSystemPath: adding to system path did not work:\n%s", syspath);
-          terminate(1, "addToWindowsSystemPath: did not work - see error");
-        }
-        log(lvl, "addToWindowsSystemPath: added to systempath:\n%s", libsPath);
-      }
-    }
-  }
-
-  private boolean checkJavaUsrPath(File fLibsFolder) {
-    String fpLibsFolder = fLibsFolder.getAbsolutePath();
-    Field usrPathsField = null;
-    boolean contained = false;
-    try {
-      usrPathsField = ClassLoader.class.getDeclaredField("usr_paths");
-    } catch (NoSuchFieldException ex) {
-      log(-1, "checkJavaUsrPath: get\n%s", ex);
-    } catch (SecurityException ex) {
-      log(-1, "checkJavaUsrPath: get\n%s", ex);
-    }
-    if (usrPathsField != null) {
-      usrPathsField.setAccessible(true);
-      try {
-        //get array of paths
-        String[] javapaths = (String[]) usrPathsField.get(null);
-        //check if the path to add is already present
-        for (String p : javapaths) {
-          if (new File(p).equals(fLibsFolder)) {
-            contained = true;
-            break;
-          }
-        }
-        //add the new path
-        if (!contained) {
-          final String[] newPaths = Arrays.copyOf(javapaths, javapaths.length + 1);
-          newPaths[newPaths.length - 1] = fpLibsFolder;
-          usrPathsField.set(null, newPaths);
-          log(lvl, "checkJavaUsrPath: added to ClassLoader.usrPaths");
-          contained = true;
-        }
-      } catch (IllegalAccessException ex) {
-        log(-1, "checkJavaUsrPath: set\n%s", ex);
-      } catch (IllegalArgumentException ex) {
-        log(-1, "checkJavaUsrPath: set\n%s", ex);
-      }
-      return contained;
-    }
-    return false;
   }
 //</editor-fold>
 

@@ -80,7 +80,7 @@ public class RunSetup {
   private static String me = "RunSetup";
   private static int lvl = 2;
   private static String msg;
-  private static boolean shouldPackLibs = true;
+  private static boolean shouldPackBundledLibs = true;
   private static long start;
   private static boolean logToFile = true;
   private static boolean forSystemWin = false;
@@ -331,7 +331,7 @@ public class RunSetup {
 
     osarch = "" + runTime.javaArch;
     if (runTime.runningLinux) {
-      linuxDistro = LinuxSupport.getLinuxDistro();
+      linuxDistro = runTime.linuxDistro;
       logPlus(lvl, "LinuxDistro: %s (%s-Bit)", linuxDistro, osarch);
       isLinux = true;
     }
@@ -639,6 +639,7 @@ public class RunSetup {
       if (isLinux) {
         runTime.addToClasspath(jarsList[8]);
         runTime.dumpClassPath("sikulix");
+        logPlus(lvl, "checking usability of bundled/provided libs");
 				RunTime.loadLibrary(LinuxSupport.slibVision, useLibsProvided);
 				useLibsProvided = runTime.useLibsProvided || LinuxSupport.shouldUseProvided;
       }
@@ -821,18 +822,20 @@ public class RunSetup {
 
     if (isLinux) {
       if (libsProvided || useLibsProvided) {
-        shouldPackLibs = false;
+        shouldPackBundledLibs = false;
       }
-      if (!shouldPackLibs) {
+      if (!shouldPackBundledLibs) {
         addonFileList[addonVision] = new File(folderLibsLux, LinuxSupport.libVision).getAbsolutePath();
         addonFileList[addonGrabKey] = new File(folderLibsLux, LinuxSupport.libGrabKey).getAbsolutePath();
         for (int i = 0; i < 2; i++) {
           if (!new File(addonFileList[i]).exists()) {
             addonFileList[i] = null;
+          } else {
+            logPlus(lvl, "user provided lib: %s", addonFileList[i]);
           }
         }
         String libPrefix = "sikulixlibs/linux/libs" + osarch;
-        log(lvl, "Provided libs will be stored at %s", libPrefix);
+        logPlus(lvl, "libs will be stored in jar at %s", libPrefix);
         addonFilePrefix[addonVision] = libPrefix;
         addonFilePrefix[addonGrabKey] = libPrefix;
       }
@@ -866,19 +869,19 @@ public class RunSetup {
           }
         }
         if (forSystemLux || forAllSystems) {
-          if (!shouldPackLibs && entry.getName().contains(LinuxSupport.libVision)
+          if (!shouldPackBundledLibs && entry.getName().contains(LinuxSupport.libVision)
                   && entry.getName().contains("libs" + osarch)) {
             if (new File(folderLibsLux, LinuxSupport.libVision).exists()) {
-              log(lvl, "Found provided lib: %s (libs%s)", LinuxSupport.libVision, osarch);
+              logPlus(lvl, "Adding provided lib: %s (libs%s)", LinuxSupport.libVision, osarch);
               return false;
             } else {
               return true;
             }
           }
-          if (!shouldPackLibs && entry.getName().contains(LinuxSupport.libGrabKey)
+          if (!shouldPackBundledLibs && entry.getName().contains(LinuxSupport.libGrabKey)
                   && entry.getName().contains("libs" + osarch)) {
             if (new File(folderLibsLux, LinuxSupport.libGrabKey).exists()) {
-              log(lvl, "Found provided lib: %s (libs%s)", LinuxSupport.libGrabKey, osarch);
+              logPlus(lvl, "Adding provided lib: %s (libs%s)", LinuxSupport.libGrabKey, osarch);
               return false;
             } else {
               return true;
