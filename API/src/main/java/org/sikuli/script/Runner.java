@@ -1,6 +1,7 @@
 package org.sikuli.script;
 
 import java.io.File;
+import java.io.FileReader;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -177,14 +178,14 @@ public class Runner {
 				someJS = runTime.getOption("runsetup", "");
 				if (!someJS.isEmpty()) {
 					log(lvl, "Options.runsetup: %s", someJS);
-					runjs(null, null, someJS, null);
+					new RunBox().runjs(null, null, someJS, null);
 				}
 				RunBox rb = new RunBox(givenScriptName, runTime.getSikuliArgs(), runAsTest);
 				exitCode = rb.run();
 				someJS = runTime.getOption("runteardown", "");
 				if (!someJS.isEmpty()) {
 					log(lvl, "Options.runteardown: %s", someJS);
-					runjs(null, null, someJS, null);
+					new RunBox().runjs(null, null, someJS, null);
 				}
 				lastReturnCode = exitCode;
 			}
@@ -217,25 +218,6 @@ public class Runner {
   }
 
   static JythonHelper pyRunner = null;
-
-  public static int runpy(File fScript, URL script, String scriptName, String[] args) {
-    String fpScript = fScript.getAbsolutePath();
-    if (pyRunner == null) {
-      pyRunner = initpy();
-    }
-    if (pyRunner == null) {
-      log(-1, "Running Python scripts:init failed");
-      return -999;
-    }
-    String[] newArgs = new String[args.length+1];
-    newArgs[0] = fpScript;
-    for (int i = 0; i < args.length; i++) {
-      newArgs[i+1] = args[i];
-    }
-    pyRunner.setSysArgv(newArgs);
-    pyRunner.execfile(fScript.getAbsolutePath());
-    return 0;
-  }
   
   private static JythonHelper initpy() {
     JythonHelper jh = JythonHelper.get();
@@ -246,55 +228,8 @@ public class Runner {
   }
 
   static Object rbRunner = null;
-
-  public static int runrb(File fScript, URL script, String scriptName, String[] args) {
-    log(-1, "Running Ruby scripts not yet supported!");
-    return -999;
-  }
-
   static Object txtRunner = null;
-
-  public static int runtxt(File fScript, URL script, String scriptName, String[] args) {
-    log(-1, "Running plain text scripts not yet supported!");
-    return -999;
-  }
-  
   static ScriptEngine jsRunner = null;
-
-  public static int runjs(File fScript, URL script, String scriptName, String[] args) {
-    String initSikulix = "";
-    if (jsRunner == null) {
-			jsRunner = initjs();
-			initSikulix = prologjs(initSikulix);
-    }
-    try {
-			if (null != fScript) {
-				File innerBundle = new File(fScript.getParentFile(), scriptName + ".sikuli");
-				if (innerBundle.exists()) {
-					ImagePath.setBundlePath(innerBundle.getCanonicalPath());
-				} else {
-					ImagePath.setBundlePath(fScript.getParent());
-				}
-			} else if (script != null) {
-				ImagePath.addHTTP(script.toExternalForm());
-				String sname = new File(script.toExternalForm()).getName();
-				ImagePath.addHTTP(script.toExternalForm() + "/" + sname + ".sikuli");
-			}
-			if (!initSikulix.isEmpty()) {
-				initSikulix = prologjs(initSikulix);
-				jsRunner.eval(initSikulix);
-				initSikulix = "";
-			}
-			if (null != fScript) {
-				jsRunner.eval(new java.io.FileReader(fScript));
-			} else {
-				jsRunner.eval(scriptName);
-			}
-    } catch (Exception ex) {
-      log(-1, "not possible:\n%s", ex);
-    }
-    return 0;
-  }
 
 	public static ScriptEngine initjs() {
 		ScriptEngineManager jsFactory = new ScriptEngineManager();
@@ -443,7 +378,88 @@ public class Runner {
     return vars;
   }
 
+  public static int runjs(Object object, URL uGivenScript, String givenScriptScript, String[] args) {
+    return new RunBox().runjs(null, uGivenScript, me, args);
+  }
+
+  public static int runpy(Object object, URL uGivenScript, String givenScriptScript, String[] args) {
+    return new RunBox().runpy(null, uGivenScript, me, args);
+  }
+
+  public static int runrb(Object object, URL uGivenScript, String givenScriptScript, String[] args) {
+    return new RunBox().runrb(null, uGivenScript, me, args);
+  }
+
+  public static int runtxt(Object object, URL uGivenScript, String givenScriptScript, String[] args) {
+    return new RunBox().runtxt(null, uGivenScript, me, args);
+  }
+
   static class RunBox {
+    
+    public RunBox() {}
+
+    public static int runtxt(File fScript, URL script, String scriptName, String[] args) {
+      Runner.log(-1, "Running plain text scripts not yet supported!");
+      return -999;
+    }
+
+    public static int runrb(File fScript, URL script, String scriptName, String[] args) {
+      Runner.log(-1, "Running Ruby scripts not yet supported!");
+      return -999;
+    }
+
+    public static int runpy(File fScript, URL script, String scriptName, String[] args) {
+      String fpScript = fScript.getAbsolutePath();
+      if (Runner.pyRunner == null) {
+        Runner.pyRunner = Runner.initpy();
+      }
+      if (Runner.pyRunner == null) {
+        Runner.log(-1, "Running Python scripts:init failed");
+        return -999;
+      }
+      String[] newArgs = new String[args.length + 1];
+      newArgs[0] = fpScript;
+      for (int i = 0; i < args.length; i++) {
+        newArgs[i + 1] = args[i];
+      }
+      Runner.pyRunner.setSysArgv(newArgs);
+      return Runner.pyRunner.execfile(fScript.getAbsolutePath());
+    }
+
+    public int runjs(File fScript, URL script, String scriptName, String[] args) {
+      String initSikulix = "";
+      if (Runner.jsRunner == null) {
+        Runner.jsRunner = Runner.initjs();
+        initSikulix = Runner.prologjs(initSikulix);
+      }
+      try {
+        if (null != fScript) {
+          File innerBundle = new File(fScript.getParentFile(), scriptName + ".sikuli");
+          if (innerBundle.exists()) {
+            ImagePath.setBundlePath(innerBundle.getCanonicalPath());
+          } else {
+            ImagePath.setBundlePath(fScript.getParent());
+          }
+        } else if (script != null) {
+          ImagePath.addHTTP(script.toExternalForm());
+          String sname = new File(script.toExternalForm()).getName();
+          ImagePath.addHTTP(script.toExternalForm() + "/" + sname + ".sikuli");
+        }
+        if (!initSikulix.isEmpty()) {
+          initSikulix = Runner.prologjs(initSikulix);
+          Runner.jsRunner.eval(initSikulix);
+          initSikulix = "";
+        }
+        if (null != fScript) {
+          Runner.jsRunner.eval(new FileReader(fScript));
+        } else {
+          Runner.jsRunner.eval(scriptName);
+        }
+      } catch (Exception ex) {
+        Runner.log(-1, "not possible:\n%s", ex);
+      }
+      return 0;
+    }
 
 //    static File scriptProject = null;
 //    static URL uScriptProject = null;
@@ -496,7 +512,7 @@ public class Runner {
       }
 			if ("NET".equals(givenScriptType)) {
         if (Runner.RJSCRIPT.equals(givenScriptScriptType)) {
-          exitCode = Runner.runjs(null, uGivenScript, givenScriptScript, args);
+          exitCode = runjs(null, uGivenScript, givenScriptScript, args);
         } else {
           log(-1, "running from net not supported for %s\n%s", givenScriptScriptType, uGivenScript);
         }
@@ -511,13 +527,13 @@ public class Runner {
 				}
         log(lvl, "Trying to run script:\n%s", fScript);
 				if (fScript.getName().endsWith(EJSCRIPT)) {
-          exitCode = Runner.runjs(fScript, null, givenScriptScript, args);
+          exitCode = runjs(fScript, null, givenScriptScript, args);
         } else if (fScript.getName().endsWith(EPYTHON)) {
-          exitCode = Runner.runpy(fScript, null, givenScriptScript, args);
+          exitCode = runpy(fScript, null, givenScriptScript, args);
         } else if (fScript.getName().endsWith(ERUBY)) {
-          exitCode = Runner.runrb(fScript, null, givenScriptScript, args);
+          exitCode = runrb(fScript, null, givenScriptScript, args);
         } else if (fScript.getName().endsWith(EPLAIN)) {
-          exitCode = Runner.runtxt(fScript, null, givenScriptScript, args);
+          exitCode = runtxt(fScript, null, givenScriptScript, args);
         } else {
 					log(-1, "Running not supported currently for:\n%s", fScript);
 					return -9999;

@@ -53,6 +53,7 @@ public class JythonHelper {
   static Class[] nc = new Class[0];
   static Class[] nc1 = new Class[1];
   static Class cInterpreter = null;
+  static Class cPyException = null;
   static Class cList = null;
   static Class cPy = null;
   static Class cPyFunction = null;
@@ -90,6 +91,7 @@ public class JythonHelper {
         mExecfile = cInterpreter.getMethod("execfile", new Class[] {String.class});
         Constructor PI_new = cInterpreter.getConstructor(nc);
         interpreter = PI_new.newInstance(null);
+        cPyException = Class.forName("org.python.core.PyException");
         cList = Class.forName("org.python.core.PyList");
         cPy = Class.forName("org.python.core.Py");
         cPyFunction = Class.forName("org.python.core.PyFunction");
@@ -115,6 +117,34 @@ public class JythonHelper {
   }
 
   private void noOp() {} // for debugging as breakpoint
+  
+  class PyException {
+    Object inst = null;
+    Field fType = null;
+    Field fValue = null;
+    Field fTrBack = null;
+    public PyException(Object i) {
+      inst = i;
+			cPyException.cast(inst);
+			try {
+				fType = cPyException.getField("type");
+        fValue = cPyException.getField("value");
+        fTrBack = cPyException.getField("traceback");
+			} catch (Exception ex) {
+				noOp();
+			}
+    }
+    public int isTypeExit() {
+      try {
+        if (fType.get(inst).toString().contains("SystemExit")) {
+          return Integer.parseInt(fValue.get(inst).toString());
+        }
+      } catch (Exception ex) {
+        return -999;
+      }
+      return -1;
+    }
+  }
 
   class PyInstance {
     Object inst = null;
@@ -241,14 +271,17 @@ public class JythonHelper {
     return true;
   }
 
-  public boolean execfile(String fpScript) {
+  public int execfile(String fpScript) {
+    int retval = -999;
     try {
       mExecfile.invoke(interpreter, fpScript);
     } catch (Exception ex) {
-      log(-1, "execFile: returns:\n%s", ex.getCause());
-      return false;
+      PyException pex = new PyException(ex.getCause());
+      if ((retval = pex.isTypeExit()) < 0) {
+        log(-1, "execFile: returns:\n%s", ex.getCause());
+      }
     }
-    return true;
+    return retval;
   }
 
 //TODO check signature (instance method)
