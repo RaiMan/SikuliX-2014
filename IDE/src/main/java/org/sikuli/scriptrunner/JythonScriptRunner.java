@@ -195,14 +195,16 @@ public class JythonScriptRunner implements IScriptRunner {
           log(lvl, "runPython: running COMPILE_ONLY");
           interpreter.compile(pyFile.getAbsolutePath());
         } else {
+          String scr;
           if (scriptPaths.length > 1) {
-            String scr = FileManager.slashify(scriptPaths[0], true) + scriptPaths[1] + ".sikuli";
+            scr = FileManager.slashify(scriptPaths[0], true) + scriptPaths[1] + ".sikuli";
             log(lvl, "runPython: running script from IDE: \n" + scr);
             interpreter.exec("sys.argv[0] = \""
                     + scr + "\"");
           } else {
-            log(lvl, "runPython: running script: \n" + scriptPaths[0]);
-            interpreter.exec("sys.argv[0] = \"" + scriptPaths[0] + "\"");
+            scr = FileManager.slashify(scriptPaths[0], false);
+            log(lvl, "runPython: running script: \n%s", scr);
+            interpreter.exec("sys.argv[0] = \"" + scr + "\"");
           }
           interpreter.execfile(pyFile.getAbsolutePath());
         }
