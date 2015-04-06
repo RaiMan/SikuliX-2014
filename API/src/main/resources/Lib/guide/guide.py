@@ -35,7 +35,7 @@ _g = Guide()
 #================
 
 def rectangle(target, **kwargs):
-    comp = _g.rectangle
+    comp = _g.rectangle()
     return _addComponentHelper(comp, target, side = 'over',  **kwargs)
 
 def circle(target, **kwargs):
@@ -54,7 +54,8 @@ def tooltip(target, txt, **kwargs):
 def flag(target, txt, **kwargs):
     comp = _g.flag(txt)
     s = kwargs.pop("side", 'right')
-    return _addComponentHelper(comp, target, side = s, **kwargs)
+    f = kwargs.pop("fontsize", 12)
+    return _addComponentHelper(comp, target, side = s, fontsize = f, **kwargs)
 
 def callout(target, txt, **kwargs):
     comp = _g.callout(txt)
@@ -64,7 +65,7 @@ def callout(target, txt, **kwargs):
 
 def image(target, img, **kwargs):
     comp = _g.image(img)
-    return _addComponentHelper(comp, target, **kwargs)
+    return _addComponentHelper(comp, target, side = "over", **kwargs)
 
 def bracket(target, **kwargs):
     comp = _g.bracket()
@@ -211,6 +212,7 @@ def _addComponentHelper(comp, target, side = 'best', margin = 0, offset = (0,0),
         comp.setOffset(x,y)
 
     # Side
+    sideConstant = None;
     if (side == 'right'):
         sideConstant = Layout.RIGHT
     elif (side == 'top'):
@@ -234,8 +236,10 @@ def _addComponentHelper(comp, target, side = 'best', margin = 0, offset = (0,0),
 #        comp.setVerticalAlignmentWithRegion(r,1.0)
 
     # target and position
-    comp.setTarget(target)
-    comp.setLayout(sideConstant)
+    if target:
+      comp.setTarget(target)
+    if sideConstant:
+      comp.setLayout(sideConstant)
 
 #    if isinstance(target, Region):
 #        # absolute location wrt a Region
@@ -281,19 +285,23 @@ def _addComponentHelper(comp, target, side = 'best', margin = 0, offset = (0,0),
 #=====================
 
 def show(arg = None, timeout = 5):
+    global _g
+    cmd = ""
     # show a list of steps
     if isinstance(arg, list) or isinstance(arg, tuple):
         _show_steps(arg, timeout)
     # show a single step
     elif callable(arg):
         arg()
-        return _g.showNow(timeout)
+        cmd = _g.showNow(timeout)
     # show for some period of time
     elif isinstance(arg, float) or isinstance(arg, int):
-        return _g.showNow(arg)
+        cmd = _g.showNow(arg)
     # show
     else:
-        return _g.showNow()
+        cmd = _g.showNow()
+    _g = Guide()
+    return cmd
 
 def setDefaultTimeout(timeout):
     _g.setDefaultTimeout(timeout)

@@ -388,6 +388,10 @@ public class Visual extends JComponent
     return actualBounds.getLocation();
   }
 
+  public void offsetLocation(int x, int y) {
+    setActualLocation(getActualLocation().x + x, getActualLocation().y + y);
+  }
+
   public void setActualLocation(Point location) {
     setActualLocation(location.x, location.y);
   }
@@ -420,16 +424,17 @@ public class Visual extends JComponent
     margin.bottom = bottom;
     margin.right = right;
   }
+
   int offsetx = 0;
   int offsety = 0;
-
   public void setOffset(int offsetx, int offsety) {
     this.offsetx = offsetx;
     this.offsety = offsety;
+    offsetLocation(offsetx, offsety);
   }
+  
   // TODO: fix this
   float zoomLevel = 1.0f;
-
   public void setZoomLevel(float zoomLevel) {
 
     if (true) {
@@ -744,7 +749,55 @@ public class Visual extends JComponent
     }
   }
   //</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="layout">
+  public Visual left() {
+    left(0);
+    return this;
+  }
 
+  public Visual left(int x) {
+    setLayout(Layout.LEFT);
+    if (x != 0) {
+      setOffset(-x, 0);
+    }
+    return this;
+  }
+  public Visual right() {
+    return right(0);
+  }
+
+  public Visual right(int x) {
+    setLayout(Layout.RIGHT);
+    if (x != 0) {
+      setOffset(x, 0);
+    }
+    return this;
+  }
+  public Visual above() {
+    return above(0);
+  }
+
+  public Visual above(int y) {
+    setLayout(Layout.TOP);
+    if (y != 0) {
+      setOffset(0, -y);
+    }
+    return this;
+  }
+  
+  public Visual below() {
+    return below(0);
+  }
+
+  public Visual below(int y) {
+    setLayout(Layout.BOTTOM);
+    if (y != 0) {
+      setOffset(0, y);
+    }
+    return this;
+  }
+//</editor-fold>
   //<editor-fold defaultstate="collapsed" desc="AutoLayout">
   AutoLayout autolayout = null;
 

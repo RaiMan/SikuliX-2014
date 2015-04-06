@@ -422,6 +422,12 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		setDirty(false);
 	}
 
+	private void cleanBundle() {
+		log(3, "cleanBundle");
+		FileManager.deleteNotUsedImages(getBundlePath(), parseforImages().keySet());
+		log(3, "cleanBundle finished");
+	}
+
 	private Map<String, List<Integer>> parseforImages() {
 		String pbundle = FileManager.slashify(getSrcBundle(), false);
 		log(3, "parseforImages: in \n%s", pbundle);
@@ -429,11 +435,13 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		Lexer lexer = getLexer();
 		Map<String, List<Integer>> images = new HashMap<String, List<Integer>>();
 		parseforImagesWalk(pbundle, lexer, scriptText, 0, images);
+		log(3, "parseforImages finished");
 		return images;
 	}
 
 	private void parseforImagesWalk(String pbundle, Lexer lexer,
 					String text, int pos, Map<String, List<Integer>> images) {
+		//log(3, "parseforImagesWalk");
 		Iterable<Token> tokens = lexer.getTokens(text);
 		boolean inString = false;
 		String current;
@@ -443,11 +451,13 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		for (Token t : tokens) {
 			current = t.getValue();
 			if (t.getType() == TokenType.Comment) {
+    		//log(3, "parseforImagesWalk::Comment");
 				innerText = t.getValue().substring(1);
 				parseforImagesWalk(pbundle, lexer, innerText, t.getPos() + 1, images);
 				continue;
 			}
 			if (t.getType() == TokenType.String_Doc) {
+    		//log(3, "parseforImagesWalk::String_Doc");
 				innerText = t.getValue().substring(3, t.getValue().length() - 3);
 				parseforImagesWalk(pbundle, lexer, innerText, t.getPos() + 3, images);
 				continue;
@@ -466,6 +476,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 	private boolean parseforImagesGetName(String current, boolean inString,
 					String[] possibleImage, String[] stringType) {
+		//log(3, "parseforImagesGetName (inString: %s)", inString);
 		if (!inString) {
 			if (!current.isEmpty() && (current.contains("\"") || current.contains("'"))) {
 				possibleImage[0] = "";
@@ -484,6 +495,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 	private void parseforImagesCollect(String pbundle, String img, int pos, Map<String, List<Integer>> images) {
 		String fimg;
+ 		//log(3, "parseforImagesCollect");
 		if (img.endsWith(".png") || img.endsWith(".jpg") || img.endsWith(".jpeg")) {
 			fimg = FileManager.slashify(img, false);
 			if (fimg.contains("/")) {
@@ -500,11 +512,6 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 				images.put(img, poss);
 			}
 		}
-	}
-
-	private void cleanBundle() {
-		log(3, "cleanBundle");
-		FileManager.deleteNotUsedImages(getBundlePath(), parseforImages().keySet());
 	}
 
 	private Lexer getLexer() {

@@ -16,7 +16,7 @@ import org.sikuli.script.*;
 public class Run {
 
 	Guide guide = null;
-	Screen scr;
+	static Screen scr;
   static Visual sgc;
 
   
@@ -25,6 +25,7 @@ public static void main(String[] args) {
   sgr.scr = new Screen();
   ImagePath.add("org.sikuli.script.RunTime/ImagesAPI.sikuli");
   sgr.setUp();
+  sgr.testButton();
   sgr.tearDown();
 }
   
@@ -33,30 +34,16 @@ public static void main(String[] args) {
 	}
 
 	private void tearDown() {
-		guide.showNow(2f);
+		System.out.println(guide.showNow(5f));
 		guide = null;
 	}
 
-	/**
-	 * Test of button method, of class Guide.
-	 */
-	private void testButton() {
+	public void testButton() {
 		System.out.println("button");
-		String name = "";
-		Guide instance = new Guide();
-		Visual expResult = null;
-		Visual result = instance.button(name);
-	}
-
-	/**
-	 * Test of arrow method, of class Guide.
-	 */
-	private void testArrow() {
-		System.out.println("arrow");
-		Object from = null;
-		Object to = null;
-		Guide instance = new Guide();
-		Visual expResult = null;
-		Visual result = instance.arrow(from, to);
+		Visual g = guide.button("Continue");
+    g.setLocationRelativeToRegion(scr.getCenter().grow(500), Visual.Layout.BOTTOM);
+//    g.setFontSize(12);
+//    g.setColor(Color.white);
+//    g.setTextColor(Color.black);
 	}
 }

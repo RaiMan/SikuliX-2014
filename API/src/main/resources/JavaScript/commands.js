@@ -137,3 +137,44 @@ closeBrowserWindow = function() {
 		write("#C.w");
 	};
 };
+
+circle = function() {
+  return makeRetVal(Commands.call("circle", getArgsForJ(arguments)));
+};
+
+rectangle = function() {
+  return makeRetVal(Commands.call("rectangle", getArgsForJ(arguments)));
+};
+
+text = function() {
+  return makeRetVal(Commands.call("text", getArgsForJ(arguments)));
+};
+
+tooltip = function() {
+  return makeRetVal(Commands.call("tooltip", getArgsForJ(arguments)));
+};
+
+flag = function() {
+  return makeRetVal(Commands.call("flag", getArgsForJ(arguments)));
+};
+
+callout = function() {
+  return makeRetVal(Commands.call("callout", getArgsForJ(arguments)));
+};
+
+image = function() {
+  return makeRetVal(Commands.call("image", getArgsForJ(arguments)));
+};
+
+arrow = function() {
+  return makeRetVal(Commands.call("arrow", getArgsForJ(arguments)));
+};
+
+bracket = function() {
+  return makeRetVal(Commands.call("bracket", getArgsForJ(arguments)));
+};
+
+button = function() {
+  return makeRetVal(Commands.call("button", getArgsForJ(arguments)));
+};
+
