@@ -1099,9 +1099,14 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
           setCurrentFileTabTitle(fname);
           tabPane.setLastClosed(fname);
         }
-      } catch (IOException eio) {
-        log(-1, "Problem when trying to save %s\nError: %s",
-                fname, eio.getMessage());
+      } catch (Exception ex) {
+        if (ex instanceof IOException) {
+          log(-1, "Problem when trying to save %s\nError: %s",
+                  fname, ex.getMessage());
+        } else {
+          log(-1, "A non-IOException-problem when trying to save %s\nError: %s",
+                  fname, ex.getMessage());
+        }
       }
     }
 
@@ -1118,9 +1123,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         } else {
           retval = false;
         }
-      } catch (IOException eio) {
+      } catch (Exception ex) {
         log(-1, "Problem when trying to save %s\nError: %s",
-                fname, eio.getMessage());
+                fname, ex.getMessage());
         retval = false;
       }
       tabPane.setSelectedIndex(currentTab);
@@ -1144,8 +1149,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         } else {
 	        log(-1, "doSaveAs: %s not completed", orgName);
 				}
-      } catch (IOException eio) {
-        log(-1, "doSaveAs: %s Error: %s", orgName, eio.getMessage());
+      } catch (Exception ex) {
+        log(-1, "doSaveAs: %s Error: %s", orgName, ex.getMessage());
       }
     }
 
@@ -1188,8 +1193,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         if (codePane.close()) {
           tabPane.remove(tabPane.getSelectedIndex());
         }
-      } catch (IOException e) {
-        Debug.info("Can't close this tab: " + e.getStackTrace());
+      } catch (Exception ex) {
+        Debug.info("Can't close this tab: %s", ex.getMessage());
       }
       codePane = getCurrentCodePane();
       if (codePane != null) {
