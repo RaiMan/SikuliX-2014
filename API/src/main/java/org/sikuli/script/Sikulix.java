@@ -100,7 +100,7 @@ public class Sikulix {
   public static void main(String[] args) throws FindFailed {
 
     System.out.println("********** Running Sikulix.main");
-    
+
     if (args.length > 1 && args[0].toLowerCase().startsWith("runserver")) {
       if (args[1].toLowerCase().contains("start")) {
         RunServer.run(null);
@@ -154,12 +154,12 @@ public class Sikulix {
 
       Screen s = new Screen();
       ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
-      
+
 //      Runner.run("scripts/testpy", new String[] {"parm1"});
 //      System.exit(1);
-      
+
       RunServer.run(null);
-      System.exit(0);
+      System.exit(1);
 
       if (rt.runningWinApp) {
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());

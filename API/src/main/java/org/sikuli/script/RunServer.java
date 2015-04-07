@@ -105,6 +105,7 @@ public class RunServer {
   }
 
   static ScriptEngine jsRunner = null;
+	static File scriptFolder = null;
 
   private static class HandleClient implements Runnable {
 
@@ -112,7 +113,6 @@ public class RunServer {
     Thread thread;
     Socket socket;
     Boolean shouldStop = false;
-		File scriptFolder = null;
 
     public HandleClient(Socket sock) {
       init(sock);
@@ -132,36 +132,38 @@ public class RunServer {
     public boolean getShouldStop() {
       return shouldStop;
     }
-    
+
     boolean isHTTP = false;
     String request;
     String rCommand;
     String[] rArgs;
-    String rMessage = "OK";
-    
+    String rMessage = "";
+		Object evalReturnObject;
+
     @Override
     public void run() {
 			Debug.on(3);
       RunServer.log("now handling client: " + socket);
       while (keepRunning) {
         try {
-          request = in.nextLine();
-          if (request != null) {
+          String inLine = in.nextLine();
+          if (inLine != null) {
             if (!isHTTP) {
-              RunServer.log("processing: <%s>", request);
+              RunServer.log("processing: <%s>", inLine);
             }
 						boolean success = true;
-            if (request.startsWith("GET") && request.contains("HTTP")) {
+            if (inLine.startsWith("GET") && inLine.contains("HTTP")) {
               isHTTP = true;
+							request = inLine;
               continue;
             }
             if (isHTTP) {
-              if (!request.isEmpty()) {
+              if (!inLine.isEmpty()) {
                 continue;
               }
             }
             if (!isHTTP) {
-              request = "GET /?" + request + " HTTP/1.1"; 
+              request = "GET /?" + request + " HTTP/1.1";
             }
             String[] parts = request.split("\\s");
             rCommand = parts[1].substring(2).toUpperCase();
@@ -175,7 +177,7 @@ public class RunServer {
             }
             if (rCommand.contains("STOP")) {
               shouldStop = true;
-            } else if (rCommand.contains("START")) {              
+            } else if (rCommand.contains("START")) {
               success = startRunner();
               if (!success) {
                 rMessage = "startRunner: not possible";
@@ -192,27 +194,42 @@ public class RunServer {
                 startRunner();
 								if (jsRunner != null) {
                   try {
-									jsRunner.eval(new java.io.FileReader(fScriptScript));
+										evalReturnObject = jsRunner.eval(new java.io.FileReader(fScriptScript));
+										rMessage = "runScript: returned: " +
+														(evalReturnObject == null ? "null" : evalReturnObject.toString());
+										success = success && evalReturnObject != null;
                   } catch (Exception ex) {
-                    rMessage = "runScript: script raised exception on run";
+                    rMessage = "runScript: script raised exception on run: " + ex.toString();
                     success = false;
                   }
 								} else {
 									success = false;
 								}
 							} else {
-                rMessage = "runScript: script not found or not valid";
+                rMessage = "runScript: script not found or not valid" + fScriptScript.toString();
               }
 						} else {
 							if (jsRunner != null) {
-                String line = request.substring(7);
+                String line = request.substring(6);
                 line = line.replace(" HTTP/1.1", "");
-								jsRunner.eval(line);
+                  try {
+										evalReturnObject = jsRunner.eval(line);
+										rMessage = "runStatement: returned: " +
+														(evalReturnObject == null ? "null" : evalReturnObject.toString());
+										success = success && evalReturnObject != null;
+                  } catch (Exception ex) {
+                    rMessage = "runStatement: raised exception on eval: " + ex.toString();
+                    success = false;
+                  }
+							} else {
+                rMessage = "runStatement: not possible --- no runner";
+								success = false;
 							}
 						}
             if (isHTTP) {
               String retVal = success ? "HTTP/1.1 200 OK" : "HTTP/1.1 400 NOK";
-              out.write(retVal + "\r\n\r\n" + request + "\r\n" + rMessage + "\r\n");
+							String state = success ? "PASS: " : "FAIL: ";
+              out.write(retVal + "\r\n\r\n" + request + "\r\n" + state + rMessage + "\r\n");
               out.flush();
               stopRunning();
             } else {
