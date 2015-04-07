@@ -1,11 +1,14 @@
 from guide import *
 import java.awt.Color as Color
 
+App.openLink("http://www.sikulix.com/uploads/1/4/2/8/14281286/1389697664.png")
+tl = wait("logo.png", 10)
+
 t1 = getCenter().offset(-300, 0).grow(100)
 t2 = getCenter().offset(300, 0).grow(100)
-t3 = getCenter().grow(50)
-tl = Region(0, 0, 50, 50)
+
 img = capture(tl)
+t3 = getCenter().grow(tl.h)
 
 circle(t1)
 
@@ -24,12 +27,19 @@ bracket(t2).below(2).setColor(Color.green)
 
 flag(t2, "a bracket").below(15).setColor(Color.green)
 
-callout(t3, "This image<br>is from<br>top left")
+callout(t3, "This image<br>is from<br>above")
 
 image(t3, img)
 
 arrow(tl.getBottomRight().grow(1), t3.getTopLeft().grow(1))
 
 bContinue = button(t3, "Continue").below(50)
+flag(bContinue.getRegion(), 
+    "this all is shown for 30 seconds. To stop: click Continue").left(10)
 
-print show(5)
+print show(10)
+wait(1)
+type("h", Key.CMD)
+type("w", Key.CMD)
+switchApp("SikulixIDE")
+wait(1)

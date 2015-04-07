@@ -54,6 +54,7 @@ import org.sikuli.script.RunTime;
 import org.sikuli.scriptrunner.ScriptingSupport;
 import org.sikuli.idesupport.IDESupport;
 import org.sikuli.script.Key;
+import org.sikuli.script.RunServer;
 import org.sikuli.script.Runner;
 import org.sikuli.script.Sikulix;
 
@@ -166,6 +167,11 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     start = (new Date()).getTime();
     
     runTime = RunTime.get(RunTime.Type.IDE, args);
+    
+    if (RunTime.shouldRunServer) {
+      RunServer.run(args);
+      System.exit(0);
+    }
         
     getInstance();
     log(3, "running with Locale: %s", SikuliIDEI18N.getLocaleShow());

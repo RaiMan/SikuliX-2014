@@ -164,7 +164,7 @@ public class Runner {
     return lastReturnCode;
   }
 
-	static int runScripts(String[] args) {
+	public static int runScripts(String[] args) {
 		runScripts = Runner.evalArgs(args);
 		String someJS = "";
 		int exitCode = 0;
@@ -378,20 +378,20 @@ public class Runner {
     return vars;
   }
 
-  public static int runjs(Object object, URL uGivenScript, String givenScriptScript, String[] args) {
-    return new RunBox().runjs(null, uGivenScript, me, args);
+  public static int runjs(File fScript, URL uGivenScript, String givenScriptScript, String[] args) {
+    return new RunBox().runjs(fScript, uGivenScript, givenScriptScript, args);
   }
 
-  public static int runpy(Object object, URL uGivenScript, String givenScriptScript, String[] args) {
-    return new RunBox().runpy(null, uGivenScript, me, args);
+  public static int runpy(File fScript, URL uGivenScript, String givenScriptScript, String[] args) {
+    return new RunBox().runpy(fScript, uGivenScript, givenScriptScript, args);
   }
 
-  public static int runrb(Object object, URL uGivenScript, String givenScriptScript, String[] args) {
-    return new RunBox().runrb(null, uGivenScript, me, args);
+  public static int runrb(File fScript, URL uGivenScript, String givenScriptScript, String[] args) {
+    return new RunBox().runrb(fScript, uGivenScript, givenScriptScript, args);
   }
 
-  public static int runtxt(Object object, URL uGivenScript, String givenScriptScript, String[] args) {
-    return new RunBox().runtxt(null, uGivenScript, me, args);
+  public static int runtxt(File fScript, URL uGivenScript, String givenScriptScript, String[] args) {
+    return new RunBox().runtxt(fScript, uGivenScript, givenScriptScript, args);
   }
 
   static class RunBox {

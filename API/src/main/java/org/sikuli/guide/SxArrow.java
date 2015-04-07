@@ -60,7 +60,6 @@ public class SxArrow extends Visual implements ComponentListener {
       source = from.getCenter();
       destination = to.getCenter();
     }
-    Debug.info("" + getSource() + " to " + getDestination());
     Rectangle r = new Rectangle(getSource());
     r.add(getDestination());
     r.grow(10, 10);

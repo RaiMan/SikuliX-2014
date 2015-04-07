@@ -53,6 +53,7 @@ import org.sikuli.util.LinuxSupport;
 public class RunTime {
   public static File scriptProject = null;
   public static URL uScriptProject = null;
+  public static boolean shouldRunServer = false;
   
   public static void resetProject() {
     scriptProject = null;
@@ -143,6 +144,9 @@ public class RunTime {
             System.setProperty("sikuli.console", "false");
           } else if (debugLevel == 999) {
             runTime.runningScripts = true;
+          } else if (debugLevel == -3) {
+            //if (Type.IDE.equals(typ) && "runserver".equals(opt)) {
+            shouldRunServer = true;
           }
         }
       }
@@ -2595,6 +2599,9 @@ int nMonitors = 0;
       String opt = options.get(n);
 			if ("nodebug".equals(opt)) {
 				return -2;
+			}
+			if (Type.IDE.equals(typ) && "runserver".equals(opt)) {
+				return -3;
 			}
       if (!opt.startsWith("-")) {
         continue;

@@ -155,9 +155,12 @@ public class Sikulix {
       Screen s = new Screen();
       ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
       
-      Runner.run("scripts/testpy", new String[] {"parm1"});
-      System.exit(1);
+//      Runner.run("scripts/testpy", new String[] {"parm1"});
+//      System.exit(1);
       
+      RunServer.run(null);
+      System.exit(0);
+
       if (rt.runningWinApp) {
         popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
         try {
@@ -183,6 +186,7 @@ public class Sikulix {
         popup("Nothing to do!", version);
       } else {
         FileManager.writeStringToFile(runSomeJS, lastSession);
+        Runner.runjs(null, null, "Sikulix.popup(\"Now running your test\")", null);
         Runner.runjs(null, null, runSomeJS, null);
       }
     }

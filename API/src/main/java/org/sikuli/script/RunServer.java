@@ -3,6 +3,7 @@ package org.sikuli.script;
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -14,7 +15,7 @@ import org.sikuli.basics.FileManager;
 
 public class RunServer {
   private static ServerSocket server = null;
-  private static ObjectOutputStream out = null;
+  private static PrintWriter out = null;
   private static Scanner in = null;
   private static boolean isHandling = false;
   private static boolean shouldStop = false;
@@ -58,7 +59,7 @@ public class RunServer {
         FileManager.writeStringToFile(theServer, new File(RunTime.get().fSikulixStore, "RunServer"));
         log("now waiting on port: %d at %s", port, theIP);
         Socket socket = server.accept();
-        out = new ObjectOutputStream(socket.getOutputStream());
+        out = new PrintWriter(socket.getOutputStream());
         in = new Scanner(socket.getInputStream());
         HandleClient client = new HandleClient(socket);
         isHandling = true;
@@ -91,7 +92,8 @@ public class RunServer {
       try {
         port = Integer.parseInt(p);
       } catch (NumberFormatException ex) {
-        return -1;
+        log(-1, "given port not useable: %s --- using default", p);
+        return pDefault;
       }
     } else {
       return pDefault;
@@ -102,13 +104,14 @@ public class RunServer {
     return port;
   }
 
+  static ScriptEngine jsRunner = null;
+
   private static class HandleClient implements Runnable {
 
     private volatile boolean keepRunning;
     Thread thread;
     Socket socket;
     Boolean shouldStop = false;
-		ScriptEngine jsRunner = null;
 		File scriptFolder = null;
 
     public HandleClient(Socket sock) {
@@ -129,56 +132,100 @@ public class RunServer {
     public boolean getShouldStop() {
       return shouldStop;
     }
-
+    
+    boolean isHTTP = false;
+    String request;
+    String rCommand;
+    String[] rArgs;
+    String rMessage = "OK";
+    
     @Override
     public void run() {
 			Debug.on(3);
-      String e;
       RunServer.log("now handling client: " + socket);
       while (keepRunning) {
         try {
-          e = in.nextLine();
-          if (e != null) {
-            RunServer.log("processing: " + e);
+          request = in.nextLine();
+          if (request != null) {
+            if (!isHTTP) {
+              RunServer.log("processing: <%s>", request);
+            }
 						boolean success = true;
-            if (e.contains("EXIT")) {
-              stopRunning();
-              in.close();
-              out.close();
-              if (e.contains("STOP")) {
-                RunServer.log("stop server requested");
-                shouldStop = true;
+            if (request.startsWith("GET") && request.contains("HTTP")) {
+              isHTTP = true;
+              continue;
+            }
+            if (isHTTP) {
+              if (!request.isEmpty()) {
+                continue;
               }
-              return;
-            } else if (e.contains("START")) {
-							if (jsRunner == null) {
-								jsRunner = Runner.initjs();
-								String prolog = "";
-								prolog = Runner.prologjs(prolog);
-								prolog = Runner.prologjs(prolog);
-								jsRunner.eval(prolog);
-							}
-            } else if (e.contains("SDIR")) {
-							scriptFolder = new File(e.substring(5));
-            } else if (e.contains("RUN")) {
-							String script = e.substring(4);
+            }
+            if (!isHTTP) {
+              request = "GET /?" + request + " HTTP/1.1"; 
+            }
+            String[] parts = request.split("\\s");
+            rCommand = parts[1].substring(2).toUpperCase();
+            rArgs = new String[0];
+            int rArgsCount = parts.length -3;
+            if (rArgsCount > 0) {
+              rArgs = new String[rArgsCount];
+              for (int i = 0; i < rArgsCount; i++) {
+                rArgs[i] = parts[i + 2];
+              }
+            }
+            if (rCommand.contains("STOP")) {
+              shouldStop = true;
+            } else if (rCommand.contains("START")) {              
+              success = startRunner();
+              if (!success) {
+                rMessage = "startRunner: not possible";
+              }
+            } else if (rCommand.contains("SDIR")) {
+							scriptFolder = new File(rArgs[0]);
+            } else if (rCommand.contains("RUN")) {
+							String script = rArgs[0];
 							File fScript = new File(scriptFolder, script);
 							File fScriptScript = new File(fScript, script + ".js");
 							success &= fScript.exists() && fScriptScript.exists();
 							if (success) {
 								ImagePath.setBundlePath(fScript.getAbsolutePath());
+                startRunner();
 								if (jsRunner != null) {
+                  try {
 									jsRunner.eval(new java.io.FileReader(fScriptScript));
+                  } catch (Exception ex) {
+                    rMessage = "runScript: script raised exception on run";
+                    success = false;
+                  }
 								} else {
 									success = false;
 								}
-							}
+							} else {
+                rMessage = "runScript: script not found or not valid";
+              }
 						} else {
 							if (jsRunner != null) {
-								jsRunner.eval(e);
+                String line = request.substring(7);
+                line = line.replace(" HTTP/1.1", "");
+								jsRunner.eval(line);
 							}
 						}
-						send(success ? "ok" : "failed");
+            if (isHTTP) {
+              String retVal = success ? "HTTP/1.1 200 OK" : "HTTP/1.1 400 NOK";
+              out.write(retVal + "\r\n\r\n" + request + "\r\n" + rMessage + "\r\n");
+              out.flush();
+              stopRunning();
+            } else {
+              send(success ? "ok" : "failed");
+            }
+            if (shouldStop) {
+              if (!isHTTP) {
+                stopRunning();
+              }
+              in.close();
+              out.close();
+              return;
+            }
           }
         } catch (Exception ex) {
           RunServer.log(-1, "Exception while processing\n" + ex.getMessage());
@@ -192,18 +239,20 @@ public class RunServer {
       }
     }
 
-    private void send(Object o) {
+    private void send(String response) {
       try {
-        out.writeObject(o);
+        out.write(response);
         out.flush();
-        RunServer.log("returned: "  + o);
-      } catch (IOException ex) {
-        RunServer.log(-1, "send: writeObject: Exception: " + ex.getMessage());
+        RunServer.log("returned: "  + response);
+      } catch (Exception ex) {
+        RunServer.log(-1, "send: write: Exception: " + ex.getMessage());
       }
     }
 
     public void stopRunning() {
-      RunServer.log("stop client handling requested");
+      if (!isHTTP) {
+        RunServer.log("stop client handling requested");
+      }
       try {
         socket.close();
       } catch (IOException ex) {
@@ -211,6 +260,22 @@ public class RunServer {
         System.exit(1);
       }
       keepRunning = false;
+    }
+
+    private boolean startRunner() {
+      if (jsRunner == null) {
+        try {
+          jsRunner = Runner.initjs();
+          String prolog = "";
+          prolog = Runner.prologjs(prolog);
+          prolog = Runner.prologjs(prolog);
+          jsRunner.eval(prolog);
+        } catch (Exception ex) {
+          rMessage = "startRunner: not possible";
+          return false;
+        }
+      }
+      return true;
     }
   }
 }
