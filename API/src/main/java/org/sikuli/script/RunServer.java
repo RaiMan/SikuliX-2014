@@ -106,6 +106,7 @@ public class RunServer {
 
   static ScriptEngine jsRunner = null;
 	static File scriptFolder = null;
+	static File imageFolder = null;
 
   private static class HandleClient implements Runnable {
 
@@ -136,6 +137,9 @@ public class RunServer {
     boolean isHTTP = false;
     String request;
     String rCommand;
+    String rRessource;
+    String rVersion = "HTTP/1.1";
+    String rQuery;
     String[] rArgs;
     String rMessage = "";
 		Object evalReturnObject;
@@ -152,7 +156,7 @@ public class RunServer {
               RunServer.log("processing: <%s>", inLine);
             }
 						boolean success = true;
-            if (inLine.startsWith("GET") && inLine.contains("HTTP")) {
+            if (inLine.startsWith("GET /") && inLine.contains("HTTP/")) {
               isHTTP = true;
 							request = inLine;
               continue;
@@ -163,73 +167,87 @@ public class RunServer {
               }
             }
             if (!isHTTP) {
-              request = "GET /?" + request + " HTTP/1.1";
+              request = "GET /" + request + " HTTP/1.1";
             }
-            String[] parts = request.split("\\s");
-            rCommand = parts[1].substring(2).toUpperCase();
-            rArgs = new String[0];
-            int rArgsCount = parts.length -3;
-            if (rArgsCount > 0) {
-              rArgs = new String[rArgsCount];
-              for (int i = 0; i < rArgsCount; i++) {
-                rArgs[i] = parts[i + 2];
-              }
-            }
-            if (rCommand.contains("STOP")) {
-              shouldStop = true;
-            } else if (rCommand.contains("START")) {
-              success = startRunner();
-              if (!success) {
-                rMessage = "startRunner: not possible";
-              }
-            } else if (rCommand.contains("SDIR")) {
-							scriptFolder = new File(rArgs[0]);
-            } else if (rCommand.contains("RUN")) {
-							String script = rArgs[0];
-							File fScript = new File(scriptFolder, script);
-							File fScriptScript = new File(fScript, script + ".js");
-							success &= fScript.exists() && fScriptScript.exists();
-							if (success) {
-								ImagePath.setBundlePath(fScript.getAbsolutePath());
-                startRunner();
-								if (jsRunner != null) {
-                  try {
-										evalReturnObject = jsRunner.eval(new java.io.FileReader(fScriptScript));
-										rMessage = "runScript: returned: " +
-														(evalReturnObject == null ? "null" : evalReturnObject.toString());
-										success = success && evalReturnObject != null;
-                  } catch (Exception ex) {
-                    rMessage = "runScript: script raised exception on run: " + ex.toString();
+            success = checkRequest(request);
+            if (success) {
+              // STOP
+              if (rCommand.contains("STOP")) {
+                rMessage = "stopped";
+                shouldStop = true;
+              // START  
+              } else if (rCommand.startsWith("START")) {
+                success = startRunner();
+                rMessage = "started";
+                if (!success) {
+                  rMessage = "startRunner: not possible";
+                }
+              // SCRIPTS  
+              } else if (rCommand.startsWith("SCRIPTS")) {
+                if (!rRessource.isEmpty()) {
+                  scriptFolder = new File(rRessource);
+                  rMessage = "scriptFolder now: " + scriptFolder.getAbsolutePath();
+                  if (!scriptFolder.exists()) {
+                    rMessage = "scriptFolder not found: " + scriptFolder.getAbsolutePath();
                     success = false;
                   }
-								} else {
-									success = false;
-								}
-							} else {
-                rMessage = "runScript: script not found or not valid" + fScriptScript.toString();
-              }
-						} else {
-							if (jsRunner != null) {
-                String line = request.substring(6);
-                line = line.replace(" HTTP/1.1", "");
+                }
+              // IMAGES  
+              } else if (rCommand.startsWith("IMAGES")) {
+                  imageFolder = new File(rRessource);
+                  rMessage = "imageFolder now: " + imageFolder.getAbsolutePath();
+                  if (!imageFolder.exists()) {
+                    rMessage = "imageFolder not found: " + imageFolder.getAbsolutePath();
+                    success = false;
+                  }
+                  ImagePath.add(imageFolder.getAbsolutePath());
+              // RUN
+              } else if (rCommand.startsWith("RUN")) {
+                String script = rRessource;
+                File fScript = new File(scriptFolder, script);
+                File fScriptScript = new File(fScript, script + ".js");
+                success &= fScript.exists() && fScriptScript.exists();
+                if (success) {
+                  ImagePath.setBundlePath(fScript.getAbsolutePath());
+                  startRunner();
+                  if (jsRunner != null) {
+                    try {
+                      evalReturnObject = jsRunner.eval(new java.io.FileReader(fScriptScript));
+                      rMessage = "runScript: returned: "
+                              + (evalReturnObject == null ? "null" : evalReturnObject.toString());
+                      success = success && evalReturnObject != null;
+                    } catch (Exception ex) {
+                      rMessage = "runScript: script raised exception on run: " + ex.toString();
+                      success = false;
+                    }
+                  } else {
+                    success = false;
+                  }
+                } else {
+                  rMessage = "runScript: script not found or not valid " + fScriptScript.toString();
+                }
+              } else if (rCommand.startsWith("EVAL")) {
+                if (jsRunner != null) {
+                  String line = rQuery;
                   try {
-										evalReturnObject = jsRunner.eval(line);
-										rMessage = "runStatement: returned: " +
-														(evalReturnObject == null ? "null" : evalReturnObject.toString());
-										success = success && evalReturnObject != null;
+                    evalReturnObject = jsRunner.eval(line);
+                    rMessage = "runStatement: returned: "
+                            + (evalReturnObject == null ? "null" : evalReturnObject.toString());
+                    success = success && evalReturnObject != null;
                   } catch (Exception ex) {
                     rMessage = "runStatement: raised exception on eval: " + ex.toString();
                     success = false;
                   }
-							} else {
-                rMessage = "runStatement: not possible --- no runner";
-								success = false;
-							}
-						}
+                } else {
+                  rMessage = "runStatement: not possible --- no runner";
+                  success = false;
+                }
+              }
+            }
             if (isHTTP) {
               String retVal = success ? "HTTP/1.1 200 OK" : "HTTP/1.1 400 NOK";
-							String state = success ? "PASS: " : "FAIL: ";
-              out.write(retVal + "\r\n\r\n" + request + "\r\n" + state + rMessage + "\r\n");
+              String state = success ? "PASS: " : "FAIL: ";
+              out.write(retVal + "\r\n\r\n" + state + rMessage + "\r\n");
               out.flush();
               stopRunning();
             } else {
@@ -254,6 +272,36 @@ public class RunServer {
       } catch (InterruptedException ex) {
         stopRunning();
       }
+    }
+    
+    private boolean checkRequest(String request) {
+      rCommand = "NOOP";
+      rMessage = "invalid: " + request;
+      String[] parts = request.split("\\s");
+      if (parts.length != 3 || !"GET".equals(parts[0]) || !parts[1].startsWith("/")) {
+        return false;
+      }
+      if (!rVersion.equals(parts[2])) {
+        return false;
+      }      
+      String cmd = parts[1].substring(1);
+      parts = cmd.split("\\?");
+      cmd = parts[0];
+      rQuery = "";
+      if (parts.length > 1) {
+        rQuery = parts[1];
+      }
+      parts = cmd.split("/");
+      if (!"START,STOP,SCRIPTS,IMAGES,RUN,EVAL,".contains((parts[0]+",").toUpperCase())) {
+        return false;
+      }
+      rCommand = parts[0].toUpperCase();
+      rMessage = "";
+      rRessource = "";
+      if (parts.length > 1) {
+        rRessource = cmd.substring(rCommand.length());
+      }
+      return true;
     }
 
     private void send(String response) {
