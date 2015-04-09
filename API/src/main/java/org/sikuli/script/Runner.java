@@ -221,6 +221,9 @@ public class Runner {
   
   private static JythonHelper initpy() {
     JythonHelper jh = JythonHelper.get();
+    if (jh == null) {
+      return null;
+    } 
 		jh.exec("# -*- coding: utf-8 -*- ");
     jh.exec("import org.sikuli.basics.SikulixForJython");
     jh.exec("from sikuli import *");
@@ -422,8 +425,11 @@ public class Runner {
       for (int i = 0; i < args.length; i++) {
         newArgs[i + 1] = args[i];
       }
+      ImagePath.add(fScript.getParent());
       Runner.pyRunner.setSysArgv(newArgs);
-      return Runner.pyRunner.execfile(fScript.getAbsolutePath());
+      int retval = Runner.pyRunner.execfile(fpScript);
+      ImagePath.remove(fScript.getParent());
+      return retval;
     }
 
     public int runjs(File fScript, URL script, String scriptName, String[] args) {
