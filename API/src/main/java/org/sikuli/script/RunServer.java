@@ -142,7 +142,17 @@ public class RunServer {
     String rQuery;
     String[] rArgs;
     String rMessage = "";
+    String rStatus;
+    String rStatusOK = "200 OK";
+    String rStatusBadRequest = "400 Bad Request";
+    String rStatusNotFound = "404 Not Found";
+    String rStatusServerError = "500 Internal Server Error";
+    String rStatusServiceNotAvail = "503 Service Unavailable";
 		Object evalReturnObject;
+    String runTypeJS = "JavaScript";
+    String runTypePY = "Python";
+    String runTypeRB = "Ruby";
+    String runType = runTypeJS;
 
     @Override
     public void run() {
@@ -173,14 +183,22 @@ public class RunServer {
             if (success) {
               // STOP
               if (rCommand.contains("STOP")) {
-                rMessage = "stopped";
+                rMessage = "stopping";
                 shouldStop = true;
               // START  
               } else if (rCommand.startsWith("START")) {
-                success = startRunner();
-                rMessage = "started";
+                if (rCommand.length() > 5) {
+                  if ("P".equals(rCommand.substring(5, 6))) {
+                    runType = runTypePY;
+                  } else if ("R".equals(rCommand.substring(5, 6))) {
+                    runType = runTypeRB;
+                  }
+                }
+                success = startRunner(runType, null, null);
+                rMessage = "startRunner for: " + runType;
                 if (!success) {
-                  rMessage = "startRunner: not possible";
+                  rMessage = "startRunner: not possible for: " + runType;
+                  rStatus = rStatusServiceNotAvail;
                 }
               // SCRIPTS  
               } else if (rCommand.startsWith("SCRIPTS")) {
@@ -189,6 +207,7 @@ public class RunServer {
                   rMessage = "scriptFolder now: " + scriptFolder.getAbsolutePath();
                   if (!scriptFolder.exists()) {
                     rMessage = "scriptFolder not found: " + scriptFolder.getAbsolutePath();
+                    rStatus = rStatusNotFound;
                     success = false;
                   }
                 }
@@ -198,33 +217,31 @@ public class RunServer {
                   rMessage = "imageFolder now: " + imageFolder.getAbsolutePath();
                   if (!imageFolder.exists()) {
                     rMessage = "imageFolder not found: " + imageFolder.getAbsolutePath();
+                    rStatus = rStatusNotFound;
                     success = false;
                   }
                   ImagePath.add(imageFolder.getAbsolutePath());
               // RUN
               } else if (rCommand.startsWith("RUN")) {
                 String script = rRessource;
+                String scriptScript = script;
+                if (script.endsWith(".sikuli")) {
+                  scriptScript = script.replace(".sikuli", "");
+                }
                 File fScript = new File(scriptFolder, script);
-                File fScriptScript = new File(fScript, script + ".js");
-                success &= fScript.exists() && fScriptScript.exists();
+                File fScriptScript = new File(fScript, scriptScript + ".js");
+                success = fScript.exists() && fScriptScript.exists();
+                if (!success) {
+                  fScriptScript = new File(fScript, scriptScript + ".py");
+                  success = fScript.exists() && fScriptScript.exists();
+                  if (!success) {
+                    rMessage = "runScript: script not found, not valid or not supported" + fScriptScript.toString();
+                  }
+                  runType = runTypePY;
+                }
                 if (success) {
                   ImagePath.setBundlePath(fScript.getAbsolutePath());
-                  startRunner();
-                  if (jsRunner != null) {
-                    try {
-                      evalReturnObject = jsRunner.eval(new java.io.FileReader(fScriptScript));
-                      rMessage = "runScript: returned: "
-                              + (evalReturnObject == null ? "null" : evalReturnObject.toString());
-                      success = success && evalReturnObject != null;
-                    } catch (Exception ex) {
-                      rMessage = "runScript: script raised exception on run: " + ex.toString();
-                      success = false;
-                    }
-                  } else {
-                    success = false;
-                  }
-                } else {
-                  rMessage = "runScript: script not found or not valid " + fScriptScript.toString();
+                  success = startRunner(runType, fScript, fScriptScript);                  
                 }
               } else if (rCommand.startsWith("EVAL")) {
                 if (jsRunner != null) {
@@ -240,13 +257,14 @@ public class RunServer {
                   }
                 } else {
                   rMessage = "runStatement: not possible --- no runner";
+                  rStatus = rStatusServiceNotAvail;
                   success = false;
                 }
               }
             }
             if (isHTTP) {
-              String retVal = success ? "HTTP/1.1 200 OK" : "HTTP/1.1 400 NOK";
-              String state = success ? "PASS: " : "FAIL: ";
+              String retVal = "HTTP/1.1 " + rStatus;
+              String state = (success ? "PASS " : "FAIL ") + rStatus.substring(0,3) + " ";
               out.write(retVal + "\r\n\r\n" + state + rMessage + "\r\n");
               out.flush();
               stopRunning();
@@ -277,6 +295,7 @@ public class RunServer {
     private boolean checkRequest(String request) {
       rCommand = "NOOP";
       rMessage = "invalid: " + request;
+      rStatus = rStatusBadRequest;
       String[] parts = request.split("\\s");
       if (parts.length != 3 || !"GET".equals(parts[0]) || !parts[1].startsWith("/")) {
         return false;
@@ -293,10 +312,12 @@ public class RunServer {
       }
       parts = cmd.split("/");
       if (!"START,STOP,SCRIPTS,IMAGES,RUN,EVAL,".contains((parts[0]+",").toUpperCase())) {
+        rMessage = "invalid command: " + request;
         return false;
       }
       rCommand = parts[0].toUpperCase();
       rMessage = "";
+      rStatus = rStatusOK;
       rRessource = "";
       if (parts.length > 1) {
         rRessource = cmd.substring(rCommand.length());
@@ -327,18 +348,45 @@ public class RunServer {
       keepRunning = false;
     }
 
-    private boolean startRunner() {
-      if (jsRunner == null) {
-        try {
-          jsRunner = Runner.initjs();
-          String prolog = "";
-          prolog = Runner.prologjs(prolog);
-          prolog = Runner.prologjs(prolog);
-          jsRunner.eval(prolog);
-        } catch (Exception ex) {
-          rMessage = "startRunner: not possible";
+    private boolean startRunner(String runType, File fScript, File fScriptScript) {
+      if (runTypeJS.equals(runType)) {
+        if (jsRunner == null) {
+          try {
+            jsRunner = Runner.initjs();
+            String prolog = "";
+            prolog = Runner.prologjs(prolog);
+            prolog = Runner.prologjs(prolog);
+            jsRunner.eval(prolog);
+          } catch (Exception ex) {
+            rMessage = "startRunner JavaScript: not possible";
+            rStatus = rStatusServiceNotAvail;
+            return false;
+          }
+        }
+        if (fScript == null) {
+          return true;
+        }
+        if (jsRunner != null) {
+          try {
+            evalReturnObject = jsRunner.eval(new java.io.FileReader(fScriptScript));
+            rMessage = "runScript: returned: "
+                    + (evalReturnObject == null ? "null" : evalReturnObject.toString());
+            return evalReturnObject != null;
+          } catch (Exception ex) {
+            rMessage = "runScript: script raised exception on run: " + ex.toString();
+            return false;
+          }
+        } else {
           return false;
         }
+      } else if (runTypePY.equals(runType)) {
+        evalReturnObject = Runner.run(fScript.getAbsolutePath());
+        if (((Integer) evalReturnObject) < 0) {
+          rMessage = "startRunner Python: not possible or crashed with exception";
+          rStatus = rStatusServiceNotAvail;
+          return false;
+        }
+        rMessage = "runScript: returned: " + evalReturnObject.toString();
       }
       return true;
     }

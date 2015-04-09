@@ -37,9 +37,8 @@ bContinue = button(t3, "Continue").below(50)
 flag(bContinue.getRegion(), 
     "this all is shown for 30 seconds. To stop: click Continue").left(10)
 
-print show(10)
+print show(30)
 wait(1)
 type("h", Key.CMD)
 type("w", Key.CMD)
-switchApp("SikulixIDE")
 wait(1)
