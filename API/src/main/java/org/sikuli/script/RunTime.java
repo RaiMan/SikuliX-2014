@@ -2600,7 +2600,7 @@ int nMonitors = 0;
 			if ("nodebug".equals(opt)) {
 				return -2;
 			}
-			if (Type.IDE.equals(typ) && "runserver".equals(opt.toLowerCase())) {
+			if (Type.IDE.equals(typ) && "-s".equals(opt.toLowerCase())) {
 				return -3;
 			}
       if (!opt.startsWith("-")) {

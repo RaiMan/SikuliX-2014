@@ -169,7 +169,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     runTime = RunTime.get(RunTime.Type.IDE, args);
     
     if (RunTime.shouldRunServer) {
-      RunServer.run(args);
+      RunServer.run(null);
       System.exit(0);
     }
         

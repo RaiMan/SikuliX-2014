@@ -57,6 +57,7 @@ public class Sikulix {
   private static final String prefNonSikuli = "nonSikuli_";
   private static RunTime rt = null;
   public static int testNumber = -1;
+  private static boolean shouldRunServer = false;
 
   static {
     String jarName = "";
@@ -99,96 +100,80 @@ public class Sikulix {
    */
   public static void main(String[] args) throws FindFailed {
 
-    System.out.println("********** Running Sikulix.main");
+    if (args.length > 0 && args[0].toLowerCase().startsWith("-s")) {
+      shouldRunServer = true;
+    } else {
+      System.out.println("********** Running Sikulix.main");
 
-    if (args.length > 1 && args[0].toLowerCase().startsWith("runserver")) {
-      if (args[1].toLowerCase().contains("start")) {
-        RunServer.run(null);
-        System.exit(0);
+      int dl = RunTime.checkArgs(args, RunTime.Type.API);
+      if (dl > -1 && dl < 999) {
+        testNumber = dl;
+        Debug.on(3);
       } else {
-        File fRunServer = new File(RunTime.get().fSikulixStore, "RunServer");
-        String theServer = "";
-        if (fRunServer.exists()) {
-          theServer = FileManager.readFileToString(fRunServer).trim();
-          if (!theServer.isEmpty()) {
-            String[] parts = theServer.split(" ");
-            RunClient runner = new RunClient(parts[0].trim(), parts[1].trim());
-            runner.close(true);
-            fRunServer.delete();
-            System.exit(0);
-          }
+        testNumber = -1;
+      }
+
+      testNumber = rt.getOptionNumber("testing.test", testNumber);
+
+      if (dl == 999) {
+        int exitCode = Runner.runScripts(args);
+        cleanUp(exitCode);
+        System.exit(exitCode);
+      } else if (testNumber > -1) {
+        if (!rt.testing) {
+          rt.show();
+          rt.testing = true;
         }
-      }
-    }
-
-    int dl = RunTime.checkArgs(args, RunTime.Type.API);
-    if (dl > -1 && dl < 999) {
-      testNumber = dl;
-      Debug.on(3);
-    } else {
-      testNumber = -1;
-    }
-
-    testNumber = rt.getOptionNumber("testing.test", testNumber);
-
-    if (dl == 999) {
-      int exitCode = Runner.runScripts(args);
-      cleanUp(exitCode);
-      System.exit(exitCode);
-    } else if (testNumber > -1) {
-      if (!rt.testing) {
-        rt.show();
-        rt.testing = true;
-      }
-      Tests.runTest(testNumber);
-      System.exit(1);
-    } else {
-      rt = RunTime.get();
-      if (rt.fSxBaseJar.getName().contains("setup")) {
-        Sikulix.popError("Not useable!\nRun setup first!");
-        System.exit(0);
-      }
-      Debug.on(3);
-      Settings.InfoLogs = false;
-      Settings.ActionLogs = false;
-
-      Screen s = new Screen();
-      ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
-
-//      Runner.run("scripts/testpy", new String[] {"parm1"});
-//      System.exit(1);
-
-      RunServer.run(null);
-      System.exit(1);
-
-      if (rt.runningWinApp) {
-        popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
-        try {
-          Screen scr = new Screen();
-          scr.find(new Image(scr.userCapture("grab something to find"))).highlight(3);
-        } catch (Exception ex) {
-          popup("Uuups :-(\n" + ex.getMessage(), rt.fSxBaseJar.getName());
-        }
-        popup("Hello World\nNothing else to do ( yet ;-)", rt.fSxBaseJar.getName());
+        Tests.runTest(testNumber);
         System.exit(1);
       }
-      String version = String.format("(%s-%s)", rt.getVersionShort(), rt.sxBuildStamp);
-      File lastSession = new File(rt.fSikulixStore, "LastAPIJavaScript.js");
-      String runSomeJS = "";
-      if (lastSession.exists()) {
-        runSomeJS = FileManager.readFileToString(lastSession);
+    }
+    rt = RunTime.get();
+    if (rt.fSxBaseJar.getName().contains("setup")) {
+      Sikulix.popError("Not useable!\nRun setup first!");
+      System.exit(0);
+    }
+    
+    if (shouldRunServer) {
+      RunServer.run(null);
+      System.exit(1);
+    }
+    
+    Debug.on(3);
+    Settings.InfoLogs = false;
+    Settings.ActionLogs = false;
+
+    
+    Screen s = new Screen();
+    ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
+
+    if (rt.runningWinApp) {
+      popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
+      try {
+        Screen scr = new Screen();
+        scr.find(new Image(scr.userCapture("grab something to find"))).highlight(3);
+      } catch (Exception ex) {
+        popup("Uuups :-(\n" + ex.getMessage(), rt.fSxBaseJar.getName());
       }
-      runSomeJS = inputText("enter some JavaScript (know what you do - may silently die ;-)"
-              + "\nexample: run(\"git*\") will run the JavaScript showcase from GitHub"
-              + "\nWhat you enter now will be shown the next time.",
-              "API::JavaScriptRunner " + version, 10, 60, runSomeJS);
-      if (runSomeJS.isEmpty()) {
-        popup("Nothing to do!", version);
-      } else {
-        FileManager.writeStringToFile(runSomeJS, lastSession);
-        Runner.runjs(null, null, "Sikulix.popup(\"Now running your test\")", null);
-        Runner.runjs(null, null, runSomeJS, null);
-      }
+      popup("Hello World\nNothing else to do ( yet ;-)", rt.fSxBaseJar.getName());
+      System.exit(1);
+    }
+    String version = String.format("(%s-%s)", rt.getVersionShort(), rt.sxBuildStamp);
+    File lastSession = new File(rt.fSikulixStore, "LastAPIJavaScript.js");
+    String runSomeJS = "";
+    if (lastSession.exists()) {
+      runSomeJS = FileManager.readFileToString(lastSession);
+    }
+    runSomeJS = inputText("enter some JavaScript (know what you do - may silently die ;-)"
+            + "\nexample: run(\"git*\") will run the JavaScript showcase from GitHub"
+            + "\nWhat you enter now will be shown the next time.",
+            "API::JavaScriptRunner " + version, 10, 60, runSomeJS);
+    if (runSomeJS.isEmpty()) {
+      popup("Nothing to do!", version);
+    } else {
+      FileManager.writeStringToFile(runSomeJS, lastSession);
+      Runner.runjs(null, null, "Sikulix.popup(\"Now running your test\")", null);
+      Runner.runjs(null, null, runSomeJS, null);
     }
   }
 

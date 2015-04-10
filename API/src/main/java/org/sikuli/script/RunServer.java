@@ -1,6 +1,7 @@
 package org.sikuli.script;
 
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
@@ -25,7 +26,7 @@ public class RunServer {
   private static void log(int lvl, String message, Object... args) {
     if (lvl < 0 || lvl >= logLevel) {
       System.out.println((lvl < 0 ? "[error] " : "[info] ") +
-              String.format("RunnerServer: " + message, args));
+              String.format("RunServer: " + message, args));
     }
   }
   private static void log(String message, Object... args) {
@@ -35,6 +36,9 @@ public class RunServer {
 	private RunServer() {
 	}
 
+  static File isRunning = null;
+  static FileOutputStream isRunningFile = null;
+  
   public static void run(String[] args) {
 		if (args == null) {
 			args = new String[0];
@@ -53,10 +57,35 @@ public class RunServer {
         log(-1, "could not be started");
         System.exit(1);
       }
+      String theIP = InetAddress.getLocalHost().getHostAddress();
+      String theServer = String.format("%s %d", theIP, port);
+      isRunning = new File(RunTime.get().fSikulixStore, "RunServer.txt");
+      try {
+        isRunning.createNewFile();
+        isRunningFile = new FileOutputStream(isRunning);
+        if (null == isRunningFile.getChannel().tryLock()) {
+          log(-1, "Terminating on FatalError: already running");
+          System.exit(1);
+        }
+        isRunningFile.write(theServer.getBytes());
+      } catch (Exception ex) {
+        log(-1, "Terminating on FatalError: cannot access to lock for/n" + isRunning);
+        System.exit(1);
+      }
+      Runtime.getRuntime().addShutdownHook(new Thread() {
+        @Override
+        public void run() {
+          log(3, "final cleanup");
+          if (isRunning != null) {
+            try {
+              isRunningFile.close();
+            } catch (IOException ex) {
+            }
+            isRunning.delete();
+          }
+        }
+      });
       while (true) {
-        String theIP = InetAddress.getLocalHost().getHostAddress();
-        String theServer = String.format("%s %d", theIP, port);
-        FileManager.writeStringToFile(theServer, new File(RunTime.get().fSikulixStore, "RunServer"));
         log("now waiting on port: %d at %s", port, theIP);
         Socket socket = server.accept();
         out = new PrintWriter(socket.getOutputStream());
@@ -203,7 +232,7 @@ public class RunServer {
               // SCRIPTS  
               } else if (rCommand.startsWith("SCRIPTS")) {
                 if (!rRessource.isEmpty()) {
-                  scriptFolder = new File(rRessource);
+                  scriptFolder = getFolder(rRessource);
                   rMessage = "scriptFolder now: " + scriptFolder.getAbsolutePath();
                   if (!scriptFolder.exists()) {
                     rMessage = "scriptFolder not found: " + scriptFolder.getAbsolutePath();
@@ -213,7 +242,7 @@ public class RunServer {
                 }
               // IMAGES  
               } else if (rCommand.startsWith("IMAGES")) {
-                  imageFolder = new File(rRessource);
+                  imageFolder = getFolder(rRessource);
                   rMessage = "imageFolder now: " + imageFolder.getAbsolutePath();
                   if (!imageFolder.exists()) {
                     rMessage = "imageFolder not found: " + imageFolder.getAbsolutePath();
@@ -235,7 +264,7 @@ public class RunServer {
                   fScriptScript = new File(fScript, scriptScript + ".py");
                   success = fScript.exists() && fScriptScript.exists();
                   if (!success) {
-                    rMessage = "runScript: script not found, not valid or not supported" + fScriptScript.toString();
+                    rMessage = "runScript: script not found, not valid or not supported " + fScriptScript.toString();
                   }
                   runType = runTypePY;
                 }
@@ -290,6 +319,17 @@ public class RunServer {
       } catch (InterruptedException ex) {
         stopRunning();
       }
+    }
+    
+    private File getFolder(String path) {
+      File aFolder = new File(path);
+      if (path.toLowerCase().startsWith("/home/")) {
+        path = path.substring(6);
+        aFolder = new File(RunTime.get().fUserDir, path);
+      } else if (RunTime.get().runningWindows) {
+//TODO handle drive letter
+      }
+      return aFolder;
     }
     
     private boolean checkRequest(String request) {
