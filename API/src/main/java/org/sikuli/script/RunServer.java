@@ -3,7 +3,6 @@ package org.sikuli.script;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
@@ -11,7 +10,6 @@ import java.net.Socket;
 import java.util.Scanner;
 import javax.script.ScriptEngine;
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.FileManager;
 
 
 public class RunServer {
@@ -135,7 +133,9 @@ public class RunServer {
 
   static ScriptEngine jsRunner = null;
 	static File scriptFolder = null;
+	static String scriptFolderNet = null;
 	static File imageFolder = null;
+	static String imageFolderNet = null;
 
   private static class HandleClient implements Runnable {
 
@@ -231,42 +231,80 @@ public class RunServer {
                 }
               // SCRIPTS  
               } else if (rCommand.startsWith("SCRIPTS")) {
-                if (!rRessource.isEmpty()) {
+                if (rRessource.isEmpty()) {
+                  rMessage = "no scriptFolder given ";
+                  rStatus = rStatusBadRequest;
+                  success = false;
+                } else {
                   scriptFolder = getFolder(rRessource);
-                  rMessage = "scriptFolder now: " + scriptFolder.getAbsolutePath();
-                  if (!scriptFolder.exists()) {
-                    rMessage = "scriptFolder not found: " + scriptFolder.getAbsolutePath();
-                    rStatus = rStatusNotFound;
-                    success = false;
+                  if (scriptFolder.getPath().startsWith("__NET/")) {
+                    scriptFolderNet = "http://" + scriptFolder.getPath().substring(6);
+                    rMessage = "scriptFolder now: " + scriptFolderNet;                    
+                  } else {
+                    scriptFolderNet = null;
+                    rMessage = "scriptFolder now: " + scriptFolder.getAbsolutePath();
+                    if (!scriptFolder.exists()) {
+                      rMessage = "scriptFolder not found: " + scriptFolder.getAbsolutePath();
+                      rStatus = rStatusNotFound;
+                      success = false;
+                    }
                   }
                 }
               // IMAGES  
               } else if (rCommand.startsWith("IMAGES")) {
+                String asImagePath;
+                if (rRessource.isEmpty()) {
+                  rMessage = "no imageFolder given ";
+                  rStatus = rStatusBadRequest;
+                  success = false;
+                } else {
                   imageFolder = getFolder(rRessource);
-                  rMessage = "imageFolder now: " + imageFolder.getAbsolutePath();
-                  if (!imageFolder.exists()) {
-                    rMessage = "imageFolder not found: " + imageFolder.getAbsolutePath();
-                    rStatus = rStatusNotFound;
-                    success = false;
+                  if (imageFolder.getPath().startsWith("__NET/")) {
+                    imageFolderNet = "http://" + imageFolder.getPath().substring(6);
+                    rMessage = "imageFolder now: " + imageFolderNet;
+                    asImagePath = imageFolderNet;
+                  } else {
+                    String fpGiven = imageFolder.getAbsolutePath();
+                    if (!imageFolder.exists()) {
+                      imageFolder = new File(imageFolder.getAbsolutePath() + ".sikuli");
+                      if (!imageFolder.exists()) {
+                        rMessage = "imageFolder not found: " + fpGiven;
+                        rStatus = rStatusNotFound;
+                        success = false;
+                      }
+                    }
+                    asImagePath = imageFolder.getAbsolutePath(); 
                   }
-                  ImagePath.add(imageFolder.getAbsolutePath());
-              // RUN
+                  rMessage = "imageFolder now: " + asImagePath;
+                  ImagePath.add(asImagePath);
+                }
+                // RUN
               } else if (rCommand.startsWith("RUN")) {
                 String script = rRessource;
-                String scriptScript = script;
-                if (script.endsWith(".sikuli")) {
-                  scriptScript = script.replace(".sikuli", "");
+                File fScript = null;
+                File fScriptScript = null;
+                if (scriptFolderNet != null) {
+                  rMessage = "runScript from net not yet supported";
+                  rStatus = rStatusServiceNotAvail;
+                  success = false;
                 }
-                File fScript = new File(scriptFolder, script);
-                File fScriptScript = new File(fScript, scriptScript + ".js");
-                success = fScript.exists() && fScriptScript.exists();
-                if (!success) {
-                  fScriptScript = new File(fScript, scriptScript + ".py");
+                if (success) {
+                  String scriptScript = script;
+                  if (script.endsWith(".sikuli")) {
+                    scriptScript = script.replace(".sikuli", "");
+                  }
+                  fScript = new File(scriptFolder, script);
+                  fScriptScript = new File(fScript, scriptScript + ".js");
                   success = fScript.exists() && fScriptScript.exists();
                   if (!success) {
-                    rMessage = "runScript: script not found, not valid or not supported " + fScriptScript.toString();
+                    fScriptScript = new File(fScript, scriptScript + ".py");
+                    success = fScript.exists() && fScriptScript.exists();
+                    if (!success) {
+                      rMessage = "runScript: script not found, not valid or not supported " 
+                              + fScriptScript.toString();
+                    }
+                    runType = runTypePY;
                   }
-                  runType = runTypePY;
                 }
                 if (success) {
                   ImagePath.setBundlePath(fScript.getAbsolutePath());
@@ -326,6 +364,9 @@ public class RunServer {
       if (path.toLowerCase().startsWith("/home/")) {
         path = path.substring(6);
         aFolder = new File(RunTime.get().fUserDir, path);
+      } else if (path.toLowerCase().startsWith("/net/")) {
+        path = "__NET/" + path.substring(5);
+        aFolder = new File(path);
       } else if (RunTime.get().runningWindows) {
 //TODO handle drive letter
       }
