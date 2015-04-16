@@ -909,7 +909,7 @@ public class RunSetup {
       success &= handleTempAfter(targetJar, localJar);
     }
 
-    if(getTess) {
+    if(getAPI && getTess) {
       new File(workDir, localTess).delete();
       jarsList[2] = null;
     }

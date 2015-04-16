@@ -1569,12 +1569,12 @@ int nMonitors = 0;
     if (uContentList != null) {
       files = doResourceListWithList(tessdata, files, null);
       if (files.size() > 0) {
-        return doExtractToFolderWithList(tessdata, folder, files);
+        files = doExtractToFolderWithList(tessdata, folder, files);
       }
-      return null;
     } else {
-      return extractResourcesToFolder("/sikulixtessdata", folder, null);
+      files = extractResourcesToFolder("/sikulixtessdata", folder, null);
     }
+    return (files.size() == 0 ? null : files);
   }
   /**
    * export all resource files from the given subtree on classpath to the given folder retaining the subtree<br>
