@@ -2494,7 +2494,7 @@ public class Region {
           } else if (img.isText()) {
             findingText = true;
           } else {
-            throw new IOException("Region: doFind: Image not loadable: " + (String) ptn);
+            throw new IOException("Region: doFind: Image not loadable: " + ptn.toString());
           }
         }
 				if (findingText) {
@@ -2514,7 +2514,7 @@ public class Region {
             f.find((Pattern) ptn);
           }
         } else {
-          throw new IOException("Region: doFind: Image not loadable: " + (String) ptn);
+          throw new IOException("Region: doFind: Image not loadable: " + ptn.toString());
         }
       } else if (ptn instanceof Image) {
         if (((Image) ptn).isValid()) {
@@ -2525,7 +2525,7 @@ public class Region {
             f.find(img);
           }
         } else {
-          throw new IOException("Region: doFind: Image not loadable: " + (String) ptn);
+          throw new IOException("Region: doFind: Image not loadable: " + ptn.toString());
         }
       } else {
         log(-1, "doFind: invalid parameter: %s", ptn);
