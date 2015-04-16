@@ -3,6 +3,7 @@ package org.sikuli.script;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.lang.reflect.Method;
+import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.sikuli.basics.Debug;
 
 public class Commands {
@@ -69,6 +70,10 @@ public class Commands {
     return retVal;
   }
 
+public static Object circle(Object args) {
+  return 0;
+}  
+  
 //<editor-fold defaultstate="collapsed" desc="conversions">
   private static boolean isNumber(Object aObj) {
     if (aObj instanceof Integer || aObj instanceof Long || aObj instanceof Float || aObj instanceof Double) {

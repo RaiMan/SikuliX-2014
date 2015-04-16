@@ -26,6 +26,7 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
+import org.sikuli.util.JythonHelper;
 import org.sikuli.util.LinuxSupport;
 
 /**
@@ -142,7 +143,10 @@ public class Sikulix {
     Debug.on(3);
     Settings.InfoLogs = false;
     Settings.ActionLogs = false;
-
+    
+    SikulixForJython.get();
+    JythonHelper.get().showSysPath();
+    System.exit(1);
     
     Screen s = new Screen();
     ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
