@@ -110,6 +110,7 @@ public class Runner {
     }
 
     runTime.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
+    log(lvl, "commandline: %s", cmdArgs.getArgsOrg());
     runTime.printArgs();
 
     // select script runner and/or start interactive session
