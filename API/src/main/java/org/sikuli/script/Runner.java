@@ -110,7 +110,6 @@ public class Runner {
     }
 
     runTime.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
-    log(lvl, "CmdOrg: " + System.getenv("SIKULI_COMMAND"));
     runTime.printArgs();
 
     // select script runner and/or start interactive session
@@ -180,7 +179,7 @@ public class Runner {
 					log(lvl, "Options.runsetup: %s", someJS);
 					new RunBox().runjs(null, null, someJS, null);
 				}
-				RunBox rb = new RunBox(givenScriptName, runTime.getSikuliArgs(), runAsTest);
+				RunBox rb = new RunBox(givenScriptName, runTime.getArgs(), runAsTest);
 				exitCode = rb.run();
 				someJS = runTime.getOption("runteardown", "");
 				if (!someJS.isEmpty()) {
@@ -352,6 +351,9 @@ public class Runner {
 			}
 			if (givenScriptName.startsWith("JS*")) {
 				givenScriptName = new File(runTime.fSxProjectTestScriptsJS, givenScriptName.substring(3)).getPath();
+			}
+			if (givenScriptName.startsWith("TEST*")) {
+				givenScriptName = new File(runTime.fSxProjectTestScripts, givenScriptName.substring(5)).getPath();
 			}
 			String scriptName = new File(givenScriptName).getName();
 			if (scriptName.contains(".")) {

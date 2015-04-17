@@ -439,7 +439,7 @@ public class ScriptingSupport {
           log(lvl, "Exit code -1: Terminating multi-script-run");
           break;
         }
-        exitCode = new RunBox(givenScriptName, runTime.getSikuliArgs(), runAsTest).run();
+        exitCode = new RunBox(givenScriptName, runTime.getArgs(), runAsTest).run();
         lastReturnCode = exitCode;
       }
       System.exit(exitCode);

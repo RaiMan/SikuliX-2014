@@ -401,6 +401,7 @@ public class RunTime {
   public File fSxBaseJar = null;
   public File fSxProject = null;
 	public File fSxProjectTestScriptsJS = null;
+  public File fSxProjectTestScripts = null;
   public String fpContent = "sikulixcontent";
 
   public boolean runningJar = true;
@@ -620,7 +621,10 @@ int nMonitors = 0;
     } else {
       terminate(1, "no valid Java context for SikuliX available (java.security.CodeSource.getLocation() is null)");
     }
+    if (runningInProject) {
 		fSxProjectTestScriptsJS = new File(fSxProject, "StuffContainer/testScripts/testJavaScript");
+		fSxProjectTestScripts = new File(fSxProject, "StuffContainer/testScripts");
+    }
 //</editor-fold>
 
     if (runningWinApp || testingWinApp) {
