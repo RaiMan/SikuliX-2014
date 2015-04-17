@@ -68,10 +68,21 @@ public class Commands {
     }
     return retVal;
   }
+  
+  public static Object run(Object... args) {
+    String script = args[0].toString();
+    String scriptArgs[] = new String[args.length - 1];
+    if (scriptArgs.length > 0) {
+      for (int i = 1; i < args.length; i++) {
+        scriptArgs[i-1] = args[i].toString();
+      }
+    }
+    return Runner.run(script, scriptArgs);
+  }  
 
-public static Object circle(Object args) {
-  return 0;
-}  
+  public static Object circle(Object args) {
+    return 0;
+  }  
   
 //<editor-fold defaultstate="collapsed" desc="conversions">
   private static boolean isNumber(Object aObj) {

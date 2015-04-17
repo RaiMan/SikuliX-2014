@@ -3,6 +3,7 @@ import java.awt.Color as Color
 
 App.openLink("http://www.sikulix.com/uploads/1/4/2/8/14281286/1389697664.png")
 tl = wait("logo.png", 10)
+wait(1)
 
 t1 = getCenter().offset(-300, 0).grow(100)
 t2 = getCenter().offset(300, 0).grow(100)

@@ -144,12 +144,6 @@ public class Sikulix {
     Settings.InfoLogs = false;
     Settings.ActionLogs = false;
     
-    rt.dumpClassPath();
-    SikulixForJython.get();
-    JythonHelper.get().showSysPath();
-    System.exit(1);
-    
-    Screen s = new Screen();
     ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
 
     if (rt.runningWinApp) {
@@ -176,9 +170,13 @@ public class Sikulix {
     if (runSomeJS.isEmpty()) {
       popup("Nothing to do!", version);
     } else {
-      FileManager.writeStringToFile(runSomeJS, lastSession);
-      Runner.runjs(null, null, "Sikulix.popup(\"Now running your test\")", null);
-      Runner.runjs(null, null, runSomeJS, null);
+      while (!runSomeJS.isEmpty()) {
+        FileManager.writeStringToFile(runSomeJS, lastSession);
+        Runner.runjs(null, null, runSomeJS, null);
+        runSomeJS = inputText("Edit the JavaScript and/or press OK to run it (again)\n"
+                + "Press Cancel to terminate",
+            "API::JavaScriptRunner " + version, 10, 60, runSomeJS);
+      }
     }
   }
 

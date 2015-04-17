@@ -64,12 +64,7 @@ run = function() {
   if (arguments.length < 1) {
     return;
   }
-  jargs = getArgsForJ(arguments);
-  if (arguments.length > 1) {
-    Runner.run(jargs[0]);    
-  } else {
-    Runner.run(jargs[0]);
-  }
+  return makeRetValDo(Commands.call("run", getArgsForJ(arguments)));
 }
 
 use = function() {
