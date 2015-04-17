@@ -10,6 +10,7 @@ package org.sikuli.script;
 
 import java.io.File;
 import java.net.URL;
+import org.sikuli.basics.FileManager;
 import org.sikuli.util.JythonHelper;
 
 /**
@@ -40,7 +41,7 @@ public class SikulixForJython {
       }
       if ("jar".equals(uSikuliStuff.getProtocol())) {
         fpSikuliStuff = uSikuliStuff.getPath().split("!")[0].substring(5); 
-        fpSikuliStuff = new File(fpSikuliStuff, "/Lib").getAbsolutePath();
+        fpSikuliStuff = new File(FileManager.normalizeAbsolute(fpSikuliStuff, false), "Lib").getAbsolutePath();
       } else {
         fpSikuliStuff = new File(uSikuliStuff.getPath()).getAbsolutePath();
         fpSikuliStuff = new File(fpSikuliStuff.substring(0, 

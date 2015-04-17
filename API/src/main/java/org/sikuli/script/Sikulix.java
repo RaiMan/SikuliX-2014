@@ -144,6 +144,7 @@ public class Sikulix {
     Settings.InfoLogs = false;
     Settings.ActionLogs = false;
     
+    rt.dumpClassPath();
     SikulixForJython.get();
     JythonHelper.get().showSysPath();
     System.exit(1);

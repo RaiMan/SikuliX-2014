@@ -3,7 +3,6 @@ package org.sikuli.script;
 import java.awt.Point;
 import java.awt.Rectangle;
 import java.lang.reflect.Method;
-import jdk.nashorn.api.scripting.ScriptObjectMirror;
 import org.sikuli.basics.Debug;
 
 public class Commands {
