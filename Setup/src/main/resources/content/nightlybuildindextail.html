@@ -1,3 +1,11 @@
+<h4>Build: 2015-04-17</h4>
+fixed: user args after -- not filled into sys.argv when running from commandline<br>
+fixed: runsikulix.cmd did not use Java 8, if available in standard places<br>
+fixed: tessdata not bundled when using setup with option 1 only<br>
+fixed: exists(Pattern(image)) hangs (internally looping endlessly), if image file is not available<br>
+added: experimental: RunServer: run scripts (or JavaScript snippets) from anywhere using a http RESTful protocol<br>
+fixed: save script problems causing exceptions should be handled internally (otherwise might block GUI)<br>
+added: experimental: visual annotation (former extension Guide) now a standard feature of SikuliX (contained in sikulixapi.jar)
 <h4>Build: 2015-04-03</h4>
 fixed: runScript(): possible NPE, when used in scripts run from commandline
 <h4>Build: 2015-04-01</h4>
