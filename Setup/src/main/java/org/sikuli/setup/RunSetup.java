@@ -1512,13 +1512,13 @@ public class RunSetup {
   private static String getMavenJarPath(String givenItem) {
     String mPath;
     String mJar = "";
-		String itemSuffix = "";
-		String item = givenItem;
-		if (item.contains("#")) {
-			String[] parts = item.split("#");
-			item = parts[0];
-			itemSuffix = "-" + parts[1];
-		}
+    String itemSuffix = "";
+    String item = givenItem;
+    if (item.contains("#")) {
+      String[] parts = item.split("#");
+      item = parts[0];
+      itemSuffix = "-" + parts[1];
+    }
     if (runTime.isVersionRelease()) {
       mPath = String.format("%s%s/%s/", sikulixMavenGroup, item, version);
       mJar = String.format("%s-%s%s.jar", item, version, itemSuffix);
@@ -1531,22 +1531,24 @@ public class RunSetup {
       mPath = runTime.dlMavenSnapshot + dlMavenSnapshotPrefix;
       String xml = mPath + dlMavenSnapshotXML;
       String xmlContent = FileManager.downloadURLtoString(xml);
-      Matcher m = Pattern.compile("<timestamp>(.*?)</timestamp>").matcher(xmlContent);
-      if (m.find()) {
-        timeStamp = m.group(1);
-        m = Pattern.compile("<buildNumber>(.*?)</buildNumber>").matcher(xmlContent);
+      if (xmlContent != null && !xmlContent.isEmpty()) {
+        Matcher m = Pattern.compile("<timestamp>(.*?)</timestamp>").matcher(xmlContent);
         if (m.find()) {
-          buildNumber = m.group(1);
+          timeStamp = m.group(1);
+          m = Pattern.compile("<buildNumber>(.*?)</buildNumber>").matcher(xmlContent);
+          if (m.find()) {
+            buildNumber = m.group(1);
+          }
         }
       }
       if (!timeStamp.isEmpty() && !buildNumber.isEmpty()) {
         mJar = String.format("%s-%s-%s-%s%s.jar", item, version, timeStamp, buildNumber, itemSuffix);
         log(lvl, "getMavenJar: %s", mJar);
       } else {
-				if (!bequiet) {
-					log(-1, "Maven download: could not get timestamp or buildnumber for %s from:"
-									+ "\n%s\nwith content:\n%s", givenItem, xml, xmlContent);
-				}
+        if (!bequiet) {
+          log(-1, "Maven download: could not get timestamp nor buildnumber for %s from:"
+                  + "\n%s\nwith content:\n%s", givenItem, xml, xmlContent);
+        }
         return null;
       }
     }

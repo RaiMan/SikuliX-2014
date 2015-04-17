@@ -64,13 +64,13 @@ public class FileManager {
   private static SplashFrame _progress = null;
   private static final String EXECUTABLE = "#executable";
 
-  public static int tryGetFileSize(URL url) {
+  public static int tryGetFileSize(URL aUrl) {
     HttpURLConnection conn = null;
     try {
       if (getProxy() != null) {
-        conn = (HttpURLConnection) url.openConnection(getProxy());
+        conn = (HttpURLConnection) aUrl.openConnection(getProxy());
       } else {
-        conn = (HttpURLConnection) url.openConnection();
+        conn = (HttpURLConnection) aUrl.openConnection();
       }
       conn.setConnectTimeout(30000);
       conn.setReadTimeout(30000);
@@ -78,12 +78,53 @@ public class FileManager {
       conn.getInputStream();
       return conn.getContentLength();
     } catch (Exception ex) {
-//      log0(-1, "Download: getFileSize: not accessible:\n" + ex.getMessage());
-      return -1;
+      return 0;
     } finally {
-      conn.disconnect();
+      if (conn != null) {
+        conn.disconnect();
+      }
     }
   }
+
+	public static int isUrlUseabel(String sURL) {
+		try {
+			return isUrlUseabel(new URL(sURL));
+		} catch (Exception ex) {
+			return -1;
+		}
+	}
+	
+	public static int isUrlUseabel(URL aURL) {
+    HttpURLConnection conn = null;
+		try {
+//			HttpURLConnection.setFollowRedirects(false);
+	    if (getProxy() != null) {
+    		conn = (HttpURLConnection) aURL.openConnection(getProxy());
+      } else {
+    		conn = (HttpURLConnection) aURL.openConnection();
+      }
+//			con.setInstanceFollowRedirects(false);
+			conn.setRequestMethod("HEAD");
+			int retval = conn.getResponseCode();
+//				HttpURLConnection.HTTP_BAD_METHOD 405
+//				HttpURLConnection.HTTP_NOT_FOUND 404
+			if (retval == HttpURLConnection.HTTP_OK) {
+				return 1;
+			} else if (retval == HttpURLConnection.HTTP_NOT_FOUND) {
+				return 0;
+			} else if (retval == HttpURLConnection.HTTP_FORBIDDEN) {
+				return 0;
+			} else {
+				return -1;
+			}
+		} catch (Exception ex) {
+			return -1;
+    } finally {
+      if (conn != null) {
+        conn.disconnect();
+      }
+    }
+	}
 
   public static Proxy getProxy() {
     Proxy proxy = Settings.proxy;
@@ -176,9 +217,6 @@ public class FileManager {
     }
     if (fullpath != null) {
       srcLength = tryGetFileSize(url);
-			if (srcLength < 0) {
-				srcLength = 0;
-			}
       srcLengthKB = (int) (srcLength / 1024);
       if (srcLength > 0) {
         log(lvl, "Downloading %s having %d KB", filename, srcLengthKB);
@@ -279,50 +317,16 @@ public class FileManager {
     try {
       url = new URL(src);
     } catch (MalformedURLException ex) {
-      log(-1, "download: bad URL: " + src);
+      log(-1, "download to string: bad URL:\n%s", src);
       return null;
     }
-    String[] path = url.getPath().split("/");
-    String filename = path[path.length - 1];
-    String target = "";
-    int srcLength = 1;
-    int srcLengthKB = 0;
-		int totalBytesRead = 0;
-		srcLength = tryGetFileSize(url);
-		if (srcLength > 0) {
-			srcLengthKB = (int) (srcLength / 1024);
-			log(lvl, "Downloading %s having %d KB", filename, srcLengthKB);
-			InputStream reader = null;
-			try {
-				if (getProxy() != null) {
-					reader = url.openConnection(getProxy()).getInputStream();
-				} else {
-					reader = url.openConnection().getInputStream();
-				}
-          byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
-          int bytesRead = 0;
-		      while ((bytesRead = reader.read(buffer)) > 0) {
-            totalBytesRead += bytesRead;
-						target += (new String(Arrays.copyOfRange(buffer, 0, bytesRead), Charset.forName("utf-8")));
-          }
-			} catch (Exception ex) {
-				log(-1, "problems while downloading\n" + ex.getMessage());
-				target= null;
-			} finally {
-				if (reader != null) {
-					try {
-						reader.close();
-					} catch (IOException ex) {
-					}
-				}
-			}
-    }
-    return target;
+    return downloadURLtoString(url);
   }
 
   public static String downloadURLtoString(URL uSrc) {
-    String target = "";
+    String content = null;
     InputStream reader = null;
+    log(lvl, "download to string from:\n%s,", uSrc);
     try {
       if (getProxy() != null) {
         reader = uSrc.openConnection(getProxy()).getInputStream();
@@ -332,11 +336,11 @@ public class FileManager {
       byte[] buffer = new byte[DOWNLOAD_BUFFER_SIZE];
       int bytesRead = 0;
       while ((bytesRead = reader.read(buffer)) > 0) {
-        target += (new String(Arrays.copyOfRange(buffer, 0, bytesRead), Charset.forName("utf-8")));
+        content += (new String(Arrays.copyOfRange(buffer, 0, bytesRead), Charset.forName("utf-8")));
       }
     } catch (Exception ex) {
       log(-1, "problems while downloading\n" + ex.getMessage());
-      target = null;
+      content = null;
     } finally {
       if (reader != null) {
         try {
@@ -345,7 +349,7 @@ public class FileManager {
         }
       }
     }
-    return target;
+    return content;
   }
 
   /**
@@ -928,38 +932,6 @@ public class FileManager {
     }
     return aURL;
   }
-
-	public static int isUrlUseabel(String sURL) {
-		try {
-			return isUrlUseabel(new URL(sURL));
-		} catch (Exception ex) {
-			return -1;
-		}
-	}
-	
-	public static int isUrlUseabel(URL aURL) {
-		try {
-//			HttpURLConnection.setFollowRedirects(false);
-			HttpURLConnection con = (HttpURLConnection) aURL.openConnection();
-//			con.setInstanceFollowRedirects(false);
-			con.setRequestMethod("HEAD");
-			int retval = con.getResponseCode();
-//				HttpURLConnection.HTTP_BAD_METHOD 405
-//				HttpURLConnection.HTTP_NOT_FOUND 404
-			if (retval == HttpURLConnection.HTTP_OK) {
-				return 1;
-			} else if (retval == HttpURLConnection.HTTP_NOT_FOUND) {
-				return 0;
-			} else if (retval == HttpURLConnection.HTTP_FORBIDDEN) {
-				return 0;
-			} else {
-				return -1;
-			}
-		} catch (Exception ex) {
-			return -1;
-		}
-
-	}
 
 	public static boolean checkJarContent(String jarPath, String jarContent) {
 		URL jpu = makeURL(jarPath, "jar");
