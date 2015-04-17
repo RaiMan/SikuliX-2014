@@ -392,7 +392,7 @@ public class RunServer {
         rQuery = parts[1];
       }
       parts = cmd.split("/");
-      if (!"START,STOP,SCRIPTS,IMAGES,RUN,EVAL,".contains((parts[0]+",").toUpperCase())) {
+      if (!"START,STARTP,STOP,SCRIPTS,IMAGES,RUN,EVAL,".contains((parts[0]+",").toUpperCase())) {
         rMessage = "invalid command: " + request;
         return false;
       }

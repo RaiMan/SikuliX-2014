@@ -355,6 +355,21 @@ public class ImagePath {
 		}
 		return true;
   }
+  
+  public static boolean removeHTTP(String pathHTTP) {
+		try {
+      String proto = "http://";
+      String protos = "https://";
+      if (pathHTTP.startsWith(proto) || pathHTTP.startsWith(protos)) {
+        proto = "";
+      }
+			pathHTTP = FileManager.slashify(pathHTTP, false);
+			return remove(new URL(proto + pathHTTP));
+    } catch (Exception ex) {
+      log (-1, "removeHTTP: not possible: %s\n%s", pathHTTP, ex);
+      return false;
+		}
+  }
 
   /**
    * create a new PathEntry from the given absolute path name and add it to the
@@ -425,6 +440,10 @@ public class ImagePath {
    * @return true on success, false otherwise
    */
   public static boolean remove(String path) {
+    File fPath = new File(path);
+    if (!fPath.isAbsolute() && path.contains(":")) {
+      return removeHTTP(path);
+    }
     return remove(makePathURL(FileManager.normalize(path), null).pathURL);
   }
 

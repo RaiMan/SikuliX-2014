@@ -318,7 +318,7 @@ public class Runner {
               break;
             }
           }
-          if (!content.isEmpty()) {
+          if (content != null && !content.isEmpty()) {
             givenScriptType = "NET";
             givenScriptScript = content;
             givenScriptExists = true;
@@ -415,7 +415,12 @@ public class Runner {
     }
 
     public static int runpy(File fScript, URL script, String scriptName, String[] args) {
-      String fpScript = fScript.getAbsolutePath();
+      String fpScript;
+      if (fScript == null) {
+        fpScript = script.toExternalForm();
+      } else {
+        fpScript = fScript.getAbsolutePath();
+      }
       if (Runner.pyRunner == null) {
         Runner.pyRunner = Runner.initpy();
       }
@@ -424,14 +429,20 @@ public class Runner {
         return -999;
       }
       String[] newArgs = new String[args.length + 1];
-      newArgs[0] = fpScript;
       for (int i = 0; i < args.length; i++) {
         newArgs[i + 1] = args[i];
       }
-      ImagePath.add(fScript.getParent());
       Runner.pyRunner.setSysArgv(newArgs);
-      int retval = Runner.pyRunner.execfile(fpScript);
-      ImagePath.remove(fScript.getParent());
+      newArgs[0] = fpScript;
+      int retval;
+      if (fScript == null) {
+        ImagePath.addHTTP(fpScript);
+        retval = (Runner.pyRunner.exec(scriptName) ? 0 : -1);        
+        ImagePath.removeHTTP(fpScript);
+      } else {
+        ImagePath.add(fScript.getParent());
+        retval = Runner.pyRunner.execfile(fpScript);
+      }
       return retval;
     }
 
@@ -522,6 +533,8 @@ public class Runner {
 			if ("NET".equals(givenScriptType)) {
         if (Runner.RJSCRIPT.equals(givenScriptScriptType)) {
           exitCode = runjs(null, uGivenScript, givenScriptScript, args);
+        } else if (Runner.RPYTHON.equals(givenScriptScriptType)) {
+          exitCode = runpy(null, uGivenScript, givenScriptScript, args);
         } else {
           log(-1, "running from net not supported for %s\n%s", givenScriptScriptType, uGivenScript);
         }
