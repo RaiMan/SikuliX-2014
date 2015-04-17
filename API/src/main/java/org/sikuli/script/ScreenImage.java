@@ -88,7 +88,7 @@ public class ScreenImage {
 	 * @return absolute path to stored file
 	 */
   public String save() {
-    return FileManager.saveTimedImage(_img, RunTime.get().BaseTempPath, "sikuliximage");
+    return FileManager.saveTimedImage(_img, RunTime.get().fpBaseTempPath, "sikuliximage");
   }
   
 	/**

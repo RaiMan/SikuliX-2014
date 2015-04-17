@@ -50,7 +50,7 @@ public class ExtensionManager {
       url = RunTime.get().SikuliRepo + name + "-" + version + ".jar";
     }
 		String extPath = Settings.getUserExtPath();
-		String tmpdir = RunTime.get().BaseTempPath;
+		String tmpdir = RunTime.get().fpBaseTempPath;
 		try {
 			File localFile = new File(FileManager.downloadURL(new URL(url), tmpdir));
 			String extName = localFile.getName();

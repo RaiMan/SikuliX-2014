@@ -366,7 +366,7 @@ public class FileManager {
   }
 
   public static File createTempDir(String path) {
-    File fTempDir = new File(RunTime.get().BaseTempPath, path);
+    File fTempDir = new File(RunTime.get().fpBaseTempPath, path);
     log(lvl, "createTempDir:\n%s", fTempDir);
     if (!fTempDir.exists()) {
       fTempDir.mkdirs();
@@ -381,13 +381,16 @@ public class FileManager {
   }
 
   public static File createTempDir() {
-    Random rand = new Random();
-    int randomInt = 1 + rand.nextInt();
-    File fTempDir = createTempDir("tmp-" + randomInt + ".sikuli");
+    File fTempDir = createTempDir("tmp-" + getRandomInt() + ".sikuli");
     if (null != fTempDir) {
       fTempDir.deleteOnExit();
     }
     return fTempDir;
+  }
+  
+  public static int getRandomInt() {
+    int rand = 1 + new Random().nextInt();
+    return (rand < 0 ? rand * -1 : rand);
   }
 
   public static void deleteTempDir(String path) {
@@ -476,7 +479,7 @@ public class FileManager {
   public static File createTempFile(String suffix, String path) {
     String temp1 = "sikuli-";
     String temp2 = "." + suffix;
-    File fpath = new File(RunTime.get().BaseTempPath);
+    File fpath = new File(RunTime.get().fpBaseTempPath);
     if (path != null) {
       fpath = new File(path);
     }
@@ -1123,30 +1126,6 @@ public class FileManager {
 			}
 		}
 	}
-
-  /**
-   * INTERNAL USE
-   */
-  public static void cleanTemp() {
-    for (File f : new File(System.getProperty("java.io.tmpdir")).listFiles(new FilenameFilter() {
-      @Override
-      public boolean accept(File dir, String name) {
-        if (name.contains("sikulixlibs")) {
-          return false;
-        }
-        if (name.contains("BridJExtractedLibraries")) {
-          return true;
-        }
-        if (name.toLowerCase().contains("sikuli")) {
-          return true;
-        }
-        return false;
-      }
-    })) {
-      Debug.log(4, "cleanTemp: " + f.getName());
-      FileManager.deleteFileOrFolder(f.getAbsolutePath());
-    }
-  }
 
 	public static boolean isBundle(String dir) {
 		return dir.endsWith(".sikuli");

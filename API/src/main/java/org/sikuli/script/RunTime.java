@@ -366,7 +366,7 @@ public class RunTime {
   public ClassLoader classLoader = RunTime.class.getClassLoader();
   public String baseJar = "";
   public String userName = "";
-  public String BaseTempPath = "";
+  public String fpBaseTempPath = "";
 
   private Class clsRef = RunTime.class;
   private Class clsRefBase = clsRef;
@@ -468,12 +468,13 @@ int nMonitors = 0;
     } else {
       terminate(1, "init: java.io.tmpdir not valid (null or empty");
     }
-    fBaseTempPath = new File(fTempPath, "Sikulix");
-    BaseTempPath = fBaseTempPath.getAbsolutePath();
+    fBaseTempPath = new File(fTempPath, 
+            String.format("Sikulix_%d", FileManager.getRandomInt()));
+    fpBaseTempPath = fBaseTempPath.getAbsolutePath();
+    fBaseTempPath.mkdirs();
 
     if (Type.IDE.equals(typ) && !runningScripts) {
-      fBaseTempPath.mkdirs();
-      isRunning = new File(BaseTempPath, isRunningFilename);
+      isRunning = new File(fBaseTempPath, isRunningFilename);
       try {
         isRunning.createNewFile();
         isRunningFile = new FileOutputStream(isRunning);
@@ -485,24 +486,54 @@ int nMonitors = 0;
         Sikulix.popError("Terminating on FatalError: cannot access IDE lock for/n" + isRunning);
         System.exit(1);
       }
-      Runtime.getRuntime().addShutdownHook(new Thread() {
-        @Override
-        public void run() {
-          log(lvl, "final cleanup");
-          if (isRunning != null) {
-            try {
-              isRunningFile.close();
-            } catch (IOException ex) {
-            }
-            isRunning.delete();
-          }
-          FileManager.cleanTemp();
-        }
-      });
     }
+    
+    Runtime.getRuntime().addShutdownHook(new Thread() {
+      @Override
+      public void run() {
+        log(lvl, "final cleanup");
+        if (isRunning != null) {
+          try {
+            isRunningFile.close();
+          } catch (IOException ex) {
+          }
+          isRunning.delete();
+        }
+        for (File f : fTempPath.listFiles(new FilenameFilter() {
+          @Override
+          public boolean accept(File dir, String name) {
+            File aFile = new File(dir, name);
+            boolean isObsolete = false;
+            long lastTime = aFile.lastModified();
+            if (lastTime == 0) {
+              return false;
+            }
+            if (lastTime < ((new Date().getTime()) - 7 * 24 * 60 * 60 * 1000)) {
+              isObsolete = true;
+            }
+            if (name.contains("BridJExtractedLibraries") && isObsolete) {
+              return true;
+            }
+            if (name.toLowerCase().contains("sikuli")) {
+              if (name.contains("Sikulix_")) {
+                if (isObsolete || aFile.equals(fBaseTempPath)) {
+                  return true;
+                }                
+              } else {
+                return true;
+              }
+            }
+            return false;
+          }
+        })) {
+          Debug.log(4, "cleanTemp: " + f.getName());
+          FileManager.deleteFileOrFolder(f.getAbsolutePath());
+        }   
+      }
+    });
 
     for (String aFile : fTempPath.list()) {
-      if (aFile.startsWith("Sikulix")) {
+      if (aFile.startsWith("Sikulix") && (new File(aFile).isFile())) {
         FileManager.deleteFileOrFolder(new File(fTempPath, aFile), new FileManager.FileFilter() {
           @Override
           public boolean accept(File entry) {
