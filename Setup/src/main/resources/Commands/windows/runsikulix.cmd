@@ -19,9 +19,14 @@ set PARMS=-Xms64M -Xmx512M -Dfile.encoding=UTF-8 -Dsikuli.FromCommandLine
 if not defined JAVA_HOME goto CHECKJAVA
 IF EXIST "%JAVA_HOME%\bin\java.exe" goto JAVA_OK
 echo +++ JAVA_HOME specified but not useable %JAVA_HOME%
-echo +++ looking for Java in standard places
+echo +++ looking for Java in system path and then in standard places
 
 :CHECKJAVA
+java 2> nul
+if errorlevel 9009 goto CHECKPLACES
+goto JAVA_OK_PATH
+
+:CHECKPLACES
 set PROGRAMS=%ProgramFiles%
 if defined ProgramFiles(x86) set PROGRAMS32=%ProgramFiles(x86)%
 
@@ -60,6 +65,16 @@ goto JAVA_OK
 echo +++ Java not found in standard places %PROGRAMS% or %PROGRAMS32%
 echo +++ JAVA_HOME not specified
 goto STOPIT
+
+:JAVA_OK_PATH
+echo +++ running this Java
+set SIKULI_COMMAND=%*
+java -version
+PATH=%SIKULIX_HOME%libs;%PATH%
+echo +++ trying to run SikuliX
+echo +++ using: %PARMS% -jar %SIKULIX_HOME%%SJAR%.jar %SIKULI_COMMAND%
+java %PARMS% -jar "%SIKULIX_HOME%%SJAR%.jar" %SIKULI_COMMAND%
+GOTO FINALLY
 
 :JAVA_OK
 echo +++ running this Java
