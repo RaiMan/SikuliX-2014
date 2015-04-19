@@ -89,6 +89,7 @@ public class RunTime {
   public File fLibsProvided;
   public File fLibsLocal;
   public boolean useLibsProvided = false;
+  private String lastResult = "";
 
   private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -2580,11 +2581,15 @@ int nMonitors = 0;
       retVal = 9999;
       hasError = true;
     }
-    result = String.format("%d%s%s", retVal, NL, result);
     if (hasError) {
       result += error;
     }
-    return result;
+    lastResult = result;
+    return String.format("%d%s%s", retVal, NL, result);
+  }
+  
+  public String getLastCommandResult() {
+    return lastResult;
   }
 //</editor-fold>
 

@@ -550,6 +550,9 @@ public class ScriptingSupport {
     }
 
     private int run() {
+      if (Runner.RASCRIPT.equals(givenScriptScriptType)) {
+        return Runner.runas(givenScriptScript);
+      }
       int exitCode = -1;
       IScriptRunner currentRunner = null;
       if (givenScriptType == "NET" && givenScriptExists) {

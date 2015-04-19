@@ -28,15 +28,18 @@ public class Runner {
   public static String ERUBY = "rb";
   public static String EPYTHON = "py";
   public static String EJSCRIPT = "js";
+  public static String EASCRIPT = "script";
   public static String EPLAIN = "txt";
   public static String EDEFAULT = EPYTHON;
   public static String CPYTHON = "text/python";
   public static String CRUBY = "text/ruby";
   public static String CJSCRIPT = "text/javascript";
+  public static String CASCRIPT = "text/applescript";
   public static String CPLAIN = "text/plain";
   public static String RPYTHON = "jython";
   public static String RRUBY = "jruby";
   public static String RJSCRIPT = "JavaScript";
+  public static String RASCRIPT = "AppleScript";
   public static String RDEFAULT = RPYTHON;
 
   private static String[] runScripts = null;
@@ -265,7 +268,7 @@ public class Runner {
     String gitScripts = "https://github.com/RaiMan/SikuliX-2014/tree/master/TestScripts/";
     String givenScriptHost = "";
     String givenScriptFolder = "";
-    String givenScriptName = "";
+    String givenScriptName;
     String givenScriptScript = "";
     String givenScriptType = "sikuli";
     String givenScriptScriptType = RDEFAULT;
@@ -274,118 +277,143 @@ public class Runner {
     URL uGivenScriptFile = null;
     givenScriptName = givenName;
     String[] parts = null;
-		int isNet;
-    if (givenName.toLowerCase().startsWith("git*")) {
+    int isNet;
+    givenName = givenName.trim();
+    if (givenName.toLowerCase().startsWith("applescript")) {
+      givenScriptScriptType = RASCRIPT;
+      givenScriptName = null;
+      givenScriptScript = givenName.substring(12);
+    } else if (givenName.toLowerCase().startsWith("git*")) {
       if (givenName.length() == 4) {
         givenName = gitScripts + "showcase";
       } else {
         givenName = gitScripts + givenName.substring(4);
       }
     }
-    if (-1 < (isNet = givenName.indexOf("://"))) {
-			String payload = givenName.substring(isNet+3);
-			payload = payload.replaceFirst("/", "#");
-			parts = payload.split("#");
-			if (parts.length > 1 && !parts[1].isEmpty()) {
-				givenScriptHost = parts[0];
-        givenScriptName = new File(parts[1]).getName();
-        String fpFolder = new File(parts[1]).getParent();
-        if (null != fpFolder && !fpFolder.isEmpty()) {
-          givenScriptFolder = FileManager.slashify(fpFolder, true);
-          if (givenScriptFolder.startsWith("/")) {
-            givenScriptFolder = givenScriptFolder.substring(1);
-          }
-        }
-      }
-			String scriptLocation = givenName;
-			givenScriptExists = false;
-      String content = "";
-      if (givenScriptHost.contains("github.com")) {
-        givenScriptHost = "https://raw.githubusercontent.com/";
-        givenScriptFolder = givenScriptFolder.replace("tree/", "");
-        if (givenScriptName.endsWith(".zip")) {
-          scriptLocation = givenScriptHost + givenScriptFolder + givenScriptName;
-          if (0 < FileManager.isUrlUseabel(scriptLocation)) {
-            runTime.terminate(1, ".zip from git not yet supported\n%s", scriptLocation);
-          }
-        } else {
-          for (String suffix : endingTypes.keySet()) {
-            givenScriptScript = givenScriptName + "/" + givenScriptName + "." + suffix;
-            scriptLocation = givenScriptHost + givenScriptFolder + givenScriptScript;
-            givenScriptScriptType = runnerTypes.get(suffix);
-            if (0 < FileManager.isUrlUseabel(scriptLocation)) {
-              content = FileManager.downloadURLtoString(scriptLocation);
-              break;
+    if (!RASCRIPT.equals(givenScriptScriptType)) {
+      if (-1 < (isNet = givenName.indexOf("://"))) {
+        String payload = givenName.substring(isNet + 3);
+        payload = payload.replaceFirst("/", "#");
+        parts = payload.split("#");
+        if (parts.length > 1 && !parts[1].isEmpty()) {
+          givenScriptHost = parts[0];
+          givenScriptName = new File(parts[1]).getName();
+          String fpFolder = new File(parts[1]).getParent();
+          if (null != fpFolder && !fpFolder.isEmpty()) {
+            givenScriptFolder = FileManager.slashify(fpFolder, true);
+            if (givenScriptFolder.startsWith("/")) {
+              givenScriptFolder = givenScriptFolder.substring(1);
             }
           }
-          if (content != null && !content.isEmpty()) {
-            givenScriptType = "NET";
-            givenScriptScript = content;
-            givenScriptExists = true;
-            try {
-              uGivenScript = new URL(givenScriptHost + givenScriptFolder + givenScriptName);
-            } catch (Exception ex) {
-              givenScriptExists = false;
+        }
+        String scriptLocation = givenName;
+        givenScriptExists = false;
+        String content = "";
+        if (givenScriptHost.contains("github.com")) {
+          givenScriptHost = "https://raw.githubusercontent.com/";
+          givenScriptFolder = givenScriptFolder.replace("tree/", "");
+          if (givenScriptName.endsWith(".zip")) {
+            scriptLocation = givenScriptHost + givenScriptFolder + givenScriptName;
+            if (0 < FileManager.isUrlUseabel(scriptLocation)) {
+              runTime.terminate(1, ".zip from git not yet supported\n%s", scriptLocation);
             }
           } else {
-            givenScriptExists = false;
+            for (String suffix : endingTypes.keySet()) {
+              givenScriptScript = givenScriptName + "/" + givenScriptName + "." + suffix;
+              scriptLocation = givenScriptHost + givenScriptFolder + givenScriptScript;
+              givenScriptScriptType = runnerTypes.get(suffix);
+              if (0 < FileManager.isUrlUseabel(scriptLocation)) {
+                content = FileManager.downloadURLtoString(scriptLocation);
+                break;
+              }
+            }
+            if (content != null && !content.isEmpty()) {
+              givenScriptType = "NET";
+              givenScriptScript = content;
+              givenScriptExists = true;
+              try {
+                uGivenScript = new URL(givenScriptHost + givenScriptFolder + givenScriptName);
+              } catch (Exception ex) {
+                givenScriptExists = false;
+              }
+            } else {
+              givenScriptExists = false;
+            }
+          }
+        }
+        if (!givenScriptExists) {
+          log(-1, "given script location not supported or not valid:\n%s", scriptLocation);
+        } else {
+          String header = "# ";
+          String trailer = "\n";
+          if (RJSCRIPT.equals(givenScriptScriptType)) {
+            header = "/*\n";
+            trailer = "*/\n";
+          }
+          header += scriptLocation + "\n";
+          FileManager.writeStringToFile(header + trailer + content,
+                  new File(runTime.fSikulixStore, "LastScriptFromNet.txt"));
+        }
+      } else {
+        boolean sameFolder = givenScriptName.startsWith("./");
+        if (sameFolder) {
+          givenScriptName = givenScriptName.substring(2);
+        }
+        if (givenScriptName.startsWith("JS*")) {
+          givenScriptName = new File(runTime.fSxProjectTestScriptsJS, givenScriptName.substring(3)).getPath();
+        }
+        if (givenScriptName.startsWith("TEST*")) {
+          givenScriptName = new File(runTime.fSxProjectTestScripts, givenScriptName.substring(5)).getPath();
+        }
+        String scriptName = new File(givenScriptName).getName();
+        if (scriptName.contains(".")) {
+          parts = scriptName.split("\\.");
+          givenScriptScript = parts[0];
+          givenScriptType = parts[1];
+        } else {
+          givenScriptScript = scriptName;
+        }
+        if (sameFolder && scriptProject != null) {
+          givenScriptName = new File(scriptProject, givenScriptName).getPath();
+        } else if (sameFolder && uScriptProject != null) {
+          givenScriptHost = uScriptProject.getHost();
+          givenScriptFolder = uScriptProject.getPath().substring(1);
+        } else if (scriptProject == null && givenScriptHost.isEmpty()) {
+          String fpParent = new File(givenScriptName).getParent();
+          if (fpParent == null || fpParent.isEmpty()) {
+            scriptProject = null;
+          } else {
+            scriptProject = new File(givenScriptName).getParentFile();
           }
         }
       }
-			if (!givenScriptExists) {
-				log(-1, "given script location not supported or not valid:\n%s", scriptLocation);
-			} else {
-        String header = "# ";
-        String trailer = "\n";
-        if ("JavaScript".equals(givenScriptScriptType)) {
-          header = "/*\n";
-          trailer = "*/\n";
-        }
-        header += scriptLocation + "\n";
-        FileManager.writeStringToFile( header + trailer + content,
-                new File(runTime.fSikulixStore, "LastScriptFromNet.txt"));
-      }
-    } else {
-			boolean sameFolder = givenScriptName.startsWith("./");
-			if (sameFolder) {
-				givenScriptName = givenScriptName.substring(2);
-			}
-			if (givenScriptName.startsWith("JS*")) {
-				givenScriptName = new File(runTime.fSxProjectTestScriptsJS, givenScriptName.substring(3)).getPath();
-			}
-			if (givenScriptName.startsWith("TEST*")) {
-				givenScriptName = new File(runTime.fSxProjectTestScripts, givenScriptName.substring(5)).getPath();
-			}
-			String scriptName = new File(givenScriptName).getName();
-			if (scriptName.contains(".")) {
-				parts = scriptName.split("\\.");
-				givenScriptScript = parts[0];
-				givenScriptType = parts[1];
-			} else {
-				givenScriptScript = scriptName;
-			}
-			if (sameFolder && scriptProject != null) {
-				givenScriptName = new File(scriptProject, givenScriptName).getPath();
-			} else if (sameFolder && uScriptProject != null) {
-				givenScriptHost = uScriptProject.getHost();
-				givenScriptFolder = uScriptProject.getPath().substring(1);
-			} else if (scriptProject == null && givenScriptHost.isEmpty()) {
-				String fpParent = new File(givenScriptName).getParent();
-				if (fpParent == null || fpParent.isEmpty()) {
-					scriptProject = null;
-				} else {
-					scriptProject = new File(givenScriptName).getParentFile();
-				}
-			}
-		}
-    Object[] vars = new Object[]{givenScriptHost, givenScriptFolder, givenScriptName, 
-      givenScriptScript, givenScriptType,	givenScriptScriptType, 
+    }
+    Object[] vars = new Object[]{givenScriptHost, givenScriptFolder, givenScriptName,
+      givenScriptScript, givenScriptType, givenScriptScriptType,
       uGivenScript, uGivenScriptFile, givenScriptExists, scriptProject, uScriptProject};
     return vars;
   }
 
   public static int runjs(File fScript, URL uGivenScript, String givenScriptScript, String[] args) {
     return new RunBox().runjs(fScript, uGivenScript, givenScriptScript, args);
+  }
+
+  public static int runas(String givenScriptScript) {
+    if (!runTime.runningMac) {
+      return -1;
+    }
+    File aFile = FileManager.createTempFile("script");
+    FileManager.writeStringToFile(givenScriptScript, aFile);
+    String retVal = runTime.runcmd(new String[]{"osascript", aFile.getAbsolutePath()});
+    String[] parts = retVal.split("\n");
+    int retcode = -1;
+    try {
+      retcode = Integer.parseInt(parts[0]);
+    } catch (Exception ex) {}
+    if (retcode != 0) {
+      log(-1, "AppleScript:\n%s\nreturned:\n%s", givenScriptScript, runTime.getLastCommandResult());
+    }
+    return retcode;
   }
 
   public static int runpy(File fScript, URL uGivenScript, String givenScriptScript, String[] args) {
