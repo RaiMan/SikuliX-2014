@@ -29,17 +29,20 @@ public class Runner {
   public static String EPYTHON = "py";
   public static String EJSCRIPT = "js";
   public static String EASCRIPT = "script";
+  public static String ESSCRIPT = "ps1";
   public static String EPLAIN = "txt";
   public static String EDEFAULT = EPYTHON;
   public static String CPYTHON = "text/python";
   public static String CRUBY = "text/ruby";
   public static String CJSCRIPT = "text/javascript";
   public static String CASCRIPT = "text/applescript";
+  public static String CSSCRIPT = "text/powershell";
   public static String CPLAIN = "text/plain";
   public static String RPYTHON = "jython";
   public static String RRUBY = "jruby";
   public static String RJSCRIPT = "JavaScript";
   public static String RASCRIPT = "AppleScript";
+  public static String RSSCRIPT = "PowerShell";
   public static String RDEFAULT = RPYTHON;
 
   private static String[] runScripts = null;
@@ -278,11 +281,18 @@ public class Runner {
     givenScriptName = givenName;
     String[] parts = null;
     int isNet;
+    boolean isInline = false;
     givenName = givenName.trim();
-    if (givenName.toLowerCase().startsWith("applescript")) {
+    if (givenName.toLowerCase().startsWith(RASCRIPT.toLowerCase())) {
       givenScriptScriptType = RASCRIPT;
       givenScriptName = null;
-      givenScriptScript = givenName.substring(12);
+      givenScriptScript = givenName.substring(RASCRIPT.length() + 1);
+      isInline = true;
+    } else if (givenName.toLowerCase().startsWith(RSSCRIPT.toLowerCase())) {
+      givenScriptScriptType = RSSCRIPT;
+      givenScriptName = null;
+      givenScriptScript = givenName.substring(RSSCRIPT.length() + 1);
+      isInline = true;
     } else if (givenName.toLowerCase().startsWith("git*")) {
       if (givenName.length() == 4) {
         givenName = gitScripts + "showcase";
@@ -290,7 +300,7 @@ public class Runner {
         givenName = gitScripts + givenName.substring(4);
       }
     }
-    if (!RASCRIPT.equals(givenScriptScriptType)) {
+    if (!isInline) {
       if (-1 < (isNet = givenName.indexOf("://"))) {
         String payload = givenName.substring(isNet + 3);
         payload = payload.replaceFirst("/", "#");
@@ -412,6 +422,33 @@ public class Runner {
     } catch (Exception ex) {}
     if (retcode != 0) {
       log(-1, "AppleScript:\n%s\nreturned:\n%s", givenScriptScript, runTime.getLastCommandResult());
+    }
+    return retcode;
+  }
+
+  public static int runps(String givenScriptScript) {
+    if (!runTime.runningWindows) {
+      return -1;
+    }
+    File aFile = FileManager.createTempFile("ps1");
+    FileManager.writeStringToFile(givenScriptScript, aFile);
+    String[] psDirect = new String[]{
+      "powershell.exe", "-ExecutionPolicy", "UnRestricted", 
+      "-NonInteractive", "-NoLogo", "-NoProfile", "-WindowStyle", "Hidden",
+      "-File", aFile.getAbsolutePath()
+      };
+    String[] psCmdType = new String[]{
+      "cmd.exe", "/S", "/C",
+      "type " + aFile.getAbsolutePath() + " | powershell -noprofile -"
+      };
+    String retVal = runTime.runcmd(psCmdType);
+    String[] parts = retVal.split("\\s");
+    int retcode = -1;
+    try {
+      retcode = Integer.parseInt(parts[0]);
+    } catch (Exception ex) {}
+    if (retcode != 0) {
+      log(-1, "PowerShell:\n%s\nreturned:\n%s", givenScriptScript, runTime.getLastCommandResult());
     }
     return retcode;
   }
