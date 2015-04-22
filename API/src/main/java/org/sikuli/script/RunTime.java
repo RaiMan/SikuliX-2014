@@ -90,6 +90,7 @@ public class RunTime {
   public File fLibsLocal;
   public boolean useLibsProvided = false;
   private String lastResult = "";
+  public boolean shouldCleanDownloads = false;
 
   private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -499,6 +500,9 @@ int nMonitors = 0;
           } catch (IOException ex) {
           }
           isRunning.delete();
+        }
+        if (shouldCleanDownloads) {
+          FileManager.deleteFileOrFolder(fSikulixDownloadsBuild);
         }
         for (File f : fTempPath.listFiles(new FilenameFilter() {
           @Override
