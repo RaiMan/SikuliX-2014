@@ -278,7 +278,7 @@ public class App {
 	 * @return this or null on failure
 	 */
 	public App open() {
-    if (Settings.isWindows() || Settings.isLinux()) {
+    if (!runTime.runningMac) {
       int pid = _osUtil.openApp(_appName);
       _pid = pid;
       Debug.action("App.open " + this.toString());
@@ -288,6 +288,11 @@ public class App {
       }
     } else {
       Debug.action("App.open " + this.toString());
+      if (runTime.isJava8()) {
+        if (Runner.runas(String.format("tell app \"%s\" to activate", _appName)) < 0) {
+          return null;
+        }
+      }
       if (_osUtil.openApp(_appName) < 0) {
         Debug.error("App.open failed: " + _appName + " not found");
         return null;
