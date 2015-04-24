@@ -288,7 +288,7 @@ public class App {
       }
     } else {
       Debug.action("App.open " + this.toString());
-      if (runTime.isJava8()) {
+      if (runTime.runningMacApp && runTime.osVersion.startsWith("10.10.")) {
         if (Runner.runas(String.format("tell app \"%s\" to activate", _appName)) < 0) {
           return null;
         }
