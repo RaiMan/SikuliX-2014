@@ -31,8 +31,16 @@ public class RobotDesktop extends Robot implements IRobot {
   private static int heldButtons = 0;
   private static String heldKeys = "";
   private static final ArrayList<Integer> heldKeyCodes = new ArrayList<Integer>();
+  public static int stdAutoDelay = 10;
   private Screen scr = null;
   private static RunTime runTime = RunTime.get();
+  
+  private static void logRobot(Robot robot, int delay, String msg) {
+    int theDelay = robot.getAutoDelay();
+    if (theDelay > delay) {
+      Debug.log(0, msg, robot.isAutoWaitForIdle(), theDelay);
+    }
+  }
 
   @Override
   public boolean isRemote() {
@@ -58,7 +66,7 @@ public class RobotDesktop extends Robot implements IRobot {
   public void smoothMove(Location src, Location dest, long ms) {
     Debug.log(4, "RobotDesktop: smoothMove (%.1f): " + src.toString() + "---" + dest.toString(), Settings.MoveMouseDelay);
     if (ms == 0) {
-      Screen.getMouseRobot().mouseMove(dest.x, dest.y);
+      doMouseMove(dest.x, dest.y);
       checkMousePosition(dest);
       return;
     }
@@ -70,7 +78,7 @@ public class RobotDesktop extends Robot implements IRobot {
     while (aniX.running()) {
       x = aniX.step();
       y = aniY.step();
-      Screen.getMouseRobot().mouseMove((int) x, (int) y);
+      doMouseMove((int) x, (int) y);
     }
     checkMousePosition(new Location((int) x, (int) y));
   }
@@ -100,25 +108,33 @@ public class RobotDesktop extends Robot implements IRobot {
     } else {
       heldButtons = buttons;
     }
-    Screen.getMouseRobot().mousePress(heldButtons);
-//TODO check: does this produce Robot locked situations?
-//    Screen.getMouseRobot().waitForIdle();
+    doMouseDown(heldButtons);
   }
 
   @Override
   public int mouseUp(int buttons) {
     if (buttons == 0) {
-      Screen.getMouseRobot().mouseRelease(heldButtons);
+      doMouseUp(heldButtons);
       heldButtons = 0;
     } else {
-      Screen.getMouseRobot().mouseRelease(buttons);
+      doMouseUp(buttons);
       heldButtons &= ~buttons;
     }
-		try {
-			Screen.getMouseRobot().waitForIdle();
-		} catch (Exception e) {
-		}
     return heldButtons;
+  }
+  
+  private void doMouseDown(int buttons) {
+    logRobot(Screen.getMouseRobot(), stdAutoDelay, "MouseDown: WaitForIdle: %s - Delay: %d");
+    Screen.getMouseRobot().mousePress(buttons);    
+  }
+
+  private void doMouseUp(int buttons) {
+    logRobot(Screen.getMouseRobot(), stdAutoDelay, "MouseUp: WaitForIdle: %s - Delay: %d");
+    Screen.getMouseRobot().mouseRelease(buttons);
+  }
+
+  private void doMouseMove(int x, int y) {
+    Screen.getMouseRobot().mouseMove(x, y);
   }
 
   @Override
@@ -155,22 +171,32 @@ public class RobotDesktop extends Robot implements IRobot {
     return getPixelColor(x, y);
   }
 
+  private void doKeyPress(int keyCode) {
+    logRobot(Screen.getMouseRobot(), stdAutoDelay, "KeyPress: WaitForIdle: %s - Delay: %d");
+    keyPress(keyCode);
+  }
+  
+  private void doKeyRelease(int keyCode) {
+    logRobot(Screen.getMouseRobot(), stdAutoDelay, "KeyRelease: WaitForIdle: %s - Delay: %d");
+    keyRelease(keyCode);
+  }
+  
   @Override
   public void pressModifiers(int modifiers) {
     if ((modifiers & KeyModifier.SHIFT) != 0) {
-      keyPress(KeyEvent.VK_SHIFT);
+      doKeyPress(KeyEvent.VK_SHIFT);
     }
     if ((modifiers & KeyModifier.CTRL) != 0) {
-      keyPress(KeyEvent.VK_CONTROL);
+      doKeyPress(KeyEvent.VK_CONTROL);
     }
     if ((modifiers & KeyModifier.ALT) != 0) {
-      keyPress(KeyEvent.VK_ALT);
+      doKeyPress(KeyEvent.VK_ALT);
     }
     if ((modifiers & KeyModifier.META) != 0) {
       if (Settings.isWindows()) {
-        keyPress(KeyEvent.VK_WINDOWS);
+        doKeyPress(KeyEvent.VK_WINDOWS);
       } else {
-        keyPress(KeyEvent.VK_META);
+        doKeyPress(KeyEvent.VK_META);
       }
     }
   }
@@ -178,19 +204,19 @@ public class RobotDesktop extends Robot implements IRobot {
   @Override
   public void releaseModifiers(int modifiers) {
     if ((modifiers & KeyModifier.SHIFT) != 0) {
-      keyRelease(KeyEvent.VK_SHIFT);
+      doKeyRelease(KeyEvent.VK_SHIFT);
     }
     if ((modifiers & KeyModifier.CTRL) != 0) {
-      keyRelease(KeyEvent.VK_CONTROL);
+      doKeyRelease(KeyEvent.VK_CONTROL);
     }
     if ((modifiers & KeyModifier.ALT) != 0) {
-      keyRelease(KeyEvent.VK_ALT);
+      doKeyRelease(KeyEvent.VK_ALT);
     }
     if ((modifiers & KeyModifier.META) != 0) {
       if (Settings.isWindows()) {
-        keyRelease(KeyEvent.VK_WINDOWS);
+        doKeyRelease(KeyEvent.VK_WINDOWS);
       } else {
-        keyRelease(KeyEvent.VK_META);
+        doKeyRelease(KeyEvent.VK_META);
       }
     }
   }
@@ -211,7 +237,7 @@ public class RobotDesktop extends Robot implements IRobot {
   @Override
   public void keyDown(int code) {
     if (!heldKeyCodes.contains(code)) {
-      keyPress(code);
+      doKeyPress(code);
       heldKeyCodes.add(code);
     }
   }
@@ -228,17 +254,15 @@ public class RobotDesktop extends Robot implements IRobot {
                   + heldKeys.substring(pos + 1);
         }
       }
-      waitForIdle();
     }
   }
 
   @Override
   public void keyUp(int code) {
     if (heldKeyCodes.contains(code)) {
-      keyRelease(code);
+      doKeyRelease(code);
       heldKeyCodes.remove((Object) code);
     }
-    waitForIdle();
   }
 
   @Override
@@ -252,18 +276,18 @@ public class RobotDesktop extends Robot implements IRobot {
   private void doType(KeyMode mode, int... keyCodes) {
     if (mode == KeyMode.PRESS_ONLY) {
       for (int i = 0; i < keyCodes.length; i++) {
-        keyPress(keyCodes[i]);
+        doKeyPress(keyCodes[i]);
       }
     } else if (mode == KeyMode.RELEASE_ONLY) {
       for (int i = 0; i < keyCodes.length; i++) {
-        keyRelease(keyCodes[i]);
+        doKeyRelease(keyCodes[i]);
       }
     } else {
       for (int i = 0; i < keyCodes.length; i++) {
-        keyPress(keyCodes[i]);
+        doKeyPress(keyCodes[i]);
       }
       for (int i = 0; i < keyCodes.length; i++) {
-        keyRelease(keyCodes[i]);
+        doKeyRelease(keyCodes[i]);
       }
     }
   }
@@ -274,7 +298,6 @@ public class RobotDesktop extends Robot implements IRobot {
             KeyEvent.getKeyText(Key.toJavaKeyCode(character)[0]).toString(),
             Key.toJavaKeyCode(character)[0]);
     doType(mode, Key.toJavaKeyCode(character));
-    waitForIdle();
   }
 
   @Override
@@ -302,7 +325,6 @@ public class RobotDesktop extends Robot implements IRobot {
       }
     }
     doType(KeyMode.PRESS_RELEASE, key);
-    waitForIdle();
   }
 
   @Override

@@ -77,7 +77,7 @@ public class Screen extends Region implements EventObserver, IScreen {
     try {
       log(lvl+1, "initScreens: getting mouseRobot");
       globalRobot = new Robot();
-      globalRobot.setAutoDelay(10);
+      globalRobot.setAutoDelay(RobotDesktop.stdAutoDelay);
     } catch (AWTException e) {
       Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
       Sikulix.terminate(999);

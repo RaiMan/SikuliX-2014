@@ -1,4 +1,4 @@
-#Debug.on(3)
+Debug.on(3)
 Debug.off()
 App.open("Notes")
 btn1 = Pattern("btn1.png").targetOffset(-19,30)
@@ -9,7 +9,7 @@ reg.highlight(1)
 
 loopSave = 15
 start = time.time()
-for i in range(100):
+for i in range(50):
   loop1 = time.time()
   click(btn1)
   if (time.time()-loop1 < loopSave):
@@ -23,4 +23,7 @@ for i in range(100):
   loop2 = time.time()-loop1
   if (loop2 > loopSave * 2): 
     print "slowdown at %d after %f secs" % (i, time.time() - start)
+    break
+  if ((time.time()-start) > 180): 
+    print "terminating after 3 minutes running fast"
     break
