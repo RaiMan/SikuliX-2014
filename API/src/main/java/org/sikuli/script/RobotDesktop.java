@@ -21,6 +21,7 @@ import java.awt.Robot;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
+import java.util.Date;
 
 /**
  * INTERNAL USE Implementation of IRobot making a DesktopRobot using java.awt.Robot
@@ -31,17 +32,27 @@ public class RobotDesktop extends Robot implements IRobot {
   private static int heldButtons = 0;
   private static String heldKeys = "";
   private static final ArrayList<Integer> heldKeyCodes = new ArrayList<Integer>();
-  public static int stdAutoDelay = 10;
+  public static int stdAutoDelay = 0;
+  public static int stdMaxElapsed = 1000;
   private Screen scr = null;
   private static RunTime runTime = RunTime.get();
+  private long start;
   
-  private static void logRobot(Robot robot, int delay, String msg) {
+  private void logRobot(Robot robot, int delay, String msg) {
+    start = new Date().getTime();
     int theDelay = robot.getAutoDelay();
     if (theDelay > delay) {
       Debug.log(0, msg, robot.isAutoWaitForIdle(), theDelay);
     }
   }
 
+  private void logRobot(int maxElapsed, String msg) {
+    long elapsed = new Date().getTime() - start;
+    if (elapsed > maxElapsed) {
+      Debug.log(0, msg, elapsed);
+    }
+  }
+  
   @Override
   public boolean isRemote() {
     return false;
@@ -125,12 +136,16 @@ public class RobotDesktop extends Robot implements IRobot {
   
   private void doMouseDown(int buttons) {
     logRobot(Screen.getMouseRobot(), stdAutoDelay, "MouseDown: WaitForIdle: %s - Delay: %d");
-    Screen.getMouseRobot().mousePress(buttons);    
+    Screen.getMouseRobot().mousePress(buttons);
+    delay(10);
+    logRobot(stdMaxElapsed, "MouseDown: extended delay: %d");
   }
 
   private void doMouseUp(int buttons) {
     logRobot(Screen.getMouseRobot(), stdAutoDelay, "MouseUp: WaitForIdle: %s - Delay: %d");
     Screen.getMouseRobot().mouseRelease(buttons);
+    delay(10);
+    logRobot(stdMaxElapsed, "MouseUp: extended delay: %d");
   }
 
   private void doMouseMove(int x, int y) {
@@ -174,11 +189,13 @@ public class RobotDesktop extends Robot implements IRobot {
   private void doKeyPress(int keyCode) {
     logRobot(Screen.getMouseRobot(), stdAutoDelay, "KeyPress: WaitForIdle: %s - Delay: %d");
     keyPress(keyCode);
+    logRobot(stdMaxElapsed, "KeyPress: extended delay: %d");
   }
   
   private void doKeyRelease(int keyCode) {
     logRobot(Screen.getMouseRobot(), stdAutoDelay, "KeyRelease: WaitForIdle: %s - Delay: %d");
     keyRelease(keyCode);
+    logRobot(stdMaxElapsed, "KeyRelease: extended delay: %d");
   }
   
   @Override
