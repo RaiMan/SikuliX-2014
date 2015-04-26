@@ -92,6 +92,9 @@ from org.sikuli.util import JythonHelper
 
 RUNTIME = RunTime.get()
 
+def show():
+  RUNTIME.show()
+
 ##
 # a token to check the availability
 #

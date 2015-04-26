@@ -43,6 +43,7 @@ import java.util.zip.ZipInputStream;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
+import org.sikuli.util.JythonHelper;
 import org.sikuli.util.SysJNA;
 import org.sikuli.util.LinuxSupport;
 
@@ -91,6 +92,7 @@ public class RunTime {
   public boolean useLibsProvided = false;
   private String lastResult = "";
   public boolean shouldCleanDownloads = false;
+  public boolean isJythonReady = false;
 
   private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -1131,8 +1133,15 @@ int nMonitors = 0;
     if (runningJar) {
       logp("executing jar: %s", fSxBaseJar);
     }
-    if (Debug.getDebugLevel() > minLvl - 1) {
+    if (Debug.getDebugLevel() > minLvl - 1 || isJythonReady) {
       dumpClassPath("sikulix");
+      if (isJythonReady) {
+        int saveLvl = Debug.getDebugLevel();
+        Debug.setDebugLevel(lvl);
+        JythonHelper.get().showSysPath();
+        Screen.showMonitors();
+        Debug.setDebugLevel(saveLvl);
+      }
     }
     logp("***** show environment end");
   }

@@ -112,6 +112,7 @@ public class JythonHelper {
     if (cInterpreter == null) {
       instance.runTime.terminate(1, "JythonHelper: no Jython on classpath");
     }
+    runTime.isJythonReady = true;
     return instance;
   }
 
