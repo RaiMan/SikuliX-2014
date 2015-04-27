@@ -238,7 +238,13 @@ public class Mouse {
       shouldMove = false;
       loc = at();
     }
-    IRobot r = loc.getRobotForPoint("click");
+    IRobot r = null;
+//    r = Screen.getMouseRobot();
+    try {
+      r = new RobotDesktop();
+    } catch (Exception ex) {
+      log(-1, "click: no Robot available");
+    }
     if (r == null) {
       profiler.end();
       return 0;
@@ -318,7 +324,13 @@ public class Mouse {
       return 0;
     }
     if (loc != null) {
-      IRobot r = loc.getRobotForPoint("mouseMove");
+      IRobot r = null;
+//      r = Screen.getMouseRobot();
+      try {
+        r = new RobotDesktop();
+      } catch (Exception ex) {
+        log(-1, "click: no Robot available");
+      }
       if (r == null) {
         return 0;
       }

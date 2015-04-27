@@ -480,6 +480,7 @@ public class Location implements Comparable<Location>{
     if (!getScreen().isOtherScreen()) {
       getScreen().showTarget(this);
     }
-    return getScreen().getRobot();
+    return Screen.getMouseRobot();
+//    return getScreen().getRobot();
   }
 }

@@ -36,7 +36,7 @@ public class Screen extends Region implements EventObserver, IScreen {
     Debug.logx(level, me + message, args);
   }
 
-  private static Robot globalRobot;
+  private static IRobot globalRobot;
   protected static Screen[] screens = null;
   protected static int primaryScreen = -1;
   private static int waitForScreenshot = 300;
@@ -76,7 +76,7 @@ public class Screen extends Region implements EventObserver, IScreen {
     }
     try {
       log(lvl+1, "initScreens: getting mouseRobot");
-      globalRobot = new Robot();
+      globalRobot = new RobotDesktop();
       globalRobot.setAutoDelay(RobotDesktop.stdAutoDelay);
     } catch (AWTException e) {
       Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
@@ -106,10 +106,10 @@ public class Screen extends Region implements EventObserver, IScreen {
     }
   }
 
-  protected static Robot getMouseRobot() {
+  protected static IRobot getMouseRobot() {
     return globalRobot;
   }
-
+  
   /**
    * create a Screen (ScreenUnion) object as a united region of all available monitors
    * @return ScreenUnion
@@ -227,12 +227,12 @@ public class Screen extends Region implements EventObserver, IScreen {
    */
   public static void showMonitors() {
 //    initScreens();
-    Debug.info("*** monitor configuration [ %s Screen(s)] ***", Screen.getNumberScreens());
-    Debug.info("*** Primary is Screen %d", primaryScreen);
+    Debug.logp("*** monitor configuration [ %s Screen(s)] ***", Screen.getNumberScreens());
+    Debug.logp("*** Primary is Screen %d", primaryScreen);
     for (int i = 0; i < runTime.nMonitors; i++) {
-      Debug.info("Screen %d: %s", i, Screen.getScreen(i).toStringShort());
+      Debug.logp("Screen %d: %s", i, Screen.getScreen(i).toStringShort());
     }
-    Debug.info("*** end monitor configuration ***");
+    Debug.logp("*** end monitor configuration ***");
   }
 
   /**
@@ -244,10 +244,10 @@ public class Screen extends Region implements EventObserver, IScreen {
     Debug.error("... Current Region/Screen objects might not be valid any longer");
     Debug.error("... Use existing Region/Screen objects only if you know what you are doing!");
     initScreens(true);
-    Debug.info("*** new monitor configuration [ %s Screen(s)] ***", Screen.getNumberScreens());
-    Debug.info("*** Primary is Screen %d", primaryScreen);
+    Debug.logp("*** new monitor configuration [ %s Screen(s)] ***", Screen.getNumberScreens());
+    Debug.logp("*** Primary is Screen %d", primaryScreen);
     for (int i = 0; i < runTime.nMonitors; i++) {
-      Debug.info("Screen %d: %s", i, Screen.getScreen(i).toStringShort());
+      Debug.logp("Screen %d: %s", i, Screen.getScreen(i).toStringShort());
     }
     Debug.error("*** end new monitor configuration ***");
   }
