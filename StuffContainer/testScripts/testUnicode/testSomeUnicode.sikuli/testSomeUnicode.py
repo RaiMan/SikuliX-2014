@@ -14,9 +14,9 @@ JS.out.println("plainJ: " + text)
 JS.out.println("unicodeJ: " + textu)
 popup("plain: " + text)
 popup("unicode: " + textu)
-print "plain:", text
+#print "plain:", text
 print "unicode:" 
-print unicode(text,"utf-8")
+uprint (unicode(text))
 exit()
 text = "漢字"
 text = u'\u4e00'
