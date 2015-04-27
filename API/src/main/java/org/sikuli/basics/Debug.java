@@ -665,6 +665,12 @@ public class Debug {
     }
     return sout;
   }
+  
+  public static String logp(String msg, Object... args) {
+    String out = String.format(msg, args);
+    System.out.println(out);
+    return out;
+  }
 
   private static synchronized String log(int level, String prefix, String message, Object... args) {
 //TODO replace the hack -99 to filter user logs
