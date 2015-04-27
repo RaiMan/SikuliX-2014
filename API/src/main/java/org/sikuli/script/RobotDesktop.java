@@ -32,7 +32,7 @@ public class RobotDesktop extends Robot implements IRobot {
   private static int heldButtons = 0;
   private static String heldKeys = "";
   private static final ArrayList<Integer> heldKeyCodes = new ArrayList<Integer>();
-  public static int stdAutoDelay = 0;
+  public static int stdAutoDelay = 10;
   public static int stdMaxElapsed = 1000;
   private Screen scr = null;
   private static RunTime runTime = RunTime.get();
@@ -42,7 +42,7 @@ public class RobotDesktop extends Robot implements IRobot {
   private void logRobot(int delay, String msg) {
     start = new Date().getTime();
     int theDelay = getAutoDelay();
-    if (theDelay > delay) {
+    if (theDelay > 0 && theDelay > delay) {
       Debug.log(0, msg, isAutoWaitForIdle(), theDelay);
     }
   }
