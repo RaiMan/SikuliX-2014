@@ -442,16 +442,23 @@ public class JythonHelper {
 //      return None
 //  return None
 
+    log(lvl, "findModule: %s (%s)", modName, packPath);
     if (modName.endsWith(".*")) {
       return null;
     }
-    log(lvl + 1, "findModule: %s", modName);
+    int nDot = modName.lastIndexOf(".");
+    if (nDot > -1) {
+      modName = modName.substring(nDot + 1);
+    }
     String fpBundle = ImagePath.getBundlePath();
     File fParentBundle = null;
     File fModule = null;
     if (fpBundle != null) {
       fParentBundle = new File(fpBundle).getParentFile();
       fModule = existsModule(modName, fParentBundle);
+    }
+    if (fModule == null && packPath != null) {
+      log(lvl, "findModule: packpath not null");
     }
     if (fModule == null) {
       fModule = existsSysPathModule(modName);
@@ -469,7 +476,7 @@ public class JythonHelper {
 //  Sikuli._addModPath(self.path)
 //  return self._load_module(module_name)
 
-    log(lvl + 1, "loadModulePrepare: %s", modName);
+    log(lvl, "loadModulePrepare: %s", modName);
     int nDot = modName.lastIndexOf(".");
     if (nDot > -1) {
       modName = modName.substring(nDot + 1);
