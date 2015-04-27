@@ -394,6 +394,9 @@ public class JythonHelper {
 //        return True
 //    return False
     log(lvl, "load: to be loaded:\n%s", fpJarOrFolder);
+    if (!fpJarOrFolder.endsWith(".jar")) {
+      fpJarOrFolder += ".jar";
+    }
     String fpBundle = ImagePath.getBundlePath();
     File fJar = new File(FileManager.normalizeAbsolute(fpJarOrFolder, false));
     if (!fJar.exists()) {
@@ -442,10 +445,10 @@ public class JythonHelper {
 //      return None
 //  return None
 
-    log(lvl, "findModule: %s (%s)", modName, packPath);
     if (modName.endsWith(".*")) {
       return null;
     }
+    log(lvl, "findModule: %s (%s)", modName, packPath);
     int nDot = modName.lastIndexOf(".");
     if (nDot > -1) {
       modName = modName.substring(nDot + 1);
