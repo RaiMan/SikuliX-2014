@@ -1,11 +1,12 @@
 #import sys
-import org.sikuli.script.SikulixForJython
+#import org.sikuli.script.SikulixForJython
 #print "*****1***** symodules.com =", sys.modules.has_key("com")
-from sikuli import *
-#load("testLoadCom.jar")
-#import com.testcom.BaseCom as BC
-#BC.run()
+#from sikuli import *
+load("testLoadCom.jar")
+import com.testcom.BaseCom as BC
+BC.run()
 
+exit()
 Debug.on(3)
 load("mongodb.jar")
 show()

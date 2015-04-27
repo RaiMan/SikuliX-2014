@@ -1,0 +1,5 @@
+m = ALL.find("SXQuickstart.png")
+click(m)
+w = App.focusedWindow()
+w.highlight(2)
+w.hover("Thisisvalidf.png")
