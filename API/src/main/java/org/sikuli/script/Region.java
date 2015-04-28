@@ -2577,6 +2577,14 @@ public class Region {
       return new Finder(simg, this);
     }
   }
+  
+  public void saveLastScreenImage() {
+    ScreenImage simg = getScreen().getLastScreenImageFromScreen();
+    if (simg != null) {
+      simg.saveLastScreenImage(runTime.fSikulixStore);
+    }
+  }
+
 
   /**
    * Match findAllNow( Pattern/String/Image ) finds all the given pattern on the screen and returns the best matches

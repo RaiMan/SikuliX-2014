@@ -173,4 +173,11 @@ public class ScreenImage {
 	public Rectangle getROI() {
 		return _roi;
 	}
+
+  public void saveLastScreenImage(File fPath) {
+    try {
+  		ImageIO.write(_img, "png", new File(fPath, "LastScreenImage.png"));
+    } catch (Exception ex) {}
+  }
+ 
 }
