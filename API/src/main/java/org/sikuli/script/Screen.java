@@ -429,12 +429,14 @@ public class Screen extends Region implements EventObserver, IScreen {
    */
   @Override
   public ScreenImage capture(Rectangle rect) {
-    log(lvl + 1, "Screen.capture: (%d,%d) %dx%d", rect.x, rect.y, rect.width, rect.height);
     ScreenImage simg = robot.captureScreen(rect);
     lastScreenImage = simg;
+    if (Debug.getDebugLevel() > lvl) {
+      simg.saveLastScreenImage(runTime.fSikulixStore);
+    }
     return simg;
   }
-
+  
   /**
    * create a ScreenImage with given region on this screen
    *

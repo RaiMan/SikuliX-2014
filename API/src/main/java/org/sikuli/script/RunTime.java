@@ -593,7 +593,7 @@ int nMonitors = 0;
           if (mainMonitor < 0) {
             mainMonitor = i;
             log(lvl, "ScreenDevice %d contains (0,0) --- will be used as primary", i);
-        } else {
+          } else {
             log(lvl, "ScreenDevice %d too contains (0,0)!", i);
           }
         }
