@@ -1986,14 +1986,20 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     if (ENABLE_UNIFIED_TOOLBAR) {
       MacUtils.makeWindowLeopardStyle(this.getRootPane());
     }
-
+    
     JToolBar toolbar = new JToolBar();
     JButton btnInsertImage = new ButtonInsertImage();
     _btnCapture = new ButtonCapture();
-    JButton btnSubregion = new ButtonSubregion();
+    JButton btnSubregion = new ButtonSubregion().init();
+    JButton btnLocation = new ButtonLocation().init();
+    JButton btnOffset = new ButtonOffset().init();
+    JButton btnShow = new ButtonShow().init();
     toolbar.add(_btnCapture);
     toolbar.add(btnInsertImage);
     toolbar.add(btnSubregion);
+    toolbar.add(btnLocation);
+    toolbar.add(btnOffset);
+    toolbar.add(btnShow);
     toolbar.add(Box.createHorizontalGlue());
     _btnRun = new ButtonRun();
     toolbar.add(_btnRun);
@@ -2045,22 +2051,35 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   class ButtonSubregion extends ButtonOnToolbar implements ActionListener, EventObserver {
-
+    
+    String promptText;
+    String buttonText;
+    String iconFile;
+    String buttonHint;
+    
     public ButtonSubregion() {
       super();
-      URL imageURL = SikuliIDE.class.getResource("/icons/region-icon.png");
+      promptText = SikuliIDE._I("msgCapturePrompt");
+      buttonText = "Region"; // SikuliIDE._I("btnRegionLabel");
+      iconFile = "/icons/region-icon.png";
+      buttonHint = SikuliIDE._I("btnRegionHint");
+    }
+    
+    public ButtonSubregion init() {
+      URL imageURL = SikuliIDE.class.getResource(iconFile);
       setIcon(new ImageIcon(imageURL));
-      setText(SikuliIDE._I("btnRegionLabel"));
+      setText(buttonText);
       //setMaximumSize(new Dimension(26,26));
-      setToolTipText(SikuliIDE._I("btnRegionHint"));
+      setToolTipText(buttonHint);
       addActionListener(this);
+      return this;
     }
 
     @Override
     public void actionPerformed(ActionEvent ae) {
       sikulixIDE.setVisible(false);
       OverlayCapturePrompt prompt = new OverlayCapturePrompt(null, this);
-      prompt.prompt(SikuliIDE._I("msgCapturePrompt"), 500);
+      prompt.prompt(promptText, 500);
     }
 
     @Override
@@ -2095,6 +2114,93 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       }
       sikulixIDE.setVisible(true);
       codePane.requestFocus();
+    }
+  }
+  
+  class ButtonLocation extends ButtonSubregion implements ActionListener, EventObserver {
+    
+    public ButtonLocation() {
+      super();
+      promptText = "Select a Location";
+      buttonText = "Location";
+      iconFile = "/icons/region-icon.png";
+      buttonHint = "Select location as center of selection";
+    }
+
+    @Override
+    public void complete(OverlayCapturePrompt cp) {
+      int x, y;
+      EditorPane codePane = getCurrentCodePane();
+      ScreenImage simg = cp.getSelection();
+      cp.close();
+      if (simg != null) {
+        Rectangle roi = simg.getROI();
+        x = (int) (roi.getX() +  roi.getWidth()/2);
+        y = (int) (roi.getY() + roi.getHeight()/2);        
+        sikulixIDE.setVisible(false);
+        codePane.insertString(String.format("Location(%d, %d)", x, y));
+      }
+      sikulixIDE.setVisible(true);
+      codePane.requestFocus();
+    }
+  }
+
+  class ButtonOffset extends ButtonSubregion implements ActionListener, EventObserver {
+    
+    public ButtonOffset() {
+      super();
+      promptText = "Select an Offset";
+      buttonText = "Offset";
+      iconFile = "/icons/region-icon.png";
+      buttonHint = "Select offset as topLeft to buttomRight of selection";
+    }
+
+    @Override
+    public void complete(OverlayCapturePrompt cp) {
+      int x, y, ox, oy;
+      EditorPane codePane = getCurrentCodePane();
+      ScreenImage simg = cp.getSelection();
+      cp.close();
+      if (simg != null) {
+        Rectangle roi = simg.getROI();
+        x = (int) roi.getX();
+        y = (int) roi.getY();
+        ox = (int) roi.getWidth();
+        oy = (int) roi.getHeight();
+        sikulixIDE.setVisible(false);
+        codePane.insertString(String.format("Location(%d, %d).offset(%d, %d)", x, y, ox, oy));
+      }
+      sikulixIDE.setVisible(true);
+      codePane.requestFocus();      
+    }
+  }
+  
+  class ButtonShow extends ButtonOnToolbar implements ActionListener {
+    
+    String buttonText;
+    String iconFile;
+    String buttonHint;
+   
+    public ButtonShow() {
+      super();
+      buttonText = "Show";
+      iconFile = "/icons/region-icon.png";
+      buttonHint = "Show the item at the cursor";
+    }
+
+    public ButtonShow init() {
+      URL imageURL = SikuliIDE.class.getResource(iconFile);
+      setIcon(new ImageIcon(imageURL));
+      setText(buttonText);
+      //setMaximumSize(new Dimension(26,26));
+      setToolTipText(buttonHint);
+      addActionListener(this);
+      return this;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      Sikulix.popup("Not implemented");
     }
   }
 
