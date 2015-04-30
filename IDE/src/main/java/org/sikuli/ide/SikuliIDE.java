@@ -140,6 +140,14 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       waitBeforeVisible = 2;
     }
   }
+  
+  public static void showIDE() {
+    sikulixIDE.setVisible(true);
+  }
+
+  public static void hideIDE() {
+    sikulixIDE.setVisible(false);
+  }
 
   private SikuliIDE() {
     super("SikuliX-IDE");
@@ -1999,7 +2007,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     toolbar.add(btnSubregion);
     toolbar.add(btnLocation);
     toolbar.add(btnOffset);
-//    toolbar.add(btnShow);
+    toolbar.add(btnShow);
     toolbar.add(Box.createHorizontalGlue());
     _btnRun = new ButtonRun();
     toolbar.add(_btnRun);

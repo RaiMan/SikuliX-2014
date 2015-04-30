@@ -2,6 +2,7 @@ package org.sikuli.script;
 
 import java.io.File;
 import java.io.FileReader;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -224,6 +225,9 @@ public class Runner {
   }
 
   static JythonHelper pyRunner = null;
+  static Class cIDE;
+  static Method mShow;
+  static Method mHide;
   
   private static JythonHelper initpy() {
     JythonHelper jh = JythonHelper.get();
@@ -248,6 +252,15 @@ public class Runner {
 		} else {
 			runTime.terminate(1, "ScriptingEngine for JavaScript not available");
 		}
+    if (RunTime.Type.IDE.equals(runTime.runType)) {
+      try {
+        cIDE = Class.forName("org.sikuli.ide.SikuliIDE");
+        mHide = cIDE.getMethod("hideIDE", new Class[0]);
+        mShow = cIDE.getMethod("showIDE", new Class[0]);
+      } catch (Exception ex) {
+        log(-1, "initjs: getIDE");
+      }
+    }
 		return jsr;
 	}
 
@@ -537,9 +550,16 @@ public class Runner {
           @Override
           public void run() {
             try {
+              Runner.mHide.invoke(null, new Class[0]);
               Runner.jsRunner.eval(jsScript);
+              Runner.mShow.invoke(null, new Class[0]);
             } catch (Exception ex) {
               Runner.log(-1, "not possible:\n%s", ex);
+              try {
+              Runner.mShow.invoke(null, new Class[0]);
+              } catch (Exception e) {
+                Sikulix.terminate(901);
+              }
             }        
           }
         };
