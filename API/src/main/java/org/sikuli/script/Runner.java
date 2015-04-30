@@ -404,6 +404,10 @@ public class Runner {
     return vars;
   }
 
+  public static void runjsEval(String script) {
+    new RunBox().runjsEval(script);
+  }
+
   public static int runjs(File fScript, URL uGivenScript, String givenScriptScript, String[] args) {
     return new RunBox().runjs(fScript, uGivenScript, givenScriptScript, args);
   }
@@ -467,6 +471,8 @@ public class Runner {
 
   static class RunBox {
     
+    String jsScript;
+    
     public RunBox() {}
 
     public static int runtxt(File fScript, URL script, String scriptName, String[] args) {
@@ -511,6 +517,38 @@ public class Runner {
       return retval;
     }
 
+    public void runjsEval(String script) {
+      if (script.isEmpty()) {
+        return;
+      }
+      String initSikulix = "";
+      if (Runner.jsRunner == null) {
+        Runner.jsRunner = Runner.initjs();
+        initSikulix = Runner.prologjs(initSikulix);
+      }
+      try {
+        if (!initSikulix.isEmpty()) {
+          initSikulix = Runner.prologjs(initSikulix);
+          Runner.jsRunner.eval(initSikulix);
+        }
+        Runner.log(lvl, "JavaScript: eval: %s", script);
+        jsScript = script;
+        Thread evalThread = new Thread() {
+          @Override
+          public void run() {
+            try {
+              Runner.jsRunner.eval(jsScript);
+            } catch (Exception ex) {
+              Runner.log(-1, "not possible:\n%s", ex);
+            }        
+          }
+        };
+        evalThread.start();
+      } catch (Exception ex) {
+        Runner.log(-1, "init not possible:\n%s", ex);
+      }        
+    }
+    
     public int runjs(File fScript, URL script, String scriptName, String[] args) {
       String initSikulix = "";
       if (Runner.jsRunner == null) {
