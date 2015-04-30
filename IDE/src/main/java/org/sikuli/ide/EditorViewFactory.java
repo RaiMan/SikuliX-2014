@@ -18,7 +18,6 @@ import javax.swing.text.*;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import org.sikuli.script.Runner;
-import org.sikuli.scriptrunner.ScriptingSupport;
 
 public class EditorViewFactory implements ViewFactory {
 

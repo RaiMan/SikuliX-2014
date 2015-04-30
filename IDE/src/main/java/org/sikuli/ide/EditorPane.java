@@ -88,6 +88,8 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 					"\\b(Pattern\\s*\\(\".*?\"\\)(\\.\\w+\\([^)]*\\))+)");
 	static Pattern patRegionStr = Pattern.compile(
 					"\\b(Region\\s*\\([\\d\\s,]+\\))");
+	static Pattern patLocationStr = Pattern.compile(
+					"\\b(Location\\s*\\([\\d\\s,]+\\))");
 
 	//TODO what is it for???
 	private int _caret_last_x = -1;
@@ -739,12 +741,39 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
 	public Element getLineAtCaret(int caretPosition) {
 		Element root = getDocument().getDefaultRootElement();
+    Element result;
 		if (caretPosition == -1) {
-			return root.getElement(root.getElementIndex(getCaretPosition()));
+			result = root.getElement(root.getElementIndex(getCaretPosition()));
 		} else {
-			return root.getElement(root.getElementIndex(root.getElementIndex(caretPosition)));
+			result = root.getElement(root.getElementIndex(root.getElementIndex(caretPosition)));
 		}
+    return result;
 	}
+  
+  public String getLineTextAtCaret() {
+    Element elem = getLineAtCaret(-1);
+    Document doc = elem.getDocument();
+    Element subElem;
+    String text;
+    String line = "";
+    int start = elem.getStartOffset();
+    int end = elem.getEndOffset();
+    for (int i = 0; i < elem.getElementCount(); i++) {
+      text = "";
+      subElem = elem.getElement(i);
+      start = subElem.getStartOffset();
+      end = subElem.getEndOffset();
+      if (subElem.getName().contains("component")) {
+        text = StyleConstants.getComponent(subElem.getAttributes()).toString();
+      } else {
+        try {
+          text = doc.getText(start, end - start);
+        } catch (Exception ex) {}
+      }
+      line  += text;
+    }
+    return line.trim();
+  }
 
 	public Element getLineAtPoint(MouseEvent me) {
 		Point p = me.getLocationOnScreen();
@@ -910,7 +939,34 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		}
 	}
 
-	private int parseRange(int start, int end) {
+
+  public String parseLineText(String line) {
+    Matcher mR = patRegionStr.matcher(line);
+    String asOffset = ".asOffset()";
+    if (mR.find()) {
+      if (line.length() >= mR.end() + asOffset.length()) {
+        if (line.substring(mR.end()).contains(asOffset)) {
+          return line.substring(mR.start(), mR.end()) + asOffset;
+        }        
+      }
+      return line.substring(mR.start(), mR.end());
+    }
+    Matcher mL = patLocationStr.matcher(line);
+    if (mL.find()) {
+      return line.substring(mL.start(), mL.end());
+    }
+    Matcher mP = patPatternStr.matcher(line);
+    if (mP.find()) {
+      return line.substring(mP.start(), mP.end());
+    }
+    Matcher mI = patPngStr.matcher(line);
+    if (mI.find()) {
+      return line.substring(mI.start(), mI.end());
+    }
+    return "";
+  }
+  
+  private int parseRange(int start, int end) {
 		if (!showThumbs) {
 			// do not show any thumbnails
 			return end;

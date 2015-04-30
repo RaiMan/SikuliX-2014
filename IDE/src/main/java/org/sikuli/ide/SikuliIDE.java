@@ -1999,7 +1999,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     toolbar.add(btnSubregion);
     toolbar.add(btnLocation);
     toolbar.add(btnOffset);
-    toolbar.add(btnShow);
+//    toolbar.add(btnShow);
     toolbar.add(Box.createHorizontalGlue());
     _btnRun = new ButtonRun();
     toolbar.add(_btnRun);
@@ -2168,7 +2168,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         ox = (int) roi.getWidth();
         oy = (int) roi.getHeight();
         sikulixIDE.setVisible(false);
-        codePane.insertString(String.format("Location(%d, %d).offset(%d, %d)", x, y, ox, oy));
+        codePane.insertString(String.format("Region(%d, %d, %d, %d).asOffset()", x, y, ox, oy));
       }
       sikulixIDE.setVisible(true);
       codePane.requestFocus();      
@@ -2200,8 +2200,33 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-      Sikulix.popup("Not implemented");
-    }
+      String line = "";
+      EditorPane codePane = getCurrentCodePane();
+      line = codePane.getLineTextAtCaret();
+      String item = codePane.parseLineText(line);
+      if (!item.isEmpty()) {
+        String eval = "";
+        item = item.replaceAll("\"", "\\\"");
+        if (item.startsWith("Region")) {
+          if (item.contains(".asOffset()")) {
+            item = item.replace(".asOffset()", "");
+          }
+          eval = "Region.create" + item.substring(6) + ".highlight(2);";
+        } else if (item.startsWith("Location")) {
+          eval = "new " + item + ".grow(10).highlight(2);";
+        } else if (item.startsWith("Pattern")) {
+          eval = "m = exists(new " + item + "); if (m != null) m.highlight(2);";
+        } else if (item.startsWith("\"")) {
+          eval = "m = exists(" + item + "); if (m != null) m.highlight(2);";          
+        }
+        if (!eval.isEmpty()) {
+          Debug.logp("show: %s", eval);
+          Runner.runjsEval(eval);
+          return;
+        }
+      } 
+      Sikulix.popup("Nothing to show");
+   }
   }
 
   class ButtonRun extends ButtonOnToolbar implements ActionListener {
@@ -2226,7 +2251,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
 		public void runCurrentScript() {
 			SikuliIDE.getStatusbar().setMessage("... PLEASE WAIT ... checking IDE state before running script");
-			if (ideIsRunningScript || sikulixIDE.getCurrentCodePane().getDocument().getLength() == 0 || !sikulixIDE.doBeforeRun()) {
+			if (ideIsRunningScript 
+              || sikulixIDE.getCurrentCodePane().getDocument().getLength() == 0 
+              || !sikulixIDE.doBeforeRun()) {
 				return;
 			}
 			SikuliIDE.getStatusbar().resetMessage();

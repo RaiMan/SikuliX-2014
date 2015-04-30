@@ -1,0 +1,10 @@
+find(Pattern("icons.png").similar(0.92).targetOffset(267,0))
+highlight(-2)
+r = Region(325,153,251,149)
+r.highlight(2)
+l = Location(437, 197)
+l.grow(10).highlight(2)
+o = Region(66,70,370,130).asOffset()
+Region(66,70,370,130).highlight(2)
+img = "icons.png"
+exists(img).highlight(2)
