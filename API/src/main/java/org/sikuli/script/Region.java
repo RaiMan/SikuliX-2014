@@ -1343,6 +1343,14 @@ public class Region {
   public boolean contains(Region region) {
     return getRect().contains(region.getRect());
   }
+  
+  /**
+   * create a Location object, that can be used as an offset taking the width and hight of this Region
+   * @return a new Location object with width and height as x and y
+   */
+  public Location asOffset() {
+    return new Location(w, h);
+  }
 
   /**
    * create region with same size at top left corner offset
