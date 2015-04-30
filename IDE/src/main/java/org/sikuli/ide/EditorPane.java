@@ -939,8 +939,14 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		}
 	}
 
-
   public String parseLineText(String line) {
+    if (line.startsWith("#")) {
+      Pattern aName = Pattern.compile("#[A-Za-z0-9_]+ =");
+      Matcher mN = aName.matcher(line);
+      if (mN.find()) {
+        return line.substring(1).split(" ")[0];
+      }
+    }
     Matcher mR = patRegionStr.matcher(line);
     String asOffset = ".asOffset()";
     if (mR.find()) {

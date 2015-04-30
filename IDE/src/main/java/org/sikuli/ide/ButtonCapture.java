@@ -30,6 +30,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
   protected boolean _isCapturing;
   private boolean captureCancelled = false;
   private EditorPatternLabel _lbl = null;
+  private String givenName = "";
 
   public ButtonCapture() {
     super();
@@ -85,6 +86,10 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
     if (_isCapturing) {
       return;
     }
+    String line = "";
+    EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
+    line = codePane.getLineTextAtCaret();
+    givenName = codePane.parseLineText("#" + line.trim());
     Thread t = new Thread("capture") {
       @Override
       public void run() {
@@ -125,33 +130,41 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
       ScreenImage simg = cp.getSelection();
       String filename = null;
       EditorPane pane = SikuliIDE.getInstance().getCurrentCodePane();
+      boolean saveOverwrite = Settings.OverwriteImages;
 
       if (simg != null) {
-        int naming = PreferencesUser.getInstance().getAutoNamingMethod();
-        if (naming == PreferencesUser.AUTO_NAMING_TIMESTAMP) {
-          filename = Settings.getTimestamp();
-        } else if (naming == PreferencesUser.AUTO_NAMING_OCR) {
-          filename = PatternPaneNaming.getFilenameFromImage(simg.getImage());
-          if (filename == null || filename.length() == 0) {
-            filename = Settings.getTimestamp();
-          }
+        if (!givenName.isEmpty()) {
+          filename = givenName + ".png";
+          Settings.OverwriteImages = true;
         } else {
-          String nameOCR = "";
-          try {
-            nameOCR = PatternPaneNaming.getFilenameFromImage(simg.getImage());
-          } catch (Exception e) {
+          int naming = PreferencesUser.getInstance().getAutoNamingMethod();
+          if (naming == PreferencesUser.AUTO_NAMING_TIMESTAMP) {
+            filename = Settings.getTimestamp();
+          } else if (naming == PreferencesUser.AUTO_NAMING_OCR) {
+            filename = PatternPaneNaming.getFilenameFromImage(simg.getImage());
+            if (filename == null || filename.length() == 0) {
+              filename = Settings.getTimestamp();
+            }
+          } else {
+            String nameOCR = "";
+            try {
+              nameOCR = PatternPaneNaming.getFilenameFromImage(simg.getImage());
+            } catch (Exception e) {
+            }
+            filename = getFilenameFromUser(nameOCR);
           }
-          filename = getFilenameFromUser(nameOCR);
         }
 
         if (filename != null) {
           String fullpath = FileManager.saveImage(simg.getImage(), filename, pane.getSrcBundle());
           if (fullpath != null) {
             captureCompleted(FileManager.slashify(fullpath, false), cp);
+            Settings.OverwriteImages = saveOverwrite;
             return;
           }
         }
       }
+      Settings.OverwriteImages = saveOverwrite;
       captureCompleted(null, cp);
     }
   }

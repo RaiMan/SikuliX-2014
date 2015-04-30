@@ -2227,7 +2227,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
           eval = "m = exists(" + item + "); if (m != null) m.highlight(2);";          
         }
         if (!eval.isEmpty()) {
-          Debug.logp("show: %s", eval);
+          Debug.log(lvl, "show: %s", eval);
           Runner.runjsEval(eval);
           return;
         }
