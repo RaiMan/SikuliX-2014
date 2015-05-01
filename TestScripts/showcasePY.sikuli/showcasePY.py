@@ -13,9 +13,10 @@ Debug.on(3)
 r = ALL.wait("sxpower.png", 30)
 r.below(100).click("quickstart.png")
 
-popup("Click OK:\n- to close the browser window\n- and terminate")
 
 if RUNTIME.runningMac:
+  wait(2)
   write("#M.w")
 else:
+  popup("Click OK:\n- to close the browser window\n- and terminate")
   write("#C.w")
