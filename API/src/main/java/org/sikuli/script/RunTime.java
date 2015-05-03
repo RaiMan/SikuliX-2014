@@ -1494,6 +1494,7 @@ int nMonitors = 0;
   public String SikuliJythonMaven;
   public String SikuliJythonMaven25;
   public String SikuliJython;
+  public String SikuliJython25;
   public String SikuliJRubyVersion;
   public String SikuliJRuby;
   public String SikuliJRubyMaven;
@@ -1589,6 +1590,7 @@ int nMonitors = 0;
       SikuliJythonMaven25 = "org/python/jython-standalone/"
               + SikuliJythonVersion25 + "/jython-standalone-" + SikuliJythonVersion25 + ".jar";
       SikuliJython = SikuliLocalRepo + SikuliJythonMaven;
+      SikuliJython25 = SikuliLocalRepo + SikuliJythonMaven25;
       SikuliJRubyVersion = prop.getProperty("sikulixvjruby");
       SikuliJRubyMaven = "org/jruby/jruby-complete/"
               + SikuliJRubyVersion + "/jruby-complete-" + SikuliJRubyVersion + ".jar";

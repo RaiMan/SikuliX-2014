@@ -57,6 +57,7 @@ public class RunSetup {
   private static String downloadAPI;
   private static String downloadRServer;
   private static String downloadJython;
+  private static String downloadJython25;
   private static String downloadJRuby;
   private static String downloadJRubyAddOns;
   private static String localAPI = "sikulixapi.jar";
@@ -173,6 +174,7 @@ public class RunSetup {
     }
 
     downloadJython = new File(runTime.SikuliJythonMaven).getName();
+    downloadJython25 = new File(runTime.SikuliJythonMaven25).getName();
     downloadJRuby = new File(runTime.SikuliJRubyMaven).getName();
 
 //    CodeSource codeSrc = RunSetup.class.getProtectionDomain().getCodeSource();
@@ -715,15 +717,30 @@ public class RunSetup {
       targetJar = new File(workDir, localJython).getAbsolutePath();
       if (Settings.isJava6()) {
         logPlus(lvl, "running on Java 6: need to use Jython 2.5 - which is downloaded");
-        fDownloaded = downloadedAlready("python25", "Jython 2.5", true);
+        fDownloaded = downloadedAlready("python25", "Jython 2.5", false);
         if (fDownloaded == null) {
           fDownloaded = downloadJarFromMaven(runTime.SikuliJythonMaven25, dlDirGeneric, sDownloaded);
         }
+        downloadedFiles.replace(downloadJython, downloadJython25);
       } else {
-        sDownloadedName = new File(runTime.SikuliJythonMaven).getName();
-        fDownloaded = downloadedAlready("python", "Jython 2.7", true);
-        if (fDownloaded == null) {
-          fDownloaded = downloadJarFromMaven(runTime.SikuliJythonMaven, dlDirGeneric, sDownloaded);
+        if (popAsk("If you click YES, you will get Jython version 2.7.0 (recommended)\n"
+                + "... but there is an issue with some rare UTF-8/Unicode situations,\n"
+                + "that usually appear on startup with UTF-8 ccharacters\n"
+                + "somewhere in the system environment\n"
+                + "If you encounter such problems with Jython 2.7.0\n"
+                + "run setup again and\n"
+                + "click NO to get Jython 2.5.4rc1")) {
+          sDownloadedName = new File(runTime.SikuliJythonMaven).getName();
+          fDownloaded = downloadedAlready("python", "Jython 2.7", false);
+          if (fDownloaded == null) {
+            fDownloaded = downloadJarFromMaven(runTime.SikuliJythonMaven, dlDirGeneric, sDownloaded);
+          }
+        } else {
+          fDownloaded = downloadedAlready("python25", "Jython 2.5", false);
+          if (fDownloaded == null) {
+            fDownloaded = downloadJarFromMaven(runTime.SikuliJythonMaven25, dlDirGeneric, sDownloaded);
+          }
+          downloadedFiles = downloadedFiles.replace(downloadJython, downloadJython25);
         }
       }
       downloadOK &= copyFromDownloads(fDownloaded, sDownloaded, targetJar);
@@ -799,7 +816,6 @@ public class RunSetup {
     if (!downloadedFiles.isEmpty()) {
       logPlus(lvl, "Download ended");
       logPlus(lvl, "Downloads for selected options:\n" + downloadedFiles);
-      logPlus(lvl, "Download page: " + runTime.downloadBaseDirWeb);
     }
     if (!downloadOK) {
       popError("Some of the downloads did not complete successfully.\n"
@@ -1229,6 +1245,11 @@ public class RunSetup {
 			log(lvl, "createSetupFolder: missing: " + fJythonJar.getAbsolutePath());
 			success = false;
 		}
+		File fJythonJar25 = new File(runTime.SikuliJython25);
+		if (!noSetup && !fJythonJar25.exists()) {
+			log(lvl, "createSetupFolder: missing: " + fJythonJar.getAbsolutePath());
+      fJythonJar25 = null;
+		}
 		File fJrubyJar = new File(runTime.SikuliJRuby);
 		if (!noSetup && !fJrubyJar.exists()) {
 			log(lvl, "createSetupFolder: missing " + fJrubyJar.getAbsolutePath());
@@ -1256,6 +1277,9 @@ public class RunSetup {
 
 			if (!noSetup) {
 				success &= FileManager.xcopy(fJythonJar, new File(fDownloadsGeneric, downloadJython));
+        if (fJythonJar25 != null) {
+          FileManager.xcopy(fJythonJar25, new File(fDownloadsGeneric, downloadJython25));
+        }
 				success &= FileManager.xcopy(fJrubyJar, new File(fDownloadsGeneric, downloadJRuby));
 			}
 
