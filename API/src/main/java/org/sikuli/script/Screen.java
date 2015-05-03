@@ -502,6 +502,21 @@ public class Screen extends Region implements EventObserver, IScreen {
     }
     return ret;
   }
+  
+  public String saveCapture(String name) {
+    return saveCapture(name, null);
+  }
+  
+  public String saveCapture(String name, Region reg) {
+    ScreenImage img;
+    if (reg == null) {
+      img = userCapture("Capture for image " + name);
+    } else {
+      img = capture(reg);
+    }
+    img.saveInBundle(name);
+    return name;
+  }
 
   /**
    * interactive region create with predefined message: lets the user draw the rectangle using the

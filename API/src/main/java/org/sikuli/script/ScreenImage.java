@@ -149,10 +149,28 @@ public class ScreenImage {
 		return _filename;
 	}
 
+	public String saveInBundle(String name) {
+    if (!name.endsWith(".png")) {
+			name += ".png";
+		}
+    if (!name.startsWith("_")) {
+			name = "_" + name;
+		}
+    try {
+      File fImage = new File(ImagePath.getBundlePath(), name);
+      createFile(fImage);
+      Debug.log(3, "ScreenImage.saveInBundle:\n%s", fImage);
+    } catch (IOException iOException) {
+      Debug.error("ScreenImage.saveInBundle: IOException", iOException);
+      return null;
+    }
+    return name;
+  }
+  
 	// store image to given path if not yet stored
 	private void createFile(File tmp) throws IOException {
 		String filename = tmp.getAbsolutePath();
-		if (_filename == null || !filename.equals(_filename)) {
+		if (_filename == null || !filename.equals(_filename) || tmp.getName().startsWith("_")) {
 			ImageIO.write(_img, "png", tmp);
 			_filename = filename;
 		}

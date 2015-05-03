@@ -326,7 +326,17 @@ def capture(*args):
     else:
         return None
 
-
+def saveCapture(*args):
+    scr = ScreenUnion()
+    if len(args) == 1:
+        return scr.saveCapture(args[0])
+    elif len(args) == 2:
+        return scr.saveCapture(args[0], args[1])
+    elif len(args) == 5:
+        return scr.saveCapture(args[0], Region.create(args[1], args[2], args[3], args[4]))
+    else:
+        return None
+    
 def selectRegion(msg=None):
     if msg:
         r = ScreenUnion().selectRegion(msg)
