@@ -3251,7 +3251,7 @@ public class Region {
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
-  public <PFRML> int click(PFRML target, int modifiers) throws FindFailed {
+  public <PFRML> int click(PFRML target, Integer modifiers) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     int ret = Mouse.click(loc, InputEvent.BUTTON1_MASK, modifiers, false, this);
 
@@ -3298,7 +3298,7 @@ public class Region {
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
-  public <PFRML> int doubleClick(PFRML target, int modifiers) throws FindFailed {
+  public <PFRML> int doubleClick(PFRML target, Integer modifiers) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     int ret = Mouse.click(loc, InputEvent.BUTTON1_MASK, modifiers, true, this);
 
@@ -3344,7 +3344,7 @@ public class Region {
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
-    public <PFRML> int rightClick(PFRML target, int modifiers) throws FindFailed {
+    public <PFRML> int rightClick(PFRML target, Integer modifiers) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     int ret = Mouse.click(loc, InputEvent.BUTTON3_MASK, modifiers, false, this);
 
@@ -4028,15 +4028,15 @@ public class Region {
   }
   //</editor-fold>
   
-  public String saveCapture() {
+  public String saveScreenCapture() {
     return getScreen().capture(this).save();
   }
 
-  public String saveCapture(String path) {
+  public String saveScreenCapture(String path) {
     return getScreen().capture(this).save(path);
   }
 
-  public String saveCapture(String path, String name) {
+  public String saveScreenCapture(String path, String name) {
     return getScreen().capture(this).save(path, name);
   }
 }

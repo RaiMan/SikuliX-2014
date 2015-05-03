@@ -231,7 +231,10 @@ public class Mouse {
     }
   }
 
-  protected static int click(Location loc, int buttons, int modifiers, boolean dblClick, Region region) {
+  protected static int click(Location loc, int buttons, Integer modifiers, boolean dblClick, Region region) {
+    if (modifiers == null) {
+      modifiers = 0;
+    }
     Debug profiler = Debug.startTimer("Mouse.click");
     boolean shouldMove = true;
     if (loc == null) {
