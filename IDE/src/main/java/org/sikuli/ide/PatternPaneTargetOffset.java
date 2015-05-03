@@ -21,10 +21,11 @@ import org.sikuli.script.Region;
 import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenImage;
 
-class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWheelListener, ChangeListener {
+class PatternPaneTargetOffset extends JPanel implements 
+        MouseListener, MouseWheelListener, KeyListener, ChangeListener {
 
   final static String me = "PatternPaneTargetOffset: ";
-	final static int DEFAULT_H = 300;
+	static int DEFAULT_H;
 	final static float DEFAULT_PATTERN_RATIO = 0.4f;
 	private static final Color COLOR_BG_LINE = new Color(210, 210, 210, 130);
 	ScreenImage _simg;
@@ -38,7 +39,9 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 	private LoadingSpinner _loading;
 	private boolean _finding = true;
 
-	public PatternPaneTargetOffset(ScreenImage simg, String patFilename, Location initOffset) {
+	public PatternPaneTargetOffset(
+          ScreenImage simg, String patFilename, Location initOffset, Dimension pDim) {
+    DEFAULT_H = pDim.height - 250;
 		_simg = simg;
 		_ratio = DEFAULT_PATTERN_RATIO;
 		Rectangle r = _simg.getROI();
@@ -124,7 +127,7 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 	public void mouseWheelMoved(MouseWheelEvent e) {
 		int rot = e.getWheelRotation();
 		int patW = (int) (getWidth() * _ratio);
-		float zoomRatio = patW / (float) _img.getWidth();
+//		float zoomRatio = patW / (float) _img.getWidth();
 		int patH = (int) (_img.getHeight() * _zoomRatio);
 		if (rot < 0) {
 			if (patW < 2 * getWidth() && patH < 2 * getHeight()) {
@@ -165,7 +168,7 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 			} else {
 				paintPatternOnly(g2d);
 			}
-			paintRulers(g2d);
+//			paintRulers(g2d);
 			paintTarget(g2d);
 			synchronized (this) {
 				if (_finding) {
@@ -206,13 +209,17 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 	}
 
 	void paintMatch(Graphics2D g2d) {
-		int w = (int) (getWidth() * _ratio),
-						h = (int) ((float) w / _img.getWidth() * _img.getHeight());
-		int x = getWidth() / 2 - w / 2, y = getHeight() / 2 - h / 2;
+		int w = (int) (getWidth() * _ratio);
+		int h = (int) ((float) w / _img.getWidth() * _img.getHeight());
+		int x = getWidth() / 2 - w / 2;
+    int y = getHeight() / 2 - h / 2;
 		Color c = PatternSimilaritySlider.getScoreColor(_match.getScore());
 		g2d.setColor(c);
-		g2d.fillRect(x, y, w, h);
-		g2d.drawRect(x, y, w - 1, h - 1);
+//		g2d.fillRect(x, y, w, h);
+    Stroke savedStroke = g2d.getStroke();
+    g2d.setStroke(new BasicStroke(5));
+    g2d.drawRect(x, y, w - 1, h - 1);
+    g2d.setStroke(savedStroke);
 	}
 
 	void paintBackground(Graphics g2d) {
@@ -331,4 +338,16 @@ class PatternPaneTargetOffset extends JPanel implements MouseListener, MouseWhee
 	public Location getTargetOffset() {
 		return new Location(_offset);
 	}
+
+  @Override
+  public void keyTyped(KeyEvent e) {
+  }
+
+  @Override
+  public void keyPressed(KeyEvent e) {
+  }
+
+  @Override
+  public void keyReleased(KeyEvent e) {
+  }
 }

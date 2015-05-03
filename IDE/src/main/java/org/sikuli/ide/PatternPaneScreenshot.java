@@ -23,7 +23,7 @@ import org.sikuli.basics.Debug;
 class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentListener {
 
   private static final String me = "PatternPaneScreenshot: ";
-  final static int DEFAULT_H = 500;
+  static int DEFAULT_H;
   static int MAX_NUM_MATCHING = EditorPatternButton.DEFAULT_NUM_MATCHES;
   Region _match_region;
   int _width, _height;
@@ -47,15 +47,16 @@ class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentL
     return SikuliIDEI18N._I(key, args);
   }
 
-  public PatternPaneScreenshot(ScreenImage simg) {
-    init(simg);
+  public PatternPaneScreenshot(ScreenImage simg, Dimension pDim) {
+    init(simg, pDim);
   }
 
-  private void init(ScreenImage simg) {
+  private void init(ScreenImage simg, Dimension pDim) {
     _match_region = new ScreenUnion();
-    int w = _match_region.w, h = _match_region.h;
+    int w = _match_region.w; 
+    int h = _match_region.h;
     _ratio = (double) w / h;
-    _height = DEFAULT_H;
+    _height = pDim.height - 250;
     _scale = (double) _height / h;
     _width = (int) (w * _scale);
     setPreferredSize(new Dimension(_width, _height));

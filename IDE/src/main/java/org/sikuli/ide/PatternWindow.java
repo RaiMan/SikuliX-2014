@@ -10,10 +10,12 @@ import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
+import java.awt.GraphicsConfiguration;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.*;
 import java.io.*;
@@ -44,6 +46,7 @@ public class PatternWindow extends JFrame {
   boolean isFileOverwritten = false;
   String fileRenameOld;
   String fileRenameNew;
+  Dimension pDim;
 
   static String _I(String key, Object... args) {
 		return SikuliIDEI18N._I(key, args);
@@ -58,16 +61,26 @@ public class PatternWindow extends JFrame {
 		setTitle(_I("winPatternSettings"));
 		setDefaultCloseOperation(DO_NOTHING_ON_CLOSE);
 		_imgBtn = imgBtn;
-		Point pos = imgBtn.getLocationOnScreen();
-		Debug.log(4, "pattern window: " + pos);
-		setLocation(pos.x + imgBtn.getWidth(), pos.y);
 
 		takeScreenshot();
 		Container c = getContentPane();
 		c.setLayout(new BorderLayout());
-
-		tabPane = new JTabbedPane();
-		tabPane.setPreferredSize(new Dimension(790, 700));
+    GraphicsConfiguration gc = getGraphicsConfiguration();
+    Point pLoc;
+    if (gc == null) {
+      pDim = new Dimension(900, 700);
+      pLoc = new Point(100,100);
+    } else {
+      pDim = getGraphicsConfiguration().getBounds().getSize();
+      pDim.width *= 0.8;
+      pDim.height *= 0.85;
+      pLoc = getGraphicsConfiguration().getBounds().getLocation();
+      pLoc.translate(100, 100);
+    }
+    setLocation(pLoc);
+		c.setPreferredSize(pDim);
+    
+    tabPane = new JTabbedPane();
 		msgApplied = new JLabel[tabMax];
 
 		msgApplied[tabSequence] = new JLabel("...");
@@ -113,7 +126,7 @@ public class PatternWindow extends JFrame {
 	private JPanel createPreviewPanel() {
 		JPanel p = new JPanel();
 		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-		_screenshot = new PatternPaneScreenshot(_simg);
+		_screenshot = new PatternPaneScreenshot(_simg, pDim);
     createMarginBox(p, _screenshot);
 		p.add(Box.createVerticalStrut(5));
 		p.add(_screenshot.createControls());
@@ -127,7 +140,7 @@ public class PatternWindow extends JFrame {
 		JPanel p = new JPanel();
 		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 		_tarOffsetPane = new PatternPaneTargetOffset(
-						_simg, _imgBtn.getFilename(), _imgBtn.getTargetOffset());
+						_simg, _imgBtn.getFilename(), _imgBtn.getTargetOffset(), pDim);
 		createMarginBox(p, _tarOffsetPane);
 		p.add(Box.createVerticalStrut(5));
 		p.add(_tarOffsetPane.createControls());
