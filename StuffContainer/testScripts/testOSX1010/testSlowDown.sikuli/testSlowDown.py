@@ -9,6 +9,7 @@ for i in range(50):
   start = time.time()
   click(btnEdit)
   click("close.png")
+  wait(2)
   click(btnEdit)
   click("close.png") 
   print i, time.time()-start

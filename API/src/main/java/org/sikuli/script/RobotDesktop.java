@@ -32,7 +32,8 @@ public class RobotDesktop extends Robot implements IRobot {
   private static int heldButtons = 0;
   private static String heldKeys = "";
   private static final ArrayList<Integer> heldKeyCodes = new ArrayList<Integer>();
-  public static int stdAutoDelay = 10;
+  public static int stdAutoDelay = 0;
+  public static int stdDelay = 10;
   public static int stdMaxElapsed = 1000;
   private Screen scr = null;
   private static RunTime runTime = RunTime.get();
@@ -51,36 +52,67 @@ public class RobotDesktop extends Robot implements IRobot {
     long elapsed = new Date().getTime() - start;
     if (elapsed > maxElapsed) {
       Debug.log(0, msg, elapsed);
+      setAutoDelay(stdAutoDelay);
+      setAutoWaitForIdle(false);
     }
   }
   
   private void doMouseMove(int x, int y) {
     mouseMove(x, y);
   }
+  
+  private void fakeHighlight(boolean onOff) {
+    if (runTime.runningMac && runTime.osVersion.startsWith("10.10")) {
+      Region reg = Screen.getFakeRegion();
+      reg.silentHighlight(onOff);
+    }
+  }
 
   private void doMouseDown(int buttons) {
+    fakeHighlight(true);
     logRobot(stdAutoDelay, "MouseDown: WaitForIdle: %s - Delay: %d");
+    setAutoDelay(stdAutoDelay);
+    setAutoWaitForIdle(false);
+    delay(100);
+    fakeHighlight(false);
+    delay(100);
     mousePress(buttons);
-    delay(10);
+    if (stdAutoDelay == 0) {
+      delay(stdDelay);
+    }
     logRobot("MouseDown: extended delay: %d", stdMaxElapsed);
   }
 
   private void doMouseUp(int buttons) {
     logRobot(stdAutoDelay, "MouseUp: WaitForIdle: %s - Delay: %d");
+    setAutoDelay(stdAutoDelay);
+    setAutoWaitForIdle(false);
     mouseRelease(buttons);
-    delay(10);
+    if (stdAutoDelay == 0) {
+      delay(stdDelay);
+    }
     logRobot("MouseUp: extended delay: %d", stdMaxElapsed);
   }
 
   private void doKeyPress(int keyCode) {
     logRobot(stdAutoDelay, "KeyPress: WaitForIdle: %s - Delay: %d");
+    setAutoDelay(stdAutoDelay);
+    setAutoWaitForIdle(false);
     keyPress(keyCode);
+    if (stdAutoDelay == 0) {
+      delay(stdDelay);
+    }
     logRobot("KeyPress: extended delay: %d", stdMaxElapsed);
   }
   
   private void doKeyRelease(int keyCode) {
     logRobot(stdAutoDelay, "KeyRelease: WaitForIdle: %s - Delay: %d");
+    setAutoDelay(stdAutoDelay);
+    setAutoWaitForIdle(false);
     keyRelease(keyCode);
+    if (stdAutoDelay == 0) {
+      delay(stdDelay);
+    }
     logRobot("KeyRelease: extended delay: %d", stdMaxElapsed);
   }
   
@@ -105,6 +137,8 @@ public class RobotDesktop extends Robot implements IRobot {
 
   public RobotDesktop() throws AWTException {
     super();
+    setAutoDelay(stdAutoDelay);
+    setAutoWaitForIdle(false);
   }
 
   @Override

@@ -1936,6 +1936,16 @@ public class Region {
       highlight(true, null);
     }
   }
+  
+  protected Region silentHighlight(boolean onOff) {
+    if (onOff && overlay == null) {
+      return doHighlight(true, null, true);
+    }
+    if (!onOff && overlay != null) {
+      return doHighlight(true, null, true);
+    }
+    return this;
+  }
 
   /**
    * Toggle the regions Highlight visibility (red frame)
@@ -1973,11 +1983,17 @@ public class Region {
    * @param color Color of frame (see method highlight(color))
    */
   private Region highlight(boolean toEnable, String color) {
+    return doHighlight(toEnable, color, false);
+  }
+
+  private Region doHighlight(boolean toEnable, String color, boolean silent) {
     if (isOtherScreen()) {
       return this;
     }
-    Debug.action("toggle highlight " + toString() + ": " + toEnable +
-                (color != null ? " color: " + color : ""));
+    if (!silent) {
+      Debug.action("toggle highlight " + toString() + ": " + toEnable +
+              (color != null ? " color: " + color : ""));
+    }
     if (toEnable) {
       overlay = new ScreenHighlighter(getScreen(), color);
       overlay.highlight(this);

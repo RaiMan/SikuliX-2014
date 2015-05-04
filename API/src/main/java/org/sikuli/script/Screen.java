@@ -32,11 +32,12 @@ public class Screen extends Region implements EventObserver, IScreen {
 
   private static String me = "Screen: ";
   private static int lvl = 3;
+  private static Region fakeRegion;
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, me + message, args);
   }
 
-  private static IRobot globalRobot;
+  private static IRobot globalRobot = null;
   protected static Screen[] screens = null;
   protected static int primaryScreen = -1;
   private static int waitForScreenshot = 300;
@@ -74,14 +75,7 @@ public class Screen extends Region implements EventObserver, IScreen {
       screens[i] = new Screen(i, true);
       screens[i].initScreen();
     }
-    try {
-      log(lvl+1, "initScreens: getting mouseRobot");
-      globalRobot = new RobotDesktop();
-      globalRobot.setAutoDelay(RobotDesktop.stdAutoDelay);
-    } catch (AWTException e) {
-      Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
-      Sikulix.terminate(999);
-    }
+    globalRobot = getMouseRobot();
     Mouse.init();
     Keys.init();
     if (getNumberScreens() > 1) {
@@ -107,7 +101,20 @@ public class Screen extends Region implements EventObserver, IScreen {
   }
 
   protected static IRobot getMouseRobot() {
+    try {
+      if (globalRobot == null) {
+        globalRobot = new RobotDesktop();
+        fakeRegion = new Region(0,0,5,5);
+      }
+    } catch (AWTException e) {
+      Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
+      Sikulix.terminate(999);
+    }
     return globalRobot;
+  }
+  
+  protected static Region getFakeRegion() {
+    return fakeRegion;
   }
   
   /**
