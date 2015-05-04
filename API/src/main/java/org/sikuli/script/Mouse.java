@@ -242,12 +242,7 @@ public class Mouse {
       loc = at();
     }
     IRobot r = null;
-//    r = Screen.getMouseRobot();
-    try {
-      r = new RobotDesktop();
-    } catch (Exception ex) {
-      log(-1, "click: no Robot available");
-    }
+    r = Screen.getMouseRobot();
     if (r == null) {
       profiler.end();
       return 0;
