@@ -66,19 +66,18 @@ public class PatternWindow extends JFrame {
 		Container c = getContentPane();
 		c.setLayout(new BorderLayout());
     GraphicsConfiguration gc = getGraphicsConfiguration();
-    Point pLoc;
+    int pOff = 50;
+    Point pLoc  = new Point(pOff, pOff);
     if (gc == null) {
       pDim = new Dimension(900, 700);
-      pLoc = new Point(100,100);
     } else {
       pDim = getGraphicsConfiguration().getBounds().getSize();
-      pDim.width *= 0.8;
-      pDim.height *= 0.85;
+      pDim.width = (int) ((pDim.width - 2 * pOff) * 0.95);
+      pDim.height = (int) ((pDim.height - 2 * pOff) * 0.95);
       pLoc = getGraphicsConfiguration().getBounds().getLocation();
-      pLoc.translate(100, 100);
+      pLoc.translate(pOff, pOff);
     }
-    setLocation(pLoc);
-		c.setPreferredSize(pDim);
+    setPreferredSize(pDim);
     
     tabPane = new JTabbedPane();
 		msgApplied = new JLabel[tabMax];
@@ -109,6 +108,7 @@ public class PatternWindow extends JFrame {
 		}
 		setDirty(false);
     currentPane = SikuliIDE.getInstance().getCurrentCodePane();
+    setLocation(pLoc);
 		setVisible(true);
 	}
 

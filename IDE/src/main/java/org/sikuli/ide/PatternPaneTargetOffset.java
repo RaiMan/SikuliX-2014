@@ -22,11 +22,11 @@ import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenImage;
 
 class PatternPaneTargetOffset extends JPanel implements 
-        MouseListener, MouseWheelListener, KeyListener, ChangeListener {
+        MouseListener, MouseWheelListener, ChangeListener {
 
   final static String me = "PatternPaneTargetOffset: ";
-	static int DEFAULT_H;
-	final static float DEFAULT_PATTERN_RATIO = 0.4f;
+	static int DEFAULT_H = 120;
+	final static float DEFAULT_PATTERN_RATIO = 0.1f;
 	private static final Color COLOR_BG_LINE = new Color(210, 210, 210, 130);
 	ScreenImage _simg;
 	BufferedImage _img;
@@ -41,12 +41,9 @@ class PatternPaneTargetOffset extends JPanel implements
 
 	public PatternPaneTargetOffset(
           ScreenImage simg, String patFilename, Location initOffset, Dimension pDim) {
-    DEFAULT_H = pDim.height - 250;
 		_simg = simg;
 		_ratio = DEFAULT_PATTERN_RATIO;
-		Rectangle r = _simg.getROI();
-		int w = DEFAULT_H / r.height * r.width;
-		setPreferredSize(new Dimension(w, DEFAULT_H));
+		setPreferredSize(new Dimension(pDim.width, pDim.height - DEFAULT_H));
 
 		addMouseListener(this);
 		addMouseWheelListener(this);
@@ -190,8 +187,10 @@ class PatternPaneTargetOffset extends JPanel implements
 		if (_viewX < 0 || _viewY < 0) {
 			paintBackground(g2d);
 		}
-		int subX = _viewX < 0 ? 0 : _viewX, subY = _viewY < 0 ? 0 : _viewY;
-		int subW = _viewW - (subX - _viewX), subH = _viewH - (subY - _viewY);
+		int subX = _viewX < 0 ? 0 : _viewX;
+    int subY = _viewY < 0 ? 0 : _viewY;
+		int subW = _viewW - (subX - _viewX); 
+    int subH = _viewH - (subY - _viewY);
 		BufferedImage img = _simg.getImage();
 		if (subX + subW >= img.getWidth()) {
 			subW = img.getWidth() - subX;
@@ -305,7 +304,7 @@ class PatternPaneTargetOffset extends JPanel implements
 
 	public JComponent createControls() {
 		JPanel pane = new JPanel(new GridBagLayout());
-		JLabel lblTargetX = new JLabel(_I("lblTargetOffsetX"));
+		JLabel lblX = new JLabel(_I("lblTargetOffsetX"));
 		JLabel lblY = new JLabel(_I("lblTargetOffsetY"));
 
 		int x = _offset != null ? _offset.x : 0;
@@ -319,7 +318,7 @@ class PatternPaneTargetOffset extends JPanel implements
 
 		c.fill = 1;
 		c.gridy = 0;
-		pane.add(lblTargetX, c);
+		pane.add(lblX, c);
 		pane.add(txtX, c);
 		pane.add(lblY, c);
 		pane.add(txtY, c);
@@ -338,16 +337,4 @@ class PatternPaneTargetOffset extends JPanel implements
 	public Location getTargetOffset() {
 		return new Location(_offset);
 	}
-
-  @Override
-  public void keyTyped(KeyEvent e) {
-  }
-
-  @Override
-  public void keyPressed(KeyEvent e) {
-  }
-
-  @Override
-  public void keyReleased(KeyEvent e) {
-  }
 }
