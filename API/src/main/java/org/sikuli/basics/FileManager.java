@@ -324,7 +324,7 @@ public class FileManager {
   }
 
   public static String downloadURLtoString(URL uSrc) {
-    String content = null;
+    String content = "";
     InputStream reader = null;
     log(lvl, "download to string from:\n%s,", uSrc);
     try {
@@ -340,7 +340,6 @@ public class FileManager {
       }
     } catch (Exception ex) {
       log(-1, "problems while downloading\n" + ex.getMessage());
-      content = null;
     } finally {
       if (reader != null) {
         try {
