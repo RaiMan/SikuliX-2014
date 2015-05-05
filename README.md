@@ -1,6 +1,8 @@
 [![RaiMan's Stuff](https://raw.github.com/RaiMan/SikuliX-2014-Docs/master/src/main/resources/docs/source/RaiManStuff64.png)](http://www.sikuli.org) SikuliX-2014 (version 1.1.x)
 ============
 
+[![Join the chat at https://gitter.im/RaiMan/SikuliX-2014](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RaiMan/SikuliX-2014?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 1.1.0 final is under development
 -----------------
 The followup is SikuliX2 [version 2.0.0 in 2015](https://github.com/RaiMan/SikuliX2) 
