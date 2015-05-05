@@ -38,9 +38,11 @@ class PatternPaneTargetOffset extends JPanel implements
 	JSpinner txtX, txtY;
 	private LoadingSpinner _loading;
 	private boolean _finding = true;
+  private JLabel _msgApplied;
 
 	public PatternPaneTargetOffset(
-          ScreenImage simg, String patFilename, Location initOffset, Dimension pDim) {
+          ScreenImage simg, String patFilename, Location initOffset, Dimension pDim, JLabel msgApplied) {
+    _msgApplied = msgApplied;
 		_simg = simg;
 		_ratio = DEFAULT_PATTERN_RATIO;
 		setPreferredSize(new Dimension(pDim.width, pDim.height - DEFAULT_H));
@@ -161,10 +163,10 @@ class PatternPaneTargetOffset extends JPanel implements
 			if (_match != null) {
 				zoomToMatch();
 				paintSubScreen(g2d);
-				paintMatch(g2d);
 			} else {
 				paintPatternOnly(g2d);
 			}
+      paintMatch(g2d);
 //			paintRulers(g2d);
 			paintTarget(g2d);
 			synchronized (this) {
@@ -212,7 +214,7 @@ class PatternPaneTargetOffset extends JPanel implements
 		int h = (int) ((float) w / _img.getWidth() * _img.getHeight());
 		int x = getWidth() / 2 - w / 2;
     int y = getHeight() / 2 - h / 2;
-		Color c = PatternSimilaritySlider.getScoreColor(_match.getScore());
+		Color c = PatternSimilaritySlider.getScoreColor((_match == null ? 1.0 : _match.getScore()));
 		g2d.setColor(c);
 //		g2d.fillRect(x, y, w, h);
     Stroke savedStroke = g2d.getStroke();
@@ -316,12 +318,13 @@ class PatternPaneTargetOffset extends JPanel implements
 
 		GridBagConstraints c = new GridBagConstraints();
 
-		c.fill = 1;
+		c.fill = GridBagConstraints.BOTH;
 		c.gridy = 0;
 		pane.add(lblX, c);
 		pane.add(txtX, c);
 		pane.add(lblY, c);
 		pane.add(txtY, c);
+    pane.add(_msgApplied, c);
 
 		return pane;
 

@@ -15,12 +15,9 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.Window;
 import java.awt.event.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
 import javax.swing.*;
 import org.sikuli.script.Location;
 import org.sikuli.script.ScreenImage;
@@ -81,19 +78,23 @@ public class PatternWindow extends JFrame {
     
     tabPane = new JTabbedPane();
 		msgApplied = new JLabel[tabMax];
-
-		msgApplied[tabSequence] = new JLabel("...");
-		paneNaming = new PatternPaneNaming(_imgBtn, msgApplied[tabSequence++]);
+    
+		tabSequence = 0;
+		JLabel aMsg = msgApplied[tabSequence] = new JLabel();
+    setMessageApplied(tabSequence, false);
+		paneNaming = new PatternPaneNaming(_imgBtn, aMsg);
 		tabPane.addTab(_I("tabNaming"), paneNaming);
-
-		msgApplied[tabSequence] = new JLabel("...");
+    
+		tabSequence++;
+		msgApplied[tabSequence] = new JLabel();
+    setMessageApplied(tabSequence, false);
 		panePreview = createPreviewPanel();
-		tabSequence++;
 		tabPane.addTab(_I("tabMatchingPreview"), panePreview);
-
-		msgApplied[tabSequence] = new JLabel("...");
-		paneTarget = createTargetPanel();
+    
 		tabSequence++;
+		msgApplied[tabSequence] = new JLabel();
+    setMessageApplied(tabSequence, false);
+		paneTarget = createTargetPanel();
 		tabPane.addTab(_I("tabTargetOffset"), paneTarget);
 
 		c.add(tabPane, BorderLayout.CENTER);
@@ -126,12 +127,12 @@ public class PatternWindow extends JFrame {
 	private JPanel createPreviewPanel() {
 		JPanel p = new JPanel();
 		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
-		_screenshot = new PatternPaneScreenshot(_simg, pDim);
+		_screenshot = new PatternPaneScreenshot(_simg, pDim, msgApplied[tabSequence]);
     createMarginBox(p, _screenshot);
 		p.add(Box.createVerticalStrut(5));
 		p.add(_screenshot.createControls());
-		p.add(Box.createVerticalStrut(5));
-		p.add(msgApplied[tabSequence]);
+//		p.add(Box.createVerticalStrut(5));
+//		p.add(msgApplied[tabSequence]);
 		p.doLayout();
 		return p;
 	}
@@ -140,12 +141,10 @@ public class PatternWindow extends JFrame {
 		JPanel p = new JPanel();
 		p.setLayout(new BoxLayout(p, BoxLayout.Y_AXIS));
 		_tarOffsetPane = new PatternPaneTargetOffset(
-						_simg, _imgBtn.getFilename(), _imgBtn.getTargetOffset(), pDim);
+						_simg, _imgBtn.getFilename(), _imgBtn.getTargetOffset(), pDim, msgApplied[tabSequence]);
 		createMarginBox(p, _tarOffsetPane);
 		p.add(Box.createVerticalStrut(5));
 		p.add(_tarOffsetPane.createControls());
-		p.add(Box.createVerticalStrut(5));
-		p.add(msgApplied[tabSequence]);
 		p.doLayout();
 		return p;
 	}
@@ -200,9 +199,11 @@ public class PatternWindow extends JFrame {
 
 	public void setMessageApplied(int i, boolean flag) {
 		if (flag) {
-			msgApplied[i].setText("Changes have been applied");
+      for (JLabel m : msgApplied) {
+        m.setText("     (changed)");
+      }
 		} else {
-			msgApplied[i].setText("...");
+			msgApplied[i].setText("     (          )");
 		}
 	}
 

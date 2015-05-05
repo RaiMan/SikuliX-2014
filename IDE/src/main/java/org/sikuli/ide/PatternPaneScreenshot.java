@@ -46,17 +46,19 @@ class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentL
   static String _I(String key, Object... args) {
     return SikuliIDEI18N._I(key, args);
   }
+  private JLabel _msgApplied;
 
-  public PatternPaneScreenshot(ScreenImage simg, Dimension pDim) {
-    init(simg, pDim);
+  public PatternPaneScreenshot(ScreenImage simg, Dimension pDim, JLabel msgApplied) {
+    init(simg, pDim, msgApplied);
   }
 
-  private void init(ScreenImage simg, Dimension pDim) {
+  private void init(ScreenImage simg, Dimension pDim, JLabel msgApplied) {
+    _msgApplied = msgApplied;
     _match_region = new ScreenUnion();
     int w = _match_region.w; 
     int h = _match_region.h;
     _ratio = (double) w / h;
-    _height = pDim.height - 250;
+    _height = pDim.height - 200;
     _scale = (double) _height / h;
     _width = (int) (w * _scale);
     setPreferredSize(new Dimension(_width, _height));
@@ -72,6 +74,7 @@ class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentL
     JPanel pane = new JPanel(new GridBagLayout());
     btnSimilar = new JLabel(_I("lblSimilarity"));
     sldSimilar = createSlider();
+    sldSimilar.setPreferredSize(new Dimension(250, 35));
 
     /*
      JLabel lblPreNumMatches = new JLabel(_I("lblNumberOfMatches"));
@@ -87,9 +90,10 @@ class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentL
     GridBagConstraints c = new GridBagConstraints();
 
     c.fill = GridBagConstraints.BOTH;
-    c.gridwidth = GridBagConstraints.REMAINDER;
-    pane.add(btnSimilar, c);
+    c.gridy = 0;
     pane.add(sldSimilar, c);
+    pane.add(btnSimilar, c);
+    pane.add(_msgApplied, c);
 
 //TODO num Matches needed?
 /*		c.fill = 0;
@@ -115,9 +119,9 @@ class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentL
     sldSimilar.setPaintTicks(true);
 
     Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-    labelTable.put(new Integer(0), new JLabel("0.0"));
-    labelTable.put(new Integer(50), new JLabel("0.5"));
-    labelTable.put(new Integer(100), new JLabel("0.99"));
+    labelTable.put(new Integer(0), new JLabel("00"));
+    labelTable.put(new Integer(50), new JLabel("50"));
+    labelTable.put(new Integer(100), new JLabel("99"));
     sldSimilar.setLabelTable(labelTable);
     sldSimilar.setPaintLabels(true);
 

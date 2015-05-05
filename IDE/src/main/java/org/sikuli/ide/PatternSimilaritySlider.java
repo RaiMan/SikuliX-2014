@@ -48,7 +48,7 @@ class PatternSimilaritySlider extends JSlider {
 
 	public void showValue(JLabel lbl, int val) {
 		float sim = val > 99 ? 0.99f : (float) val / 100;
-		String txt = String.format("Similarity: %.2f", sim);
+		String txt = String.format("   ( %.2f )", sim);
 		lbl.setText(txt);
 		lbl.repaint();
 	}
