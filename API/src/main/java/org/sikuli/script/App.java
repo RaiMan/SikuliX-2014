@@ -43,7 +43,7 @@ public class App {
 
   protected static final OSUtil _osUtil = SysUtil.getOSUtil();
   protected String _appName;
-  protected int _pid;
+  protected int _pid = -1;
   private static final Map<Type, String> appsWindows; 
   private static final Map<Type, String> appsMac;
   private static final Region aRegion = new Region();
@@ -148,6 +148,10 @@ public class App {
       seconds -= 0.5;
     }
     return win;
+  }
+  
+  public int getPID() {
+    return _pid;
   }
   
   public static boolean openLink(String url) {
