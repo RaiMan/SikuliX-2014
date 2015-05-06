@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.io.Reader;
 import java.io.StringReader;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.util.HashMap;
@@ -41,9 +40,11 @@ public class App {
   
   static RunTime runTime = RunTime.get();
 
-  protected static final OSUtil _osUtil = SysUtil.getOSUtil();
-  protected String _appName;
-  protected int _pid = -1;
+  private static final OSUtil _osUtil = SysUtil.getOSUtil();
+  private String appNameGiven;
+  private String appName;
+  private String appWindow;
+  private int appPID;
   private static final Map<Type, String> appsWindows; 
   private static final Map<Type, String> appsMac;
   private static final Region aRegion = new Region();
@@ -150,10 +151,6 @@ public class App {
     return win;
   }
   
-  public int getPID() {
-    return _pid;
-  }
-  
   public static boolean openLink(String url) {
     if (!Desktop.isDesktopSupported()) {
       return false;
@@ -174,29 +171,176 @@ public class App {
     }
   }
 
+  static class AppEntry {
+    public String name;
+    public String window;
+    public int pid;
+    
+    public AppEntry(String theName, String thePID, String theWindow) {
+      name = theName;
+      window = theWindow;
+      pid = -1;
+      try {
+        pid = Integer.parseInt(thePID);
+      } catch (Exception ex) {}
+    }
+  }
+
 	/**
 	 * creates an instance for an app with this name
 	 * (nothing done yet)
 	 *
-	 * @param appName name
+	 * @param name name
 	 */
-	public App(String appName) {
-    _appName = appName;
-    _pid = 0;
+	public App(String name) {
+    appNameGiven = name;
+    appName = name;
+    appPID = -1;
+    appWindow = "";
+    AppEntry app = getApp(appNameGiven);
+    if (app != null) {
+      appName = app.name;
+      appPID = app.pid;
+      appWindow = app.window;
+    }
   }
 
-  protected App(String appName, int pid) {
-    _appName = appName;
-    _pid = pid;
+  public App(int pid) {
+    appNameGiven = "FromPID";
+    appName = "";
+    appPID = pid;
+    appWindow = "";
+    init(pid);
   }
-
+  
+  private void init(int pid) {
+    AppEntry app = getApp(pid);
+    if (app != null) {
+      appName = app.name;
+      appPID = app.pid;
+      appWindow = app.window;
+    }    
+  }
+  
+  private static Map<String, AppEntry> getApps() {
+    Map<String, AppEntry> apps = new HashMap<String, AppEntry>();
+    if (runTime.runningWindows) {
+      String cmd = cmd = "!tasklist /V /FO CSV /NH /FI \"SESSIONNAME eq Console\"";
+      String result = runTime.runcmd(cmd);
+      String[] lines = result.split("\r\n");
+      if ("0".equals(lines[0].trim())) {
+        for (int nl = 1; nl < lines.length; nl++) {
+          String[] parts = lines[nl].split("\"");
+          String theWindow = parts[parts.length - 1];
+          if (theWindow.trim().startsWith("N/A")) {
+            continue;
+          }
+          apps.put(parts[1], new AppEntry(parts[1], parts[3] , theWindow));
+        }
+      } else {
+        Debug.logp(result);
+      }
+    }
+    return apps;
+  }
+  
+  private static AppEntry getApp(Object filter) {
+    AppEntry app = null;
+    String name = "";
+    int pid = -1;
+    if (filter instanceof String) {
+      name = (String) filter;
+    } else if (filter instanceof Integer) {
+      pid = (Integer) filter;
+    } else {
+      return app;
+    }
+    if (runTime.runningWindows) {
+      String cmd = cmd = "!tasklist /V /FO CSV /NH /FI \"SESSIONNAME eq Console\"";
+      String result = runTime.runcmd(cmd);
+      String[] lines = result.split("\r\n");
+      if ("0".equals(lines[0].trim())) {
+        for (int nl = 1; nl < lines.length; nl++) {
+          String[] parts = lines[nl].split("\"");
+          String theWindow = parts[parts.length - 1];
+          String theName = parts[1];
+          String thePID = parts[3];
+          if (theWindow.trim().startsWith("N/A")) {
+            continue;
+          }
+          if (!name.isEmpty()) {
+            if (theName.toUpperCase().contains(name.toUpperCase()) ||
+                    theWindow.contains(name)) {
+              return new AppEntry(theName, thePID , theWindow);
+            }
+          } else {
+            try {
+              if (Integer.parseInt(thePID) == pid) {
+                return new AppEntry(theName, thePID , theWindow);
+              }
+            } catch (Exception ex) {}
+          }
+        }
+      } else {
+        Debug.logp(result);
+      }
+    }
+    return app;
+  }
+  
+  public int getPID() {
+    return appPID;
+  }
+  
+  public String getName() {
+    return appName;
+  }
+  
+  public String getWindow() {
+    return appWindow;
+  }
+  
 	/**
 	 * creates an instance for an app with this name and tries to open it
 	 * @param appName name
 	 * @return the App instance or null on failure
 	 */
 	public static App open(String appName) {
-    return (new App(appName)).open();
+    App theApp = new App(appName);
+    if (theApp.appPID > -1) {
+      return theApp;
+    }
+    return theApp.open();
+  }
+
+	/**
+	 * tries to open the app defined by this App instance
+	 * @return this or null on failure
+	 */
+	public App open() {
+    if (!runTime.runningMac) {
+      if (appPID == -1) {
+        int pid = _osUtil.open(appNameGiven);
+        if (pid == 0) {
+          Debug.error("App.open failed: " + appNameGiven + " not found");
+          return null;
+        }
+        appPID = pid;
+      }
+      init(appPID);
+    } else {
+      if (runTime.runningMacApp && runTime.osVersion.startsWith("10.10.")) {
+        if (Runner.runas(String.format("tell app \"%s\" to activate", appNameGiven)) < 0) {
+          return null;
+        }
+      }
+      if (_osUtil.open(appNameGiven) < 0) {
+        Debug.error("App.open failed: " + appNameGiven + " not found");
+        return null;
+      }
+    }
+    Debug.action("App.open " + this.toString());
+    return this;
   }
 
 	/**
@@ -206,7 +350,24 @@ public class App {
 	 * @return 0 for success -1 otherwise
 	 */
 	public static int close(String appName) {
-    return _osUtil.closeApp(appName);
+    int ret = _osUtil.close(appName);
+    return ret;
+  }
+
+	/**
+	 * tries to close the app defined by this App instance
+	 * @return this or null on failure
+	 */
+	public int close() {
+    Debug.action("App.close " + this.toString());
+    if (appPID > -1) {
+      int ret = _osUtil.close(appPID);
+      if (ret >= 0) {
+        appPID = -1;
+        return ret;
+      }
+    }
+    return close(appNameGiven);
   }
 
 	/**
@@ -240,6 +401,9 @@ public class App {
 	 * @return the App instance or null on failure
 	 */
 	public App focus() {
+    if (appPID > -1) {
+      init(appPID);
+    }
     return focus(0);
   }
 
@@ -251,81 +415,30 @@ public class App {
 	 */
   public App focus(int num) {
     Debug.action("App.focus " + this.toString() + " #" + num);
-    if (_pid != 0) {
-      if (_osUtil.switchApp(_pid, num) == 0) {
-        Debug.error("App.focus failed: " + _appName
-                + "(" + _pid + ") not found");
+    if (appPID != 0) {
+      if (_osUtil.switchto(appPID, num) == 0) {
+        Debug.error("App.focus failed: " + appNameGiven
+                + "(" + appPID + ") not found");
         return null;
       }
     } else {
       boolean failed = false;
       if (Settings.isWindows()) {
-        _pid = _osUtil.switchApp(_appName, num);
-        if (_pid == 0) {
+        appPID = _osUtil.switchto(appNameGiven, num);
+        if (appPID == 0) {
           failed = true;
         }
       } else {
-        if (_osUtil.switchApp(_appName, num) < 0) {
+        if (_osUtil.switchto(appNameGiven, num) < 0) {
           failed = true;
         }
       }
       if (failed) {
-        Debug.error("App.focus failed: " + _appName + " not found");
+        Debug.error("App.focus failed: " + appNameGiven + " not found");
         return null;
       }
     }
     return this;
-  }
-
-	/**
-	 * tries to open the app defined by this App instance
-	 * @return this or null on failure
-	 */
-	public App open() {
-    if (!runTime.runningMac) {
-      int pid = _osUtil.openApp(_appName);
-      _pid = pid;
-      Debug.action("App.open " + this.toString());
-      if (pid == 0) {
-        Debug.error("App.open failed: " + _appName + " not found");
-        return null;
-      }
-    } else {
-      Debug.action("App.open " + this.toString());
-      if (runTime.runningMacApp && runTime.osVersion.startsWith("10.10.")) {
-        if (Runner.runas(String.format("tell app \"%s\" to activate", _appName)) < 0) {
-          return null;
-        }
-      }
-      if (_osUtil.openApp(_appName) < 0) {
-        Debug.error("App.open failed: " + _appName + " not found");
-        return null;
-      }
-    }
-    return this;
-  }
-
-	/**
-	 * tries to close the app defined by this App instance
-	 * @return this or null on failure
-	 */
-	public int close() {
-    Debug.action("App.close " + this.toString());
-    if (_pid != 0) {
-      int ret = _osUtil.closeApp(_pid);
-      if (ret >= 0) {
-        return ret;
-      }
-    }
-    return close(_appName);
-  }
-
-	/**
-	 * the app's name as defined by this App instance
-	 * @return the name
-	 */
-	public String name() {
-    return _appName;
   }
 
 	/**
@@ -336,10 +449,10 @@ public class App {
 	 * @return the region
 	 */
 	public Region window() {
-    if (_pid != 0) {
-      return asRegion(_osUtil.getWindow(_pid));
+    if (appPID != 0) {
+      return asRegion(_osUtil.getWindow(appPID));
     }
-    return asRegion(_osUtil.getWindow(_appName));
+    return asRegion(_osUtil.getWindow(appNameGiven));
   }
 
 	/**
@@ -351,10 +464,10 @@ public class App {
 	 * @return the region
 	 */
   public Region window(int winNum) {
-    if (_pid != 0) {
-      return asRegion(_osUtil.getWindow(_pid, winNum));
+    if (appPID != 0) {
+      return asRegion(_osUtil.getWindow(appPID, winNum));
     }
-    return asRegion(_osUtil.getWindow(_appName, winNum));
+    return asRegion(_osUtil.getWindow(appNameGiven, winNum));
   }
 
 	/**
@@ -395,7 +508,7 @@ public class App {
 
   @Override
   public String toString() {
-    return _appName + "(" + _pid + ")";
+    return String.format("%s [%d:%s (%s)]", appNameGiven, appPID, appName, appWindow);
   }
 
 	private static class Clipboard {

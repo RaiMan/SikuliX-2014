@@ -40,28 +40,7 @@ public class LinuxUtil implements OSUtil {
 	}
 
   @Override
-  public int switchApp(String appName, int winNum) {
-		if (!wmctrlIsAvail("switchApp")) {
-			return -1;
-		}
-    try {
-      String cmd[] = {"wmctrl", "-a", appName};
-      Process p = Runtime.getRuntime().exec(cmd);
-      p.waitFor();
-      return p.exitValue();
-    } catch (Exception e) {
-      System.out.println("[error] switchApp:\n" + e.getMessage());
-      return -1;
-    }
-  }
-
-  @Override
-  public int switchApp(String appName) {
-    return switchApp(appName, 0);
-  }
-
-  @Override
-  public int openApp(String appName) {
+  public int open(String appName) {
     try {
       String cmd[] = {"sh", "-c", "(" + appName + ") &\necho -n $!"};
       Process p = Runtime.getRuntime().exec(cmd);
@@ -81,7 +60,28 @@ public class LinuxUtil implements OSUtil {
   }
 
   @Override
-  public int closeApp(String appName) {
+  public int switchto(String appName, int winNum) {
+		if (!wmctrlIsAvail("switchApp")) {
+			return -1;
+		}
+    try {
+      String cmd[] = {"wmctrl", "-a", appName};
+      Process p = Runtime.getRuntime().exec(cmd);
+      p.waitFor();
+      return p.exitValue();
+    } catch (Exception e) {
+      System.out.println("[error] switchApp:\n" + e.getMessage());
+      return -1;
+    }
+  }
+
+  @Override
+  public int switchto(String appName) {
+    return switchto(appName, 0);
+  }
+
+  @Override
+  public int close(String appName) {
     try {
       String cmd[] = {"killall", appName};
       Process p = Runtime.getRuntime().exec(cmd);
@@ -231,7 +231,7 @@ public class LinuxUtil implements OSUtil {
   }
 
   @Override
-  public int closeApp(int pid) {
+  public int close(int pid) {
 		if (!wmctrlIsAvail("closeApp")) {
 			return -1;
 		}
@@ -251,7 +251,7 @@ public class LinuxUtil implements OSUtil {
   }
 
   @Override
-  public int switchApp(int pid, int num) {
+  public int switchto(int pid, int num) {
 		if (!wmctrlIsAvail("switchApp")) {
 			return -1;
 		}

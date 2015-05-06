@@ -534,13 +534,14 @@ public class Debug {
    */
   public static void action(String message, Object... args) {
     if (Settings.ActionLogs) {
-			if (doRedirect(CallbackType.ACTION, "", message, args)) {
-				return;
-			}
-      log(-1, actionPrefix, message, args);
-    }
-    if (is(3)) {
-      logx(3, message, args);
+      if (doRedirect(CallbackType.ACTION, "", message, args)) {
+        return;
+      }
+      if (is(3)) {
+        logx(3, message, args);
+      } else {
+        log(-1, actionPrefix, message, args);
+      }
     }
   }
 

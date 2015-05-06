@@ -140,6 +140,23 @@ public class Sikulix {
       System.exit(1);
     }
     
+    //******Test Space*************************************
+    App test;
+//    test = new App("chrome");
+//    Debug.logp("%s", test);
+//    test = new App(7112);
+//    Debug.logp("%s", test);
+    App.close("notepad");
+    System.exit(1);
+    test = new App("notepad");
+    Debug.logp("******************* %s", test);
+    test.open();
+    Debug.logp("******************* %s", test);
+    test.close();
+    test.close();
+    System.exit(1);
+    //*********************************
+    
     Debug.on(3);
     Settings.InfoLogs = false;
     Settings.ActionLogs = false;

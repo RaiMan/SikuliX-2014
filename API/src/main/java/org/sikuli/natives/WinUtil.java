@@ -11,29 +11,49 @@ import java.awt.Window;
 
 public class WinUtil implements OSUtil {
 
-	@Override
-	public String getLibName() {
-		return "WinUtil";
-	}
+  @Override
+  public String getLibName() {
+    return "WinUtil";
+  }
 
   @Override
-  public int switchApp(String appName) {
+  public int open(String appName) {
+    return openApp(appName);
+  }
+
+  @Override
+  public int switchto(String appName) {
     return switchApp(appName, 0);
   }
 
   @Override
+  public int switchto(String appName, int winNum) {
+    return switchApp(appName, winNum);
+  }
+
+  @Override
+  public int switchto(int pid, int num) {
+    return switchApp(pid, num);
+  }
+
+  @Override
+  public int close(String appName) {
+    return closeApp(appName);
+  }
+
+  @Override
+  public int close(int pid) {
+    return closeApp(pid);
+  }
+
   public native int switchApp(String appName, int num);
 
-  @Override
   public native int switchApp(int pid, int num);
 
-  @Override
   public native int openApp(String appName);
 
-  @Override
   public native int closeApp(String appName);
 
-  @Override
   public native int closeApp(int pid);
 
   @Override

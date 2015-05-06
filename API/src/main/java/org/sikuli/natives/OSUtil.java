@@ -15,22 +15,22 @@ public interface OSUtil {
 
 	public String getLibName();
 	
-	public int openApp(String appName);
+	public int open(String appName);
 
   // Windows: returns PID, 0 if fails
   // Others: return 0 if succeeds, -1 if fails
-  public int switchApp(String appName);
+  public int switchto(String appName);
 
-  public int switchApp(String appName, int winNum);
+  public int switchto(String appName, int winNum);
 
   //internal use
-  public int switchApp(int pid, int num);
+  public int switchto(int pid, int num);
 
   // returns 0 if succeeds, -1 if fails
-  public int closeApp(String appName);
+  public int close(String appName);
 
   //internal use
-  public int closeApp(int pid);
+  public int close(int pid);
 
   public Rectangle getWindow(String appName);
 

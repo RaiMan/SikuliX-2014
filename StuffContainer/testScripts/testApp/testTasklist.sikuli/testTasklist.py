@@ -1,32 +1,30 @@
 Debug.off()
-dir = r"c:\program files (x86)\notepad++" + "\\"
-pgm = "notepad++.exe"
-
-# the app should not run yet
-# open app and get pid (process id)
-appNP = App.open(dir + pgm)
-pidNP = int(str(appNP).split("(")[-1].replace(")", ""))
-print "Notepad PID:", pidNP
-wait(3) # somwhow wait until the window is ready
-
-switchApp("Google Chrome")
-wait(1)
-type("t", Key.CTRL)
-wait(1)
-
-appNP.focus()
-wait(1)
-type("t", Key.CTRL)
-wait(3)
 
 # use the tasklist command to get details about the app
-cmd = 'tasklist /v /FO LIST /FI "IMAGENAME eq %s"' % (pgm)
+start = time.time()
+cmd = 'tasklist /V /FO CSV /NH /FI "SESSIONNAME eq Console"'
 result = run(cmd)
-#print result # for debugging
 temp = result.split("\r\n")
-# temp[0] should contain "0" - the returncode of the command execution
-# otherwise it failed
 
+info = []
+for n in range(len(temp)):
+  if n == 0: continue
+  e = temp[n].strip()
+  if e == "": continue
+  print e
+  detail = []
+  for val in e.split('"'):
+    if val == ",": continue
+    if val == "": continue
+    #print val
+    detail.append(val)
+  if detail[-1] == "N/A": continue
+  if detail[6] == "N/A": continue
+  info.append([detail[0], int(detail[1]), detail[-1]])  
+print time.time() - start
+for e in info:
+  print e
+exit()
 # evaluate the info
 info = []
 ni = 0

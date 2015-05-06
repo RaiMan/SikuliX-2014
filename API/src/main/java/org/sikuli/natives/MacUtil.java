@@ -21,23 +21,7 @@ public class MacUtil implements OSUtil {
 	}
 
   @Override
-  public int switchApp(String appName) {
-    return openApp(appName);
-  }
-
-  @Override
-  public int switchApp(int pid, int num) {
-    return -1;
-  }
-
-  // ignore winNum on Mac
-  @Override
-  public int switchApp(String appName, int winNum) {
-    return openApp(appName);
-  }
-
-  @Override
-  public int openApp(String appName) {
+  public int open(String appName) {
     if (_openApp(appName)) {
       return 0;
     }
@@ -45,7 +29,23 @@ public class MacUtil implements OSUtil {
   }
 
   @Override
-  public int closeApp(String appName) {
+  public int switchto(String appName) {
+    return open(appName);
+  }
+
+  @Override
+  public int switchto(int pid, int num) {
+    return -1;
+  }
+
+  // ignore winNum on Mac
+  @Override
+  public int switchto(String appName, int winNum) {
+    return open(appName);
+  }
+
+  @Override
+  public int close(String appName) {
     try {
       String cmd[] = {"sh", "-c",
         "ps aux |  grep \"" + appName + "\" | awk '{print $2}' | xargs kill"};
@@ -58,7 +58,7 @@ public class MacUtil implements OSUtil {
   }
 
   @Override
-  public int closeApp(int pid) {
+  public int close(int pid) {
     return -1;
   }
 

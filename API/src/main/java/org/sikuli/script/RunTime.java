@@ -2527,12 +2527,17 @@ int nMonitors = 0;
     if (args.length == 0) {
       return "";
     }
+    boolean silent = false;
     if (args.length == 1) {
       String separator = "\"";
       ArrayList<String> argsx = new ArrayList<String>();
       StringTokenizer toks;
       String tok;
       String cmd = args[0];
+      if (cmd.startsWith("!")) {
+        silent = true;
+        cmd = cmd.substring(1);
+      }
       if (Settings.isWindows()) {
         cmd = cmd.replaceAll("\\\\ ", "%20;");
       }
@@ -2567,10 +2572,12 @@ int nMonitors = 0;
     boolean hasError = false;
     int retVal;
     try {
+      if (!silent) {
       if (lvl <= Debug.getDebugLevel()) {
         log(lvl, Sikulix.arrayToString(args));
       } else {
         Debug.info("runcmd: " + Sikulix.arrayToString(args));
+      }
       }
       Process process = Runtime.getRuntime().exec(args);
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));
