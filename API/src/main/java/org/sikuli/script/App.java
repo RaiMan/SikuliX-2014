@@ -351,6 +351,11 @@ public class App {
 	 */
 	public static int close(String appName) {
     int ret = _osUtil.close(appName);
+    if (ret > -1) {
+      Debug.action("App.close " + appName);
+    } else {
+      Debug.error("App.close %s did not work", appName);
+    }
     return ret;
   }
 
@@ -359,10 +364,10 @@ public class App {
 	 * @return this or null on failure
 	 */
 	public int close() {
-    Debug.action("App.close " + this.toString());
     if (appPID > -1) {
       int ret = _osUtil.close(appPID);
       if (ret >= 0) {
+        Debug.action("App.close " + this.toString());
         appPID = -1;
         return ret;
       }
