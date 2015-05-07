@@ -10,7 +10,8 @@ if RunTime.get().runningMac:
 
 # --------------------- 
 # the target offset was evaluated and set with Preview
-start = Pattern("start.png").targetOffset(-45,122)
+start = Pattern("start.png").targetOffset(0,-135)
+#Region(1207, 407, 19, 136).asOffset()
 click(wait(start, 10)) # waits for and then clicks into and activates the username field
 paste("username") # instead of type() in case it contains special characters
 type(Key.TAB) # activates the password field
