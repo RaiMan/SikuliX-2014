@@ -448,7 +448,6 @@ public class JythonHelper {
     if (modName.endsWith(".*")) {
       return null;
     }
-    log(lvl, "findModule: %s (%s)", modName, packPath);
     int nDot = modName.lastIndexOf(".");
     if (nDot > -1) {
       modName = modName.substring(nDot + 1);
@@ -461,7 +460,7 @@ public class JythonHelper {
       fModule = existsModule(modName, fParentBundle);
     }
     if (fModule == null && packPath != null) {
-      log(lvl, "findModule: packpath not null");
+//      log(lvl, "findModule: packpath not null");
     }
     if (fModule == null) {
       fModule = existsSysPathModule(modName);
@@ -469,6 +468,7 @@ public class JythonHelper {
         return null;
       }
     }
+    log(lvl, "findModule: %s (%s)", modName, packPath);
     return fModule.getAbsolutePath();
   }
 

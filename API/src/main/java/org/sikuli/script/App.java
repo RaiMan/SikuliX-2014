@@ -206,6 +206,8 @@ public class App {
       appName = app.name;
       appPID = app.pid;
       appWindow = app.window;
+      Debug.log(3, "App.create: %s", toString());
+      
     } else {
       appName = new File(appNameGiven).getName();
     }
@@ -233,9 +235,11 @@ public class App {
   private static AppEntry getApp(Object filter) {
     AppEntry app = null;
     String name = "";
+    String execName = "";
     int pid = -1;
     if (filter instanceof String) {
       name = (String) filter;
+      execName = new File(name).getName().toUpperCase();
     } else if (filter instanceof Integer) {
       pid = (Integer) filter;
     } else {
@@ -255,7 +259,7 @@ public class App {
             continue;
           }
           if (!name.isEmpty()) {
-            if (theName.toUpperCase().contains(name.toUpperCase()) ||
+            if (theName.toUpperCase().contains(execName) ||
                     theWindow.contains(name)) {
               return new AppEntry(theName, thePID , theWindow);
             }
@@ -441,9 +445,15 @@ public class App {
    */
   public App focus(int num) {
     boolean failed = false;
+    int pid = -1;
     if (appPID != 0) {
-      if (_osUtil.switchto(appPID, num) == 0) {
-        failed = true;
+      if (!appWindow.isEmpty()) {
+        _osUtil.switchto(appWindow, num);
+      } else {
+        pid = _osUtil.switchto(appPID, num);
+        if (pid == 0) {
+          failed = true;
+        }
       }
     } else {
       if (Settings.isWindows()) {
