@@ -16,6 +16,7 @@ import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.StringSelection;
 import java.awt.datatransfer.Transferable;
 import java.awt.datatransfer.UnsupportedFlavorException;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
@@ -66,10 +67,11 @@ public class App {
     appsMac.put(Type.VIEWER, "Preview");
 }
   
+  //<editor-fold defaultstate="collapsed" desc="special app fetures">
   public static enum Type {
     EDITOR, BROWSER, VIEWER
   }
-    
+  
   public static Region start(Type appType) {
     App app = null;
     Region win;
@@ -92,7 +94,7 @@ public class App {
             aRegion.click(win);
             return win;
           }
-        }      
+        }
         if (runTime.runningWindows) {
           app = new App(appsWindows.get(appType));
           if (app.window() != null) {
@@ -110,7 +112,7 @@ public class App {
             aRegion.click(win);
             return win;
           }
-        }      
+        }
       } else if (Type.BROWSER.equals(appType)) {
         if (runTime.runningWindows) {
           app = new App(appsWindows.get(appType));
@@ -129,7 +131,7 @@ public class App {
             aRegion.click(win);
             return win;
           }
-        }      
+        }
         return null;
       } else if (Type.VIEWER.equals(appType)) {
         return null;
@@ -137,11 +139,11 @@ public class App {
     } catch (Exception ex) {}
     return null;
   }
-    
+  
   public Region waitForWindow() {
     return waitForWindow(5);
   }
-
+  
   public Region waitForWindow(int seconds) {
     Region win = null;
     while ((win = window()) == null && seconds > 0) {
@@ -162,7 +164,7 @@ public class App {
     }
     return true;
   }
-
+  
   private static Region asRegion(Rectangle r) {
     if (r != null) {
       return Region.create(r);
@@ -170,7 +172,8 @@ public class App {
       return null;
     }
   }
-
+//</editor-fold>
+  
   static class AppEntry {
     public String name;
     public String window;
@@ -186,13 +189,14 @@ public class App {
     }
   }
 
-	/**
-	 * creates an instance for an app with this name
-	 * (nothing done yet)
-	 *
-	 * @param name name
-	 */
-	public App(String name) {
+  //<editor-fold defaultstate="collapsed" desc="constructors">
+  /**
+   * creates an instance for an app with this name
+   * (nothing done yet)
+   *
+   * @param name name
+   */
+  public App(String name) {
     appNameGiven = name;
     appName = name;
     appPID = -1;
@@ -202,9 +206,11 @@ public class App {
       appName = app.name;
       appPID = app.pid;
       appWindow = app.window;
+    } else {
+      appName = new File(appNameGiven).getName();
     }
   }
-
+  
   public App(int pid) {
     appNameGiven = "FromPID";
     appName = "";
@@ -219,31 +225,11 @@ public class App {
       appName = app.name;
       appPID = app.pid;
       appWindow = app.window;
-    }    
-  }
-  
-  private static Map<String, AppEntry> getApps() {
-    Map<String, AppEntry> apps = new HashMap<String, AppEntry>();
-    if (runTime.runningWindows) {
-      String cmd = cmd = "!tasklist /V /FO CSV /NH /FI \"SESSIONNAME eq Console\"";
-      String result = runTime.runcmd(cmd);
-      String[] lines = result.split("\r\n");
-      if ("0".equals(lines[0].trim())) {
-        for (int nl = 1; nl < lines.length; nl++) {
-          String[] parts = lines[nl].split("\"");
-          String theWindow = parts[parts.length - 1];
-          if (theWindow.trim().startsWith("N/A")) {
-            continue;
-          }
-          apps.put(parts[1], new AppEntry(parts[1], parts[3] , theWindow));
-        }
-      } else {
-        Debug.logp(result);
-      }
     }
-    return apps;
   }
+//</editor-fold>
   
+  //<editor-fold defaultstate="collapsed" desc="getApp">
   private static AppEntry getApp(Object filter) {
     AppEntry app = null;
     String name = "";
@@ -287,7 +273,30 @@ public class App {
     }
     return app;
   }
+  private static Map<String, AppEntry> getApps() {
+    Map<String, AppEntry> apps = new HashMap<String, AppEntry>();
+    if (runTime.runningWindows) {
+      String cmd = cmd = "!tasklist /V /FO CSV /NH /FI \"SESSIONNAME eq Console\"";
+      String result = runTime.runcmd(cmd);
+      String[] lines = result.split("\r\n");
+      if ("0".equals(lines[0].trim())) {
+        for (int nl = 1; nl < lines.length; nl++) {
+          String[] parts = lines[nl].split("\"");
+          String theWindow = parts[parts.length - 1];
+          if (theWindow.trim().startsWith("N/A")) {
+            continue;
+          }
+          apps.put(parts[1], new AppEntry(parts[1], parts[3] , theWindow));
+        }
+      } else {
+        Debug.logp(result);
+      }
+    }
+    return apps;
+  }
+  //</editor-fold>
   
+  //<editor-fold defaultstate="collapsed" desc="getter/setter">
   public int getPID() {
     return appPID;
   }
@@ -300,24 +309,32 @@ public class App {
     return appWindow;
   }
   
-	/**
-	 * creates an instance for an app with this name and tries to open it
-	 * @param appName name
-	 * @return the App instance or null on failure
-	 */
-	public static App open(String appName) {
+  @Override
+  public String toString() {
+    return String.format("[%d:%s (%s)] %s", appPID, appName, appWindow, appNameGiven);
+  }
+ 
+//</editor-fold>
+  
+  //<editor-fold defaultstate="collapsed" desc="open">
+  /**
+   * creates an instance for an app with this name and tries to open it
+   * @param appName name
+   * @return the App instance or null on failure
+   */
+  public static App open(String appName) {
     App theApp = new App(appName);
     if (theApp.appPID > -1) {
       return theApp;
     }
     return theApp.open();
   }
-
-	/**
-	 * tries to open the app defined by this App instance
-	 * @return this or null on failure
-	 */
-	public App open() {
+  
+  /**
+   * tries to open the app defined by this App instance
+   * @return this or null on failure
+   */
+  public App open() {
     if (!runTime.runningMac) {
       if (appPID == -1) {
         int pid = _osUtil.open(appNameGiven);
@@ -342,14 +359,16 @@ public class App {
     Debug.action("App.open " + this.toString());
     return this;
   }
-
-	/**
-	 * tries to identify a running app with the given name
-	 * and then tries to close it
-	 * @param appName name
-	 * @return 0 for success -1 otherwise
-	 */
-	public static int close(String appName) {
+//</editor-fold>
+  
+  //<editor-fold defaultstate="collapsed" desc="close">
+  /**
+   * tries to identify a running app with the given name
+   * and then tries to close it
+   * @param appName name
+   * @return 0 for success -1 otherwise
+   */
+  public static int close(String appName) {
     int ret = _osUtil.close(appName);
     if (ret > -1) {
       Debug.action("App.close " + appName);
@@ -358,12 +377,12 @@ public class App {
     }
     return ret;
   }
-
-	/**
-	 * tries to close the app defined by this App instance
-	 * @return this or null on failure
-	 */
-	public int close() {
+  
+  /**
+   * tries to close the app defined by this App instance
+   * @return this or null on failure
+   */
+  public int close() {
     if (appPID > -1) {
       int ret = _osUtil.close(appPID);
       if (ret >= 0) {
@@ -374,121 +393,128 @@ public class App {
     }
     return close(appNameGiven);
   }
-
-	/**
-	 * tries to identify a running app with name and
-	 * if not running tries to open it
-	 * and tries to make it the foreground application
-	 * bringing its topmost window to front
-	 * @param appName name
-	 * @return the App instance or null on failure
-	 */
-	public static App focus(String appName) {
-    return (new App(appName)).focus();
+//</editor-fold>
+  
+  //<editor-fold defaultstate="collapsed" desc="focus">
+  /**
+   * tries to identify a running app with name and
+   * if not running tries to open it
+   * and tries to make it the foreground application
+   * bringing its topmost window to front
+   * @param appName name
+   * @return the App instance or null on failure
+   */
+  public static App focus(String appName) {
+    return (new App(appName)).focus(0);
   }
-
-	/**
-	 * tries to identify a running app with name and
-	 * if not running tries to open it
-	 * and tries to make it the foreground application
-	 * bringing its window with the given number to front
-	 * @param appName name
-	 * @param num window
-	 * @return the App instance or null on failure
-	 */
+  
+  /**
+   * tries to identify a running app with name and
+   * if not running tries to open it
+   * and tries to make it the foreground application
+   * bringing its window with the given number to front
+   * @param appName name
+   * @param num window
+   * @return the App instance or null on failure
+   */
   public static App focus(String appName, int num) {
     return (new App(appName)).focus(num);
   }
-
-	/**
-	 * tries to make it the foreground application
-	 * bringing its topmost window to front
-	 * @return the App instance or null on failure
-	 */
-	public App focus() {
+  
+  /**
+   * tries to make it the foreground application
+   * bringing its topmost window to front
+   * @return the App instance or null on failure
+   */
+  public App focus() {
     if (appPID > -1) {
       init(appPID);
     }
     return focus(0);
   }
-
-	/**
-	 * tries to make it the foreground application
-	 * bringing its window with the given number to front
-	 * @param num window
-	 * @return the App instance or null on failure
-	 */
+  
+  /**
+   * tries to make it the foreground application
+   * bringing its window with the given number to front
+   * @param num window
+   * @return the App instance or null on failure
+   */
   public App focus(int num) {
-    Debug.action("App.focus " + this.toString() + " #" + num);
+    boolean failed = false;
     if (appPID != 0) {
       if (_osUtil.switchto(appPID, num) == 0) {
-        Debug.error("App.focus failed: " + appNameGiven
-                + "(" + appPID + ") not found");
-        return null;
+        failed = true;
       }
     } else {
-      boolean failed = false;
       if (Settings.isWindows()) {
         appPID = _osUtil.switchto(appNameGiven, num);
         if (appPID == 0) {
           failed = true;
+        } else {
+          init(appPID);
         }
       } else {
         if (_osUtil.switchto(appNameGiven, num) < 0) {
           failed = true;
         }
       }
-      if (failed) {
-        Debug.error("App.focus failed: " + appNameGiven + " not found");
-        return null;
-      }
+    }
+    if (failed) {
+      Debug.error("App.focus failed: " + (num > 0 ? " #" + num : "") + " " + this.toString());
+      return null;
+    } else {
+      Debug.action("App.focus: " + (num > 0 ? " #" + num : "") + " " + this.toString());
     }
     return this;
   }
-
-	/**
-	 * evaluates the region currently occupied
-	 * by the topmost window of this App instance.
-	 * The region might not be fully visible, not visible at all
-	 * or invalid with respect to the current monitor configuration (outside any screen)
-	 * @return the region
-	 */
-	public Region window() {
+//</editor-fold>
+  
+  //<editor-fold defaultstate="collapsed" desc="window">
+  /**
+   * evaluates the region currently occupied
+   * by the topmost window of this App instance.
+   * The region might not be fully visible, not visible at all
+   * or invalid with respect to the current monitor configuration (outside any screen)
+   * @return the region
+   */
+  public Region window() {
     if (appPID != 0) {
       return asRegion(_osUtil.getWindow(appPID));
     }
     return asRegion(_osUtil.getWindow(appNameGiven));
   }
-
-	/**
-	 * evaluates the region currently occupied
-	 * by the window with the given number of this App instance.
-	 * The region might not be fully visible, not visible at all
-	 * or invalid with respect to the current monitor configuration (outside any screen)
-	 * @param winNum window
-	 * @return the region
-	 */
+  
+  /**
+   * evaluates the region currently occupied
+   * by the window with the given number of this App instance.
+   * The region might not be fully visible, not visible at all
+   * or invalid with respect to the current monitor configuration (outside any screen)
+   * @param winNum window
+   * @return the region
+   */
   public Region window(int winNum) {
     if (appPID != 0) {
       return asRegion(_osUtil.getWindow(appPID, winNum));
     }
     return asRegion(_osUtil.getWindow(appNameGiven, winNum));
   }
-
-	/**
-	 * evaluates the region currently occupied by the systemwide frontmost window
-	 * (usually the one that has focus for mouse and keyboard actions)
-	 * @return the region
-	 */
-	public static Region focusedWindow() {
+  
+  /**
+   * evaluates the region currently occupied by the systemwide frontmost window
+   * (usually the one that has focus for mouse and keyboard actions)
+   * @return the region
+   */
+  public static Region focusedWindow() {
     return asRegion(_osUtil.getFocusedWindow());
   }
-
-	/**
-	 * evaluates the current textual content of the system clipboard
-	 * @return the textual content
-	 */
-	public static String getClipboard() {
+//</editor-fold>
+  
+  //<editor-fold defaultstate="collapsed" desc="clipboard">
+  /**
+   * evaluates the current textual content of the system clipboard
+   * @return the textual content
+   */
+  public static String getClipboard() {
     Transferable content = Clipboard.getSystemClipboard().getContents(null);
     try {
       if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
@@ -501,157 +527,152 @@ public class App {
     }
     return "";
   }
-
-	/**
-	 * sets the current textual content of the system clipboard to the given text
-	 * @param text text
-	 */
-	public static void setClipboard(String text) {
+  
+  /**
+   * sets the current textual content of the system clipboard to the given text
+   * @param text text
+   */
+  public static void setClipboard(String text) {
     Clipboard.putText(Clipboard.PLAIN, Clipboard.UTF8,
             Clipboard.CHAR_BUFFER, text);
   }
-
-  @Override
-  public String toString() {
-    return String.format("%s [%d:%s (%s)]", appNameGiven, appPID, appName, appWindow);
-  }
-
-	private static class Clipboard {
-
-   public static final TextType HTML = new TextType("text/html");
-   public static final TextType PLAIN = new TextType("text/plain");
-
-   public static final Charset UTF8 = new Charset("UTF-8");
-   public static final Charset UTF16 = new Charset("UTF-16");
-   public static final Charset UNICODE = new Charset("unicode");
-   public static final Charset US_ASCII = new Charset("US-ASCII");
-
-   public static final TransferType READER = new TransferType(Reader.class);
-   public static final TransferType INPUT_STREAM = new TransferType(InputStream.class);
-   public static final TransferType CHAR_BUFFER = new TransferType(CharBuffer.class);
-   public static final TransferType BYTE_BUFFER = new TransferType(ByteBuffer.class);
-
-   private Clipboard() {
-   }
-
-   /**
-    * Dumps a given text (either String or StringBuffer) into the Clipboard, with a default MIME type
-    */
-   public static void putText(CharSequence data) {
+  
+  private static class Clipboard {
+    
+    public static final TextType HTML = new TextType("text/html");
+    public static final TextType PLAIN = new TextType("text/plain");
+    
+    public static final Charset UTF8 = new Charset("UTF-8");
+    public static final Charset UTF16 = new Charset("UTF-16");
+    public static final Charset UNICODE = new Charset("unicode");
+    public static final Charset US_ASCII = new Charset("US-ASCII");
+    
+    public static final TransferType READER = new TransferType(Reader.class);
+    public static final TransferType INPUT_STREAM = new TransferType(InputStream.class);
+    public static final TransferType CHAR_BUFFER = new TransferType(CharBuffer.class);
+    public static final TransferType BYTE_BUFFER = new TransferType(ByteBuffer.class);
+    
+    private Clipboard() {
+    }
+    
+    /**
+     * Dumps a given text (either String or StringBuffer) into the Clipboard, with a default MIME type
+     */
+    public static void putText(CharSequence data) {
       StringSelection copy = new StringSelection(data.toString());
       getSystemClipboard().setContents(copy, copy);
-   }
-
-   /**
-    * Dumps a given text (either String or StringBuffer) into the Clipboard with a specified MIME type
-    */
-   public static void putText(TextType type, Charset charset, TransferType transferType, CharSequence data) {
+    }
+    
+    /**
+     * Dumps a given text (either String or StringBuffer) into the Clipboard with a specified MIME type
+     */
+    public static void putText(TextType type, Charset charset, TransferType transferType, CharSequence data) {
       String mimeType = type + "; charset=" + charset + "; class=" + transferType;
       TextTransferable transferable = new TextTransferable(mimeType, data.toString());
       getSystemClipboard().setContents(transferable, transferable);
-   }
-
-   public static java.awt.datatransfer.Clipboard getSystemClipboard() {
+    }
+    
+    public static java.awt.datatransfer.Clipboard getSystemClipboard() {
       return Toolkit.getDefaultToolkit().getSystemClipboard();
-   }
-
-   private static class TextTransferable implements Transferable, ClipboardOwner {
+    }
+    
+    private static class TextTransferable implements Transferable, ClipboardOwner {
       private String data;
       private DataFlavor flavor;
-
+      
       public TextTransferable(String mimeType, String data) {
-         flavor = new DataFlavor(mimeType, "Text");
-         this.data = data;
+        flavor = new DataFlavor(mimeType, "Text");
+        this.data = data;
       }
-
-     @Override
+      
+      @Override
       public DataFlavor[] getTransferDataFlavors() {
-         return new DataFlavor[]{flavor, DataFlavor.stringFlavor};
+        return new DataFlavor[]{flavor, DataFlavor.stringFlavor};
       }
-
-     @Override
+      
+      @Override
       public boolean isDataFlavorSupported(DataFlavor flavor) {
-         boolean b = this.flavor.getPrimaryType().equals(flavor.getPrimaryType());
-         return b || flavor.equals(DataFlavor.stringFlavor);
+        boolean b = this.flavor.getPrimaryType().equals(flavor.getPrimaryType());
+        return b || flavor.equals(DataFlavor.stringFlavor);
       }
-
-     @Override
+      
+      @Override
       public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
-         if (flavor.isRepresentationClassInputStream()) {
-            return new StringReader(data);
-         }
-         else if (flavor.isRepresentationClassReader()) {
-            return new StringReader(data);
-         }
-         else if (flavor.isRepresentationClassCharBuffer()) {
-            return CharBuffer.wrap(data);
-         }
-         else if (flavor.isRepresentationClassByteBuffer()) {
-            return ByteBuffer.wrap(data.getBytes());
-         }
-         else if (flavor.equals(DataFlavor.stringFlavor)){
-            return data;
-         }
-         throw new UnsupportedFlavorException(flavor);
+        if (flavor.isRepresentationClassInputStream()) {
+          return new StringReader(data);
+        }
+        else if (flavor.isRepresentationClassReader()) {
+          return new StringReader(data);
+        }
+        else if (flavor.isRepresentationClassCharBuffer()) {
+          return CharBuffer.wrap(data);
+        }
+        else if (flavor.isRepresentationClassByteBuffer()) {
+          return ByteBuffer.wrap(data.getBytes());
+        }
+        else if (flavor.equals(DataFlavor.stringFlavor)){
+          return data;
+        }
+        throw new UnsupportedFlavorException(flavor);
       }
-
-     @Override
+      
+      @Override
       public void lostOwnership(java.awt.datatransfer.Clipboard clipboard, Transferable contents) {
       }
-   }
-
-   /**
-    * Enumeration for the text type property in MIME types
-    */
-   public static class TextType {
+    }
+    
+    /**
+     * Enumeration for the text type property in MIME types
+     */
+    public static class TextType {
       private String type;
-
+      
       private TextType(String type) {
-         this.type = type;
+        this.type = type;
       }
-
-     @Override
+      
+      @Override
       public String toString() {
-         return type;
+        return type;
       }
-   }
-
-   /**
-    * Enumeration for the charset property in MIME types (UTF-8, UTF-16, etc.)
-    */
-   public static class Charset {
+    }
+    
+    /**
+     * Enumeration for the charset property in MIME types (UTF-8, UTF-16, etc.)
+     */
+    public static class Charset {
       private String name;
-
+      
       private Charset(String name) {
-         this.name = name;
+        this.name = name;
       }
-
-     @Override
+      
+      @Override
       public String toString() {
-         return name;
+        return name;
       }
-   }
-
-   /**
-    * Enumeration for the transferScriptt type property in MIME types (InputStream, CharBuffer, etc.)
-    */
-   public static class TransferType {
+    }
+    
+    /**
+     * Enumeration for the transferScriptt type property in MIME types (InputStream, CharBuffer, etc.)
+     */
+    public static class TransferType {
       private Class dataClass;
-
+      
       private TransferType(Class streamClass) {
-         this.dataClass = streamClass;
+        this.dataClass = streamClass;
       }
-
+      
       public Class getDataClass() {
-         return dataClass;
+        return dataClass;
       }
-
-     @Override
+      
+      @Override
       public String toString() {
-         return dataClass.getName();
+        return dataClass.getName();
       }
-   }
-
-}
-
+    }
+    
+  }
+//</editor-fold>
 }
