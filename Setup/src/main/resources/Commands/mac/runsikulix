@@ -1,22 +1,22 @@
 #!/bin/bash
 PROPS='-Xmx512M -Dfile.encoding=UTF-8'
 
-rundir=`dirname $0`
+rundir=`dirname "$0"`
 sjar=$rundir/SikuliX.app/Contents/Java/sikulix.jar
-if [ ! -e $sjar ]; then
+if [ ! -e "$sjar" ]; then
   sjar=$rundir/Contents/Java/sikulix.jar
 fi
-if [ ! -e $sjar ]; then
+if [ ! -e "$sjar" ]; then
   sjar=/Applications/SikuliX.app/Contents/Java/sikulix.jar
 fi
 
 if [ "$1" = "" ]; then
   echo "Error: terminating: no parameters provided (at least -r or -i)"
 else
-  if [ -e $sjar ]; then
+  if [ -e "$sjar" ]; then
     export SIKULI_COMMAND=$*
     echo "running SikuliX: $sjar $SIKULI_COMMAND"
-    java $PROPS -jar $sjar $SIKULI_COMMAND
+    java $PROPS -jar "$sjar" $SIKULI_COMMAND
   else
     echo "Error: terminating: $sjar not found"
   fi
