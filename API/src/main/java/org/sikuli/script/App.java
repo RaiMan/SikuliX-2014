@@ -38,7 +38,7 @@ import org.sikuli.natives.SysUtil;
  * (cosult the docs for more info)
  */
 public class App {
-  
+
   static RunTime runTime = RunTime.get();
 
   private static final OSUtil _osUtil = SysUtil.getOSUtil();
@@ -46,7 +46,7 @@ public class App {
   private String appName;
   private String appWindow;
   private int appPID;
-  private static final Map<Type, String> appsWindows; 
+  private static final Map<Type, String> appsWindows;
   private static final Map<Type, String> appsMac;
   private static final Region aRegion = new Region();
 
@@ -66,12 +66,12 @@ public class App {
     appsMac.put(Type.BROWSER, "Safari");
     appsMac.put(Type.VIEWER, "Preview");
 }
-  
+
   //<editor-fold defaultstate="collapsed" desc="special app fetures">
   public static enum Type {
     EDITOR, BROWSER, VIEWER
   }
-  
+
   public static Region start(Type appType) {
     App app = null;
     Region win;
@@ -139,11 +139,11 @@ public class App {
     } catch (Exception ex) {}
     return null;
   }
-  
+
   public Region waitForWindow() {
     return waitForWindow(5);
   }
-  
+
   public Region waitForWindow(int seconds) {
     Region win = null;
     while ((win = window()) == null && seconds > 0) {
@@ -152,7 +152,7 @@ public class App {
     }
     return win;
   }
-  
+
   public static boolean openLink(String url) {
     if (!Desktop.isDesktopSupported()) {
       return false;
@@ -164,7 +164,7 @@ public class App {
     }
     return true;
   }
-  
+
   private static Region asRegion(Rectangle r) {
     if (r != null) {
       return Region.create(r);
@@ -173,12 +173,12 @@ public class App {
     }
   }
 //</editor-fold>
-  
+
   static class AppEntry {
     public String name;
     public String window;
     public int pid;
-    
+
     public AppEntry(String theName, String thePID, String theWindow) {
       name = theName;
       window = theWindow;
@@ -207,12 +207,11 @@ public class App {
       appPID = app.pid;
       appWindow = app.window;
       Debug.log(3, "App.create: %s", toString());
-      
     } else {
       appName = new File(appNameGiven).getName();
     }
   }
-  
+
   public App(int pid) {
     appNameGiven = "FromPID";
     appName = "";
@@ -220,7 +219,7 @@ public class App {
     appWindow = "";
     init(pid);
   }
-  
+
   private void init(int pid) {
     AppEntry app = getApp(pid);
     if (app != null) {
@@ -230,7 +229,7 @@ public class App {
     }
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="getApp">
   private static AppEntry getApp(Object filter) {
     AppEntry app = null;
@@ -299,27 +298,27 @@ public class App {
     return apps;
   }
   //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="getter/setter">
   public int getPID() {
     return appPID;
   }
-  
+
   public String getName() {
     return appName;
   }
-  
+
   public String getWindow() {
     return appWindow;
   }
-  
+
   @Override
   public String toString() {
     return String.format("[%d:%s (%s)] %s", appPID, appName, appWindow, appNameGiven);
   }
- 
+
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="open">
   /**
    * creates an instance for an app with this name and tries to open it
@@ -333,7 +332,7 @@ public class App {
     }
     return theApp.open();
   }
-  
+
   /**
    * tries to open the app defined by this App instance
    * @return this or null on failure
@@ -364,7 +363,7 @@ public class App {
     return this;
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="close">
   /**
    * tries to identify a running app with the given name
@@ -381,7 +380,7 @@ public class App {
     }
     return ret;
   }
-  
+
   /**
    * tries to close the app defined by this App instance
    * @return this or null on failure
@@ -398,7 +397,7 @@ public class App {
     return close(appNameGiven);
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="focus">
   /**
    * tries to identify a running app with name and
@@ -411,7 +410,7 @@ public class App {
   public static App focus(String appName) {
     return (new App(appName)).focus(0);
   }
-  
+
   /**
    * tries to identify a running app with name and
    * if not running tries to open it
@@ -424,7 +423,7 @@ public class App {
   public static App focus(String appName, int num) {
     return (new App(appName)).focus(num);
   }
-  
+
   /**
    * tries to make it the foreground application
    * bringing its topmost window to front
@@ -436,7 +435,7 @@ public class App {
     }
     return focus(0);
   }
-  
+
   /**
    * tries to make it the foreground application
    * bringing its window with the given number to front
@@ -446,7 +445,7 @@ public class App {
   public App focus(int num) {
     boolean failed = false;
     int pid = -1;
-    if (appPID != 0) {
+    if (appPID > -1) {
       if (!appWindow.isEmpty()) {
         _osUtil.switchto(appWindow, num);
       } else {
@@ -457,14 +456,15 @@ public class App {
       }
     } else {
       if (Settings.isWindows()) {
-        appPID = _osUtil.switchto(appNameGiven, num);
-        if (appPID == 0) {
+        pid = _osUtil.switchto(appNameGiven, num);
+        if (pid == 0) {
           failed = true;
         } else {
-          init(appPID);
+          init(pid);
         }
       } else {
-        if (_osUtil.switchto(appNameGiven, num) < 0) {
+				pid = _osUtil.switchto(appNameGiven, num);
+        if ( pid < 0) {
           failed = true;
         }
       }
@@ -478,7 +478,7 @@ public class App {
     return this;
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="window">
   /**
    * evaluates the region currently occupied
@@ -493,7 +493,7 @@ public class App {
     }
     return asRegion(_osUtil.getWindow(appNameGiven));
   }
-  
+
   /**
    * evaluates the region currently occupied
    * by the window with the given number of this App instance.
@@ -508,7 +508,7 @@ public class App {
     }
     return asRegion(_osUtil.getWindow(appNameGiven, winNum));
   }
-  
+
   /**
    * evaluates the region currently occupied by the systemwide frontmost window
    * (usually the one that has focus for mouse and keyboard actions)
@@ -518,7 +518,7 @@ public class App {
     return asRegion(_osUtil.getFocusedWindow());
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="clipboard">
   /**
    * evaluates the current textual content of the system clipboard
@@ -537,7 +537,7 @@ public class App {
     }
     return "";
   }
-  
+
   /**
    * sets the current textual content of the system clipboard to the given text
    * @param text text
@@ -546,25 +546,25 @@ public class App {
     Clipboard.putText(Clipboard.PLAIN, Clipboard.UTF8,
             Clipboard.CHAR_BUFFER, text);
   }
-  
+
   private static class Clipboard {
-    
+
     public static final TextType HTML = new TextType("text/html");
     public static final TextType PLAIN = new TextType("text/plain");
-    
+
     public static final Charset UTF8 = new Charset("UTF-8");
     public static final Charset UTF16 = new Charset("UTF-16");
     public static final Charset UNICODE = new Charset("unicode");
     public static final Charset US_ASCII = new Charset("US-ASCII");
-    
+
     public static final TransferType READER = new TransferType(Reader.class);
     public static final TransferType INPUT_STREAM = new TransferType(InputStream.class);
     public static final TransferType CHAR_BUFFER = new TransferType(CharBuffer.class);
     public static final TransferType BYTE_BUFFER = new TransferType(ByteBuffer.class);
-    
+
     private Clipboard() {
     }
-    
+
     /**
      * Dumps a given text (either String or StringBuffer) into the Clipboard, with a default MIME type
      */
@@ -572,7 +572,7 @@ public class App {
       StringSelection copy = new StringSelection(data.toString());
       getSystemClipboard().setContents(copy, copy);
     }
-    
+
     /**
      * Dumps a given text (either String or StringBuffer) into the Clipboard with a specified MIME type
      */
@@ -581,31 +581,31 @@ public class App {
       TextTransferable transferable = new TextTransferable(mimeType, data.toString());
       getSystemClipboard().setContents(transferable, transferable);
     }
-    
+
     public static java.awt.datatransfer.Clipboard getSystemClipboard() {
       return Toolkit.getDefaultToolkit().getSystemClipboard();
     }
-    
+
     private static class TextTransferable implements Transferable, ClipboardOwner {
       private String data;
       private DataFlavor flavor;
-      
+
       public TextTransferable(String mimeType, String data) {
         flavor = new DataFlavor(mimeType, "Text");
         this.data = data;
       }
-      
+
       @Override
       public DataFlavor[] getTransferDataFlavors() {
         return new DataFlavor[]{flavor, DataFlavor.stringFlavor};
       }
-      
+
       @Override
       public boolean isDataFlavorSupported(DataFlavor flavor) {
         boolean b = this.flavor.getPrimaryType().equals(flavor.getPrimaryType());
         return b || flavor.equals(DataFlavor.stringFlavor);
       }
-      
+
       @Override
       public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
         if (flavor.isRepresentationClassInputStream()) {
@@ -625,64 +625,64 @@ public class App {
         }
         throw new UnsupportedFlavorException(flavor);
       }
-      
+
       @Override
       public void lostOwnership(java.awt.datatransfer.Clipboard clipboard, Transferable contents) {
       }
     }
-    
+
     /**
      * Enumeration for the text type property in MIME types
      */
     public static class TextType {
       private String type;
-      
+
       private TextType(String type) {
         this.type = type;
       }
-      
+
       @Override
       public String toString() {
         return type;
       }
     }
-    
+
     /**
      * Enumeration for the charset property in MIME types (UTF-8, UTF-16, etc.)
      */
     public static class Charset {
       private String name;
-      
+
       private Charset(String name) {
         this.name = name;
       }
-      
+
       @Override
       public String toString() {
         return name;
       }
     }
-    
+
     /**
      * Enumeration for the transferScriptt type property in MIME types (InputStream, CharBuffer, etc.)
      */
     public static class TransferType {
       private Class dataClass;
-      
+
       private TransferType(Class streamClass) {
         this.dataClass = streamClass;
       }
-      
+
       public Class getDataClass() {
         return dataClass;
       }
-      
+
       @Override
       public String toString() {
         return dataClass.getName();
       }
     }
-    
+
   }
 //</editor-fold>
 }
