@@ -245,6 +245,14 @@ public class App {
       appWindow = app.window;
     }
   }
+  
+  private void init() {
+    if (appPID > -1) {
+      init(appPID);
+    } else {
+      init(appName);
+    }
+  }
 //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="getApps">  
@@ -295,6 +303,7 @@ public class App {
   
   @Override
   public String toString() {
+    init();
     return String.format("[%d:%s (%s)] %s", appPID, appName, appWindow, appNameGiven);
   }
 
