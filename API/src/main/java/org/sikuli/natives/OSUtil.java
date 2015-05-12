@@ -8,14 +8,19 @@ package org.sikuli.natives;
 
 import java.awt.Rectangle;
 import java.awt.Window;
+import org.sikuli.script.App;
 
 public interface OSUtil {
   // Windows: returns PID, 0 if fails
   // Others: return 0 if succeeds, -1 if fails
 
 	public String getLibName();
+  
+  public App.AppEntry getApp(Object filter);
 	
 	public int open(String appName);
+  
+  public int open(App.AppEntry app);
 
   // Windows: returns PID, 0 if fails
   // Others: return 0 if succeeds, -1 if fails
@@ -26,11 +31,15 @@ public interface OSUtil {
   //internal use
   public int switchto(int pid, int num);
 
+  public int switchto(App.AppEntry app, int num);
+
   // returns 0 if succeeds, -1 if fails
   public int close(String appName);
 
   //internal use
   public int close(int pid);
+
+  public int close(App.AppEntry app);
 
   public Rectangle getWindow(String appName);
 

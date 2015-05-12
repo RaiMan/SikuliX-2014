@@ -55,6 +55,8 @@ public class Mouse {
       mouse = new Mouse();
       device = new Device(mouse);
       device.isMouse = true;
+      move(at());
+      device.lastPos = null;
       log(3, "init");
     }
   }
@@ -323,12 +325,7 @@ public class Mouse {
     }
     if (loc != null) {
       IRobot r = null;
-//      r = Screen.getMouseRobot();
-      try {
-        r = new RobotDesktop();
-      } catch (Exception ex) {
-        log(-1, "click: no Robot available");
-      }
+      r = Screen.getMouseRobot();
       if (r == null) {
         return 0;
       }
@@ -359,7 +356,7 @@ public class Mouse {
       return;
     }
     device.use(region);
-    Screen.getPrimaryScreen().getRobot().mouseDown(buttons);
+    Screen.getMouseRobot().mouseDown(buttons);
   }
 
   /**
@@ -383,7 +380,7 @@ public class Mouse {
     if (device.isSuspended()) {
       return;
     }
-    Screen.getPrimaryScreen().getRobot().mouseUp(buttons);
+    Screen.getMouseRobot().mouseUp(buttons);
     if (region != null) {
       device.let(region);
     }
@@ -404,7 +401,7 @@ public class Mouse {
     if (device.isSuspended()) {
       return;
     }
-    IRobot r = Screen.getPrimaryScreen().getRobot();
+    IRobot r = Screen.getMouseRobot();
     device.use(region);
     Debug.log(3, "Region: wheel: %s steps: %d",
             (direction == WHEEL_UP ? "WHEEL_UP" : "WHEEL_DOWN"), steps);

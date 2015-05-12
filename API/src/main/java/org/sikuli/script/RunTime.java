@@ -440,6 +440,7 @@ public Rectangle[] monitorBounds = null;
 Rectangle rAllMonitors;
 int mainMonitor = -1;
 int nMonitors = 0;
+Point pNull = new Point(0, 0);
 
 //<editor-fold defaultstate="collapsed" desc="global init">
   private void init(Type typ) {
@@ -589,7 +590,7 @@ int nMonitors = 0;
         if (null != rAllMonitors) {
           rAllMonitors = rAllMonitors.union(monitorBounds[i]);
         }
-        if (monitorBounds[i].contains(new Point(0, 0))) {
+        if (monitorBounds[i].contains(pNull)) {
           if (mainMonitor < 0) {
             mainMonitor = i;
             log(lvl, "ScreenDevice %d contains (0,0) --- will be used as primary", i);
@@ -597,10 +598,10 @@ int nMonitors = 0;
             log(lvl, "ScreenDevice %d too contains (0,0)!", i);
           }
         }
-        if (mainMonitor < 0) {
-            log(lvl, "No ScreenDevice contains (0,0) --- using 0 as primary: %s", monitorBounds[0]);
-            mainMonitor = 0;
-        }
+      }
+      if (mainMonitor < 0) {
+          log(lvl, "No ScreenDevice contains (0,0) --- using 0 as primary: %s", monitorBounds[0]);
+          mainMonitor = 0;
       }
     } else {
       log(lvl, "running in headless environment");
@@ -2534,10 +2535,6 @@ int nMonitors = 0;
       StringTokenizer toks;
       String tok;
       String cmd = args[0];
-      if (cmd.startsWith("!")) {
-        silent = true;
-        cmd = cmd.substring(1);
-      }
       if (Settings.isWindows()) {
         cmd = cmd.replaceAll("\\\\ ", "%20;");
       }
@@ -2562,6 +2559,10 @@ int nMonitors = 0;
       }
       args = argsx.toArray(new String[0]);
     }
+    if (args[0].startsWith("!")) {
+      silent = true;
+      args[0] = args[0].substring(1);
+    }
     if (args[0].startsWith("#")) {
       String pgm = args[0].substring(1);
       args[0] = (new File(pgm)).getAbsolutePath();
@@ -2573,11 +2574,11 @@ int nMonitors = 0;
     int retVal;
     try {
       if (!silent) {
-      if (lvl <= Debug.getDebugLevel()) {
-        log(lvl, Sikulix.arrayToString(args));
-      } else {
-        Debug.info("runcmd: " + Sikulix.arrayToString(args));
-      }
+        if (lvl <= Debug.getDebugLevel()) {
+          log(lvl, Sikulix.arrayToString(args));
+        } else {
+          Debug.info("runcmd: " + Sikulix.arrayToString(args));
+        }
       }
       Process process = Runtime.getRuntime().exec(args);
       BufferedReader stdInput = new BufferedReader(new InputStreamReader(process.getInputStream()));

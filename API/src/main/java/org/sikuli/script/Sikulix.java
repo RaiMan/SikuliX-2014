@@ -141,19 +141,23 @@ public class Sikulix {
     }
     
     //******Test Space*************************************
-    App test;
-//    test = new App("chrome");
-//    Debug.logp("%s", test);
-//    test = new App(7112);
-//    Debug.logp("%s", test);
-    App.close("notepad");
-    System.exit(1);
-    test = new App("notepad");
-    Debug.logp("******************* %s", test);
-    test.open();
-    Debug.logp("******************* %s", test);
-    test.close();
-    test.close();
+//    Screen.showMonitors();
+    Screen s = new Screen();
+//    Debug.logp("%s", s0);
+//    Screen s1 = new Screen(1);
+//    Debug.logp("%s", s1);
+    Debug.off();
+    App app = new App("Preview");
+    if (!app.isRunning()) {
+      app.open();
+    }
+    if (!app.hasWindow()) {
+      app.focus();
+      s.write("#C.#F2.f#N.o#N.#N.");
+    }
+    RunTime.pause(3);
+    app.close();
+    Debug.logp("%s", app);
     System.exit(1);
     //*********************************
     

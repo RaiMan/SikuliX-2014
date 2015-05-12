@@ -9,23 +9,105 @@ package org.sikuli.natives;
 import java.awt.Rectangle;
 import java.awt.Window;
 import javax.swing.JOptionPane;
+import org.sikuli.script.App;
+import org.sikuli.script.RunTime;
+import org.sikuli.script.Runner;
 
 public class MacUtil implements OSUtil {
 
   private static boolean _askedToEnableAX = false;
   private String usedFeature;
+  private static RunTime runTime = null;
 
 	@Override
 	public String getLibName() {
+    runTime = RunTime.get();
 		return "MacUtil";
 	}
-
+  
+  /*
+  tell application "System Events"
+    set found to "NotFound"
+    try
+      set found to first item of (processes whose name is "#APP#")
+      set found to first item of (processes whose unix id is equal to #PID#)
+    end try
+    found
+  end tell
+  if not found is equal to "NotFound" then
+    set windowName to ""
+    try
+    set windowName to name of first window of application "#APP#"
+    end try
+    set found to {name of found, «class idux» of found, windowName}
+  end if
+  found  
+  */
+  static String cmd = "tell application \"System Events\"\n"
+          + "set found to \"NotFound\"\n"
+          + "try\n"
+          + "#LINE#\n"
+          + "end try\n"
+          + "end tell\n"
+          + "if not found is equal to \"NotFound\" then\n"
+          + "set windowName to \"\"\n"
+          + "try\n"
+          + "set windowName to name of first window of application (name of found)\n"
+          + "end try\n"
+          + "set found to {name of found, «class idux» of found, windowName}\n"
+          + "end if\n" +
+            "found\n"; 
+  static String cmdLineApp = "set found to first item of (processes whose name is \"#APP#\")";
+  static String cmdLinePID = "set found to first item of (processes whose unix id is equal to #PID#)";
+  
+  @Override
+  public App.AppEntry getApp(Object filter) {
+    App.AppEntry app = null;
+    String name = "";
+    String theCmd = "";
+    int pid = -1;
+    if (filter instanceof String) {
+      name = (String) filter;
+      theCmd = cmd.replace("#LINE#", cmdLineApp);
+      theCmd = theCmd.replaceAll("#APP#", name);
+    } else if (filter instanceof Integer) {
+      pid = (Integer) filter;
+      theCmd = cmd.replace("#LINE#", cmdLinePID);
+      theCmd = theCmd.replaceAll("#PID#", "" + pid);
+    } else {
+      return app;
+    }
+    int retVal = Runner.runas(theCmd, true);
+    String result = RunTime.get().getLastCommandResult();
+    if (retVal > -1) {
+      if (!result.contains("NotFound")) {
+        String[] parts = result.split(",");
+        app = new App.AppEntry(parts[0].trim(), parts[1].trim(), parts[2].trim(), "");
+      }
+    }
+    return app;
+  }
+  
   @Override
   public int open(String appName) {
     if (_openApp(appName)) {
       return 0;
     }
     return -1;
+  }
+
+  @Override
+  public int open(App.AppEntry app) {
+    String appName = app.execName.startsWith(app.name) ? app.name : app.execName;
+    int retval = 0;
+    if (runTime.osVersion.startsWith("10.10.")) {
+      if (Runner.runas(String.format("tell app \"%s\" to activate", appName), true) < 0) {
+        retval = -1;
+      }
+    } else {
+      retval = open(appName);
+    }
+    return retval;
   }
 
   @Override
@@ -45,6 +127,20 @@ public class MacUtil implements OSUtil {
   }
 
   @Override
+  public int switchto(App.AppEntry app, int num) {
+    String appName = app.execName.startsWith(app.name) ? app.name : app.execName;
+    int retval = 0;
+    if (runTime.osVersion.startsWith("10.10.")) {
+      if (Runner.runas(String.format("tell app \"%s\" to activate", appName), true) < 0) {
+        retval = -1;
+      }
+    } else {
+      retval = open(appName);
+    }
+    return retval;
+  }
+
+  @Override
   public int close(String appName) {
     try {
       String cmd[] = {"sh", "-c",
@@ -59,7 +155,23 @@ public class MacUtil implements OSUtil {
 
   @Override
   public int close(int pid) {
-    return -1;
+    try {
+      String cmd[] = {"sh", "-c", "kill " + pid};
+      Process p = Runtime.getRuntime().exec(cmd);
+      p.waitFor();
+      return p.exitValue();
+    } catch (Exception e) {
+      return -1;
+    }
+  }
+
+  @Override
+  public int close(App.AppEntry app) {
+    if (app.pid > -1) {
+      return close(app.pid);
+    }
+    String appName = app.execName.startsWith(app.name) ? app.name : app.execName;
+    return close(appName);
   }
 
   private void checkAxEnabled(String name) {

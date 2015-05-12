@@ -426,12 +426,17 @@ public class Runner {
   }
 
   public static int runas(String givenScriptScript) {
+    return runas(givenScriptScript, false);
+  }
+  
+  public static int runas(String givenScriptScript, boolean silent) {
     if (!runTime.runningMac) {
       return -1;
     }
+    String prefix = silent ? "!" : "";
     File aFile = FileManager.createTempFile("script");
     FileManager.writeStringToFile(givenScriptScript, aFile);
-    String retVal = runTime.runcmd(new String[]{"osascript", aFile.getAbsolutePath()});
+    String retVal = runTime.runcmd(new String[]{prefix + "osascript", aFile.getAbsolutePath()});
     String[] parts = retVal.split("\n");
     int retcode = -1;
     try {
@@ -639,6 +644,11 @@ public class Runner {
     }
 
     int run() {
+      if (Runner.RASCRIPT.equals(givenScriptScriptType)) {
+        return Runner.runas(givenScriptScript);
+      } else if (Runner.RSSCRIPT.equals(givenScriptScriptType)) {
+        return Runner.runps(givenScriptScript);
+      }
       int exitCode = 0;
       log(lvl, "givenScriptName:\n%s", givenScriptName);
       if (-1 == FileManager.slashify(givenScriptName, false).indexOf("/") && RunTime.scriptProject != null) {

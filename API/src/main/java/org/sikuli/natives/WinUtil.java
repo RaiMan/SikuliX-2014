@@ -8,6 +8,10 @@ package org.sikuli.natives;
 
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.io.File;
+import org.sikuli.basics.Debug;
+import org.sikuli.script.App;
+import org.sikuli.script.RunTime;
 
 public class WinUtil implements OSUtil {
 
@@ -17,8 +21,62 @@ public class WinUtil implements OSUtil {
   }
 
   @Override
+  public App.AppEntry getApp(Object filter) {
+    App.AppEntry app = null;
+    String name = "";
+    String execName = "";
+    int pid = -1;
+    if (filter instanceof String) {
+      name = (String) filter;
+      execName = new File(name).getName().toUpperCase();
+    } else if (filter instanceof Integer) {
+      pid = (Integer) filter;
+    } else {
+      return app;
+    }
+    String cmd = cmd = "!tasklist /V /FO CSV /NH /FI \"SESSIONNAME eq Console\"";
+    String result = RunTime.get().runcmd(cmd);
+    String[] lines = result.split("\r\n");
+    if ("0".equals(lines[0].trim())) {
+      for (int nl = 1; nl < lines.length; nl++) {
+        String[] parts = lines[nl].split("\"");
+        String theWindow = parts[parts.length - 1];
+        String theName = parts[1];
+        String thePID = parts[3];
+        if (theWindow.trim().startsWith("N/A")) {
+          continue;
+        }
+        if (!name.isEmpty()) {
+          if (theName.toUpperCase().contains(execName)
+                  || theWindow.contains(name)) {
+            return new App.AppEntry(theName, thePID, theWindow, "");
+          }
+        } else {
+          try {
+            if (Integer.parseInt(thePID) == pid) {
+              return new App.AppEntry(theName, thePID, theWindow, "");
+            }
+          } catch (Exception ex) {
+          }
+        }
+      }
+    } else {
+      Debug.logp(result);
+    }
+    return app;
+  }
+
+  @Override
   public int open(String appName) {
     return openApp(appName);
+  }
+
+  @Override
+  public int open(App.AppEntry app) {
+    if (app.pid > -1) {
+      switchApp(app.pid, 0);
+    }
+    return openApp(app.execName);
   }
 
   @Override
@@ -37,6 +95,11 @@ public class WinUtil implements OSUtil {
   }
 
   @Override
+  public int switchto(App.AppEntry app, int num) {
+    return -1;
+  }
+
+  @Override
   public int close(String appName) {
     return closeApp(appName);
   }
@@ -44,6 +107,14 @@ public class WinUtil implements OSUtil {
   @Override
   public int close(int pid) {
     return closeApp(pid);
+  }
+
+  @Override
+  public int close(App.AppEntry app) {
+    if (app.pid > -1) {
+      return closeApp(app.pid);
+    }
+    return closeApp(app.execName);
   }
 
   public native int switchApp(String appName, int num);

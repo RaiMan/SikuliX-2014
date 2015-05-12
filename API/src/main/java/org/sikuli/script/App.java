@@ -8,7 +8,6 @@ package org.sikuli.script;
 
 import java.awt.Desktop;
 import java.awt.Rectangle;
-import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import java.awt.Toolkit;
 import java.awt.datatransfer.ClipboardOwner;
@@ -174,21 +173,29 @@ public class App {
   }
 //</editor-fold>
 
-  static class AppEntry {
+  //<editor-fold defaultstate="collapsed" desc="AppEntry">
+  public static class AppEntry {
     public String name;
+    public String execName;
     public String window;
     public int pid;
-
-    public AppEntry(String theName, String thePID, String theWindow) {
+    
+    public AppEntry(String theName, String thePID, String theWindow, String theExec) {
       name = theName;
       window = theWindow;
       pid = -1;
+      execName = theExec;
       try {
         pid = Integer.parseInt(thePID);
       } catch (Exception ex) {}
     }
   }
-
+  
+  public AppEntry makeAppEntry() {
+    return new AppEntry(appName, getPID().toString(), appWindow, appNameGiven);
+  }
+//</editor-fold>
+  
   //<editor-fold defaultstate="collapsed" desc="constructors">
   /**
    * creates an instance for an app with this name
@@ -201,14 +208,23 @@ public class App {
     appName = name;
     appPID = -1;
     appWindow = "";
-    AppEntry app = getApp(appNameGiven);
+    init(appNameGiven);
+    if (appPID > -1) {
+      Debug.log(3, "App.create: %s", toString());
+    } else {
+      appName = new File(appNameGiven).getName();
+      if (runTime.runningMac) {
+        appName = appName.replace(".app", "");
+      }
+    }
+  }
+
+  private void init(String name) {
+    AppEntry app = _osUtil.getApp(name);
     if (app != null) {
       appName = app.name;
       appPID = app.pid;
       appWindow = app.window;
-      Debug.log(3, "App.create: %s", toString());
-    } else {
-      appName = new File(appNameGiven).getName();
     }
   }
 
@@ -221,7 +237,8 @@ public class App {
   }
 
   private void init(int pid) {
-    AppEntry app = getApp(pid);
+    AppEntry app; 
+    app = pid > 0 ? _osUtil.getApp(pid) : _osUtil.getApp(appName);
     if (app != null) {
       appName = app.name;
       appPID = app.pid;
@@ -230,52 +247,7 @@ public class App {
   }
 //</editor-fold>
 
-  //<editor-fold defaultstate="collapsed" desc="getApp">
-  private static AppEntry getApp(Object filter) {
-    AppEntry app = null;
-    String name = "";
-    String execName = "";
-    int pid = -1;
-    if (filter instanceof String) {
-      name = (String) filter;
-      execName = new File(name).getName().toUpperCase();
-    } else if (filter instanceof Integer) {
-      pid = (Integer) filter;
-    } else {
-      return app;
-    }
-    if (runTime.runningWindows) {
-      String cmd = cmd = "!tasklist /V /FO CSV /NH /FI \"SESSIONNAME eq Console\"";
-      String result = runTime.runcmd(cmd);
-      String[] lines = result.split("\r\n");
-      if ("0".equals(lines[0].trim())) {
-        for (int nl = 1; nl < lines.length; nl++) {
-          String[] parts = lines[nl].split("\"");
-          String theWindow = parts[parts.length - 1];
-          String theName = parts[1];
-          String thePID = parts[3];
-          if (theWindow.trim().startsWith("N/A")) {
-            continue;
-          }
-          if (!name.isEmpty()) {
-            if (theName.toUpperCase().contains(execName) ||
-                    theWindow.contains(name)) {
-              return new AppEntry(theName, thePID , theWindow);
-            }
-          } else {
-            try {
-              if (Integer.parseInt(thePID) == pid) {
-                return new AppEntry(theName, thePID , theWindow);
-              }
-            } catch (Exception ex) {}
-          }
-        }
-      } else {
-        Debug.logp(result);
-      }
-    }
-    return app;
-  }
+  //<editor-fold defaultstate="collapsed" desc="getApps">  
   private static Map<String, AppEntry> getApps() {
     Map<String, AppEntry> apps = new HashMap<String, AppEntry>();
     if (runTime.runningWindows) {
@@ -289,7 +261,7 @@ public class App {
           if (theWindow.trim().startsWith("N/A")) {
             continue;
           }
-          apps.put(parts[1], new AppEntry(parts[1], parts[3] , theWindow));
+          apps.put(parts[1], new AppEntry(parts[1], parts[3] , theWindow, ""));
         }
       } else {
         Debug.logp(result);
@@ -300,7 +272,7 @@ public class App {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="getter/setter">
-  public int getPID() {
+  public Integer getPID() {
     return appPID;
   }
 
@@ -311,7 +283,16 @@ public class App {
   public String getWindow() {
     return appWindow;
   }
+  
+  public boolean isRunning() {
+    return getPID() > -1;
+  }
 
+  public boolean hasWindow() {
+    init(appName);
+    return !getWindow().isEmpty();
+  }
+  
   @Override
   public String toString() {
     return String.format("[%d:%s (%s)] %s", appPID, appName, appWindow, appNameGiven);
@@ -338,27 +319,12 @@ public class App {
    * @return this or null on failure
    */
   public App open() {
-    if (!runTime.runningMac) {
-      if (appPID == -1) {
-        int pid = _osUtil.open(appNameGiven);
-        if (pid == 0) {
-          Debug.error("App.open failed: " + appNameGiven + " not found");
-          return null;
-        }
-        appPID = pid;
-      }
-      init(appPID);
-    } else {
-      if (runTime.runningMacApp && runTime.osVersion.startsWith("10.10.")) {
-        if (Runner.runas(String.format("tell app \"%s\" to activate", appNameGiven)) < 0) {
-          return null;
-        }
-      }
-      if (_osUtil.open(appNameGiven) < 0) {
-        Debug.error("App.open failed: " + appNameGiven + " not found");
-        return null;
-      }
+    int pid = _osUtil.open(makeAppEntry());
+    if (pid < 0) {
+      Debug.error("App.open failed: " + appNameGiven + " not found");
+      return null;
     }
+    init(pid);
     Debug.action("App.open " + this.toString());
     return this;
   }
@@ -372,13 +338,7 @@ public class App {
    * @return 0 for success -1 otherwise
    */
   public static int close(String appName) {
-    int ret = _osUtil.close(appName);
-    if (ret > -1) {
-      Debug.action("App.close " + appName);
-    } else {
-      Debug.error("App.close %s did not work", appName);
-    }
-    return ret;
+    return new App(appName).close();
   }
 
   /**
@@ -387,14 +347,16 @@ public class App {
    */
   public int close() {
     if (appPID > -1) {
-      int ret = _osUtil.close(appPID);
-      if (ret >= 0) {
-        Debug.action("App.close " + this.toString());
-        appPID = -1;
-        return ret;
-      }
+      init(appPID);
     }
-    return close(appNameGiven);
+    int ret = _osUtil.close(makeAppEntry());
+    if (ret > -1) {
+      Debug.action("App.close: %s", this);
+      appPID = -1;
+    } else {
+      Debug.error("App.close %s did not work", this);
+    }
+    return ret;
   }
 //</editor-fold>
 
@@ -443,33 +405,10 @@ public class App {
    * @return the App instance or null on failure
    */
   public App focus(int num) {
-    boolean failed = false;
     int pid = -1;
-    if (appPID > -1) {
-      if (!appWindow.isEmpty()) {
-        _osUtil.switchto(appWindow, num);
-      } else {
-        pid = _osUtil.switchto(appPID, num);
-        if (pid == 0) {
-          failed = true;
-        }
-      }
-    } else {
-      if (Settings.isWindows()) {
-        pid = _osUtil.switchto(appNameGiven, num);
-        if (pid == 0) {
-          failed = true;
-        } else {
-          init(pid);
-        }
-      } else {
-				pid = _osUtil.switchto(appNameGiven, num);
-        if ( pid < 0) {
-          failed = true;
-        }
-      }
-    }
-    if (failed) {
+    pid = _osUtil.switchto(makeAppEntry(), num);
+        init(appName);
+    if (pid < 0) {
       Debug.error("App.focus failed: " + (num > 0 ? " #" + num : "") + " " + this.toString());
       return null;
     } else {

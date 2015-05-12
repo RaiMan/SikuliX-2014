@@ -9,6 +9,7 @@ package org.sikuli.natives;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.io.*;
+import org.sikuli.script.App;
 import org.sikuli.script.RunTime;
 
 public class LinuxUtil implements OSUtil {
@@ -40,6 +41,11 @@ public class LinuxUtil implements OSUtil {
 	}
 
   @Override
+  public App.AppEntry getApp(Object filter) {
+    return null;
+  }
+
+  @Override
   public int open(String appName) {
     try {
       String cmd[] = {"sh", "-c", "(" + appName + ") &\necho -n $!"};
@@ -57,6 +63,11 @@ public class LinuxUtil implements OSUtil {
       System.out.println("[error] openApp:\n" + e.getMessage());
       return 0;
     }
+  }
+
+  @Override
+  public int open(App.AppEntry app) {
+    return open(app.execName);
   }
 
   @Override
@@ -81,6 +92,10 @@ public class LinuxUtil implements OSUtil {
   }
 
   @Override
+  public int switchto(App.AppEntry app, int num) {
+    return switchto(app.execName, num);
+  }
+  @Override
   public int close(String appName) {
     try {
       String cmd[] = {"killall", appName};
@@ -91,6 +106,11 @@ public class LinuxUtil implements OSUtil {
       System.out.println("[error] closeApp:\n" + e.getMessage());
       return -1;
     }
+  }
+
+  @Override
+  public int close(App.AppEntry app) {
+    return close(app.execName);
   }
 
   private enum SearchType {
