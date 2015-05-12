@@ -11,7 +11,9 @@ import java.awt.Window;
 import java.io.File;
 import org.sikuli.basics.Debug;
 import org.sikuli.script.App;
+import org.sikuli.script.Key;
 import org.sikuli.script.RunTime;
+import org.sikuli.script.Screen;
 
 public class WinUtil implements OSUtil {
 
@@ -43,9 +45,6 @@ public class WinUtil implements OSUtil {
         String theWindow = parts[parts.length - 1];
         String theName = parts[1];
         String thePID = parts[3];
-        if (theWindow.trim().startsWith("N/A")) {
-          continue;
-        }
         if (!name.isEmpty()) {
           if (theName.toUpperCase().contains(execName)
                   || theWindow.contains(name)) {
@@ -74,7 +73,7 @@ public class WinUtil implements OSUtil {
   @Override
   public int open(App.AppEntry app) {
     if (app.pid > -1) {
-      switchApp(app.pid, 0);
+      return switchApp(app.pid, 0);
     }
     return openApp(app.execName);
   }
@@ -96,7 +95,13 @@ public class WinUtil implements OSUtil {
 
   @Override
   public int switchto(App.AppEntry app, int num) {
-    return -1;
+    if (app.window.startsWith("!")) {
+      return switchto(app.window.substring(1), 0);
+    }
+    if (app.pid > -1) {
+      return switchto(app.pid, 0);
+    }
+    return switchto(app.execName, num);
   }
 
   @Override
@@ -111,6 +116,11 @@ public class WinUtil implements OSUtil {
 
   @Override
   public int close(App.AppEntry app) {
+    if (app.window.startsWith("!")) {
+      switchto(app.window.substring(1), 0);
+      RunTime.pause(1);
+      new Screen().type(Key.F4, Key.ALT);
+    }
     if (app.pid > -1) {
       return closeApp(app.pid);
     }

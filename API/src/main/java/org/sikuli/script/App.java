@@ -212,9 +212,21 @@ public class App {
     if (appPID > -1) {
       Debug.log(3, "App.create: %s", toString());
     } else {
-      appName = new File(appNameGiven).getName();
-      if (runTime.runningMac) {
-        appName = appName.replace(".app", "");
+      if (runTime.runningWindows) {
+        int pid = _osUtil.switchto(appNameGiven);
+        if (pid > 0) {
+          init(pid);
+          appWindow = "!" + appNameGiven;
+          Debug.log(3, "App.create: %s", toString());
+        } else {
+          appPID = -1;
+          appName = "";
+        }
+      } else {
+        appName = new File(appNameGiven).getName();
+        if (runTime.runningMac) {
+          appName = appName.replace(".app", "");
+        }
       }
     }
   }
@@ -224,7 +236,9 @@ public class App {
     if (app != null) {
       appName = app.name;
       appPID = app.pid;
-      appWindow = app.window;
+      if (!app.window.contains("N/A")) {
+        appWindow = app.window;
+      }
     }
   }
 
@@ -242,7 +256,9 @@ public class App {
     if (app != null) {
       appName = app.name;
       appPID = app.pid;
-      appWindow = app.window;
+      if (!app.window.contains("N/A")) {
+        appWindow = app.window;
+      }
     }
   }
   
@@ -303,7 +319,9 @@ public class App {
   
   @Override
   public String toString() {
-    init();
+    if (!appWindow.startsWith("!")) {
+      init();
+    }
     return String.format("[%d:%s (%s)] %s", appPID, appName, appWindow, appNameGiven);
   }
 
@@ -416,7 +434,7 @@ public class App {
   public App focus(int num) {
     int pid = -1;
     pid = _osUtil.switchto(makeAppEntry(), num);
-        init(appName);
+    init(appName);
     if (pid < 0) {
       Debug.error("App.focus failed: " + (num > 0 ? " #" + num : "") + " " + this.toString());
       return null;
