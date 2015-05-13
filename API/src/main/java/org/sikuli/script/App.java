@@ -466,7 +466,49 @@ public class App {
     return asRegion(_osUtil.getFocusedWindow());
   }
 //</editor-fold>
-
+  
+  //<editor-fold defaultstate="collapsed" desc="run">
+  public static int lastRunReturnCode = -1;
+  public static String lastRunStdout = "";
+  public static String lastRunStderr = "";
+  public static String lastRunResult = "";
+  
+  /**
+   * the given text is parsed into a String[] suitable for issuing a Runtime.getRuntime().exec(args).
+   * quoting is preserved/obeyed. the first item must be an executable valid for the running system.<br>
+   * After completion, the following information is available: <br>
+   * App.lastRunResult: a string containing the complete result according to the docs of the run() command<br>
+   * App.lastRunStdout: a string containing only the output lines that went to stdout<br>
+   * App.lastRunStderr: a string containing only the output lines that went to stderr<br>
+   * App.lastRunReturnCode: the value, that is returnd as returncode
+   * @param cmd the command to run starting with an executable item
+   * @return the final returncode of the command execution
+   */
+  public static int run(String cmd) {
+    lastRunResult = runTime.runcmd(cmd);
+    String NL = runTime.runningWindows ? "\r\n" : "\n";
+    String[] res = lastRunResult.split(NL);
+    try {
+      lastRunReturnCode = Integer.parseInt(res[0].trim());
+    } catch (Exception ex) {}
+    lastRunStdout = "";
+    lastRunStderr = "";
+    boolean isError = false;
+    for (int n=1; n < res.length; n++) {
+      if (isError) {
+        lastRunStderr += res[n] + NL;
+        continue;
+      }
+      if (RunTime.runCmdError.equals(res[n])) {
+        isError = true;
+        continue;
+      }
+      lastRunStdout += res[n] + NL;
+    }
+    return lastRunReturnCode;
+  }
+//</editor-fold>
+  
   //<editor-fold defaultstate="collapsed" desc="clipboard">
   /**
    * evaluates the current textual content of the system clipboard
