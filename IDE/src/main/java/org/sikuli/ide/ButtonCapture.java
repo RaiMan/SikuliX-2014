@@ -21,6 +21,7 @@ import org.sikuli.util.OverlayCapturePrompt;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.Key;
+import org.sikuli.script.Screen;
 
 class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable, EventObserver {
 
@@ -100,8 +101,9 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
           Thread.sleep(delay);
         } catch (Exception e) {
         }
-        OverlayCapturePrompt p = new OverlayCapturePrompt(null, ButtonCapture.this);
-        p.prompt("Select an image");
+//        OverlayCapturePrompt p = new OverlayCapturePrompt(null, ButtonCapture.this);
+//        p.prompt("Select an image");
+        Screen.startPrompt("Select an image", ButtonCapture.this);
       }
     };
     t.start();
@@ -123,11 +125,13 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
    * _line = elmLine;
    * }*/
   //</editor-fold>
+
   @Override
   public void update(EventSubject s) {
     if (s instanceof OverlayCapturePrompt) {
       OverlayCapturePrompt cp = (OverlayCapturePrompt) s;
       ScreenImage simg = cp.getSelection();
+      Screen.closePrompt();
       String filename = null;
       EditorPane pane = SikuliIDE.getInstance().getCurrentCodePane();
       boolean saveOverwrite = Settings.OverwriteImages;
@@ -158,14 +162,14 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
         if (filename != null) {
           String fullpath = FileManager.saveImage(simg.getImage(), filename, pane.getSrcBundle());
           if (fullpath != null) {
-            captureCompleted(FileManager.slashify(fullpath, false), cp);
+            captureCompleted(FileManager.slashify(fullpath, false));
             Settings.OverwriteImages = saveOverwrite;
             return;
           }
         }
       }
       Settings.OverwriteImages = saveOverwrite;
-      captureCompleted(null, cp);
+      captureCompleted(null);
     }
   }
 
@@ -180,9 +184,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
             hint);
   }
 
-  public void captureCompleted(String imgFullPath, OverlayCapturePrompt prompt) {
-    prompt.close();
-
+  public void captureCompleted(String imgFullPath) {
     Element src = getSrcElement();
     if (imgFullPath != null) {
       Debug.log(2, "captureCompleted: " + imgFullPath);

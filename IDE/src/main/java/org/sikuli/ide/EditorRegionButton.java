@@ -16,6 +16,7 @@ import org.sikuli.script.Region;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.util.EventSubject;
 import org.sikuli.basics.Debug;
+import org.sikuli.script.Screen;
 import org.sikuli.util.EventObserver;
 
 class EditorRegionButton extends JButton implements ActionListener, EventObserver {
@@ -41,8 +42,9 @@ class EditorRegionButton extends JButton implements ActionListener, EventObserve
     SikuliIDE ide = SikuliIDE.getInstance();
     EditorPane codePane = ide.getCurrentCodePane();
     ide.setVisible(false);
-    OverlayCapturePrompt prompt = new OverlayCapturePrompt(null, this);
-    prompt.prompt(SikuliIDE._I("msgCapturePrompt"), 500);
+//    OverlayCapturePrompt prompt = new OverlayCapturePrompt(null, this);
+//    prompt.prompt(SikuliIDE._I("msgCapturePrompt"), 500);
+    Screen.startPrompt(SikuliIDE._I("msgCapturePrompt"), this);
   }
 
   @Override
@@ -50,7 +52,7 @@ class EditorRegionButton extends JButton implements ActionListener, EventObserve
     if (s instanceof OverlayCapturePrompt) {
       OverlayCapturePrompt cp = (OverlayCapturePrompt) s;
       ScreenImage r = cp.getSelection();
-      cp.close();
+      Screen.closePrompt();
       if (r != null) {
         try {
           Thread.sleep(300);

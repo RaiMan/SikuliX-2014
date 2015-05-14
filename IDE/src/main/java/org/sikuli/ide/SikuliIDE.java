@@ -55,6 +55,7 @@ import org.sikuli.idesupport.IDESupport;
 import org.sikuli.script.Key;
 import org.sikuli.script.RunServer;
 import org.sikuli.script.Runner;
+import org.sikuli.script.Screen;
 import org.sikuli.script.Sikulix;
 
 public class SikuliIDE extends JFrame implements InvocationHandler {
@@ -2085,8 +2086,10 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     @Override
     public void actionPerformed(ActionEvent ae) {
       sikulixIDE.setVisible(false);
-      OverlayCapturePrompt prompt = new OverlayCapturePrompt(null, this);
-      prompt.prompt(promptText, 500);
+//      OverlayCapturePrompt prompt = new OverlayCapturePrompt(null, this);
+//      prompt.prompt(promptText, 500);
+      RunTime.pause(0.5f);
+      Screen.startPrompt(promptText, this);
     }
 
     @Override
@@ -2100,7 +2103,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       int x, y, w, h;
       EditorPane codePane = getCurrentCodePane();
       ScreenImage r = cp.getSelection();
-      cp.close();
+      Screen.closePrompt();
       if (r != null) {
         Rectangle roi = r.getROI();
         x = (int) roi.getX();
@@ -2139,7 +2142,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       int x, y;
       EditorPane codePane = getCurrentCodePane();
       ScreenImage simg = cp.getSelection();
-      cp.close();
+      Screen.closePrompt();
       if (simg != null) {
         Rectangle roi = simg.getROI();
         x = (int) (roi.getX() +  roi.getWidth()/2);
@@ -2167,7 +2170,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       int x, y, ox, oy;
       EditorPane codePane = getCurrentCodePane();
       ScreenImage simg = cp.getSelection();
-      cp.close();
+      Screen.closePrompt();
       if (simg != null) {
         Rectangle roi = simg.getROI();
         x = (int) roi.getX();
@@ -2222,9 +2225,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         } else if (item.startsWith("Location")) {
           eval = "new " + item + ".grow(10).highlight(2);";
         } else if (item.startsWith("Pattern")) {
-          eval = "m = exists(new " + item + "); if (m != null) m.highlight(2);";
+          eval = "m = Screen.all().exists(new " + item + "); if (m != null) m.highlight(2);";
         } else if (item.startsWith("\"")) {
-          eval = "m = exists(" + item + "); if (m != null) m.highlight(2);";          
+          eval = "m = Screen.all().exists(" + item + "); if (m != null) m.highlight(2);";          
         }
         if (!eval.isEmpty()) {
           Debug.log(lvl, "show: %s", eval);

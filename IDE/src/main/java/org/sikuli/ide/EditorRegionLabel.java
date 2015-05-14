@@ -15,6 +15,8 @@ import java.awt.event.MouseListener;
 import javax.swing.BorderFactory;
 import javax.swing.JLabel;
 import javax.swing.border.Border;
+import org.sikuli.script.RunTime;
+import org.sikuli.script.Screen;
 import org.sikuli.util.EventObserver;
 import org.sikuli.util.EventSubject;
 import org.sikuli.util.OverlayCapturePrompt;
@@ -78,7 +80,7 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
     if (s instanceof OverlayCapturePrompt) {
       OverlayCapturePrompt cp = (OverlayCapturePrompt) s;
       ScreenImage r = cp.getSelection();
-      cp.close();
+      Screen.closePrompt();
       if (r != null) {
         try {
           Thread.sleep(300);
@@ -135,8 +137,10 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
     ide.setVisible(false);
     setForeground(fc);
     setBorder(bfinal);
-    OverlayCapturePrompt prompt = new OverlayCapturePrompt(null, this);
-    prompt.prompt(SikuliIDE._I("msgCapturePrompt"), 500);
+//    OverlayCapturePrompt prompt = new OverlayCapturePrompt(null, this);
+//    prompt.prompt(SikuliIDE._I("msgCapturePrompt"), 500);
+    RunTime.pause(0.5f);
+    Screen.startPrompt(SikuliIDE._I("msgCapturePrompt"), this);
   }
 
   @Override
