@@ -13,6 +13,7 @@ s0.hover()
 bsw = App("Safari").open().window()
 bsw.highlight(1)
 img = "img.png"
+#Debug.on(4)
 m = s1.find(img)
 hover(m)
 hover(s1)
