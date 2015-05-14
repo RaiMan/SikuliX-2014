@@ -1113,6 +1113,10 @@ Point pNull = new Point(0, 0);
   public boolean isJava7() {
     return javaVersion > 6;
   }
+  
+  public boolean isOSX10() {
+    return osVersion.startsWith("10.10.");
+  }
 
   /**
    * print out some basic information about the current runtime environment

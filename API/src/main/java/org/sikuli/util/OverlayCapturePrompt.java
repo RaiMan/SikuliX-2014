@@ -14,6 +14,7 @@ import java.awt.image.*;
 import org.sikuli.natives.SysUtil;
 import org.sikuli.script.IScreen;
 import org.sikuli.script.Location;
+import org.sikuli.script.RunTime;
 import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.script.ScreenUnion;
@@ -57,10 +58,14 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
 
   private void init(IScreen scr, EventObserver ob) {
     addObserver(ob);
-    if (Screen.getNumberScreens() > 1) {
-      scrOCP = new ScreenUnion();
+    if (RunTime.get().isOSX10()) {
+      scrOCP = scr;
     } else {
-      scrOCP = Screen.getPrimaryScreen();
+      if (Screen.getNumberScreens() > 1) {
+        scrOCP = new ScreenUnion();
+      } else {
+        scrOCP = Screen.getPrimaryScreen();
+      }
     }
     canceled = false;
     setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
@@ -89,7 +94,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
         desty = srcy = e.getY();
         srcScreenId = scrOCP.getIdFromPoint(srcx, srcy);
         srcScreenLocation = new Location(srcx + scrOCP.getX(), srcy + scrOCP.getY());
-        Debug.log(2, "CapturePrompt: started at (%d,%d) as %s on %d", srcx, srcy,
+        Debug.log(4, "CapturePrompt: started at (%d,%d) as %s on %d", srcx, srcy,
                 srcScreenLocation.toStringShort(), srcScreenId);
         repaint();
       }
@@ -105,10 +110,10 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
         }
         if (e.getButton() == java.awt.event.MouseEvent.BUTTON3) {
           canceled = true;
-          Debug.log(2, "CapturePrompt: aborted using right mouse button");
+          Debug.log(3, "CapturePrompt: aborted using right mouse button");
         } else {
           destScreenLocation = new Location(destx + scrOCP.getX(), desty + scrOCP.getY());
-          Debug.log(2, "CapturePrompt: finished at (%d,%d) as %s on %d", destx, desty,
+          Debug.log(4, "CapturePrompt: finished at (%d,%d) as %s on %d", destx, desty,
                   destScreenLocation.toStringShort(), srcScreenId);
         }
         setVisible(false);
@@ -139,7 +144,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
             return;
           }
           canceled = true;
-          Debug.log(2, "CapturePrompt: aborted using key ESC");
+          Debug.log(3, "CapturePrompt: aborted using key ESC");
           setVisible(false);
           notifyObserver();
         }
@@ -149,7 +154,8 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
 
   @Override
   public void close() {
-    Debug.log(2, "CapturePrompt.close: freeing resources");
+    Debug.log(4, "CapturePrompt.close: freeing resources");
+    setVisible(false);
     dispose();
     scr_img = null;
     scr_img_darker = null;
@@ -187,7 +193,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
     Rectangle rect = new Rectangle(scrOCP.getBounds());
     this.setBounds(rect);
     promptMsg = msg;
-    Debug.log(3, "CapturePrompt: [%d,%d (%d, %d)] %s", rect.x, rect.y, rect.width, rect.height, promptMsg);
+    Debug.log(4, "CapturePrompt: [%d,%d (%d, %d)] %s", rect.x, rect.y, rect.width, rect.height, promptMsg);
     this.setVisible(true);
     if (!Settings.isJava7()) {
       if (Settings.isMac()) {

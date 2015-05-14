@@ -149,7 +149,7 @@ public class Sikulix {
     Screen s1 = Screen.as(1);
     p("%s", s1);
     p("%s", new Screen(1));
-    s1.selectRegion();
+    p("%s", s.saveCapture("test"));
     System.exit(1);
     //*********************************
     

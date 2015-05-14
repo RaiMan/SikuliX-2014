@@ -19,3 +19,6 @@ hover(s1)
 saveCapture("test")
 m = bsw.find("_test.png")
 hover(m)
+
+icons = "icons.png"
+hover(icons)

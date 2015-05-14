@@ -47,7 +47,7 @@ public class Screen extends Region implements EventObserver, IScreen {
   protected int monitor = -1;
   protected boolean waitPrompt;
   protected OverlayCapturePrompt prompt;
-  private final String promptMsg = "Select a region on the screen";
+  private final static String promptMsg = "Select a region on the screen";
   private ScreenImage lastScreenImage = null;
 
   //<editor-fold defaultstate="collapsed" desc="Initialization">
@@ -502,6 +502,20 @@ public class Screen extends Region implements EventObserver, IScreen {
     return userCapture("");
   }
 
+  public static void startPrompt(String message, EventObserver obs) {
+    String msg = message.isEmpty() ? promptMsg : message;
+    for (int is = 0; is < Screen.getNumberScreens(); is++) {
+      Screen.getScreen(is).prompt = new OverlayCapturePrompt(Screen.getScreen(is), obs);
+      Screen.getScreen(is).prompt.prompt(msg);
+    }
+  }
+  
+  public static void closePrompt() {
+    for (int is = 0; is < Screen.getNumberScreens(); is++) {
+      Screen.getScreen(is).prompt.close();
+    }
+  }
+  
   /**
    * interactive capture with given message: lets the user capture a screen image using the mouse to
    * draw the rectangle
@@ -515,12 +529,10 @@ public class Screen extends Region implements EventObserver, IScreen {
     Thread th = new Thread() {
       @Override
       public void run() {
-        if ("".equals(message)) {
-          prompt = new OverlayCapturePrompt(null, Screen.this);
-          prompt.prompt(promptMsg);
-       } else {
-          prompt = new OverlayCapturePrompt(Screen.this, Screen.this);
-          prompt.prompt(message);
+        String msg = message.isEmpty() ? promptMsg : message;
+        for (int is = 0; is < Screen.getNumberScreens(); is++) {
+          Screen.getScreen(is).prompt = new OverlayCapturePrompt(Screen.getScreen(is), Screen.this);
+          Screen.getScreen(is).prompt.prompt(msg);
         }
       }
     };
@@ -538,13 +550,19 @@ public class Screen extends Region implements EventObserver, IScreen {
     } catch (InterruptedException e) {
       hasShot = false;
     }
-    ScreenImage ret = null;
+    ScreenImage simg = null;
     if (hasShot) {
-      ret = prompt.getSelection();
-      lastScreenImage = ret;
-      prompt.close();
+      for (int is = 0; is < Screen.getNumberScreens(); is++) {
+        if (simg == null) {
+          simg = Screen.getScreen(is).prompt.getSelection();
+          if (simg != null) {
+            Screen.getScreen(is).lastScreenImage = simg;
+          }
+        }
+        Screen.getScreen(is).prompt.close();
+      }
     }
-    return ret;
+    return simg;
   }
   
   public String saveCapture(String name) {
