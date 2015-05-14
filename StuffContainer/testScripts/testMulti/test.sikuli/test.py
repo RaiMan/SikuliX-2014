@@ -10,5 +10,6 @@ wait(2)
 s0.hover()
 App("Safari").open()
 img = "img.png"
+#Debug.on(4)
 m = s1.find(img)
 hover(m)
