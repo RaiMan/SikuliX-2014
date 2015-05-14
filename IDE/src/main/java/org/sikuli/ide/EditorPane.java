@@ -87,9 +87,9 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	static Pattern patPatternStr = Pattern.compile(
 					"\\b(Pattern\\s*\\(\".*?\"\\)(\\.\\w+\\([^)]*\\))+)");
 	static Pattern patRegionStr = Pattern.compile(
-					"\\b(Region\\s*\\([\\d\\s,]+\\))");
+					"\\b(Region\\s*\\((-?[\\d\\s],?)+\\))");
 	static Pattern patLocationStr = Pattern.compile(
-					"\\b(Location\\s*\\([\\d\\s,]+\\))");
+					"\\b(Location\\s*\\((-?[\\d\\s],?)+\\))");
 
 	//TODO what is it for???
 	private int _caret_last_x = -1;
