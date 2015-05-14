@@ -48,12 +48,12 @@ public class WinUtil implements OSUtil {
         if (!name.isEmpty()) {
           if (theName.toUpperCase().contains(execName)
                   || theWindow.contains(name)) {
-            return new App.AppEntry(theName, thePID, theWindow, "");
+            return new App.AppEntry(theName, thePID, theWindow, "", "");
           }
         } else {
           try {
             if (Integer.parseInt(thePID) == pid) {
-              return new App.AppEntry(theName, thePID, theWindow, "");
+              return new App.AppEntry(theName, thePID, theWindow, "", "");
             }
           } catch (Exception ex) {
           }
@@ -75,7 +75,11 @@ public class WinUtil implements OSUtil {
     if (app.pid > -1) {
       return switchApp(app.pid, 0);
     }
-    return openApp(app.execName);
+    String cmd = app.execName;
+    if (!app.options.isEmpty()) {
+      cmd += " " + app.options;
+    }
+    return openApp(cmd);
   }
 
   @Override

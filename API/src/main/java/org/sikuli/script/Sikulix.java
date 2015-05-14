@@ -144,13 +144,7 @@ public class Sikulix {
     //******Test Space*************************************
 //    Screen.showMonitors();
     Screen s = Screen.as(0);
-    p("%s", s);
-    p("%s", new Screen(0));
-    Screen s1 = Screen.as(1);
-    p("%s", s1);
-    p("%s", new Screen(1));
-    p("%s", s.saveCapture("test"));
-    System.exit(1);
+//    System.exit(1);
     //*********************************
     
     Debug.on(3);

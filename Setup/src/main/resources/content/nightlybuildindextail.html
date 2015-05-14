@@ -1,3 +1,11 @@
+<h4>Build: 2015-05-15</h4>
+fixed: multi monitor: should be fixed now (tested on Mac (incl. 10.10.x) and on Windows)<br>
+revised: IDE: show button: now recognizes negative coordinates and finds image on all screens.
+added: class App: now possible to add parameters/options again as a string using setUsing(...). <br>
+Currently only recognized on Windows, which brings back the possibility to <br>
+open an application with parameters/options. <br>
+Until now: App.open("some.exe parm1 parm2 ...") <br>
+must now be written as App("some.exe").setUsing("parm1 parm2 ...").open()
 <h4>Build: 2015-05-13</h4>
 revised: class App: Mac/Windows: an app now knows it's process ID (PID) and its frontmost window title<br>
 you can ask an app wether it is running and wether it has a window<br>

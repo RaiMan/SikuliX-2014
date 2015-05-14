@@ -42,6 +42,7 @@ public class App {
 
   private static final OSUtil _osUtil = SysUtil.getOSUtil();
   private String appNameGiven;
+  private String appOptions;
   private String appName;
   private String appWindow;
   private int appPID;
@@ -177,12 +178,14 @@ public class App {
   public static class AppEntry {
     public String name;
     public String execName;
+    public String options;
     public String window;
     public int pid;
     
-    public AppEntry(String theName, String thePID, String theWindow, String theExec) {
+    public AppEntry(String theName, String thePID, String theWindow, String theExec, String theOptions) {
       name = theName;
       window = theWindow;
+      options = theOptions;
       pid = -1;
       execName = theExec;
       try {
@@ -192,7 +195,7 @@ public class App {
   }
   
   public AppEntry makeAppEntry() {
-    return new AppEntry(appName, getPID().toString(), appWindow, appNameGiven);
+    return new AppEntry(appName, getPID().toString(), appWindow, appNameGiven, appOptions);
   }
 //</editor-fold>
   
@@ -208,6 +211,7 @@ public class App {
     appName = name;
     appPID = -1;
     appWindow = "";
+    appOptions = "";
     init(appNameGiven);
     if (appPID > -1) {
       Debug.log(3, "App.create: %s", toString());
@@ -285,7 +289,7 @@ public class App {
           if (theWindow.trim().startsWith("N/A")) {
             continue;
           }
-          apps.put(parts[1], new AppEntry(parts[1], parts[3] , theWindow, ""));
+          apps.put(parts[1], new AppEntry(parts[1], parts[3] , theWindow, "", ""));
         }
       } else {
         Debug.logp(result);
@@ -296,6 +300,15 @@ public class App {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="getter/setter">
+  public App setUsing(String options) {
+    if (options != null) {
+      appOptions = options;
+    } else {
+      appOptions = "";
+    }
+    return this;
+  }
+  
   public Integer getPID() {
     return appPID;
   }
@@ -355,6 +368,7 @@ public class App {
     Debug.action("App.open " + this.toString());
     return this;
   }
+  
 //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="close">
