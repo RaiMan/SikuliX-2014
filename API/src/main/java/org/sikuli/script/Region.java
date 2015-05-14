@@ -195,14 +195,14 @@ public class Region {
    * Detects on which Screen the Region is present. The region is cropped to the intersection with the given screen or
    * the screen with the largest intersection
    *
-   * @param scr The Screen containing the Region
+   * @param iscr The Screen containing the Region
    */
-  public void initScreen(IScreen scr) {
+  public void initScreen(IScreen iscr) {
     // check given screen first
     Rectangle rect, screenRect;
     IScreen screen, screenOn;
-    if (scr != null) {
-      if (scr.isOtherScreen()) {
+    if (iscr != null) {
+      if (iscr.isOtherScreen()) {
         if (x < 0) {
           w = w + x;
           x = 0;
@@ -211,18 +211,18 @@ public class Region {
           h = h + y;
           y = 0;
         }
-        this.scr = scr;
+        this.scr = iscr;
         this.otherScreen = true;
         return;
       }
-      if (scr.getID() > -1) {
-        rect = regionOnScreen(scr);
+      if (iscr.getID() > -1) {
+        rect = regionOnScreen(iscr);
         if (rect != null) {
           x = rect.x;
           y = rect.y;
           w = rect.width;
           h = rect.height;
-          this.scr = scr;
+          this.scr = iscr;
           return;
         }
       } else {
@@ -234,7 +234,13 @@ public class Region {
     // crop to the screen with the largest intersection
     screenRect = new Rectangle(0, 0, 0, 0);
     screenOn = null;
-    if (scr instanceof Screen) {
+    boolean isVNC;
+    if (iscr == null) {
+      isVNC = scr instanceof VNCScreen;
+    } else {
+      isVNC = iscr instanceof VNCScreen;
+    }
+    if (!isVNC) {
       for (int i = 0; i < Screen.getNumberScreens(); i++) {
         screen = Screen.getScreen(i);
         rect = regionOnScreen(screen);
@@ -245,7 +251,7 @@ public class Region {
           }
         }
       }
-    } else if (scr instanceof VNCScreen) {
+    } else {
       for (int i = 0; i < VNCScreen.getNumberScreens(); i++) {
         screen = VNCScreen.getScreen(i);
         rect = regionOnScreen(screen);
@@ -256,18 +262,7 @@ public class Region {
           }
         }
       }
-    } else {//when scr == null
-      for (int i = 0; i < Screen.getNumberScreens(); i++) {
-        screen = Screen.getScreen(i);
-        rect = regionOnScreen(screen);
-        if (rect != null) {
-          if (rect.width * rect.height > screenRect.width * screenRect.height) {
-            screenRect = rect;
-            screenOn = screen;
-          }
-        }
-      }
-    }
+    } 
     if (screenOn != null) {
       x = screenRect.x;
       y = screenRect.y;
@@ -887,7 +882,7 @@ public class Region {
     Location c = getCenter();
     x = x - c.x + loc.x;
     y = y - c.y + loc.y;
-    initScreen(loc.getScreen());
+    initScreen(null);
     return this;
   }
 
@@ -927,7 +922,7 @@ public class Region {
     Location c = getTopRight();
     x = x - c.x + loc.x;
     y = y - c.y + loc.y;
-    initScreen(getScreen());
+    initScreen(null);
     return this;
   }
 
@@ -949,7 +944,7 @@ public class Region {
     Location c = getBottomLeft();
     x = x - c.x + loc.x;
     y = y - c.y + loc.y;
-    initScreen(getScreen());
+    initScreen(null);
     return this;
   }
 
@@ -1014,7 +1009,7 @@ public class Region {
    */
   public void setX(int X) {
     x = X;
-    initScreen(scr);
+    initScreen(null);
   }
 
   /**
@@ -1023,7 +1018,7 @@ public class Region {
    */
   public void setY(int Y) {
     y = Y;
-    initScreen(scr);
+    initScreen(null);
   }
 
   /**
@@ -1032,7 +1027,7 @@ public class Region {
    */
   public void setW(int W) {
     w = W > 1 ? W : 1;
-    initScreen(scr);
+    initScreen(null);
   }
 
   /**
@@ -1041,7 +1036,7 @@ public class Region {
    */
   public void setH(int H) {
     h = H > 1 ? H : 1;
-    initScreen(scr);
+    initScreen(null);
   }
 
   // ************************************************
@@ -1054,7 +1049,7 @@ public class Region {
   public Region setSize(int W, int H) {
     w = W > 1 ? W : 1;
     h = H > 1 ? H : 1;
-    initScreen(scr);
+    initScreen(null);
     return this;
   }
 
@@ -1090,7 +1085,7 @@ public class Region {
     y = Y;
     w = W > 1 ? W : 1;
     h = H > 1 ? H : 1;
-    initScreen(getScreen());
+    initScreen(null);
     return this;
   }
 
@@ -1132,7 +1127,7 @@ public class Region {
     y = Y;
     w = W > 1 ? W : 1;
     h = H > 1 ? H : 1;
-    initScreen(getScreen());
+    initScreen(null);
   }
 
   /**
@@ -1200,7 +1195,7 @@ public class Region {
   public Region setLocation(Location loc) {
     x = loc.x;
     y = loc.y;
-    initScreen(scr);
+    initScreen(null);
     return this;
   }
 
@@ -1236,7 +1231,7 @@ public class Region {
     if (h < 1) {
       h = 1;
     }
-    initScreen(getScreen());
+    initScreen(null);
     return this;
   }
 
@@ -1250,7 +1245,7 @@ public class Region {
     Rectangle rect = getRect();
     rect.add(r.getRect());
     setRect(rect);
-    initScreen(getScreen());
+    initScreen(null);
     return this;
   }
 
@@ -1264,7 +1259,7 @@ public class Region {
     Rectangle rect = getRect();
     rect.add(loc.x, loc.y);
     setRect(rect);
-    initScreen(getScreen());
+    initScreen(null);
     return this;
   }
 

@@ -233,7 +233,7 @@ public class RobotDesktop extends Robot implements IRobot {
     Rectangle cRect = new Rectangle(rect);
 //    cRect.translate(-s.x, -s.y);
     BufferedImage img = createScreenCapture(rect);
-    Debug.log(3, "RobotDesktop: captureScreen: [%d,%d, %dx%d]",
+    Debug.log(4, "RobotDesktop: captureScreen: [%d,%d, %dx%d]",
             rect.x, rect.y, rect.width, rect.height);
     return new ScreenImage(rect, img);
   }

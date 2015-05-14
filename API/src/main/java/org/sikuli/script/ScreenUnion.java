@@ -62,7 +62,7 @@ public class ScreenUnion extends Screen {
 
   @Override
   public ScreenImage capture(Rectangle rect) {
-    Debug.log(3, "ScreenUnion: capture: (%d,%d) %dx%d", rect.x, rect.y, rect.width, rect.height);
+    Debug.log(4, "ScreenUnion: capture: (%d,%d) %dx%d", rect.x, rect.y, rect.width, rect.height);
     Screen s = Screen.getPrimaryScreen();
 //    Location tl = new Location(rect.getLocation());
 //    for (Screen sx : Screen.screens) {

@@ -6,8 +6,6 @@
  */
 package org.sikuli.util;
 
-import org.sikuli.util.EventObserver;
-import org.sikuli.util.EventSubject;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import java.awt.*;
@@ -59,14 +57,11 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
 
   private void init(IScreen scr, EventObserver ob) {
     addObserver(ob);
-    if (scr == null) {
-      if (Screen.getNumberScreens() > 1) {
-        scr = new ScreenUnion();
-      } else {
-        scr = Screen.getPrimaryScreen();
-      }
+    if (Screen.getNumberScreens() > 1) {
+      scrOCP = new ScreenUnion();
+    } else {
+      scrOCP = Screen.getPrimaryScreen();
     }
-    scrOCP = scr;
     canceled = false;
     setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     rectSelection = new Rectangle();
@@ -189,9 +184,10 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
 
   public void prompt(String msg) {
     captureScreen(scrOCP);
-    this.setBounds(scrOCP.getBounds());
+    Rectangle rect = new Rectangle(scrOCP.getBounds());
+    this.setBounds(rect);
     promptMsg = msg;
-    Debug.log(2, "CapturePrompt: " + promptMsg);
+    Debug.log(3, "CapturePrompt: [%d,%d (%d, %d)] %s", rect.x, rect.y, rect.width, rect.height, promptMsg);
     this.setVisible(true);
     if (!Settings.isJava7()) {
       if (Settings.isMac()) {

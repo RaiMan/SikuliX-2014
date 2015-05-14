@@ -149,19 +149,7 @@ public class Sikulix {
     Screen s1 = Screen.as(1);
     p("%s", s1);
     p("%s", new Screen(1));
-//    s1.hover();
-//    p("%s", Mouse.at());
-//    s1.hover();
-//    p("%s", Mouse.at());
-//    App bs = new App("Safari");
-//    bs.focus();
-//    Region bsw = bs.window();
-//    p("%s", bsw);
-//    bsw.highlight(2);
-    Rectangle rect = new Rectangle(-300, 300, 600, 600);
-    Debug.on(4);
-    s.capture(rect);
-//    p("reg: %s", s1.saveCapture("test", s));
+    s1.selectRegion();
     System.exit(1);
     //*********************************
     
