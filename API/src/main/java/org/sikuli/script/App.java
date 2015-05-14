@@ -66,7 +66,7 @@ public class App {
     appsMac.put(Type.VIEWER, "Preview");
 }
 
-  //<editor-fold defaultstate="collapsed" desc="special app fetures">
+  //<editor-fold defaultstate="collapsed" desc="special app features">
   public static enum Type {
     EDITOR, BROWSER, VIEWER
   }

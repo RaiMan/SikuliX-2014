@@ -71,6 +71,7 @@ public class Screen extends Region implements EventObserver, IScreen {
     }
     log(lvl+1, "initScreens: entry");
     primaryScreen = 0;
+    globalRobot = getMouseRobot();
     screens = new Screen[runTime.nMonitors];
     screens[0] = new Screen(0, runTime.mainMonitor);
     screens[0].initScreen();
@@ -82,7 +83,6 @@ public class Screen extends Region implements EventObserver, IScreen {
       screens[i] = new Screen(i, nMonitor);
       screens[i].initScreen();
     }
-    globalRobot = getMouseRobot();
     Mouse.init();
     Keys.init();
     if (getNumberScreens() > 1) {
@@ -111,7 +111,6 @@ public class Screen extends Region implements EventObserver, IScreen {
     try {
       if (globalRobot == null) {
         globalRobot = new RobotDesktop();
-        fakeRegion = new Region(0,0,5,5);
       }
     } catch (AWTException e) {
       Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
@@ -121,6 +120,9 @@ public class Screen extends Region implements EventObserver, IScreen {
   }
   
   protected static Region getFakeRegion() {
+    if (fakeRegion == null) {
+      fakeRegion = new Region(0,0,5,5);
+    }
     return fakeRegion;
   }
   
@@ -145,6 +147,16 @@ public class Screen extends Region implements EventObserver, IScreen {
     curID = id;
     this.monitor = monitor;
   }
+  
+  public static Screen as(int id) {
+    if (id < 0 || id >= runTime.nMonitors) {
+      Debug.error("Screen(%d) not in valid range 0 to %d - using primary %d",
+							id, runTime.nMonitors - 1, primaryScreen);
+			return screens[0];
+    } else {
+			return screens[id];
+		}
+  }
 
   /**
    * The screen object with the given id
@@ -160,6 +172,7 @@ public class Screen extends Region implements EventObserver, IScreen {
     } else {
 			curID = id;
 		}
+    monitor = screens[id].monitor;
     initScreen();
   }
 
@@ -215,13 +228,14 @@ public class Screen extends Region implements EventObserver, IScreen {
     y = (int) bounds.getY();
     w = (int) bounds.getWidth();
     h = (int) bounds.getHeight();
-    try {
-      robot = new RobotDesktop(this);
-      robot.setAutoDelay(10);
-    } catch (AWTException e) {
-      Debug.error("Can't initialize Java Robot on Screen " + curID + ": " + e.getMessage());
-      robot = null;
-    }
+//    try {
+//      robot = new RobotDesktop(this);
+//      robot.setAutoDelay(10);
+//    } catch (AWTException e) {
+//      Debug.error("Can't initialize Java Robot on Screen " + curID + ": " + e.getMessage());
+//      robot = null;
+//    }
+    robot = globalRobot;
   }
 
   /**
@@ -544,8 +558,11 @@ public class Screen extends Region implements EventObserver, IScreen {
     } else {
       img = capture(reg);
     }
-    img.saveInBundle(name);
-    return name;
+    if (img == null) {
+      return null;
+    } else {
+      return img.saveInBundle(name);
+    }
   }
 
   /**

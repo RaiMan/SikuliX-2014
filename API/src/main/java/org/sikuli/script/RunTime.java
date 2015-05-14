@@ -593,14 +593,14 @@ Point pNull = new Point(0, 0);
         if (monitorBounds[i].contains(pNull)) {
           if (mainMonitor < 0) {
             mainMonitor = i;
-            log(lvl, "ScreenDevice %d contains (0,0) --- will be used as primary", i);
+            log(lvl, "ScreenDevice %d has (0,0) --- will be primary Screen(0)", i);
           } else {
             log(lvl, "ScreenDevice %d too contains (0,0)!", i);
           }
         }
       }
       if (mainMonitor < 0) {
-          log(lvl, "No ScreenDevice contains (0,0) --- using 0 as primary: %s", monitorBounds[0]);
+          log(lvl, "No ScreenDevice has (0,0) --- using 0 as primary: %s", monitorBounds[0]);
           mainMonitor = 0;
       }
     } else {

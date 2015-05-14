@@ -156,15 +156,16 @@ public class ScreenImage {
     if (!name.startsWith("_")) {
 			name = "_" + name;
 		}
+    File fImage = new File(name);
     try {
-      File fImage = new File(ImagePath.getBundlePath(), name);
+      fImage = new File(ImagePath.getBundlePath(), name);
       createFile(fImage);
       Debug.log(3, "ScreenImage.saveInBundle:\n%s", fImage);
     } catch (IOException iOException) {
       Debug.error("ScreenImage.saveInBundle: IOException", iOException);
       return null;
     }
-    return name;
+    return fImage.getAbsolutePath();
   }
   
 	// store image to given path if not yet stored

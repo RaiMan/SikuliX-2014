@@ -10,6 +10,7 @@ import org.sikuli.basics.HotkeyManager;
 import org.sikuli.util.Tests;
 import org.sikuli.util.ScreenHighlighter;
 import java.awt.Dimension;
+import java.awt.Rectangle;
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
@@ -142,22 +143,25 @@ public class Sikulix {
     
     //******Test Space*************************************
 //    Screen.showMonitors();
-    Screen s = new Screen();
-//    Debug.logp("%s", s0);
-//    Screen s1 = new Screen(1);
-//    Debug.logp("%s", s1);
-    Debug.off();
-    App app = new App("Preview");
-    if (!app.isRunning()) {
-      app.open();
-    }
-    if (!app.hasWindow()) {
-      app.focus();
-      s.write("#C.#F2.f#N.o#N.#N.");
-    }
-    RunTime.pause(3);
-    app.close();
-    Debug.logp("%s", app);
+    Screen s = Screen.as(0);
+    p("%s", s);
+    p("%s", new Screen(0));
+    Screen s1 = Screen.as(1);
+    p("%s", s1);
+    p("%s", new Screen(1));
+//    s1.hover();
+//    p("%s", Mouse.at());
+//    s1.hover();
+//    p("%s", Mouse.at());
+//    App bs = new App("Safari");
+//    bs.focus();
+//    Region bsw = bs.window();
+//    p("%s", bsw);
+//    bsw.highlight(2);
+    Rectangle rect = new Rectangle(-300, 300, 600, 600);
+    Debug.on(4);
+    s.capture(rect);
+//    p("reg: %s", s1.saveCapture("test", s));
     System.exit(1);
     //*********************************
     
