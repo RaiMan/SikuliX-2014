@@ -1,3 +1,5 @@
+<h4>Build: 2015-05-16</h4>
+fixed: IDE: cursor keeps current position in cases, where the conent is reevaluated (toggle view and image rename)
 <h4>Build: 2015-05-15</h4>
 fixed: multi monitor: should be fixed now (tested on Mac (incl. 10.10.x) and on Windows)<br>
 revised: IDE: show button: now recognizes negative coordinates and finds image on all screens.
@@ -11,7 +13,7 @@ revised: class App: Mac/Windows: an app now knows it's process ID (PID) and its 
 you can ask an app wether it is running and wether it has a window<br>
 if an app is running it is not started again with open(). Linux: not yet revised
 <h4>Build: 2015-05-08</h4>
-revised: class App: App.open, focus, close on Windows to be more consistent. 
+revised: class App: App.open, focus, close on Windows to be more consistent.
 getWindow() to get the title of the frontmost window of an app. The same app is only opened once -
 a running process is reused.
 <h4>Build: 2015-05-04</h4>
@@ -46,7 +48,7 @@ fixed: runScript(): possible NPE, when used in scripts run from commandline
 revised: jython script running with sikulixapi.jar::Runner: now returns the value from an exit(n)<br>
 fixed: Linux: possible NPE in build on the fly
 <h4>Build: 2015-03-31</h4>
-added: jython script running with sikulixapi.jar::Runner: usage: org.sikuli.script.Runner.run(scriptPath, args), 
+added: jython script running with sikulixapi.jar::Runner: usage: org.sikuli.script.Runner.run(scriptPath, args),
 sikulixapi.jar and a jython.jar must be on classpath (auto taken from setup downloads if omitted).
 <h4>Build: 2015-03-27</h4>
 fixed: Mac: a problem that made it to not run any longer with Java 6<br>
