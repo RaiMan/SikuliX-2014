@@ -27,7 +27,7 @@ import org.sikuli.script.ScreenImage;
  */
 public class ScreenHighlighter extends OverlayTransparentWindow implements MouseListener {
 
-  static Color _transparentColor = new Color(0F, 0F, 0F, 0.5F);
+  static Color _transparentColor = new Color(0F, 0F, 0F, 0.2F);
   Color _targetColor = Color.RED;
   final static int TARGET_SIZE = 50;
   final static int DRAGGING_TIME = 200;

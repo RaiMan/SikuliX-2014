@@ -1,5 +1,11 @@
 <h4>Build: 2015-05-16</h4>
-fixed: IDE: cursor keeps current position in cases, where the conent is reevaluated (toggle view and image rename)
+fixed: IDE: cursor keeps current position in cases, where the content is re-evaluated (toggle view and image rename)<br>
+added: experimental (more options might follow): 
+a feature to highlight the search region before search (green frame) 
+and the match (if found, red frame) after the search (each for 2 seconds), 
+might be an alternative to slow motion running. Start: Debug.highlightOn(), Stop: Debug.highlightOff(). 
+works for region.method() usage and for setROI() usage. The region/ROI must be at least 10 pixel smaller 
+than the screen on all sides, otherwise the green frame is omitted. 
 <h4>Build: 2015-05-15</h4>
 fixed: multi monitor: should be fixed now (tested on Mac (incl. 10.10.x) and on Windows)<br>
 revised: IDE: show button: now recognizes negative coordinates and finds image on all screens.

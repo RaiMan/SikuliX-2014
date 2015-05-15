@@ -2487,6 +2487,7 @@ public class Region {
   private <PSI> Match doFind(PSI ptn, RepeatableFind repeating) throws IOException {
     Finder f = null;
     Match m = null;
+    IScreen s = null;
     boolean findingText = false;
     lastFindTime = (new Date()).getTime();
     ScreenImage simg;
@@ -2498,6 +2499,7 @@ public class Region {
       lastSearchTime = (new Date()).getTime();
       f.findRepeat();
     } else {
+      s = getScreen();
       Image img = null;
       if (ptn instanceof String) {
         if (((String) ptn).startsWith("\t") && ((String) ptn).endsWith("\t")) {
@@ -2508,7 +2510,8 @@ public class Region {
             lastSearchTime = (new Date()).getTime();
             f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), null);
             if (!f.hasNext()) {
-              f.find(img);
+              runFinder(f, img);
+              //f.find(img);
             }
           } else if (img.isText()) {
             findingText = true;
@@ -2530,7 +2533,8 @@ public class Region {
           lastSearchTime = (new Date()).getTime();
           f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), (Pattern) ptn);
           if (!f.hasNext()) {
-            f.find((Pattern) ptn);
+            runFinder(f, img);
+            //f.find((Pattern) ptn);
           }
         } else {
           throw new IOException("Region: doFind: Image not loadable: " + ptn.toString());
@@ -2541,7 +2545,8 @@ public class Region {
           lastSearchTime = (new Date()).getTime();
           f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), null);
           if (!f.hasNext()) {
-            f.find(img);
+            runFinder(f, img);
+            //f.find(img);
           }
         } else {
           throw new IOException("Region: doFind: Image not loadable: " + ptn.toString());
@@ -2563,6 +2568,18 @@ public class Region {
     }
     return m;
   }
+  
+  private void runFinder(Finder f, Object target) {
+    if (Debug.shouldHighlight()) {
+      if (this.scr.getW() > w + 20 && this.scr.getH() > h + 20)
+        highlight(2, "#000255000");
+    }
+    if (target instanceof Image) {
+      f.find((Image) target);
+    } else if (target instanceof Pattern) {
+      f.find((Pattern) target);
+    }
+  }
 
   private Finder checkLastSeenAndCreateFinder(Image img, double findTimeout, Pattern ptn) {
     ScreenImage simg = getScreen().capture(this);
@@ -2575,6 +2592,10 @@ public class Region {
           f = new Finder(new VNCScreen().capture(r), r);
         } else {
           f = new Finder(simg.getSub(r.getRect()), r);
+          if (Debug.shouldHighlight()) {
+            if (this.scr.getW() > w + 10 && this.scr.getH() > h + 10)
+              highlight(2, "#000255000");
+          }          
         }
         if (ptn == null) {
           f.find(new Pattern(img).similar(score));
