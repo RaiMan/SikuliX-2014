@@ -55,12 +55,10 @@ class PatternPaneScreenshot extends JPanel implements ChangeListener, ComponentL
   private void init(ScreenImage simg, Dimension pDim, JLabel msgApplied) {
     _msgApplied = msgApplied;
     _match_region = new ScreenUnion();
-    int w = _match_region.w; 
-    int h = _match_region.h;
-    _ratio = (double) w / h;
+    _ratio = (double) _match_region.w / _match_region.h;
     _height = pDim.height - 200;
-    _scale = (double) _height / h;
-    _width = (int) (w * _scale);
+    _scale = (double) _height / _match_region.h;
+    _width = (int) (_match_region.w * _scale);
     setPreferredSize(new Dimension(_width, _height));
     addComponentListener(this);
     _simg = simg;
