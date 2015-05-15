@@ -478,21 +478,6 @@ Point pNull = new Point(0, 0);
     fpBaseTempPath = fBaseTempPath.getAbsolutePath();
     fBaseTempPath.mkdirs();
 
-    if (Type.IDE.equals(typ) && !runningScripts) {
-      isRunning = new File(fBaseTempPath, isRunningFilename);
-      try {
-        isRunning.createNewFile();
-        isRunningFile = new FileOutputStream(isRunning);
-        if (null == isRunningFile.getChannel().tryLock()) {
-          Sikulix.popError("Terminating on FatalError: IDE already running");
-          System.exit(1);
-        }
-      } catch (Exception ex) {
-        Sikulix.popError("Terminating on FatalError: cannot access IDE lock for/n" + isRunning);
-        System.exit(1);
-      }
-    }
-    
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
       public void run() {
@@ -540,17 +525,29 @@ Point pNull = new Point(0, 0);
       }
     });
 
+    if (Type.IDE.equals(typ) && !runningScripts) {
+      isRunning = new File(fTempPath, isRunningFilename);
+      boolean shouldTerminate = false;
+      try {
+        isRunning.createNewFile();
+        isRunningFile = new FileOutputStream(isRunning);
+        if (null == isRunningFile.getChannel().tryLock()) {
+          Sikulix.popError("Terminating: IDE already running");
+          shouldTerminate = true;
+        }
+      } catch (Exception ex) {
+        Sikulix.popError("Terminating on FatalError: cannot access IDE lock for/n" + isRunning);
+        shouldTerminate = true;
+      }
+      if (shouldTerminate) {
+        System.exit(1);
+      }
+    }
+    
     for (String aFile : fTempPath.list()) {
-      if (aFile.startsWith("Sikulix") && (new File(aFile).isFile())) {
-        FileManager.deleteFileOrFolder(new File(fTempPath, aFile), new FileManager.FileFilter() {
-          @Override
-          public boolean accept(File entry) {
-            if (entry.getName().contains(isRunningFilename)) {
-              return false;
-            }
-            return true;
-          }
-        });
+      if ((aFile.startsWith("Sikulix") && (new File(aFile).isFile())) ||
+              (aFile.startsWith("jffi") && aFile.endsWith(".tmp"))) {
+        FileManager.deleteFileOrFolder(new File(fTempPath, aFile));
       }
     }
 
@@ -1023,7 +1020,7 @@ Point pNull = new Point(0, 0);
 //<editor-fold defaultstate="collapsed" desc="init for IDE">
   File isRunning = null;
   FileOutputStream isRunningFile = null;
-  String isRunningFilename = "sikuli-ide-isrunning";
+  String isRunningFilename = "s_i_k_u_l_i-ide-isrunning";
 
   private void initIDEbefore() {
     log(lvl, "initIDEbefore: entering");
