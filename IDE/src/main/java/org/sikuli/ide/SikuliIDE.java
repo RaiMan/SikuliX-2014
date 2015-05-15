@@ -118,14 +118,14 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   IDESplash ideSplash = null;
   boolean idePause = false;
   int waitBeforeVisible = 0;
-    
+
   private synchronized boolean setPause(Boolean state) {
     if (state != null) {
       idePause = state;
     }
     return idePause;
   }
-  
+
   private boolean getPause() {
     return setPause(null);
   }
@@ -140,7 +140,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       waitBeforeVisible = 2;
     }
   }
-  
+
   public static void showIDE() {
     sikulixIDE.setVisible(true);
   }
@@ -171,19 +171,19 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
   public static RunTime runTime;
   public static void run(String[] args) {
-    
+
     start = (new Date()).getTime();
-    
+
     runTime = RunTime.get(RunTime.Type.IDE, args);
-    
+
     if (RunTime.shouldRunServer) {
       RunServer.run(null);
       System.exit(0);
     }
-        
+
     getInstance();
     log(3, "running with Locale: %s", SikuliIDEI18N.getLocaleShow());
-    
+
  		sikulixIDE.initNativeSupport();
 
     CommandArgs cmdArgs = new CommandArgs("IDE");
@@ -349,7 +349,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
 
     waitPause();
-    sikulixIDE.ideSplash.showStep("Restore last Session");    
+    sikulixIDE.ideSplash.showStep("Restore last Session");
     restoreSession(0);
     if (tabPane.getTabCount() == 0) {
       (new FileAction()).doNew(null);
@@ -1605,6 +1605,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     public void toggleShowThumbs(ActionEvent ae) {
       getCurrentCodePane().showThumbs = chkShowThumbs.getState();
+			getCurrentCodePane().saveCaretPosition();
       if (!getCurrentCodePane().reparse()) {
         chkShowThumbs.setState(!chkShowThumbs.getState());
         getCurrentCodePane().showThumbs = chkShowThumbs.getState();
@@ -1994,7 +1995,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     if (ENABLE_UNIFIED_TOOLBAR) {
       MacUtils.makeWindowLeopardStyle(this.getRootPane());
     }
-    
+
     JToolBar toolbar = new JToolBar();
     JButton btnInsertImage = new ButtonInsertImage();
     _btnCapture = new ButtonCapture();
@@ -2059,12 +2060,12 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   class ButtonSubregion extends ButtonOnToolbar implements ActionListener, EventObserver {
-    
+
     String promptText;
     String buttonText;
     String iconFile;
     String buttonHint;
-    
+
     public ButtonSubregion() {
       super();
       promptText = SikuliIDE._I("msgCapturePrompt");
@@ -2072,7 +2073,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       iconFile = "/icons/region-icon.png";
       buttonHint = SikuliIDE._I("btnRegionHint");
     }
-    
+
     public ButtonSubregion init() {
       URL imageURL = SikuliIDE.class.getResource(iconFile);
       setIcon(new ImageIcon(imageURL));
@@ -2126,9 +2127,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       codePane.requestFocus();
     }
   }
-  
+
   class ButtonLocation extends ButtonSubregion implements ActionListener, EventObserver {
-    
+
     public ButtonLocation() {
       super();
       promptText = "Select a Location";
@@ -2146,7 +2147,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       if (simg != null) {
         Rectangle roi = simg.getROI();
         x = (int) (roi.getX() +  roi.getWidth()/2);
-        y = (int) (roi.getY() + roi.getHeight()/2);        
+        y = (int) (roi.getY() + roi.getHeight()/2);
         sikulixIDE.setVisible(false);
         codePane.insertString(String.format("Location(%d, %d)", x, y));
       }
@@ -2156,7 +2157,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   class ButtonOffset extends ButtonSubregion implements ActionListener, EventObserver {
-    
+
     public ButtonOffset() {
       super();
       promptText = "Select an Offset";
@@ -2181,16 +2182,16 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         codePane.insertString(String.format("Region(%d, %d, %d, %d).asOffset()", x, y, ox, oy));
       }
       sikulixIDE.setVisible(true);
-      codePane.requestFocus();      
+      codePane.requestFocus();
     }
   }
-  
+
   class ButtonShow extends ButtonOnToolbar implements ActionListener {
-    
+
     String buttonText;
     String iconFile;
     String buttonHint;
-   
+
     public ButtonShow() {
       super();
       buttonText = "Show";
@@ -2227,14 +2228,14 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         } else if (item.startsWith("Pattern")) {
           eval = "m = Screen.all().exists(new " + item + "); if (m != null) m.highlight(2);";
         } else if (item.startsWith("\"")) {
-          eval = "m = Screen.all().exists(" + item + "); if (m != null) m.highlight(2);";          
+          eval = "m = Screen.all().exists(" + item + "); if (m != null) m.highlight(2);";
         }
         if (!eval.isEmpty()) {
           Debug.log(lvl, "show: %s", eval);
           Runner.runjsEval(eval);
           return;
         }
-      } 
+      }
       Sikulix.popup("Nothing to show");
    }
   }
@@ -2261,8 +2262,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
 		public void runCurrentScript() {
 			SikuliIDE.getStatusbar().setMessage("... PLEASE WAIT ... checking IDE state before running script");
-			if (ideIsRunningScript 
-              || sikulixIDE.getCurrentCodePane().getDocument().getLength() == 0 
+			if (ideIsRunningScript
+              || sikulixIDE.getCurrentCodePane().getDocument().getLength() == 0
               || !sikulixIDE.doBeforeRun()) {
 				return;
 			}

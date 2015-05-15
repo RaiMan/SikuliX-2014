@@ -98,6 +98,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	private SikuliEditorKit editorKit;
 	private EditorViewFactory editorViewFactory;
 	private SikuliIDE sikuliIDE = null;
+	private int caretPosition = -1;
 
 	//<editor-fold defaultstate="collapsed" desc="Initialization">
 	public EditorPane(SikuliIDE ide) {
@@ -105,6 +106,22 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		showThumbs = !pref.getPrefMorePlainText();
 		sikuliIDE = ide;
 		log(lvl, "EditorPane: creating new pane (constructor)");
+	}
+
+	public void saveCaretPosition() {
+		caretPosition = getCaretPosition();
+	}
+
+	public void restoreCaretPosition() {
+		if (caretPosition < 0) {
+			return;
+		}
+		if (caretPosition < getDocument().getLength()) {
+			setCaretPosition(caretPosition);
+		} else {
+			setCaretPosition(getDocument().getLength() - 1);
+		}
+		caretPosition = -1;
 	}
 
 	public void initBeforeLoad(String scriptType) {
@@ -312,7 +329,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		Document doc = getDocument();
 		Element root = doc.getDefaultRootElement();
 		parse(root);
-		setCaretPosition(0);
+		restoreCaretPosition();
 	}
 
 	public boolean hasEditingFile() {
@@ -749,7 +766,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		}
     return result;
 	}
-  
+
   public String getLineTextAtCaret() {
     Element elem = getLineAtCaret(-1);
     Document doc = elem.getDocument();
@@ -953,7 +970,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
       if (line.length() >= mR.end() + asOffset.length()) {
         if (line.substring(mR.end()).contains(asOffset)) {
           return line.substring(mR.start(), mR.end()) + asOffset;
-        }        
+        }
       }
       return line.substring(mR.start(), mR.end());
     }
@@ -971,7 +988,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     }
     return "";
   }
-  
+
   private int parseRange(int start, int end) {
 		if (!showThumbs) {
 			// do not show any thumbnails

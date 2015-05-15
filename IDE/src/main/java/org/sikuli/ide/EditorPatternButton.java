@@ -149,6 +149,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Debug.log(3, "ThumbButtonLabel: open Pattern Settings");
+		_pane.saveCaretPosition();
 		if (pwin == null) {
 			_offsetSaved = new Location(_offset);
 			_similaritySaved = _similarity;
@@ -227,7 +228,7 @@ class EditorPatternButton extends JButton implements ActionListener, Serializabl
       if (_image != null) {
         img = _image.get();
       } else {
-        
+
 //TODO ????        Debug.error("EditorPatternButton: createThumbnailImage: not using Image for: " + imgFname);
         img = ImageIO.read(new File(imgFname));
       }
