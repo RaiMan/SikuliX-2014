@@ -10,11 +10,9 @@ import org.sikuli.basics.HotkeyManager;
 import org.sikuli.util.Tests;
 import org.sikuli.util.ScreenHighlighter;
 import java.awt.Dimension;
-import java.awt.Rectangle;
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
-import java.util.Date;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JLabel;
@@ -27,8 +25,6 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
-import org.sikuli.util.JythonHelper;
-import org.sikuli.util.LinuxSupport;
 
 /**
  * global services for package API
@@ -137,13 +133,20 @@ public class Sikulix {
     }
     
     if (shouldRunServer) {
-      RunServer.run(null);
-      System.exit(1);
+      if (RunServer.run(null)) {
+        System.exit(1);
+      }
     }
     
     //******Test Space*************************************
 //    Screen.showMonitors();
     Screen s = Screen.as(0);
+//    Run.connect();
+//    p(Run.show());
+//    p(Run.send("START"));
+//    p(Run.send("EVAL?r=Region.create(100,100,100,100);r.toJSON();"));
+//    Run.close();
+//    Run.stop();
 //    System.exit(1);
     //*********************************
     

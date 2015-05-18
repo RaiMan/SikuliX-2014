@@ -37,7 +37,7 @@ public class RunServer {
   static File isRunning = null;
   static FileOutputStream isRunningFile = null;
   
-  public static void run(String[] args) {
+  public static boolean run(String[] args) {
 		if (args == null) {
 			args = new String[0];
 		}
@@ -53,7 +53,7 @@ public class RunServer {
       }
       if (server == null) {
         log(-1, "could not be started");
-        System.exit(1);
+        return false;
       }
       String theIP = InetAddress.getLocalHost().getHostAddress();
       String theServer = String.format("%s %d", theIP, port);
@@ -63,12 +63,12 @@ public class RunServer {
         isRunningFile = new FileOutputStream(isRunning);
         if (null == isRunningFile.getChannel().tryLock()) {
           log(-1, "Terminating on FatalError: already running");
-          System.exit(1);
+          return false;
         }
         isRunningFile.write(theServer.getBytes());
       } catch (Exception ex) {
         log(-1, "Terminating on FatalError: cannot access to lock for/n" + isRunning);
-        System.exit(1);
+        return false;
       }
       Runtime.getRuntime().addShutdownHook(new Thread() {
         @Override
@@ -108,8 +108,10 @@ public class RunServer {
     }
     if (!isHandling) {
       log(-1, "start handling not possible: " + port);
+      return false;
     }
     log("now stopped on port: " + port);
+    return true;
   }
 
   private static int getPort(String p) {
@@ -140,6 +142,7 @@ public class RunServer {
   private static class HandleClient implements Runnable {
 
     private volatile boolean keepRunning;
+    private boolean shouldKeep = false;
     Thread thread;
     Socket socket;
     Boolean shouldStop = false;
@@ -206,14 +209,18 @@ public class RunServer {
               }
             }
             if (!isHTTP) {
-              request = "GET /" + request + " HTTP/1.1";
+              request = "GET /" + inLine + " HTTP/1.1";
             }
             success = checkRequest(request);
             if (success) {
               // STOP
               if (rCommand.contains("STOP")) {
-                rMessage = "stopping";
+                rMessage = "stopping server";
                 shouldStop = true;
+                shouldKeep = false;
+              } else if (rCommand.contains("EXIT")) {
+                rMessage = "stopping client";
+                shouldKeep = false;                
               // START  
               } else if (rCommand.startsWith("START")) {
                 if (rCommand.length() > 5) {
@@ -317,7 +324,7 @@ public class RunServer {
                     evalReturnObject = jsRunner.eval(line);
                     rMessage = "runStatement: returned: "
                             + (evalReturnObject == null ? "null" : evalReturnObject.toString());
-                    success = success && evalReturnObject != null;
+                    success = true;
                   } catch (Exception ex) {
                     rMessage = "runStatement: raised exception on eval: " + ex.toString();
                     success = false;
@@ -329,36 +336,51 @@ public class RunServer {
                 }
               }
             }
+            String retVal = "";
             if (isHTTP) {
-              String retVal = "HTTP/1.1 " + rStatus;
+              retVal = "HTTP/1.1 " + rStatus;
               String state = (success ? "PASS " : "FAIL ") + rStatus.substring(0,3) + " ";
-              out.write(retVal + "\r\n\r\n" + state + rMessage + "\r\n");
-              out.flush();
-              stopRunning();
+              retVal += "\r\n\r\n" + state + rMessage + "\r";
             } else {
-              send(success ? "ok" : "failed");
+              retVal = (success ? "isok:\n" : "fail:\n") + rMessage + "\n###+++###";
             }
-            if (shouldStop) {
-              if (!isHTTP) {
-                stopRunning();
-              }
-              in.close();
-              out.close();
-              return;
+            try {
+              out.println(retVal);
+              out.flush();
+              RunServer.log("returned:\n"  + retVal.replace("###+++###", ""));
+            } catch (Exception ex) {
+              RunServer.log(-1, "write response: Exception:\n" + ex.getMessage());
             }
+            stopRunning();
           }
         } catch (Exception ex) {
-          RunServer.log(-1, "Exception while processing\n" + ex.getMessage());
+          RunServer.log(-1, "while processing: Exception:\n" + ex.getMessage());
+          shouldKeep = false;
           stopRunning();
         }
       }
       try {
         Thread.sleep(100);
       } catch (InterruptedException ex) {
+        shouldKeep = false;
         stopRunning();
       }
     }
     
+    public void stopRunning() {
+      if (!shouldKeep) {
+        in.close();
+        out.close();
+        try {
+          socket.close();
+        } catch (IOException ex) {
+          RunServer.log(-1, "fatal: socket not closeable");
+          System.exit(1);
+        }
+        keepRunning = false;
+      }
+    }
+
     private File getFolder(String path) {
       File aFolder = new File(path);
       if (path.toLowerCase().startsWith("/home/")) {
@@ -374,6 +396,7 @@ public class RunServer {
     }
     
     private boolean checkRequest(String request) {
+      shouldKeep = false;
       rCommand = "NOOP";
       rMessage = "invalid: " + request;
       rStatus = rStatusBadRequest;
@@ -385,6 +408,10 @@ public class RunServer {
         return false;
       }      
       String cmd = parts[1].substring(1);
+      if (cmd.startsWith("X")) {
+        cmd = cmd.substring(1);
+        shouldKeep = true;
+      }
       parts = cmd.split("\\?");
       cmd = parts[0];
       rQuery = "";
@@ -392,7 +419,7 @@ public class RunServer {
         rQuery = parts[1];
       }
       parts = cmd.split("/");
-      if (!"START,STARTP,STOP,SCRIPTS,IMAGES,RUN,EVAL,".contains((parts[0]+",").toUpperCase())) {
+      if (!"START,STARTP,STOP,EXIT,SCRIPTS,IMAGES,RUN,EVAL,".contains((parts[0]+",").toUpperCase())) {
         rMessage = "invalid command: " + request;
         return false;
       }
@@ -404,29 +431,6 @@ public class RunServer {
         rRessource = cmd.substring(rCommand.length());
       }
       return true;
-    }
-
-    private void send(String response) {
-      try {
-        out.write(response);
-        out.flush();
-        RunServer.log("returned: "  + response);
-      } catch (Exception ex) {
-        RunServer.log(-1, "send: write: Exception: " + ex.getMessage());
-      }
-    }
-
-    public void stopRunning() {
-      if (!isHTTP) {
-        RunServer.log("stop client handling requested");
-      }
-      try {
-        socket.close();
-      } catch (IOException ex) {
-        RunServer.log(-1, "fatal: socket not closeable");
-        System.exit(1);
-      }
-      keepRunning = false;
     }
 
     private boolean startRunner(String runType, File fScript, File fScriptScript) {
