@@ -82,7 +82,13 @@ public class MacUtil implements OSUtil {
     if (retVal > -1) {
       if (!result.contains("NotFound")) {
         String[] parts = result.split(",");
-        app = new App.AppEntry(parts[0].trim(), parts[1].trim(), parts[2].trim(), "", "");
+        String title = parts[2];
+        if (parts.length > 3) {
+          for (int i = 3; i < parts.length; i++) {
+            title += "," + parts[i];
+          }
+        } 
+        app = new App.AppEntry(parts[0].trim(), parts[1].trim(), title.trim(), "", "");
       }
     }
     return app;
