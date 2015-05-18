@@ -2533,7 +2533,7 @@ public class Region {
           lastSearchTime = (new Date()).getTime();
           f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), (Pattern) ptn);
           if (!f.hasNext()) {
-            runFinder(f, img);
+            runFinder(f, ptn);
             //f.find((Pattern) ptn);
           }
         } else {
