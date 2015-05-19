@@ -217,14 +217,16 @@ public class App {
       Debug.log(3, "App.create: %s", toString());
     } else {
       if (runTime.runningWindows) {
-        int pid = _osUtil.switchto(appNameGiven);
-        if (pid > 0) {
-          init(pid);
-          appWindow = "!" + appNameGiven;
-          Debug.log(3, "App.create: %s", toString());
-        } else {
-          appPID = -1;
-          appName = "";
+        if (appOptions.isEmpty()) {
+          int pid = _osUtil.switchto(appNameGiven);
+          if (pid > 0) {
+            init(pid);
+            appWindow = "!" + appNameGiven;
+            Debug.log(3, "App.create: %s", toString());
+          } else {
+            appPID = -1;
+            appName = "";
+          }
         }
       } else {
         appName = new File(appNameGiven).getName();
@@ -239,9 +241,14 @@ public class App {
     AppEntry app = _osUtil.getApp(name);
     if (app != null) {
       appName = app.name;
-      appPID = app.pid;
-      if (!app.window.contains("N/A")) {
-        appWindow = app.window;
+      if (app.options.isEmpty()) {
+        appPID = app.pid;
+        if (!app.window.contains("N/A")) {
+          appWindow = app.window;
+        }
+      } else {
+        appOptions = app.options;
+        appNameGiven = appName;
       }
     }
   }
@@ -335,7 +342,7 @@ public class App {
     if (!appWindow.startsWith("!")) {
       init();
     }
-    return String.format("[%d:%s (%s)] %s", appPID, appName, appWindow, appNameGiven);
+    return String.format("[%d:%s (%s)] %s %s", appPID, appName, appWindow, appNameGiven, appOptions);
   }
 
 //</editor-fold>

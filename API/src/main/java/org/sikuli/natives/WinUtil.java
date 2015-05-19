@@ -27,10 +27,29 @@ public class WinUtil implements OSUtil {
     App.AppEntry app = null;
     String name = "";
     String execName = "";
+    String options = "";
     int pid = -1;
+    String[] parts;
     if (filter instanceof String) {
       name = (String) filter;
-      execName = new File(name).getName().toUpperCase();
+      if (name.startsWith("\"")) {
+        parts = name.substring(1).split("\"");
+        if (parts.length > 1) {
+          options = name.substring(parts[0].length() + 3);
+          name = "\"" + parts[0] +  "\"";
+        }
+      } else {
+        parts = name.split(" ");
+        if (parts.length > 1) {
+          options = name.substring(parts[0].length() + 2);
+          name = parts[0];
+        }
+      }
+      if (name.startsWith("\"")) {
+        execName = new File(name.substring(1, name.length()-1)).getName().toUpperCase();
+      } else {
+        execName = new File(name).getName().toUpperCase();
+      }
     } else if (filter instanceof Integer) {
       pid = (Integer) filter;
     } else {
@@ -41,7 +60,7 @@ public class WinUtil implements OSUtil {
     String[] lines = result.split("\r\n");
     if ("0".equals(lines[0].trim())) {
       for (int nl = 1; nl < lines.length; nl++) {
-        String[] parts = lines[nl].split("\"");
+        parts = lines[nl].split("\"");
         String theWindow = parts[parts.length - 1];
         String theName = parts[1];
         String thePID = parts[3];
@@ -61,6 +80,9 @@ public class WinUtil implements OSUtil {
       }
     } else {
       Debug.logp(result);
+    }
+    if (!options.isEmpty()) {
+      return new App.AppEntry(name, "", "", "", options);
     }
     return app;
   }
