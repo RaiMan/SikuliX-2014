@@ -41,7 +41,7 @@ public class WinUtil implements OSUtil {
       } else {
         parts = name.split(" ");
         if (parts.length > 1) {
-          options = name.substring(parts[0].length() + 2);
+          options = name.substring(parts[0].length() + 1);
           name = parts[0];
         }
       }
