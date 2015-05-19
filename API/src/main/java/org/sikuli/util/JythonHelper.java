@@ -468,7 +468,10 @@ public class JythonHelper {
         return null;
       }
     }
-    log(lvl, "findModule: %s (%s)", modName, packPath);
+    log(lvl, "findModule: %s (%s)", fModule.getName(), packPath);
+    if (!fModule.getName().endsWith(".sikuli")) {
+      fModule = fModule.getParentFile();
+    }
     return fModule.getAbsolutePath();
   }
 
@@ -479,13 +482,15 @@ public class JythonHelper {
 //  Sikuli._addModPath(self.path)
 //  return self._load_module(module_name)
 
-    log(lvl, "loadModulePrepare: %s", modName);
+    log(lvl, "loadModulePrepare: %s in %s", modName, modPath);
     int nDot = modName.lastIndexOf(".");
     if (nDot > -1) {
       modName = modName.substring(nDot + 1);
     }
     addSysPath(modPath);
-    ImagePath.add(modPath);
+    if (modPath.endsWith(".sikuli")) {
+      ImagePath.add(modPath);
+    }
     return modName;
   }
 
