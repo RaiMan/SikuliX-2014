@@ -1,3 +1,5 @@
+<h4>Build: 2015-05-21</h4>
+revised App class (Windows): faster now and focus indeed activates the frontmost window
 <h4>Build: 2015-05-20</h4>
 fixed: Jython import: problem with import of .py files
 <h4>Build: 2015-05-19</h4>
@@ -5,16 +7,16 @@ revised: App class: open() now accepts parameters again
 <h4>Build: 2015-05-18</h4>
 fixed: regression: Pattern().targetOffset() offset ignored
 fixed: a problem with the "name =" capture feature, now made sure, that the line only contains "name ="<br>
-fixed: App.getWindow(): Mac: a problem with , in a title<br>	
+fixed: App.getWindow(): Mac: a problem with , in a title<br>
 continued: RunServer and RunClient (now named Run)
 <h4>Build: 2015-05-16</h4>
 fixed: IDE: cursor keeps current position in cases, where the content is re-evaluated (toggle view and image rename)<br>
-added: experimental (more options might follow): 
-a feature to highlight the search region before search (green frame) 
-and the match (if found, red frame) after the search (each for 2 seconds), 
-might be an alternative to slow motion running. Start: Debug.highlightOn(), Stop: Debug.highlightOff(). 
-works for region.method() usage and for setROI() usage. The region/ROI must be at least 10 pixel smaller 
-than the screen on all sides, otherwise the green frame is omitted. 
+added: experimental (more options might follow):
+a feature to highlight the search region before search (green frame)
+and the match (if found, red frame) after the search (each for 2 seconds),
+might be an alternative to slow motion running. Start: Debug.highlightOn(), Stop: Debug.highlightOff().
+works for region.method() usage and for setROI() usage. The region/ROI must be at least 10 pixel smaller
+than the screen on all sides, otherwise the green frame is omitted.
 <h4>Build: 2015-05-15</h4>
 fixed: multi monitor: should be fixed now (tested on Mac (incl. 10.10.x) and on Windows)<br>
 revised: IDE: show button: now recognizes negative coordinates and finds image on all screens.<br>
