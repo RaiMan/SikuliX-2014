@@ -1,5 +1,4 @@
-setAutoWaitTimeout(0.5)
-Settings.MoveMouseDelay = 0.1
+Settings.MoveMouseDelay = 0
 lang = "EN"
 HID = 0 #hidden
 EMP = 10 #empty
@@ -14,27 +13,91 @@ N6 = 6
 N7 = 7
 N8 = 8
 
+shot = "shot.png"
+
+#Debug.highlightOn()
+
 pgmPath = r'"C:\Program Files\Microsoft Games\Minesweeper\MineSweeper.exe"'  
 pgm = App(pgmPath);
-pgm.open()
+if not pgm.isRunning():
+    pgm.open()
+    
+pgmWin = None
+while not pgmWin:
+    pgmWin = pgm.window()
+    wait(1)
 
-minefield = exists(Pattern("minefield.png").similar(0.95),5)
+timer = "timer.png"
+setupOK = False
+if pgmWin.exists(timer):
+    setupOK = True
+    type(Key.F5)
+    while pgmWin.x == pgm.window().x:
+        wait(1) 
+    options = pgm.window()
+    wait(1) 
+    click(options.getTopLeft().offset(Region(924, 163, 72, 90).asOffset()))
+    type(Key.ENTER)
+    wait(2)
+    pgmWin = pgm.window()
+    minefield = pgmWin.exists(Pattern("minefield.png"), 3)
+    if not minefield:
+        setupOK = False
+if not setupOK:
+    popup("Minesweeper not found\n" +
+          "or not setup as needed\n" +
+          "--- exiting")
+    exit(1)
 
-if not minefield:
-  popup("Minesweeper not found - exiting")
-  exit(1)
-  
-print "minefield (x,y): (" + str(minefield.x) + ", " + str(minefield.y) + ")"
-print "minefield w: " + str(minefield.w)
-print "minefield h: " + str(minefield.h)
 xcount = 9;
 ycount = 9;
+
+minefield.x += 2
+minefield.y += 2
+minefield.w += -3
+minefield.h += -3
+grid = Region(minefield)
+grid.setRaster(xcount, ycount)
+print "grid:", grid.toJSON()
+print "cell:", grid.getCell(0,0).toJSON()
+#grid.getCell(0,0).highlight(2)
+#grid.getCell(4,4).highlight(2)
+#grid.getCell(8,8).highlight(2)
+
 boxsize = minefield.w /xcount
 halfabox = boxsize / 2
 boxeslocations = [[0]*xcount for i in range(ycount)];
 for x in range(xcount):
     for y in range(ycount):
         boxeslocations[x][y] = Location(x*boxsize + halfabox + minefield.x,y*boxsize + halfabox + minefield.y)
+
+boxesstates = [[HID]*xcount for i in range(ycount)];
+
+def regionforbox(x,y):
+    return grid.getCell(x,y)        
+
+def regionishidden(r):
+    if r.exists("imgHidden.png",0): #or r.exists(HID2,0):
+        #print r.x, r.y, r.getLastMatch().getScore()
+        return True
+    return False
+
+found = True
+for r in range(xcount):
+    for c in range(ycount):
+        reg = regionforbox(r, c)
+        found = True
+        if regionishidden(reg):
+            reg.hover()
+        else:
+            reg.highlight(2)
+            found = False
+            break
+    if not found:
+        break
+#type(Key.ESC)
+#type(Key.F4, Key.ALT)
+#Debug.highlightOff(); exit()
 
 def hoverout():
     hover(Location(minefield.x + minefield.w, minefield.y))
@@ -91,14 +154,6 @@ def areallcolorssimilar(region, color, rr, rg, rb):
             return False
     return True
 
-def regionishidden(region):
-    if(region.exists(Pattern("HIDa.png").similar(0.84),0)):
-        print "HID1"
-        return True
-    if(region.exists(Pattern("HIDb.png").similar(0.84),0)):
-        print "HID2"
-        return True
-    return False
 
 def regionis1(region):
     if( issomecolorsimilar(region, Color( 62, 80 , 190), 5, 5, 5)):
@@ -172,18 +227,9 @@ def analyseRegionState(region):
     
     
 def regionfromlocation(location, halfsize):
-    newreg = Region(location.x - halfsize, location.y - halfsize, halfsize * 2, halfsize * 2)
-    #hover(Location(newreg.x, newreg.y))
-    #hover(Location(newreg.x + newreg.w, newreg.y + newreg.h))
+    newreg = location.grow(halfsize)
     return newreg
 
-boxesregions = [[0]*xcount for i in range(ycount)];
-
-def regionforbox(x,y):
-    if(boxesregions[x][y] == 0):
-        boxesregions[x][y] = regionfromlocation(boxeslocations[x][y], halfabox + 2)
-    return boxesregions[x][y] 
-        
 def isgamelost():
     focusrect = App.focusedWindow()
     focusrect = focusrect.nearby(30)
@@ -212,8 +258,6 @@ def isgameend():
         isgamewin()
         return True
     return False
-
-boxesstates = [[HID]*xcount for i in range(ycount)];
 
 def updateboxstate(x,y):
     currentregion = regionforbox(x, y) 
