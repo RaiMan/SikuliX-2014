@@ -1,0 +1,430 @@
+
+<html>
+   <head>
+      <style type="text/css">
+         .sikuli-code {
+            font-size: 20px;
+            font-family: "Osaka-mono", Monospace;
+            line-height: 1.5em;
+            display:table-cell;
+            white-space: pre-wrap;       /* css-3 */
+            white-space: -moz-pre-wrap !important;  /* Mozilla, since 1999 */
+            white-space: -pre-wrap;      /* Opera 4-6 */
+            white-space: -o-pre-wrap;    /* Opera 7 */
+            word-wrap: break-word;       /* Internet Explorer 5.5+ */
+            width: 99%;   /* remove horizontal scroll-bar when viewing in IE7 */
+         }
+         .sikuli-code img {
+            vertical-align: middle;
+            margin: 2px;
+            border: 1px solid #ccc;
+            padding: 2px;
+            -moz-border-radius: 5px;
+            -webkit-border-radius: 5px;
+            -moz-box-shadow: 1px 1px 1px gray;
+            -webkit-box-shadow: 1px 1px 2px gray;
+         }
+         .kw {
+            color: blue;
+         }
+         .skw {
+            color: rgb(63, 127, 127);
+         }
+
+         .str {
+            color: rgb(128, 0, 0);
+         }
+
+         .dig {
+            color: rgb(128, 64, 0);
+         }
+
+         .cmt {
+            color: rgb(200, 0, 200);
+         }
+
+         h2 {
+            display: inline;
+            font-weight: normal;
+         }
+
+         .info {
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 5px;
+            margin-bottom: 20px;
+            display: none;
+         }
+
+         a {
+            color: #9D2900;
+         }
+
+         body {
+            font-family: "Trebuchet MS", Arial, Sans-Serif;
+         }
+
+      </style>
+   </head>
+<body>
+<div class="info">
+<h2>miny.sikuli\miny.sikuli</h2> <a href="miny.sikuli\miny.zip">(Download this script)</a>
+</div>
+<pre class="sikuli-code">
+setAutoWaitTimeout(<span class="dig">0.5</span>)
+Settings.MoveMouseDelay = <span class="dig">0.1</span>
+lang = <span class="str">"EN"</span>
+HID = <span class="dig">0</span> <span class="cmt">#hidden</span>
+EMP = <span class="dig">10</span> <span class="cmt">#empty</span>
+ERR = -<span class="dig">1</span> <span class="cmt">#error</span>
+BOO = <span class="dig">9</span> <span class="cmt">#mine</span>
+N1 = <span class="dig">1</span>
+N2 = <span class="dig">2</span>
+N3 = <span class="dig">3</span>
+N4 = <span class="dig">4</span>
+N5 = <span class="dig">5</span>
+N6 = <span class="dig">6</span>
+N7 = <span class="dig">7</span>
+N8 = <span class="dig">8</span>
+minefield = exists(Pattern(<img src="minefield.png" />).similar(<span class="dig">0.95</span>),<span class="dig">2</span>)
+<span class="kw">if</span>(<span class="kw">not</span> minefield):
+    <span class="skw">popup</span>(<span class="str">"Minefield not found. Check if following steps are fulfilled.\n1] (Run windows 7) minesweeper game\n2] Set it to beginner level\n3] Resize the window to its minimum size\n4] Set appearance to blue with mines\n5] Disable question marks\n6] Leave it visible on (primary) screen"</span>)
+    exit(-<span class="dig">1</span>)
+
+<span class="kw">print</span> <span class="str">"minefield (x,y): ("</span> + str(minefield.x) + <span class="str">", "</span> + str(minefield.y) + <span class="str">")"</span>
+<span class="kw">print</span> <span class="str">"minefield w: "</span> + str(minefield.w)
+<span class="kw">print</span> <span class="str">"minefield h: "</span> + str(minefield.h)
+xcount = <span class="dig">9</span>;
+ycount = <span class="dig">9</span>;
+boxsize = minefield.w /xcount
+halfabox = boxsize / <span class="dig">2</span>
+boxeslocations = [[<span class="dig">0</span>]*xcount <span class="kw">for</span> i <span class="kw">in</span> range(ycount)];
+<span class="kw">for</span> x <span class="kw">in</span> range(xcount):
+    <span class="kw">for</span> y <span class="kw">in</span> range(ycount):
+        boxeslocations[x][y] = Location(x*boxsize + halfabox + minefield.x,y*boxsize + halfabox + minefield.y)
+
+<span class="kw">def</span> hoverout():
+    hover(Location(minefield.x + minefield.w, minefield.y))
+    <span class="kw">return</span>
+
+<span class="kw">from</span> java.awt <span class="kw">import</span> Color
+<span class="kw">from</span> java.awt <span class="kw">import</span> Robot
+
+<span class="kw">def</span> iscolorsimilar(location, color, rr, rg, rb):
+    pixel = Robot().getPixelColor(location.x, location.y)
+    pr = pixel.getRed();
+    cr = color.getRed();
+    <span class="kw">print</span> <span class="str">"pixel color: "</span>, pixel
+    <span class="kw">if</span>(pr &gt; cr - rr <span class="kw">and</span> pr &lt; cr + rr):
+        pg = pixel.getGreen();
+        cg = color.getGreen();
+        <span class="kw">if</span>(pg &gt; cg - rg <span class="kw">and</span> pg &lt; cg + rg):
+            pb = pixel.getBlue();
+            cb = color.getBlue();
+            <span class="kw">if</span>(pb &gt; cb - rb <span class="kw">and</span> pb &lt; cb + rb):
+                <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> issomecolorsimilar(region, color, rr, rg, rb, centerOffset=<span class="dig">2</span>):
+    <span class="kw">print</span> <span class="str">"search for pixel similar to ["</span>, color.getRed(), <span class="str">", "</span>, color.getGreen(), <span class="str">", "</span>, color.getBlue(), <span class="str">"] in range of +-"</span>, rr, <span class="str">", "</span>, rg, <span class="str">", "</span>, rb
+    center = region.getCenter()
+    <span class="kw">if</span>(iscolorsimilar(center, color, rr, rg, rb)):
+        <span class="kw">return</span> True
+    reg = regionfromlocation(center, centerOffset)
+    <span class="kw">if</span>(iscolorsimilar(reg.getTopLeft(), color, rr, rg, rb)):
+        <span class="kw">return</span> True
+    <span class="kw">if</span>(iscolorsimilar(reg.getTopRight(), color, rr, rg, rb)):
+        <span class="kw">return</span> True
+    <span class="kw">if</span>(iscolorsimilar(reg.getBottomLeft(), color, rr, rg, rb)):
+        <span class="kw">return</span> True
+    <span class="kw">if</span>(iscolorsimilar(reg.getBottomRight(), color, rr, rg, rb)):
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> areallcolorssimilar(region, color, rr, rg, rb):
+    <span class="kw">print</span> <span class="str">"ensure all pixels are similar to ["</span>, color.getRed(), <span class="str">", "</span>, color.getGreen(), <span class="str">", "</span>, color.getBlue(), <span class="str">"] in range of +-"</span>, rr, <span class="str">", "</span>, rg, <span class="str">", "</span>, rb
+    center = region.getCenter()
+    <span class="kw">if</span>(<span class="kw">not</span> iscolorsimilar(center, color, rr, rg, rb)):
+        <span class="kw">return</span> False
+    <span class="kw">for</span> i <span class="kw">in</span> range(<span class="dig">2</span>,<span class="dig">4</span>):
+        reg = regionfromlocation(center, i)
+        <span class="kw">if</span>(<span class="kw">not</span> iscolorsimilar(reg.getTopLeft(), color, rr, rg, rb)):
+            <span class="kw">return</span> False
+        <span class="kw">if</span>(<span class="kw">not</span> iscolorsimilar(reg.getTopRight(), color, rr, rg, rb)):
+            <span class="kw">return</span> False
+        <span class="kw">if</span>(<span class="kw">not</span> iscolorsimilar(reg.getBottomLeft(), color, rr, rg, rb)):
+            <span class="kw">return</span> False
+        <span class="kw">if</span>(<span class="kw">not</span> iscolorsimilar(reg.getBottomRight(), color, rr, rg, rb)):
+            <span class="kw">return</span> False
+    <span class="kw">return</span> True
+
+<span class="kw">def</span> regionishidden(region):
+    <span class="kw">if</span>(region.exists(Pattern(<img src="HIDa.png" />).similar(<span class="dig">0.84</span>),<span class="dig">0</span>)):
+        <span class="kw">print</span> <span class="str">"HID1"</span>
+        <span class="kw">return</span> True
+    <span class="kw">if</span>(region.exists(Pattern(<img src="HIDb.png" />).similar(<span class="dig">0.84</span>),<span class="dig">0</span>)):
+        <span class="kw">print</span> <span class="str">"HID2"</span>
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> regionis1(region):
+    <span class="kw">if</span>( issomecolorsimilar(region, Color( <span class="dig">62</span>, <span class="dig">80</span> , <span class="dig">190</span>), <span class="dig">5</span>, <span class="dig">5</span>, <span class="dig">5</span>)):
+        <span class="kw">print</span> <span class="str">"N1"</span>
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> regionis2(region):
+    <span class="kw">if</span>( issomecolorsimilar(region, Color( <span class="dig">29</span>, <span class="dig">104</span> , <span class="dig">1</span>), <span class="dig">5</span>, <span class="dig">5</span>, <span class="dig">5</span>, <span class="dig">3</span>)):
+        <span class="kw">print</span> <span class="str">"N2"</span>
+        <span class="kw">return</span> True
+    <span class="kw">if</span>( issomecolorsimilar(region, Color( <span class="dig">29</span>, <span class="dig">104</span> , <span class="dig">1</span>), <span class="dig">5</span>, <span class="dig">5</span>, <span class="dig">5</span>, <span class="dig">2</span>)):
+        <span class="kw">print</span> <span class="str">"N2"</span>
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> regionis3(region):
+    <span class="kw">if</span>( issomecolorsimilar(region, Color( <span class="dig">170</span>, <span class="dig">9</span> , <span class="dig">8</span>), <span class="dig">5</span>, <span class="dig">5</span>, <span class="dig">5</span>, <span class="dig">1</span>)):
+        <span class="kw">print</span> <span class="str">"N3a"</span>
+        <span class="kw">return</span> True
+    <span class="kw">if</span>( issomecolorsimilar(region, Color( <span class="dig">170</span>, <span class="dig">9</span> , <span class="dig">8</span>), <span class="dig">5</span>, <span class="dig">5</span>, <span class="dig">5</span>, <span class="dig">3</span>)):
+        <span class="kw">print</span> <span class="str">"N3b"</span>
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> regionis4(region):
+    <span class="kw">if</span>(region.exists(Pattern(<img src="N4a.png" />).similar(<span class="dig">0.80</span>),<span class="dig">0</span>)):
+        <span class="kw">print</span> <span class="str">"N41"</span>
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> regionis5(region):
+    <span class="kw">if</span>(region.exists(Pattern(<img src="1427818173376.png" />).similar(<span class="dig">0.76</span>),<span class="dig">0</span>)):
+        <span class="kw">print</span> <span class="str">"N51"</span>
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> regionis6(region):
+    <span class="kw">if</span>( issomecolorsimilar(region, Color( <span class="dig">44</span>, <span class="dig">141</span> , <span class="dig">146</span>), <span class="dig">5</span>, <span class="dig">5</span>, <span class="dig">5</span>)):
+        <span class="kw">print</span> <span class="str">"N6"</span>
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> regionisempty(region):
+    <span class="cmt">#if(region.exists(Pattern("emp.png").similar(0.90),0)):
+</span>        <span class="cmt">#print "EMP1"
+</span>        <span class="cmt">#return True
+</span>    <span class="kw">if</span>( areallcolorssimilar(region, Color( <span class="dig">199</span>, <span class="dig">207</span> , <span class="dig">228</span>), <span class="dig">29</span>, <span class="dig">28</span>, <span class="dig">20</span>)):
+        <span class="kw">print</span> <span class="str">"EMP"</span>
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> analyseRegionState(region):
+    <span class="kw">if</span>(regionisempty(region)):
+        <span class="kw">return</span> EMP
+    <span class="kw">if</span>(regionis1(region)):
+        <span class="kw">return</span> N1
+    <span class="kw">if</span>(regionis2(region)):
+        <span class="kw">return</span> N2
+    <span class="kw">if</span>(regionis3(region)):
+        <span class="kw">return</span> N3
+    <span class="kw">if</span>(regionis4(region)):
+        <span class="kw">return</span> N4
+    <span class="kw">if</span>(regionis5(region)):
+        <span class="kw">return</span> N5
+    <span class="kw">if</span>(regionis6(region)):
+        <span class="kw">return</span> N6
+    <span class="kw">if</span>(regionishidden(region)):
+        <span class="kw">return</span> HID
+    <span class="kw">return</span> ERR
+
+
+<span class="kw">def</span> regionfromlocation(location, halfsize):
+    newreg = Region(location.x - halfsize, location.y - halfsize, halfsize * <span class="dig">2</span>, halfsize * <span class="dig">2</span>)
+    <span class="cmt">#hover(Location(newreg.x, newreg.y))
+</span>    <span class="cmt">#hover(Location(newreg.x + newreg.w, newreg.y + newreg.h))
+</span>    <span class="kw">return</span> newreg
+
+boxesregions = [[<span class="dig">0</span>]*xcount <span class="kw">for</span> i <span class="kw">in</span> range(ycount)];
+
+<span class="kw">def</span> regionforbox(x,y):
+    <span class="kw">if</span>(boxesregions[x][y] == <span class="dig">0</span>):
+        boxesregions[x][y] = regionfromlocation(boxeslocations[x][y], halfabox + <span class="dig">2</span>)
+    <span class="kw">return</span> boxesregions[x][y]
+
+<span class="kw">def</span> isgamelost():
+    focusrect = App.focusedWindow()
+    focusrect = focusrect.nearby(<span class="dig">30</span>)
+    paterntosearch = Pattern(<span class="str">"langimg\\"</span> + lang + <img src="end.png" />).similar(<span class="dig">0.8</span>)
+    <span class="kw">if</span>(focusrect.exists(paterntosearch, <span class="dig">0.4</span>)):
+        <span class="kw">print</span> <span class="str">"BOOM!"</span>
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> isgamewin():
+    focusrect = App.focusedWindow()
+    focusrect = focusrect.nearby(<span class="dig">30</span>)
+    paterntosearch = Pattern(<span class="str">"langimg\\"</span> + lang + <img src="win.png" />).similar(<span class="dig">0.8</span>)
+    <span class="cmt">#print "focusrect (x,y,w,h): (" + str(focusrect.x) + ", " + str(focusrect.y) + ", " + str(focusrect.w) + ", " + str(focusrect.h) + ")"
+</span>    <span class="kw">if</span>(focusrect.exists(paterntosearch, <span class="dig">0.4</span>)):
+        <span class="kw">print</span> <span class="str">"HOORAY!"</span>
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> isgameend():
+    focusrect = App.focusedWindow()
+    focusrect = focusrect.nearby(<span class="dig">30</span>)
+    paterntosearch = Pattern(<span class="str">"langimg\\"</span> + lang + <img src="perc.png" />).similar(<span class="dig">0.8</span>)
+    <span class="kw">if</span>(focusrect.exists(paterntosearch, <span class="dig">0.4</span>)):
+        isgamelost()
+        isgamewin()
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+boxesstates = [[HID]*xcount <span class="kw">for</span> i <span class="kw">in</span> range(ycount)];
+
+<span class="kw">def</span> updateboxstate(x,y):
+    currentregion = regionforbox(x, y)
+    s = time.time()
+    boxesstates[x][y] = analyseRegionState(currentregion)
+    <span class="kw">print</span> <span class="str">"analyse time:"</span>, time.time()-s
+    <span class="kw">if</span>(boxesstates[x][y] == ERR):
+        <span class="kw">print</span> <span class="str">"ERR on ["</span>, x, <span class="str">", "</span>, y, <span class="str">"]"</span>
+        hover(boxeslocations[x][y])
+        boxesstates[x][y] = <span class="skw">input</span>(<span class="str">"Couldn't recognise field in column "</span> + str(x+<span class="dig">1</span>) + <span class="str">", row: "</span> + str(y+<span class="dig">1</span>) + <span class="str">"\nPlease tell me what it is.\nPut number:\n0 if the field is still hidden\n1-8 if there is a specific number\n9 if the field is mine\n10 if the field is empty)"</span>, <span class="str">"-1"</span>)
+    <span class="kw">return</span> boxesstates[x][y]
+
+<span class="kw">def</span> hasstate(x,y,state):
+    <span class="kw">if</span>(boxesstates[x][y] == state):
+        <span class="kw">return</span> True
+    <span class="kw">return</span> False
+
+<span class="kw">def</span> updatestatesfromempty(x,y):
+    hoverout()
+    hiditems = getaround(x,y,[HID])
+    <span class="kw">for</span> item <span class="kw">in</span> hiditems:
+        <span class="kw">if</span>(boxesstates[item[<span class="dig">0</span>]][item[<span class="dig">1</span>]] == HID): <span class="cmt">#additional state check is necessary because it may be changed by previous items</span>
+            <span class="kw">if</span>(updateboxstate(item[<span class="dig">0</span>],item[<span class="dig">1</span>]) == EMP):
+                updatestatesfromempty(item[<span class="dig">0</span>],item[<span class="dig">1</span>])
+    <span class="kw">return</span>
+
+<span class="kw">def</span> clickfield(x,y):
+    <span class="skw">click</span>(boxeslocations[x][y])
+    <span class="skw">wait</span>(<span class="dig">0.1</span>)
+<span class="cmt">#    if(isgamewin() or isgamelost()):
+</span>    <span class="kw">if</span>(isgameend()):
+        <span class="kw">return</span> -<span class="dig">2</span>
+    boxstate = updateboxstate(x,y)
+    <span class="kw">print</span> <span class="str">"Clicked field ["</span> + str(x) + <span class="str">", "</span> + str(y) + <span class="str">"] and found it in state "</span> + str(boxstate)
+    <span class="kw">if</span>(boxstate == EMP):
+        <span class="skw">wait</span>(<span class="dig">0.2</span>)
+        updatestatesfromempty(i,j)
+        <span class="cmt">#popup(str(boxesstates))
+</span>    <span class="kw">return</span> boxstate
+
+<span class="kw">def</span> rightclickfield(x,y):
+    <span class="skw">rightClick</span>(boxeslocations[x][y])
+    boxesstates[x][y] = BOO
+    <span class="kw">return</span>
+
+<span class="kw">def</span> getaround(x,y,states):
+    points = []
+    <span class="kw">for</span> state <span class="kw">in</span> states:
+        <span class="kw">if</span>(x &gt; <span class="dig">0</span>):
+            <span class="kw">if</span>(boxesstates[x-<span class="dig">1</span>][y] == state):
+                points.append((x-<span class="dig">1</span>,y))
+            <span class="kw">if</span>(y &gt; <span class="dig">0</span>):
+                <span class="kw">if</span>(boxesstates[x-<span class="dig">1</span>][y-<span class="dig">1</span>] == state):
+                    points.append((x-<span class="dig">1</span>,y-<span class="dig">1</span>))
+            <span class="kw">if</span>(y &lt; (ycount-<span class="dig">1</span>)):
+                <span class="kw">if</span>(boxesstates[x-<span class="dig">1</span>][y+<span class="dig">1</span>] == state):
+                    points.append((x-<span class="dig">1</span>,y+<span class="dig">1</span>))
+        <span class="kw">if</span>(y &gt; <span class="dig">0</span>):
+            <span class="kw">if</span>(boxesstates[x][y-<span class="dig">1</span>] == state):
+                points.append((x,y-<span class="dig">1</span>))
+        <span class="kw">if</span>(y &lt; (ycount-<span class="dig">1</span>)):
+            <span class="kw">if</span>(boxesstates[x][y+<span class="dig">1</span>] == state):
+                points.append((x,y+<span class="dig">1</span>))
+        <span class="kw">if</span>(x &lt; (xcount-<span class="dig">1</span>)):
+            <span class="kw">if</span>(boxesstates[x+<span class="dig">1</span>][y] == state):
+                points.append((x+<span class="dig">1</span>,y))
+            <span class="kw">if</span>(y &gt; <span class="dig">0</span>):
+                <span class="kw">if</span>(boxesstates[x+<span class="dig">1</span>][y-<span class="dig">1</span>] == state):
+                    points.append((x+<span class="dig">1</span>,y-<span class="dig">1</span>))
+            <span class="kw">if</span>(y &lt; (ycount-<span class="dig">1</span>)):
+                <span class="kw">if</span>(boxesstates[x+<span class="dig">1</span>][y+<span class="dig">1</span>] == state):
+                   points.append((x+<span class="dig">1</span>,y+<span class="dig">1</span>))
+    <span class="kw">return</span> points
+
+<span class="kw">def</span> countaround(x,y,states):
+    <span class="kw">return</span> len(getaround(x,y,states))
+
+<span class="kw">def</span> markminesaround(x,y):
+    hiditems = getaround(x,y,[HID])
+    <span class="kw">for</span> item <span class="kw">in</span> hiditems:
+        rightclickfield(item[<span class="dig">0</span>],item[<span class="dig">1</span>])
+    <span class="kw">return</span>
+
+<span class="kw">def</span> listlength(list):
+    len = <span class="dig">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> list:
+        len = len + <span class="dig">1</span>
+    <span class="kw">return</span> len
+
+freefields = [];
+
+<span class="kw">def</span> findmines():
+    <span class="kw">for</span> x <span class="kw">in</span> range(xcount):
+        <span class="kw">for</span> y <span class="kw">in</span> range(ycount):
+            state = boxesstates[x][y]
+            <span class="kw">if</span>(state &gt; <span class="dig">0</span> <span class="kw">and</span> state &lt; <span class="dig">9</span>):
+                <span class="kw">if</span>(state == countaround(x,y,[HID, BOO])):
+                    markminesaround(x,y)
+    <span class="kw">return</span>
+
+<span class="kw">def</span> findfree():
+    <span class="kw">for</span> x <span class="kw">in</span> range(xcount):
+        <span class="kw">for</span> y <span class="kw">in</span> range(ycount):
+            state = boxesstates[x][y]
+            <span class="kw">if</span>(state &gt; <span class="dig">0</span> <span class="kw">and</span> state &lt; <span class="dig">9</span>):
+                <span class="kw">if</span>(state == countaround(x,y,[BOO])):
+                    newitems = getaround(x,y,[HID])
+                    <span class="kw">for</span> item <span class="kw">in</span> newitems:
+                        unique = True
+                        <span class="kw">for</span> olditem <span class="kw">in</span> freefields:
+                            <span class="kw">if</span>(olditem[<span class="dig">0</span>] == item[<span class="dig">0</span>] <span class="kw">and</span> olditem[<span class="dig">1</span>] == item[<span class="dig">1</span>]):
+                                unique = False
+                                <span class="kw">break</span>
+                        <span class="kw">if</span>(unique):
+                            freefields.append(item)
+    <span class="kw">return</span> <span class="dig">0</span>
+
+<span class="kw">def</span> chooseField():
+    point = <span class="dig">0</span>
+    findmines()
+    <span class="kw">if</span>(len(freefields) == <span class="dig">0</span>):
+        findfree()
+    <span class="kw">if</span>(len(freefields) &gt; <span class="dig">0</span>):
+        point = freefields.pop()
+    <span class="kw">if</span>(point == <span class="dig">0</span>):
+        point = (random.randint(<span class="dig">0</span>,xcount-<span class="dig">1</span>), random.randint(<span class="dig">0</span>,ycount-<span class="dig">1</span>))
+        <span class="kw">print</span> <span class="str">"trying random field "</span>, point
+    <span class="kw">else</span>:
+        <span class="kw">print</span> <span class="str">"using free field "</span>, point
+    <span class="kw">return</span> point
+
+<span class="kw">import</span> random
+gameend = False
+<span class="kw">while</span>(<span class="kw">not</span> gameend):
+    point = chooseField();
+    i = point[<span class="dig">0</span>]
+    j = point[<span class="dig">1</span>]
+    <span class="kw">if</span>(hasstate(i,j,HID)):
+        s = time.time()
+        <span class="kw">if</span>(clickfield(i,j) == -<span class="dig">2</span>):
+            gameend = True
+        <span class="kw">print</span> <span class="str">"click time:"</span>, time.time()-s
+    <span class="cmt">#hoverout()
+</span>
+<span class="kw">print</span> <span class="str">"END"</span>
+</pre>
+</body>
+</html>
