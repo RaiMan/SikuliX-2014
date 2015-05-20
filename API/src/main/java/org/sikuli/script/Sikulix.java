@@ -141,13 +141,18 @@ public class Sikulix {
     //******Test Space*************************************
 //    Screen.showMonitors();
     Screen s = Screen.as(0);
+    String pgmPath = "\"C:\\Program Files\\Microsoft Games\\Minesweeper\\MineSweeper.exe\"";
+    App pgm = new App(pgmPath);
+    pgm.open();
+    RunTime.pause(2);
+    pgm.focus();
 //    Run.connect();
 //    p(Run.show());
 //    p(Run.send("START"));
 //    p(Run.send("EVAL?r=Region.create(100,100,100,100);r.toJSON();"));
 //    Run.close();
 //    Run.stop();
-//    System.exit(1);
+    System.exit(1);
     //*********************************
     
     Debug.on(3);
