@@ -563,7 +563,7 @@ public class ImagePath {
     if (bundlePath == null) {
       setBundlePath(null);
     }
-		return FileManager.slashify(bundlePath.getPath(), false);
+    return new File(FileManager.slashify(bundlePath.getPath(), false)).getAbsolutePath();
   }
 
   /**
@@ -574,7 +574,7 @@ public class ImagePath {
     if (bundlePath == null) {
       setBundlePath(null);
     }
-		return FileManager.slashify(bundlePath.getPath(), true);
+    return new File(FileManager.slashify(bundlePath.getPath(), true)).getAbsolutePath();
   }
 
   private static PathEntry makePathURL(String fpMainPath, String fpAltPath) {
