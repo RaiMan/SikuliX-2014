@@ -28,7 +28,7 @@ public class WinUtil implements OSUtil {
     String name = "";
     String execName = "";
     String options = "";
-    int pid = -1;
+    Integer pid = -1;
     String[] parts;
     if (filter instanceof String) {
       name = (String) filter;
@@ -55,7 +55,13 @@ public class WinUtil implements OSUtil {
     } else {
       return app;
     }
-    String cmd = cmd = "!tasklist /V /FO CSV /NH /FI \"SESSIONNAME eq Console\"";
+    Debug.log(3, "WinUtil.getApp: %s", filter);
+    String cmd;
+    if (pid < 0) {
+      cmd = cmd = "!tasklist /V /FO CSV /NH /FI \"SESSIONNAME eq Console\"";
+    } else {
+      cmd = cmd = "!tasklist /V /FO CSV /NH /FI \"PID eq " + pid.toString() + "\"";
+    }
     String result = RunTime.get().runcmd(cmd);
     String[] lines = result.split("\r\n");
     if ("0".equals(lines[0].trim())) {
@@ -125,7 +131,7 @@ public class WinUtil implements OSUtil {
       return switchto(app.window.substring(1), 0);
     }
     if (app.pid > -1) {
-      return switchto(app.pid, 0);
+      return switchto(app.window, 0);
     }
     return switchto(app.execName, num);
   }

@@ -214,7 +214,7 @@ public class App {
     appOptions = "";
     init(appNameGiven);
     if (appPID > -1) {
-      Debug.log(3, "App.create: %s", toString());
+      Debug.log(3, "App.create: %s", toStringShort());
     } else {
       if (runTime.runningWindows) {
         if (appOptions.isEmpty()) {
@@ -222,7 +222,7 @@ public class App {
           if (pid > 0) {
             init(pid);
             appWindow = "!" + appNameGiven;
-            Debug.log(3, "App.create: %s", toString());
+            Debug.log(3, "App.create: %s", toStringShort());
           } else {
             appPID = -1;
             appName = "";
@@ -345,6 +345,9 @@ public class App {
     return String.format("[%d:%s (%s)] %s %s", appPID, appName, appWindow, appNameGiven, appOptions);
   }
 
+  public String toStringShort() {
+    return String.format("[%d:%s]", appPID, appName);
+  }
 //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="open">
@@ -372,7 +375,7 @@ public class App {
       return null;
     }
     init(pid);
-    Debug.action("App.open " + this.toString());
+    Debug.action("App.open " + this.toStringShort());
     return this;
   }
   
@@ -399,7 +402,7 @@ public class App {
     }
     int ret = _osUtil.close(makeAppEntry());
     if (ret > -1) {
-      Debug.action("App.close: %s", this);
+      Debug.action("App.close: %s", this.toStringShort());
       appPID = -1;
     } else {
       Debug.error("App.close %s did not work", this);
@@ -455,12 +458,11 @@ public class App {
   public App focus(int num) {
     int pid = -1;
     pid = _osUtil.switchto(makeAppEntry(), num);
-    init(appName);
     if (pid < 0) {
       Debug.error("App.focus failed: " + (num > 0 ? " #" + num : "") + " " + this.toString());
       return null;
     } else {
-      Debug.action("App.focus: " + (num > 0 ? " #" + num : "") + " " + this.toString());
+      Debug.action("App.focus: " + (num > 0 ? " #" + num : "") + " " + this.toStringShort());
     }
     return this;
   }
