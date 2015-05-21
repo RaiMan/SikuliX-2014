@@ -13,8 +13,6 @@ N6 = 6
 N7 = 7
 N8 = 8
 
-shot = "shot.png"
-
 #Debug.highlightOn()
 
 pgmPath = r'"C:\Program Files\Microsoft Games\Minesweeper\MineSweeper.exe"'  
