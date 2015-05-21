@@ -12,6 +12,7 @@ N5 = 5
 N6 = 6
 N7 = 7
 N8 = 8
+numbers = ["N1.png", "N2.png", "N3.png", "N4.png", "N5.png", None, None, None, None, "N0.png"]
 
 #Debug.highlightOn()
 
@@ -154,44 +155,32 @@ def areallcolorssimilar(region, color, rr, rg, rb):
 
 
 def regionis1(region):
-    if( issomecolorsimilar(region, Color( 62, 80 , 190), 5, 5, 5)):
-        print "N1"
+    if(region.exists(numbers[0],0)):
         return True
     return False
 
 def regionis2(region):
-    if( issomecolorsimilar(region, Color( 29, 104 , 1), 5, 5, 5, 3)):
-        print "N2"
-        return True
-    if( issomecolorsimilar(region, Color( 29, 104 , 1), 5, 5, 5, 2)):
-        print "N2"
+    if(region.exists(numbers[1],0)):
         return True
     return False
 
 def regionis3(region):
-    if( issomecolorsimilar(region, Color( 170, 9 , 8), 5, 5, 5, 1)):
-        print "N3a"
-        return True
-    if( issomecolorsimilar(region, Color( 170, 9 , 8), 5, 5, 5, 3)):
-        print "N3b"
+    if(region.exists(numbers[2],0)):
         return True
     return False
 
 def regionis4(region):
-    if(region.exists(Pattern("N4a.png").similar(0.80),0)):
-        print "N41"
+    if(region.exists(numbers[3],0)):
         return True
     return False
 
 def regionis5(region):
-    if(region.exists(Pattern("N5a.png").similar(0.76),0)):
-        print "N51"
+    if(region.exists(numbers[4],0)):
         return True
     return False
 
 def regionis6(region):
     if( issomecolorsimilar(region, Color( 44, 141 , 146), 5, 5, 5)):
-        print "N6"
         return True
     return False
 
