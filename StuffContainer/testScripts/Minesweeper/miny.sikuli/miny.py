@@ -12,23 +12,36 @@ N5 = 5
 N6 = 6
 N7 = 7
 N8 = 8
-numbers = ["N1.png", "N2.png", "N3.png", "N4.png", "N5.png", None, None, None, None, "N0.png"]
+fields = ["imgHidden.png", "N1.png", "N2.png", "N3.png", "N4.png", "N5.png", None, None, None, None, "N0.png"]
 
 #Debug.highlightOn()
 
 pgmPath = r'"C:\Program Files\Microsoft Games\Minesweeper\MineSweeper.exe"'  
-pgm = App(pgmPath);
-if not pgm.isRunning():
-    pgm.open()
+pgm = App(pgmPath)
+if pgm.isRunning:
+    pgm.close()
+    wait(2)
+pgm.open()
     
-pgmWin = None
-while not pgmWin:
-    pgmWin = pgm.window()
+pgmWin = None    
+waitTime = 5
+while not pgmWin and waitTime > 0:
+    pgmWin = None    
+    for n in range(10):
+        w = pgm.window(n)
+        print waitTime, n, w.toJSON()
+        if not w:            
+            break
+        if w.w < 100:
+            continue
+        pgmWin = w
+        break
+    waitTime -= 1
     wait(1)
-
+    
 timer = "timer.png"
 setupOK = False
-if pgmWin.exists(timer):
+if pgmWin.exists(timer, 5):
     setupOK = True
     type(Key.F5)
     while pgmWin.x == pgm.window().x:
@@ -46,6 +59,7 @@ if not setupOK:
     popup("Minesweeper not found\n" +
           "or not setup as needed\n" +
           "--- exiting")
+    print "windowtitle:%s:" % pgm.getWindow(), "window: %s" % pgmWin.toJSON()
     exit(1)
 
 xcount = 9;
@@ -63,155 +77,43 @@ print "cell:", grid.getCell(0,0).toJSON()
 #grid.getCell(4,4).highlight(2)
 #grid.getCell(8,8).highlight(2)
 
-boxsize = minefield.w /xcount
-halfabox = boxsize / 2
-boxeslocations = [[0]*xcount for i in range(ycount)];
-for x in range(xcount):
-    for y in range(ycount):
-        boxeslocations[x][y] = Location(x*boxsize + halfabox + minefield.x,y*boxsize + halfabox + minefield.y)
-
 boxesstates = [[HID]*xcount for i in range(ycount)];
 
 def regionforbox(x,y):
     return grid.getCell(x,y)        
 
-def regionishidden(r):
-    if r.exists("imgHidden.png",0): #or r.exists(HID2,0):
-        #print r.x, r.y, r.getLastMatch().getScore()
-        return True
-    return False
+def analyseRegionState(reg):
+    for n in range(len(fields)):
+        if not fields[n]:
+            continue
+        if reg.exists(fields[n], 0):
+            return n
+    return ERR    
 
-found = True
-for r in range(xcount):
-    for c in range(ycount):
-        reg = regionforbox(r, c)
-        found = True
-        if regionishidden(reg):
-            reg.hover()
-        else:
-            reg.highlight(2)
-            found = False
+Debug.off()
+def scanfields():
+    found = -1
+    for r in range(xcount):
+        for c in range(ycount):
+            reg = regionforbox(r, c)
+            found = analyseRegionState(reg)
+            if found < 0:
+                reg.highlight(2)
+                break
+            else:
+                reg.hover()
+        if found < 0:
             break
-    if not found:
-        break
+#scanfields()
+
 #type(Key.ESC)
 #type(Key.F4, Key.ALT)
 #Debug.highlightOff(); exit()
+Debug.on(3)
 
 def hoverout():
     hover(Location(minefield.x + minefield.w, minefield.y))
     return
-
-from java.awt import Color
-from java.awt import Robot
-
-def iscolorsimilar(location, color, rr, rg, rb):
-    pixel = Robot().getPixelColor(location.x, location.y)
-    pr = pixel.getRed();
-    cr = color.getRed();
-    print "pixel color: ", pixel
-    if(pr > cr - rr and pr < cr + rr):
-        pg = pixel.getGreen();
-        cg = color.getGreen();
-        if(pg > cg - rg and pg < cg + rg):
-            pb = pixel.getBlue();
-            cb = color.getBlue();
-            if(pb > cb - rb and pb < cb + rb):
-                return True
-    return False
-
-def issomecolorsimilar(region, color, rr, rg, rb, centerOffset=2):
-    print "search for pixel similar to [", color.getRed(), ", ", color.getGreen(), ", ", color.getBlue(), "] in range of +-", rr, ", ", rg, ", ", rb
-    center = region.getCenter() 
-    if(iscolorsimilar(center, color, rr, rg, rb)):
-        return True
-    reg = regionfromlocation(center, centerOffset)
-    if(iscolorsimilar(reg.getTopLeft(), color, rr, rg, rb)):
-        return True
-    if(iscolorsimilar(reg.getTopRight(), color, rr, rg, rb)):
-        return True
-    if(iscolorsimilar(reg.getBottomLeft(), color, rr, rg, rb)):
-        return True
-    if(iscolorsimilar(reg.getBottomRight(), color, rr, rg, rb)):
-        return True
-    return False
-
-def areallcolorssimilar(region, color, rr, rg, rb):
-    print "ensure all pixels are similar to [", color.getRed(), ", ", color.getGreen(), ", ", color.getBlue(), "] in range of +-", rr, ", ", rg, ", ", rb
-    center = region.getCenter() 
-    if(not iscolorsimilar(center, color, rr, rg, rb)):
-        return False
-    for i in range(2,4):
-        reg = regionfromlocation(center, i)
-        if(not iscolorsimilar(reg.getTopLeft(), color, rr, rg, rb)):
-            return False
-        if(not iscolorsimilar(reg.getTopRight(), color, rr, rg, rb)):
-            return False
-        if(not iscolorsimilar(reg.getBottomLeft(), color, rr, rg, rb)):
-            return False
-        if(not iscolorsimilar(reg.getBottomRight(), color, rr, rg, rb)):
-            return False
-    return True
-
-
-def regionis1(region):
-    if(region.exists(numbers[0],0)):
-        return True
-    return False
-
-def regionis2(region):
-    if(region.exists(numbers[1],0)):
-        return True
-    return False
-
-def regionis3(region):
-    if(region.exists(numbers[2],0)):
-        return True
-    return False
-
-def regionis4(region):
-    if(region.exists(numbers[3],0)):
-        return True
-    return False
-
-def regionis5(region):
-    if(region.exists(numbers[4],0)):
-        return True
-    return False
-
-def regionis6(region):
-    if( issomecolorsimilar(region, Color( 44, 141 , 146), 5, 5, 5)):
-        return True
-    return False
-
-def regionisempty(region):
-    #if(region.exists(Pattern("emp.png").similar(0.90),0)):
-        #print "EMP1"
-        #return True
-    if( areallcolorssimilar(region, Color( 199, 207 , 228), 29, 28, 20)):
-        print "EMP"
-        return True
-    return False
-
-def analyseRegionState(region):
-    if(regionisempty(region)):
-        return EMP
-    if(regionis1(region)):
-        return N1
-    if(regionis2(region)):
-        return N2
-    if(regionis3(region)):
-        return N3
-    if(regionis4(region)):
-        return N4
-    if(regionis5(region)):
-        return N5
-    if(regionis6(region)):
-        return N6
-    if(regionishidden(region)):
-        return HID
-    return ERR
-    
     
 def regionfromlocation(location, halfsize):
     newreg = location.grow(halfsize)
@@ -238,11 +140,16 @@ def isgamewin():
 
 def isgameend():
     focusrect = App.focusedWindow()
-    focusrect = focusrect.nearby(30)
+    if (focusrect.x == pgmWin.x):
+        return False
     paterntosearch = Pattern("langimg\\" + lang + "perc.png").similar(0.8)
     if(focusrect.exists(paterntosearch, 0.4)):
         isgamelost()
         isgamewin()
+        dragDrop(focusrect.aboveAt(10),focusrect.aboveAt(10).offset(-focusrect.w, 0))
+        pgmWin.getScreen().capture(pgmWin).getFile(getParentPath(), "lastGame")
+        wait(2)
+        type(Key.ESC); type(Key.F4, Key.ALT)
         return True
     return False
 
@@ -253,8 +160,26 @@ def updateboxstate(x,y):
     print "analyse time:", time.time()-s
     if(boxesstates[x][y] == ERR):
         print "ERR on [", x, ", ", y, "]"
-        hover(boxeslocations[x][y])
-        boxesstates[x][y] = input("Couldn't recognise field in column " + str(x+1) + ", row: " + str(y+1) + "\nPlease tell me what it is.\nPut number:\n0 if the field is still hidden\n1-8 if there is a specific number\n9 if the field is mine\n10 if the field is empty)", "-1")
+        hover(grid.getCell(x, y))
+        retVal = input("Couldn't recognise field in column " + str(x+1) + 
+                ", row: " + str(y+1) + 
+                "\nPlease tell me what it is.\nPut number:\n" + 
+                "0 if the field is still hidden\n" + 
+                "1-8 if there is a specific number\n" + 
+                "9 if the field is mine\n" + 
+                "10 if the field is empty)\n" + 
+                "press cancel to terminate", "-1")
+        if not retVal:
+            if not isgameend():
+                type(Key.F4, Key.ALT)
+                wait(1)
+                type(Key.TAB)
+                type(" ")
+            exit();
+        try:
+            boxesstates[x][y] = int(retVal);
+        except:
+            boxesstates[x][y] = -1;        
     return boxesstates[x][y]
 
 def hasstate(x,y,state):
@@ -272,12 +197,12 @@ def updatestatesfromempty(x,y):
     return
 
 def clickfield(x,y):
-    click(boxeslocations[x][y])
+    click(grid.getCell(x,y))
     wait(0.1)
 #    if(isgamewin() or isgamelost()):
+    boxstate = updateboxstate(x,y)        
     if(isgameend()):
         return -2
-    boxstate = updateboxstate(x,y)        
     print "Clicked field [" + str(x) + ", " + str(y) + "] and found it in state " + str(boxstate)
     if(boxstate == EMP):
         wait(0.2)
@@ -286,7 +211,7 @@ def clickfield(x,y):
     return boxstate
 
 def rightclickfield(x,y):
-    rightClick(boxeslocations[x][y])
+    rightClick(grid.getCell(x,y))
     boxesstates[x][y] = BOO
     return
 
@@ -387,7 +312,6 @@ while(not gameend):
         if(clickfield(i,j) == -2):
             gameend = True
         print "click time:", time.time()-s
-    #hoverout()
 
 print "END"
 
