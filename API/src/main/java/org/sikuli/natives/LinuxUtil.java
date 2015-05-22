@@ -9,6 +9,7 @@ package org.sikuli.natives;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.io.*;
+import java.util.Map;
 import org.sikuli.script.App;
 import org.sikuli.script.RunTime;
 
@@ -111,6 +112,11 @@ public class LinuxUtil implements OSUtil {
   @Override
   public int close(App.AppEntry app) {
     return close(app.execName);
+  }
+
+  @Override
+  public Map<Integer, String[]> getApps(String name) {
+    return null;
   }
 
   private enum SearchType {

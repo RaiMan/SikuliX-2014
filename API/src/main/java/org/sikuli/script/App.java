@@ -46,6 +46,7 @@ public class App {
   private String appName;
   private String appWindow;
   private int appPID;
+  private boolean isImmediate = false;
   private static final Map<Type, String> appsWindows;
   private static final Map<Type, String> appsMac;
   private static final Region aRegion = new Region();
@@ -212,12 +213,19 @@ public class App {
     appPID = -1;
     appWindow = "";
     appOptions = "";
-    init(appNameGiven);
+    if(!appNameGiven.startsWith("+")) {
+      init(appNameGiven);
+    } else {
+      isImmediate = true;
+      appNameGiven = appNameGiven.substring(1);
+      appName = appNameGiven;
+      Debug.log(3, "App.open(+...): %s", appNameGiven);
+    }
     if (appPID > -1) {
       Debug.log(3, "App.create: %s", toStringShort());
     } else {
       if (runTime.runningWindows) {
-        if (appOptions.isEmpty()) {
+        if (!isImmediate && appOptions.isEmpty()) {
           int pid = _osUtil.switchto(appNameGiven);
           if (pid > 0) {
             init(pid);
@@ -282,31 +290,28 @@ public class App {
   }
 //</editor-fold>
 
-  //<editor-fold defaultstate="collapsed" desc="getApps">  
-  private static Map<String, AppEntry> getApps() {
-    Map<String, AppEntry> apps = new HashMap<String, AppEntry>();
-    if (runTime.runningWindows) {
-      String cmd = cmd = "!tasklist /V /FO CSV /NH /FI \"SESSIONNAME eq Console\"";
-      String result = runTime.runcmd(cmd);
-      String[] lines = result.split("\r\n");
-      if ("0".equals(lines[0].trim())) {
-        for (int nl = 1; nl < lines.length; nl++) {
-          String[] parts = lines[nl].split("\"");
-          String theWindow = parts[parts.length - 1];
-          if (theWindow.trim().startsWith("N/A")) {
-            continue;
-          }
-          apps.put(parts[1], new AppEntry(parts[1], parts[3] , theWindow, "", ""));
-        }
+  //<editor-fold defaultstate="collapsed" desc="getter/setter">
+  public static void getApps(String name){
+    Map<Integer, String[]> theApps = _osUtil.getApps(name);
+    int count = 0;
+    String[] item; 
+    for (Integer pid : theApps.keySet()) {
+      item = theApps.get(pid);
+      if (pid < 0) {
+        pid = -pid;
+        Debug.logp("%d:%s (N/A)", pid, item[0]);        
       } else {
-        Debug.logp(result);
+        Debug.logp("%d:%s (%s)", pid, item[0], item[1]);
+        count++;
       }
     }
-    return apps;
+    Debug.logp("App.getApps: %d apps (%d having window)", theApps.size(), count);
   }
-  //</editor-fold>
-
-  //<editor-fold defaultstate="collapsed" desc="getter/setter">
+  
+  public static void getApps(){
+    getApps(null);
+  }
+  
   public App setUsing(String options) {
     if (options != null) {
       appOptions = options;
@@ -357,10 +362,7 @@ public class App {
    * @return the App instance or null on failure
    */
   public static App open(String appName) {
-    App theApp = new App(appName);
-    if (theApp.appPID > -1) {
-      return theApp;
-    }
+    App theApp = new App("+" + appName);
     return theApp.open();
   }
 
@@ -369,13 +371,18 @@ public class App {
    * @return this or null on failure
    */
   public App open() {
-    int pid = _osUtil.open(makeAppEntry());
-    if (pid < 0) {
-      Debug.error("App.open failed: " + appNameGiven + " not found");
-      return null;
+    int pid;
+    if (isImmediate) {
+      pid = _osUtil.open(appNameGiven);
+    } else {
+      pid = _osUtil.open(makeAppEntry());
+      if (pid < 0) {
+        Debug.error("App.open failed: " + appNameGiven + " not found");
+        return null;
+      }
+      init(pid);
+      Debug.action("App.open " + this.toStringShort());
     }
-    init(pid);
-    Debug.action("App.open " + this.toStringShort());
     return this;
   }
   

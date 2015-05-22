@@ -8,6 +8,7 @@ package org.sikuli.natives;
 
 import java.awt.Rectangle;
 import java.awt.Window;
+import java.util.Map;
 import org.sikuli.script.App;
 
 public interface OSUtil {
@@ -17,7 +18,9 @@ public interface OSUtil {
 	public String getLibName();
   
   public App.AppEntry getApp(Object filter);
-	
+
+  public Map<Integer, String[]> getApps(String name);
+
 	public int open(String appName);
   
   public int open(App.AppEntry app);

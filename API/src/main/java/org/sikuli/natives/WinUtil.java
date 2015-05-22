@@ -9,6 +9,8 @@ package org.sikuli.natives;
 import java.awt.Rectangle;
 import java.awt.Window;
 import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
 import org.sikuli.basics.Debug;
 import org.sikuli.script.App;
 import org.sikuli.script.Key;
@@ -71,7 +73,7 @@ public class WinUtil implements OSUtil {
         String theName = parts[1];
         String thePID = parts[3];
         if (!name.isEmpty()) {
-          if (theName.toUpperCase().contains(execName)
+          if ((theName.toUpperCase().contains(execName) && !theWindow.contains("N/A"))
                   || theWindow.contains(name)) {
             return new App.AppEntry(theName, thePID, theWindow, "", "");
           }
@@ -91,6 +93,44 @@ public class WinUtil implements OSUtil {
       return new App.AppEntry(name, "", "", "", options);
     }
     return app;
+  }
+
+  @Override
+  public Map<Integer, String[]> getApps(String name) {
+    Map<Integer, String[]> apps = new HashMap<Integer, String[]>();
+    String cmd;
+    if (name == null || name.isEmpty()) {
+      cmd = cmd = "!tasklist /V /FO CSV /NH /FI \"SESSIONNAME eq Console\"";
+    } else {
+      cmd = String.format("!tasklist /V /FO CSV /NH /FI \"IMAGENAME eq %s\"", name);
+    }
+    String result = RunTime.get().runcmd(cmd);
+    String[] lines = result.split("\r\n");
+    if ("0".equals(lines[0].trim())) {
+      for (int nl = 1; nl < lines.length; nl++) {
+        String[] parts = lines[nl].split("\"");
+        if (parts.length < 3) {
+          continue;
+        }
+        String theWindow = parts[parts.length - 1];
+        String thePID = parts[3];
+        String theName = parts[1];
+        Integer pid = -1;
+        try {
+          pid = Integer.parseInt(thePID);
+        } catch (Exception ex) {
+        }
+        if (pid != -1) {
+          if (theWindow.contains("N/A")) {
+            pid = -pid;
+          }
+          apps.put(pid, new String[] {theName, theWindow});
+        }
+      }
+    } else {
+      Debug.logp(result);
+    }
+    return apps;
   }
 
   @Override
