@@ -334,7 +334,11 @@ public class App {
   }
   
   public boolean isRunning() {
-    return getPID() > -1;
+    if (appPID > -1) {
+      return true;
+    }
+    init(appNameGiven);
+    return appPID > -1;
   }
 
   public boolean hasWindow() {
