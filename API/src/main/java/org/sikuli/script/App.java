@@ -289,7 +289,7 @@ public class App {
     } else {
       String name = appName;
       if (name.isEmpty() && appOptions.isEmpty()) name = appNameGiven;
-      init(appName);
+      init(name);
     }
   }
 //</editor-fold>
