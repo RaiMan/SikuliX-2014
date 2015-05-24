@@ -2003,12 +2003,14 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     JButton btnLocation = new ButtonLocation().init();
     JButton btnOffset = new ButtonOffset().init();
     JButton btnShow = new ButtonShow().init();
+    JButton btnShowIn = new ButtonShowIn().init();
     toolbar.add(_btnCapture);
     toolbar.add(btnInsertImage);
     toolbar.add(btnSubregion);
     toolbar.add(btnLocation);
     toolbar.add(btnOffset);
     toolbar.add(btnShow);
+    toolbar.add(btnShowIn);
     toolbar.add(Box.createHorizontalGlue());
     _btnRun = new ButtonRun();
     toolbar.add(_btnRun);
@@ -2229,6 +2231,57 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
           eval = "m = Screen.all().exists(new " + item + ", 0); if (m != null) m.highlight(2); print(m);";
         } else if (item.startsWith("\"")) {
           eval = "m = Screen.all().exists(" + item + ", 0); if (m != null) m.highlight(2);print(m);";
+        }
+        if (!eval.isEmpty()) {
+          Debug.log(lvl, "show: %s", eval);
+          Runner.runjsEval(eval);
+          return;
+        }
+      }
+      Sikulix.popup("Nothing to show");
+   }
+  }
+
+  class ButtonShowIn extends ButtonOnToolbar implements ActionListener {
+
+    String buttonText;
+    String iconFile;
+    String buttonHint;
+
+    public ButtonShowIn() {
+      super();
+      buttonText = "Show in";
+      iconFile = "/icons/region-icon.png";
+      buttonHint = "Show the item at the cursor in the selected region";
+    }
+
+    public ButtonShowIn init() {
+      URL imageURL = SikuliIDE.class.getResource(iconFile);
+      setIcon(new ImageIcon(imageURL));
+      setText(buttonText);
+      //setMaximumSize(new Dimension(26,26));
+      setToolTipText(buttonHint);
+      addActionListener(this);
+      return this;
+    }
+
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      String line = "";
+      EditorPane codePane = getCurrentCodePane();
+      line = codePane.getLineTextAtCaret();
+      String item = codePane.parseLineText(line);
+      if (!item.isEmpty()) {
+        String eval = "";
+        item = item.replaceAll("\"", "\\\"");
+        if (item.startsWith("Pattern")) {
+          eval = "m = null; r = Screen.all().selectRegion(); "
+                  + "if (r != null) m = r.exists(new " + item + ", 0); "
+                  + "if (m != null) m.highlight(2); print(m);";
+        } else if (item.startsWith("\"")) {
+          eval = "m = null; r = Screen.all().selectRegion(); "
+                  + "if (r != null) m = r.exists(" + item + ", 0); "
+                  + "if (m != null) m.highlight(2); print(m);";
         }
         if (!eval.isEmpty()) {
           Debug.log(lvl, "show: %s", eval);
