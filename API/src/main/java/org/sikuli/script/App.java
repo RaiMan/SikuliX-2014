@@ -196,7 +196,9 @@ public class App {
   }
   
   public AppEntry makeAppEntry() {
-    return new AppEntry(appName, getPID().toString(), appWindow, appNameGiven, appOptions);
+    String name = appName;
+    if (name.isEmpty() && appOptions.isEmpty()) name = appNameGiven;
+    return new AppEntry(name, getPID().toString(), appWindow, appNameGiven, appOptions);
   }
 //</editor-fold>
   
@@ -285,6 +287,8 @@ public class App {
     if (appPID > -1) {
       init(appPID);
     } else {
+      String name = appName;
+      if (name.isEmpty() && appOptions.isEmpty()) name = appNameGiven;
       init(appName);
     }
   }
