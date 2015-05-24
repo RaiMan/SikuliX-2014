@@ -2680,7 +2680,8 @@ Point pNull = new Point(0, 0);
         if (debugLevel > -1) {
           Debug.on(debugLevel);
         }
-      } else if (opt.startsWith("-r") || opt.startsWith("-t")) {
+      } else if (opt.startsWith("-r") || opt.startsWith("-t") 
+              || opt.startsWith("-s") || opt.startsWith("-i")) {
         runningScripts = true;
       }
     }
