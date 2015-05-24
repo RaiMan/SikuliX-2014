@@ -134,6 +134,20 @@ public class WinUtil implements OSUtil {
   }
 
   @Override
+  public int isRunning(App.AppEntry app) {
+    if (app.pid > -1) {
+      return 1;
+    }
+    if (app.name.isEmpty()) {
+      return -1;
+    }
+    if (getWindow(app.name, 0) != null) {
+      return 1;
+    }
+    return 0;
+  }
+
+  @Override
   public int open(String appName) {
     return openApp(appName);
   }

@@ -45,6 +45,11 @@ public class LinuxUtil implements OSUtil {
   public App.AppEntry getApp(Object filter) {
     return null;
   }
+  
+  @Override
+  public int isRunning(App.AppEntry app) {
+    return -1;
+  }
 
   @Override
   public int open(String appName) {

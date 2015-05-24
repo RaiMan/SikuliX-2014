@@ -334,10 +334,11 @@ public class App {
   }
   
   public boolean isRunning() {
-    if (appPID > -1) {
-      return true;
+    int retVal = _osUtil.isRunning(makeAppEntry());
+    if (retVal == 0) {
+      return false;
     }
-    init(appNameGiven);
+    init();
     return appPID > -1;
   }
 

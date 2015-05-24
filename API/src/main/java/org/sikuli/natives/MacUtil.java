@@ -96,6 +96,11 @@ public class MacUtil implements OSUtil {
   }
   
   @Override
+  public int isRunning(App.AppEntry app) {
+    return -1;
+  }
+
+  @Override
   public int open(String appName) {
     if (_openApp(appName)) {
       return 0;

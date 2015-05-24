@@ -20,6 +20,8 @@ public interface OSUtil {
   public App.AppEntry getApp(Object filter);
 
   public Map<Integer, String[]> getApps(String name);
+  
+  public int isRunning(App.AppEntry app);
 
 	public int open(String appName);
   
