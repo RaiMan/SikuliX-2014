@@ -18,6 +18,8 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 
 import edu.unh.iol.dlc.VNCScreen;
+import java.util.ArrayList;
+import java.util.Comparator;
 
 /**
  * A Region is a rectengular area and lies always completely inside its parent screen
@@ -2258,7 +2260,179 @@ public class Region {
       }
     }
   }
+  
+  public <PSI> Match[] findAllByRow(PSI target) {
+    Match[] matches = new Match[0];
+    List<Match> mList = findAllCollect(target);
+    if (mList.isEmpty()) {
+      return null;
+    }
+    mList.sort(new Comparator<Match>() {
+      @Override
+      public int compare(Match m1, Match m2) {
+        if (m1.y == m2.y) {
+          return m1.x - m2.x;
+        }
+        return m1.y - m2.y;
+      }
+    });
+    return mList.toArray(matches);
+  }
 
+  public <PSI> Match[] findAllByColumn(PSI target) {
+    Match[] matches = new Match[0];
+    List<Match> mList = findAllCollect(target);
+    if (mList.isEmpty()) {
+      return null;
+    }
+    mList.sort(new Comparator<Match>() {
+      @Override
+      public int compare(Match m1, Match m2) {
+        if (m1.x == m2.x) {
+          return m1.y - m2.y;
+        }
+        return m1.x - m2.x;
+      }
+    });
+    return mList.toArray(matches);
+  }
+
+  private <PSI> List<Match> findAllCollect(PSI target) {
+    Iterator<Match> mIter = null;
+    try {
+      mIter = findAll(target);
+    } catch (Exception ex) {
+      Debug.error("findAllByRow: %s", ex.getMessage());
+      return null;
+    }
+    List<Match> mList = new ArrayList<Match>();
+    while (mIter.hasNext()) {
+      mList.add(mIter.next());
+    }
+    return mList;
+  }
+  
+  public <PSI> Match findBest(Object... args) {
+    Match mResult = null;
+    List<Match> mList = findAnyCollect(args);
+    if (mList != null) {
+      mList.sort(new Comparator<Match>() {
+        @Override
+        public int compare(Match m1, Match m2) {
+          double ms = m2.getScore() - m1.getScore();
+          if (ms < 0) {
+            return -1;
+          } else if (ms > 0) {
+            return 1;
+          }
+          return 0;
+        }
+      });
+      mResult = mList.get(0);
+    }
+    return mResult;
+  }
+
+  private List<Match> findAnyCollect(Object... args) {
+    if (args == null) return null;
+    List<Match> mList = new ArrayList<Match>();
+    int nobj = 0;
+    ScreenImage base = getScreen().capture(this);
+    Match match;
+    long timer = -1;
+    for (Object obj : args) {
+      if (obj instanceof Pattern || obj instanceof String || obj instanceof Image) {
+        try {
+          timer = (new Date()).getTime();
+          match = findInImage(base, obj);
+          timer = (new Date()).getTime() - timer;
+        } catch (Exception ex) {
+          log(-1, "findAnyCollect: image file not found:\n", obj);
+          match = null;
+        }
+        if (match != null) {
+          match.setIndex(nobj);
+          mList.add(match);
+          log(lvl, "findAnyCollect: image: %d (%s) time %d msec at\n%s", 
+                  nobj, match.getImage().getName(), timer, match);
+        } else {
+          log(lvl, "findAnyCollect: image: %d (%s) time %d msec not found", 
+                  nobj, obj, timer);
+        }
+      }
+      nobj++;
+    }
+    return mList;
+  }
+  
+  private Match findInImage(ScreenImage base, Object target) throws IOException {
+    Finder finder = null;
+    Match match = null;
+    boolean findingText = false;
+    lastFindTime = (new Date()).getTime();
+    Image img = null;
+    if (target instanceof String) {
+      if (((String) target).startsWith("\t") && ((String) target).endsWith("\t")) {
+        findingText = true;
+      } else {
+        img = Image.create((String) target);
+        if (img.isValid()) {
+          lastSearchTime = (new Date()).getTime();
+          finder = doCheckLastSeenAndCreateFinder(base, img, 0.0, null);
+          if (!finder.hasNext()) {
+            runFinder(finder, img);
+          }
+        } else if (img.isText()) {
+          findingText = true;
+        } else {
+          throw new IOException("Region: findInImage: Image not loadable: " + target.toString());
+        }
+      }
+      if (findingText) {
+        if (TextRecognizer.getInstance() != null) {
+          log(lvl, "findInImage: Switching to TextSearch");
+          finder = new Finder(getScreen().capture(x, y, w, h), this);
+          lastSearchTime = (new Date()).getTime();
+          finder.findText((String) target);
+        }
+      }
+    } else if (target instanceof Pattern) {
+      if (((Pattern) target).isValid()) {
+        img = ((Pattern) target).getImage();
+        lastSearchTime = (new Date()).getTime();
+        finder = doCheckLastSeenAndCreateFinder(base, img, 0.0, (Pattern) target);
+        if (!finder.hasNext()) {
+          runFinder(finder, target);
+        }
+      } else {
+        throw new IOException("Region: findInImage: Image not loadable: " + target.toString());
+      }
+    } else if (target instanceof Image) {
+      if (((Image) target).isValid()) {
+        img = ((Image) target);
+        lastSearchTime = (new Date()).getTime();
+        finder = doCheckLastSeenAndCreateFinder(base, img, 0.0, null);
+        if (!finder.hasNext()) {
+          runFinder(finder, img);
+        }
+      } else {
+        throw new IOException("Region: findInImage: Image not loadable: " + target.toString());
+      }
+    } else {
+      log(-1, "findInImage: invalid parameter: %s", target);
+      return null;
+    }
+    lastSearchTime = (new Date()).getTime() - lastSearchTime;
+    lastFindTime = (new Date()).getTime() - lastFindTime;
+    if (finder.hasNext()) {
+      match = finder.next();
+      match.setTimes(lastFindTime, lastSearchTime);
+      match.setImage(img);
+      img.setLastSeen(match.getRect(), match.getScore());
+    }
+    return match;
+  }
+  
   /**
    * Waits for the Pattern, String or Image to appear until the AutoWaitTimeout value is exceeded.
    *
@@ -2582,7 +2756,13 @@ public class Region {
   }
 
   private Finder checkLastSeenAndCreateFinder(Image img, double findTimeout, Pattern ptn) {
-    ScreenImage simg = getScreen().capture(this);
+    return doCheckLastSeenAndCreateFinder(null, img, findTimeout, ptn);
+  }
+  
+  private Finder doCheckLastSeenAndCreateFinder(ScreenImage base, Image img, double findTimeout, Pattern ptn) {
+    if (base == null) {
+      base = getScreen().capture(this);
+    }
     if (!Settings.UseImageFinder && Settings.CheckLastSeen && null != img.getLastSeen()) {
       Region r = Region.create(img.getLastSeen());
       float score = (float) (img.getLastSeenScore() - 0.01); 
@@ -2591,7 +2771,7 @@ public class Region {
         if (this.scr instanceof VNCScreen) {
           f = new Finder(new VNCScreen().capture(r), r);
         } else {
-          f = new Finder(simg.getSub(r.getRect()), r);
+          f = new Finder(base.getSub(r.getRect()), r);
           if (Debug.shouldHighlight()) {
             if (this.scr.getW() > w + 10 && this.scr.getH() > h + 10)
               highlight(2, "#000255000");
@@ -2614,7 +2794,7 @@ public class Region {
       f.setFindTimeout(findTimeout);
       return f;
     } else {
-      return new Finder(simg, this);
+      return new Finder(base, this);
     }
   }
   
