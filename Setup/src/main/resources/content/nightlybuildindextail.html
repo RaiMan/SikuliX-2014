@@ -1,3 +1,10 @@
+<h4>Build: 2015-05-26</h4>
+added: findAllByRow, findAllByColumn: returns an array of matches in sorted order 
+top left to bottom right either row-wise or column-wise<br>
+added: findBest(): find the match with the highest score out of the list of given images<br>
+revised: App.isRunning(): now internally refreshes the App instance, 
+so the App can be created with a window title and later be checked, whether it is running, 
+if other means are used to start the app (usage instead of "if someApp.window()")
 <h4>Build: 2015-05-22</h4>
 revised: class App: App.open() and openApp() now ignore already running instances of the named app and will in doubt start a new instance.
 Windows: openApp("cmd.exe /c "some command to run") works again
