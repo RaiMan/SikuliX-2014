@@ -2335,34 +2335,71 @@ public class Region {
 
   private List<Match> findAnyCollect(Object... args) {
     if (args == null) return null;
+    Boolean finished[] = new Boolean[args.length];
     List<Match> mList = new ArrayList<Match>();
+    Match[] mArray = new Match[args.length];
     int nobj = 0;
     ScreenImage base = getScreen().capture(this);
-    Match match;
     long timer = -1;
     for (Object obj : args) {
+      mArray[nobj] = null;
       if (obj instanceof Pattern || obj instanceof String || obj instanceof Image) {
-        try {
-          timer = (new Date()).getTime();
-          match = findInImage(base, obj);
-          timer = (new Date()).getTime() - timer;
-        } catch (Exception ex) {
-          log(-1, "findAnyCollect: image file not found:\n", obj);
-          match = null;
-        }
-        if (match != null) {
-          match.setIndex(nobj);
-          mList.add(match);
-          log(lvl, "findAnyCollect: image: %d (%s) time %d msec at\n%s", 
-                  nobj, match.getImage().getName(), timer, match);
-        } else {
-          log(lvl, "findAnyCollect: image: %d (%s) time %d msec not found", 
-                  nobj, obj, timer);
-        }
+          new Thread(new SubFindRun(mArray, nobj, finished, base, obj, this)).start();
+      }
+      nobj++;
+    }
+    while (true) {
+      boolean all = true;
+      for (boolean bf : finished) {
+        all &= bf;
+      }
+      if (all) {
+        break;
+      }
+    }
+    nobj = 0;
+    for (Match match : mArray) {
+      if (match != null) {
+        match.setIndex(nobj);
+        mList.add(match);
+        log(lvl, "findAnyCollect: image: %d (%s) time %d msec at\n%s", 
+                nobj, match.getImage().getName(), timer, match);
+      } else {
+        log(lvl, "findAnyCollect: image: %d (%s) time %d msec not found", 
+                nobj, args[nobj], timer);
       }
       nobj++;
     }
     return mList;
+  }
+  
+  private class SubFindRun implements Runnable {
+    
+    Match[] mArray;
+    ScreenImage base;
+    Object target;
+    Region reg;
+    Boolean[] finished;
+    int subN;
+    
+    public SubFindRun(Match[] pMArray, int pSubN, Boolean[] pFinished, 
+            ScreenImage pBase, Object pTarget, Region pReg) {
+      subN = pSubN;
+      base = pBase;
+      target = pTarget;
+      reg = pReg;
+      mArray = pMArray;
+    }
+    
+    @Override
+    public void run() {
+      try {
+        mArray[subN] = reg.findInImage(base, target);
+      } catch (Exception ex) {
+        log(-1, "findAnyCollect: image file not found:\n", target);
+      }
+      finished[subN] = true;
+    }
   }
   
   private Match findInImage(ScreenImage base, Object target) throws IOException {
