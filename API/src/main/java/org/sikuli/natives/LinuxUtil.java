@@ -42,7 +42,7 @@ public class LinuxUtil implements OSUtil {
 	}
 
   @Override
-  public App.AppEntry getApp(Object filter) {
+  public App.AppEntry getApp(int appPID, String appName) {
     return null;
   }
   

@@ -19,6 +19,7 @@ import org.sikuli.basics.Settings;
 
 import edu.unh.iol.dlc.VNCScreen;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 
 /**
@@ -2267,7 +2268,7 @@ public class Region {
     if (mList.isEmpty()) {
       return null;
     }
-    mList.sort(new Comparator<Match>() {
+    Collections.sort(mList, new Comparator<Match>() {
       @Override
       public int compare(Match m1, Match m2) {
         if (m1.y == m2.y) {
@@ -2285,7 +2286,7 @@ public class Region {
     if (mList.isEmpty()) {
       return null;
     }
-    mList.sort(new Comparator<Match>() {
+    Collections.sort(mList, new Comparator<Match>() {
       @Override
       public int compare(Match m1, Match m2) {
         if (m1.x == m2.x) {
@@ -2316,7 +2317,7 @@ public class Region {
     Match mResult = null;
     List<Match> mList = findAnyCollect(args);
     if (mList != null) {
-      mList.sort(new Comparator<Match>() {
+      Collections.sort(mList, new Comparator<Match>() {
         @Override
         public int compare(Match m1, Match m2) {
           double ms = m2.getScore() - m1.getScore();

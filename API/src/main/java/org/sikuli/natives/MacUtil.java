@@ -62,11 +62,17 @@ public class MacUtil implements OSUtil {
   static String cmdLinePID = "set found to first item of (processes whose unix id is equal to #PID#)";
   
   @Override
-  public App.AppEntry getApp(Object filter) {
+  public App.AppEntry getApp(int appPID, String appName) {
     App.AppEntry app = null;
     String name = "";
     String theCmd = "";
     int pid = -1;
+    Object filter;
+    if (appPID < 0) {
+      filter = appName;
+    } else {
+      filter = appPID;
+    }
     if (filter instanceof String) {
       name = (String) filter;
       theCmd = cmd.replace("#LINE#", cmdLineApp);

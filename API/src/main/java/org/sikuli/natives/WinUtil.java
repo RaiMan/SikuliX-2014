@@ -25,8 +25,17 @@ public class WinUtil implements OSUtil {
   }
 
   @Override
-  public App.AppEntry getApp(Object filter) {
+  public App.AppEntry getApp(int appPID, String appName) {
+    if (appPID == 0) {
+      return null;
+    }
     App.AppEntry app = null;
+    Object filter;
+    if (appPID < 0) {
+      filter = appName;
+    } else {
+      filter = appPID;
+    }
     String name = "";
     String execName = "";
     String options = "";
@@ -69,9 +78,13 @@ public class WinUtil implements OSUtil {
     if ("0".equals(lines[0].trim())) {
       for (int nl = 1; nl < lines.length; nl++) {
         parts = lines[nl].split("\"");
+        if (parts.length < 2) {
+          continue;
+        }
         String theWindow = parts[parts.length - 1];
         String theName = parts[1];
         String thePID = parts[3];
+        Debug.log(3, "WinUtil.getApp: %s:%s(%s)", thePID, theName, theWindow);
         if (!name.isEmpty()) {
           if ((theName.toUpperCase().contains(execName) && !theWindow.contains("N/A"))
                   || theWindow.contains(name)) {
@@ -91,6 +104,25 @@ public class WinUtil implements OSUtil {
     }
     if (!options.isEmpty()) {
       return new App.AppEntry(name, "", "", "", options);
+    }
+    if (app == null) {
+      cmd = String.format("!tasklist /V /FO CSV /NH /FI \"IMAGENAME eq %s\"", appName);
+      result = RunTime.get().runcmd(cmd);
+      lines = result.split("\r\n");
+      if ("0".equals(lines[0].trim())) {
+        for (int nl = 1; nl < lines.length; nl++) {
+          parts = lines[nl].split("\"");
+          if (parts.length < 2) {
+            continue;
+          }
+          String theWindow = parts[parts.length - 1];
+          String theName = parts[1];
+          String thePID = parts[3];
+          if (theWindow.contains("N/A")) continue;
+          app = new App.AppEntry(theName, thePID, theWindow, "", "");
+          break;
+        }
+      }
     }
     return app;
   }
@@ -135,7 +167,7 @@ public class WinUtil implements OSUtil {
 
   @Override
   public int isRunning(App.AppEntry app) {
-    if (app.pid > -1) {
+    if (app.pid > 0) {
       return 1;
     }
     if (app.name.isEmpty()) {

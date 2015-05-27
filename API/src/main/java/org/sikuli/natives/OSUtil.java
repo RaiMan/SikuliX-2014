@@ -17,7 +17,7 @@ public interface OSUtil {
 
 	public String getLibName();
   
-  public App.AppEntry getApp(Object filter);
+  public App.AppEntry getApp(int pid, String name);
 
   public Map<Integer, String[]> getApps(String name);
   

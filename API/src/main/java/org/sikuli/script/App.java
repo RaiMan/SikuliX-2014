@@ -23,6 +23,7 @@ import java.io.StringReader;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import org.sikuli.natives.OSUtil;
@@ -197,7 +198,9 @@ public class App {
   
   public AppEntry makeAppEntry() {
     String name = appName;
+    String window = appWindow;
     if (name.isEmpty() && appOptions.isEmpty()) name = appNameGiven;
+    if (isImmediate)window = "!" + window;
     return new AppEntry(name, getPID().toString(), appWindow, appNameGiven, appOptions);
   }
 //</editor-fold>
@@ -215,13 +218,32 @@ public class App {
     appPID = -1;
     appWindow = "";
     appOptions = "";
-    if(!appNameGiven.startsWith("+")) {
-      init(appNameGiven);
-    } else {
+    if(appNameGiven.startsWith("+")) {
       isImmediate = true;
       appNameGiven = appNameGiven.substring(1);
       appName = appNameGiven;
+      String[] parts;
+      if (appName.startsWith("\"")) {
+        parts = appName.substring(1).split("\"");
+        if (parts.length > 1) {
+          appOptions = appName.substring(parts[0].length() + 3);
+          appName = "\"" + parts[0] +  "\"";
+        }
+      } else {
+        parts = appName.split(" ");
+        if (parts.length > 1) {
+          appOptions = appName.substring(parts[0].length() + 1);
+          appName = parts[0];
+        }
+      }
+      if (appName.startsWith("\"")) {
+        appName = new File(appName.substring(1, appName.length()-1)).getName();
+      } else {
+        appName = new File(appName).getName();
+      }
       Debug.log(3, "App.open(+...): %s", appNameGiven);
+    } else {
+      init(appNameGiven);
     }
     if (appPID > -1) {
       Debug.log(3, "App.create: %s", toStringShort());
@@ -248,7 +270,7 @@ public class App {
   }
 
   private void init(String name) {
-    AppEntry app = _osUtil.getApp(name);
+    AppEntry app = _osUtil.getApp(-1, name);
     if (app != null) {
       appName = app.name;
       if (app.options.isEmpty()) {
@@ -272,14 +294,15 @@ public class App {
   }
 
   private void init(int pid) {
-    AppEntry app; 
-    app = pid > 0 ? _osUtil.getApp(pid) : _osUtil.getApp(appName);
+    AppEntry app =_osUtil.getApp(pid, appName);
     if (app != null) {
       appName = app.name;
       appPID = app.pid;
       if (!app.window.contains("N/A")) {
         appWindow = app.window;
       }
+    } else {
+      appPID = -1;
     }
   }
   
@@ -338,11 +361,26 @@ public class App {
   }
   
   public boolean isRunning() {
-    int retVal = _osUtil.isRunning(makeAppEntry());
-    if (retVal == 0) {
-      return false;
+    return isRunning(1);
+  }
+  
+  public boolean isRunning(int maxTime) {
+    long wait = -1;
+    for (int n = 0; n < maxTime; n++) {
+      wait = new Date().getTime();
+      int retVal = _osUtil.isRunning(makeAppEntry());
+      if (retVal > 0) {
+        init();
+        break;
+      }
+      if (n == 0) {
+        continue;
+      }
+      wait = 1000 - new Date().getTime() + wait;
+      if (wait > 0) {
+        RunTime.pause(wait/1000f);
+      }
     }
-    init();
     return appPID > -1;
   }
 
@@ -356,7 +394,7 @@ public class App {
     if (!appWindow.startsWith("!")) {
       init();
     }
-    return String.format("[%d:%s (%s)] %s %s", appPID, appName, appWindow, appNameGiven, appOptions);
+    return String.format("[%d:%s (%s)] %s", appPID, appName, appWindow, appNameGiven);
   }
 
   public String toStringShort() {
@@ -371,8 +409,7 @@ public class App {
    * @return the App instance or null on failure
    */
   public static App open(String appName) {
-    App theApp = new App("+" + appName);
-    return theApp.open();
+    return new App("+" + appName).open();
   }
 
   /**
@@ -389,9 +426,9 @@ public class App {
         Debug.error("App.open failed: " + appNameGiven + " not found");
         return null;
       }
-      init(pid);
-      Debug.action("App.open " + this.toStringShort());
     }
+    init(pid);
+    Debug.action("App.open " + this.toStringShort());
     return this;
   }
   
