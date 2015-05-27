@@ -422,13 +422,13 @@ public class App {
       pid = _osUtil.open(appNameGiven);
     } else {
       pid = _osUtil.open(makeAppEntry());
-      if (pid < 0) {
-        Debug.error("App.open failed: " + appNameGiven + " not found");
-        return null;
-      }
+      init(pid);
     }
-    init(pid);
-    Debug.action("App.open " + this.toStringShort());
+    if (pid < 0) {
+      Debug.error("App.open failed: " + appNameGiven + " not found");
+    } else {
+      Debug.action("App.open " + this.toStringShort());
+    }
     return this;
   }
   
