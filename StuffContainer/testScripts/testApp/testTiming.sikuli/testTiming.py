@@ -7,6 +7,7 @@ bcPath1 = bcPath0 + ' http://sikulix.com'
 print "******************* app.isRunning(wait)"
 bcPathx = r'"C:\Program Files (x86)\Google\Chrome\Application\chrom.exe"'
 bc = App.open(bcPathx)
+print bc
 if not bc.isRunning(5):
   print "not running"
 

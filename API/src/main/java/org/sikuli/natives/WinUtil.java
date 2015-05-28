@@ -84,7 +84,7 @@ public class WinUtil implements OSUtil {
         String theWindow = parts[parts.length - 1];
         String theName = parts[1];
         String thePID = parts[3];
-        Debug.log(3, "WinUtil.getApp: %s:%s(%s)", thePID, theName, theWindow);
+        //Debug.log(3, "WinUtil.getApp: %s:%s(%s)", thePID, theName, theWindow);
         if (!name.isEmpty()) {
           if ((theName.toUpperCase().contains(execName) && !theWindow.contains("N/A"))
                   || theWindow.contains(name)) {
@@ -176,6 +176,9 @@ public class WinUtil implements OSUtil {
     if (getWindow(app.name, 0) != null) {
       return 1;
     }
+    if (getApp(app.pid, app.name).pid > 0) {
+      return 1;
+    }
     return 0;
   }
 
@@ -215,11 +218,20 @@ public class WinUtil implements OSUtil {
 
   @Override
   public int switchto(App.AppEntry app, int num) {
-    if (app.window.startsWith("!")) {
-      return switchto(app.window.substring(1), 0);
-    }
     if (app.pid > -1) {
-      return switchto(app.window, 0);
+      String wname = app.window;
+      if (wname.startsWith("!")) {
+        wname = wname.substring(1);
+      }
+      return switchto(wname, 0);
+    }
+    if (app.window.startsWith("!")) {
+      String token = app.window.substring(1);
+      if(!token.isEmpty()) {
+        return switchto(app.window.substring(1), 0);
+      } else {
+        return switchto(getApp(app.pid, app.name).window, 0);
+      }
     }
     return switchto(app.execName, num);
   }
@@ -236,15 +248,24 @@ public class WinUtil implements OSUtil {
 
   @Override
   public int close(App.AppEntry app) {
-    if (app.window.startsWith("!")) {
-      switchto(app.window.substring(1), 0);
-      RunTime.pause(1);
-      new Screen().type(Key.F4, Key.ALT);
-    }
     if (app.pid > -1) {
       return closeApp(app.pid);
     }
-    return closeApp(app.execName);
+    if (app.window.startsWith("!")) {
+      String token = app.window.substring(1);
+      if(!token.isEmpty()) {
+        switchto(app.window.substring(1), 0);
+        RunTime.pause(1);
+        new Screen().type(Key.F4, Key.ALT);
+      } else {
+        app = getApp(app.pid, app.name);
+      }
+    }
+    if (app.pid > -1) {
+      return closeApp(app.pid);
+    } else {
+      return closeApp(app.execName.replaceAll("\"", ""));
+    }
   }
 
   public native int switchApp(String appName, int num);

@@ -48,6 +48,7 @@ public class App {
   private String appWindow;
   private int appPID;
   private boolean isImmediate = false;
+  private boolean notFound = false;
   private static final Map<Type, String> appsWindows;
   private static final Map<Type, String> appsMac;
   private static final Region aRegion = new Region();
@@ -68,7 +69,6 @@ public class App {
     appsMac.put(Type.BROWSER, "Safari");
     appsMac.put(Type.VIEWER, "Preview");
 }
-
   //<editor-fold defaultstate="collapsed" desc="special app features">
   public static enum Type {
     EDITOR, BROWSER, VIEWER
@@ -199,9 +199,13 @@ public class App {
   public AppEntry makeAppEntry() {
     String name = appName;
     String window = appWindow;
-    if (name.isEmpty() && appOptions.isEmpty()) name = appNameGiven;
-    if (isImmediate)window = "!" + window;
-    return new AppEntry(name, getPID().toString(), appWindow, appNameGiven, appOptions);
+    if (name.isEmpty() && appOptions.isEmpty()) {
+      name = appNameGiven;
+    }
+    if (isImmediate) {
+      window = "!" + window;
+    }
+    return new AppEntry(name, getPID().toString(), window, appNameGiven, appOptions);
   }
 //</editor-fold>
   
@@ -360,11 +364,18 @@ public class App {
     return appWindow;
   }
   
+  public boolean isValid() {
+    return !notFound;
+  } 
+  
   public boolean isRunning() {
     return isRunning(1);
   }
   
   public boolean isRunning(int maxTime) {
+    if (!isValid()) {
+      return false;
+    }
     long wait = -1;
     for (int n = 0; n < maxTime; n++) {
       wait = new Date().getTime();
@@ -385,6 +396,9 @@ public class App {
   }
 
   public boolean hasWindow() {
+    if (!isValid()) {
+      return false;
+    }
     init(appName);
     return !getWindow().isEmpty();
   }
@@ -426,6 +440,7 @@ public class App {
     }
     if (pid < 0) {
       Debug.error("App.open failed: " + appNameGiven + " not found");
+      notFound = true;
     } else {
       Debug.action("App.open " + this.toStringShort());
     }
@@ -442,7 +457,7 @@ public class App {
    * @return 0 for success -1 otherwise
    */
   public static int close(String appName) {
-    return new App(appName).close();
+    return new App("+" + appName).close();
   }
 
   /**
@@ -450,6 +465,9 @@ public class App {
    * @return this or null on failure
    */
   public int close() {
+    if (!isValid()) {
+      return 0;
+    }
     if (appPID > -1) {
       init(appPID);
     }
@@ -474,7 +492,7 @@ public class App {
    * @return the App instance or null on failure
    */
   public static App focus(String appName) {
-    return (new App(appName)).focus(0);
+    return focus(appName, 0);
   }
 
   /**
@@ -487,7 +505,7 @@ public class App {
    * @return the App instance or null on failure
    */
   public static App focus(String appName, int num) {
-    return (new App(appName)).focus(num);
+    return (new App("+" + appName)).focus(num);
   }
 
   /**
@@ -509,6 +527,9 @@ public class App {
    * @return the App instance or null on failure
    */
   public App focus(int num) {
+    if (!isValid()) {
+      return this;
+    }
     int pid = -1;
     pid = _osUtil.switchto(makeAppEntry(), num);
     if (pid < 0) {
@@ -516,6 +537,9 @@ public class App {
       return null;
     } else {
       Debug.action("App.focus: " + (num > 0 ? " #" + num : "") + " " + this.toStringShort());
+      if (appPID < 1) {
+        init();
+      }
     }
     return this;
   }
