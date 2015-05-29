@@ -2314,6 +2314,7 @@ public class Region {
   }
   
   public <PSI> Match findBest(Object... args) {
+    Debug.log(lvl, "findBest: enter");
     Match mResult = null;
     List<Match> mList = findAnyCollect(args);
     if (mList != null) {
@@ -2336,38 +2337,35 @@ public class Region {
 
   private List<Match> findAnyCollect(Object... args) {
     if (args == null) return null;
-    Boolean finished[] = new Boolean[args.length];
     List<Match> mList = new ArrayList<Match>();
     Match[] mArray = new Match[args.length];
+    SubFindRun[] theSubs = new SubFindRun[args.length];
     int nobj = 0;
     ScreenImage base = getScreen().capture(this);
-    long timer = -1;
     for (Object obj : args) {
       mArray[nobj] = null;
       if (obj instanceof Pattern || obj instanceof String || obj instanceof Image) {
-          new Thread(new SubFindRun(mArray, nobj, finished, base, obj, this)).start();
+          theSubs[nobj] = new SubFindRun(mArray, nobj, base, obj, this);
+          new Thread(theSubs[nobj]).start();
       }
       nobj++;
     }
-    while (true) {
-      boolean all = true;
-      for (boolean bf : finished) {
-        all &= bf;
-      }
-      if (all) {
-        break;
+    Debug.log(lvl, "findAnyCollect: waiting for SubFindRuns");
+    nobj = 0;
+    boolean all = false;
+    while (!all) {
+      all = true;
+      for (SubFindRun sub : theSubs) {
+        all &= sub.hasFinished();
       }
     }
+    Debug.log(lvl, "findAnyCollect: SubFindRuns finished");
     nobj = 0;
     for (Match match : mArray) {
       if (match != null) {
         match.setIndex(nobj);
         mList.add(match);
-        log(lvl, "findAnyCollect: image: %d (%s) time %d msec at\n%s", 
-                nobj, match.getImage().getName(), timer, match);
       } else {
-        log(lvl, "findAnyCollect: image: %d (%s) time %d msec not found", 
-                nobj, args[nobj], timer);
       }
       nobj++;
     }
@@ -2380,10 +2378,10 @@ public class Region {
     ScreenImage base;
     Object target;
     Region reg;
-    Boolean[] finished;
+    boolean finished = false;
     int subN;
     
-    public SubFindRun(Match[] pMArray, int pSubN, Boolean[] pFinished, 
+    public SubFindRun(Match[] pMArray, int pSubN, 
             ScreenImage pBase, Object pTarget, Region pReg) {
       subN = pSubN;
       base = pBase;
@@ -2399,7 +2397,18 @@ public class Region {
       } catch (Exception ex) {
         log(-1, "findAnyCollect: image file not found:\n", target);
       }
-      finished[subN] = true;
+      hasFinished(true);
+    }
+    
+    public boolean hasFinished() {
+      return hasFinished(false);
+    }    
+    
+    public synchronized boolean hasFinished(boolean state) {
+      if (state) {
+        finished = true;
+      }
+      return finished;
     }
   }
   
