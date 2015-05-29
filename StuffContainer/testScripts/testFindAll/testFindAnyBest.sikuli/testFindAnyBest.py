@@ -21,8 +21,8 @@ imgList = (imgA, imgB, imgC, imgD, imgE, imgF, imgG, imgH, imgI, imgJ,
            imgA, imgB, imgC, imgD, imgE, imgF, imgG, imgH, imgI, imgJ,
            imgA, imgB, imgC, imgD, imgE, imgF, imgG, imgH, imgI, imgJ)
 
-imgList = imgList[:5]
-print imgList
+#imgList = imgList[:5]
+print "using %d images", len(imgList)
 
 def findBestX(reg, imgList):
   score = 0;
