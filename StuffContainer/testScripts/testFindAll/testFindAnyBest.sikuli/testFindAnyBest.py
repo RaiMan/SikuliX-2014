@@ -1,6 +1,11 @@
 print "*********** starting **********", sys.argv[0].split("testScripts")[1]
 Debug.off()
-te = switchApp("textedit"); wait(1)
+
+if RUNTIME.runningMac:
+  te = switchApp("textedit"); wait(1)
+else:
+  App.focus("_findBestScreen"); wait(1)
+  
 r = App.focusedWindow()
 r.setAutoWaitTimeout(0)
 r.highlight(1)
@@ -21,7 +26,7 @@ imgList = (imgA, imgB, imgC, imgD, imgE, imgF, imgG, imgH, imgI, imgJ,
            imgA, imgB, imgC, imgD, imgE, imgF, imgG, imgH, imgI, imgJ,
            imgA, imgB, imgC, imgD, imgE, imgF, imgG, imgH, imgI, imgJ)
 
-#imgList = imgList[:5]
+imgList = imgList[:2]
 print "using %d images", len(imgList)
 
 def findBestX(reg, imgList):
