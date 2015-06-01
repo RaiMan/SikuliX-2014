@@ -43,23 +43,28 @@ public class WinUtil implements OSUtil {
     String[] parts;
     if (filter instanceof String) {
       name = (String) filter;
-      if (name.startsWith("\"")) {
-        parts = name.substring(1).split("\"");
-        if (parts.length > 1) {
-          options = name.substring(parts[0].length() + 3);
-          name = "\"" + parts[0] +  "\"";
-        }
+      if (name.startsWith("!")) {
+        name = name.substring(1);
+        execName = name;
       } else {
-        parts = name.split(" ");
-        if (parts.length > 1) {
-          options = name.substring(parts[0].length() + 1);
-          name = parts[0];
+        if (name.startsWith("\"")) {
+          parts = name.substring(1).split("\"");
+          if (parts.length > 1) {
+            options = name.substring(parts[0].length() + 3);
+            name = "\"" + parts[0] +  "\"";
+          }
+        } else {
+          parts = name.split(" ");
+          if (parts.length > 1) {
+            options = name.substring(parts[0].length() + 1);
+            name = parts[0];
+          }
         }
-      }
-      if (name.startsWith("\"")) {
-        execName = new File(name.substring(1, name.length()-1)).getName().toUpperCase();
-      } else {
-        execName = new File(name).getName().toUpperCase();
+        if (name.startsWith("\"")) {
+          execName = new File(name.substring(1, name.length()-1)).getName().toUpperCase();
+        } else {
+          execName = new File(name).getName().toUpperCase();
+        }
       }
     } else if (filter instanceof Integer) {
       pid = (Integer) filter;

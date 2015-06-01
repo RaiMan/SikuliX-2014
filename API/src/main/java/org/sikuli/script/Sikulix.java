@@ -187,6 +187,7 @@ public class Sikulix {
             "API::JavaScriptRunner " + version, 10, 60, runSomeJS);
       }
     }
+    System.exit(0);
   }
 
   private static boolean addFromProject(String project, String aJar) {

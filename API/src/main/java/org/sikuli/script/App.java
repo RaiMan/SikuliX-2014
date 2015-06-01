@@ -202,8 +202,11 @@ public class App {
     if (name.isEmpty() && appOptions.isEmpty()) {
       name = appNameGiven;
     }
-    if (isImmediate) {
+    if (isImmediate && !window.startsWith("!")) {
       window = "!" + window;
+    }
+    if (notFound) {
+      name = "!" + name;
     }
     return new AppEntry(name, getPID().toString(), window, appNameGiven, appOptions);
   }
@@ -222,6 +225,7 @@ public class App {
     appPID = -1;
     appWindow = "";
     appOptions = "";
+    String execName = "";
     if(appNameGiven.startsWith("+")) {
       isImmediate = true;
       appNameGiven = appNameGiven.substring(1);
@@ -241,11 +245,20 @@ public class App {
         }
       }
       if (appName.startsWith("\"")) {
-        appName = new File(appName.substring(1, appName.length()-1)).getName();
+        execName = appName.substring(1, appName.length()-1);
+        appName = new File(execName).getName();
       } else {
+        execName = appName;
         appName = new File(appName).getName();
       }
-      Debug.log(3, "App.open(+...): %s", appNameGiven);
+      if (!new File(execName).exists()) {
+        appName = "";
+        appOptions = "";
+        appWindow = "!";
+        notFound = true;
+        init("!" + appNameGiven);
+      }
+      Debug.log(3, "App.immediate: %s", appNameGiven);
     } else {
       init(appNameGiven);
     }
@@ -528,7 +541,9 @@ public class App {
    */
   public App focus(int num) {
     if (!isValid()) {
-      return this;
+      if (!appWindow.startsWith("!")) {
+        return this;
+      }
     }
     int pid = -1;
     pid = _osUtil.switchto(makeAppEntry(), num);
