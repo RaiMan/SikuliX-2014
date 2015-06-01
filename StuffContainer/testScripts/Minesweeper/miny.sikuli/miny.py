@@ -1,3 +1,11 @@
+print "********************** starting *********************"
+#Debug.highlightOn()
+#type(Key.ESC)
+#type(Key.F4, Key.ALT)
+#Debug.highlightOff(); exit()
+
+Debug.off()
+
 Settings.MoveMouseDelay = 0
 lang = "EN"
 HID = 0 #hidden
@@ -12,9 +20,9 @@ N5 = 5
 N6 = 6
 N7 = 7
 N8 = 8
-fields = ["imgHidden.png", "N1.png", "N2.png", "N3.png", "N4.png", "N5.png", None, None, None, None, "N0.png"]
-
-#Debug.highlightOn()
+fields = ["imgHidden.png", "N1.png", "N2.png", "N3.png", "N4.png", "N5.png", 
+          None, None, None, None, "N0.png"]
+boom = "boom.png"
 
 pgmPath = r'"C:\Program Files\Microsoft Games\Minesweeper\MineSweeper.exe"'  
 pgm = App(pgmPath)
@@ -59,8 +67,15 @@ if not setupOK:
     popup("Minesweeper not found\n" +
           "or not setup as needed\n" +
           "--- exiting")
-    print "windowtitle:%s:" % pgm.getWindow(), "window: %s" % pgmWin.toJSON()
     exit(1)
+
+menu = pgmWin.above(1).below(30).below(20)
+menu.x += 6
+menu.w -= 12
+imgMenu = capture(menu)
+
+def showsDialog():
+    return not menu.exists(imgMenu, 0)
 
 xcount = 9;
 ycount = 9;
@@ -73,11 +88,10 @@ grid = Region(minefield)
 grid.setRaster(xcount, ycount)
 print "grid:", grid.toJSON()
 print "cell:", grid.getCell(0,0).toJSON()
-#grid.getCell(0,0).highlight(2)
-#grid.getCell(4,4).highlight(2)
-#grid.getCell(8,8).highlight(2)
 
-boxesstates = [[HID]*xcount for i in range(ycount)];
+boxesstates = [[HID]*xcount for i in range(ycount)]
+mines = 10
+fieldsDone = xcount * ycount - mines
 
 def regionforbox(x,y):
     return grid.getCell(x,y)        
@@ -90,7 +104,6 @@ def analyseRegionState(reg):
             return n
     return ERR    
 
-Debug.off()
 def scanfields():
     found = -1
     for r in range(xcount):
@@ -106,59 +119,53 @@ def scanfields():
             break
 #scanfields()
 
-#type(Key.ESC)
-#type(Key.F4, Key.ALT)
-#Debug.highlightOff(); exit()
-Debug.on(3)
-
-def hoverout():
-    hover(Location(minefield.x + minefield.w, minefield.y))
-    return
-    
-def regionfromlocation(location, halfsize):
-    newreg = location.grow(halfsize)
-    return newreg
-
-def isgamelost():
-    focusrect = App.focusedWindow()
-    focusrect = focusrect.nearby(30)
-    paterntosearch = Pattern("langimg\\" + lang + "end.png").similar(0.8)
-    if(focusrect.exists(paterntosearch, 0.4)):
+def isgamelost(reg):
+    aPattern = Pattern("langimg\\" + lang + "end.png").similar(0.8)
+    if(reg.exists(aPattern, 0.4)):
         print "BOOM!"
         return True
     return False
 
-def isgamewin():
-    focusrect = App.focusedWindow()
-    focusrect = focusrect.nearby(30)
-    paterntosearch = Pattern("langimg\\" + lang + "win.png").similar(0.8)
-    #print "focusrect (x,y,w,h): (" + str(focusrect.x) + ", " + str(focusrect.y) + ", " + str(focusrect.w) + ", " + str(focusrect.h) + ")"
-    if(focusrect.exists(paterntosearch, 0.4)):
+def isgamewin(reg):
+    aPattern = Pattern("langimg\\" + lang + "win.png").similar(0.8)
+    if(reg.exists(aPattern, 0.4)):
         print "HOORAY!"
         return True
     return False
 
-def isgameend():
-    focusrect = App.focusedWindow()
-    if (focusrect.x == pgmWin.x):
-        return False
-    paterntosearch = Pattern("langimg\\" + lang + "perc.png").similar(0.8)
-    if(focusrect.exists(paterntosearch, 0.4)):
-        isgamelost()
-        isgamewin()
-        dragDrop(focusrect.aboveAt(10),focusrect.aboveAt(10).offset(-focusrect.w, 0))
+def handleDialog():
+    reg = App.focusedWindow()
+    dragDrop(reg.aboveAt(10),reg.aboveAt(10).offset(-reg.w, 0))
+    wait(1)
+    reg.x -= reg.w
+    reg.highlight(2)
+    aPattern = Pattern("langimg\\" + lang + "perc.png").similar(0.8)
+    if(reg.exists(aPattern, 0.4)):
+        isgamelost(reg)
+        isgamewin(reg)
         pgmWin.getScreen().capture(pgmWin).getFile(getParentPath(), "lastGame")
         wait(2)
-        type(Key.ESC); type(Key.F4, Key.ALT)
-        return True
+#        type(Key.ESC); type(Key.F4, Key.ALT)
+        exit()
+    exit()
+    return False 
+
+def isgameend():
+    if showsDialog():
+        return handleDialog()
     return False
 
 def updateboxstate(x,y):
-    currentregion = regionforbox(x, y) 
-    s = time.time()
-    boxesstates[x][y] = analyseRegionState(currentregion)
-    print "analyse time:", time.time()-s
-    if(boxesstates[x][y] == ERR):
+    currentregion = regionforbox(x, y)
+    state = ERR
+    while state == ERR:
+        state = analyseRegionState(currentregion)
+        if(state == ERR):
+            if showsDialog():
+                handleDialog()
+        else:
+            break
+    if state == ERR:
         print "ERR on [", x, ", ", y, "]"
         hover(grid.getCell(x, y))
         retVal = input("Couldn't recognise field in column " + str(x+1) + 
@@ -177,10 +184,11 @@ def updateboxstate(x,y):
                 type(" ")
             exit();
         try:
-            boxesstates[x][y] = int(retVal);
+            state = int(retVal);
         except:
-            boxesstates[x][y] = -1;        
-    return boxesstates[x][y]
+            pass;
+    boxesstates[x][y] = state
+    return state
 
 def hasstate(x,y,state):
     if(boxesstates[x][y] == state):
@@ -188,27 +196,41 @@ def hasstate(x,y,state):
     return False
 
 def updatestatesfromempty(x,y):
-    hoverout()
+    global fieldsDone
+    hover(grid.getTopRight())
+    for r in range(xcount):
+        for c in range(ycount):
+            if boxesstates[r][c] == HID:
+                reg = regionforbox(r, c)
+                found = analyseRegionState(reg)
+                if found == HID or found == ERR:
+                    continue
+                boxesstates[r][c] = found
+                fieldsDone -= 1
+    
+"""    
     hiditems = getaround(x,y,[HID])
     for item in hiditems:
-        if(boxesstates[item[0]][item[1]] == HID): #additional state check is necessary because it may be changed by previous items
+    #additional state check is necessary because it may be changed by previous items
+        if(boxesstates[item[0]][item[1]] == HID): 
             if(updateboxstate(item[0],item[1]) == EMP):
                 updatestatesfromempty(item[0],item[1])
     return
+"""
 
 def clickfield(x,y):
+    global fieldsDone
     click(grid.getCell(x,y))
     wait(0.1)
-#    if(isgamewin() or isgamelost()):
-    boxstate = updateboxstate(x,y)        
+    state = updateboxstate(x,y)        
     if(isgameend()):
         return -2
-    print "Clicked field [" + str(x) + ", " + str(y) + "] and found it in state " + str(boxstate)
-    if(boxstate == EMP):
+    fieldsDone -= 1
+    print "Clicked [%s, %s] %s (still %s)" % (x, y, state, fieldsDone)
+    if(state == EMP):
         wait(0.2)
         updatestatesfromempty(i,j)
-        #popup(str(boxesstates))
-    return boxstate
+    return state
 
 def rightclickfield(x,y):
     rightClick(grid.getCell(x,y))
@@ -295,10 +317,12 @@ def chooseField():
     if(len(freefields) > 0):
         point = freefields.pop()
     if(point == 0):
+        if showsDialog():
+            handleDialog()
         point = (random.randint(0,xcount-1), random.randint(0,ycount-1))
-        print "trying random field ", point
-    else:
-        print "using free field ", point
+        print "random at fieldsDone: %s" % fieldsDone
+        if fieldsDone < 1:
+            exit()
     return point
 
 import random
@@ -308,10 +332,8 @@ while(not gameend):
     i = point[0]
     j = point[1]
     if(hasstate(i,j,HID)):
-        s = time.time()
         if(clickfield(i,j) == -2):
             gameend = True
-        print "click time:", time.time()-s
 
 print "END"
 
