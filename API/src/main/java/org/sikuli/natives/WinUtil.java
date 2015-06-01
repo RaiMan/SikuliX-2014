@@ -111,7 +111,7 @@ public class WinUtil implements OSUtil {
       return new App.AppEntry(name, "", "", "", options);
     }
     if (app == null) {
-      cmd = String.format("!tasklist /V /FO CSV /NH /FI \"IMAGENAME eq %s\"", appName);
+      cmd = String.format("!tasklist /V /FO CSV /NH /FI \"IMAGENAME eq %s\"", execName);
       result = RunTime.get().runcmd(cmd);
       lines = result.split("\r\n");
       if ("0".equals(lines[0].trim())) {
@@ -233,9 +233,14 @@ public class WinUtil implements OSUtil {
     if (app.window.startsWith("!")) {
       String token = app.window.substring(1);
       if(!token.isEmpty()) {
-        return switchto(app.window.substring(1), 0);
+        return switchto(token, 0);
       } else {
-        return switchto(getApp(app.pid, app.name).window, 0);
+        App.AppEntry newApp = getApp(app.pid, app.name);
+        if (newApp == null) {
+          return -1;
+        } else {
+          return switchto(newApp.window, 0);
+        }
       }
     }
     return switchto(app.execName, num);

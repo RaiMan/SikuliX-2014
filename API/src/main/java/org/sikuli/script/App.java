@@ -294,6 +294,9 @@ public class App {
         appPID = app.pid;
         if (!app.window.contains("N/A")) {
           appWindow = app.window;
+          if (notFound) {
+            notFound = false;
+          }
         }
       } else {
         appOptions = app.options;
