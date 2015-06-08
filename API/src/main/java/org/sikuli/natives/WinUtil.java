@@ -237,7 +237,7 @@ public class WinUtil implements OSUtil {
       } else {
         App.AppEntry newApp = getApp(app.pid, app.name);
         if (newApp == null) {
-          return -1;
+          return switchto(app.execName, 0);
         } else {
           return switchto(newApp.window, 0);
         }
