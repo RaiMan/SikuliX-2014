@@ -82,6 +82,7 @@ public class Screen extends Region implements EventObserver, IScreen {
       }
       screens[i] = new Screen(i, nMonitor);
       screens[i].initScreen();
+      nMonitor++;
     }
     Mouse.init();
     Keys.init();

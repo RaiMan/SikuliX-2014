@@ -287,7 +287,10 @@ public class App {
   }
 
   private void init(String name) {
-    AppEntry app = _osUtil.getApp(-1, name);
+    AppEntry app = null;
+    if (!(isImmediate && notFound)) {
+      app = _osUtil.getApp(-1, name);
+    }
     if (app != null) {
       appName = app.name;
       if (app.options.isEmpty()) {
