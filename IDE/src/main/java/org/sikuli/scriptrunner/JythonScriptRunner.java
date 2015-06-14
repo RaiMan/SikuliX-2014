@@ -89,8 +89,6 @@ public class JythonScriptRunner implements IScriptRunner {
 	private static final int PY_JAVA = 2;
 	private static final int PY_UNKNOWN = -1;
 	private static final String NL = String.format("%n");
-	private Pattern pFile = Pattern.compile("File..(.*?\\.py).*?"
-					+ ",.*?line.*?(\\d+),.*?in(.*?)" + NL + "(.*?)" + NL);
 	//TODO SikuliToHtmlConverter implement in Java
 	final static InputStream SikuliToHtmlConverter
 					= JythonScriptRunner.class.getResourceAsStream("/scripts/sikuli2html.py");
@@ -247,6 +245,11 @@ public class JythonScriptRunner implements IScriptRunner {
 		errorType = "--UnKnown--";
 		errorText = "--UnKnown--";
 
+//  File ".../mainpy.sikuli/mainpy.py", line 25, in <module> NL func() NL
+//  File ".../subpy.py", line 4, in func NL 1/0 NL   
+    Pattern pFile = Pattern.compile("File..(.*?\\.py).*?"
+					+ ",.*?line.*?(\\d+),.*?in(.*?)" + NL + "(.*?)" + NL);
+
 		String msg;
 		Matcher mFile = null;
 
@@ -318,7 +321,7 @@ public class JythonScriptRunner implements IScriptRunner {
 			Debug.error(msg);
 			Debug.error(errorType + " ( " + errorText + " )");
 			if (errorClass == PY_RUNTIME) {
-				errorClass = findErrorSourceWalkTrace(mFile, filename);
+				errorTrace = findErrorSourceWalkTrace(mFile, filename);
 				if (errorTrace.length() > 0) {
 					Debug.error("--- Traceback --- error source first\n"
 									+ "line: module ( function ) statement \n" + errorTrace
@@ -334,15 +337,8 @@ public class JythonScriptRunner implements IScriptRunner {
 		return errorLine;
 	}
 
-	private int findErrorSourceWalkTrace(Matcher m, String filename) {
-//[error] Traceback (most recent call last):
-//File "/var/folders/wk/pcty7jkx1r5bzc5dvs6n5x_40000gn/T/sikuli-tmp3464751893408897244.py", line 2, in
-//sub.hello()
-//File "/Users/rhocke/NetBeansProjects/RaiManSikuli2012-Script/sub.sikuli/sub.py", line 4, in hello
-//print "hello from sub", 1/0
-//ZeroDivisionError: integer division or modulo by zero
+	private String findErrorSourceWalkTrace(Matcher m, String filename) {
 		Pattern pModule = Pattern.compile(".*/(.*?).py");
-		//Matcher mFile = pFile.matcher(etext);
 		String mod;
 		String modIgnore = "SikuliImporter,";
 		StringBuilder trace = new StringBuilder();
@@ -360,13 +356,9 @@ public class JythonScriptRunner implements IScriptRunner {
 			}
 			telem = m.group(2) + ": " + mod + " ( "
 							+ m.group(3) + " ) " + m.group(4) + NL;
-			//log(lvl,telem);
 			trace.insert(0, telem);
-//        log(lvl,"Rest of Trace ----\n" + etext.substring(mFile.end()));
 		}
-		log(lvl + 2, "------------- Traceback -------------\n" + trace);
-		errorTrace = trace.toString();
-		return errorClass;
+		return trace.toString();
 	}
 
 	private void findErrorSourceFromJavaStackTrace(Throwable thr, String filename) {
