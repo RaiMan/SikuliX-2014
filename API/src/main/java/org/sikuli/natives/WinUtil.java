@@ -271,10 +271,14 @@ public class WinUtil implements OSUtil {
         app = getApp(app.pid, app.name);
       }
     }
-    if (app.pid > -1) {
-      return closeApp(app.pid);
+    if (app != null) {
+      if (app.pid > -1) {
+        return closeApp(app.pid);
+      } else {
+        return closeApp(app.execName.replaceAll("\"", ""));
+      }
     } else {
-      return closeApp(app.execName.replaceAll("\"", ""));
+      return -1;
     }
   }
 

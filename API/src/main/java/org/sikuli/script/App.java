@@ -489,6 +489,8 @@ public class App {
     }
     if (appPID > -1) {
       init(appPID);
+    } else if (isImmediate) {
+//      init();
     }
     int ret = _osUtil.close(makeAppEntry());
     if (ret > -1) {

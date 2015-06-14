@@ -338,7 +338,12 @@ public class JythonScriptRunner implements IScriptRunner {
 	}
 
 	private String findErrorSourceWalkTrace(Matcher m, String filename) {
-		Pattern pModule = Pattern.compile(".*/(.*?).py");
+    Pattern pModule;
+    if (runTime.runningWindows) {
+      pModule = Pattern.compile(".*\\\\(.*?)\\.py");
+    } else {
+      pModule = Pattern.compile(".*/(.*?)\\.py");
+    }
 		String mod;
 		String modIgnore = "SikuliImporter,";
 		StringBuilder trace = new StringBuilder();
