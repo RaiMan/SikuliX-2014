@@ -23,6 +23,7 @@ public class Settings {
 	private static String me = "Settings: ";
 	private static int lvl = 3;
   public static boolean noPupUps = false;
+  public static boolean FindProfiling = false;
 	private static void log(int level, String message, Object... args) {
 		Debug.logx(level, me + message, args);
 	}

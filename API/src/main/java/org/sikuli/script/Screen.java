@@ -15,6 +15,7 @@ import org.sikuli.basics.Debug;
 import java.awt.AWTException;
 import java.awt.Rectangle;
 import java.awt.Robot;
+import java.util.Date;
 
 /**
  * A screen represents a physical monitor with its coordinates and size according to the global
@@ -56,6 +57,7 @@ public class Screen extends Region implements EventObserver, IScreen {
     RunTime.loadLibrary("VisionProxy");
     initScreens(false);
   }
+  private long lastCaptureTime = -1;
 
 //  private static void initScreens() {
 //    initScreens(false);
@@ -474,7 +476,12 @@ public class Screen extends Region implements EventObserver, IScreen {
    */
   @Override
   public ScreenImage capture(Rectangle rect) {
+    lastCaptureTime = new Date().getTime();
     ScreenImage simg = robot.captureScreen(rect);
+    if (Settings.FindProfiling) {
+      Debug.logp("[FindProfiling] Screen.capture [%d x %d]: %d msec", 
+              rect.width, rect.height, new Date().getTime() - lastCaptureTime);
+    }
     lastScreenImage = simg;
     if (Debug.getDebugLevel() > lvl) {
       simg.saveLastScreenImage(runTime.fSikulixStore);

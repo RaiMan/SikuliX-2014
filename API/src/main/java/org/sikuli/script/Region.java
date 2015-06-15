@@ -95,10 +95,11 @@ public class Region {
    * The last found {@link Match}es in the Region
    */
   private Iterator<Match> lastMatches = null;
-  private long lastSearchTime;
-  private long lastFindTime;
+  private long lastSearchTime = -1;
+  private long lastFindTime = -1;
   private boolean isScreenUnion = false;
   private boolean isVirtual = false;
+  private long lastSearchTimeRepeat = -1;
 
 	/**
 	 * in case of not found the total wait time
@@ -2416,7 +2417,6 @@ public class Region {
     Finder finder = null;
     Match match = null;
     boolean findingText = false;
-    lastFindTime = (new Date()).getTime();
     Image img = null;
     if (target instanceof String) {
       if (((String) target).startsWith("\t") && ((String) target).endsWith("\t")) {
@@ -2424,7 +2424,6 @@ public class Region {
       } else {
         img = Image.create((String) target);
         if (img.isValid()) {
-          lastSearchTime = (new Date()).getTime();
           finder = doCheckLastSeenAndCreateFinder(base, img, 0.0, null);
           if (!finder.hasNext()) {
             runFinder(finder, img);
@@ -2439,14 +2438,12 @@ public class Region {
         if (TextRecognizer.getInstance() != null) {
           log(lvl, "findInImage: Switching to TextSearch");
           finder = new Finder(getScreen().capture(x, y, w, h), this);
-          lastSearchTime = (new Date()).getTime();
           finder.findText((String) target);
         }
       }
     } else if (target instanceof Pattern) {
       if (((Pattern) target).isValid()) {
         img = ((Pattern) target).getImage();
-        lastSearchTime = (new Date()).getTime();
         finder = doCheckLastSeenAndCreateFinder(base, img, 0.0, (Pattern) target);
         if (!finder.hasNext()) {
           runFinder(finder, target);
@@ -2457,7 +2454,6 @@ public class Region {
     } else if (target instanceof Image) {
       if (((Image) target).isValid()) {
         img = ((Image) target);
-        lastSearchTime = (new Date()).getTime();
         finder = doCheckLastSeenAndCreateFinder(base, img, 0.0, null);
         if (!finder.hasNext()) {
           runFinder(finder, img);
@@ -2469,11 +2465,8 @@ public class Region {
       log(-1, "findInImage: invalid parameter: %s", target);
       return null;
     }
-    lastSearchTime = (new Date()).getTime() - lastSearchTime;
-    lastFindTime = (new Date()).getTime() - lastFindTime;
     if (finder.hasNext()) {
       match = finder.next();
-      match.setTimes(lastFindTime, lastSearchTime);
       match.setImage(img);
       img.setLastSeen(match.getRect(), match.getScore());
     }
@@ -2717,6 +2710,10 @@ public class Region {
       f = repeating._finder;
       f.setScreenImage(simg);
       f.setRepeating();
+      if (Settings.FindProfiling) {
+        Debug.logp("[FindProfiling] Region.doFind repeat: %d msec", 
+                new Date().getTime() - lastSearchTimeRepeat);
+      }      
       lastSearchTime = (new Date()).getTime();
       f.findRepeat();
     } else {
@@ -2781,11 +2778,15 @@ public class Region {
         repeating._image = img;
       }
     }
+    lastSearchTimeRepeat = lastSearchTime;
     lastSearchTime = (new Date()).getTime() - lastSearchTime;
     lastFindTime = (new Date()).getTime() - lastFindTime;
     if (f.hasNext()) {
       m = f.next();
       m.setTimes(lastFindTime, lastSearchTime);
+      if (Settings.FindProfiling) {
+        Debug.logp("[FindProfiling] Region.doFind final: %d msec", lastSearchTime);
+      }      
     }
     return m;
   }

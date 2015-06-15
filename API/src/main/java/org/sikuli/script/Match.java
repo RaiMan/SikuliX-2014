@@ -23,8 +23,8 @@ public class Match extends Region implements Comparable<Match> {
   private Location target = null;
   private Image image = null;
   private String ocrText = null;
-  private long lastSearchTime;
-  private long lastFindTime;
+  private long lastSearchTime = -1;
+  private long lastFindTime = -1;
   private int index = -1;
 
   public int getIndex() {
@@ -264,7 +264,7 @@ public class Match extends Region implements Comparable<Match> {
     } else {
       starget = String.format("C:%d,%d", c.x, c.y);
     }
-    String findTimes = String.format("[%d/%d msec]", lastFindTime, lastSearchTime);
+    String findTimes = String.format("[%d msec]", lastSearchTime);
     return String.format("M[%d,%d %dx%d]@S(%s) S:%.2f %s %s", x, y, w, h,
               (getScreen()== null ? "?" : getScreen().toStringShort()),
               simScore, starget, findTimes);

@@ -25,6 +25,7 @@ import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -1242,8 +1243,14 @@ public class Image {
 
   protected static org.sikuli.natives.Mat convertBufferedImageToMat(BufferedImage img) {
     if (img != null) {
+      long theMatTime = new Date().getTime();
       byte[] data = convertBufferedImageToByteArray(img);
-      return Vision.createMat(img.getHeight(), img.getWidth(), data);
+      org.sikuli.natives.Mat theMat = Vision.createMat(img.getHeight(), img.getWidth(), data);
+      if (Settings.FindProfiling) {
+        Debug.logp("[FindProfiling] createCVMat [%d x %d]: %d msec", 
+                img.getWidth(), img.getHeight(), new Date().getTime() - theMatTime);
+      }
+      return theMat;
     } else {
       return null;
     }
