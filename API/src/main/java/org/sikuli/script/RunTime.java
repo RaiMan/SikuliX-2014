@@ -582,12 +582,15 @@ Point pNull = new Point(0, 0);
       }
       monitorBounds = new Rectangle[nMonitors];
       rAllMonitors = null;
+      Rectangle currentBounds;
       for (int i = 0; i < nMonitors; i++) {
-        monitorBounds[i] = gdevs[i].getDefaultConfiguration().getBounds();
+        currentBounds = gdevs[i].getDefaultConfiguration().getBounds();
         if (null != rAllMonitors) {
-          rAllMonitors = rAllMonitors.union(monitorBounds[i]);
+          rAllMonitors = rAllMonitors.union(currentBounds);
+        } else {
+          rAllMonitors = currentBounds;
         }
-        if (monitorBounds[i].contains(pNull)) {
+        if (currentBounds.contains(pNull)) {
           if (mainMonitor < 0) {
             mainMonitor = i;
             log(lvl, "ScreenDevice %d has (0,0) --- will be primary Screen(0)", i);
@@ -595,6 +598,9 @@ Point pNull = new Point(0, 0);
             log(lvl, "ScreenDevice %d too contains (0,0)!", i);
           }
         }
+        log(lvl, "Monitor %d: (%d, %d) %d x %d", i, 
+                currentBounds.x, currentBounds.y, currentBounds.width, currentBounds.height);
+        monitorBounds[i] = currentBounds;
       }
       if (mainMonitor < 0) {
           log(lvl, "No ScreenDevice has (0,0) --- using 0 as primary: %s", monitorBounds[0]);
