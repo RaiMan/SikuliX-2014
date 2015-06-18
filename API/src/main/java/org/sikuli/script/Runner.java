@@ -446,7 +446,11 @@ public class Runner {
       retcode = Integer.parseInt(parts[0]);
     } catch (Exception ex) {}
     if (retcode != 0) {
-      log(-1, "AppleScript:\n%s\nreturned:\n%s", givenScriptScript, runTime.getLastCommandResult());
+      if (silent) {
+        log(lvl, "AppleScript:\n%s\nreturned:\n%s", givenScriptScript, runTime.getLastCommandResult());
+      } else {
+        log(-1, "AppleScript:\n%s\nreturned:\n%s", givenScriptScript, runTime.getLastCommandResult());
+      }
     }
     return retcode;
   }

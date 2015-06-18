@@ -119,7 +119,7 @@ public class MacUtil implements OSUtil {
     String appName = app.execName.startsWith(app.name) ? app.name : app.execName;
     int retval = 0;
     if (runTime.osVersion.startsWith("10.10.")) {
-      if (Runner.runas(String.format("tell app \"%s\" to activate", appName), true) < 0) {
+      if (Runner.runas(String.format("tell app \"%s\" to activate", appName), true) != 0) {
         retval = -1;
       }
     } else {
