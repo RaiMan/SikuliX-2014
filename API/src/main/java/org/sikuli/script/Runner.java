@@ -228,12 +228,12 @@ public class Runner {
   static Class cIDE;
   static Method mShow;
   static Method mHide;
-  
+
   private static JythonHelper initpy() {
     JythonHelper jh = JythonHelper.get();
     if (jh == null) {
       return null;
-    } 
+    }
 		jh.exec("# -*- coding: utf-8 -*- ");
     jh.exec("import org.sikuli.basics.SikulixForJython");
     jh.exec("from sikuli import *");
@@ -428,15 +428,18 @@ public class Runner {
   public static int runas(String givenScriptScript) {
     return runas(givenScriptScript, false);
   }
-  
+
   public static int runas(String givenScriptScript, boolean silent) {
     if (!runTime.runningMac) {
       return -1;
     }
     String prefix = silent ? "!" : "";
+		String osascriptShebang = "#!/usr/bin/osascript\n";
+		givenScriptScript = osascriptShebang + givenScriptScript;
     File aFile = FileManager.createTempFile("script");
+		aFile.setExecutable(true);
     FileManager.writeStringToFile(givenScriptScript, aFile);
-    String retVal = runTime.runcmd(new String[]{prefix + "osascript", aFile.getAbsolutePath()});
+    String retVal = runTime.runcmd(new String[]{prefix + aFile.getAbsolutePath()});
     String[] parts = retVal.split("\n");
     int retcode = -1;
     try {
@@ -455,7 +458,7 @@ public class Runner {
     File aFile = FileManager.createTempFile("ps1");
     FileManager.writeStringToFile(givenScriptScript, aFile);
     String[] psDirect = new String[]{
-      "powershell.exe", "-ExecutionPolicy", "UnRestricted", 
+      "powershell.exe", "-ExecutionPolicy", "UnRestricted",
       "-NonInteractive", "-NoLogo", "-NoProfile", "-WindowStyle", "Hidden",
       "-File", aFile.getAbsolutePath()
       };
@@ -488,9 +491,9 @@ public class Runner {
   }
 
   static class RunBox {
-    
+
     String jsScript;
-    
+
     public RunBox() {}
 
     public static int runtxt(File fScript, URL script, String scriptName, String[] args) {
@@ -526,7 +529,7 @@ public class Runner {
       int retval;
       if (fScript == null) {
         ImagePath.addHTTP(fpScript);
-        retval = (Runner.pyRunner.exec(scriptName) ? 0 : -1);        
+        retval = (Runner.pyRunner.exec(scriptName) ? 0 : -1);
         ImagePath.removeHTTP(fpScript);
       } else {
         ImagePath.add(fScript.getParent());
@@ -565,15 +568,15 @@ public class Runner {
               } catch (Exception e) {
                 Sikulix.terminate(901);
               }
-            }        
+            }
           }
         };
         evalThread.start();
       } catch (Exception ex) {
         Runner.log(-1, "init not possible:\n%s", ex);
-      }        
+      }
     }
-    
+
     public int runjs(File fScript, URL script, String scriptName, String[] args) {
       String initSikulix = "";
       if (Runner.jsRunner == null) {

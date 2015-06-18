@@ -25,7 +25,7 @@ public class MacUtil implements OSUtil {
     runTime = RunTime.get();
 		return "MacUtil";
 	}
-  
+
   /*
   tell application "System Events"
     set found to "NotFound"
@@ -42,7 +42,7 @@ public class MacUtil implements OSUtil {
     end try
     set found to {name of found, «class idux» of found, windowName}
   end if
-  found  
+  found
   */
   static String cmd = "tell application \"System Events\"\n"
           + "set found to \"NotFound\"\n"
@@ -57,10 +57,10 @@ public class MacUtil implements OSUtil {
           + "end try\n"
           + "set found to {name of found, «class idux» of found, windowName}\n"
           + "end if\n" +
-            "found\n"; 
+            "found\n";
   static String cmdLineApp = "set found to first item of (processes whose name is \"#APP#\")";
   static String cmdLinePID = "set found to first item of (processes whose unix id is equal to #PID#)";
-  
+
   @Override
   public App.AppEntry getApp(int appPID, String appName) {
     App.AppEntry app = null;
@@ -94,13 +94,13 @@ public class MacUtil implements OSUtil {
           for (int i = 3; i < parts.length; i++) {
             title += "," + parts[i];
           }
-        } 
+        }
         app = new App.AppEntry(parts[0].trim(), parts[1].trim(), title.trim(), "", "");
       }
     }
     return app;
   }
-  
+
   @Override
   public int isRunning(App.AppEntry app) {
     return -1;
@@ -125,7 +125,10 @@ public class MacUtil implements OSUtil {
     } else {
       retval = open(appName);
     }
-    return retval;
+		if (retval == 0) {
+				retval = getPID(appName);
+		}
+		return retval;
   }
 
   @Override
@@ -155,6 +158,9 @@ public class MacUtil implements OSUtil {
     } else {
       retval = open(appName);
     }
+		if (retval == 0) {
+				retval = getPID(appName);
+		}
     return retval;
   }
 
