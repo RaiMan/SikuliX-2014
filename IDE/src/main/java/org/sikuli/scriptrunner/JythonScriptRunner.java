@@ -125,6 +125,7 @@ public class JythonScriptRunner implements IScriptRunner {
       String fpAPILib = new File(fpAPI, "Lib").getAbsolutePath();
       helper.putSysPath(fpAPILib, 0);
       helper.setSysPath();
+			helper.addSitePackages();
       helper.showSysPath();
       interpreter.exec("from sikuli import *");
       log(3, "running Jython %s", interpreter.eval("SIKULIX_IS_WORKING").toString());
@@ -246,7 +247,7 @@ public class JythonScriptRunner implements IScriptRunner {
 		errorText = "--UnKnown--";
 
 //  File ".../mainpy.sikuli/mainpy.py", line 25, in <module> NL func() NL
-//  File ".../subpy.py", line 4, in func NL 1/0 NL   
+//  File ".../subpy.py", line 4, in func NL 1/0 NL
     Pattern pFile = Pattern.compile("File..(.*?\\.py).*?"
 					+ ",.*?line.*?(\\d+),.*?in(.*?)" + NL + "(.*?)" + NL);
 

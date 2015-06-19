@@ -84,7 +84,7 @@ public class JythonHelper {
         }
       }
       try {
-        cInterpreter = Class.forName("org.python.util.PythonInterpreter");     
+        cInterpreter = Class.forName("org.python.util.PythonInterpreter");
         mGetSystemState = cInterpreter.getMethod("getSystemState", nc);
         mExec = cInterpreter.getMethod("exec", new Class[] {String.class});
         mExecfile = cInterpreter.getMethod("execfile", new Class[] {String.class});
@@ -117,7 +117,7 @@ public class JythonHelper {
   }
 
   private void noOp() {} // for debugging as breakpoint
-  
+
   class PyException {
     Object inst = null;
     Field fType = null;
@@ -261,7 +261,7 @@ public class JythonHelper {
 			return pyString;
 		}
   }
-  
+
   public boolean exec(String code) {
     try {
       mExec.invoke(interpreter, code);
@@ -529,7 +529,7 @@ public class JythonHelper {
       sysArgv = null;
     }
   }
-  
+
   public void setSysArgv(String[] args) {
     if (null == cInterpreter || null == sysArgv) {
       return;
@@ -600,6 +600,17 @@ public class JythonHelper {
       sysPath = null;
     }
   }
+
+	public void addSitePackages() {
+		File fLibFolder = runTime.fSikulixLib;
+		File fSitePackages = new File(fLibFolder, "site-packages");
+		if (fSitePackages.exists()) {
+			addSysPath(fSitePackages);
+			if (hasSysPath(fSitePackages.getAbsolutePath())) {
+				log(lvl, "added as Jython::sys.path[0]:\n%s", fSitePackages);
+			}
+		}
+	}
 
   public void addSysPath(String fpFolder) {
     if (!hasSysPath(fpFolder)) {

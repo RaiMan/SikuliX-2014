@@ -1075,7 +1075,7 @@ Point pNull = new Point(0, 0);
 //<editor-fold defaultstate="collapsed" desc="init for API">
   private void initAPI() {
     log(lvl, "initAPI: entering");
-    if (shouldExport || !fSikulixLib.exists()) {
+    if (runType == Type.API && (shouldExport || !fSikulixLib.exists())) {
       fSikulixLib.mkdir();
       extractResourcesToFolder("Lib", fSikulixLib, null);
     }
