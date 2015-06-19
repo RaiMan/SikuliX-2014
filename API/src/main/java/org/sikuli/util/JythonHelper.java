@@ -609,12 +609,31 @@ public class JythonHelper {
 			if (hasSysPath(fSitePackages.getAbsolutePath())) {
 				log(lvl, "added as Jython::sys.path[0]:\n%s", fSitePackages);
 			}
+			File fSites = new File(fSitePackages, "sites.txt");
+			String sSites = "";
+			if (fSites.exists()) {
+				sSites = FileManager.readFileToString(fSites);
+				if (!sSites.isEmpty()) {
+					String[] lSites = sSites.split("\n");
+					for (String site : lSites) {
+						appendSysPath(site);
+					}
+				}
+			}
 		}
 	}
 
   public void addSysPath(String fpFolder) {
     if (!hasSysPath(fpFolder)) {
       sysPath.add(0, fpFolder);
+      setSysPath();
+      nPathAdded++;
+    }
+  }
+
+  public void appendSysPath(String fpFolder) {
+    if (!hasSysPath(fpFolder)) {
+      sysPath.add(fpFolder);
       setSysPath();
       nPathAdded++;
     }
