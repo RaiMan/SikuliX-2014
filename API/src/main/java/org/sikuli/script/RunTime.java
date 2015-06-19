@@ -55,7 +55,7 @@ public class RunTime {
   public static File scriptProject = null;
   public static URL uScriptProject = null;
   public static boolean shouldRunServer = false;
-  
+
   public static void resetProject() {
     scriptProject = null;
     uScriptProject = null;
@@ -93,6 +93,7 @@ public class RunTime {
   private String lastResult = "";
   public boolean shouldCleanDownloads = false;
   public boolean isJythonReady = false;
+	private boolean shouldExport = false;
 
   private void log(int level, String message, Object... args) {
     Debug.logx(level, String.format(me, runType) + message, args);
@@ -473,7 +474,7 @@ Point pNull = new Point(0, 0);
     } else {
       terminate(1, "init: java.io.tmpdir not valid (null or empty");
     }
-    fBaseTempPath = new File(fTempPath, 
+    fBaseTempPath = new File(fTempPath,
             String.format("Sikulix_%d", FileManager.getRandomInt()));
     fpBaseTempPath = fBaseTempPath.getAbsolutePath();
     fBaseTempPath.mkdirs();
@@ -511,7 +512,7 @@ Point pNull = new Point(0, 0);
               if (name.contains("Sikulix_")) {
                 if (isObsolete || aFile.equals(fBaseTempPath)) {
                   return true;
-                }                
+                }
               } else {
                 return true;
               }
@@ -521,7 +522,7 @@ Point pNull = new Point(0, 0);
         })) {
           Debug.log(4, "cleanTemp: " + f.getName());
           FileManager.deleteFileOrFolder(f.getAbsolutePath());
-        }   
+        }
       }
     });
 
@@ -543,7 +544,7 @@ Point pNull = new Point(0, 0);
         System.exit(1);
       }
     }
-    
+
     for (String aFile : fTempPath.list()) {
       if ((aFile.startsWith("Sikulix") && (new File(aFile).isFile())) ||
               (aFile.startsWith("jffi") && aFile.endsWith(".tmp"))) {
@@ -598,7 +599,7 @@ Point pNull = new Point(0, 0);
             log(lvl, "ScreenDevice %d too contains (0,0)!", i);
           }
         }
-        log(lvl, "Monitor %d: (%d, %d) %d x %d", i, 
+        log(lvl, "Monitor %d: (%d, %d) %d x %d", i,
                 currentBounds.x, currentBounds.y, currentBounds.width, currentBounds.height);
         monitorBounds[i] = currentBounds;
       }
@@ -730,7 +731,6 @@ Point pNull = new Point(0, 0);
       FileManager.deleteFileOrFolder(fSikulixLib);
     }
     if (!fLibsFolder.exists()) {
-      fSikulixLib.mkdir();
       fLibsFolder.mkdirs();
       if (!fLibsFolder.exists()) {
         terminate(1, "libs folder not available: " + fLibsFolder.toString());
@@ -843,14 +843,12 @@ Point pNull = new Point(0, 0);
   }
 
   private void libsExport(Type typ) {
-    boolean shouldExport = false;
+    shouldExport = false;
     makeFolders();
     URL uLibsFrom = null;
     if (!libsCheck(fLibsFolder)) {
       FileManager.deleteFileOrFolder(fLibsFolder);
-      FileManager.deleteFileOrFolder(fSikulixLib);
       fLibsFolder.mkdirs();
-      fSikulixLib.mkdir();
       shouldExport = true;
       if (!fLibsFolder.exists()) {
         terminate(1, "libs folder not available: " + fLibsFolder.toString());
@@ -932,9 +930,6 @@ Point pNull = new Point(0, 0);
       if (!fJawtDll.exists()) {
         terminate(1, "problem copying %s", fJawtDll);
       }
-    }
-    if (shouldExport && !Type.IDE.equals(runType)) {
-      extractResourcesToFolder("Lib", fSikulixLib, null);
     }
     areLibsExported = true;
   }
@@ -1079,8 +1074,12 @@ Point pNull = new Point(0, 0);
 
 //<editor-fold defaultstate="collapsed" desc="init for API">
   private void initAPI() {
-//    log(lvl, "initAPI: entering");
-//    log(lvl, "initAPI: leaving");
+    log(lvl, "initAPI: entering");
+    if (shouldExport || !fSikulixLib.exists()) {
+      fSikulixLib.mkdir();
+      extractResourcesToFolder("Lib", fSikulixLib, null);
+    }
+    log(lvl, "initAPI: leaving");
   }
 //</editor-fold>
 
@@ -1116,7 +1115,7 @@ Point pNull = new Point(0, 0);
   public boolean isJava7() {
     return javaVersion > 6;
   }
-  
+
   public boolean isOSX10() {
     return osVersion.startsWith("10.10.");
   }
@@ -1133,7 +1132,7 @@ Point pNull = new Point(0, 0);
     logp("user.dir (work dir): %s", fWorkDir);
     logp("user.name: %s", userName);
     logp("java.io.tmpdir: %s", fTempPath);
-    logp("running %dBit on %s (%s) %s", javaArch, osName, 
+    logp("running %dBit on %s (%s) %s", javaArch, osName,
             (linuxDistro.contains("???") ? osVersion : linuxDistro), appType);
     logp(javaShow);
     logp("app data folder: %s", fSikulixAppPath);
@@ -2617,7 +2616,7 @@ Point pNull = new Point(0, 0);
     lastResult = result;
     return String.format("%d%s%s", retVal, NL, result);
   }
-  
+
   public String getLastCommandResult() {
     return lastResult;
   }
@@ -2686,7 +2685,7 @@ Point pNull = new Point(0, 0);
         if (debugLevel > -1) {
           Debug.on(debugLevel);
         }
-      } else if (opt.startsWith("-r") || opt.startsWith("-t") 
+      } else if (opt.startsWith("-r") || opt.startsWith("-t")
               || opt.startsWith("-s") || opt.startsWith("-i")) {
         runningScripts = true;
       }
