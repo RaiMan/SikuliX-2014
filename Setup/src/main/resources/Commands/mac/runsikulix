@@ -15,7 +15,7 @@ fi
 if [ -e "$sjar" ]; then
 	export SIKULI_COMMAND=$*
 	echo "running SikuliX: $sjar $SIKULI_COMMAND"
-	java $PROPS -Xdock:icon=$icon -Xdock:name=SikuliX -jar "$sjar" $SIKULI_COMMAND
+	java $PROPS -Xdock:icon="$icon" -Xdock:name=SikuliX -jar "$sjar" $SIKULI_COMMAND
 else
 	echo "Error: terminating: $sjar not found"
 fi
