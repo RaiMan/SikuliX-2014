@@ -2,7 +2,7 @@ globalVars = {}
 globalVars["var1"] = "whatever"
 
 import sub
-#reload(sub)
+reload(sub)
 
 print "***** sys.path"
 for e in sys.path: print e

@@ -1,26 +1,25 @@
 Debug.on(3)
-s0 = Screen(0)
-Debug.logp("0: %s", s0)
-s1 = Screen(1)
-Debug.logp("1: %s", s1)
 
-s0.hover()
-wait(2)
-s1.hover()
-wait(2)
-s0.hover()
+for n in range(Screen.getNumberScreens()):
+  exec("s%s = Screen(n); Debug.logp('%%s: %%s', n, s%s)" % (n, n))
 
+ss = (s0, s1, s2)
 img = "img.png"
-#Debug.on(4)
-m = s1.find(img)
+
+for s in ss:
+  s.highlight(2).hover()
+  m = s.find(img)
+  m.highlight(2)
+  
+exit()
+
+
+
 hover(m)
 hover(s1)
 saveCapture("test")
 m = s1.find("_test.png")
 hover(m)
-
-icons = "icons.png"
-hover(icons)
 
 
 
