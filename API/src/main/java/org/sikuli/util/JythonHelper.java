@@ -614,9 +614,12 @@ public class JythonHelper {
 			if (fSites.exists()) {
 				sSites = FileManager.readFileToString(fSites);
 				if (!sSites.isEmpty()) {
-					String[] lSites = sSites.split("\n");
-					for (String site : lSites) {
-						appendSysPath(site);
+					String[] listSites = sSites.split("\n");
+					for (String site : listSites) {
+            String path = site.trim();
+            if (!path.isEmpty()) {
+              appendSysPath(path);
+            }
 					}
 				}
 			}
