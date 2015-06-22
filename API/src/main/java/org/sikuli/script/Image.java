@@ -956,7 +956,7 @@ public class Image {
    */
   public String getFilename() {
     if (fileURL != null && "file".equals(fileURL.getProtocol())) {
-      return fileURL.getPath();
+      return new File(fileURL.getPath()).getAbsolutePath();
     } else {
 			return imageName;
 		}

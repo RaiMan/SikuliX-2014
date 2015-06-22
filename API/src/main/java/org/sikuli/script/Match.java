@@ -26,6 +26,11 @@ public class Match extends Region implements Comparable<Match> {
   private long lastSearchTime = -1;
   private long lastFindTime = -1;
   private int index = -1;
+  private boolean onScreen = true;
+  
+  public void setOnScreen(boolean state) {
+    onScreen = state;
+  }
 
   public int getIndex() {
     return index;
@@ -266,7 +271,7 @@ public class Match extends Region implements Comparable<Match> {
     }
     String findTimes = String.format("[%d msec]", lastSearchTime);
     return String.format("M[%d,%d %dx%d]@S(%s) S:%.2f %s %s", x, y, w, h,
-              (getScreen()== null ? "?" : getScreen().toStringShort()),
+              ((getScreen()== null || !onScreen) ? "?" : getScreen().toStringShort()),
               simScore, starget, findTimes);
   }
 
