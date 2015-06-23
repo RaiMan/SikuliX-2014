@@ -229,15 +229,17 @@ public class Runner {
   static Method mShow;
   static Method mHide;
 
-  private static JythonHelper initpy() {
-    JythonHelper jh = JythonHelper.get();
-    if (jh == null) {
-      return null;
+  protected static boolean initpy() {
+    if (pyRunner == null) {
+      pyRunner = JythonHelper.get();
+      if (pyRunner == null) {
+        return false;
+      }
+      pyRunner.exec("# -*- coding: utf-8 -*- ");
+      pyRunner.exec("import org.sikuli.basics.SikulixForJython");
+      pyRunner.exec("from sikuli import *");
     }
-		jh.exec("# -*- coding: utf-8 -*- ");
-    jh.exec("import org.sikuli.basics.SikulixForJython");
-    jh.exec("from sikuli import *");
-    return jh;
+    return true;
   }
 
   static Object rbRunner = null;
@@ -517,10 +519,7 @@ public class Runner {
       } else {
         fpScript = fScript.getAbsolutePath();
       }
-      if (Runner.pyRunner == null) {
-        Runner.pyRunner = Runner.initpy();
-      }
-      if (Runner.pyRunner == null) {
+      if (!Runner.initpy()) {
         Runner.log(-1, "Running Python scripts:init failed");
         return -999;
       }
