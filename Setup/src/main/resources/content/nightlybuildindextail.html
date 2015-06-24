@@ -1,25 +1,27 @@
-<h4>Build: 2015-06-22</h4>
+<h4>Build: 2015-06-25</h4>
+added: Jython scripts: highlightOff() switches off all current highlights
+<h4>Build: 2015-06-24</h4>
 revised: RunServer: now works according to http://sikulix.com/support<br>
 fixed: Finder: Windows: now works again<br>
 fixed: App class: isRunning() now works on Windows and Mac<br>
-added: Jython support: now Lib/site-packages is recognized 
-and can have a sites.txt containing more paths (see docs/Using Python)  
+added: Jython support: now Lib/site-packages is recognized
+and can have a sites.txt containing more paths (see docs/Using Python)
 <h4>Build: 2015-06-22</h4>
 revised: commandfiles on Mac to have alternatives to start the IDE (shows SikuliX icon in taskbar and SikuliX as name)<br>
-revised: App class on Mac, still App.open() (app not running) 
-does not work on 10.9 and earlier (on 10.10 with most apps works), 
+revised: App class on Mac, still App.open() (app not running)
+does not work on 10.9 and earlier (on 10.10 with most apps works),
 when the script is run from the IDE that is running as SikuliX.app
 - when starting the IDE or running script from commandline it works<br>
 <h4>Build: 2015-06-15</h4>
 fixed: Windows: Jython scripting: exceptions in imported stuff now again shown correctly
 <h4>Build: 2015-05-28</h4>
-revised: findBest(): now internally works on the given images in parallel (threading) 
+revised: findBest(): now internally works on the given images in parallel (threading)
 <h4>Build: 2015-05-26</h4>
-added: findAllByRow, findAllByColumn: returns an array of matches in sorted order 
+added: findAllByRow, findAllByColumn: returns an array of matches in sorted order
 top left to bottom right either row-wise or column-wise<br>
 added: findBest(): find the match with the highest score out of the list of given images<br>
-revised: App.isRunning(): now internally refreshes the App instance, 
-so the App can be created with a window title and later be checked, whether it is running, 
+revised: App.isRunning(): now internally refreshes the App instance,
+so the App can be created with a window title and later be checked, whether it is running,
 if other means are used to start the app (usage instead of "if someApp.window()")
 <h4>Build: 2015-05-22</h4>
 revised: class App: App.open() and openApp() now ignore already running instances of the named app and will in doubt start a new instance.
