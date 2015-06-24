@@ -174,9 +174,9 @@ class SyntaxHighlightLabelView extends LabelView {
     "switchApp", "openApp", "closeApp", "use", "useRemote", "ucode", "load",
     "assertExist", "assertNotExist",
     "capture", "selectRegion",
-    "getOS", "getMouseLocation", "exit", 
+    "getOS", "getMouseLocation", "exit",
     //Region
-    "right", "rightAt", "left", "leftAt", "above", "aboveAt", "below", "belowAt", 
+    "right", "rightAt", "left", "leftAt", "above", "aboveAt", "below", "belowAt",
     "nearby", "inside", "grow", "union", "intersection",
     "getScreen", "getCenter", "setCenter", "setSize", "setLocation",
     "setX", "setY", "setW", "setH", "setRect", "setROI",
@@ -184,7 +184,7 @@ class SyntaxHighlightLabelView extends LabelView {
     "highlight", "add", "getLastScreenImageFile",
     "getNumberScreens", "getBounds",
     "contains", "containsMouse", "atMouse",
-    "getTopLeft", "setTopLeft", "getTopRight", "setTopRight", 
+    "getTopLeft", "setTopLeft", "getTopRight", "setTopRight",
     "getBottomLeft", "setBottomLeft", "getBottomRight", "setBottomRight",
     "get", "setRows", "getRows", "setCols", "setCols", "getRowH", "getColW",
     "setRaster", "getRow", "getCol", "getCell",
@@ -195,6 +195,7 @@ class SyntaxHighlightLabelView extends LabelView {
     //global
     "setAutoWaitTimeout", "setBundlePath", "setShowActions", "setThrowException",
     "getAutoWaitTimeout", "getBundlePath", "getShowActions", "getThrowException",
+    "highlightOff",
     "setFindFailedResponse", "getFindFailedResponse",
     "setWaitScanRate", "getWaitScanRate",
     "setObserveScanRate", "getObserveScanRate",
