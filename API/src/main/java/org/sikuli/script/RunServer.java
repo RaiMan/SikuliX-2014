@@ -223,6 +223,7 @@ public class RunServer {
                 shouldKeep = false;                
               // START  
               } else if (rCommand.startsWith("START")) {
+                runType = runTypeJS;
                 if (rCommand.length() > 5) {
                   if ("P".equals(rCommand.substring(5, 6))) {
                     runType = runTypePY;
@@ -296,13 +297,18 @@ public class RunServer {
                   success = false;
                 }
                 if (success) {
-                  String scriptScript = script;
-                  if (script.endsWith(".sikuli")) {
-                    scriptScript = script.replace(".sikuli", "");
-                  }
                   fScript = new File(scriptFolder, script);
+                  if(!fScript.exists()) {
+                    if (script.endsWith(".sikuli")) {
+                      script = script.replace(".sikuli", "");
+                    } else {
+                      script = script + ".sikuli";
+                    }
+                    fScript = new File(scriptFolder, script);
+                  }
+                  String scriptScript = script.replace(".sikuli", "");
                   fScriptScript = new File(fScript, scriptScript + ".js");
-                  success = fScript.exists() && fScriptScript.exists();
+                  success = fScriptScript.exists();
                   if (!success) {
                     fScriptScript = new File(fScript, scriptScript + ".py");
                     success = fScript.exists() && fScriptScript.exists();
@@ -465,13 +471,29 @@ public class RunServer {
           return false;
         }
       } else if (runTypePY.equals(runType)) {
-        evalReturnObject = Runner.run(fScript.getAbsolutePath());
-        if (((Integer) evalReturnObject) < 0) {
+        Integer retval = 0;
+        if (!Runner.initpy()) {
+          retval = -1;
+        }
+        if (fScript != null && retval == 0) {
+          evalReturnObject = Runner.run(fScript.getAbsolutePath());
+          try {
+            retval = Integer.parseInt(evalReturnObject.toString());
+            if (retval == -999) {
+              retval = 0;
+            }
+          } catch (Exception ex) {
+            retval = 0;
+          }
+        }
+        if (retval < 0) {
           rMessage = "startRunner Python: not possible or crashed with exception";
           rStatus = rStatusServiceNotAvail;
           return false;
         }
-        rMessage = "runScript: returned: " + evalReturnObject.toString();
+        if (fScript != null) {
+          rMessage = "runScript: returned: " + retval.toString();
+        }
       }
       return true;
     }

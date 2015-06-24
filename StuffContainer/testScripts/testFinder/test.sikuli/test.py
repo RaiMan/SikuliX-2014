@@ -1,12 +1,16 @@
-stars = "stars.png"
-star = "star.png"
-f = Finder(stars)
-f.findAll(star)
-while f.hasNext():
-  print f.next()
+imgBase = "imgBase.png"
+imgTarget = "imgTarget.png"
 
-exit()
+print "*** screen find"
+m = find(imgBase)
 
-reg = selectRegion()
-matches = list(reg.findAll(star))
-for m in matches: print m
+print "*** Finder same"
+f = Finder(imgBase)
+print f.find(imgBase)
+print f.hasNext()
+print "same", f.next()
+
+print "*** Finder contained"
+f.find(imgTarget)
+print f.hasNext()
+print "contained", f.next()

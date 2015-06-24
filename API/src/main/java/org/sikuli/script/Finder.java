@@ -35,6 +35,8 @@ public class Finder implements Iterator<Match> {
   private FindResults _results = null;
   private int _cur_result_i;
   private boolean repeating = false;
+  private boolean valid = true;
+  private boolean screenFinder = true;
 
   static {
     RunTime.loadLibrary("VisionProxy");
@@ -46,142 +48,184 @@ public class Finder implements Iterator<Match> {
     Debug.logx(level, me + message, args);
   }
 
+//<editor-fold defaultstate="collapsed" desc="Constructors">
   /**
    * Just to force library initialization
    */
   public Finder() {}
-
+  
   /**
    * Finder constructor (finding within an image).
    * <br>internally used with a screen snapshot
    *
    * @param imageFilename a string (name, path, url)
-	 * @throws java.io.IOException if imagefile not found
+   * @throws java.io.IOException if imagefile not found
    */
   public Finder(String imageFilename) throws IOException {
     this(imageFilename, null);
   }
-
+  
   /**
    * Finder constructor (finding within an image within the given region).
    * <br>internally used with a screen snapshot
    *
    * @param imageFilename a string (name, path, url)
    * @param region search Region within image - topleft = (0,0)
-	 * @throws java.io.IOException if imagefile not found
+   * @throws java.io.IOException if imagefile not found
    */
   public Finder(String imageFilename, Region region) throws IOException  {
-    String fname = Image.create(imageFilename).getFilename();
-    _findInput.setSource(fname);
-    _region = region;
+    Image img = Image.create(imageFilename);
+    if (img.isValid()) {
+      _findInput.setSource(Image.convertBufferedImageToMat(img.get()));
+      _region = region;
+      screenFinder = false;
+    } else {
+      log(-1, "imagefile not found:\n%s");
+      valid = false;
+    }
   }
-
-	/**
-	 * Constructor for special use from a BufferedImage
-	 *
-	 * @param bimg BufferedImage
-	 */
-	public Finder(BufferedImage bimg) {
+  
+  /**
+   * Constructor for special use from a BufferedImage
+   *
+   * @param bimg BufferedImage
+   */
+  public Finder(BufferedImage bimg) {
     _findInput.setSource(Image.convertBufferedImageToMat(bimg));
-	}
-
-  /**
-	 * Finder constructor for special use from a ScreenImage
-	 *
-	 * @param simg ScreenImage
-	 */
-	public Finder(ScreenImage simg) {
-		initScreenFinder(simg, null);
   }
-
+  
   /**
-	 * Finder constructor for special use from a ScreenImage
-	 *
-	 * @param simg ScreenImage
-	 * @param region the cropping region
-	 */
-	public Finder(ScreenImage simg, Region region) {
-		initScreenFinder(simg, region);
+   * Finder constructor for special use from a ScreenImage
+   *
+   * @param simg ScreenImage
+   */
+  public Finder(ScreenImage simg) {
+    initScreenFinder(simg, null);
   }
-
+  
   /**
-	 * Finder constructor for special use from an Image
-	 *
-	 * @param img Image
-	 */
-	public Finder(Image img) {
-		log(lvl, "Image: %s", img);
+   * Finder constructor for special use from a ScreenImage
+   *
+   * @param simg ScreenImage
+   * @param region the cropping region
+   */
+  public Finder(ScreenImage simg, Region region) {
+    initScreenFinder(simg, region);
+  }
+  
+  /**
+   * Finder constructor for special use from an Image
+   *
+   * @param img Image
+   */
+  public Finder(Image img) {
+    log(lvl, "Image: %s", img);
     _findInput.setSource(Image.convertBufferedImageToMat(img.get()));
   }
-
-	private void initScreenFinder(ScreenImage simg, Region region) {
-		setScreenImage(simg);
+  
+  private void initScreenFinder(ScreenImage simg, Region region) {
+    setScreenImage(simg);
     _region = region;
-	}
-
+  }
+  
   /**
    * to explicitly free the Finder's resources
    */
   public void destroy() {
-		_findInput.delete();
-		_findInput = null;
-		_results.delete();
-		_results = null;
-		_pattern = null;
+    _findInput.delete();
+    _findInput = null;
+    _results.delete();
+    _results = null;
+    _pattern = null;
+  }
+  
+  /**
+   * not used
+   */
+  @Override
+  public void remove(){}
+
+  @Override
+  protected void finalize() throws Throwable {
+    super.finalize();
+    destroy();
   }
 
-	/**
-	 * internal use: exchange the source image in existing Finder
-	 *
-	 * @param simg ScreenImage
-	 */
-	protected void setScreenImage(ScreenImage simg) {
-    _findInput.setSource(Image.convertBufferedImageToMat(simg.getImage()));
-	}
-
   /**
-	 * internal use: to be able to reuse the same Finder
-	 */
-	protected void setRepeating() {
+   * internal use: exchange the source image in existing Finder
+   *
+   * @param simg ScreenImage
+   */
+  protected void setScreenImage(ScreenImage simg) {
+    _findInput.setSource(Image.convertBufferedImageToMat(simg.getImage()));
+  }
+  
+  public boolean isValid() {
+    return valid;
+  }  
+  //</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="internal repeating">
+  /**
+   * internal use: to be able to reuse the same Finder
+   */
+  protected void setRepeating() {
     repeating = true;
   }
-
-	/**
-	 * internal use: repeat with same Finder
-	 */
-	protected void findRepeat() {
-		_results = Vision.find(_findInput);
-		_cur_result_i = 0;
-	}
-
-//TODO public String find(String imageOrText, [similarity]) {
+  
   /**
-   * do a find op with the given image or the given text in the Finder's image
-	 * (hasNext() and next() will reveal possible match results)
-   * @param imageOrText image file name or text
-	 * @return null. if find setup not possible
+   * internal use: repeat with same Finder
    */
-  public String find(String imageOrText) {
-		String target = setTargetSmartly(_findInput, imageOrText);
-    if (null == target) {
-      return null;
-    }
-		if (target.equals(imageOrText+"???")) {
-			return target;
-		}
-    _findInput.setSimilarity(Settings.MinSimilarity);
+  protected void findRepeat() {
     _results = Vision.find(_findInput);
     _cur_result_i = 0;
-    return target;
   }
-
+  
+  /**
+   * internal use: repeat with same Finder
+   */
+  protected void findAllRepeat() {
+    Debug timing = Debug.startTimer("Finder.findAll");
+    _results = Vision.find(_findInput);
+    _cur_result_i = 0;
+    timing.end();
+  }
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="find">
+  
+  /**
+   * do a find op with the given image or the given text in the Finder's image
+   * (hasNext() and next() will reveal possible match results)
+   * @param imageOrText image file name or text
+   * @return null. if find setup not possible
+   */
+  public String find(String imageOrText) {
+    if (!valid) {
+      log(-1, "not valid");
+      return null;
+    }
+    Image img = Image.create(imageOrText);
+    if (img.isText()) {
+      return findText(imageOrText);
+    }
+    if (img.isValid()) {
+      return find(img);
+    } 
+    return null;
+  }
+  
   /**
    * do a find op with the given pattern in the Finder's image
-	 * (hasNext() and next() will reveal possible match results)
+   * (hasNext() and next() will reveal possible match results)
    * @param aPtn Pattern
-	 * @return null. if find setup not possible
+   * @return null. if find setup not possible
    */
   public String find(Pattern aPtn) {
+    if (!valid) {
+      log(-1, "not valid");
+      return null;
+    }
     if (aPtn.isValid()) {
       _pattern = aPtn;
       _findInput.setTarget(aPtn.getImage().getMatNative());
@@ -193,14 +237,18 @@ public class Finder implements Iterator<Match> {
       return null;
     }
   }
-
+  
   /**
    * do a find op with the given pattern in the Finder's image
-	 * (hasNext() and next() will reveal possible match results)
-	 * @param img Image
-	 * @return null. if find setup not possible
+   * (hasNext() and next() will reveal possible match results)
+   * @param img Image
+   * @return null. if find setup not possible
    */
   public String find(Image img) {
+    if (!valid) {
+      log(-1, "not valid");
+      return null;
+    }
     if (img.isValid()) {
       _findInput.setTarget(img.getMatNative());
       _findInput.setSimilarity(Settings.MinSimilarity);
@@ -213,69 +261,64 @@ public class Finder implements Iterator<Match> {
       return null;
     }
   }
-
+  
   /**
    * do a text find with the given text in the Finder's image
-	 * (hasNext() and next() will reveal possible match results)
-	 * @param text text
-	 * @return null. if find setup not possible
+   * (hasNext() and next() will reveal possible match results)
+   * @param text text
+   * @return null. if find setup not possible
    */
   public String findText(String text) {
+    if (!valid) {
+      log(-1, "not valid");
+      return null;
+    }
     _findInput.setTarget(TARGET_TYPE.TEXT, text);
     _results = Vision.find(_findInput);
     _cur_result_i = 0;
     return text;
   }
-
-  /**
-	 * internal use: repeat with same Finder
-	 */
-  protected void findAllRepeat() {
-    Debug timing = Debug.startTimer("Finder.findAll");
-    _results = Vision.find(_findInput);
-    _cur_result_i = 0;
-    timing.end();
-	}
-
+//</editor-fold>
+  
+//<editor-fold defaultstate="collapsed" desc="findAll">
   /**
    * do a findAll op with the given image or the given text in the Finder's image
-	 * (hasNext() and next() will reveal possible match results)
+   * (hasNext() and next() will reveal possible match results)
    * @param imageOrText iamge file name or text
-	 * @return null. if find setup not possible
+   * @return null. if find setup not possible
    */
   public String findAll(String imageOrText) {
-		String target = setTargetSmartly(_findInput, imageOrText);
-    if (null == target) {
+    if (!valid) {
+      log(-1, "not valid");
       return null;
     }
-		if (target.equals(imageOrText+"???")) {
-			return target;
-		}
-    Debug timing = Debug.startTimer("Finder.findAll");
-
-    setTargetSmartly(_findInput, imageOrText);
-    _findInput.setSimilarity(Settings.MinSimilarity);
-    _findInput.setFindAll(true);
-    _results = Vision.find(_findInput);
-    _cur_result_i = 0;
-
-    timing.end();
-    return target;
+    Image img = Image.create(imageOrText);
+    if (img.isText()) {
+      return findAllText(imageOrText);
+    }
+    if (!img.isValid()) {
+      return findAll(img);
+    } 
+    return null;
   }
-
+  
   /**
    * do a find op with the given pattern in the Finder's image
-	 * (hasNext() and next() will reveal possible match results)
-	 * @param aPtn Pattern
-	 * @return null. if find setup not possible
+   * (hasNext() and next() will reveal possible match results)
+   * @param aPtn Pattern
+   * @return null. if find setup not possible
    */
   public String findAll(Pattern aPtn)  {
+    if (!valid) {
+      log(-1, "not valid");
+      return null;
+    }
     if (aPtn.isValid()) {
       _pattern = aPtn;
       _findInput.setTarget(aPtn.getImage().getMatNative());
       _findInput.setSimilarity(aPtn.getSimilar());
       _findInput.setFindAll(true);
-	    Debug timing = Debug.startTimer("Finder.findAll");
+      Debug timing = Debug.startTimer("Finder.findAll");
       _results = Vision.find(_findInput);
       _cur_result_i = 0;
       timing.end();
@@ -284,19 +327,23 @@ public class Finder implements Iterator<Match> {
       return null;
     }
   }
-
+  
   /**
    * do a findAll op with the given image in the Finder's image
-	 * (hasNext() and next() will reveal possible match results)
+   * (hasNext() and next() will reveal possible match results)
    * @param img Image
-	 * @return null. if find setup not possible
+   * @return null. if find setup not possible
    */
   public String findAll(Image img)  {
+    if (!valid) {
+      log(-1, "not valid");
+      return null;
+    }
     if (img.isValid()) {
       _findInput.setTarget(img.getMatNative());
       _findInput.setSimilarity(Settings.MinSimilarity);
       _findInput.setFindAll(true);
-	    Debug timing = Debug.startTimer("Finder.findAll");
+      Debug timing = Debug.startTimer("Finder.findAll");
       _results = Vision.find(_findInput);
       _cur_result_i = 0;
       timing.end();
@@ -305,14 +352,18 @@ public class Finder implements Iterator<Match> {
       return null;
     }
   }
-
+  
   /**
    * do a findAll op with the given text in the Finder's image
-	 * (hasNext() and next() will reveal possible match results)
+   * (hasNext() and next() will reveal possible match results)
    * @param text text
-	 * @return null. if find setup not possible
+   * @return null. if find setup not possible
    */
   public String findAllText(String text) {
+    if (!valid) {
+      log(-1, "not valid");
+      return null;
+    }
     _findInput.setTarget(TARGET_TYPE.TEXT, text);
     _findInput.setFindAll(true);
     Debug timing = Debug.startTimer("Finder.findAllText");
@@ -321,7 +372,8 @@ public class Finder implements Iterator<Match> {
     timing.end();
     return text;
   }
-
+//</editor-fold>
+  
   private String setTargetSmartly(FindInput fin, String target) {
     if (isImageFile(target)) {
       //assume it's a file first
@@ -379,37 +431,24 @@ public class Finder implements Iterator<Match> {
    */
   @Override
   public Match next() {
-    Match ret = null;
+    Match match = null;
     if (hasNext()) {
       FindResult fr = _results.get(_cur_result_i++);
       IScreen parentScreen = null;
-      if (_region != null) {
+      if (screenFinder && _region != null) {
         parentScreen = _region.getScreen();
       }
-      ret = new Match(fr, parentScreen);
+      match = new Match(fr, parentScreen);
+      match.setOnScreen(screenFinder);
 			fr.delete();
       if (_region != null) {
-        ret = _region.toGlobalCoord(ret);
+        match = _region.toGlobalCoord(match);
       }
       if (_pattern != null) {
         Location offset = _pattern.getTargetOffset();
-        ret.setTargetOffset(offset);
+        match.setTargetOffset(offset);
       }
     }
-    return ret;
+    return match;
   }
-
-  /**
-   * not used
-   */
-  @Override
-  public void remove(){}
-
-  @Override
-  protected void finalize() throws Throwable {
-    super.finalize();
-    destroy();
-  }
-
-
 }

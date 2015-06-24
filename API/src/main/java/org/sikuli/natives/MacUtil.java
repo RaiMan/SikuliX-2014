@@ -103,7 +103,20 @@ public class MacUtil implements OSUtil {
 
   @Override
   public int isRunning(App.AppEntry app) {
-    return -1;
+    if (app.pid > 0) {
+      return 1;
+    }
+    if (app.name.isEmpty()) {
+      return -1;
+    }
+    if (getWindow(app.name, 0) != null) {
+      return 1;
+    }
+    App.AppEntry ae = getApp(app.pid, app.name);
+    if (ae != null && ae.pid > 0) {
+      return 1;
+    }
+    return 0;
   }
 
   @Override
