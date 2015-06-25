@@ -232,6 +232,29 @@ public class Sikulix {
     }
     return fpJarFound;
   }
+  
+  public static boolean buildJarFromFolder(String targetJar, String sourceFolder) {
+    log(lvl, "buildJarFromFolder: \nfrom Folder: %s\nto Jar: %s", sourceFolder, targetJar);
+    File fJar = new File(targetJar);
+    if (!fJar.getParentFile().exists()) {
+      log(-1, "buildJarFromFolder: parent folder of Jar not available");
+      return false;
+    }
+    File fSrc = new File(sourceFolder);
+    if (!fSrc.exists() || !fSrc.isDirectory()) {
+      log(-1, "buildJarFromFolder: source folder not available");
+      return false;
+    }
+    String prefix = null;
+    if (new File(fSrc, "__init__.py").exists()) {
+      prefix = fSrc.getName();
+      if (prefix.endsWith("_")) {
+        prefix = prefix.substring(0, prefix.length() - 1);
+      }
+    }
+    return FileManager.buildJar(targetJar, new String[]{null}, 
+            new String[] {sourceFolder}, new String[] {prefix}, null);
+  }
 
   private static boolean addFromProject(String project, String aJar) {
     File aFile = null;
