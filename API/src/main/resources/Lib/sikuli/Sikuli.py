@@ -243,6 +243,10 @@ def makeFolder(*paths):
 def setShowActions(flag):
     Settings.setShowActions(flag)
 
+def highlightOff():
+    import org.sikuli.util.ScreenHighlighter as SH
+    SH.closeAll()
+
 ## ----------------------------------------------------------------------
 # Shows a message dialog containing the given message.
 # @param msg The given message string.
@@ -336,7 +340,7 @@ def saveCapture(*args):
         return scr.saveCapture(args[0], Region.create(args[1], args[2], args[3], args[4]))
     else:
         return None
-    
+
 def selectRegion(msg=None):
     if msg:
         r = ScreenUnion().selectRegion(msg)
