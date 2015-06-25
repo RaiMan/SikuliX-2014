@@ -267,7 +267,7 @@ public class ImagePath {
   }
 
   /**
-   * given absolute or relative (searched on imaga path) file name<br>
+   * given absolute or relative (searched on image path) file name<br>
    * is tried to open as a BufferedReader<br>
    * BE AWARE: use br.close() when finished
    *
@@ -406,6 +406,18 @@ public class ImagePath {
 							(altPath == null ? "" : " / " + altPath));
     }
     return false;
+  }
+  
+  public static boolean addJar(String fpJar, String fpImage) {
+    URL pathURL = null;
+    if (new File(fpJar).exists()) {
+      if (fpImage == null) {
+        fpImage = "";
+      }
+      pathURL = FileManager.makeURL(fpJar + "!/" + fpImage, "jar");
+      add(pathURL);
+    }
+    return true;
   }
 
   private static int hasPath(PathEntry path) {

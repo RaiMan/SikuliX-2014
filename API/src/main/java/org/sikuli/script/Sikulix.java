@@ -25,6 +25,7 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
+import org.sikuli.util.JythonHelper;
 
 /**
  * global services for package API
@@ -188,6 +189,48 @@ public class Sikulix {
       }
     }
     System.exit(0);
+  }
+  
+  /**
+   * add a jar to the scripting environment<br>
+   * Jython: added to sys.path<br>
+   * JRuby: not yet supported<br>
+   * JavaScript: not yet supported<br>
+   * if no scripting active (API usage), jar is added to classpath if available
+   * @param fpJar absolute path to a jar (relative: searched according to Extension concept)
+   * @return the absolute path to the jar or null, if not available
+   */
+  public static String load(String fpJar) {
+    return load(fpJar, null);
+  }
+
+  /**
+   * add a jar to the scripting environment<br>
+   * Jython: added to sys.path<br>
+   * JRuby: not yet supported<br>
+   * JavaScript: not yet supported<br>
+   * if no scripting active (API usage), jar is added to classpath if available<br>
+   * additionally: fpJar/fpJarImagePath is added to ImagePath (not checked)
+   * @param fpJar absolute path to a jar (relative: searched according to Extension concept)
+   * @param fpJarImagePath path relative to jar root inside jar
+   * @return the absolute path to the jar or null, if not available
+   */
+  public static String load(String fpJar, String fpJarImagePath) {
+    JythonHelper jython = JythonHelper.get();
+    String fpJarFound = null;
+    if (jython != null) {
+      fpJarFound = jython.load(fpJar);
+    } else {
+      File fJarFound = rt.asExtension(fpJar);
+      if (fJarFound != null) {
+        fpJarFound = fJarFound.getAbsolutePath();
+        rt.addToClasspath(fpJarFound);
+      }
+    }
+    if (fpJarFound != null && fpJarImagePath != null) {
+      ImagePath.addJar(fpJarFound, fpJarImagePath);
+    }
+    return fpJarFound;
   }
 
   private static boolean addFromProject(String project, String aJar) {

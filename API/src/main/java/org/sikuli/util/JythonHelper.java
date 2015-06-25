@@ -365,7 +365,7 @@ public class JythonHelper {
     return instance;
   }
 
-  public boolean load(String fpJarOrFolder) {
+  public String load(String fpJarOrFolder) {
 //##
 //# loads a Sikuli extension (.jar) from
 //#  1. user's sikuli data path
@@ -419,13 +419,14 @@ public class JythonHelper {
         }
       } else {
         log(-1, "load: not possible");
-        return false;
       }
     } else {
       log(-1, "load: could not be found - even not in bundle nor in Lib nor in Extensions");
-      return false;
     }
-    return true;
+    if (fJar == null) {
+      return null;
+    }
+    return fJar.getAbsolutePath();
   }
 
   public String findModule(String modName, Object packPath, Object sysPath) {

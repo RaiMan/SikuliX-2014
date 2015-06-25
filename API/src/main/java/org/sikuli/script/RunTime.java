@@ -2419,6 +2419,22 @@ Point pNull = new Point(0, 0);
     storeClassPath();
     return true;
   }
+  
+  public File asExtension(String fpJar) {
+    File fJarFound = new File(FileManager.normalizeAbsolute(fpJar, false));
+    if (!fJarFound.exists()) {
+      fJarFound = new File(runTime.fSikulixExtensions, fpJar);
+      if (!fJarFound.exists()) {
+        fJarFound = new File(runTime.fSikulixLib, fpJar);
+        if (!fJarFound.exists()) {
+          fJarFound = null;
+        }
+      }
+    } else {
+      return null;
+    }
+    return fJarFound;
+  }
 //</editor-fold>
 
 //<editor-fold defaultstate="collapsed" desc="system enviroment">
