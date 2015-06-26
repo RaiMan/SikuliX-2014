@@ -11,6 +11,7 @@ import org.sikuli.util.Tests;
 import org.sikuli.util.ScreenHighlighter;
 import java.awt.Dimension;
 import java.io.File;
+import java.io.FileFilter;
 import java.net.URL;
 import java.security.CodeSource;
 import javax.swing.Box;
@@ -197,7 +198,8 @@ public class Sikulix {
    * JRuby: not yet supported<br>
    * JavaScript: not yet supported<br>
    * if no scripting active (API usage), jar is added to classpath if available
-   * @param fpJar absolute path to a jar (relative: searched according to Extension concept)
+   * @param fpJar absolute path to a jar (relative: searched according to Extension concept, 
+   * but first on sys.path)
    * @return the absolute path to the jar or null, if not available
    */
   public static String load(String fpJar) {
@@ -205,13 +207,14 @@ public class Sikulix {
   }
 
   /**
-   * add a jar to the scripting environment<br>
+   * add a jar to the scripting environment or to classpath<br>
    * Jython: added to sys.path<br>
-   * JRuby: not yet supported<br>
-   * JavaScript: not yet supported<br>
-   * if no scripting active (API usage), jar is added to classpath if available<br>
+   * JRuby: only added to classpath<br>
+   * JavaScript: only added to classpath<br>
+   * if no scripting is active (API usage), jar is added to classpath if available<br>
    * additionally: fpJar/fpJarImagePath is added to ImagePath (not checked)
-   * @param fpJar absolute path to a jar (relative: searched according to Extension concept)
+   * @param fpJar absolute path to a jar (relative: searched according to Extension concept, 
+   * but first on sys.path)
    * @param fpJarImagePath path relative to jar root inside jar
    * @return the absolute path to the jar or null, if not available
    */
@@ -219,13 +222,17 @@ public class Sikulix {
     JythonHelper jython = JythonHelper.get();
     String fpJarFound = null;
     if (jython != null) {
+      File aFile = jython.existsSysPathJar(fpJar);
+      if (aFile != null) {
+        fpJar = aFile.getAbsolutePath();
+      }
       fpJarFound = jython.load(fpJar);
     } else {
       File fJarFound = rt.asExtension(fpJar);
       if (fJarFound != null) {
         fpJarFound = fJarFound.getAbsolutePath();
         rt.addToClasspath(fpJarFound);
-      }
+      } 
     }
     if (fpJarFound != null && fpJarImagePath != null) {
       ImagePath.addJar(fpJarFound, fpJarImagePath);
@@ -233,6 +240,15 @@ public class Sikulix {
     return fpJarFound;
   }
   
+  /**
+   * build a jar on the fly at runtime from a folder.<br>
+   * special for Jython: if the folder contains a __init__.py on first level, 
+   * the folder will be copied to the jar root (hence preserving module folders)
+   * @param targetJar absolute path to the created jar (parent folder must exist, jar is overwritten) 
+   * @param sourceFolder absolute path to a folder, the contained folder structure 
+   * will be copied to the jar root level
+   * @return
+   */
   public static boolean buildJarFromFolder(String targetJar, String sourceFolder) {
     log(lvl, "buildJarFromFolder: \nfrom Folder: %s\nto Jar: %s", sourceFolder, targetJar);
     File fJar = new File(targetJar);
@@ -246,7 +262,7 @@ public class Sikulix {
       return false;
     }
     String prefix = null;
-    if (new File(fSrc, "__init__.py").exists()) {
+    if (new File(fSrc, "__init__.py").exists() || new File(fSrc, "__init__$py.class").exists()) {
       prefix = fSrc.getName();
       if (prefix.endsWith("_")) {
         prefix = prefix.substring(0, prefix.length() - 1);
@@ -254,6 +270,78 @@ public class Sikulix {
     }
     return FileManager.buildJar(targetJar, new String[]{null}, 
             new String[] {sourceFolder}, new String[] {prefix}, null);
+  }
+  
+  /**
+   * the foo.py files in the given source folder are compiled to JVM-ByteCode-classfiles foo$py.class 
+   * and stored in the target folder (thus securing your code against changes).<br>
+   * A folder structure is preserved. All files not ending as .py will be copied also.
+   * The target folder might then be packed to a jar using buildJarFromFolder.<br>
+   * Be aware: you will get no feedback about any compile problems, 
+   * so make sure your code compiles error free. Currently there is no support for running such a jar,
+   * it can only be used with load()/import, but you might provide a simple script that does load()/import
+   * and then runs something based on available functions in the jar code.
+   * @param fpSource absolute path to a folder/folder-tree containing the stuff to be copied/compiled
+   * @param fpTarget the folder that will contain the copied/compiled stuff (folder is first deleted)
+   * @return false if anything goes wrong, true means should have worked
+   */
+  public static boolean compileJythonFolder(String fpSource, String fpTarget) {
+    JythonHelper jython = JythonHelper.get();
+    if (jython != null) {
+      File fTarget = new File(fpTarget);
+      FileManager.deleteFileOrFolder(fTarget);
+      fTarget.mkdirs();
+      if (!fTarget.exists()) {
+        log(-1, "compileJythonFolder: target folder not available\n%", fTarget);
+        return false;
+      }
+      File fSource = new File(fpSource);
+      if (!fSource.exists()) {
+        log(-1, "compileJythonFolder: source folder not available\n", fSource);
+        return false;
+      }
+      if (fTarget.equals(fSource)) {
+        log(-1, "compileJythonFolder: target folder cannot be the same as the source folder");
+        return false;
+      }
+      FileManager.xcopy(fSource, fTarget);
+      if (!jython.exec("import compileall")) {
+        return false;
+      }
+      jython = doCompileJythonFolder(jython, fTarget);
+      FileManager.traverseFolder(fTarget, new CompileJythonFilter(jython));
+    }
+    return false;
+  }
+  
+  private static class CompileJythonFilter implements FileManager.FileFilter {
+    
+    JythonHelper jython = null;
+    
+    public CompileJythonFilter(JythonHelper jython) {
+      this.jython = jython;
+    }
+
+    @Override
+    public boolean accept(File entry) {
+      if (jython != null && entry.isDirectory()) {
+        jython = doCompileJythonFolder(jython, entry);
+      }
+      return false;
+    }
+  }
+  
+  private static JythonHelper doCompileJythonFolder(JythonHelper jython, File fSource) {
+    if (!jython.exec(String.format("compileall.compile_dir(\"%s\","
+            + "maxlevels = 0, quiet = 1)", fSource))) {
+      return null;
+    }
+    for (File aFile : fSource.listFiles()) {
+      if (aFile.getName().endsWith(".py")) {
+        aFile.delete();
+      }
+    }
+    return jython;
   }
 
   private static boolean addFromProject(String project, String aJar) {
