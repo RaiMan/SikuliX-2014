@@ -708,6 +708,19 @@ public class JythonHelper {
     return fModule;
   }
 
+  public File existsSysPathJar(String fpJar) {
+    getSysPath();
+    File fJar = null;
+    for (String fpPath : sysPath) {
+      fJar = new File(fpPath, fpJar);
+      if (fJar.exists()) {
+        break;
+      }
+      fJar = null;
+    }
+    return fJar;
+  }
+
   public void showSysPath() {
     if (Debug.is(lvl)) {
       getSysPath();
