@@ -11,7 +11,6 @@ import org.sikuli.util.Tests;
 import org.sikuli.util.ScreenHighlighter;
 import java.awt.Dimension;
 import java.io.File;
-import java.io.FileFilter;
 import java.net.URL;
 import java.security.CodeSource;
 import javax.swing.Box;
@@ -332,8 +331,9 @@ public class Sikulix {
   }
   
   private static JythonHelper doCompileJythonFolder(JythonHelper jython, File fSource) {
+    String fpSource = FileManager.slashify(fSource.getAbsolutePath(), false);
     if (!jython.exec(String.format("compileall.compile_dir(\"%s\","
-            + "maxlevels = 0, quiet = 1)", fSource))) {
+            + "maxlevels = 0, quiet = 1)", fpSource))) {
       return null;
     }
     for (File aFile : fSource.listFiles()) {
