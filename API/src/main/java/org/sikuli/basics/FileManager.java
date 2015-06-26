@@ -441,7 +441,7 @@ public class FileManager {
     File aFile;
     String[] entries;
     boolean somethingLeft = false;
-    if (fPath.isDirectory()) {
+    if (fPath.exists() && fPath.isDirectory()) {
       entries = fPath.list();
       for (int i = 0; i < entries.length; i++) {
         aFile = new File(fPath, entries[i]);
@@ -475,6 +475,26 @@ public class FileManager {
     return true;
   }
 
+  public static void traverseFolder(File fPath, FileFilter filter) {
+    if (fPath == null) {
+      return;
+    }
+    File aFile;
+    String[] entries;
+    if (fPath.isDirectory()) {
+      entries = fPath.list();
+      for (int i = 0; i < entries.length; i++) {
+        aFile = new File(fPath, entries[i]);
+        if (filter != null) {
+          filter.accept(aFile);
+        }
+        if (aFile.isDirectory()) {
+          traverseFolder(aFile, filter);
+        }
+      }
+    }
+  }
+  
   public static File createTempFile(String suffix) {
     return createTempFile(suffix, null);
   }

@@ -1,7 +1,10 @@
-#import compileall
-#compileall.compile_dir(getBundlePath())
 Debug.on(3)
 current = getBundlePath()
+target = os.path.join(getParentPath(), "testCompile")
+
+Sikulix.compileJythonFolder(current, target)
+Sikulix.buildJarFromFolder(os.path.join(getParentPath(), "testCompile.jar"), target)
+
 srcdir = os.path.join(current, "testload")
 Sikulix.buildJarFromFolder(os.path.join(current, "test.jar"), os.path.join(current, "testload_"))
 print "jar loaded", load("test.jar")
