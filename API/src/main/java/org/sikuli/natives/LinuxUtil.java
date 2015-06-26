@@ -43,7 +43,7 @@ public class LinuxUtil implements OSUtil {
 
   @Override
   public App.AppEntry getApp(int appPID, String appName) {
-    return null;
+    return new App.AppEntry(appName, "" + appPID, "", "", "");
   }
   
   @Override
