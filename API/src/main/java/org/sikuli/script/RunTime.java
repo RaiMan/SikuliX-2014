@@ -2420,15 +2420,20 @@ Point pNull = new Point(0, 0);
     return true;
   }
   
-  public File asExtension(String fpJar) {
+  public File asExtension(String fpJar) {    
     File fJarFound = new File(FileManager.normalizeAbsolute(fpJar, false));
     if (!fJarFound.exists()) {
-      fJarFound = new File(runTime.fSikulixExtensions, fpJar);
-      if (!fJarFound.exists()) {
-        fJarFound = new File(runTime.fSikulixLib, fpJar);
+      String fpCPEntry = runTime.isOnClasspath(fJarFound.getName());
+      if (fpCPEntry == null) {
+        fJarFound = new File(runTime.fSikulixExtensions, fpJar);
         if (!fJarFound.exists()) {
-          fJarFound = null;
+          fJarFound = new File(runTime.fSikulixLib, fpJar);
+          if (!fJarFound.exists()) {
+            fJarFound = null;
+          }
         }
+      } else {
+        fJarFound = new File(fpCPEntry, fJarFound.getName());
       }
     } else {
       return null;
