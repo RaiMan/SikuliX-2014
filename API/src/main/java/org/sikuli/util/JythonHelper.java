@@ -470,9 +470,9 @@ public class JythonHelper {
       }
     }
     log(lvl, "findModule: %s (%s)", fModule.getName(), packPath);
-    if (!fModule.getName().endsWith(".sikuli")) {
-      fModule = fModule.getParentFile();
-    }
+//    if (!fModule.getName().endsWith(".sikuli")) {
+//      fModule = fModule.getParentFile();
+//    }
     return fModule.getAbsolutePath();
   }
 
@@ -503,10 +503,10 @@ public class JythonHelper {
     if (fSikuli.exists()) {
       return fSikuli;
     }
-    File fPython = new File(fFolder, mName + ".py");
-    if (fPython.exists()) {
-      return fPython;
-    }
+//    File fPython = new File(fFolder, mName + ".py");
+//    if (fPython.exists()) {
+//      return fPython;
+//    }
     return null;
   }
 
