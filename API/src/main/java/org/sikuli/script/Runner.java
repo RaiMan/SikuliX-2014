@@ -51,22 +51,22 @@ public class Runner {
   private static int lastReturnCode = 0;
 
   private static String beforeJSjava8 = "load(\"nashorn:mozilla_compat.js\");";
-  private static String beforeJS =
-          "importPackage(Packages.org.sikuli.script); " +
-          "importClass(Packages.org.sikuli.basics.Debug); " +
-          "importClass(Packages.org.sikuli.basics.Settings);";
+  private static String beforeJS
+          = "importPackage(Packages.org.sikuli.script); "
+          + "importClass(Packages.org.sikuli.basics.Debug); "
+          + "importClass(Packages.org.sikuli.basics.Settings);";
 
   static {
-      endingTypes.put(EPYTHON, CPYTHON);
-      endingTypes.put(ERUBY, CRUBY);
-      endingTypes.put(EJSCRIPT, CJSCRIPT);
-      endingTypes.put(EPLAIN, CPLAIN);
-      for (String k : endingTypes.keySet()) {
-        typeEndings.put(endingTypes.get(k), k);
-      }
-      runnerTypes.put(EPYTHON, RPYTHON);
-      runnerTypes.put(ERUBY, RRUBY);
-      runnerTypes.put(EJSCRIPT, RJSCRIPT);
+    endingTypes.put(EPYTHON, CPYTHON);
+    endingTypes.put(ERUBY, CRUBY);
+    endingTypes.put(EJSCRIPT, CJSCRIPT);
+    endingTypes.put(EPLAIN, CPLAIN);
+    for (String k : endingTypes.keySet()) {
+      typeEndings.put(endingTypes.get(k), k);
+    }
+    runnerTypes.put(EPYTHON, RPYTHON);
+    runnerTypes.put(ERUBY, RRUBY);
+    runnerTypes.put(EJSCRIPT, RJSCRIPT);
   }
 
   static void log(int level, String message, Object... args) {
@@ -171,34 +171,34 @@ public class Runner {
     return lastReturnCode;
   }
 
-	public static int runScripts(String[] args) {
-		runScripts = Runner.evalArgs(args);
-		String someJS = "";
-		int exitCode = 0;
-		if (runScripts != null && runScripts.length > 0) {
-			boolean runAsTest = runTime.runningTests;
-			for (String givenScriptName : runScripts) {
-				if (lastReturnCode == -1) {
-					log(lvl, "Exit code -1: Terminating multi-script-run");
-					break;
-				}
-				someJS = runTime.getOption("runsetup", "");
-				if (!someJS.isEmpty()) {
-					log(lvl, "Options.runsetup: %s", someJS);
-					new RunBox().runjs(null, null, someJS, null);
-				}
-				RunBox rb = new RunBox(givenScriptName, runTime.getArgs(), runAsTest);
-				exitCode = rb.run();
-				someJS = runTime.getOption("runteardown", "");
-				if (!someJS.isEmpty()) {
-					log(lvl, "Options.runteardown: %s", someJS);
-					new RunBox().runjs(null, null, someJS, null);
-				}
-				lastReturnCode = exitCode;
-			}
-		}
-		return exitCode;
-	}
+  public static int runScripts(String[] args) {
+    runScripts = Runner.evalArgs(args);
+    String someJS = "";
+    int exitCode = 0;
+    if (runScripts != null && runScripts.length > 0) {
+      boolean runAsTest = runTime.runningTests;
+      for (String givenScriptName : runScripts) {
+        if (lastReturnCode == -1) {
+          log(lvl, "Exit code -1: Terminating multi-script-run");
+          break;
+        }
+        someJS = runTime.getOption("runsetup", "");
+        if (!someJS.isEmpty()) {
+          log(lvl, "Options.runsetup: %s", someJS);
+          new RunBox().runjs(null, null, someJS, null);
+        }
+        RunBox rb = new RunBox(givenScriptName, runTime.getArgs(), runAsTest);
+        exitCode = rb.run();
+        someJS = runTime.getOption("runteardown", "");
+        if (!someJS.isEmpty()) {
+          log(lvl, "Options.runteardown: %s", someJS);
+          new RunBox().runjs(null, null, someJS, null);
+        }
+        lastReturnCode = exitCode;
+      }
+    }
+    return exitCode;
+  }
 
   public static File getScriptFile(File fScriptFolder) {
     if (fScriptFolder == null) {
@@ -246,14 +246,14 @@ public class Runner {
   static Object txtRunner = null;
   static ScriptEngine jsRunner = null;
 
-	public static ScriptEngine initjs() {
-		ScriptEngineManager jsFactory = new ScriptEngineManager();
-		ScriptEngine jsr = jsFactory.getEngineByName("JavaScript");
-		if (jsr != null) {
-			log(lvl, "ScriptingEngine started: JavaScript (ending .js)");
-		} else {
-			runTime.terminate(1, "ScriptingEngine for JavaScript not available");
-		}
+  public static ScriptEngine initjs() {
+    ScriptEngineManager jsFactory = new ScriptEngineManager();
+    ScriptEngine jsr = jsFactory.getEngineByName("JavaScript");
+    if (jsr != null) {
+      log(lvl, "ScriptingEngine started: JavaScript (ending .js)");
+    } else {
+      runTime.terminate(1, "ScriptingEngine for JavaScript not available");
+    }
     if (RunTime.Type.IDE.equals(runTime.runType)) {
       try {
         cIDE = Class.forName("org.sikuli.ide.SikuliIDE");
@@ -263,24 +263,24 @@ public class Runner {
         log(-1, "initjs: getIDE");
       }
     }
-		return jsr;
-	}
+    return jsr;
+  }
 
-	public static String prologjs(String before) {
-		String after = before;
-		if (after.isEmpty()) {
-			if (runTime.isJava8()) {
-				after += beforeJSjava8;
-			}
-			after += beforeJS;
-		} else {
-			String commands = runTime.extractResourceToString("JavaScript", "commands.js", "");
-			if (commands != null) {
-				after += commands;
-			}
-		}
-		return after;
-	}
+  public static String prologjs(String before) {
+    String after = before;
+    if (after.isEmpty()) {
+      if (runTime.isJava8()) {
+        after += beforeJSjava8;
+      }
+      after += beforeJS;
+    } else {
+      String commands = runTime.extractResourceToString("JavaScript", "commands.js", "");
+      if (commands != null) {
+        after += commands;
+      }
+    }
+    return after;
+  }
 
   public static Object[] runBoxInit(String givenName, File scriptProject, URL uScriptProject) {
     String gitScripts = "https://github.com/RaiMan/SikuliX-2014/tree/master/TestScripts/";
@@ -316,54 +316,64 @@ public class Runner {
       }
     }
     if (!isInline) {
+      boolean fromNet = false;
+      String scriptLocation = givenName;
+      String content = "";
       if (-1 < (isNet = givenName.indexOf("://"))) {
-        String payload = givenName.substring(isNet + 3);
-        payload = payload.replaceFirst("/", "#");
-        parts = payload.split("#");
+        givenName = givenName.substring(isNet + 3);
+        if (givenName.indexOf(":") == -1) {
+          givenName.replaceFirst("/", ":");
+        }
+      }
+      if (givenName.indexOf(":") > 5) {
+        parts = givenName.split(":");
         if (parts.length > 1 && !parts[1].isEmpty()) {
+          fromNet = true;
           givenScriptHost = parts[0];
           givenScriptName = new File(parts[1]).getName();
           String fpFolder = new File(parts[1]).getParent();
           if (null != fpFolder && !fpFolder.isEmpty()) {
             givenScriptFolder = FileManager.slashify(fpFolder, true);
-            if (givenScriptFolder.startsWith("/")) {
-              givenScriptFolder = givenScriptFolder.substring(1);
-            }
           }
         }
-        String scriptLocation = givenName;
+        scriptLocation = givenName;
         givenScriptExists = false;
-        String content = "";
+      }
+      if (fromNet) {
         if (givenScriptHost.contains("github.com")) {
           givenScriptHost = "https://raw.githubusercontent.com/";
           givenScriptFolder = givenScriptFolder.replace("tree/", "");
-          if (givenScriptName.endsWith(".zip")) {
-            scriptLocation = givenScriptHost + givenScriptFolder + givenScriptName;
+        } else {
+          givenScriptHost = "http://" + givenScriptHost;
+        }
+        if (givenScriptName.endsWith(".zip")) {
+          scriptLocation = givenScriptHost + givenScriptFolder + givenScriptName;
+          if (0 < FileManager.isUrlUseabel(scriptLocation)) {
+            runTime.terminate(1, ".zip from net not yet supported\n%s", scriptLocation);
+          }
+        } else {
+          for (String suffix : endingTypes.keySet()) {
+            String dlsuffix = suffix + ".txt";
+            if (suffix == "js") dlsuffix = "js";
+            givenScriptScript = givenScriptName + "/" + givenScriptName + "." + dlsuffix;
+            scriptLocation = givenScriptHost + "/" + givenScriptFolder + givenScriptScript;
+            givenScriptScriptType = runnerTypes.get(suffix);
             if (0 < FileManager.isUrlUseabel(scriptLocation)) {
-              runTime.terminate(1, ".zip from git not yet supported\n%s", scriptLocation);
+              content = FileManager.downloadURLtoString(scriptLocation);
+              break;
             }
-          } else {
-            for (String suffix : endingTypes.keySet()) {
-              givenScriptScript = givenScriptName + "/" + givenScriptName + "." + suffix;
-              scriptLocation = givenScriptHost + givenScriptFolder + givenScriptScript;
-              givenScriptScriptType = runnerTypes.get(suffix);
-              if (0 < FileManager.isUrlUseabel(scriptLocation)) {
-                content = FileManager.downloadURLtoString(scriptLocation);
-                break;
-              }
-            }
-            if (content != null && !content.isEmpty()) {
-              givenScriptType = "NET";
-              givenScriptScript = content;
-              givenScriptExists = true;
-              try {
-                uGivenScript = new URL(givenScriptHost + givenScriptFolder + givenScriptName);
-              } catch (Exception ex) {
-                givenScriptExists = false;
-              }
-            } else {
+          }
+          if (content != null && !content.isEmpty()) {
+            givenScriptType = "NET";
+            givenScriptScript = content;
+            givenScriptExists = true;
+            try {
+              uGivenScript = new URL(givenScriptHost + "/" + givenScriptFolder + givenScriptName);
+            } catch (Exception ex) {
               givenScriptExists = false;
             }
+          } else {
+            givenScriptExists = false;
           }
         }
         if (!givenScriptExists) {
@@ -436,17 +446,18 @@ public class Runner {
       return -1;
     }
     String prefix = silent ? "!" : "";
-		String osascriptShebang = "#!/usr/bin/osascript\n";
-		givenScriptScript = osascriptShebang + givenScriptScript;
+    String osascriptShebang = "#!/usr/bin/osascript\n";
+    givenScriptScript = osascriptShebang + givenScriptScript;
     File aFile = FileManager.createTempFile("script");
-		aFile.setExecutable(true);
+    aFile.setExecutable(true);
     FileManager.writeStringToFile(givenScriptScript, aFile);
     String retVal = runTime.runcmd(new String[]{prefix + aFile.getAbsolutePath()});
     String[] parts = retVal.split("\n");
     int retcode = -1;
     try {
       retcode = Integer.parseInt(parts[0]);
-    } catch (Exception ex) {}
+    } catch (Exception ex) {
+    }
     if (retcode != 0) {
       if (silent) {
         log(lvl, "AppleScript:\n%s\nreturned:\n%s", givenScriptScript, runTime.getLastCommandResult());
@@ -467,17 +478,18 @@ public class Runner {
       "powershell.exe", "-ExecutionPolicy", "UnRestricted",
       "-NonInteractive", "-NoLogo", "-NoProfile", "-WindowStyle", "Hidden",
       "-File", aFile.getAbsolutePath()
-      };
+    };
     String[] psCmdType = new String[]{
       "cmd.exe", "/S", "/C",
       "type " + aFile.getAbsolutePath() + " | powershell -noprofile -"
-      };
+    };
     String retVal = runTime.runcmd(psCmdType);
     String[] parts = retVal.split("\\s");
     int retcode = -1;
     try {
       retcode = Integer.parseInt(parts[0]);
-    } catch (Exception ex) {}
+    } catch (Exception ex) {
+    }
     if (retcode != 0) {
       log(-1, "PowerShell:\n%s\nreturned:\n%s", givenScriptScript, runTime.getLastCommandResult());
     }
@@ -500,7 +512,8 @@ public class Runner {
 
     String jsScript;
 
-    public RunBox() {}
+    public RunBox() {
+    }
 
     public static int runtxt(File fScript, URL script, String scriptName, String[] args) {
       Runner.log(-1, "Running plain text scripts not yet supported!");
@@ -567,7 +580,7 @@ public class Runner {
             } catch (Exception ex) {
               Runner.log(-1, "not possible:\n%s", ex);
               try {
-              Runner.mShow.invoke(null, new Class[0]);
+                Runner.mShow.invoke(null, new Class[0]);
               } catch (Exception e) {
                 Sikulix.terminate(901);
               }
@@ -617,7 +630,6 @@ public class Runner {
 
 //    static File scriptProject = null;
 //    static URL uScriptProject = null;
-
     RunTime runTime = RunTime.get();
     boolean asTest = false;
     String[] args = new String[0];
@@ -628,7 +640,7 @@ public class Runner {
     String givenScriptScript = "";
     String givenScriptType = "sikuli";
     String givenScriptScriptType = RDEFAULT;
-		URL uGivenScript = null;
+    URL uGivenScript = null;
     URL uGivenScriptFile = null;
     boolean givenScriptExists = true;
 
@@ -669,7 +681,7 @@ public class Runner {
 //          return -9999;
 //        }
       }
-			if ("NET".equals(givenScriptType)) {
+      if ("NET".equals(givenScriptType)) {
         if (Runner.RJSCRIPT.equals(givenScriptScriptType)) {
           exitCode = runjs(null, uGivenScript, givenScriptScript, args);
         } else if (Runner.RPYTHON.equals(givenScriptScriptType)) {
@@ -677,17 +689,17 @@ public class Runner {
         } else {
           log(-1, "running from net not supported for %s\n%s", givenScriptScriptType, uGivenScript);
         }
-			} else {
-				File fScript = Runner.getScriptFile(new File(givenScriptName));
-				if (fScript == null) {
-					return -9999;
-				}
-				fScript = new File(FileManager.normalizeAbsolute(fScript.getPath(), true));
-				if (null == RunTime.scriptProject) {
-					RunTime.scriptProject = fScript.getParentFile().getParentFile();
-				}
+      } else {
+        File fScript = Runner.getScriptFile(new File(givenScriptName));
+        if (fScript == null) {
+          return -9999;
+        }
+        fScript = new File(FileManager.normalizeAbsolute(fScript.getPath(), true));
+        if (null == RunTime.scriptProject) {
+          RunTime.scriptProject = fScript.getParentFile().getParentFile();
+        }
         log(lvl, "Trying to run script:\n%s", fScript);
-				if (fScript.getName().endsWith(EJSCRIPT)) {
+        if (fScript.getName().endsWith(EJSCRIPT)) {
           exitCode = runjs(fScript, null, givenScriptScript, args);
         } else if (fScript.getName().endsWith(EPYTHON)) {
           exitCode = runpy(fScript, null, givenScriptScript, args);
@@ -696,10 +708,10 @@ public class Runner {
         } else if (fScript.getName().endsWith(EPLAIN)) {
           exitCode = runtxt(fScript, null, givenScriptScript, args);
         } else {
-					log(-1, "Running not supported currently for:\n%s", fScript);
-					return -9999;
-				}
-			}
+          log(-1, "Running not supported currently for:\n%s", fScript);
+          return -9999;
+        }
+      }
       return exitCode;
     }
   }
