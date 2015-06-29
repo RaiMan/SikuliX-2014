@@ -386,8 +386,10 @@ public class Runner {
             trailer = "*/\n";
           }
           header += scriptLocation + "\n";
-          FileManager.writeStringToFile(header + trailer + content,
-                  new File(runTime.fSikulixStore, "LastScriptFromNet.txt"));
+          if (Debug.is() > 2) {
+            FileManager.writeStringToFile(header + trailer + content,
+                    new File(runTime.fSikulixStore, "LastScriptFromNet.txt"));
+          }
         }
       } else {
         boolean sameFolder = givenScriptName.startsWith("./");
