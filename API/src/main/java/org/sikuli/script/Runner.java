@@ -322,7 +322,7 @@ public class Runner {
       if (-1 < (isNet = givenName.indexOf("://"))) {
         givenName = givenName.substring(isNet + 3);
         if (givenName.indexOf(":") == -1) {
-          givenName.replaceFirst("/", ":");
+          givenName = givenName.replaceFirst("/", ":");
         }
       }
       if (givenName.indexOf(":") > 5) {
