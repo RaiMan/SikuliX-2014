@@ -43,7 +43,7 @@ import org.sikuli.script.Sikulix;
 
 public class JRubyScriptRunner implements IScriptRunner {
   
-  static RunTime runTime = RunTime.get();
+  static RunTime sxRunTime = RunTime.get();
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
 	private static final String me = "JRubyScriptRunner: ";
@@ -93,14 +93,13 @@ public class JRubyScriptRunner implements IScriptRunner {
 	private boolean isFromIDE;
 	private boolean isCompileOnly;
   
-  private static Ruby runtime = Ruby.newInstance();
-  private static ThreadContext context = runtime.getCurrentContext();
-
+  private static Ruby runtime;
+  private static ThreadContext context;
 
 	@Override
 	public void init(String[] args) {
 		//TODO classpath and other path handlings
-		sikuliLibPath = new File(Sikulix.getJarPath(), "Lib").getAbsolutePath();
+		sikuliLibPath = sxRunTime.fSikulixLib.getAbsolutePath();
 	}
 
 	@Override
@@ -253,6 +252,10 @@ public class JRubyScriptRunner implements IScriptRunner {
   }
 
   private boolean runObserveCallback(Object[] args) {
+    if (runtime == null) {
+      runtime = Ruby.newInstance();
+      context = runtime.getCurrentContext();
+    }
     IRubyObject[] pargs;
     try {
       pargs = new IRubyObject[] {JavaUtil.convertJavaToRuby(runtime, args[1])};
@@ -498,7 +501,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 		if (interpreter == null) {
 			sysargv = new ArrayList<String>();
 			sysargv.add("--???--");
-			sysargv.addAll(Arrays.asList(runTime.getArgs()));
+			sysargv.addAll(Arrays.asList(sxRunTime.getArgs()));
 			createScriptingContainer();
 		}
 		return interpreter;
