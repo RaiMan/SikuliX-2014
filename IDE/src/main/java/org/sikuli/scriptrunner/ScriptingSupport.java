@@ -562,6 +562,7 @@ public class ScriptingSupport {
         if (Runner.RJSCRIPT.equals(givenScriptScriptType)) {
           exitCode = Runner.runjs(null, uGivenScript, givenScriptScript, args);
         } else {
+          ScriptingSupport.init();
 					currentRunner = scriptRunner.get(givenScriptScriptType);
           if (null == currentRunner) {
             log(-1, "running from net not supported for %s\n%s", givenScriptScriptType, uGivenScript);
