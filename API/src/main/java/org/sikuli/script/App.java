@@ -653,18 +653,25 @@ public class App {
   //<editor-fold defaultstate="collapsed" desc="clipboard">
   /**
    * evaluates the current textual content of the system clipboard
-   * @return the textual content
+   * @return the textual content or empty string if not possible
    */
   public static String getClipboard() {
-    Transferable content = Clipboard.getSystemClipboard().getContents(null);
+    Transferable content = null;
     try {
-      if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
-        return (String) content.getTransferData(DataFlavor.stringFlavor);
+      content = Clipboard.getSystemClipboard().getContents(null);
+    } catch (Exception ex) {
+      Debug.error("Env.getClipboard: clipboard not available:\n%s", ex.getMessage());
+    }
+    if (content != null) {
+      try {
+        if (content.isDataFlavorSupported(DataFlavor.stringFlavor)) {
+          return (String) content.getTransferData(DataFlavor.stringFlavor);
+        }
+      } catch (UnsupportedFlavorException ex) {
+        Debug.error("Env.getClipboard: UnsupportedFlavorException: " + content);
+      } catch (IOException ex) {
+        Debug.error("Env.getClipboard: IOException:\n%s", ex.getMessage());
       }
-    } catch (UnsupportedFlavorException e) {
-      Debug.error("Env.getClipboard: UnsupportedFlavorException: " + content);
-    } catch (IOException e) {
-      e.printStackTrace();
     }
     return "";
   }
