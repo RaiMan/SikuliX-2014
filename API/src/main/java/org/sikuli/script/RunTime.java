@@ -668,6 +668,16 @@ Point pNull = new Point(0, 0);
 		fSxProjectTestScriptsJS = new File(fSxProject, "StuffContainer/testScripts/testJavaScript");
 		fSxProjectTestScripts = new File(fSxProject, "StuffContainer/testScripts");
     }
+
+    String optClasspath = getOption("classpath");
+    if (!optClasspath.isEmpty()) {
+      String items[] = optClasspath.split(System.getProperty("path.separator"));
+      if (items.length > 0) {
+        for (String item : items) {
+          addToClasspath(item.trim());
+        }
+      }
+    }
 //</editor-fold>
 
     if (runningWinApp || testingWinApp) {
