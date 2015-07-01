@@ -44,6 +44,7 @@ wait(1)
 if RUNTIME.runningMac():
     type("w", Key.CMD)
 else:
+    print "trying to close window"
     type("w", Key.CTRL)
 
 wait(1)
