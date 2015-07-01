@@ -183,7 +183,7 @@ public class App {
     public String options;
     public String window;
     public int pid;
-    
+
     public AppEntry(String theName, String thePID, String theWindow, String theExec, String theOptions) {
       name = theName;
       window = theWindow;
@@ -195,7 +195,7 @@ public class App {
       } catch (Exception ex) {}
     }
   }
-  
+
   public AppEntry makeAppEntry() {
     String name = appName;
     String window = appWindow;
@@ -211,7 +211,7 @@ public class App {
     return new AppEntry(name, getPID().toString(), window, appNameGiven, appOptions);
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="constructors">
   /**
    * creates an instance for an app with this name
@@ -328,7 +328,7 @@ public class App {
       appPID = -1;
     }
   }
-  
+
   private void init() {
     if (appPID > -1) {
       init(appPID);
@@ -344,12 +344,12 @@ public class App {
   public static void getApps(String name){
     Map<Integer, String[]> theApps = _osUtil.getApps(name);
     int count = 0;
-    String[] item; 
+    String[] item;
     for (Integer pid : theApps.keySet()) {
       item = theApps.get(pid);
       if (pid < 0) {
         pid = -pid;
-        Debug.logp("%d:%s (N/A)", pid, item[0]);        
+        Debug.logp("%d:%s (N/A)", pid, item[0]);
       } else {
         Debug.logp("%d:%s (%s)", pid, item[0], item[1]);
         count++;
@@ -357,11 +357,11 @@ public class App {
     }
     Debug.logp("App.getApps: %d apps (%d having window)", theApps.size(), count);
   }
-  
+
   public static void getApps(){
     getApps(null);
   }
-  
+
   public App setUsing(String options) {
     if (options != null) {
       appOptions = options;
@@ -370,7 +370,7 @@ public class App {
     }
     return this;
   }
-  
+
   public Integer getPID() {
     return appPID;
   }
@@ -382,15 +382,15 @@ public class App {
   public String getWindow() {
     return appWindow;
   }
-  
+
   public boolean isValid() {
     return !notFound;
-  } 
-  
+  }
+
   public boolean isRunning() {
     return isRunning(1);
   }
-  
+
   public boolean isRunning(int maxTime) {
     if (!isValid()) {
       return false;
@@ -421,7 +421,7 @@ public class App {
     init(appName);
     return !getWindow().isEmpty();
   }
-  
+
   @Override
   public String toString() {
     if (!appWindow.startsWith("!")) {
@@ -463,9 +463,12 @@ public class App {
     } else {
       Debug.action("App.open " + this.toStringShort());
     }
+    if (isImmediate && notFound) {
+      return null;
+    }
     return this;
   }
-  
+
 //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="close">
@@ -607,13 +610,13 @@ public class App {
     return asRegion(_osUtil.getFocusedWindow());
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="run">
   public static int lastRunReturnCode = -1;
   public static String lastRunStdout = "";
   public static String lastRunStderr = "";
   public static String lastRunResult = "";
-  
+
   /**
    * the given text is parsed into a String[] suitable for issuing a Runtime.getRuntime().exec(args).
    * quoting is preserved/obeyed. the first item must be an executable valid for the running system.<br>
@@ -649,7 +652,7 @@ public class App {
     return lastRunReturnCode;
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="clipboard">
   /**
    * evaluates the current textual content of the system clipboard
