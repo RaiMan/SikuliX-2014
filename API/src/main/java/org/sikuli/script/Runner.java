@@ -353,15 +353,25 @@ public class Runner {
           }
         } else {
           for (String suffix : endingTypes.keySet()) {
-            String dlsuffix = suffix + ".txt";
-            if (suffix == "js") dlsuffix = "js";
-            givenScriptScript = givenScriptName + "/" + givenScriptName + "." + dlsuffix;
+            String dlsuffix = "";
+            if (suffix != "js") {
+              dlsuffix = ".txt";
+            }
+            givenScriptScript = givenScriptName + "/" + givenScriptName + "." + suffix;
             scriptLocation = givenScriptHost + "/" + givenScriptFolder + givenScriptScript;
             givenScriptScriptType = runnerTypes.get(suffix);
             if (0 < FileManager.isUrlUseabel(scriptLocation)) {
               content = FileManager.downloadURLtoString(scriptLocation);
               break;
+            } else if (!dlsuffix.isEmpty()) {
+              givenScriptScript = givenScriptName + "/" + givenScriptName + "." + suffix + dlsuffix;
+              scriptLocation = givenScriptHost + "/" + givenScriptFolder + givenScriptScript;
+              if (0 < FileManager.isUrlUseabel(scriptLocation)) {
+                content = FileManager.downloadURLtoString(scriptLocation);
+                break;
+              }
             }
+            scriptLocation = givenScriptHost + "/" + givenScriptFolder + givenScriptName;
           }
           if (content != null && !content.isEmpty()) {
             givenScriptType = "NET";
