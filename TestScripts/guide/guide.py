@@ -40,5 +40,10 @@ flag(bContinue.getRegion(),
 
 print show(30)
 wait(1)
-type("w", Key.CMD)
+
+if RUNTIME.runningMac():
+    type("w", Key.CMD)
+else:
+    type("w", Key.CTRL)
+
 wait(1)
