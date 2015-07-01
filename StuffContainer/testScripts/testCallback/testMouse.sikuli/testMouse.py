@@ -1,6 +1,6 @@
 def handler(e):
   print("in handler")
-  Device.setShouldTerminate()
+  #Device.setShouldTerminate()
   print("leaving handler")
   
 Mouse.setMouseMovedCallback(handler)
