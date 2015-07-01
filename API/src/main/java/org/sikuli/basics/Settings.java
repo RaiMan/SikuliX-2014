@@ -456,7 +456,7 @@ public class Settings {
 	}
 
   public static boolean isMac10() {
-    if (isMac() && Settings.getOSVersion().startsWith("10.10")) {
+    if (isMac() && Settings.getOSVersion().startsWith("10.1")) {
       return true;
     }
     return false;
