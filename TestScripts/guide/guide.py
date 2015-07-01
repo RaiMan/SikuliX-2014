@@ -35,15 +35,10 @@ image(t3, img)
 arrow(tl.getBottomRight().grow(1), t3.getTopLeft().grow(1))
 
 bContinue = button(t3, "Continue").below(50)
-flag(bContinue.getRegion(), 
+flag(bContinue.getRegion(),
     "this all is shown for 30 seconds. To stop: click Continue").left(10)
 
 print show(30)
 wait(1)
 
-if RUNTIME.runningMac:
-    type("w", Key.CMD)
-else:
-    type("w", Key.CTRL)
-
-wait(1)
+popup("You should close the browser window/tab now")
