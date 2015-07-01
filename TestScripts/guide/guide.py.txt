@@ -40,6 +40,5 @@ flag(bContinue.getRegion(),
 
 print show(30)
 wait(1)
-type("h", Key.CMD)
 type("w", Key.CMD)
 wait(1)
