@@ -341,7 +341,7 @@ public class Runner {
       }
       if (fromNet) {
         if (givenScriptHost.contains("github.com")) {
-          givenScriptHost = "https://raw.githubusercontent.com/";
+          givenScriptHost = "https://raw.githubusercontent.com";
           givenScriptFolder = givenScriptFolder.replace("tree/", "");
         } else {
           givenScriptHost = "http://" + givenScriptHost;
