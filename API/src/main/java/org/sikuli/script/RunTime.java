@@ -674,7 +674,18 @@ Point pNull = new Point(0, 0);
       String items[] = optClasspath.split(System.getProperty("path.separator"));
       if (items.length > 0) {
         for (String item : items) {
-          addToClasspath(item.trim());
+          item = item.trim();
+          if (new File(item).isAbsolute()) {
+            addToClasspath(item);
+          } else {
+            String[] fList = fSikulixExtensions.list();
+            for (String aFile : fList) {
+              if (aFile.startsWith(item)) {
+                addToClasspath(new File(fSikulixExtensions, aFile).getAbsolutePath());
+              }
+              break;
+            }
+          }
         }
       }
     }
