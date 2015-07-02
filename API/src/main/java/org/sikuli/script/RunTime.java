@@ -2361,6 +2361,9 @@ Point pNull = new Point(0, 0);
 					if (!new File(sEntry).getName().contains(artefact)) {
 						continue;
 					}
+					if (new File(sEntry).getName().contains("4" + artefact)) {
+						continue;
+					}
         }
         cpe = new File(entry.getPath()).getPath();
         break;
@@ -2440,8 +2443,8 @@ Point pNull = new Point(0, 0);
     storeClassPath();
     return true;
   }
-  
-  public File asExtension(String fpJar) {    
+
+  public File asExtension(String fpJar) {
     File fJarFound = new File(FileManager.normalizeAbsolute(fpJar, false));
     if (!fJarFound.exists()) {
       String fpCPEntry = runTime.isOnClasspath(fJarFound.getName());
