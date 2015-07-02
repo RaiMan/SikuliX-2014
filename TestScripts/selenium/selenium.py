@@ -46,6 +46,6 @@ if mQuickStart:
   click(Mouse.at()) # reactivate page
   hover(menu)
   mQuickStart.click() # seems not to work
-  click(Mouse.at())
+#  click(Mouse.at())
   wait(3)
   driver.quit()
