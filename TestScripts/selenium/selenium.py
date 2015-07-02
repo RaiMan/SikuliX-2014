@@ -2,20 +2,20 @@ try:
   from selenium4sikulix import *
 except:
   Debug.error("SikuliX environment not ready for Selenium4SikuliX")
-  
+
 driver = getFirefox()
-if not driver: 
+if not driver:
   Debug.error("Firefox could not be started")
   exit(1)
 
 ff = App("Firefox")
 if ff.isRunning():
   print "Firefox is started:", ff
-  winFF = App.focusedWindow()
-  winFF.highlight(2)
 else:
   Debug.error("Firefox application not found")
-  exit(1)  
+
+winFF = App.focusedWindow()
+winFF.highlight(2)
 
 # top left corner of web content on Screen
 # offsets evaluated manually (Firefox on Windows)
@@ -32,7 +32,7 @@ for item in items:
   print menu
   if menu.startswith("QuickStart"):
     mQuickStart = item
-    
+
 print "*** act on QuickStart"
 if mQuickStart:
   loc = mQuickStart.getLocation()
