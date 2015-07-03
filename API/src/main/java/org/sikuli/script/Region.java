@@ -2705,6 +2705,10 @@ public class Region {
     boolean findingText = false;
     lastFindTime = (new Date()).getTime();
     ScreenImage simg;
+    double findTimeout = autoWaitTimeout; 
+    if (repeating != null) {
+      findTimeout = repeating.getFindTimeOut();
+    }
     if (repeating != null && repeating._finder != null) {
       simg = getScreen().capture(this);
       f = repeating._finder;
@@ -2726,7 +2730,7 @@ public class Region {
           img = Image.create((String) ptn);
           if (img.isValid()) {
             lastSearchTime = (new Date()).getTime();
-            f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), null);
+            f = checkLastSeenAndCreateFinder(img, findTimeout, null);
             if (!f.hasNext()) {
               runFinder(f, img);
               //f.find(img);
@@ -2749,7 +2753,7 @@ public class Region {
         if (((Pattern) ptn).isValid()) {
           img = ((Pattern) ptn).getImage();
           lastSearchTime = (new Date()).getTime();
-          f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), (Pattern) ptn);
+          f = checkLastSeenAndCreateFinder(img, findTimeout, (Pattern) ptn);
           if (!f.hasNext()) {
             runFinder(f, ptn);
             //f.find((Pattern) ptn);
@@ -2761,7 +2765,7 @@ public class Region {
         if (((Image) ptn).isValid()) {
           img = ((Image) ptn);
           lastSearchTime = (new Date()).getTime();
-          f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), null);
+          f = checkLastSeenAndCreateFinder(img, findTimeout, null);
           if (!f.hasNext()) {
             runFinder(f, img);
             //f.find(img);
