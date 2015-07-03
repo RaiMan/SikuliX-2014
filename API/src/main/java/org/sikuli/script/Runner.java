@@ -44,6 +44,7 @@ public class Runner {
   public static String RJSCRIPT = "JavaScript";
   public static String RASCRIPT = "AppleScript";
   public static String RSSCRIPT = "PowerShell";
+  public static String RRSCRIPT = "Robot";
   public static String RDEFAULT = RPYTHON;
 
   private static String[] runScripts = null;
@@ -308,6 +309,11 @@ public class Runner {
       givenScriptName = null;
       givenScriptScript = givenName.substring(RSSCRIPT.length() + 1);
       isInline = true;
+    } else if (givenName.toLowerCase().startsWith(RRSCRIPT.toLowerCase())) {
+      givenScriptScriptType = RRSCRIPT;
+      givenScriptName = null;
+      givenScriptScript = givenName.substring(RRSCRIPT.length() + 1);
+      isInline = true;
     } else if (givenName.toLowerCase().startsWith("git*")) {
       if (givenName.length() == 4) {
         givenName = gitScripts + "showcase";
@@ -451,6 +457,10 @@ public class Runner {
 
   public static int runas(String givenScriptScript) {
     return runas(givenScriptScript, false);
+  }
+
+  public static int runrobot(String givenScriptScript) {
+    return 0;
   }
 
   public static int runas(String givenScriptScript, boolean silent) {
