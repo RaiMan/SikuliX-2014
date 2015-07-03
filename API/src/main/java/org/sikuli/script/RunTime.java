@@ -391,6 +391,7 @@ public class RunTime {
   public File fAppPath = null;
   public File fSikulixAppPath = null;
   public File fSikulixExtensions = null;
+  public String[] standardExtensions = new String[]{"selenium4sikulix", "robot4sikulix"};
   public File fSikulixLib = null;
   public File fSikulixStore;
   public File fSikulixDownloadsGeneric = null;
@@ -669,21 +670,36 @@ Point pNull = new Point(0, 0);
 		fSxProjectTestScripts = new File(fSxProject, "StuffContainer/testScripts");
     }
 
-    String optClasspath = getOption("classpath");
-    if (!optClasspath.isEmpty()) {
-      String items[] = optClasspath.split(System.getProperty("path.separator"));
-      if (items.length > 0) {
+    List<String> items = new ArrayList<String>();
+    if (Type.API.equals(typ)) {
+      String optJython = getOption("jython");
+      if (!optJython.isEmpty()) {
+        items.add(optJython);
+      }      
+    }
+    if (!Type.SETUP.equals(typ)) {
+      String optClasspath = getOption("classpath");
+      if (!optClasspath.isEmpty()) {
+        items.addAll(Arrays.asList(optClasspath.split(System.getProperty("path.separator"))));
+      }
+      items.addAll(Arrays.asList(standardExtensions));
+      if (items.size() > 0) {
+        String[] fList = fSikulixExtensions.list();
         for (String item : items) {
           item = item.trim();
           if (new File(item).isAbsolute()) {
             addToClasspath(item);
           } else {
-            String[] fList = fSikulixExtensions.list();
-            for (String aFile : fList) {
-              if (aFile.startsWith(item)) {
-                addToClasspath(new File(fSikulixExtensions, aFile).getAbsolutePath());
+            for (String fpFile : fList) {
+              File fFile = new File(fSikulixExtensions, fpFile);
+              if (fFile.length() > 0) {
+                if (fpFile.startsWith(item)) {
+                  addToClasspath(fFile.getAbsolutePath());
+                  break;
+                }
+              } else {
+                fFile.delete();
               }
-              break;
             }
           }
         }
