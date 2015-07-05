@@ -391,7 +391,7 @@ public class RunTime {
   public File fAppPath = null;
   public File fSikulixAppPath = null;
   public File fSikulixExtensions = null;
-  public String[] standardExtensions = new String[]{"selenium4sikulix", "robot4sikulix"};
+  public String[] standardExtensions = new String[]{"selenium4sikulix"};
   public File fSikulixLib = null;
   public File fSikulixStore;
   public File fSikulixDownloadsGeneric = null;
