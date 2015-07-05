@@ -502,11 +502,15 @@ public class Runner {
     File fRobot = new File(fRobotWork, sName + ".robot");
     FileManager.writeStringToFile(code, fRobot);
 //    runTime.dumpClassPath();
+    if (!initpy()) {
+      log(-1, "Running Python scripts:init failed");
+      return -999;
+    }
     String jarR4S = runTime.isOnClasspath("robot4sikulix");
     if (null != jarR4S) {
       pyRunner.addSysPath(jarR4S);
     }
-    pyRunner.showSysPath();
+//    pyRunner.showSysPath();
     pyRunner.exec("from sikuli import *;");
     pyRunner.exec("import robot.run;");
     pyRunner.exec(String.format(

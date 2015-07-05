@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 2.8.7 (Jython 2.7.0 on java1.8.0_45)" generated="20150705 14:27:11.036">
+<robot generator="Robot 2.8.7 (Jython 2.7.0 on java1.8.0_45)" generated="20150705 17:01:43.241">
 <suite source="/Users/raimundhocke/SikuliX/SikuliX-2014/StuffContainer/testScripts/testRobot/testRun.sikuli.robot/testRun.robot" name="testRun" id="s1">
 <test name="User can log in with correct user and password" id="s1-t1">
 <kw type="setup" name="LoginLibrary.Start Firefox And Goto Testsite">
@@ -7,10 +7,9 @@
 <arguments>
 <arg>${TESTSITE}</arg>
 </arguments>
-<msg level="INFO" timestamp="20150705 14:27:18.584">Firefox is started: [3306:firefox-bin (Mozilla Firefox)] firefox-bin
-[debug] App.create: [3306:firefox-bin]
-[debug] highlight R[4,23 1080x654]@S(0)[0,0 1440x900] E:Y, T:3.0 for 2.0 secs</msg>
-<status endtime="20150705 14:27:18.591" starttime="20150705 14:27:11.716" status="PASS"></status>
+<msg level="INFO" timestamp="20150705 17:01:49.202">Firefox is started: [3550:firefox-bin (Mozilla Firefox)] firefox-bin
+[debug] App.create: [3550:firefox-bin]</msg>
+<status endtime="20150705 17:01:49.205" starttime="20150705 17:01:43.886" status="PASS"></status>
 </kw>
 <kw type="kw" name="LoginLibrary.Attempt To Login With Credentials">
 <doc></doc>
@@ -18,44 +17,38 @@
 <arg>${USERNAME}</arg>
 <arg>${PASSWORD}</arg>
 </arguments>
-<msg level="INFO" timestamp="20150705 14:27:27.871">attempt_to_login_with_credentials demo mode
+<msg level="INFO" timestamp="20150705 17:01:58.333">attempt_to_login_with_credentials demo mode
 [debug] Image: loaded: login.png (file:/Users/raimundhocke/SikuliX/SikuliX-2014/StuffContainer/testScripts/testRobot/testRun.sikuli/login.png)
 [debug] Image: cached: login.png (31 KB) (# 1 KB 31 -- 0 % of 64 MB)
 [debug] Region: exists: waiting 3.0 secs for P(login.png) S: 0.7 T: 13,106 to appear in R[4,23 1080x654]@S(0)
 [debug] Region: exists: P(login.png) S: 0.7 T: 13,106 has appeared 
-at M[296,197 189x57]@S(S(0)[0,0 1440x900]) S:1.00 T:403,331 [179 msec]
-[debug] highlight M[296,197 189x57]@S(S(0)[0,0 1440x900]) S:1.00 T:403,331 [179 msec] for 2.0 secs
+at M[296,197 189x57]@S(S(0)[0,0 1440x900]) S:1.00 T:403,331 [163 msec]
 [debug] Region: init: (396, 323, 179, 22)
-[debug] highlight R[396,323 179x22]@S(0)[0,0 1440x900] E:Y, T:3.0 for 2.0 secs
-[debug]  TYPE "demo"
 [debug] Region:  TYPE "demo"
 [debug] Region: init: (396, 349, 179, 22)
-[debug] highlight R[396,349 179x22]@S(0)[0,0 1440x900] E:Y, T:3.0 for 2.0 secs
-[debug]  TYPE "mode"
 [debug] Region:  TYPE "mode"
-[debug] Region: init: (396, 375, 54, 20)
-[debug] highlight R[396,375 54x20]@S(0)[0,0 1440x900] E:Y, T:3.0 for 2.0 secs</msg>
-<status endtime="20150705 14:27:27.874" starttime="20150705 14:27:18.597" status="PASS"></status>
+[debug] Region: init: (396, 375, 54, 20)</msg>
+<status endtime="20150705 17:01:58.335" starttime="20150705 17:01:49.210" status="PASS"></status>
 </kw>
 <kw type="kw" name="LoginLibrary.Status Should Be">
 <doc></doc>
 <arguments>
 <arg>Accepted</arg>
 </arguments>
-<msg level="INFO" timestamp="20150705 14:27:29.887">status_should_be Accepted</msg>
-<status endtime="20150705 14:27:29.889" starttime="20150705 14:27:27.877" status="PASS"></status>
+<msg level="INFO" timestamp="20150705 17:02:00.344">status_should_be Accepted</msg>
+<status endtime="20150705 17:02:00.346" starttime="20150705 17:01:58.338" status="PASS"></status>
 </kw>
 <kw type="teardown" name="LoginLibrary.Stop Firefox">
 <doc></doc>
 <arguments>
 </arguments>
-<msg level="INFO" timestamp="20150705 14:27:29.986">stop_firefox</msg>
-<status endtime="20150705 14:27:29.988" starttime="20150705 14:27:29.892" status="PASS"></status>
+<msg level="INFO" timestamp="20150705 17:02:00.429">stop_firefox</msg>
+<status endtime="20150705 17:02:00.430" starttime="20150705 17:02:00.349" status="PASS"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status critical="yes" endtime="20150705 14:27:29.991" starttime="20150705 14:27:11.711" status="PASS"></status>
+<status critical="yes" endtime="20150705 17:02:00.433" starttime="20150705 17:01:43.873" status="PASS"></status>
 </test>
 <test name="User cannot log in with invalid user or bad password" id="s1-t2">
 <kw type="setup" name="LoginLibrary.Start Firefox And Goto Testsite">
@@ -63,10 +56,9 @@ at M[296,197 189x57]@S(S(0)[0,0 1440x900]) S:1.00 T:403,331 [179 msec]
 <arguments>
 <arg>${TESTSITE}</arg>
 </arguments>
-<msg level="INFO" timestamp="20150705 14:27:34.522">Firefox is started: [3311:firefox-bin (Mozilla Firefox)] firefox-bin
-[debug] App.create: [3311:firefox-bin]
-[debug] highlight R[4,23 1080x654]@S(0)[0,0 1440x900] E:Y, T:3.0 for 2.0 secs</msg>
-<status endtime="20150705 14:27:34.523" starttime="20150705 14:27:30.031" status="PASS"></status>
+<msg level="INFO" timestamp="20150705 17:02:04.901">Firefox is started: [3555:firefox-bin (Mozilla Firefox)] firefox-bin
+[debug] App.create: [3555:firefox-bin]</msg>
+<status endtime="20150705 17:02:04.904" starttime="20150705 17:02:00.445" status="PASS"></status>
 </kw>
 <kw type="kw" name="LoginLibrary.Attempt To Login With Credentials">
 <doc></doc>
@@ -74,49 +66,43 @@ at M[296,197 189x57]@S(S(0)[0,0 1440x900]) S:1.00 T:403,331 [179 msec]
 <arg>betty</arg>
 <arg>wrong</arg>
 </arguments>
-<msg level="INFO" timestamp="20150705 14:27:44.032">attempt_to_login_with_credentials betty wrong
+<msg level="INFO" timestamp="20150705 17:02:14.363">attempt_to_login_with_credentials betty wrong
 [debug] Image: reused: login.png (file:/Users/raimundhocke/SikuliX/SikuliX-2014/StuffContainer/testScripts/testRobot/testRun.sikuli/login.png)
 [debug] Region: exists: waiting 3.0 secs for P(login.png) S: 0.7 T: 13,106 to appear in R[4,23 1080x654]@S(0)
 [debug] Region: checkLastSeen: not there
 [debug] Region: exists: P(login.png) S: 0.7 T: 13,106 has appeared 
-at M[296,197 189x57]@S(S(0)[0,0 1440x900]) S:1.00 T:403,331 [6 msec]
-[debug] highlight M[296,197 189x57]@S(S(0)[0,0 1440x900]) S:1.00 T:403,331 [6 msec] for 2.0 secs
+at M[296,197 189x57]@S(S(0)[0,0 1440x900]) S:1.00 T:403,331 [7 msec]
 [debug] Region: init: (396, 323, 179, 22)
-[debug] highlight R[396,323 179x22]@S(0)[0,0 1440x900] E:Y, T:3.0 for 2.0 secs
-[debug]  TYPE "betty"
 [debug] Region:  TYPE "betty"
 [debug] Region: init: (396, 349, 179, 22)
-[debug] highlight R[396,349 179x22]@S(0)[0,0 1440x900] E:Y, T:3.0 for 2.0 secs
-[debug]  TYPE "wrong"
 [debug] Region:  TYPE "wrong"
-[debug] Region: init: (396, 375, 54, 20)
-[debug] highlight R[396,375 54x20]@S(0)[0,0 1440x900] E:Y, T:3.0 for 2.0 secs</msg>
-<status endtime="20150705 14:27:44.035" starttime="20150705 14:27:34.526" status="PASS"></status>
+[debug] Region: init: (396, 375, 54, 20)</msg>
+<status endtime="20150705 17:02:14.366" starttime="20150705 17:02:04.907" status="PASS"></status>
 </kw>
 <kw type="kw" name="LoginLibrary.Status Should Be">
 <doc></doc>
 <arguments>
 <arg>Denied</arg>
 </arguments>
-<msg level="INFO" timestamp="20150705 14:27:46.041">status_should_be Denied</msg>
-<status endtime="20150705 14:27:46.043" starttime="20150705 14:27:44.038" status="PASS"></status>
+<msg level="INFO" timestamp="20150705 17:02:16.376">status_should_be Denied</msg>
+<status endtime="20150705 17:02:16.378" starttime="20150705 17:02:14.369" status="PASS"></status>
 </kw>
 <kw type="teardown" name="LoginLibrary.Stop Firefox">
 <doc></doc>
 <arguments>
 </arguments>
-<msg level="INFO" timestamp="20150705 14:27:46.134">stop_firefox</msg>
-<status endtime="20150705 14:27:46.137" starttime="20150705 14:27:46.046" status="PASS"></status>
+<msg level="INFO" timestamp="20150705 17:02:16.457">stop_firefox</msg>
+<status endtime="20150705 17:02:16.459" starttime="20150705 17:02:16.381" status="PASS"></status>
 </kw>
 <doc></doc>
 <tags>
 </tags>
-<status critical="yes" endtime="20150705 14:27:46.140" starttime="20150705 14:27:30.006" status="PASS"></status>
+<status critical="yes" endtime="20150705 17:02:16.461" starttime="20150705 17:02:00.437" status="PASS"></status>
 </test>
 <doc></doc>
 <metadata>
 </metadata>
-<status endtime="20150705 14:27:46.162" starttime="20150705 14:27:11.044" status="PASS"></status>
+<status endtime="20150705 17:02:16.474" starttime="20150705 17:01:43.250" status="PASS"></status>
 </suite>
 <statistics>
 <total>
