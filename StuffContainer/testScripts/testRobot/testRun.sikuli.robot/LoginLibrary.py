@@ -1,27 +1,3 @@
-runScript("""
-robot
-
-*** Variables ***
-${USERNAME}               demo
-${PASSWORD}               mode
-${TESTSITE}               http://test.sikuli.de
-
-*** Settings ***
-Library           ./inline/LoginLibrary
-Test Setup        start firefox and goto testsite    ${TESTSITE}
-Test Teardown     stop firefox
-
-*** Test Cases ***
-User can log in with correct user and password
-    Attempt to Login with Credentials    ${USERNAME}    ${PASSWORD}
-    Status Should Be    Accepted
-
-User cannot log in with invalid user or bad password
-    Attempt to Login with Credentials    betty    wrong
-    Status Should Be    Denied
-
-""")
-
 try:
   from selenium4sikulix import *
 except:
@@ -105,4 +81,3 @@ class LoginLibrary(object):
       loc = self.webTL.offset(loc.x, loc.y)
       dim = item.getSize()
       return Region(loc.x, loc.y, dim.width, dim.height)
- 
