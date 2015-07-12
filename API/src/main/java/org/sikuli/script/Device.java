@@ -42,6 +42,7 @@ public class Device {
   protected int MouseMovedPause = 2;
   protected int MouseMovedAction = 3;
   protected int mouseMovedResponse = MouseMovedIgnore;
+  protected boolean MouseMovedHighlight = true;
   protected ObserverCallBack mouseMovedCallback = null;
   protected ObserverCallBack callback = null;
   private  boolean shouldRunCallback = false;
@@ -251,13 +252,17 @@ public class Device {
       log(lvl, "%s: moved externally: now (%d,%d) was (%d,%d) (mouseMovedResponse %d)",
               devName, pos.x, pos.y, lastPos.x, lastPos.y, mouseMovedResponse);
       if (mouseMovedResponse > 0) {
-        showMousePos(pos.getPoint());
+        if (MouseMovedHighlight) {
+          showMousePos(pos.getPoint());
+        }
       }
       if (mouseMovedResponse == MouseMovedPause) {
 				while (pos.x > 0 && pos.y > 0) {
 					delay(500);
 					pos = getLocation();
-					showMousePos(pos.getPoint());
+          if (MouseMovedHighlight) {
+    				showMousePos(pos.getPoint());
+          }
 				}
 				if (pos.x < 1) {
 					return;
