@@ -481,6 +481,8 @@ public class Runner {
     pyCode = pyCode.substring(prefix + 4).trim();
     int refLib = code.indexOf("./inline/");
     String sLib = "";
+    File fInline = null;
+    String fpInline = "";
     if (!pyCode.isEmpty()) {
       if (refLib < 0) {
         log(-1, "runRobot: invalid robot text structure");
@@ -493,24 +495,34 @@ public class Runner {
         log(-1, "runRobot: invalid robot text structure");
         return -1;
       }
+      refLib = code.indexOf("./jar/");
+      if (refLib > -1) {
+        sLib = code.substring(refLib + 6);
+        sLib = sLib.substring(0, sLib.indexOf("\n")).trim();
+        fInline = new File (sLib + ".jar");
+        if (!fInline.isAbsolute()) {
+          fInline = new File(fRobotWork, sLib + ".jar");
+        }
+        runTime.addToClasspath(fInline.getAbsolutePath());
+        sLib = "";
+      }
     }
     if (!sLib.isEmpty()) {
-      File fInline = new File(fRobotWork, sLib + ".py");      
+      fInline = new File(fRobotWork, sLib + ".py");      
       FileManager.writeStringToFile(pyCode, fInline);
-      code = code.replace("./inline/" + sLib, fInline.getAbsolutePath());
+      fpInline = fInline.getAbsolutePath().replaceAll("\\", "\\\\");
+      code = code.replace("./inline/" + sLib, fpInline);
     }
     File fRobot = new File(fRobotWork, sName + ".robot");
     FileManager.writeStringToFile(code, fRobot);
-//    runTime.dumpClassPath();
     if (!initpy()) {
       log(-1, "Running Python scripts:init failed");
       return -999;
     }
-    String jarR4S = runTime.isOnClasspath("robot4sikulix");
-    if (null != jarR4S) {
-      pyRunner.addSysPath(jarR4S);
-    }
-//    pyRunner.showSysPath();
+//    String jarR4S = runTime.isOnClasspath("robot4sikulix");
+//    if (null != jarR4S) {
+//      pyRunner.addSysPath(jarR4S);
+//    }
     pyRunner.exec("from sikuli import *;");
     pyRunner.exec("import robot.run;");
     pyRunner.exec(String.format(
