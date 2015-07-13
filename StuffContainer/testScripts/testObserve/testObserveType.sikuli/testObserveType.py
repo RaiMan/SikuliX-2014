@@ -1,2 +1,5 @@
-import org.sikuli.script.ObserveEvent as OE
-print OE.Type.APPEAR.toString() == "APPEAR"
+def handler(e):
+  print str(e.type) == "APPEAR"
+
+onAppear("icon.png", handler)
+observe()

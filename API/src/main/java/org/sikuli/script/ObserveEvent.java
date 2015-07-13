@@ -54,6 +54,46 @@ public class ObserveEvent {
       setPattern(ptn);
     }
 	}
+  
+  /**
+   * get the observe event type
+   * @return a string containing either APPEAR, VANISH, CHANGE or GENERIC
+   */
+  public String getType() {
+    return type.toString();
+  }
+  
+  /**
+   * check the observe event type
+   * @return true if it is APPEAR, false otherwise
+   */
+  public boolean isAppear() {
+    return type == Type.APPEAR;
+  }
+
+ /**
+   * check the observe event type
+   * @return true if it is VANISH, false otherwise
+   */
+   public boolean isVanish() {
+    return type == Type.VANISH;
+  }
+
+ /**
+   * check the observe event type
+   * @return true if it is CHANGE, false otherwise
+   */
+   public boolean isChange() {
+    return type == Type.CHANGE;
+  }
+
+ /**
+   * check the observe event type
+   * @return true if it is GENERIC, false otherwise
+   */
+   public boolean isGeneric() {
+    return type == Type.GENERIC;
+  }
 
   /**
    * for type GENERIC: 3 values can be stored in the event
