@@ -1,5 +1,7 @@
 def handler(e):
-  print str(e.type) == "APPEAR"
+  print "event type is", e.getType()
+  if e.isAppear():
+    print "isAppear() returns: True"
 
 onAppear("icon.png", handler)
 observe()
