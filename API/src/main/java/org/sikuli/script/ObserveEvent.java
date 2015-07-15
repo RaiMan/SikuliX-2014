@@ -21,7 +21,7 @@ public class ObserveEvent {
   /**
    * the event's type as ObserveEvent.APPEAR, .VANISH, .CHANGE
    */
-  public Type type;
+  private Type type;
 
   private Region region = null;
   private Object pattern = null;
