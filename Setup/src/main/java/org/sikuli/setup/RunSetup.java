@@ -120,7 +120,7 @@ public class RunSetup {
 	private static boolean bequiet = false;
   private static String sikulixMavenGroup = "com/sikulix/";
 	private static boolean testingMaven = false;
-  private static boolean withExtensions = true;
+  private static boolean withExtensions = false;
 
   static Map <String, String> downloadsLookfor = new HashMap<String, String>();
   static Map <String, File> downloadsFound = new HashMap<String, File>();
@@ -491,7 +491,7 @@ public class RunSetup {
       Settings.proxyChecked = true;
       //</editor-fold>
 
-//<editor-fold defaultstate="collapsed" desc="evaluate setup options">
+    //<editor-fold defaultstate="collapsed" desc="evaluate setup options">
       if (winSU.option1.isSelected()) {
         getIDE = true;
         if (winSU.option2.isSelected()) {
@@ -775,9 +775,11 @@ public class RunSetup {
         sDownloaded = item;
         sDownloadedName = item + ".jar";
         fTargetJar = new File(runTime.fSikulixExtensions, sDownloadedName);
-        if (!runTime.SikuliVersionType.isEmpty() || fTargetJar.length() == 0) {
+        if (!fTargetJar.exists()) {
           fDownloaded = download(runTime.downloadBaseDir, runTime.fSikulixExtensions.getAbsolutePath(), sDownloadedName, item);
           downloadOK &= fDownloaded != null;
+        } else {
+          logPlus(lvl, "request to download: %s ignored - already there", sDownloadedName);
         }
       }
     }
