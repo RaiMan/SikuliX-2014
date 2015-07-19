@@ -22,7 +22,6 @@ The coordinates:<br>
 `<version>... see below ...</version>`
 
 available versions:<br>
-1.1.0-Beta4-SNAPSHOT (state of the respective target)<br>
 1.1.0-SNAPSHOT (the latest version towards final)
 
 find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/SikuliX-2014/tree/master/TestRunMaven)

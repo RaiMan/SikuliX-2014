@@ -510,8 +510,8 @@ public class Runner {
     if (!sLib.isEmpty()) {
       fInline = new File(fRobotWork, sLib + ".py");      
       FileManager.writeStringToFile(pyCode, fInline);
-      fpInline = fInline.getAbsolutePath().replaceAll("\\", "\\\\");
-      code = code.replace("./inline/" + sLib, fpInline);
+      fpInline = FileManager.slashify(fInline.getAbsolutePath(), false);
+      code = code.replace("./inline/" + sLib, fpInline );
     }
     File fRobot = new File(fRobotWork, sName + ".robot");
     FileManager.writeStringToFile(code, fRobot);
