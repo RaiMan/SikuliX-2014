@@ -46,6 +46,7 @@ public class Mouse {
   public static final int RIGHT = InputEvent.BUTTON3_MASK;
   public static final int WHEEL_UP = -1;
   public static int WHEEL_DOWN = 1;
+  public static int WHEEL_STEP_DELAY = 50;
 
   private Mouse() {
   }
@@ -406,6 +407,10 @@ public class Mouse {
   }
 
   protected static void wheel(int direction, int steps, Region region) {
+    wheel(direction,steps,region, WHEEL_STEP_DELAY);
+  }
+    
+  protected static void wheel(int direction, int steps, Region region, int stepDelay) {
     if (get().device.isSuspended()) {
       return;
     }
@@ -415,7 +420,7 @@ public class Mouse {
             (direction == WHEEL_UP ? "WHEEL_UP" : "WHEEL_DOWN"), steps);
     for (int i = 0; i < steps; i++) {
       r.mouseWheel(direction);
-      r.delay(50);
+      r.delay(stepDelay);
     }
     get().device.let(region);
   }
