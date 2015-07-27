@@ -46,7 +46,7 @@ public class Mouse {
   public static final int RIGHT = InputEvent.BUTTON3_MASK;
   public static final int WHEEL_UP = -1;
   public static int WHEEL_DOWN = 1;
-  public static int WHEEL_STEP_DELAY = 50;
+  public static final int WHEEL_STEP_DELAY = 50;
 
   private Mouse() {
   }
