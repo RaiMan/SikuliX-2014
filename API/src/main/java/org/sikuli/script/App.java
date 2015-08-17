@@ -246,17 +246,18 @@ public class App {
       }
       if (appName.startsWith("\"")) {
         execName = appName.substring(1, appName.length()-1);
-        appName = new File(execName).getName();
       } else {
         execName = appName;
-        appName = new File(appName).getName();
       }
-      if (!new File(execName).exists()) {
-        appName = "";
-        appOptions = "";
-        appWindow = "!";
-        notFound = true;
-        init("!" + appNameGiven);
+      appName = new File(execName).getName();
+      File checkName = new File(execName);
+      if (checkName.isAbsolute()) {
+        if (!checkName.exists()) {
+          appName = "";
+          appOptions = "";
+          appWindow = "!";
+          notFound = true;
+        }
       }
       Debug.log(3, "App.immediate: %s", appNameGiven);
     } else {
@@ -450,14 +451,12 @@ public class App {
    * @return this or null on failure
    */
   public App open() {
-    int pid;
     if (isImmediate) {
-      pid = _osUtil.open(appNameGiven);
+      appPID = _osUtil.open(appNameGiven);
     } else {
-      pid = _osUtil.open(makeAppEntry());
-      init(pid);
+      init(_osUtil.open(makeAppEntry()));
     }
-    if (pid < 0) {
+    if (appPID < 0) {
       Debug.error("App.open failed: " + appNameGiven + " not found");
       notFound = true;
     } else {
@@ -493,12 +492,13 @@ public class App {
     if (appPID > -1) {
       init(appPID);
     } else if (isImmediate) {
-//      init();
+      init();
     }
     int ret = _osUtil.close(makeAppEntry());
     if (ret > -1) {
       Debug.action("App.close: %s", this.toStringShort());
       appPID = -1;
+      appWindow = "";
     } else {
       Debug.error("App.close %s did not work", this);
     }
@@ -556,9 +556,12 @@ public class App {
         return this;
       }
     }
-    int pid = -1;
-    pid = _osUtil.switchto(makeAppEntry(), num);
-    if (pid < 0) {
+    if (isImmediate) {
+      appPID = _osUtil.switchto(appNameGiven, num);
+    } else {
+      init(_osUtil.switchto(makeAppEntry(), num));
+    }
+    if (appPID < 0) {
       Debug.error("App.focus failed: " + (num > 0 ? " #" + num : "") + " " + this.toString());
       return null;
     } else {
