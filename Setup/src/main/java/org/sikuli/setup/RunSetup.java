@@ -200,7 +200,7 @@ public class RunSetup {
     }
 
     options.addAll(Arrays.asList(args));
-
+    
     //<editor-fold defaultstate="collapsed" desc="options return version">
     if (args.length > 0 && "stamp".equals(args[0])) {
       System.out.println(runTime.SikuliProjectVersion + "-" + runTime.sxBuildStamp);
@@ -320,8 +320,14 @@ public class RunSetup {
     localLogfile = "SikuliX-" + version + "-SetupLog.txt";
 
     if (options.size() > 0) {
-      popError("invalid command line options - terminating");
-      System.exit(999);
+      if (!"-jar".equals(options.get(0))) {
+        System.out.println("invalid command line options - terminating");
+        for (String opt : options) {
+          System.out.println("option: " + opt);
+        }
+        System.exit(-1);
+      }
+      log(lvl, "Seems to be run using mvn exec:exec");
     }
 
     //<editor-fold defaultstate="collapsed" desc="general preps">
