@@ -3703,8 +3703,9 @@ public class Region {
   }
 
   /**
-   * finalize a drag action with a drop: move mouse to given target <br>wait Settings.DelayBeforeDrop <br>release the
-   * left mouse button
+   * finalize a drag action with a drop: move mouse to given target <br>
+   * wait Settings.DelayBeforeDrop <br>
+   * before releasing the left mouse button
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
    * @param target Pattern, Filename, Text, Region, Match or Location
