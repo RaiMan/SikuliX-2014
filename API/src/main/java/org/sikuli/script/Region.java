@@ -356,7 +356,7 @@ public class Region {
 	 * @return true if yes, false otherwise
 	 */
 	public boolean isValid() {
-		return scr != null;
+		return scr != null && w != 0 && h != 0;
 	}
   //</editor-fold>
 
@@ -423,11 +423,26 @@ public class Region {
    * @param r the region
    */
   public Region(Region r) {
-    this(r.x, r.y, r.w, r.h, r.getScreen());
-    this.rows = 0;
+    init(r);
+  }
+  
+  public void init(Region r) {
+    if (!r.isValid()) {
+      return;
+    }
+    x = r.x;
+    y = r.y;
+    w = r.w;
+    h = r.h;
+    scr = r.getScreen();
+    otherScreen =r.isOtherScreen();
+    rows = 0;
     autoWaitTimeout = r.autoWaitTimeout;
     findFailedResponse = r.findFailedResponse;
     throwException = r.throwException;
+    waitScanRate = r.waitScanRate;
+    observeScanRate = r.observeScanRate;
+    repeatWaitTime = r.repeatWaitTime;
   }
 
   //</editor-fold>
