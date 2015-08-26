@@ -208,7 +208,9 @@ public class App {
     if (notFound) {
       name = "!" + name;
     }
-    return new AppEntry(name, getPID().toString(), window, appNameGiven, appOptions);
+    String pid = getPID().toString();
+    AppEntry appEntry = new AppEntry(name, pid, window, appNameGiven, appOptions);
+    return appEntry;
   }
 //</editor-fold>
 
@@ -280,9 +282,6 @@ public class App {
         }
       } else {
         appName = new File(appNameGiven).getName();
-        if (runTime.runningMac) {
-          appName = appName.replace(".app", "");
-        }
       }
     }
   }
@@ -454,7 +453,8 @@ public class App {
     if (isImmediate) {
       appPID = _osUtil.open(appNameGiven);
     } else {
-      init(_osUtil.open(makeAppEntry()));
+      AppEntry appEntry = makeAppEntry();
+      init(_osUtil.open(appEntry));
     }
     if (appPID < 0) {
       Debug.error("App.open failed: " + appNameGiven + " not found");
