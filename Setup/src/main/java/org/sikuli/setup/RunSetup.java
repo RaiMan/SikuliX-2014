@@ -328,6 +328,13 @@ public class RunSetup {
         System.exit(-1);
       }
       log(lvl, "Seems to be run using mvn exec:exec");
+    } else {
+      logPlus(lvl, "command line options:");
+      String strArgs = "";
+      for (String arg : args) {
+        strArgs += arg + " ";
+      }
+      logPlus(lvl, "%s", strArgs);
     }
 
     //<editor-fold defaultstate="collapsed" desc="general preps">
