@@ -906,6 +906,9 @@ public class Runner {
         Runner.log(-1, "Running Python scripts:init failed");
         return -999;
       }
+      if (args == null || args.length == 0) {
+        args = RunTime.get().getArgs();
+      }
       String[] newArgs = new String[args.length + 1];
       for (int i = 0; i < args.length; i++) {
         newArgs[i + 1] = args[i];

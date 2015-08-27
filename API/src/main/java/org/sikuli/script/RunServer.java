@@ -41,11 +41,18 @@ public class RunServer {
 		if (args == null) {
 			args = new String[0];
 		}
+    String userArgs = "";
+    for (String userArg : RunTime.get().getArgs()) {
+      userArgs += userArg + " ";
+    }
+    if (!userArgs.isEmpty()) {
+      userArgs = "\nWith User parameters: " + userArgs;
+    }
     int port = getPort(args.length > 0 ? args[0] : null);
     try {
       try {
         if (port > 0) {
-					log(3, "Starting: trying port: %d", port);
+					log(3, "Starting: trying port: %d %s", port, userArgs);
           server = new ServerSocket(port);
         }
       } catch (Exception ex) {

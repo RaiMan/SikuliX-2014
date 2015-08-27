@@ -176,11 +176,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     runTime = RunTime.get(RunTime.Type.IDE, args);
 
-    if (RunTime.shouldRunServer) {
-      RunServer.run(null);
-      System.exit(0);
-    }
-
     getInstance();
     log(3, "running with Locale: %s", SikuliIDEI18N.getLocaleShow());
 
@@ -192,6 +187,13 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     if (cmdLine == null) {
       Debug.error("Did not find any valid option on command line!");
       System.exit(1);
+    }
+
+    runTime.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
+
+    if (RunTime.shouldRunServer) {
+      RunServer.run(null);
+      System.exit(0);
     }
 
     if (cmdLine.hasOption("h")) {
@@ -247,7 +249,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       }
     }
 
-    runTime.setArgs(cmdArgs.getUserArgs(), cmdArgs.getSikuliArgs());
     runTime.printArgs();
 
     try {
