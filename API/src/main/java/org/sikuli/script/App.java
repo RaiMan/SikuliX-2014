@@ -268,21 +268,22 @@ public class App {
     if (appPID > -1) {
       Debug.log(3, "App.create: %s", toStringShort());
     } else {
-      if (runTime.runningWindows) {
-        if (!isImmediate && appOptions.isEmpty()) {
-          int pid = _osUtil.switchto(appNameGiven);
-          if (pid > 0) {
-            init(pid);
-            appWindow = "!" + appNameGiven;
-            Debug.log(3, "App.create: %s", toStringShort());
-          } else {
-            appPID = -1;
-            appName = "";
-          }
-        }
-      } else {
+//      if (runTime.runningWindows) {
+//        if (!isImmediate && appOptions.isEmpty()) {
+////          int pid = -1;
+//          int pid = _osUtil.switchto(appNameGiven);
+//          if (pid > 0) {
+//            init(pid);
+//            appWindow = "!" + appNameGiven;
+//            Debug.log(3, "App.create: %s", toStringShort());
+//          } else {
+//            appPID = -1;
+//            appName = "";
+//          }
+//        }
+//      } else {
         appName = new File(appNameGiven).getName();
-      }
+//      }
     }
   }
 
