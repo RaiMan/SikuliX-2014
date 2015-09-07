@@ -1,0 +1,623 @@
+# Finnish translation for sikuli
+# Copyright (c) 2012 Rosetta Contributors and Canonical Ltd 2012
+# This file is distributed under the same license as the sikuli package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2012.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sikuli\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2011-10-19 16:28-0700\n"
+"PO-Revision-Date: 2012-12-12 12:17+0000\n"
+"Last-Translator: Aki Sivula <aki.sivula@iki.fi>\n"
+"Language-Team: Finnish <fi@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2015-09-07 08:48+0000\n"
+"X-Generator: Launchpad (build 17706)\n"
+
+#: menuFile
+msgctxt "menuFile"
+msgid "File"
+msgstr "Tiedosto"
+
+#: menuEdit
+msgid "Edit"
+msgstr "Muokkaa"
+
+#: menuRun
+msgctxt "menuRun"
+msgid "Run"
+msgstr "Suorita"
+
+#: menuView
+msgid "View"
+msgstr "Näytä"
+
+#: menuTool
+msgid "Tools"
+msgstr "Työkalut"
+
+#: menuFileNew
+msgid "New"
+msgstr "Uusi"
+
+#: menuFileOpen
+msgid "Open..."
+msgstr "Avaa..."
+
+#: menuFileSave
+msgid "Save"
+msgstr "Tallenna"
+
+#: menuFileSaveAs
+msgid "Save as..."
+msgstr "Tallenna nimellä..."
+
+#: menuFileExport
+msgid "Export excutable..."
+msgstr "Vie ajettavaksi tiedostoksi..."
+
+#: menuFilePreferences
+msgid "Preferences..."
+msgstr "Asetukset..."
+
+#: menuFileCloseTab
+msgid "Close Tab"
+msgstr "Sulje välilehti"
+
+#: menuFileQuit
+msgid "Quit"
+msgstr "Lopeta"
+
+#: menuEditUndo
+msgid "Undo"
+msgstr "Kumoa"
+
+#: menuEditRedo
+msgid "Redo"
+msgstr "Palauta"
+
+#: menuEditCut
+msgid "Cut"
+msgstr "Leikkaa"
+
+#: menuEditCopy
+msgid "Copy"
+msgstr "Kopioi"
+
+#: menuEditPaste
+msgid "Paste"
+msgstr "Liitä"
+
+#: menuEditSelectAll
+msgid "Select All"
+msgstr "Valitse kaikki"
+
+#: menuEditIndent
+msgid "Indent"
+msgstr "Sisennä"
+
+#: menuEditUnIndent
+msgid "Un-Indent"
+msgstr "Poista sisennys"
+
+#: menuFind
+msgctxt "menuFind"
+msgid "Find"
+msgstr "Etsi"
+
+#: menuFindFind
+msgid "Find..."
+msgstr "Etsi..."
+
+#: menuFindFindNext
+msgid "Find Next"
+msgstr "Etsi seuraava"
+
+#: menuFindFindPrev
+msgid "Find Previous"
+msgstr "Etsi edellinen"
+
+#: menuRunRun
+msgctxt "menuRunRun"
+msgid "Run"
+msgstr "Suorita"
+
+#: menuRunRunAndShowActions
+msgctxt "menuRunRunAndShowActions"
+msgid "Run in slow motion"
+msgstr "Suorita hidastetussa tilassa"
+
+#: menuRunStop
+msgid "Stop"
+msgstr "Seis"
+
+#: menuViewUnitTest
+msgctxt "menuViewUnitTest"
+msgid "Unit Test"
+msgstr "Yksikkötesti"
+
+#: menuViewCommandList
+msgid "Command List"
+msgstr "Komentolista"
+
+#: menuToolExtensions
+msgid "Extensions..."
+msgstr "Lisäosat..."
+
+#: menuHelp
+msgid "Help"
+msgstr "Ohje"
+
+#: menuHelpCheckUpdate
+msgid "Check Update..."
+msgstr "Tarkasta päivitykset..."
+
+#: menuHelpGuide
+msgid "The Complete Guide to Sikuli Script"
+msgstr "Täydellinen opas Sikuli-skriptiin (englanniksi)"
+
+#: menuHelpDocumentations
+msgid "Tutorials, Examples, How-To's"
+msgstr "Oppaat, esimerkit ja ohjeet (englanniksi)"
+
+#: menuHelpAsk
+msgid "Ask Questions & Find Answers"
+msgstr "Esitä kysymyksiä ja etsi vastauksia (englanniksi)"
+
+#: menuHelpBugReport
+msgid "Report a Bug"
+msgstr "Raportoi ohjelmavirheestä (englanniksi)"
+
+#: menuHelpTranslation
+msgid "Join our translation project!"
+msgstr "Liity käännösprojektiin!"
+
+#: menuHelpHomepage
+msgid "Sikuli's Homepage"
+msgstr "Sikulin kotisivut"
+
+#: dlgUpdateAvailable
+msgid "Sikuli {0} is available!"
+msgstr "Sikuli {0} on saatavilla."
+
+#: msgNoUpdate
+msgid "No update is available."
+msgstr "Päivitystä ei saatavilla."
+
+#: cmdListSettings
+msgid "Settings"
+msgstr "Asetukset"
+
+#: cmdListAutoCapture
+msgid "Auto Capture"
+msgstr "Automaattinen kuvankaappaus"
+
+#: cmdListFind
+msgctxt "cmdListFind"
+msgid "Find"
+msgstr "Etsi"
+
+#: cmdListMouse
+msgid "Mouse Actions"
+msgstr "Hiiritoiminnot"
+
+#: cmdListKeyboard
+msgid "Keyboard Actions"
+msgstr "Näppäimistötoiminnot"
+
+#: cmdListObserver
+msgid "Event Observation"
+msgstr "Tapahtumien seuranta"
+
+#: paneMessage
+msgid "Message"
+msgstr "Viesti"
+
+#: paneTestTrace
+msgid "Test Trace"
+msgstr "Testin jäljitys"
+
+#: tabUntitled
+msgid "Untitled"
+msgstr "Nimetön"
+
+#: tabUnitTest
+msgctxt "tabUnitTest"
+msgid "Unit Test"
+msgstr "Yksikkötesti"
+
+#: btnRun
+msgid "Run ({0})"
+msgstr "Suorita ({0})"
+
+#: btnRunLabel
+msgctxt "btnRunLabel"
+msgid "Run"
+msgstr "Suorita"
+
+#: btnRunSlowMotionLabel
+msgctxt "btnRunSlowMotionLabel"
+msgid "Run in slow motion"
+msgstr "Suoriteta hidastetussa tilassa"
+
+#: btnRunStopHint
+msgid "Press {0} to stop"
+msgstr "Paina {0} keskeyttääksesi suorituksen"
+
+#: btnRegionLabel
+msgid "Create Region"
+msgstr "Luo alue"
+
+#: btnRegionHint
+msgid "Create a region to restrict screen matching"
+msgstr "Rajaa alue yhteensopivan kuvan etsintää varten"
+
+#: btnCaptureLabel
+msgid "Take screenshot"
+msgstr "Ota kuvankaappaus"
+
+#: btnCaptureHint
+msgid "Take a screenshot ({0})"
+msgstr "Ota kuvankaappaus ({0})"
+
+#: btnInsertImageHint
+msgid "Insert an image from disks"
+msgstr "Lisää aiemmin tallennettu kuva"
+
+#: btnInsertImageLabel
+msgid "Insert image "
+msgstr "Lisää kuva "
+
+#: msgRunningSklError
+msgid ""
+"Runtime Error when running {0}\n"
+"{1}"
+msgstr ""
+"Ajonaikainen virhe suoritettaessa kohdetta {0}\n"
+"{1}"
+
+#: msgExit
+msgid "Exited with code {0}"
+msgstr "Poistuttu suorituksesta koodilla {0}"
+
+#: msgStopped
+msgid "Stopped"
+msgstr "Pysäytetty"
+
+#: msgErrorLine
+msgid "An error occurs at line {0}"
+msgstr "Virhe rivillä {0}"
+
+#: msgErrorMsg
+msgid ""
+"Error message:\n"
+"{0}"
+msgstr ""
+"Virheilmoitus:\n"
+"{0}"
+
+#: msgCapturePrompt
+msgid "Select a region on the screen"
+msgstr "Valitse alue näytöltä"
+
+#: winPreferences
+msgid "Preferences"
+msgstr "Asetukset"
+
+#: PreferencesWin.chkExpandTab.text
+msgid "Tab key inserts spaces instead of tab"
+msgstr "Sarkain-näppäin lisää välilyöntejä sarkaimen sijaan"
+
+#: PreferencesWin.lblUpdates.text
+msgid "Updates"
+msgstr "Päivitykset"
+
+#: PreferencesWin.lblLanguage.text
+msgid "Language"
+msgstr "Kieli"
+
+#: PreferencesWin.lblTabWidth.text
+msgid "Tab width:"
+msgstr "Sarkaimen leveys:"
+
+#: PreferencesWin.lblFont.text
+msgid "Font name:"
+msgstr "Fontin nimi:"
+
+#: PreferencesWin.lblFontSize.text
+msgid "Size:"
+msgstr "Koko:"
+
+#: PreferencesWin.titleAppearance.textWithMnemonic
+msgid "Fonts"
+msgstr "Fontit"
+
+#: PreferencesWin.titleIndentation.textWithMnemonic
+msgid "Indentation"
+msgstr "Sisennys"
+
+#: PreferencesWin.paneTextEditing.tab.title
+msgid "Text Editing"
+msgstr "Tekstin muokkaaminen"
+
+#: prefTabScreenCapturing
+msgid "Screen Capturing"
+msgstr "Kuvankaappaus"
+
+#: prefCaptureHotkey
+msgid "Quick capture hotkey:"
+msgstr "Pikakaappauksen pikanäppäin:"
+
+#: prefCaptureDelay
+msgid "Delay before capture:"
+msgstr "Viive ennen kuvankaappausta:"
+
+#: prefSeconds
+msgid "seconds"
+msgstr "sekuntia"
+
+#: prefAutoNaming
+msgid "Automatic Naming:"
+msgstr "Automaattinen nimeäminen:"
+
+#: prefTimestamp
+msgid "time stamp"
+msgstr "aikaleima"
+
+#: prefRecognizedText
+msgid "text in the image"
+msgstr "kuvateksti"
+
+#: prefManualInput
+msgid "off (manual input)"
+msgstr "pois päältä (manuaalinen syöttö)"
+
+#: prefTabGeneralSettings
+msgid "General Settings"
+msgstr "Yleiset asetukset"
+
+#: prefGeneralAutoCheck
+msgid "Check Update Automatically"
+msgstr "Tarkasta päivitykset automaattisesti"
+
+#: dlgAskCloseTab
+msgid "Do you want to close this tab?"
+msgstr "Haluatko sulkea tämän välilehden?"
+
+#: msgAskSaveChanges
+msgid "{0} has been modified. Save changes?"
+msgstr "Tiedostoa {0} on muokattu. Tallennetaanko muutokset?"
+
+#: statusLineColumn
+msgid "Line: {0,number,integer}, Column: {1,number,integer}"
+msgstr "Rivi: {0,number,integer}, Sarake: {1,number,integer}"
+
+#: winPatternSettings
+msgid "Pattern Settings"
+msgstr "Mallin asetukset"
+
+#: tabNaming
+msgctxt "tabNaming"
+msgid "File"
+msgstr "Tiedosto"
+
+#: tabMatchingPreview
+msgid "Matching Preview"
+msgstr "Yhteensopivuuden esikatselu"
+
+#: tabTargetOffset
+msgid "Target Offset"
+msgstr "Kohteen poikkeama"
+
+#: lblPath
+msgid "Path:"
+msgstr "Polku:"
+
+#: lblFilename
+msgid "Filename:"
+msgstr "Tiedostonnimi:"
+
+#: lblSimilarity
+msgid "Similarity:"
+msgstr "Samankaltaisuus:"
+
+#: lblNumberOfMatches
+msgid "Number of matches/Max:"
+msgstr "Täsmäävien määrä / Maks:"
+
+#: lblTargetOffsetX
+msgid "Target offset  X:"
+msgstr "Kohteen poikkeama X:"
+
+#: lblTargetOffsetY
+msgid ", Y:"
+msgstr ", Y:"
+
+#: ok
+msgid "OK"
+msgstr "Ok"
+
+#: apply
+msgid "Apply"
+msgstr "Käytä"
+
+#: cancel
+msgid "Cancel"
+msgstr "Peruuta"
+
+#: yes
+msgid "Yes"
+msgstr "Kyllä"
+
+#: no
+msgid "No"
+msgstr "Ei"
+
+#: dlgFileExists
+msgid "File Exists"
+msgstr "Tiedosto on jo olemassa"
+
+#: msgFileExists
+msgid "Are you sure to overwrite this file \"{0}\"?"
+msgstr "Oletko varma, että haluat ylikirjoittaa tiedoston \"{0}\"?"
+
+#: dlgEnterScreenshotFilename
+msgid "Name The Screen Shot"
+msgstr "Kuvankaappauksen nimi"
+
+#: msgEnterScreenshotFilename
+msgid "Enter the screen shot's file name:"
+msgstr "Kirjoita kuvankaappauksen tiedostonnimi:"
+
+#: cmdFind
+msgid ""
+"Looks for the best matched GUI component on the screen or in the Region."
+msgstr ""
+"Näyttää parhaiten täsmäävän GUI-komponentin näytöllä tai määritellyllä "
+"alueella."
+
+#: cmdFindAll
+msgid "Looks for all matched GUI component on the screen or in the Region."
+msgstr ""
+"Näyttää kaikki GUI-komponentteihin täsmäävät osumat koko näytöllä tai "
+"määritellyllä alueella."
+
+#: cmdWait
+msgid ""
+"Waits the given GUI component to appear on the screen or in the Region for "
+"up to <i>timeout</i> seconds."
+msgstr ""
+"Odottaa, että annettu GUI-komponentti ilmestyy koko näytölle tai "
+"määritellylle aluelle kunnes <i>timeout</i> sekuntia on kulunut."
+
+#: cmdWaitVanish
+msgid ""
+"Waits the given GUI component to disappear on the screen or in the Region "
+"for up to <i>timeout</i> seconds."
+msgstr ""
+"Odottaa, että annettu GUI-komponentti katoaa koko näytöltä tai määritellyltä "
+"alueelta kunnes <i>timeout</i> sekuntia on kulunut."
+
+#: cmdExists
+msgid ""
+"Checks if the given GUI component exists on the screen or in the "
+"Region.<br>If it can not be found, None is returned without throwing an "
+"exception."
+msgstr ""
+"Tarkastaa onko määriteltyä GUI-komponenttia koko näytöllä tai määritellyllä "
+"alueella.<br>Jos sitä ei löydy, palautetaan arvona None ilman poikkeuksen "
+"asettamista (exception)."
+
+#: cmdClick
+msgid ""
+"Clicks on the best matched GUI component on the screen or in the Region."
+msgstr ""
+"Napsauttaa parhaiten täsmäävää GUI-komponenttia koko näytöllä tai "
+"määritellyllä alueella."
+
+#: cmdDoubleClick
+msgid ""
+"Double clicks on the best matched GUI component on the screen or in the "
+"Region."
+msgstr ""
+"Kaksoisnapsauttaa parhaiten täsmääviä GUI-komponentteja koko näytöllä tai "
+"määritellyllä alueella."
+
+#: cmdRightClick
+msgid ""
+"Right clicks on the best matched GUI component on the screen or in the "
+"Region."
+msgstr ""
+"Napsauttaa oikealla hiirennapilla parhaiten täsmäävää "
+"käyttöliittymäkomponenttia koko näytöllä tai määritellyllä alueella."
+
+#: cmdHover
+msgid "Moves the mouse cursor on the best matched GUI component."
+msgstr ""
+"Siirtää hiiren osoittimen parhaiten täsmäävän käyttöliittymäkomponentin "
+"päälle."
+
+#: cmdDragDrop
+msgid "Drags the first component, and drops at the second component."
+msgstr "Raahaa ensimmäisen komponentin ja pudottaa toisen komponentin."
+
+#: cmdType
+msgid "Types the given <i>text</i> to the current focused window."
+msgstr ""
+"Kirjoittaa annetun <i>merkkijonon</i> kenttään jossa fokus tällä hetkellä on."
+
+#: cmdType2
+msgid ""
+"Clicks on the given component to gain the focus and then types the given "
+"<i>text</i>."
+msgstr ""
+"Napsauttaa annettua komponenttia fokuksen asettamiseksi ja tämän jälkeen "
+"kirjoittaa annetun <i>text</i>."
+
+#: cmdPaste
+msgid "Pastes the given <i>text</i> to the current focused window."
+msgstr "Liittää annetun <i>text</i> tällä hetkellä aktiiviseen kenttään."
+
+#: cmdPaste2
+msgid ""
+"Clicks on the given component to gain the focus and then pastes the given "
+"<i>text</i>."
+msgstr ""
+"Napsauttaa annettua komponenttia kentän fokuksen asettamiseksi ja tämän "
+"jälkeen liittää annetun <i>text</i>."
+
+#: cmdOnAppear
+msgid ""
+"Calls <i>handler</i> when the given image pattern appears on the screen or "
+"in the Region."
+msgstr ""
+"Kutsuu <i>handler</i>:ia kun määritelty kuva ilmaantuu koko näytön tai "
+"määritellyn alueen sisään."
+
+#: cmdOnVanish
+msgid ""
+"Calls <i>handler</i> when the given image pattern disappears on the screen "
+"or in the Region."
+msgstr ""
+"Kutsuu <i>handler</i>:ia kun määritelty kuva katoaa koko näytön tai "
+"määritellyn alueen sisältä."
+
+#: cmdOnChange
+msgid ""
+"Calls <i>handler</i> when anything is changed on the screen or in the Region."
+msgstr ""
+"Kutsuu <i>handler</i>:ia kun mikä tahansa muuttuu koko näytöllä tai "
+"määritellyllä alueella."
+
+#: cmdObserve
+msgid ""
+"Starts the observer to watch the screen or the Region for up to <i>time</i> "
+"seconds.<br>The observer will be run in the background if <i>background</i> "
+"is set to True."
+msgstr ""
+"Aloittaa koko näytön tai määritellyn alueen seurannan <i>time</i> "
+"sekunniksi.<br>Tarkkailija suoritetaan taustalla mikäli <i>background</i> on "
+"asetettu arvoon True (tosi)."
+
+#: extBtnInstall
+msgid "Install"
+msgstr "Asenna"
+
+#: extBtnInfo
+msgid "More Info"
+msgstr "Lisätietoja"
+
+#: extMsgInstalled
+msgid "Installed"
+msgstr "Asennettu"
+
+#: extBtnInstallVer
+msgid "Install {0}"
+msgstr "Asenna {0}"
+
+#: extBtnUpdateVer
+msgid "Update to {0}"
+msgstr "Päivitä versioon {0}"
