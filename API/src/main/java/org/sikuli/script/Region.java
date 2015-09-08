@@ -3842,12 +3842,28 @@ public class Region {
    * @throws FindFailed if the Find operation failed
    */
   public <PFRML> int wheel(PFRML target, int direction, int steps) throws FindFailed {
+    return wheel(target, direction, steps, Mouse.WHEEL_STEP_DELAY);
+  }
+    
+  /**
+   * move the mouse pointer to the given target location<br> and move the wheel the given steps in the given direction:
+   * <br>Button.WHEEL_DOWN, Button.WHEEL_UP
+   *
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location target
+   * @param target Pattern, Filename, Text, Region, Match or Location
+   * @param direction to move the wheel
+   * @param steps the number of steps
+   * @param stepDelay number of miliseconds to wait when incrementing the step value
+   * @return 1 if possible, 0 otherwise
+   * @throws FindFailed if the Find operation failed
+   */
+  public <PFRML> int wheel(PFRML target, int direction, int steps, int stepDelay) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     if (loc != null) {
       Mouse.use(this);
       Mouse.keep(this);
       Mouse.move(loc, this);
-      Mouse.wheel(direction, steps, this);
+      Mouse.wheel(direction, steps, this, stepDelay);
       Mouse.let(this);
       return 1;
     }
