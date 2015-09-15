@@ -77,7 +77,7 @@ public class LinuxUtil implements OSUtil {
       byte pidBytes[] = new byte[64];
       int len = in.read(pidBytes);
       String pidStr = new String(pidBytes, 0, len);
-      int pid = Integer.parseInt(new String(pidStr));
+      int pid = Integer.parseInt(pidStr);
       p.waitFor();
       return pid;
       //return p.exitValue();
@@ -132,6 +132,9 @@ public class LinuxUtil implements OSUtil {
 
   @Override
   public int close(App.AppEntry app) {
+    if (app.pid > 0) {
+      return close(app.pid);
+    }
     return close(app.execName);
   }
 
@@ -141,11 +144,10 @@ public class LinuxUtil implements OSUtil {
   }
 
   private enum SearchType {
-
     APP_NAME,
     WINDOW_ID,
     PID
-  };
+  }
 
   @Override
   public Rectangle getFocusedWindow() {
@@ -175,7 +177,7 @@ public class LinuxUtil implements OSUtil {
 
   private Rectangle findRegion(String appName, int winNum, SearchType type) {
     String[] winLine = findWindow(appName, winNum, type);
-    if (winLine.length >= 7) {
+    if (winLine != null && winLine.length >= 7) {
       int x = new Integer(winLine[3]);
       int y = Integer.parseInt(winLine[4]);
       int w = Integer.parseInt(winLine[5]);
@@ -239,7 +241,7 @@ public class LinuxUtil implements OSUtil {
             }
           }
 
-          if (!ok && winLine[7].toLowerCase().indexOf(appName) >= 0) {
+          if (!ok && winLine[7].toLowerCase().contains(appName)) {
             ok = true;
           }
         }
