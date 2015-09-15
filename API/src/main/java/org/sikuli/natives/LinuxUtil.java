@@ -6,12 +6,16 @@
  */
 package org.sikuli.natives;
 
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.io.*;
-import java.util.Map;
+import org.apache.commons.exec.CommandLine;
+import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.PumpStreamHandler;
 import org.sikuli.script.App;
-import org.sikuli.script.RunTime;
+
+import java.awt.*;
+import java.io.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 public class LinuxUtil implements OSUtil {
 
@@ -19,19 +23,31 @@ public class LinuxUtil implements OSUtil {
 	private static boolean xdoToolAvail = true;
 
 	@Override
-	public String getLibName() {
-		String cmdRet = RunTime.get().runcmd("wmctrl -m");
-		if (cmdRet.contains("*** error ***")) {
-			System.out.println("[error] checking: wmctrl not available or not working");
-			wmctrlAvail = false;
-		}
-		cmdRet = RunTime.get().runcmd("xdotool version");
-		if (cmdRet.contains("*** error ***")) {
-			System.out.println("[error] checking: xdotool not available or not working");
-			xdoToolAvail = false;
-		}
-		return "";
-	}
+    public void checkLibAvailability() {
+      List<CommandLine> commands = Arrays.asList(
+              CommandLine.parse("wmctrl -m"),
+              CommandLine.parse("xdotool version"),
+              CommandLine.parse("killall --version")
+      );
+      for (CommandLine cmd : commands) {
+        try {
+          DefaultExecutor executor = new DefaultExecutor();
+          executor.setExitValue(0);
+          //suppress system output
+          executor.setStreamHandler(new PumpStreamHandler(null));
+          executor.execute(cmd);
+        } catch (IOException e) {
+          String executable = cmd.toStrings()[0];
+          if (executable.equals("wmctrl")) {
+            wmctrlAvail = false;
+          }
+          if (executable.equals("xdotool")) {
+            xdoToolAvail = false;
+          }
+          throw new NativeCommandException("[error] checking: command '" + executable + "' is not executable, please check if it is installed and available!");
+        }
+      }
+    }
 
 	private boolean wmctrlIsAvail(String f) {
 		if (wmctrlAvail) {

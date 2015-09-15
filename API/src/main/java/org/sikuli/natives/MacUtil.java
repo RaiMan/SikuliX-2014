@@ -6,13 +6,13 @@
  */
 package org.sikuli.natives;
 
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.util.Map;
-import javax.swing.JOptionPane;
 import org.sikuli.script.App;
 import org.sikuli.script.RunTime;
 import org.sikuli.script.Runner;
+
+import javax.swing.*;
+import java.awt.*;
+import java.util.Map;
 
 public class MacUtil implements OSUtil {
 
@@ -21,10 +21,12 @@ public class MacUtil implements OSUtil {
   private static RunTime runTime = null;
 
 	@Override
-	public String getLibName() {
-    runTime = RunTime.get();
-		return "MacUtil";
-	}
+    public void checkLibAvailability() {
+      runTime = RunTime.get();
+      if (runTime == null) {
+        throw new NativeCommandException("Native runtime environment isn't setup correctly!");
+      }
+    }
 
   /*
   tell application "System Events"
