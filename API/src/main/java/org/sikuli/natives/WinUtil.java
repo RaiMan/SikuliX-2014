@@ -6,22 +6,22 @@
  */
 package org.sikuli.natives;
 
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import org.sikuli.basics.Debug;
 import org.sikuli.script.App;
 import org.sikuli.script.Key;
 import org.sikuli.script.RunTime;
 import org.sikuli.script.Screen;
 
+import java.awt.*;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 public class WinUtil implements OSUtil {
 
   @Override
-  public String getLibName() {
-    return "WinUtil";
+  public void checkLibAvailability() {
+    //currently not needed
   }
 
   @Override

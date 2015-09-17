@@ -24,7 +24,7 @@ public class Pattern {
   private float similarity = (float) Settings.MinSimilarity;
   private Location offset = new Location(0, 0);
   private int waitAfter = 0;
-	private boolean imagePattern = false;
+  private boolean imagePattern = false;
 
   /**
    * creates empty Pattern object at least setFilename() or setBImage() must be used before the
