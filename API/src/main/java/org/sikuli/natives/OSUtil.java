@@ -6,17 +6,22 @@
  */
 package org.sikuli.natives;
 
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.util.Map;
 import org.sikuli.script.App;
+
+import java.awt.*;
+import java.util.Map;
 
 public interface OSUtil {
   // Windows: returns PID, 0 if fails
   // Others: return 0 if succeeds, -1 if fails
 
-	public String getLibName();
-  
+  /**
+   * make a sanity check if all needed native command libraries or packages are installed.
+   *
+   * @throws NativeCommandException if some library is missing
+   */
+  void checkLibAvailability() throws NativeCommandException;
+
   public App.AppEntry getApp(int pid, String name);
 
   public Map<Integer, String[]> getApps(String name);

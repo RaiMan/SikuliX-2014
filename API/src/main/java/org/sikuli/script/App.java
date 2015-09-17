@@ -6,28 +6,19 @@
  */
 package org.sikuli.script;
 
-import java.awt.Desktop;
-import java.awt.Rectangle;
 import org.sikuli.basics.Debug;
-import java.awt.Toolkit;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
+import org.sikuli.natives.OSUtil;
+import org.sikuli.natives.SysUtil;
+
+import java.awt.*;
+import java.awt.datatransfer.*;
+import java.io.*;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import org.sikuli.natives.OSUtil;
-import org.sikuli.natives.SysUtil;
 
 /**
  * App implements features to manage (open, switch to, close) applications.
@@ -56,10 +47,8 @@ public class App {
   static {
 //TODO Sikuli hangs if App is used before Screen
     new Screen();
-		String libName = _osUtil.getLibName();
-		if (!libName.isEmpty()) {
-			RunTime.loadLibrary(libName);
-		}
+    _osUtil.checkLibAvailability();
+
     appsWindows = new HashMap<Type, String>();
     appsWindows.put(Type.EDITOR, "Notepad");
     appsWindows.put(Type.BROWSER, "Google Chrome");
