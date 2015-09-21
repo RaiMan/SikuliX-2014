@@ -60,7 +60,7 @@ public class RunTime {
     scriptProject = null;
     uScriptProject = null;
   }
- public static String appDataMsg = "";
+  public static String appDataMsg = "";
 
   public static void pause(int time) {
     try {

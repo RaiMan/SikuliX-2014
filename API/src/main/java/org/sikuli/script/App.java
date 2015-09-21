@@ -163,6 +163,20 @@ public class App {
       return null;
     }
   }
+  
+  public static void pause(int time) {
+    try {
+      Thread.sleep(time * 1000);
+    } catch (InterruptedException ex) {
+    }
+  }
+
+  public static void pause(float time) {
+    try {
+      Thread.sleep((int) (time * 1000));
+    } catch (InterruptedException ex) {
+    }
+  }
 //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="AppEntry">
@@ -417,10 +431,23 @@ public class App {
   }
 
   /**
-   * tries to open the app defined by this App instance
+   * tries to open the app defined by this App instance<br>
+   * do not wait for the app to get running
    * @return this or null on failure
    */
   public App open() {
+    return openAndWait(0);
+  }
+
+  /**
+   * tries to open the app defined by this App instance
+   * @return this or null on failure
+   */
+  public App open(int waitTime) {
+    return openAndWait(waitTime);
+  }
+  
+  public App openAndWait(int waitTime) {
     if (isImmediate) {
       appPID = _osUtil.open(appNameGiven);
     } else {
@@ -436,9 +463,13 @@ public class App {
     if (isImmediate && notFound) {
       return null;
     }
+    if (waitTime > 0) {
+      if (! isRunning(waitTime)) {
+        return null;
+      }
+    }
     return this;
   }
-
 //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="close">
