@@ -3675,8 +3675,13 @@ public class Region {
       }
       Mouse.use(this);
       r.smoothMove(loc1);
+      r.delay((int) (Settings.DelayBeforeMouseDown * 1000));
       r.mouseDown(InputEvent.BUTTON1_MASK);
-      r.delay((int) (Settings.DelayAfterDrag * 1000));
+      double DelayBeforeDrag = Settings.DelayBeforeDrag;
+      if (DelayBeforeDrag < 0.0) {
+        DelayBeforeDrag = Settings.DelayAfterDrag;
+      }
+      r.delay((int) (DelayBeforeDrag * 1000));
       r = loc2.getRobotForPoint("drop");
       if (r == null) {
         Mouse.let(this);
@@ -3685,6 +3690,10 @@ public class Region {
       r.smoothMove(loc2);
       r.delay((int) (Settings.DelayBeforeDrop * 1000));
       r.mouseUp(InputEvent.BUTTON1_MASK);
+      Settings.DelayBeforeMouseDown = Settings.DelayValue;
+      Settings.DelayAfterDrag = Settings.DelayValue;
+      Settings.DelayBeforeDrag = -Settings.DelayValue;
+      Settings.DelayBeforeDrop = Settings.DelayValue; 
       Mouse.let(this);
       return 1;
     }
@@ -3709,9 +3718,19 @@ public class Region {
       }
       Mouse.use(this);
       r.smoothMove(loc);
+      r.delay((int) (Settings.DelayBeforeMouseDown * 1000));
       r.mouseDown(InputEvent.BUTTON1_MASK);
-      r.delay((int) (Settings.DelayAfterDrag * 1000));
+      double DelayBeforeDrag = Settings.DelayBeforeDrag;
+      if (DelayBeforeDrag < 0.0) {
+        DelayBeforeDrag = Settings.DelayAfterDrag;
+      }
+      r.delay((int) (DelayBeforeDrag * 1000));
       r.waitForIdle();
+      Settings.DelayBeforeMouseDown = Settings.DelayValue;
+      Settings.DelayAfterDrag = Settings.DelayValue;
+      Settings.DelayBeforeDrag = -Settings.DelayValue;
+      Settings.DelayBeforeDrop = Settings.DelayValue; 
+      Mouse.let(this);
       return 1;
     }
     return 0;
@@ -3734,10 +3753,15 @@ public class Region {
       if (r == null) {
         return 0;
       }
+      Mouse.use(this);
       r.smoothMove(loc);
       r.delay((int) (Settings.DelayBeforeDrop * 1000));
       r.mouseUp(InputEvent.BUTTON1_MASK);
       r.waitForIdle();
+      Settings.DelayBeforeMouseDown = Settings.DelayValue;
+      Settings.DelayAfterDrag = Settings.DelayValue;
+      Settings.DelayBeforeDrag = -Settings.DelayValue;
+      Settings.DelayBeforeDrop = Settings.DelayValue; 
       Mouse.let(this);
       return 1;
     }
