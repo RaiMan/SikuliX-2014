@@ -3668,36 +3668,32 @@ public class Region {
   public <PFRML> int dragDrop(PFRML t1, PFRML t2) throws FindFailed {
     Location loc1 = getLocationFromTarget(t1);
     Location loc2 = getLocationFromTarget(t2);
+    int retVal = 0;
     if (loc1 != null && loc2 != null) {
-      IRobot r = loc1.getRobotForPoint("drag");
-      if (r == null) {
-        return 0;
-      }
-      Mouse.use(this);
-      r.smoothMove(loc1);
-      r.delay((int) (Settings.DelayBeforeMouseDown * 1000));
-      r.mouseDown(InputEvent.BUTTON1_MASK);
-      double DelayBeforeDrag = Settings.DelayBeforeDrag;
-      if (DelayBeforeDrag < 0.0) {
-        DelayBeforeDrag = Settings.DelayAfterDrag;
-      }
-      r.delay((int) (DelayBeforeDrag * 1000));
-      r = loc2.getRobotForPoint("drop");
-      if (r == null) {
+      IRobot r1 = loc1.getRobotForPoint("drag");
+      IRobot r2 = loc2.getRobotForPoint("drop");
+      if (r1 != null && r2 != null) {
+        Mouse.use(this);
+        r1.smoothMove(loc1);
+        r1.delay((int) (Settings.DelayBeforeMouseDown * 1000));
+        r1.mouseDown(InputEvent.BUTTON1_MASK);
+        double DelayBeforeDrag = Settings.DelayBeforeDrag;
+        if (DelayBeforeDrag < 0.0) {
+          DelayBeforeDrag = Settings.DelayAfterDrag;
+        }
+        r1.delay((int) (DelayBeforeDrag * 1000));
+        r2.smoothMove(loc2);
+        r2.delay((int) (Settings.DelayBeforeDrop * 1000));
+        r2.mouseUp(InputEvent.BUTTON1_MASK);
         Mouse.let(this);
-        return 0;
+        retVal = 1;
       }
-      r.smoothMove(loc2);
-      r.delay((int) (Settings.DelayBeforeDrop * 1000));
-      r.mouseUp(InputEvent.BUTTON1_MASK);
-      Settings.DelayBeforeMouseDown = Settings.DelayValue;
-      Settings.DelayAfterDrag = Settings.DelayValue;
-      Settings.DelayBeforeDrag = -Settings.DelayValue;
-      Settings.DelayBeforeDrop = Settings.DelayValue; 
-      Mouse.let(this);
-      return 1;
     }
-    return 0;
+    Settings.DelayBeforeMouseDown = Settings.DelayValue;
+    Settings.DelayAfterDrag = Settings.DelayValue;
+    Settings.DelayBeforeDrag = -Settings.DelayValue;
+    Settings.DelayBeforeDrop = Settings.DelayValue; 
+    return retVal;
   }
 
   /**
@@ -3709,31 +3705,31 @@ public class Region {
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed if not found
    */
-  public <PFRML> int drag(PFRML target) throws FindFailed {
+  public <PFRML> int drag(PFRML target) throws FindFailed {    
     Location loc = getLocationFromTarget(target);
+    int retVal = 0;
     if (loc != null) {
       IRobot r = loc.getRobotForPoint("drag");
-      if (r == null) {
-        return 0;
+      if (r != null) {
+        Mouse.use(this);
+        r.smoothMove(loc);
+        r.delay((int) (Settings.DelayBeforeMouseDown * 1000));
+        r.mouseDown(InputEvent.BUTTON1_MASK);
+        double DelayBeforeDrag = Settings.DelayBeforeDrag;
+        if (DelayBeforeDrag < 0.0) {
+          DelayBeforeDrag = Settings.DelayAfterDrag;
+        }
+        r.delay((int) (DelayBeforeDrag * 1000));
+        r.waitForIdle();
+        Mouse.let(this);
+        retVal = 1;
       }
-      Mouse.use(this);
-      r.smoothMove(loc);
-      r.delay((int) (Settings.DelayBeforeMouseDown * 1000));
-      r.mouseDown(InputEvent.BUTTON1_MASK);
-      double DelayBeforeDrag = Settings.DelayBeforeDrag;
-      if (DelayBeforeDrag < 0.0) {
-        DelayBeforeDrag = Settings.DelayAfterDrag;
-      }
-      r.delay((int) (DelayBeforeDrag * 1000));
-      r.waitForIdle();
-      Settings.DelayBeforeMouseDown = Settings.DelayValue;
-      Settings.DelayAfterDrag = Settings.DelayValue;
-      Settings.DelayBeforeDrag = -Settings.DelayValue;
-      Settings.DelayBeforeDrop = Settings.DelayValue; 
-      Mouse.let(this);
-      return 1;
     }
-    return 0;
+    Settings.DelayBeforeMouseDown = Settings.DelayValue;
+    Settings.DelayAfterDrag = Settings.DelayValue;
+    Settings.DelayBeforeDrag = -Settings.DelayValue;
+    Settings.DelayBeforeDrop = Settings.DelayValue; 
+    return retVal;
   }
 
   /**
@@ -3748,24 +3744,24 @@ public class Region {
    */
   public <PFRML> int dropAt(PFRML target) throws FindFailed {
     Location loc = getLocationFromTarget(target);
+    int retVal = 0;
     if (loc != null) {
-      IRobot r = loc.getRobotForPoint("drop");
-      if (r == null) {
-        return 0;
+      IRobot r = loc.getRobotForPoint("drag");
+      if (r != null) {
+        Mouse.use(this);
+        r.smoothMove(loc);
+        r.delay((int) (Settings.DelayBeforeDrop * 1000));
+        r.mouseUp(InputEvent.BUTTON1_MASK);
+        r.waitForIdle();
+        Mouse.let(this);
+        retVal = 1;
       }
-      Mouse.use(this);
-      r.smoothMove(loc);
-      r.delay((int) (Settings.DelayBeforeDrop * 1000));
-      r.mouseUp(InputEvent.BUTTON1_MASK);
-      r.waitForIdle();
-      Settings.DelayBeforeMouseDown = Settings.DelayValue;
-      Settings.DelayAfterDrag = Settings.DelayValue;
-      Settings.DelayBeforeDrag = -Settings.DelayValue;
-      Settings.DelayBeforeDrop = Settings.DelayValue; 
-      Mouse.let(this);
-      return 1;
     }
-    return 0;
+    Settings.DelayBeforeMouseDown = Settings.DelayValue;
+    Settings.DelayAfterDrag = Settings.DelayValue;
+    Settings.DelayBeforeDrag = -Settings.DelayValue;
+    Settings.DelayBeforeDrop = Settings.DelayValue; 
+    return retVal;
   }
   //</editor-fold>
 
