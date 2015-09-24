@@ -19,14 +19,12 @@ public class MacUtil implements OSUtil {
   private static boolean _askedToEnableAX = false;
   private String usedFeature;
   private static RunTime runTime = null;
-
+  
 	@Override
-    public void checkLibAvailability() {
-      runTime = RunTime.get();
-      if (runTime == null) {
-        throw new NativeCommandException("Native runtime environment isn't setup correctly!");
-      }
-    }
+  public void checkLibAvailability() {
+    runTime = RunTime.get();
+    RunTime.loadLibrary("MacUtil");
+  }
 
   /*
   tell application "System Events"

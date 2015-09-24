@@ -16,11 +16,11 @@ public interface OSUtil {
   // Others: return 0 if succeeds, -1 if fails
 
   /**
-   * make a sanity check if all needed native command libraries or packages are installed.
-   *
-   * @throws NativeCommandException if some library is missing
+   * check if all needed native command libraries or packages are installed<br>
+   * and load needed libraries<br>
+   * terminates if something is wrong
    */
-  void checkLibAvailability() throws NativeCommandException;
+  public void checkLibAvailability();
 
   public App.AppEntry getApp(int pid, String name);
 

@@ -9,13 +9,15 @@ package org.sikuli.natives;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
-import org.sikuli.script.App;
 
 import java.awt.*;
 import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+
+import org.sikuli.script.App;
+import org.sikuli.script.RunTime;
 
 public class LinuxUtil implements OSUtil {
 
@@ -29,6 +31,7 @@ public class LinuxUtil implements OSUtil {
               CommandLine.parse("xdotool version"),
               CommandLine.parse("killall --version")
       );
+      String msg = "";
       for (CommandLine cmd : commands) {
         try {
           DefaultExecutor executor = new DefaultExecutor();
@@ -44,8 +47,12 @@ public class LinuxUtil implements OSUtil {
           if (executable.equals("xdotool")) {
             xdoToolAvail = false;
           }
-          throw new NativeCommandException("[error] checking: command '" + executable + "' is not executable, please check if it is installed and available!");
+          msg += "command '" + executable + "' is not executable\n";
         }
+      }
+      if (!msg.isEmpty()) {
+        msg += "please check the Availability!";
+        RunTime.get().terminate (1, msg);
       }
     }
 

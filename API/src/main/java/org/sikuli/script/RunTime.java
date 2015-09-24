@@ -632,7 +632,6 @@ Point pNull = new Point(0, 0);
       fSxBaseJar = new File(base);
       String jn = fSxBaseJar.getName();
       fSxBase = fSxBaseJar.getParentFile();
-      runTime.log(3, "fSxBase: %s", fSxBase);
       log(lvl, "runs as %s in: %s", jn, fSxBase.getAbsolutePath());
       if (jn.contains("classes")) {
         runningJar = false;
@@ -663,11 +662,12 @@ Point pNull = new Point(0, 0);
         }
       }
     } else {
-      terminate(1, "no valid Java context for SikuliX available (java.security.CodeSource.getLocation() is null)");
+      terminate(1, "no valid Java context for SikuliX available "
+              + "(java.security.CodeSource.getLocation() is null)");
     }
     if (runningInProject) {
-		fSxProjectTestScriptsJS = new File(fSxProject, "StuffContainer/testScripts/testJavaScript");
-		fSxProjectTestScripts = new File(fSxProject, "StuffContainer/testScripts");
+      fSxProjectTestScriptsJS = new File(fSxProject, "StuffContainer/testScripts/testJavaScript");
+      fSxProjectTestScripts = new File(fSxProject, "StuffContainer/testScripts");
     }
 
     List<String> items = new ArrayList<String>();
@@ -831,7 +831,7 @@ Point pNull = new Point(0, 0);
     File fLib = new File(fLibsFolder, libName);
     Boolean vLib = libsLoaded.get(libName);
     if (vLib == null || !fLib.exists()) {
-      terminate(1, String.format("lib: %s not available in %s", libName, fLibsFolder));
+      terminate(1, String.format("loadlib: %s not available in %s", libName, fLibsFolder));
     }
     String msg = "loadLib: %s";
     int level = lvl;

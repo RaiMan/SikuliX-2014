@@ -21,7 +21,7 @@ public class WinUtil implements OSUtil {
 
   @Override
   public void checkLibAvailability() {
-    //currently not needed
+    RunTime.loadLibrary("WinUtil");
   }
 
   @Override
