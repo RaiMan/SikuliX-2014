@@ -139,9 +139,13 @@ public class Sikulix {
       }
     }
     
+    Debug.on(3);
     //******Test Space*************************************
 //    Screen.showMonitors();
-    Screen s = Screen.as(0);
+//    Screen s = Screen.as(0);
+
+//    System.exit(1);
+    
 //    Run.connect();
 //    p(Run.show());
 //    p(Run.send("START"));
@@ -149,8 +153,7 @@ public class Sikulix {
 //    Run.close();
 //    Run.stop();
     //*********************************
-    
-    Debug.on(3);
+
     Settings.InfoLogs = false;
     Settings.ActionLogs = false;
     
