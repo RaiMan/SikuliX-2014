@@ -510,7 +510,10 @@ public class FileManager {
       fpath.mkdirs();
       File temp = File.createTempFile(temp1, temp2, fpath);
       temp.deleteOnExit();
-      log(lvl, "tempfile create:\n%s", temp.getAbsolutePath());
+      String fpTemp = temp.getAbsolutePath();
+      if (!fpTemp.endsWith(".script")) {
+        log(lvl, "tempfile create:\n%s", temp.getAbsolutePath());
+      }
       return temp;
     } catch (IOException ex) {
       log(-1, "createTempFile: IOException: %s\n%s", ex.getMessage(),

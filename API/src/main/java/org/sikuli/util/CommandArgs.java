@@ -133,6 +133,13 @@ public class CommandArgs {
             .create(CommandArgsEnum.INTERACTIVE.shortname().charAt(0)));
 
     _options.addOption(
+            OptionBuilder.withLongOpt(CommandArgsEnum.SERVER.longname())
+            .hasOptionalArg()
+            .withArgName(CommandArgsEnum.SERVER.argname())
+            .withDescription(CommandArgsEnum.SERVER.description())
+            .create(CommandArgsEnum.SERVER.shortname().charAt(0)));
+
+     _options.addOption(
             OptionBuilder.withLongOpt(CommandArgsEnum.LOAD.longname())
             .withDescription(CommandArgsEnum.LOAD.description())
             .hasOptionalArgs()

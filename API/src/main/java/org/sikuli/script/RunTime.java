@@ -60,7 +60,7 @@ public class RunTime {
     scriptProject = null;
     uScriptProject = null;
   }
- public static String appDataMsg = "";
+  public static String appDataMsg = "";
 
   public static void pause(int time) {
     try {
@@ -391,6 +391,7 @@ public class RunTime {
   public File fAppPath = null;
   public File fSikulixAppPath = null;
   public File fSikulixExtensions = null;
+  public String[] standardExtensions = new String[]{"selenium4sikulix"};
   public File fSikulixLib = null;
   public File fSikulixStore;
   public File fSikulixDownloadsGeneric = null;
@@ -631,7 +632,6 @@ Point pNull = new Point(0, 0);
       fSxBaseJar = new File(base);
       String jn = fSxBaseJar.getName();
       fSxBase = fSxBaseJar.getParentFile();
-      runTime.log(3, "fSxBase: %s", fSxBase);
       log(lvl, "runs as %s in: %s", jn, fSxBase.getAbsolutePath());
       if (jn.contains("classes")) {
         runningJar = false;
@@ -662,11 +662,48 @@ Point pNull = new Point(0, 0);
         }
       }
     } else {
-      terminate(1, "no valid Java context for SikuliX available (java.security.CodeSource.getLocation() is null)");
+      terminate(1, "no valid Java context for SikuliX available "
+              + "(java.security.CodeSource.getLocation() is null)");
     }
     if (runningInProject) {
-		fSxProjectTestScriptsJS = new File(fSxProject, "StuffContainer/testScripts/testJavaScript");
-		fSxProjectTestScripts = new File(fSxProject, "StuffContainer/testScripts");
+      fSxProjectTestScriptsJS = new File(fSxProject, "StuffContainer/testScripts/testJavaScript");
+      fSxProjectTestScripts = new File(fSxProject, "StuffContainer/testScripts");
+    }
+
+    List<String> items = new ArrayList<String>();
+    if (Type.API.equals(typ)) {
+      String optJython = getOption("jython");
+      if (!optJython.isEmpty()) {
+        items.add(optJython);
+      }      
+    }
+    if (!Type.SETUP.equals(typ)) {
+      String optClasspath = getOption("classpath");
+      if (!optClasspath.isEmpty()) {
+        items.addAll(Arrays.asList(optClasspath.split(System.getProperty("path.separator"))));
+      }
+      items.addAll(Arrays.asList(standardExtensions));
+      if (items.size() > 0) {
+        String[] fList = fSikulixExtensions.list();
+        for (String item : items) {
+          item = item.trim();
+          if (new File(item).isAbsolute()) {
+            addToClasspath(item);
+          } else {
+            for (String fpFile : fList) {
+              File fFile = new File(fSikulixExtensions, fpFile);
+              if (fFile.length() > 0) {
+                if (fpFile.startsWith(item)) {
+                  addToClasspath(fFile.getAbsolutePath());
+                  break;
+                }
+              } else {
+                fFile.delete();
+              }
+            }
+          }
+        }
+      }
     }
 //</editor-fold>
 
@@ -794,7 +831,7 @@ Point pNull = new Point(0, 0);
     File fLib = new File(fLibsFolder, libName);
     Boolean vLib = libsLoaded.get(libName);
     if (vLib == null || !fLib.exists()) {
-      terminate(1, String.format("lib: %s not available in %s", libName, fLibsFolder));
+      terminate(1, String.format("loadlib: %s not available in %s", libName, fLibsFolder));
     }
     String msg = "loadLib: %s";
     int level = lvl;
@@ -2340,6 +2377,9 @@ Point pNull = new Point(0, 0);
 					if (!new File(sEntry).getName().contains(artefact)) {
 						continue;
 					}
+					if (new File(sEntry).getName().contains("4" + artefact)) {
+						continue;
+					}
         }
         cpe = new File(entry.getPath()).getPath();
         break;
@@ -2419,8 +2459,8 @@ Point pNull = new Point(0, 0);
     storeClassPath();
     return true;
   }
-  
-  public File asExtension(String fpJar) {    
+
+  public File asExtension(String fpJar) {
     File fJarFound = new File(FileManager.normalizeAbsolute(fpJar, false));
     if (!fJarFound.exists()) {
       String fpCPEntry = runTime.isOnClasspath(fJarFound.getName());

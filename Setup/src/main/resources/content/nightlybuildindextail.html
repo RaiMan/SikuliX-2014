@@ -1,10 +1,54 @@
+<h4>Build: 2015-09-25</h4>
+revised: drag(), dropAt(), dragDrop(): for each usage you can define individual timing parameters (see docs)<br>
+fixed: problem with App class on Mac and Windows after 2015-09-19: native xxxUtil libs where no longer loaded<br>
+added: App class: someApp.open(waitTime): waits max waitTime until App is running (like someApp.isRunning(waitTime))<br>
+added: for Java: convenience Method App.pause(waitTime): do nothing for the given time (instead of using new Screen().wait())
+<h4>Build: 2015-09-22</h4>
+some revisions and new features for the App class (thanks: https://github.com/RaiMan/SikuliX-2014/pull/163)<br>
+... and Linux setup: (thanks: https://github.com/RaiMan/SikuliX-2014/pull/167)
+<h4>Build: 2015-09-09</h4>
+fixed: Windows: App class constructor App() should not open not running app (thanks: https://github.com/RaiMan/SikuliX-2014/pull/163)<br>
+added: Allow user to specify the delay between mouseWheel calls (thanks: https://github.com/RaiMan/SikuliX-2014/pull/154)
+<h4>Build: 2015-09-08</h4>
+added: IDE: italian translation
+<h4>Build: 2015-08-28</h4>
+revised: using runsikulix -s -- arg1 arg2 ... now has the user args available in sys.argv[1+] 
+when running .sikuli (Python) on the server<br>
+revised: setup now shows the used options
+<h4>Build: 2015-08-21</h4>
+fixed: added a Region.init() to better support subclassing of Region on the Jython level<br>
+revised: allow to run setup in the project context using mvn -Pl Setup exec:exec 
+<h4>Build: 2015-08-18</h4>
+fixed: some problems with the App class methods (App.close("some-app" did not work)
+<h4>Build: 2015-07-20</h4>
+fixed: offline setup: selenium4sikulix should only be downloaded on request<br>
+temp fix: removed the robot stuff from sikulixapi.jar, htmldata files cannot be loaded from a jar
+<h4>Build: 2015-07-14</h4>
+added: for use in observe handler/ObserveCallback: 
+event.getType() returning a string with APPEAR, VANISH or CHANGE<br>
+added: for use in observe handler/ObserveCallback:
+event.isAppear(), event.isVanish() and event.isChange() returning True or false
+<h4>Build: 2015-07-13</h4>
+added: Mouse.setMouseMovedHighlight(true/false), where true will be the default.<br>
+added: Robot run: use Java as Keyword implementation, containing jar file is added to classpath at runtime
+<h4>Build: 2015-07-05</h4>
+added: Robot Framework: robot Python module now bundled (SikulixAppData/Lib), 
+setup RobotFW testcase in IDE(Robot text and inline Keyword library) and run from IDE and/or commandline,
+<a href="https://github.com/RaiMan/SikuliX-2014/tree/master/StuffContainer/testScripts/testRobot/testRun.sikuli" target="_blank">see a test script combining RFW with Sikulix and Selenium</a><br>
+fixed: NPE when setting autoWaitTimeout of a region to 0 
+<h4>Build: 2015-07-03</h4>
+added: a showcase (runnable from the net) for the usage of Selenium Firefox in SikuliX script (tested on Mac and Windows)<br>
+added: download and store available extensions using setup (from commandline: setup...jar options extensions)<br>
+added: support for Selenium now available as ready to use extension jar (not yet in the docs)<br>
+fixed: scripts from the net: if download for .py/.rb is not allowed, one can use .py.txt and .rb.txt for the script files<br>
+fixed: Mac OSX 10.11: SikuliX.app did not start up
 <h4>Build: 2015-06-30</h4>
 revised: running scripts stored somewhere in the HTTP net can now be run from inside the IDE (runScript())
 or from commandline with option -r --- docs are up to date
 <h4>Build: 2015-06-27</h4>
 revised: feature load(jar): more options to find the jar, imagepath to folder in jar can be given<br>
 added: buildJarFromFolder(): to build a jar on the fly at runtime<br>
-added: compileJythonFolder(): replaces the contained .py files with it's compiled versions ...$py.class 
+added: compileJythonFolder(): replaces the contained .py files with it's compiled versions ...$py.class
 (can be used for source protection)<br>
 fixed: App class: LinuxUtil: added a stub implementation for getApp() to avoid loss of pid
 <h4>Build: 2015-06-25</h4>

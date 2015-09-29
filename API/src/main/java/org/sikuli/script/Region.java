@@ -356,7 +356,7 @@ public class Region {
 	 * @return true if yes, false otherwise
 	 */
 	public boolean isValid() {
-		return scr != null;
+		return scr != null && w != 0 && h != 0;
 	}
   //</editor-fold>
 
@@ -423,11 +423,26 @@ public class Region {
    * @param r the region
    */
   public Region(Region r) {
-    this(r.x, r.y, r.w, r.h, r.getScreen());
-    this.rows = 0;
+    init(r);
+  }
+  
+  public void init(Region r) {
+    if (!r.isValid()) {
+      return;
+    }
+    x = r.x;
+    y = r.y;
+    w = r.w;
+    h = r.h;
+    scr = r.getScreen();
+    otherScreen =r.isOtherScreen();
+    rows = 0;
     autoWaitTimeout = r.autoWaitTimeout;
     findFailedResponse = r.findFailedResponse;
     throwException = r.throwException;
+    waitScanRate = r.waitScanRate;
+    observeScanRate = r.observeScanRate;
+    repeatWaitTime = r.repeatWaitTime;
   }
 
   //</editor-fold>
@@ -2705,6 +2720,10 @@ public class Region {
     boolean findingText = false;
     lastFindTime = (new Date()).getTime();
     ScreenImage simg;
+    double findTimeout = autoWaitTimeout; 
+    if (repeating != null) {
+      findTimeout = repeating.getFindTimeOut();
+    }
     if (repeating != null && repeating._finder != null) {
       simg = getScreen().capture(this);
       f = repeating._finder;
@@ -2726,7 +2745,7 @@ public class Region {
           img = Image.create((String) ptn);
           if (img.isValid()) {
             lastSearchTime = (new Date()).getTime();
-            f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), null);
+            f = checkLastSeenAndCreateFinder(img, findTimeout, null);
             if (!f.hasNext()) {
               runFinder(f, img);
               //f.find(img);
@@ -2749,7 +2768,7 @@ public class Region {
         if (((Pattern) ptn).isValid()) {
           img = ((Pattern) ptn).getImage();
           lastSearchTime = (new Date()).getTime();
-          f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), (Pattern) ptn);
+          f = checkLastSeenAndCreateFinder(img, findTimeout, (Pattern) ptn);
           if (!f.hasNext()) {
             runFinder(f, ptn);
             //f.find((Pattern) ptn);
@@ -2761,7 +2780,7 @@ public class Region {
         if (((Image) ptn).isValid()) {
           img = ((Image) ptn);
           lastSearchTime = (new Date()).getTime();
-          f = checkLastSeenAndCreateFinder(img, repeating.getFindTimeOut(), null);
+          f = checkLastSeenAndCreateFinder(img, findTimeout, null);
           if (!f.hasNext()) {
             runFinder(f, img);
             //f.find(img);
@@ -3649,27 +3668,32 @@ public class Region {
   public <PFRML> int dragDrop(PFRML t1, PFRML t2) throws FindFailed {
     Location loc1 = getLocationFromTarget(t1);
     Location loc2 = getLocationFromTarget(t2);
+    int retVal = 0;
     if (loc1 != null && loc2 != null) {
-      IRobot r = loc1.getRobotForPoint("drag");
-      if (r == null) {
-        return 0;
-      }
-      Mouse.use(this);
-      r.smoothMove(loc1);
-      r.mouseDown(InputEvent.BUTTON1_MASK);
-      r.delay((int) (Settings.DelayAfterDrag * 1000));
-      r = loc2.getRobotForPoint("drop");
-      if (r == null) {
+      IRobot r1 = loc1.getRobotForPoint("drag");
+      IRobot r2 = loc2.getRobotForPoint("drop");
+      if (r1 != null && r2 != null) {
+        Mouse.use(this);
+        r1.smoothMove(loc1);
+        r1.delay((int) (Settings.DelayBeforeMouseDown * 1000));
+        r1.mouseDown(InputEvent.BUTTON1_MASK);
+        double DelayBeforeDrag = Settings.DelayBeforeDrag;
+        if (DelayBeforeDrag < 0.0) {
+          DelayBeforeDrag = Settings.DelayAfterDrag;
+        }
+        r1.delay((int) (DelayBeforeDrag * 1000));
+        r2.smoothMove(loc2);
+        r2.delay((int) (Settings.DelayBeforeDrop * 1000));
+        r2.mouseUp(InputEvent.BUTTON1_MASK);
         Mouse.let(this);
-        return 0;
+        retVal = 1;
       }
-      r.smoothMove(loc2);
-      r.delay((int) (Settings.DelayBeforeDrop * 1000));
-      r.mouseUp(InputEvent.BUTTON1_MASK);
-      Mouse.let(this);
-      return 1;
     }
-    return 0;
+    Settings.DelayBeforeMouseDown = Settings.DelayValue;
+    Settings.DelayAfterDrag = Settings.DelayValue;
+    Settings.DelayBeforeDrag = -Settings.DelayValue;
+    Settings.DelayBeforeDrop = Settings.DelayValue; 
+    return retVal;
   }
 
   /**
@@ -3681,26 +3705,37 @@ public class Region {
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed if not found
    */
-  public <PFRML> int drag(PFRML target) throws FindFailed {
+  public <PFRML> int drag(PFRML target) throws FindFailed {    
     Location loc = getLocationFromTarget(target);
+    int retVal = 0;
     if (loc != null) {
       IRobot r = loc.getRobotForPoint("drag");
-      if (r == null) {
-        return 0;
+      if (r != null) {
+        Mouse.use(this);
+        r.smoothMove(loc);
+        r.delay((int) (Settings.DelayBeforeMouseDown * 1000));
+        r.mouseDown(InputEvent.BUTTON1_MASK);
+        double DelayBeforeDrag = Settings.DelayBeforeDrag;
+        if (DelayBeforeDrag < 0.0) {
+          DelayBeforeDrag = Settings.DelayAfterDrag;
+        }
+        r.delay((int) (DelayBeforeDrag * 1000));
+        r.waitForIdle();
+        Mouse.let(this);
+        retVal = 1;
       }
-      Mouse.use(this);
-      r.smoothMove(loc);
-      r.mouseDown(InputEvent.BUTTON1_MASK);
-      r.delay((int) (Settings.DelayAfterDrag * 1000));
-      r.waitForIdle();
-      return 1;
     }
-    return 0;
+    Settings.DelayBeforeMouseDown = Settings.DelayValue;
+    Settings.DelayAfterDrag = Settings.DelayValue;
+    Settings.DelayBeforeDrag = -Settings.DelayValue;
+    Settings.DelayBeforeDrop = Settings.DelayValue; 
+    return retVal;
   }
 
   /**
-   * finalize a drag action with a drop: move mouse to given target <br>wait Settings.DelayBeforeDrop <br>release the
-   * left mouse button
+   * finalize a drag action with a drop: move mouse to given target <br>
+   * wait Settings.DelayBeforeDrop <br>
+   * before releasing the left mouse button
    *
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
    * @param target Pattern, Filename, Text, Region, Match or Location
@@ -3709,19 +3744,24 @@ public class Region {
    */
   public <PFRML> int dropAt(PFRML target) throws FindFailed {
     Location loc = getLocationFromTarget(target);
+    int retVal = 0;
     if (loc != null) {
-      IRobot r = loc.getRobotForPoint("drop");
-      if (r == null) {
-        return 0;
+      IRobot r = loc.getRobotForPoint("drag");
+      if (r != null) {
+        Mouse.use(this);
+        r.smoothMove(loc);
+        r.delay((int) (Settings.DelayBeforeDrop * 1000));
+        r.mouseUp(InputEvent.BUTTON1_MASK);
+        r.waitForIdle();
+        Mouse.let(this);
+        retVal = 1;
       }
-      r.smoothMove(loc);
-      r.delay((int) (Settings.DelayBeforeDrop * 1000));
-      r.mouseUp(InputEvent.BUTTON1_MASK);
-      r.waitForIdle();
-      Mouse.let(this);
-      return 1;
     }
-    return 0;
+    Settings.DelayBeforeMouseDown = Settings.DelayValue;
+    Settings.DelayAfterDrag = Settings.DelayValue;
+    Settings.DelayBeforeDrag = -Settings.DelayValue;
+    Settings.DelayBeforeDrop = Settings.DelayValue; 
+    return retVal;
   }
   //</editor-fold>
 
@@ -3822,12 +3862,28 @@ public class Region {
    * @throws FindFailed if the Find operation failed
    */
   public <PFRML> int wheel(PFRML target, int direction, int steps) throws FindFailed {
+    return wheel(target, direction, steps, Mouse.WHEEL_STEP_DELAY);
+  }
+    
+  /**
+   * move the mouse pointer to the given target location<br> and move the wheel the given steps in the given direction:
+   * <br>Button.WHEEL_DOWN, Button.WHEEL_UP
+   *
+   * @param <PFRML> Pattern, Filename, Text, Region, Match or Location target
+   * @param target Pattern, Filename, Text, Region, Match or Location
+   * @param direction to move the wheel
+   * @param steps the number of steps
+   * @param stepDelay number of miliseconds to wait when incrementing the step value
+   * @return 1 if possible, 0 otherwise
+   * @throws FindFailed if the Find operation failed
+   */
+  public <PFRML> int wheel(PFRML target, int direction, int steps, int stepDelay) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     if (loc != null) {
       Mouse.use(this);
       Mouse.keep(this);
       Mouse.move(loc, this);
-      Mouse.wheel(direction, steps, this);
+      Mouse.wheel(direction, steps, this, stepDelay);
       Mouse.let(this);
       return 1;
     }

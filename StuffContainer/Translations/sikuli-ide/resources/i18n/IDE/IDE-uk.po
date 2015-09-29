@@ -1,0 +1,615 @@
+# Ukrainian translation for sikuli
+# Copyright (c) 2010 Rosetta Contributors and Canonical Ltd 2010
+# This file is distributed under the same license as the sikuli package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2010.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sikuli\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2011-10-19 16:28-0700\n"
+"PO-Revision-Date: 2011-12-29 13:53+0000\n"
+"Last-Translator: Elyashevskyy Ostap <Unknown>\n"
+"Language-Team: Ukrainian <uk@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2015-09-07 08:48+0000\n"
+"X-Generator: Launchpad (build 17706)\n"
+
+#: menuFile
+msgctxt "menuFile"
+msgid "File"
+msgstr "Файл"
+
+#: menuEdit
+msgid "Edit"
+msgstr "Редагувати"
+
+#: menuRun
+msgctxt "menuRun"
+msgid "Run"
+msgstr "Запустити"
+
+#: menuView
+msgid "View"
+msgstr "Вигляд"
+
+#: menuTool
+msgid "Tools"
+msgstr "Інструменти"
+
+#: menuFileNew
+msgid "New"
+msgstr "Новий"
+
+#: menuFileOpen
+msgid "Open..."
+msgstr "Відкрити..."
+
+#: menuFileSave
+msgid "Save"
+msgstr "Зберегти"
+
+#: menuFileSaveAs
+msgid "Save as..."
+msgstr "Зберегти як..."
+
+#: menuFileExport
+msgid "Export excutable..."
+msgstr "Експортувати як виконуваний"
+
+#: menuFilePreferences
+msgid "Preferences..."
+msgstr "Налаштування..."
+
+#: menuFileCloseTab
+msgid "Close Tab"
+msgstr "Закрити вкладку"
+
+#: menuFileQuit
+msgid "Quit"
+msgstr "Вихід"
+
+#: menuEditUndo
+msgid "Undo"
+msgstr "Відмінити"
+
+#: menuEditRedo
+msgid "Redo"
+msgstr "Відновити"
+
+#: menuEditCut
+msgid "Cut"
+msgstr "Вирізати"
+
+#: menuEditCopy
+msgid "Copy"
+msgstr "Копіювати"
+
+#: menuEditPaste
+msgid "Paste"
+msgstr "Вставити"
+
+#: menuEditSelectAll
+msgid "Select All"
+msgstr "Виділити все"
+
+#: menuEditIndent
+msgid "Indent"
+msgstr "Зробити відступ"
+
+#: menuEditUnIndent
+msgid "Un-Indent"
+msgstr "Забрати відступ"
+
+#: menuFind
+msgctxt "menuFind"
+msgid "Find"
+msgstr "Знайти"
+
+#: menuFindFind
+msgid "Find..."
+msgstr "Знайти..."
+
+#: menuFindFindNext
+msgid "Find Next"
+msgstr "Знайти наступний варіант"
+
+#: menuFindFindPrev
+msgid "Find Previous"
+msgstr "Знайти попередній варіант"
+
+#: menuRunRun
+msgctxt "menuRunRun"
+msgid "Run"
+msgstr "Запустити"
+
+#: menuRunRunAndShowActions
+msgctxt "menuRunRunAndShowActions"
+msgid "Run in slow motion"
+msgstr "Запустити на малій швидкості"
+
+#: menuRunStop
+msgid "Stop"
+msgstr "Зупинити"
+
+#: menuViewUnitTest
+msgctxt "menuViewUnitTest"
+msgid "Unit Test"
+msgstr "Юніт-тест"
+
+#: menuViewCommandList
+msgid "Command List"
+msgstr "Список команд"
+
+#: menuToolExtensions
+msgid "Extensions..."
+msgstr "Розширення..."
+
+#: menuHelp
+msgid "Help"
+msgstr "Довідка"
+
+#: menuHelpCheckUpdate
+msgid "Check Update..."
+msgstr "Перевірити оновлення"
+
+#: menuHelpGuide
+msgid "The Complete Guide to Sikuli Script"
+msgstr "Повний довідник по Sikuli Script"
+
+#: menuHelpDocumentations
+msgid "Tutorials, Examples, How-To's"
+msgstr "Приклади, навчальні посібники, рецепти"
+
+#: menuHelpAsk
+msgid "Ask Questions & Find Answers"
+msgstr "Задайте запитання та знайдіть відповіді"
+
+#: menuHelpBugReport
+msgid "Report a Bug"
+msgstr "Сповістити про помилку"
+
+#: menuHelpTranslation
+msgid "Join our translation project!"
+msgstr "Приєднуйтесь до нашого проекту з перекладу!"
+
+#: menuHelpHomepage
+msgid "Sikuli's Homepage"
+msgstr "Домашня сторінка Sikuli"
+
+#: dlgUpdateAvailable
+msgid "Sikuli {0} is available!"
+msgstr "Можна скачати Sikuli {0} !"
+
+#: msgNoUpdate
+msgid "No update is available."
+msgstr "Немає оновлень."
+
+#: cmdListSettings
+msgid "Settings"
+msgstr "Налаштування"
+
+#: cmdListAutoCapture
+msgid "Auto Capture"
+msgstr "Автоматичний захват"
+
+#: cmdListFind
+msgctxt "cmdListFind"
+msgid "Find"
+msgstr "Пошук"
+
+#: cmdListMouse
+msgid "Mouse Actions"
+msgstr "Дії миші"
+
+#: cmdListKeyboard
+msgid "Keyboard Actions"
+msgstr "Дії клавіатури"
+
+#: cmdListObserver
+msgid "Event Observation"
+msgstr "Спостереження за подіями"
+
+#: paneMessage
+msgid "Message"
+msgstr "Повідомлення"
+
+#: paneTestTrace
+msgid "Test Trace"
+msgstr "Тестовий запуск"
+
+#: tabUntitled
+msgid "Untitled"
+msgstr "Без імені"
+
+#: tabUnitTest
+msgctxt "tabUnitTest"
+msgid "Unit Test"
+msgstr "Юніт-тест"
+
+#: btnRun
+msgid "Run ({0})"
+msgstr "Запуск ({0})"
+
+#: btnRunLabel
+msgctxt "btnRunLabel"
+msgid "Run"
+msgstr "Запустити"
+
+#: btnRunSlowMotionLabel
+msgctxt "btnRunSlowMotionLabel"
+msgid "Run in slow motion"
+msgstr "Запустити на малій швидкості"
+
+#: btnRunStopHint
+msgid "Press {0} to stop"
+msgstr "Натисніть {0} щоб зупинити"
+
+#: btnRegionLabel
+msgid "Create Region"
+msgstr "Створити область"
+
+#: btnRegionHint
+msgid "Create a region to restrict screen matching"
+msgstr "Створити область для обмеження выдповідностей"
+
+#: btnCaptureLabel
+msgid "Take screenshot"
+msgstr "Зробити знімок екрану"
+
+#: btnCaptureHint
+msgid "Take a screenshot ({0})"
+msgstr "Зробити знімок екрану"
+
+#: btnInsertImageHint
+msgid "Insert an image from disks"
+msgstr "Вставити зображення з диску"
+
+#: btnInsertImageLabel
+msgid "Insert image "
+msgstr "Вставити зображення "
+
+#: msgRunningSklError
+msgid ""
+"Runtime Error when running {0}\n"
+"{1}"
+msgstr ""
+"Помилка при запуску {0}\n"
+"{1}"
+
+#: msgExit
+msgid "Exited with code {0}"
+msgstr "Завершено з кодом {0}"
+
+#: msgStopped
+msgid "Stopped"
+msgstr "Зупинено"
+
+#: msgErrorLine
+msgid "An error occurs at line {0}"
+msgstr "Помилка в рядку {0}"
+
+#: msgErrorMsg
+msgid ""
+"Error message:\n"
+"{0}"
+msgstr ""
+"Повідомлення про помилку:\n"
+"{0}"
+
+#: msgCapturePrompt
+msgid "Select a region on the screen"
+msgstr "Виберіть регіон на екрані"
+
+#: winPreferences
+msgid "Preferences"
+msgstr "Налаштування"
+
+#: PreferencesWin.chkExpandTab.text
+msgid "Tab key inserts spaces instead of tab"
+msgstr "Клавіша табуляції вставляє пробіли замість табуляції"
+
+#: PreferencesWin.lblUpdates.text
+msgid "Updates"
+msgstr "Оновлення"
+
+#: PreferencesWin.lblLanguage.text
+msgid "Language"
+msgstr "Мова"
+
+#: PreferencesWin.lblTabWidth.text
+msgid "Tab width:"
+msgstr "Ширина табуляції:"
+
+#: PreferencesWin.lblFont.text
+msgid "Font name:"
+msgstr "Назва шрифта"
+
+#: PreferencesWin.lblFontSize.text
+msgid "Size:"
+msgstr "Розмір"
+
+#: PreferencesWin.titleAppearance.textWithMnemonic
+msgid "Fonts"
+msgstr "Шрифти"
+
+#: PreferencesWin.titleIndentation.textWithMnemonic
+msgid "Indentation"
+msgstr "Відступ"
+
+#: PreferencesWin.paneTextEditing.tab.title
+msgid "Text Editing"
+msgstr "Редагування тексту"
+
+#: prefTabScreenCapturing
+msgid "Screen Capturing"
+msgstr "Захоплення Зображення"
+
+#: prefCaptureHotkey
+msgid "Quick capture hotkey:"
+msgstr "Гаряча клавіша швидкого захоплення"
+
+#: prefCaptureDelay
+msgid "Delay before capture:"
+msgstr "Затримка перед захопленням"
+
+#: prefSeconds
+msgid "seconds"
+msgstr "секунд"
+
+#: prefAutoNaming
+msgid "Automatic Naming:"
+msgstr "Автоматичне іменування"
+
+#: prefTimestamp
+msgid "time stamp"
+msgstr "Відмітка часу"
+
+#: prefRecognizedText
+msgid "text in the image"
+msgstr "Текст в зображенні"
+
+#: prefManualInput
+msgid "off (manual input)"
+msgstr "Вимкнено (введення вручну)"
+
+#: prefTabGeneralSettings
+msgid "General Settings"
+msgstr "Загальні налаштування"
+
+#: prefGeneralAutoCheck
+msgid "Check Update Automatically"
+msgstr "Перевіряти Оновлення Автоматично"
+
+#: dlgAskCloseTab
+msgid "Do you want to close this tab?"
+msgstr "Чи бажаєте Ви закрити цю вкладку ?"
+
+#: msgAskSaveChanges
+msgid "{0} has been modified. Save changes?"
+msgstr "{0} було змынено. Зберегти змыни ?"
+
+#: statusLineColumn
+msgid "Line: {0,number,integer}, Column: {1,number,integer}"
+msgstr "Рядок: {0,number,integer}, Колонка: {1,number,integer}"
+
+#: winPatternSettings
+msgid "Pattern Settings"
+msgstr "Налаштування Шаблону"
+
+#: tabNaming
+msgctxt "tabNaming"
+msgid "File"
+msgstr "Файл"
+
+#: tabMatchingPreview
+msgid "Matching Preview"
+msgstr "Попередінй Перегляд"
+
+#: tabTargetOffset
+msgid "Target Offset"
+msgstr "Зміщення від цілі"
+
+#: lblPath
+msgid "Path:"
+msgstr "Шлях:"
+
+#: lblFilename
+msgid "Filename:"
+msgstr "Назва файлу:"
+
+#: lblSimilarity
+msgid "Similarity:"
+msgstr "Подібність:"
+
+#: lblNumberOfMatches
+msgid "Number of matches/Max:"
+msgstr "Число співпадінь/Макс:"
+
+#: lblTargetOffsetX
+msgid "Target offset  X:"
+msgstr "Зміщення від цілі Х:"
+
+#: lblTargetOffsetY
+msgid ", Y:"
+msgstr ", Y:"
+
+#: ok
+msgid "OK"
+msgstr "Гаразд"
+
+#: apply
+msgid "Apply"
+msgstr "Застосувати"
+
+#: cancel
+msgid "Cancel"
+msgstr "Відмінити"
+
+#: yes
+msgid "Yes"
+msgstr "Так"
+
+#: no
+msgid "No"
+msgstr "Ні"
+
+#: dlgFileExists
+msgid "File Exists"
+msgstr "Файл існує"
+
+#: msgFileExists
+msgid "Are you sure to overwrite this file \"{0}\"?"
+msgstr "Ви бажаэте замынити файл \"{0}\"?"
+
+#: dlgEnterScreenshotFilename
+msgid "Name The Screen Shot"
+msgstr "Назвіть скріншот"
+
+#: msgEnterScreenshotFilename
+msgid "Enter the screen shot's file name:"
+msgstr "Введіть імя файла для скріншота"
+
+#: cmdFind
+msgid ""
+"Looks for the best matched GUI component on the screen or in the Region."
+msgstr ""
+"Шукає найкращу відповідність елемента графічного інтерфейсу на екрані або в "
+"Регіоні"
+
+#: cmdFindAll
+msgid "Looks for all matched GUI component on the screen or in the Region."
+msgstr "Шукає всі елементи графічного інтерфейсу на екрані або в Регіоні"
+
+#: cmdWait
+msgid ""
+"Waits the given GUI component to appear on the screen or in the Region for "
+"up to <i>timeout</i> seconds."
+msgstr ""
+"Чекає щоб елементи графічного інтерфейсу зявився на екрані або в Регіоні до "
+"<i>таймаут</i> секунд."
+
+#: cmdWaitVanish
+msgid ""
+"Waits the given GUI component to disappear on the screen or in the Region "
+"for up to <i>timeout</i> seconds."
+msgstr ""
+"Чекає щоб елемент графічного інтерфейсу зник з екрану або з Регіону до "
+"<i>таймаут</i> секунд."
+
+#: cmdExists
+msgid ""
+"Checks if the given GUI component exists on the screen or in the "
+"Region.<br>If it can not be found, None is returned without throwing an "
+"exception."
+msgstr ""
+"Чекає чи даний компонент GUI присутній на екрані або в Регіоні.<br> Якщо він "
+"не знайдений, повертається None без викидання ексепшина."
+
+#: cmdClick
+msgid ""
+"Clicks on the best matched GUI component on the screen or in the Region."
+msgstr ""
+"Клікає по елементу GUI який є найбільш схожим на екрані або в Регіоні."
+
+#: cmdDoubleClick
+msgid ""
+"Double clicks on the best matched GUI component on the screen or in the "
+"Region."
+msgstr ""
+"Подвійно клікає по елементу GUI який є найбільш схожим на екрані або в "
+"Регіоні."
+
+#: cmdRightClick
+msgid ""
+"Right clicks on the best matched GUI component on the screen or in the "
+"Region."
+msgstr ""
+"Клікає правою клавішою миші по елементу GUI який найбільш схожий на екрані "
+"чи в Регіоні."
+
+#: cmdHover
+msgid "Moves the mouse cursor on the best matched GUI component."
+msgstr "Переміщає курсор миші на найбільш схожий елемент GUI"
+
+#: cmdDragDrop
+msgid "Drags the first component, and drops at the second component."
+msgstr "Перетягає перший компонент, і кидає на другий компонент"
+
+#: cmdType
+msgid "Types the given <i>text</i> to the current focused window."
+msgstr "Вводить даний <i>текст</i> до поточного вікна з фокусом."
+
+#: cmdType2
+msgid ""
+"Clicks on the given component to gain the focus and then types the given "
+"<i>text</i>."
+msgstr ""
+"Клікає на заданий компонент щоб отримати фокус і тоді вводить заданий  "
+"<i>текст </i>."
+
+#: cmdPaste
+msgid "Pastes the given <i>text</i> to the current focused window."
+msgstr "Вставляє заданий <i>текст</i> в поточне вікно з фокусом."
+
+#: cmdPaste2
+msgid ""
+"Clicks on the given component to gain the focus and then pastes the given "
+"<i>text</i>."
+msgstr ""
+"Клікає по заданому компоненту щоб отримати фокус і тоді вводить заданий  "
+"<i>текст</i>."
+
+#: cmdOnAppear
+msgid ""
+"Calls <i>handler</i> when the given image pattern appears on the screen or "
+"in the Region."
+msgstr ""
+"Викликає  <i>обробник</i>  коли заданий шаблон зображення зявляється на "
+"екрані чи в Регіоні."
+
+#: cmdOnVanish
+msgid ""
+"Calls <i>handler</i> when the given image pattern disappears on the screen "
+"or in the Region."
+msgstr ""
+"Викликає  <i>обробник</i> коли заданий шаблон зображення  зникає з екрана "
+"або Регіона"
+
+#: cmdOnChange
+msgid ""
+"Calls <i>handler</i> when anything is changed on the screen or in the Region."
+msgstr ""
+"Викликає  <i>обробник</i> коли що-небудь змінилось на екрані або регіоні"
+
+#: cmdObserve
+msgid ""
+"Starts the observer to watch the screen or the Region for up to <i>time</i> "
+"seconds.<br>The observer will be run in the background if <i>background</i> "
+"is set to True."
+msgstr ""
+"Стартує Observer слідкувати за екраном або Регіоном до <i>time</i> секунд. "
+"<br> Observer буде виконуватись на фоні якщо <i>background</i> встановлено "
+"як True."
+
+#: extBtnInstall
+msgid "Install"
+msgstr "Встановити"
+
+#: extBtnInfo
+msgid "More Info"
+msgstr "Докладніше"
+
+#: extMsgInstalled
+msgid "Installed"
+msgstr "Встановлено"
+
+#: extBtnInstallVer
+msgid "Install {0}"
+msgstr "Встановити {0}"
+
+#: extBtnUpdateVer
+msgid "Update to {0}"
+msgstr "Обновити до  {0}"

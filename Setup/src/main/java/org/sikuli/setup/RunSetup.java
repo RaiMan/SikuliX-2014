@@ -120,6 +120,7 @@ public class RunSetup {
 	private static boolean bequiet = false;
   private static String sikulixMavenGroup = "com/sikulix/";
 	private static boolean testingMaven = false;
+  private static boolean withExtensions = false;
 
   static Map <String, String> downloadsLookfor = new HashMap<String, String>();
   static Map <String, File> downloadsFound = new HashMap<String, File>();
@@ -199,7 +200,7 @@ public class RunSetup {
     }
 
     options.addAll(Arrays.asList(args));
-
+    
     //<editor-fold defaultstate="collapsed" desc="options return version">
     if (args.length > 0 && "stamp".equals(args[0])) {
       System.out.println(runTime.SikuliProjectVersion + "-" + runTime.sxBuildStamp);
@@ -307,6 +308,9 @@ public class RunSetup {
             notests = true;
           } else if (val.toLowerCase().startsWith("clean")) {
             clean = true;
+          } else if (val.toLowerCase().startsWith("ext")) {
+           hasOptions = true;
+           withExtensions = true;
           }
         }
         options.clear();
@@ -316,8 +320,21 @@ public class RunSetup {
     localLogfile = "SikuliX-" + version + "-SetupLog.txt";
 
     if (options.size() > 0) {
-      popError("invalid command line options - terminating");
-      System.exit(999);
+      if (!"-jar".equals(options.get(0))) {
+        System.out.println("invalid command line options - terminating");
+        for (String opt : options) {
+          System.out.println("option: " + opt);
+        }
+        System.exit(-1);
+      }
+      log(lvl, "Seems to be run using mvn exec:exec");
+    } else {
+      logPlus(lvl, "command line options:");
+      String strArgs = "";
+      for (String arg : args) {
+        strArgs += arg + " ";
+      }
+      logPlus(lvl, "%s", strArgs);
     }
 
     //<editor-fold defaultstate="collapsed" desc="general preps">
@@ -487,7 +504,7 @@ public class RunSetup {
       Settings.proxyChecked = true;
       //</editor-fold>
 
-//<editor-fold defaultstate="collapsed" desc="evaluate setup options">
+    //<editor-fold defaultstate="collapsed" desc="evaluate setup options">
       if (winSU.option1.isSelected()) {
         getIDE = true;
         if (winSU.option2.isSelected()) {
@@ -590,7 +607,7 @@ public class RunSetup {
       }
     }
 
-    if (getIDE || getAPI || getRServer) {
+    if (getIDE || getAPI || getRServer || withExtensions) {
       msg += "\n\nOnly click NO, if you want to terminate setup now!\n"
               + "Click YES even if you want to use local copies in Downloads!";
       if (!popAsk(msg)) {
@@ -639,45 +656,47 @@ public class RunSetup {
     String sDownloadedName;
 
     //<editor-fold defaultstate="collapsed" desc="download lib jars">
-    if (forSystemLux || forAllSystems) {
-      jarsList[8] = new File(workDir, libsLux + ".jar").getAbsolutePath();
-      fDownloaded = downloadedAlready("lux", "Linux native libs", true);
-      if (fDownloaded == null) {
-        fDownloaded = downloadJarFromMavenSx(libsLux, dlDir, libsLux);
+    if (getIDE || getAPI) {
+      if (forSystemLux || forAllSystems) {
+        jarsList[8] = new File(workDir, libsLux + ".jar").getAbsolutePath();
+        fDownloaded = downloadedAlready("lux", "Linux native libs", true);
+        if (fDownloaded == null) {
+          fDownloaded = downloadJarFromMavenSx(libsLux, dlDir, libsLux);
+        }
+        downloadOK &= copyFromDownloads(fDownloaded, libsLux, jarsList[8]);
+        if (isLinux) {
+          runTime.addToClasspath(jarsList[8]);
+          runTime.dumpClassPath("sikulix");
+          logPlus(lvl, "checking usability of bundled/provided libs");
+          RunTime.loadLibrary(LinuxSupport.slibVision, useLibsProvided);
+          useLibsProvided = runTime.useLibsProvided || LinuxSupport.shouldUseProvided;
+        }
       }
-      downloadOK &= copyFromDownloads(fDownloaded, libsLux, jarsList[8]);
-      if (isLinux) {
-        runTime.addToClasspath(jarsList[8]);
-        runTime.dumpClassPath("sikulix");
-        logPlus(lvl, "checking usability of bundled/provided libs");
-				RunTime.loadLibrary(LinuxSupport.slibVision, useLibsProvided);
-				useLibsProvided = runTime.useLibsProvided || LinuxSupport.shouldUseProvided;
-      }
-    }
 
-		if (forSystemWin || forAllSystems) {
-      jarsList[6] = new File(workDir, libsWin + ".jar").getAbsolutePath();
-      fDownloaded = downloadedAlready("win", "Windows native libs", true);
-      if (fDownloaded == null) {
-        fDownloaded = downloadJarFromMavenSx(libsWin, dlDir, libsWin);
+      if (forSystemWin || forAllSystems) {
+        jarsList[6] = new File(workDir, libsWin + ".jar").getAbsolutePath();
+        fDownloaded = downloadedAlready("win", "Windows native libs", true);
+        if (fDownloaded == null) {
+          fDownloaded = downloadJarFromMavenSx(libsWin, dlDir, libsWin);
+        }
+        downloadOK &= copyFromDownloads(fDownloaded, libsWin, jarsList[6]);
+        FileManager.resetFolder(folderLibsWin);
+        String aJar = FileManager.normalizeAbsolute(jarsList[6], false);
+        if (null == runTime.resourceListAsSikulixContentFromJar(aJar, "sikulixlibs/windows", folderLibsWin, null)) {
+          terminate("libswin content list could not be created", 999);
+        }
+        addonFileList[addonLibswindows] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
+        addonFilePrefix[addonLibswindows] = libsWin;
       }
-      downloadOK &= copyFromDownloads(fDownloaded, libsWin, jarsList[6]);
-      FileManager.resetFolder(folderLibsWin);
-      String aJar = FileManager.normalizeAbsolute(jarsList[6], false);
-      if (null == runTime.resourceListAsSikulixContentFromJar(aJar, "sikulixlibs/windows", folderLibsWin, null)) {
-        terminate("libswin content list could not be created", 999);
-      }
-      addonFileList[addonLibswindows] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
-      addonFilePrefix[addonLibswindows] = libsWin;
-    }
 
-    if (forSystemMac || forAllSystems) {
-      jarsList[7] = new File(workDir, libsMac + ".jar").getAbsolutePath();
-      fDownloaded = downloadedAlready("mac", "Mac native libs", true);
-      if (fDownloaded == null) {
-        fDownloaded = downloadJarFromMavenSx(libsMac, dlDir, libsMac);
+      if (forSystemMac || forAllSystems) {
+        jarsList[7] = new File(workDir, libsMac + ".jar").getAbsolutePath();
+        fDownloaded = downloadedAlready("mac", "Mac native libs", true);
+        if (fDownloaded == null) {
+          fDownloaded = downloadJarFromMavenSx(libsMac, dlDir, libsMac);
+        }
+        downloadOK &= copyFromDownloads(fDownloaded, libsMac, jarsList[7]);
       }
-      downloadOK &= copyFromDownloads(fDownloaded, libsMac, jarsList[7]);
     }
 		//</editor-fold>
 
@@ -763,6 +782,20 @@ public class RunSetup {
         downloadOK &= copyFromDownloads(fDownloaded, sDownloaded, targetJar);
       }
     }
+
+    if (downloadOK && withExtensions) {
+      for (String item : runTime.standardExtensions) {
+        sDownloaded = item;
+        sDownloadedName = item + ".jar";
+        fTargetJar = new File(runTime.fSikulixExtensions, sDownloadedName);
+        if (!fTargetJar.exists()) {
+          fDownloaded = download(runTime.downloadBaseDir, runTime.fSikulixExtensions.getAbsolutePath(), sDownloadedName, item);
+          downloadOK &= fDownloaded != null;
+        } else {
+          logPlus(lvl, "request to download: %s ignored - already there", sDownloadedName);
+        }
+      }
+    }
 		//</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="download for tesseract">
@@ -828,7 +861,7 @@ public class RunSetup {
               + downloadedFiles
               + "\n\nBe aware: The raw packages are not useable without being processed by setup!\n\n"
               + "For other reasons, you might simply try to run setup again.");
-      terminate("download not completed successfully");
+      terminate("download not completed successfully", 1);
     }
 
     //<editor-fold defaultstate="collapsed" desc="create jars and add needed stuff">

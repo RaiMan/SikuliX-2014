@@ -28,7 +28,7 @@ import org.sikuli.natives.Vision;
 public class Finder implements Iterator<Match> {
 
   static RunTime runTime = RunTime.get();
-  
+
   private Region _region = null;
   private Pattern _pattern = null;
   private FindInput _findInput = new FindInput();
@@ -53,7 +53,7 @@ public class Finder implements Iterator<Match> {
    * Just to force library initialization
    */
   public Finder() {}
-  
+
   /**
    * Finder constructor (finding within an image).
    * <br>internally used with a screen snapshot
@@ -64,7 +64,7 @@ public class Finder implements Iterator<Match> {
   public Finder(String imageFilename) throws IOException {
     this(imageFilename, null);
   }
-  
+
   /**
    * Finder constructor (finding within an image within the given region).
    * <br>internally used with a screen snapshot
@@ -84,7 +84,7 @@ public class Finder implements Iterator<Match> {
       valid = false;
     }
   }
-  
+
   /**
    * Constructor for special use from a BufferedImage
    *
@@ -93,7 +93,7 @@ public class Finder implements Iterator<Match> {
   public Finder(BufferedImage bimg) {
     _findInput.setSource(Image.convertBufferedImageToMat(bimg));
   }
-  
+
   /**
    * Finder constructor for special use from a ScreenImage
    *
@@ -102,7 +102,7 @@ public class Finder implements Iterator<Match> {
   public Finder(ScreenImage simg) {
     initScreenFinder(simg, null);
   }
-  
+
   /**
    * Finder constructor for special use from a ScreenImage
    *
@@ -112,7 +112,7 @@ public class Finder implements Iterator<Match> {
   public Finder(ScreenImage simg, Region region) {
     initScreenFinder(simg, region);
   }
-  
+
   /**
    * Finder constructor for special use from an Image
    *
@@ -122,12 +122,12 @@ public class Finder implements Iterator<Match> {
     log(lvl, "Image: %s", img);
     _findInput.setSource(Image.convertBufferedImageToMat(img.get()));
   }
-  
+
   private void initScreenFinder(ScreenImage simg, Region region) {
     setScreenImage(simg);
     _region = region;
   }
-  
+
   /**
    * to explicitly free the Finder's resources
    */
@@ -138,7 +138,7 @@ public class Finder implements Iterator<Match> {
     _results = null;
     _pattern = null;
   }
-  
+
   /**
    * not used
    */
@@ -159,12 +159,12 @@ public class Finder implements Iterator<Match> {
   protected void setScreenImage(ScreenImage simg) {
     _findInput.setSource(Image.convertBufferedImageToMat(simg.getImage()));
   }
-  
+
   public boolean isValid() {
     return valid;
-  }  
+  }
   //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="internal repeating">
   /**
    * internal use: to be able to reuse the same Finder
@@ -172,7 +172,7 @@ public class Finder implements Iterator<Match> {
   protected void setRepeating() {
     repeating = true;
   }
-  
+
   /**
    * internal use: repeat with same Finder
    */
@@ -180,7 +180,7 @@ public class Finder implements Iterator<Match> {
     _results = Vision.find(_findInput);
     _cur_result_i = 0;
   }
-  
+
   /**
    * internal use: repeat with same Finder
    */
@@ -191,9 +191,9 @@ public class Finder implements Iterator<Match> {
     timing.end();
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="find">
-  
+
   /**
    * do a find op with the given image or the given text in the Finder's image
    * (hasNext() and next() will reveal possible match results)
@@ -211,10 +211,10 @@ public class Finder implements Iterator<Match> {
     }
     if (img.isValid()) {
       return find(img);
-    } 
+    }
     return null;
   }
-  
+
   /**
    * do a find op with the given pattern in the Finder's image
    * (hasNext() and next() will reveal possible match results)
@@ -237,7 +237,7 @@ public class Finder implements Iterator<Match> {
       return null;
     }
   }
-  
+
   /**
    * do a find op with the given pattern in the Finder's image
    * (hasNext() and next() will reveal possible match results)
@@ -261,7 +261,7 @@ public class Finder implements Iterator<Match> {
       return null;
     }
   }
-  
+
   /**
    * do a text find with the given text in the Finder's image
    * (hasNext() and next() will reveal possible match results)
@@ -279,7 +279,7 @@ public class Finder implements Iterator<Match> {
     return text;
   }
 //</editor-fold>
-  
+
 //<editor-fold defaultstate="collapsed" desc="findAll">
   /**
    * do a findAll op with the given image or the given text in the Finder's image
@@ -296,12 +296,12 @@ public class Finder implements Iterator<Match> {
     if (img.isText()) {
       return findAllText(imageOrText);
     }
-    if (!img.isValid()) {
+    if (img.isValid()) {
       return findAll(img);
-    } 
+    }
     return null;
   }
-  
+
   /**
    * do a find op with the given pattern in the Finder's image
    * (hasNext() and next() will reveal possible match results)
@@ -327,7 +327,7 @@ public class Finder implements Iterator<Match> {
       return null;
     }
   }
-  
+
   /**
    * do a findAll op with the given image in the Finder's image
    * (hasNext() and next() will reveal possible match results)
@@ -352,7 +352,7 @@ public class Finder implements Iterator<Match> {
       return null;
     }
   }
-  
+
   /**
    * do a findAll op with the given text in the Finder's image
    * (hasNext() and next() will reveal possible match results)
@@ -373,7 +373,7 @@ public class Finder implements Iterator<Match> {
     return text;
   }
 //</editor-fold>
-  
+
   private String setTargetSmartly(FindInput fin, String target) {
     if (isImageFile(target)) {
       //assume it's a file first

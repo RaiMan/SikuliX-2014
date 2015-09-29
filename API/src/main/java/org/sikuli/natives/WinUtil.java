@@ -6,22 +6,22 @@
  */
 package org.sikuli.natives;
 
-import java.awt.Rectangle;
-import java.awt.Window;
-import java.io.File;
-import java.util.HashMap;
-import java.util.Map;
 import org.sikuli.basics.Debug;
 import org.sikuli.script.App;
 import org.sikuli.script.Key;
 import org.sikuli.script.RunTime;
 import org.sikuli.script.Screen;
 
+import java.awt.*;
+import java.io.File;
+import java.util.HashMap;
+import java.util.Map;
+
 public class WinUtil implements OSUtil {
 
   @Override
-  public String getLibName() {
-    return "WinUtil";
+  public void checkLibAvailability() {
+    RunTime.loadLibrary("WinUtil");
   }
 
   @Override
@@ -190,7 +190,7 @@ public class WinUtil implements OSUtil {
 
   @Override
   public int open(String appName) {
-    int pid = openApp(appName); 
+    int pid = openApp(appName);
     return pid < 1 ? -1 : pid;
   }
 
@@ -203,7 +203,7 @@ public class WinUtil implements OSUtil {
     if (!app.options.isEmpty()) {
       cmd += " " + app.options;
     }
-    int pid = openApp(cmd); 
+    int pid = openApp(cmd);
     return pid < 1 ? -1 : pid;
   }
 
@@ -268,6 +268,7 @@ public class WinUtil implements OSUtil {
         switchto(app.window.substring(1), 0);
         RunTime.pause(1);
         new Screen().type(Key.F4, Key.ALT);
+        return 0;
       } else {
         app = getApp(app.pid, app.name);
       }

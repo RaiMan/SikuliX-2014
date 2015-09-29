@@ -310,9 +310,14 @@ public class Settings {
     return ImageCache;
   }
 
-	public static double DelayBeforeDrop = 0.3;
-	public static double DelayAfterDrag = 0.3;
-
+  public static double DelayValue = 0.3;
+  public static double DelayBeforeMouseDown = DelayValue;
+  @Deprecated
+  // use DelayBeforeDrag instead
+	public static double DelayAfterDrag = DelayValue;
+	public static double DelayBeforeDrag = -DelayValue;
+	public static double DelayBeforeDrop = DelayValue;
+  
 	/**
 	 * Specify a delay between the key presses in seconds as 0.nnn. This only
 	 * applies to the next type and is then reset to 0 again. A value &gt; 1 is cut
@@ -456,7 +461,7 @@ public class Settings {
 	}
 
   public static boolean isMac10() {
-    if (isMac() && Settings.getOSVersion().startsWith("10.10")) {
+    if (isMac() && Settings.getOSVersion().startsWith("10.1")) {
       return true;
     }
     return false;

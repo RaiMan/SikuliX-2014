@@ -266,6 +266,10 @@ public class JythonHelper {
     try {
       mExec.invoke(interpreter, code);
     } catch (Exception ex) {
+      PyException pex = new PyException(ex.getCause());
+      if (pex.isTypeExit() < 0) {
+        log(-1, "exec: returns:\n%s", ex.getCause());
+      }
       return false;
     }
     return true;

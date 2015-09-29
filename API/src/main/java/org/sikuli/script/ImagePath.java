@@ -582,6 +582,17 @@ public class ImagePath {
    * no trailing path separator
    * @return the current bundle path (might be the fallback working folder)
    */
+  public static String getBundlePathSet() {
+    if (bundlePath == null) {
+      return null;
+    }
+    return new File(FileManager.slashify(bundlePath.getPath(), false)).getAbsolutePath();
+  }
+
+  /**
+   * no trailing path separator
+   * @return the current bundle path (might be the fallback working folder)
+   */
   public static String getBundleFolder() {
     if (bundlePath == null) {
       setBundlePath(null);

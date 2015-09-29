@@ -16,3 +16,4 @@ opencvsrc/
 *$py.class
 .exe
 original/
+*.sikuli.robot/

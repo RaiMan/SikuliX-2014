@@ -6,28 +6,19 @@
  */
 package org.sikuli.script;
 
-import java.awt.Desktop;
-import java.awt.Rectangle;
 import org.sikuli.basics.Debug;
-import java.awt.Toolkit;
-import java.awt.datatransfer.ClipboardOwner;
-import java.awt.datatransfer.DataFlavor;
-import java.awt.datatransfer.StringSelection;
-import java.awt.datatransfer.Transferable;
-import java.awt.datatransfer.UnsupportedFlavorException;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Reader;
-import java.io.StringReader;
+import org.sikuli.natives.OSUtil;
+import org.sikuli.natives.SysUtil;
+
+import java.awt.*;
+import java.awt.datatransfer.*;
+import java.io.*;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import org.sikuli.natives.OSUtil;
-import org.sikuli.natives.SysUtil;
 
 /**
  * App implements features to manage (open, switch to, close) applications.
@@ -56,10 +47,8 @@ public class App {
   static {
 //TODO Sikuli hangs if App is used before Screen
     new Screen();
-		String libName = _osUtil.getLibName();
-		if (!libName.isEmpty()) {
-			RunTime.loadLibrary(libName);
-		}
+    _osUtil.checkLibAvailability();
+
     appsWindows = new HashMap<Type, String>();
     appsWindows.put(Type.EDITOR, "Notepad");
     appsWindows.put(Type.BROWSER, "Google Chrome");
@@ -174,6 +163,20 @@ public class App {
       return null;
     }
   }
+  
+  public static void pause(int time) {
+    try {
+      Thread.sleep(time * 1000);
+    } catch (InterruptedException ex) {
+    }
+  }
+
+  public static void pause(float time) {
+    try {
+      Thread.sleep((int) (time * 1000));
+    } catch (InterruptedException ex) {
+    }
+  }
 //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="AppEntry">
@@ -183,7 +186,7 @@ public class App {
     public String options;
     public String window;
     public int pid;
-    
+
     public AppEntry(String theName, String thePID, String theWindow, String theExec, String theOptions) {
       name = theName;
       window = theWindow;
@@ -195,7 +198,7 @@ public class App {
       } catch (Exception ex) {}
     }
   }
-  
+
   public AppEntry makeAppEntry() {
     String name = appName;
     String window = appWindow;
@@ -208,10 +211,12 @@ public class App {
     if (notFound) {
       name = "!" + name;
     }
-    return new AppEntry(name, getPID().toString(), window, appNameGiven, appOptions);
+    String pid = getPID().toString();
+    AppEntry appEntry = new AppEntry(name, pid, window, appNameGiven, appOptions);
+    return appEntry;
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="constructors">
   /**
    * creates an instance for an app with this name
@@ -229,6 +234,7 @@ public class App {
     if(appNameGiven.startsWith("+")) {
       isImmediate = true;
       appNameGiven = appNameGiven.substring(1);
+      Debug.log(3, "App.immediate: %s", appNameGiven);
       appName = appNameGiven;
       String[] parts;
       if (appName.startsWith("\"")) {
@@ -246,44 +252,23 @@ public class App {
       }
       if (appName.startsWith("\"")) {
         execName = appName.substring(1, appName.length()-1);
-        appName = new File(execName).getName();
       } else {
         execName = appName;
-        appName = new File(appName).getName();
       }
-      if (!new File(execName).exists()) {
-        appName = "";
-        appOptions = "";
-        appWindow = "!";
-        notFound = true;
-        init("!" + appNameGiven);
+      appName = new File(execName).getName();
+      File checkName = new File(execName);
+      if (checkName.isAbsolute()) {
+        if (!checkName.exists()) {
+          appName = "";
+          appOptions = "";
+          appWindow = "!";
+          notFound = true;
+        }
       }
-      Debug.log(3, "App.immediate: %s", appNameGiven);
     } else {
       init(appNameGiven);
     }
-    if (appPID > -1) {
-      Debug.log(3, "App.create: %s", toStringShort());
-    } else {
-      if (runTime.runningWindows) {
-        if (!isImmediate && appOptions.isEmpty()) {
-          int pid = _osUtil.switchto(appNameGiven);
-          if (pid > 0) {
-            init(pid);
-            appWindow = "!" + appNameGiven;
-            Debug.log(3, "App.create: %s", toStringShort());
-          } else {
-            appPID = -1;
-            appName = "";
-          }
-        }
-      } else {
-        appName = new File(appNameGiven).getName();
-        if (runTime.runningMac) {
-          appName = appName.replace(".app", "");
-        }
-      }
-    }
+    Debug.log(3, "App.create: %s", toStringShort());
   }
 
   private void init(String name) {
@@ -328,7 +313,7 @@ public class App {
       appPID = -1;
     }
   }
-  
+
   private void init() {
     if (appPID > -1) {
       init(appPID);
@@ -344,12 +329,12 @@ public class App {
   public static void getApps(String name){
     Map<Integer, String[]> theApps = _osUtil.getApps(name);
     int count = 0;
-    String[] item; 
+    String[] item;
     for (Integer pid : theApps.keySet()) {
       item = theApps.get(pid);
       if (pid < 0) {
         pid = -pid;
-        Debug.logp("%d:%s (N/A)", pid, item[0]);        
+        Debug.logp("%d:%s (N/A)", pid, item[0]);
       } else {
         Debug.logp("%d:%s (%s)", pid, item[0], item[1]);
         count++;
@@ -357,11 +342,11 @@ public class App {
     }
     Debug.logp("App.getApps: %d apps (%d having window)", theApps.size(), count);
   }
-  
+
   public static void getApps(){
     getApps(null);
   }
-  
+
   public App setUsing(String options) {
     if (options != null) {
       appOptions = options;
@@ -370,7 +355,7 @@ public class App {
     }
     return this;
   }
-  
+
   public Integer getPID() {
     return appPID;
   }
@@ -382,15 +367,15 @@ public class App {
   public String getWindow() {
     return appWindow;
   }
-  
+
   public boolean isValid() {
     return !notFound;
-  } 
-  
+  }
+
   public boolean isRunning() {
     return isRunning(1);
   }
-  
+
   public boolean isRunning(int maxTime) {
     if (!isValid()) {
       return false;
@@ -421,7 +406,7 @@ public class App {
     init(appName);
     return !getWindow().isEmpty();
   }
-  
+
   @Override
   public String toString() {
     if (!appWindow.startsWith("!")) {
@@ -446,26 +431,45 @@ public class App {
   }
 
   /**
-   * tries to open the app defined by this App instance
+   * tries to open the app defined by this App instance<br>
+   * do not wait for the app to get running
    * @return this or null on failure
    */
   public App open() {
-    int pid;
+    return openAndWait(0);
+  }
+
+  /**
+   * tries to open the app defined by this App instance
+   * @return this or null on failure
+   */
+  public App open(int waitTime) {
+    return openAndWait(waitTime);
+  }
+  
+  public App openAndWait(int waitTime) {
     if (isImmediate) {
-      pid = _osUtil.open(appNameGiven);
+      appPID = _osUtil.open(appNameGiven);
     } else {
-      pid = _osUtil.open(makeAppEntry());
-      init(pid);
+      AppEntry appEntry = makeAppEntry();
+      init(_osUtil.open(appEntry));
     }
-    if (pid < 0) {
+    if (appPID < 0) {
       Debug.error("App.open failed: " + appNameGiven + " not found");
       notFound = true;
     } else {
       Debug.action("App.open " + this.toStringShort());
     }
+    if (isImmediate && notFound) {
+      return null;
+    }
+    if (waitTime > 0) {
+      if (! isRunning(waitTime)) {
+        return null;
+      }
+    }
     return this;
   }
-  
 //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="close">
@@ -490,12 +494,13 @@ public class App {
     if (appPID > -1) {
       init(appPID);
     } else if (isImmediate) {
-//      init();
+      init();
     }
     int ret = _osUtil.close(makeAppEntry());
     if (ret > -1) {
       Debug.action("App.close: %s", this.toStringShort());
       appPID = -1;
+      appWindow = "";
     } else {
       Debug.error("App.close %s did not work", this);
     }
@@ -553,9 +558,12 @@ public class App {
         return this;
       }
     }
-    int pid = -1;
-    pid = _osUtil.switchto(makeAppEntry(), num);
-    if (pid < 0) {
+    if (isImmediate) {
+      appPID = _osUtil.switchto(appNameGiven, num);
+    } else {
+      init(_osUtil.switchto(makeAppEntry(), num));
+    }
+    if (appPID < 0) {
       Debug.error("App.focus failed: " + (num > 0 ? " #" + num : "") + " " + this.toString());
       return null;
     } else {
@@ -607,13 +615,13 @@ public class App {
     return asRegion(_osUtil.getFocusedWindow());
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="run">
   public static int lastRunReturnCode = -1;
   public static String lastRunStdout = "";
   public static String lastRunStderr = "";
   public static String lastRunResult = "";
-  
+
   /**
    * the given text is parsed into a String[] suitable for issuing a Runtime.getRuntime().exec(args).
    * quoting is preserved/obeyed. the first item must be an executable valid for the running system.<br>
@@ -649,7 +657,7 @@ public class App {
     return lastRunReturnCode;
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="clipboard">
   /**
    * evaluates the current textual content of the system clipboard

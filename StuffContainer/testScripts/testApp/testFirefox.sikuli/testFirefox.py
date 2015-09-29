@@ -1,0 +1,18 @@
+def focusIDE():
+  hover(Location(1160, 899))
+  wait(0.5)
+  click(Mouse.at().offset(0,-50))
+  hover(getCenter())
+  
+ff = App("Firefox")
+am = App("Mail")
+ff.open()
+wait(3)
+am.focus()
+wait(2)
+ff.focus()
+write("#W1.#M.w")
+wait(2)
+ff.close()
+wait(1)
+focusIDE()

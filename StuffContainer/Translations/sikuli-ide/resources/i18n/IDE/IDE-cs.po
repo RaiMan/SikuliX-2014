@@ -1,0 +1,605 @@
+# Czech translation for sikuli
+# Copyright (c) 2011 Rosetta Contributors and Canonical Ltd 2011
+# This file is distributed under the same license as the sikuli package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2011.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: sikuli\n"
+"Report-Msgid-Bugs-To: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2011-10-19 16:28-0700\n"
+"PO-Revision-Date: 2012-04-05 10:18+0000\n"
+"Last-Translator: Michal Dlauhý <Unknown>\n"
+"Language-Team: Czech <cs@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Launchpad-Export-Date: 2015-09-07 08:48+0000\n"
+"X-Generator: Launchpad (build 17706)\n"
+
+#: menuFile
+msgctxt "menuFile"
+msgid "File"
+msgstr "Soubor"
+
+#: menuEdit
+msgid "Edit"
+msgstr "Editovat"
+
+#: menuRun
+msgctxt "menuRun"
+msgid "Run"
+msgstr "Spustit"
+
+#: menuView
+msgid "View"
+msgstr "Zobrazit"
+
+#: menuTool
+msgid "Tools"
+msgstr "Nástroje"
+
+#: menuFileNew
+msgid "New"
+msgstr "Nový"
+
+#: menuFileOpen
+msgid "Open..."
+msgstr "Otevřít..."
+
+#: menuFileSave
+msgid "Save"
+msgstr "Uložit"
+
+#: menuFileSaveAs
+msgid "Save as..."
+msgstr "Uložit jako..."
+
+#: menuFileExport
+msgid "Export excutable..."
+msgstr "Exportovat ..."
+
+#: menuFilePreferences
+msgid "Preferences..."
+msgstr "Předvolby…"
+
+#: menuFileCloseTab
+msgid "Close Tab"
+msgstr "Zavřít záložku"
+
+#: menuFileQuit
+msgid "Quit"
+msgstr "Konec"
+
+#: menuEditUndo
+msgid "Undo"
+msgstr "Zpět"
+
+#: menuEditRedo
+msgid "Redo"
+msgstr "Vpřed"
+
+#: menuEditCut
+msgid "Cut"
+msgstr "Vyjmout"
+
+#: menuEditCopy
+msgid "Copy"
+msgstr "Kopírovat"
+
+#: menuEditPaste
+msgid "Paste"
+msgstr "Vložit"
+
+#: menuEditSelectAll
+msgid "Select All"
+msgstr "Vybrat vše"
+
+#: menuEditIndent
+msgid "Indent"
+msgstr "Odsazení"
+
+#: menuEditUnIndent
+msgid "Un-Indent"
+msgstr "Zpět - odaszení"
+
+#: menuFind
+msgctxt "menuFind"
+msgid "Find"
+msgstr "Hledat"
+
+#: menuFindFind
+msgid "Find..."
+msgstr "Hledat..."
+
+#: menuFindFindNext
+msgid "Find Next"
+msgstr "Hledat další"
+
+#: menuFindFindPrev
+msgid "Find Previous"
+msgstr "Hledat předchozí"
+
+#: menuRunRun
+msgctxt "menuRunRun"
+msgid "Run"
+msgstr "Spustit"
+
+#: menuRunRunAndShowActions
+msgctxt "menuRunRunAndShowActions"
+msgid "Run in slow motion"
+msgstr "Spustit ve zpomaleném režimu"
+
+#: menuRunStop
+msgid "Stop"
+msgstr "Zastavit"
+
+#: menuViewUnitTest
+msgctxt "menuViewUnitTest"
+msgid "Unit Test"
+msgstr "Unit Test"
+
+#: menuViewCommandList
+msgid "Command List"
+msgstr "Seznam příkazů"
+
+#: menuToolExtensions
+msgid "Extensions..."
+msgstr "Rozšíření..."
+
+#: menuHelp
+msgid "Help"
+msgstr "Nápověda"
+
+#: menuHelpCheckUpdate
+msgid "Check Update..."
+msgstr "Zkontrolovat aktualizace..."
+
+#: menuHelpGuide
+msgid "The Complete Guide to Sikuli Script"
+msgstr "Kompletní návod pro Sikuli Script"
+
+#: menuHelpDocumentations
+msgid "Tutorials, Examples, How-To's"
+msgstr "Tutoriály, Příklady, Návody"
+
+#: menuHelpAsk
+msgid "Ask Questions & Find Answers"
+msgstr "Otázky & Odpovědi"
+
+#: menuHelpBugReport
+msgid "Report a Bug"
+msgstr "Nahlásit chybu"
+
+#: menuHelpTranslation
+msgid "Join our translation project!"
+msgstr "Přidej se k našemu překladatelskému projektu"
+
+#: menuHelpHomepage
+msgid "Sikuli's Homepage"
+msgstr "Sikuli's Homepage"
+
+#: dlgUpdateAvailable
+msgid "Sikuli {0} is available!"
+msgstr "Sikuli {0} je k dispozici!"
+
+#: msgNoUpdate
+msgid "No update is available."
+msgstr "Žádná aktualizace není dostupná"
+
+#: cmdListSettings
+msgid "Settings"
+msgstr "Nastavení"
+
+#: cmdListAutoCapture
+msgid "Auto Capture"
+msgstr "Automatické snímání obrazovky"
+
+#: cmdListFind
+msgctxt "cmdListFind"
+msgid "Find"
+msgstr "Najít"
+
+#: cmdListMouse
+msgid "Mouse Actions"
+msgstr "Operace s myší"
+
+#: cmdListKeyboard
+msgid "Keyboard Actions"
+msgstr "Operace s klávesnicí"
+
+#: cmdListObserver
+msgid "Event Observation"
+msgstr "Sledování události"
+
+#: paneMessage
+msgid "Message"
+msgstr "Zpráva"
+
+#: paneTestTrace
+msgid "Test Trace"
+msgstr "Zkušební běh"
+
+#: tabUntitled
+msgid "Untitled"
+msgstr "Bez názvu"
+
+#: tabUnitTest
+msgctxt "tabUnitTest"
+msgid "Unit Test"
+msgstr "Unit Test"
+
+#: btnRun
+msgid "Run ({0})"
+msgstr "Spustit ({0})"
+
+#: btnRunLabel
+msgctxt "btnRunLabel"
+msgid "Run"
+msgstr "Spustit"
+
+#: btnRunSlowMotionLabel
+msgctxt "btnRunSlowMotionLabel"
+msgid "Run in slow motion"
+msgstr "Spustit ve zpomaleném režimu"
+
+#: btnRunStopHint
+msgid "Press {0} to stop"
+msgstr "Stiskni {0} pro zastavení"
+
+#: btnRegionLabel
+msgid "Create Region"
+msgstr "Vytvořit oblast"
+
+#: btnRegionHint
+msgid "Create a region to restrict screen matching"
+msgstr "Vytvořit oblast k omezení hledání na obrazovce"
+
+#: btnCaptureLabel
+msgid "Take screenshot"
+msgstr "Pořídit snímek obrazovky"
+
+#: btnCaptureHint
+msgid "Take a screenshot ({0})"
+msgstr "Pořídit snímek obrazovky ({0})"
+
+#: btnInsertImageHint
+msgid "Insert an image from disks"
+msgstr "Vložit obrázek z disku"
+
+#: btnInsertImageLabel
+msgid "Insert image "
+msgstr "Vložit obrázek "
+
+#: msgRunningSklError
+msgid ""
+"Runtime Error when running {0}\n"
+"{1}"
+msgstr ""
+"Runtime Error během {0}\n"
+"{1}"
+
+#: msgExit
+msgid "Exited with code {0}"
+msgstr "Ukončeno kódem {0}"
+
+#: msgStopped
+msgid "Stopped"
+msgstr "Zastaveno"
+
+#: msgErrorLine
+msgid "An error occurs at line {0}"
+msgstr "Chyba na řádku {0}"
+
+#: msgErrorMsg
+msgid ""
+"Error message:\n"
+"{0}"
+msgstr ""
+"Chybová zpráva:\n"
+"{0}"
+
+#: msgCapturePrompt
+msgid "Select a region on the screen"
+msgstr "Vyber oblast na obrazovce"
+
+#: winPreferences
+msgid "Preferences"
+msgstr "Nastavení"
+
+#: PreferencesWin.chkExpandTab.text
+msgid "Tab key inserts spaces instead of tab"
+msgstr "Klávesa Tab vloží mezery místo odsazení"
+
+#: PreferencesWin.lblUpdates.text
+msgid "Updates"
+msgstr "Aktualizace"
+
+#: PreferencesWin.lblLanguage.text
+msgid "Language"
+msgstr "Jazyk"
+
+#: PreferencesWin.lblTabWidth.text
+msgid "Tab width:"
+msgstr "Šířka tabulátoru"
+
+#: PreferencesWin.lblFont.text
+msgid "Font name:"
+msgstr "Název písma:"
+
+#: PreferencesWin.lblFontSize.text
+msgid "Size:"
+msgstr "Velikost:"
+
+#: PreferencesWin.titleAppearance.textWithMnemonic
+msgid "Fonts"
+msgstr "Písma"
+
+#: PreferencesWin.titleIndentation.textWithMnemonic
+msgid "Indentation"
+msgstr "Odsazení"
+
+#: PreferencesWin.paneTextEditing.tab.title
+msgid "Text Editing"
+msgstr "Editace textu"
+
+#: prefTabScreenCapturing
+msgid "Screen Capturing"
+msgstr "Snímání obrazovky"
+
+#: prefCaptureHotkey
+msgid "Quick capture hotkey:"
+msgstr "Klávesová zkratka pro rychlé sejmutí obrazovky"
+
+#: prefCaptureDelay
+msgid "Delay before capture:"
+msgstr "Zpoždění před sejmutím obrazovky"
+
+#: prefSeconds
+msgid "seconds"
+msgstr "sekund"
+
+#: prefAutoNaming
+msgid "Automatic Naming:"
+msgstr "Automatické pojmenování"
+
+#: prefTimestamp
+msgid "time stamp"
+msgstr "časová značka"
+
+#: prefRecognizedText
+msgid "text in the image"
+msgstr "text v obrázku"
+
+#: prefManualInput
+msgid "off (manual input)"
+msgstr "vypnuto (manuální vstup)"
+
+#: prefTabGeneralSettings
+msgid "General Settings"
+msgstr "Všeobecné nastavení"
+
+#: prefGeneralAutoCheck
+msgid "Check Update Automatically"
+msgstr "Zkontroluj automaticky aktualizace"
+
+#: dlgAskCloseTab
+msgid "Do you want to close this tab?"
+msgstr "Chcete zavřit tuto záložku?"
+
+#: msgAskSaveChanges
+msgid "{0} has been modified. Save changes?"
+msgstr "{0} byl změněn. Chcete změny uložit?"
+
+#: statusLineColumn
+msgid "Line: {0,number,integer}, Column: {1,number,integer}"
+msgstr "Řádek: {0, číslo, integer), Sloupec: {1, čislo, integer)"
+
+#: winPatternSettings
+msgid "Pattern Settings"
+msgstr "Nastavení vzorku"
+
+#: tabNaming
+msgctxt "tabNaming"
+msgid "File"
+msgstr "Soubor"
+
+#: tabMatchingPreview
+msgid "Matching Preview"
+msgstr "Náhled"
+
+#: tabTargetOffset
+msgid "Target Offset"
+msgstr "Odsazení středu"
+
+#: lblPath
+msgid "Path:"
+msgstr "Cesta:"
+
+#: lblFilename
+msgid "Filename:"
+msgstr "Název souboru:"
+
+#: lblSimilarity
+msgid "Similarity:"
+msgstr "Podobnost:"
+
+#: lblNumberOfMatches
+msgid "Number of matches/Max:"
+msgstr "Počet shod/Max:"
+
+#: lblTargetOffsetX
+msgid "Target offset  X:"
+msgstr "Odsazení středu v ose X:"
+
+#: lblTargetOffsetY
+msgid ", Y:"
+msgstr ", Y:"
+
+#: ok
+msgid "OK"
+msgstr "Ok"
+
+#: apply
+msgid "Apply"
+msgstr "Použít"
+
+#: cancel
+msgid "Cancel"
+msgstr "Zrušit"
+
+#: yes
+msgid "Yes"
+msgstr "Ano"
+
+#: no
+msgid "No"
+msgstr "Ne"
+
+#: dlgFileExists
+msgid "File Exists"
+msgstr "Soubor existuje"
+
+#: msgFileExists
+msgid "Are you sure to overwrite this file \"{0}\"?"
+msgstr "Opravdu chcete přepsat soubor \"{0}\"?"
+
+#: dlgEnterScreenshotFilename
+msgid "Name The Screen Shot"
+msgstr "Pojmenujte screenshot"
+
+#: msgEnterScreenshotFilename
+msgid "Enter the screen shot's file name:"
+msgstr "Vložte jméno screenshotu:"
+
+#: cmdFind
+msgid ""
+"Looks for the best matched GUI component on the screen or in the Region."
+msgstr "Hledá nejvíce podobnou položku na obrazovce nebo v oblasti."
+
+#: cmdFindAll
+msgid "Looks for all matched GUI component on the screen or in the Region."
+msgstr "Hledá všechny odpovídající položky na obrazovce nebo v oblasti."
+
+#: cmdWait
+msgid ""
+"Waits the given GUI component to appear on the screen or in the Region for "
+"up to <i>timeout</i> seconds."
+msgstr ""
+"Čeká po dobu <i>timeout</i> sekund než se daná položka objeví na obrazovce "
+"či v oblasti."
+
+#: cmdWaitVanish
+msgid ""
+"Waits the given GUI component to disappear on the screen or in the Region "
+"for up to <i>timeout</i> seconds."
+msgstr ""
+"Čeká po dobu <i>timeout</i> sekund než daná položka zmizí z obrazovky či z "
+"oblasti."
+
+#: cmdExists
+msgid ""
+"Checks if the given GUI component exists on the screen or in the "
+"Region.<br>If it can not be found, None is returned without throwing an "
+"exception."
+msgstr ""
+"Kontroluje zda daná položka existuje na obrazovce či v oblasti.<br>Když není "
+"nalezena, je výstup None bez výstupu chyby."
+
+#: cmdClick
+msgid ""
+"Clicks on the best matched GUI component on the screen or in the Region."
+msgstr "Klikne na nejvíce odpovídající položku na obrazovce či v oblasti."
+
+#: cmdDoubleClick
+msgid ""
+"Double clicks on the best matched GUI component on the screen or in the "
+"Region."
+msgstr ""
+"Dvojitě klikne na nejvíce odpovídající položku na obrazovce či v oblasti."
+
+#: cmdRightClick
+msgid ""
+"Right clicks on the best matched GUI component on the screen or in the "
+"Region."
+msgstr ""
+"Pravé kliknutí na nejvíce odpovídající položku na obrazovce či v oblasti."
+
+#: cmdHover
+msgid "Moves the mouse cursor on the best matched GUI component."
+msgstr ""
+"Posune kurzor myši na nejvíce odpovídající položku na obrazovce či v oblasti."
+
+#: cmdDragDrop
+msgid "Drags the first component, and drops at the second component."
+msgstr "Klikne na první položku, přetáhne a uvolní nad druhou položkou."
+
+#: cmdType
+msgid "Types the given <i>text</i> to the current focused window."
+msgstr "Napíše daný text <i>text</i> do aktuálního okna."
+
+#: cmdType2
+msgid ""
+"Clicks on the given component to gain the focus and then types the given "
+"<i>text</i>."
+msgstr ""
+"Klikne na danou položku aby se stala aktivní a pak napíše daný <i>text</i>."
+
+#: cmdPaste
+msgid "Pastes the given <i>text</i> to the current focused window."
+msgstr "Vloží daný <i>text</i> do aktuálního okna."
+
+#: cmdPaste2
+msgid ""
+"Clicks on the given component to gain the focus and then pastes the given "
+"<i>text</i>."
+msgstr ""
+"Klikne na danou položku aby se stala aktivní a pak vloží daný <i>text</i>."
+
+#: cmdOnAppear
+msgid ""
+"Calls <i>handler</i> when the given image pattern appears on the screen or "
+"in the Region."
+msgstr ""
+"Vyvolá <i>handler</i> když se daná položka objeví na obrazovce či v oblasti."
+
+#: cmdOnVanish
+msgid ""
+"Calls <i>handler</i> when the given image pattern disappears on the screen "
+"or in the Region."
+msgstr ""
+"Vyvolá <i>handler</i> když daná položka zmizí z obrazovky či z oblasti."
+
+#: cmdOnChange
+msgid ""
+"Calls <i>handler</i> when anything is changed on the screen or in the Region."
+msgstr "Vyvolá <i>handler</i> když se něco změní na obrazovce či v oblasti."
+
+#: cmdObserve
+msgid ""
+"Starts the observer to watch the screen or the Region for up to <i>time</i> "
+"seconds.<br>The observer will be run in the background if <i>background</i> "
+"is set to True."
+msgstr ""
+"Spustí pozorování obrazovky či oblasti na <i>time</i> sekund.<br>Pozorování "
+"bude spuštěno do pozadí pokud <i>background</i> nastaveno na True."
+
+#: extBtnInstall
+msgid "Install"
+msgstr "Nainstalovat"
+
+#: extBtnInfo
+msgid "More Info"
+msgstr "Více informací"
+
+#: extMsgInstalled
+msgid "Installed"
+msgstr "Nainstalované"
+
+#: extBtnInstallVer
+msgid "Install {0}"
+msgstr "Nainstalovat {0}"
+
+#: extBtnUpdateVer
+msgid "Update to {0}"
+msgstr "Aktualizovat na {0}"

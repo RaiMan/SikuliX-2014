@@ -554,6 +554,8 @@ public class ScriptingSupport {
         return Runner.runas(givenScriptScript);
       } else if (Runner.RSSCRIPT.equals(givenScriptScriptType)) {
         return Runner.runps(givenScriptScript);
+      } else if (Runner.RRSCRIPT.equals(givenScriptScriptType)) {
+        return Runner.runrobot(givenScriptScript);
       }
       int exitCode = -1;
       IScriptRunner currentRunner = null;
