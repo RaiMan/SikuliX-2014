@@ -1290,22 +1290,20 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, scMask),
             new EditAction(EditAction.SELECT_ALL)));
 
-    if (!Settings.isMac10()) {
-      _editMenu.addSeparator();
-      JMenu findMenu = new JMenu(_I("menuFind"));
-      _findHelper = new FindAction();
-      findMenu.setMnemonic(KeyEvent.VK_F);
-      findMenu.add(createMenuItem(_I("menuFindFind"),
-              KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, scMask),
-              new FindAction(FindAction.FIND)));
-      findMenu.add(createMenuItem(_I("menuFindFindNext"),
-              KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, scMask),
-              new FindAction(FindAction.FIND_NEXT)));
-      findMenu.add(createMenuItem(_I("menuFindFindPrev"),
-              KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, scMask | InputEvent.SHIFT_MASK),
-              new FindAction(FindAction.FIND_PREV)));
-      _editMenu.add(findMenu);
-    }
+    _editMenu.addSeparator();
+    JMenu findMenu = new JMenu(_I("menuFind"));
+    _findHelper = new FindAction();
+    findMenu.setMnemonic(KeyEvent.VK_F);
+    findMenu.add(createMenuItem(_I("menuFindFind"),
+            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_F, scMask),
+            new FindAction(FindAction.FIND)));
+    findMenu.add(createMenuItem(_I("menuFindFindNext"),
+            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, scMask),
+            new FindAction(FindAction.FIND_NEXT)));
+    findMenu.add(createMenuItem(_I("menuFindFindPrev"),
+            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_G, scMask | InputEvent.SHIFT_MASK),
+            new FindAction(FindAction.FIND_PREV)));
+    _editMenu.add(findMenu);
 
     _editMenu.addSeparator();
     _editMenu.add(createMenuItem(_I("menuEditIndent"),
