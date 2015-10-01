@@ -2020,9 +2020,10 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     toolbar.add(Box.createHorizontalGlue());
 
 //TODO get it working for OSX 10.10
-    if (!Settings.isMac10()) {
-      toolbar.add(createSearchField());
-    }
+//    if (!Settings.isMac10()) {
+      JComponent jcSearchField = createSearchField();
+      toolbar.add(jcSearchField);
+//    }
 
     toolbar.add(Box.createRigidArea(new Dimension(7, 0)));
     toolbar.setFloatable(false);
