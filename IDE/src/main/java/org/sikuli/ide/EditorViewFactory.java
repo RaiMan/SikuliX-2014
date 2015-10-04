@@ -163,16 +163,17 @@ class SyntaxHighlightLabelView extends LabelView {
 		"ImageFind", "ImageFinder", "Settings",
   };
   private static String[] keywordsSikuli = {
-    "find", "wait", "findAll", "findText", "findAllText", "waitVanish", "exists", "text",
+    "find", "wait", "findAll", "findText", "findAllText", 
+    "waitVanish", "exists", "text",
     "click", "doubleClick", "rightClick", "hover", "wheel", "delayClick",
     "type", "paste", "write", "delayType",
     "dragDrop", "drag", "dropAt",
     "mouseMove", "mouseDown", "mouseUp",
     "keyDown", "keyUp",
-    "onAppear", "onVanish", "onChange", "observe", "stopObserver", "isObserving",
-    "popup", "input", "sleep", "run",
+    "onAppear", "onVanish", "onChange", 
+    "observe", "observeInBackground", "stopObserver", "isObserving",
+    "popup", "input", "sleep", "run", "runScript",
     "switchApp", "openApp", "closeApp", "use", "useRemote", "ucode", "load",
-    "assertExist", "assertNotExist",
     "capture", "selectRegion",
     "getOS", "getMouseLocation", "exit",
     //Region
@@ -189,6 +190,8 @@ class SyntaxHighlightLabelView extends LabelView {
     "get", "setRows", "getRows", "setCols", "setCols", "getRowH", "getColW",
     "setRaster", "getRow", "getCol", "getCell",
     "getImage",
+    //Event
+    "repeat", 
     //Pattern
     "similar", "targetOffset", "getLastMatch", "getLastMatches",
     "getTargetOffset", "getFilename",
