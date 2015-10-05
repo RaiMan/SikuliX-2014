@@ -55,6 +55,9 @@ public class RunSetup {
   private static String updateVersion;
   private static String downloadIDE;
   private static String downloadAPI;
+  private static String downloadLibsMac;
+  private static String downloadLibsWin;
+  private static String downloadLibsLux;
   private static String downloadRServer;
   private static String downloadJython;
   private static String downloadJython25;
@@ -119,7 +122,7 @@ public class RunSetup {
   private static boolean shouldBuildVision = false;
 	private static boolean bequiet = false;
   private static String sikulixMavenGroup = "com/sikulix/";
-	private static boolean testingMaven = false;
+	private static boolean testingMaven = true;
   private static boolean withExtensions = false;
 
   static Map <String, String> downloadsLookfor = new HashMap<String, String>();
@@ -168,10 +171,16 @@ public class RunSetup {
       runTime.shouldCleanDownloads = true;
       downloadIDE = String.format("sikulixsetupIDE-%s-%s.jar", version, runTime.sxBuildStamp);
       downloadAPI = String.format("sikulixsetupAPI-%s-%s.jar", version, runTime.sxBuildStamp);
+      downloadLibsMac = String.format("sikulixlibsmac-%s-%s.jar", version, runTime.sxBuildStamp);
+      downloadLibsWin = String.format("sikulixlibswin-%s-%s.jar", version, runTime.sxBuildStamp);
+      downloadLibsLux = String.format("sikulixlibslux-%s-%s.jar", version, runTime.sxBuildStamp);
     } else {
       localSetup = "sikulixsetup-" + version + ".jar";
       downloadIDE = getMavenJarName("sikulixsetupIDE#forsetup");
       downloadAPI = getMavenJarName("sikulixsetupAPI#forsetup");
+      downloadLibsMac = getMavenJarName("sikulixlibsmac");
+      downloadLibsWin = getMavenJarName("sikulixlibswin");
+      downloadLibsLux = getMavenJarName("sikulixlibslux");
     }
 
     downloadJython = new File(runTime.SikuliJythonMaven).getName();
@@ -546,10 +555,20 @@ public class RunSetup {
       if (!proxyMsg.isEmpty()) {
         msg += proxyMsg + "\n";
       }
-      if (forAllSystems)
+      if (forAllSystems) {
         msg += "\n--- Native support libraries for all systems (sikulixlibs...)\n";
-      else {
+        downloadedFiles += downloadLibsWin + " ";
+        downloadedFiles += downloadLibsMac + " ";
+        downloadedFiles += downloadLibsLux + " ";
+      } else {
         msg += "\n--- Native support libraries for " + runTime.osName + " (sikulixlibs...)\n";
+        if (runTime.runningWindows) {
+          downloadedFiles += downloadLibsWin + " ";
+        } else if (runTime.runningMac) {
+          downloadedFiles += downloadLibsMac + " ";
+        } else if (runTime.runningLinux) {
+          downloadedFiles += downloadLibsLux + " ";
+        }
       }
       if (getIDE) {
         downloadedFiles += downloadIDE + " ";
@@ -1245,8 +1264,13 @@ public class RunSetup {
       }
     }
     for (String prefix : downloadsFound.keySet()) {
-      log(lvl, "checkDownloads: found: %s:\n%s", prefix, downloadsFound.get(prefix));      
-    }
+      File fpDownloaded = downloadsFound.get(prefix);
+      if (fpDownloaded != null) {
+        log(lvl, "checkDownloads: found: %s:\n%s", prefix, fpDownloaded);
+      } else {
+        log(lvl, "checkDownloads: not found: %s", prefix);
+      }
+ }
     if (!doubleFiles.isEmpty()) {
       popError("The following files are double or even more often found in the\n"
               + "respective folders setup checks before downloading new artefacts:\n" + doubleFiles +
