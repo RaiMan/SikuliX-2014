@@ -130,6 +130,14 @@ def ucode(s):
 def load(jar):
     return JythonHelper.get().load(jar)
 
+##
+# unzips the given input (string) to the given folder (string)
+# relative paths are resolved against the working folder
+#
+def unzip(zip, target):
+    import org.sikuli.basics.FileManager as FM
+    return FM.unzip(str(zip), str(target))
+
 ## ----------------------------------------------------------------------
 # append the given path sys.path if not yet contained
 #
