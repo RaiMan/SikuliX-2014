@@ -286,6 +286,9 @@ public class FileManager {
         _progress = null;
       }
     }
+    if (targetPath == null) {
+      fullpath.delete();
+    }
     return targetPath;
   }
 
@@ -297,14 +300,14 @@ public class FileManager {
    * @return the absolute path to the downloaded file or null on any error
    */
   public static String downloadURL(String url, String localPath) {
-    URL src = null;
+    URL urlSrc = null;
     try {
-      src = new URL(url);
+      urlSrc = new URL(url);
     } catch (MalformedURLException ex) {
       log(-1, "download: bad URL: " + url);
       return null;
     }
-    return downloadURL(src, localPath);
+    return downloadURL(urlSrc, localPath);
   }
 
   public static String downloadURL(String url, String localPath, JFrame progress) {
