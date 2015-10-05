@@ -870,16 +870,19 @@ public class RunSetup {
       logPlus(lvl, "Downloads for selected options:\n" + downloadedFiles);
     }
     if (!downloadOK) {
-      popError("Some of the downloads did not complete successfully.\n"
+      String msg = "Some of the downloads did not complete successfully.\n"
               + "Check the logfile for possible error causes.\n\n"
               + "If you think, setup's inline download is blocked somehow on\n"
               + "your system, you might download the appropriate raw packages manually\n"
               + "into the folder Downloads in the setup folder and run setup again.\n\n"
               + "download page: " + runTime.downloadBaseDirWeb + "\n"
-              + "files to download (information is in the setup log file too)\n"
-              + downloadedFiles
-              + "\n\nBe aware: The raw packages are not useable without being processed by setup!\n\n"
-              + "For other reasons, you might simply try to run setup again.");
+              + "files to download (information is in the setup log file too)\n\n";
+      for (String fnToDownload : downloadedFiles.split(" ")) {
+        msg += fnToDownload + "\n";
+      }
+      msg += "\nBe aware: The raw packages are not useable without being processed by setup!\n\n"
+              + "For other reasons, you might simply try to run setup again.";
+      popError(msg);
       terminate("download not completed successfully", 1);
     }
 
@@ -1665,7 +1668,11 @@ public class RunSetup {
       itemSuffix = "-" + parts[1];
     }
     if (runTime.isVersionRelease()) {
-      mPath = String.format("%s%s/%s/", sikulixMavenGroup, item, version);
+      if (itemSuffix.contains("forsetup")) {
+        mPath = runTime.downloadBaseDir;
+      } else {
+        mPath = String.format("%s%s/%s/", sikulixMavenGroup, item, version);
+      }
       mJar = String.format("%s-%s%s.jar", item, version, itemSuffix);
     } else {
       String dlMavenSnapshotPath = version + "-SNAPSHOT";
@@ -1721,7 +1728,11 @@ public class RunSetup {
   }
 
   private static File downloadJarFromMaven(String item, String target, String itemName) {
-    return download(runTime.dlMavenRelease + item, target, null, itemName);
+    if (item.startsWith("http")) {
+      return download(item, target, null, itemName);
+    } else {
+      return download(runTime.dlMavenRelease + item, target, null, itemName);
+    }
   }
 
   private static void userTerminated(String msg) {
