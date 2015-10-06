@@ -122,7 +122,7 @@ public class RunSetup {
   private static boolean shouldBuildVision = false;
 	private static boolean bequiet = false;
   private static String sikulixMavenGroup = "com/sikulix/";
-	private static boolean testingMaven = true;
+	private static boolean testingMaven = false;
   private static boolean withExtensions = false;
 
   static Map <String, String> downloadsLookfor = new HashMap<String, String>();
