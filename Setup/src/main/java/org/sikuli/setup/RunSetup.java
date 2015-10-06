@@ -127,6 +127,21 @@ public class RunSetup {
 
   static Map <String, String> downloadsLookfor = new HashMap<String, String>();
   static Map <String, File> downloadsFound = new HashMap<String, File>();
+  
+  private static File fSetupStuff = null;
+  private static boolean hasAPI = true;
+  private static String[] jarsList = new String[]{
+      null, // ide
+      null, // api
+      null, // tess
+      null, // jython
+      null, // jruby
+      null, // jruby+
+      null, // libwin
+      null, // libmac
+      null // liblux
+    };
+
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static void logp(String message, Object... args) {
@@ -364,7 +379,7 @@ public class RunSetup {
     fDownloadsObsolete = new File(fWorkDir, "Downloads");
     workDir = fWorkDir.getAbsolutePath();
     
-    File fSetupStuff = new File(fWorkDir, "SetupStuff");
+    fSetupStuff = new File(fWorkDir, "SetupStuff");
     FileManager.resetFolder(fSetupStuff);
 
     osarch = "" + runTime.javaArch;
@@ -642,17 +657,6 @@ public class RunSetup {
 //</editor-fold>
 
     String localTemp = "sikulixtemp.jar";
-    String[] jarsList = new String[]{
-      null, // ide
-      null, // api
-      null, // tess
-      null, // jython
-      null, // jruby
-      null, // jruby+
-      null, // libwin
-      null, // libmac
-      null // liblux
-    };
     localJar = null;
     File fTargetJar;
     String targetJar;
@@ -972,7 +976,9 @@ public class RunSetup {
 
     splash = showSplash("Now creating jars, application and commandfiles", "please wait - may take some seconds ...");
 
-    jarsList[1] = (new File(workDir, localAPI)).getAbsolutePath();
+    File fAPI = new File(workDir, localAPI); 
+    jarsList[1] = fAPI.getAbsolutePath();
+    hasAPI = fAPI.exists();
 
     if (getTess) {
       jarsList[2] = (new File(workDir, localTess)).getAbsolutePath();
@@ -1028,11 +1034,6 @@ public class RunSetup {
       }
     }
 
-    for (int i = (getAPI ? 2 : 1); i < jarsList.length; i++) {
-      if (jarsList[i] != null) {
-        new File(jarsList[i]).delete();
-      }
-    }
     closeSplash(splash);
 
     if (success && getIDE) {
@@ -1058,8 +1059,6 @@ public class RunSetup {
     if (!notests && runTime.isHeadless()) {
       log(lvl, "Running headless --- skipping tests");
     }
-
-    FileManager.deleteFileOrFolder(fSetupStuff);
 
     //<editor-fold defaultstate="collapsed" desc="api test">
     boolean runAPITest = false;
@@ -1188,8 +1187,20 @@ public class RunSetup {
 
     log(lvl,
             "... SikuliX Setup seems to have ended successfully ;-)");
+    
+    finalCleanup();
 
     System.exit(RunTime.testing ? 1 : 0);
+  }
+  
+  private static void finalCleanup() {
+    if (hasAPI) jarsList[1] = null;
+    for (int i = (getAPI ? 2 : 1); i < jarsList.length; i++) {
+      if (jarsList[i] != null) {
+        new File(jarsList[i]).delete();
+      }
+    }
+    FileManager.deleteFileOrFolder(fSetupStuff);
   }
 
   private static void runScriptTest(String[] testargs) {
@@ -1753,6 +1764,7 @@ public class RunSetup {
     logPlus(-1, "... terminated abnormally :-(");
     popError("Something serious happened! Sikuli not useable!\n"
             + "Check the error log at " + (logfile == null ? "printout" : logfile));
+    finalCleanup();
   }
 
   private static void terminate(String msg) {
