@@ -3,7 +3,7 @@
 
 [![Join the chat at https://gitter.im/RaiMan/SikuliX-2014](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RaiMan/SikuliX-2014?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-This is 1.1.1 after [1.1.0 final is available since 2015-10-07](https://launchpad.net/sikuli/sikulix/1.1.0)
+This is 1.1.1 after [1.1.0 final available (since 2015-10-07)](https://launchpad.net/sikuli/sikulix/1.1.0)
 -----------------
 ... a bug-fix release for problems with version 1.1.0
 
