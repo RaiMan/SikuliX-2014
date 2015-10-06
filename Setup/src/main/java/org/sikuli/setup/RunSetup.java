@@ -96,7 +96,7 @@ public class RunSetup {
   private static String libsMac = "sikulixlibsmac";
   private static String libsWin = "sikulixlibswin";
   private static String libsLux = "sikulixlibslux";
-  private static File folderLibs;
+  private static File folderLib;
   private static File folderLibsWin;
   private static File folderLibsLux;
   private static String linuxDistro = "*** testing Linux ***";
@@ -363,6 +363,9 @@ public class RunSetup {
     }
     fDownloadsObsolete = new File(fWorkDir, "Downloads");
     workDir = fWorkDir.getAbsolutePath();
+    
+    File fSetupStuff = new File(fWorkDir, "SetupStuff");
+    FileManager.resetFolder(fSetupStuff);
 
     osarch = "" + runTime.javaArch;
     if (runTime.runningLinux) {
@@ -411,8 +414,8 @@ public class RunSetup {
     File localJarIDE = new File(fWorkDir, localIDE);
     File localJarAPI = new File(fWorkDir, localAPI);
 
-    folderLibs = runTime.fLibsLocal;
-    folderLibsWin = new File(folderLibs, "windows");
+    folderLibsWin = new File(fSetupStuff, "sikulixlibs/windows");
+    folderLib =  new File(fSetupStuff, "Lib");
     folderLibsLux = runTime.fLibsProvided;
 
     //TODO Windows 8 HKLM/SOFTWARE/JavaSoft add Prefs ????
@@ -698,14 +701,17 @@ public class RunSetup {
         if (fDownloaded == null) {
           fDownloaded = downloadJarFromMavenSx(libsWin, dlDir, libsWin);
         }
-        downloadOK &= copyFromDownloads(fDownloaded, libsWin, jarsList[6]);
-        FileManager.resetFolder(folderLibsWin);
-        String aJar = FileManager.normalizeAbsolute(jarsList[6], false);
-        if (null == runTime.resourceListAsSikulixContentFromJar(aJar, "sikulixlibs/windows", folderLibsWin, null)) {
-          terminate("libswin content list could not be created", 999);
+        boolean dlLibsWinOK = copyFromDownloads(fDownloaded, libsWin, jarsList[6]);
+        if (dlLibsWinOK) {
+          FileManager.resetFolder(folderLibsWin);
+          String aJar = FileManager.normalizeAbsolute(jarsList[6], false);
+          if (null == runTime.resourceListAsSikulixContentFromJar(aJar, "sikulixlibs/windows", folderLibsWin, null)) {
+            terminate("libswin content list could not be created", 999);
+          }
+          addonFileList[addonLibswindows] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
+          addonFilePrefix[addonLibswindows] = libsWin;
         }
-        addonFileList[addonLibswindows] = new File(folderLibsWin, runTime.fpContent).getAbsolutePath();
-        addonFilePrefix[addonLibswindows] = libsWin;
+        downloadOK &= dlLibsWinOK;
       }
 
       if (forSystemMac || forAllSystems) {
@@ -727,17 +733,17 @@ public class RunSetup {
       if (fDownloaded == null) {
         fDownloaded = downloadJarFromMavenSx("sikulixsetupAPI#forsetup", dlDir, sDownloaded);
       }
-      downloadOK &= copyFromDownloads(fDownloaded, sDownloaded, localJar);
-
-      if(forSystemWin || forAllSystems) {
-        FileManager.resetFolder(runTime.fSikulixLib);
+      boolean dlApiOK = copyFromDownloads(fDownloaded, sDownloaded, localJar);
+      if(dlApiOK && (forSystemWin || forAllSystems)) {
+        FileManager.resetFolder(folderLib);
         String aJar = FileManager.normalizeAbsolute(localJar, false);
-        if (null == runTime.resourceListAsSikulixContentFromJar(aJar, "Lib", runTime.fSikulixLib, null)) {
-          terminate("libswin content list could not be created", 999);
+        if (null == runTime.resourceListAsSikulixContentFromJar(aJar, "Lib", folderLib, null)) {
+          terminate("Lib content list could not be created", 999);
         }
-        addonFileList[addonFolderLib] = new File(runTime.fSikulixLib, runTime.fpContent).getAbsolutePath();
+        addonFileList[addonFolderLib] = new File(folderLib, runTime.fpContent).getAbsolutePath();
         addonFilePrefix[addonFolderLib] = "Lib";
       }
+      downloadOK &= dlApiOK;
     }
 
     if (getIDE) {
@@ -1053,8 +1059,7 @@ public class RunSetup {
       log(lvl, "Running headless --- skipping tests");
     }
 
-    FileManager.deleteFileOrFolder(folderLibsWin);
-    FileManager.deleteFileOrFolder(new File(runTime.fSikulixLib, runTime.fpContent));
+    FileManager.deleteFileOrFolder(fSetupStuff);
 
     //<editor-fold defaultstate="collapsed" desc="api test">
     boolean runAPITest = false;
@@ -1668,7 +1673,7 @@ public class RunSetup {
       itemSuffix = "-" + parts[1];
     }
     if (runTime.isVersionRelease()) {
-      if (itemSuffix.contains("forsetup")) {
+      if (itemSuffix.contains("forsetup") || item.contains("sikulixlibs")) {
         mPath = runTime.downloadBaseDir;
       } else {
         mPath = String.format("%s%s/%s/", sikulixMavenGroup, item, version);

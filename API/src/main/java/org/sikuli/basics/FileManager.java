@@ -233,8 +233,9 @@ public class FileManager {
 				_progress.setVisible(true);
 			}
 			InputStream reader = null;
+      FileOutputStream writer = null;
 			try {
-				FileOutputStream writer = new FileOutputStream(fullpath);
+				writer = new FileOutputStream(fullpath);
 				if (getProxy() != null) {
 					reader = url.openConnection(getProxy()).getInputStream();
 				} else {
@@ -269,6 +270,12 @@ public class FileManager {
 				if (reader != null) {
 					try {
 						reader.close();
+					} catch (IOException ex) {
+					}
+				}
+				if (writer != null) {
+					try {
+						writer.close();
 					} catch (IOException ex) {
 					}
 				}
