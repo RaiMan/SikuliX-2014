@@ -518,7 +518,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 			return;
 		}
 		List<String> path = interpreter.getLoadPaths();
-		if (!FileManager.pathEquals((String) path.get(0), sikuliLibPath)) {
+		if (path.size() == 0 || !FileManager.pathEquals((String) path.get(0), sikuliLibPath)) {
 			log(lvl, "executeScriptHeader: adding SikuliX Lib path to sys.path\n" + sikuliLibPath);
 			int pathLength = path.size();
 			String[] pathNew = new String[pathLength + 1];
