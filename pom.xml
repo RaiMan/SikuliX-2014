@@ -59,7 +59,7 @@
     <sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
     <sikuli.minorversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.minorversion>
     <sikulixjythonversion>2.7.0</sikulixjythonversion>
-    <sikulixjrubyversion>1.7.22</sikulixjrubyversion>
+    <sikulixjrubyversion>9.0.1.0</sikulixjrubyversion>
     <sikulixlocalrepo>${settings.localRepository}</sikulixlocalrepo>
     <sikuli.helpers>Setup/src/main/resources/content</sikuli.helpers>
     <timestamp>${maven.build.timestamp}</timestamp>
