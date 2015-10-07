@@ -3,15 +3,17 @@
 
 [![Join the chat at https://gitter.im/RaiMan/SikuliX-2014](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RaiMan/SikuliX-2014?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-1.1.0 final is under development
+This is 1.1.1 after [1.1.0 final (available 2015-10-07)](https://launchpad.net/sikuli/sikulix/1.1.0)
 -----------------
+... a bug-fix release for problems with version 1.1.0
+
 The followup is SikuliX2 [version 2.0.0 in 2015](https://github.com/RaiMan/SikuliX2) 
 <hr>
 
 The Maven GroupID for the project now is **com.sikulix** (package names remain org.sikuli....)
 
 <hr>
-**sikulixapi.jar is half way up to Maven Central -- SNAPSHOTS available on OSSRH**<br>
+**Until sikulixapi.jar is available on Maven Central -- SNAPSHOTS available on OSSRH**<br>
 
 The repository URL:<br>
 `<url>http://oss.sonatype.org/content/groups/public</url>`<br>
@@ -32,10 +34,8 @@ find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/Sik
 This is the **last version that compiles and runs on Java 6**. SikuliX2 will need Java 1.7+.
 
 **If you want to test the head of developement without the need to build from sources:** <br>
-[look here: I have setup a page with nightly builds](http://nightly.sikuli.de)<br>
+[look here at the page with the nightly builds](http://nightly.sikuli.de)<br>
 **At your own risk ;-) Take care for your existing work - be prepared to restore your stuff!!**
-<hr>
-The **latest stable version** is **SikuliX 1.0.1** [download here](https://launchpad.net/sikuli/+download)
 <hr />
 **SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer)
 
