@@ -7,24 +7,21 @@ This is 1.1.1 after [1.1.0 final (available 2015-10-07)](https://launchpad.net/s
 -----------------
 ... a bug-fix release for problems with version 1.1.0
 
-The followup is SikuliX2 [version 2.0.0 in 2015](https://github.com/RaiMan/SikuliX2) 
+<hr>
+**The followup is SikuliX2** [version 2.0.0 in 2015/2016](https://github.com/RaiMan/SikuliX2) 
 <hr>
 
-The Maven GroupID for the project now is **com.sikulix** (package names remain org.sikuli....)
-
-<hr>
-**Until sikulixapi.jar is available on Maven Central -- SNAPSHOTS available on OSSRH**<br>
+**SNAPSHOTS on OSSRH** (if available)<br>
 
 The repository URL:<br>
 `<url>http://oss.sonatype.org/content/groups/public</url>`<br>
 
-The coordinates:<br>
-`<groupId>com.sikulix</groupId>`<br>
-`<artifactId>sikulixapi</artifactId>`<br>
-`<version>... see below ...</version>`
-
-available versions:<br>
-1.1.0-SNAPSHOT (the latest version towards final)
+The coordinates:
+```
+<groupId>com.sikulix</groupId>
+<artifactId>sikulixapi</artifactId>
+<version>1.1.1-SNAPSHOT</version>
+```
 
 find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/SikuliX-2014/tree/master/TestRunMaven)
 
@@ -36,6 +33,8 @@ This is the **last version that compiles and runs on Java 6**. SikuliX2 will nee
 **If you want to test the head of developement without the need to build from sources:** <br>
 [look here at the page with the nightly builds](http://nightly.sikuli.de)<br>
 **At your own risk ;-) Take care for your existing work - be prepared to restore your stuff!!**
+
+Might not be available all the time.
 <hr />
 **SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer)
 
@@ -54,15 +53,14 @@ This Maven multi-module setup contains everything ...
  - if you want to contribute.
 
 <hr />
-**To get the ready-to-use packages (IDE, Script, Java/Jython support) <br />it is still recommended [to start here](http://www.sikulix.com/download.html).**
+**To get the ready-to-use packages (IDE, Script, Java/Jython support) <br />it is still recommended [to start here](http://www.sikulix.com).**
 <hr />
 
 **Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) (work in progress)**
 
 **Tools I use for developement:** <br />
 IDE with Maven support: [NetBeans 7.4/8.0](https://netbeans.org) (using Java 7 and 8)<br />
-GitHub support: [SourceTree]() (Mac + Windows)<br />
-CI Service: [Travis CI](http://travis-ci.com) (not yet used)<br />
+GitHub support: NetBeans<br />
 Doc Service: [Read the Docs](https://readthedocs.org)<br />
 Main WebSite Service: [Weebly](http://www.weebly.com)<br />
 Private complementing Websites: [Host Europe](https://www.hosteurope.de)
@@ -76,7 +74,7 @@ Each folder (module) in this repo is a Maven project by itself with its own POM,
 
 **--- The top level modules (representing the Sikuli features) ---**
 
-Module API (sikulixapi.jar)
+Module sikulixapi (folder API) (sikulixapi.jar)
 ---
 
 **package org.sikuli.script** 
@@ -105,7 +103,7 @@ For Windows and Mac the native packages will again be pre-built and ready-to-use
 
 For more information on preparation and usage of the new OpenCV Java API [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-and-use-the-new-OpenCV-Java-API)
 
-Module IDE (sikulix.jar)
+Module sikulixide (folder IDE) (sikulix.jar)
 ---
 
 Implements a GUI using Java, that allows to edit and run Sikuli scripts (currently Jython and JRuby are supported). It is an easy to use IDE focusing on the handling of the screenshots and images used in the typical Sikuli workflows.
@@ -128,15 +126,7 @@ It produces the fat jar `sikulixsetup.jar` being the root downloadable artefact.
 **Modules LibsWin, LibsMac, LibsLux**
 
 The prebuilt native libraries for Windows, Mac and Linux (partially).<br />
-(gets `sikulixlibsxxx.jar` and are contained in `sikulixsetup.jar`)
-
-**Module Tesseract4SikuliX**
-
-This is an adaption of the work [Tess4J](http://tess4j.sourceforge.net) to the needs of this project, to allow the use of relevant Tesseract features directly from the Java level. The implementation is on level Tesseract 3.02 and uses JNA direct mapping to access the native functions in the library libtesseract.
-
-For Windows and Mac the native packages will again be pre-built and ready-to-use. For Linux there will be advices and scripts available to get the needed needed libraries ready.
-
-For more information on preparation and usage of the new Tesseract Java API [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-and-use-the-new-Tesseract-Java-API)
+(produces `sikulixlibsxxx.jar`)
 
 **Module Jygments4SikuliX**
 
@@ -144,40 +134,18 @@ This is an adaption of the work [Jygments](https://code.google.com/p/jygments/) 
 
 <hr/>
 
-**--- The modules used to support package production (container jars) ---**
-
-**Module Tesseract**
-
-Currently as a convenience the standard tessdata folder needed for using Tesseract 3.0.<br />
-(will be downloaded on request during a Sikuli setup)
-
-**Modules ...Fat**
-
-Existing for IDE, API, Jython and JRuby. These build so called fat jars, that contain all needed dependency jars and are only intended for the build/setup process.
-
-**Module Docs** (not Maven-ized yet)
-
-The source files for the textual documentation (built with PythonSphinx based on .rst files) and a ready-to-use HTML version as well as a HTML version of the JavaDocs of the main public Java API.<br />
-(is downloaded and made ready-to-use-locally during Sikuli setup)
-
 **Module TestRunMaven**
 
 A sample implementation of a Maven project, that loads the sikulixapi.jar from MavenCentral (currently still OSSRH).
 
 <hr/>
 
-**--- Modules being AddOns or Extensions --**
-
-**Module Guide**
-
-**Module Remote**
-
-<hr/>
-
 Usage - basic information
 -------------------------
 
-If you intend to compile and build the modules after having downloaded this repo, you should have a valid Maven 3 installation and for editing, testing and integration some IDE, that is enabled for working with Maven projects. <br />(I myself use NetBeans 7.4, which supports Maven by default)
+If you intend to compile and build the modules after having downloaded this repo, you should have a valid Maven 3 installation and for editing, testing and integration some IDE, that is enabled for working with Maven projects and has support for Git repositories (I myself use NetBeans 8, which supports both out of the box).
+
+**Look here for a guide, [how to get on the road with this project using NetBeans](https://github.com/RaiMan/SikuliX-2014/wiki/Work-with-the-sources-in-NetBeans)**.
 
 **Take care** Even if you only want to work on one of the modules (e.g. API), the modules should not be moved around, but stay in the structure of the downloaded repo. Each module depends on the parent POM in the root as well as the ready-to-use-jar-production POMs, that additionally depend on the assembly descriptors.
 
