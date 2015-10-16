@@ -36,11 +36,11 @@
 			<artifactId>jintellitype</artifactId>
 			<version>1.3.9</version>
 		</dependency>
-		<dependency>
+<!--		<dependency>
 			<groupId>jxgrabkey</groupId>
 			<artifactId>jxgrabkey</artifactId>
 			<version>1.0</version>
-		</dependency>
+		</dependency>-->
 		<dependency>
 			<!-- BridJ aims to be the ultimate Java / native interoperability library
 			Call C, C++, ObjectiveC libraries without compiling native code
