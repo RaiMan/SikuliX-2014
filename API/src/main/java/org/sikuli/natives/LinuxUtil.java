@@ -15,60 +15,60 @@ import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
+import org.sikuli.basics.Debug;
 
 import org.sikuli.script.App;
-import org.sikuli.script.RunTime;
 
 public class LinuxUtil implements OSUtil {
 
-	private static boolean wmctrlAvail = true;
-	private static boolean xdoToolAvail = true;
+  private static boolean wmctrlAvail = true;
+  private static boolean xdoToolAvail = true;
 
-	@Override
-    public void checkLibAvailability() {
-      List<CommandLine> commands = Arrays.asList(
-              CommandLine.parse("wmctrl -m"),
-              CommandLine.parse("xdotool version"),
-              CommandLine.parse("killall --version")
-      );
-      String msg = "";
-      for (CommandLine cmd : commands) {
-        try {
-          DefaultExecutor executor = new DefaultExecutor();
-          executor.setExitValue(0);
-          //suppress system output
-          executor.setStreamHandler(new PumpStreamHandler(null));
-          executor.execute(cmd);
-        } catch (IOException e) {
-          String executable = cmd.toStrings()[0];
-          if (executable.equals("wmctrl")) {
-            wmctrlAvail = false;
-          }
-          if (executable.equals("xdotool")) {
-            xdoToolAvail = false;
-          }
-          msg += "command '" + executable + "' is not executable\n";
+  @Override
+  public void checkLibAvailability() {
+    List<CommandLine> commands = Arrays.asList(
+            CommandLine.parse("wmctrl -m"),
+            CommandLine.parse("xdotool version"),
+            CommandLine.parse("killall --version")
+    );
+    String msg = "";
+    for (CommandLine cmd : commands) {
+      try {
+        DefaultExecutor executor = new DefaultExecutor();
+        executor.setExitValue(0);
+        //suppress system output
+        executor.setStreamHandler(new PumpStreamHandler(null));
+        executor.execute(cmd);
+      } catch (IOException e) {
+        String executable = cmd.toStrings()[0];
+        if (executable.equals("wmctrl")) {
+          wmctrlAvail = false;
         }
-      }
-      if (!msg.isEmpty()) {
-        msg += "please check the Availability!";
-        RunTime.get().terminate (1, msg);
+        if (executable.equals("xdotool")) {
+          xdoToolAvail = false;
+        }
+        msg += "command '" + executable + "' is not executable\n";
       }
     }
+    if (!msg.isEmpty()) {
+      msg += "Please check the availability - some features might not work without!";
+      Debug.error(msg);
+    }
+  }
 
-	private boolean wmctrlIsAvail(String f) {
-		if (wmctrlAvail) {
-			return true;
-		}
-		System.out.println("[error] " + f + ": wmctrl not available or not working");
-		return false;
-	}
+  private boolean isAvailable(boolean module, String f) {
+    if (module) {
+      return true;
+    }
+    Debug.error("%s: wmctrl not available or not working", f);
+    return false;
+  }
 
   @Override
   public App.AppEntry getApp(int appPID, String appName) {
     return new App.AppEntry(appName, "" + appPID, "", "", "");
   }
-  
+
   @Override
   public int isRunning(App.AppEntry app) {
     return -1;
@@ -101,9 +101,9 @@ public class LinuxUtil implements OSUtil {
 
   @Override
   public int switchto(String appName, int winNum) {
-		if (!wmctrlIsAvail("switchApp")) {
-			return -1;
-		}
+    if (!isAvailable(wmctrlAvail, "switchApp")) {
+      return -1;
+    }
     try {
       String cmd[] = {"wmctrl", "-a", appName};
       Process p = Runtime.getRuntime().exec(cmd);
@@ -124,6 +124,7 @@ public class LinuxUtil implements OSUtil {
   public int switchto(App.AppEntry app, int num) {
     return switchto(app.execName, num);
   }
+
   @Override
   public int close(String appName) {
     try {
@@ -151,6 +152,7 @@ public class LinuxUtil implements OSUtil {
   }
 
   private enum SearchType {
+
     APP_NAME,
     WINDOW_ID,
     PID
@@ -158,10 +160,9 @@ public class LinuxUtil implements OSUtil {
 
   @Override
   public Rectangle getFocusedWindow() {
-		if (!xdoToolAvail) {
-			System.out.println("[error] getFocusedWindow: xdotool not available or not working");
-			return null;
-		}
+    if (!isAvailable(xdoToolAvail, "getFocusedWindow")) {
+      return null;
+    }
     String cmd[] = {"xdotool", "getactivewindow"};
     try {
       Process p = Runtime.getRuntime().exec(cmd);
@@ -288,9 +289,9 @@ public class LinuxUtil implements OSUtil {
 
   @Override
   public int close(int pid) {
-		if (!wmctrlIsAvail("closeApp")) {
-			return -1;
-		}
+    if (!isAvailable(wmctrlAvail, "closeApp")) {
+      return -1;
+    }
     String winLine[] = findWindow("" + pid, 0, SearchType.PID);
     if (winLine == null) {
       return -1;
@@ -308,9 +309,9 @@ public class LinuxUtil implements OSUtil {
 
   @Override
   public int switchto(int pid, int num) {
-		if (!wmctrlIsAvail("switchApp")) {
-			return -1;
-		}
+    if (!isAvailable(wmctrlAvail, "switchApp")) {
+      return -1;
+    }
     String winLine[] = findWindow("" + pid, num, SearchType.PID);
     if (winLine == null) {
       return -1;

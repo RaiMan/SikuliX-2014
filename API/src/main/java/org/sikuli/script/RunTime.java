@@ -431,7 +431,6 @@ public class RunTime {
   public int debuglevelAPI = -1;
   private boolean runningScripts = false;
   public String linuxDistro  = "???LINUX???";
-  public String linuxAppSupport = "";
   public String linuxNeededLibs = "";
 
 //</editor-fold>
