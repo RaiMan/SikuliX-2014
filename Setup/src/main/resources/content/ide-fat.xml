@@ -14,7 +14,6 @@
         <exclude>com.sikulix:sikulixapi</exclude>
         <exclude>com.nativelibs4java:bridj</exclude>
 				<exclude>com.melloware:jintellitype</exclude>
-				<exclude>jxgrabkey:jxgrabkey</exclude>
         <exclude>org.python:jython-standalone</exclude>
         <exclude>org.jruby:jruby-complete</exclude>
       </excludes>

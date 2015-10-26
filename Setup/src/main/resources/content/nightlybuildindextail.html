@@ -1,3 +1,11 @@
+<h1>Changelog version 1.1.1</h1>
+<h4>Build: 2015-10-17</h4>
+revised: Linux: SikuliX no longer terminates if wmctrl or xdotool are not available.
+Some Appclass features do not work in this case, but respective error messages are produced.
+wmctrl: openApp, closeApp, switchApp - xodotool: getFocusedWindow<br>
+added: jxgrabkey sources to sikulixapi.jar to avoid downloading artefact from non-MavenCentral repository<br>
+changed: JRuby now using version 9 (9.0.1.0)
+<h1>Fixlevel of version 1.1.0 (2015-10-05)</h1>
 <h4>Build: 2015-09-25</h4>
 revised: drag(), dropAt(), dragDrop(): for each usage you can define individual timing parameters (see docs)<br>
 fixed: problem with App class on Mac and Windows after 2015-09-19: native xxxUtil libs where no longer loaded<br>

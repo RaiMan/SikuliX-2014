@@ -64,54 +64,7 @@
     <maven.build.timestamp.format>yyyy-MM-dd_HH:mm</maven.build.timestamp.format>
   </properties>
 
-  <repositories>
-    <repository>  <!-- com.sikulix.sikulixapi: jxgrabkey -->
-      <id>uni-due.de</id>
-      <name>uni-due.de</name>
-      <url>http://mvn.is.inf.uni-due.de:8081/nexus/content/repositories/atunes-dependencies/</url>
-      <layout>default</layout>
-      <releases>
-        <enabled>true</enabled>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-      <snapshots>
-        <enabled>false</enabled>
-        <updatePolicy>never</updatePolicy>
-      </snapshots>
-    </repository>
-    <!--		<repository>  Tesseract4SikuliX: java/dev/jai-imageio/jai-imageio-core-standalone/1.2
-      <releases/>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>mygrid-repository</id>
-      <name>myGrid Repository</name>
-      <url>http://www.mygrid.org.uk/maven/repository</url>
-    </repository>-->
-  </repositories>
-
   <dependencies>
-    <!-- not yet used
-        <dependency>
-          <groupId>org.slf4j</groupId>
-          <artifactId>slf4j-api</artifactId>
-          <version>1.7.5</version>
-        </dependency>
-        <dependency>
-          <groupId>ch.qos.logback</groupId>
-          <artifactId>logback-classic</artifactId>
-          <version>1.0.13</version>
-        </dependency>
-    -->
-    <!--
-    Javassist (Java Programming Assistant) makes Java bytecode manipulation simple.
-    http://www.csg.ci.i.u-tokyo.ac.jp/~chiba/javassist/
-    -->
-    <!--		<dependency>
-      <groupId>org.javassist</groupId>
-      <artifactId>javassist</artifactId>
-      <version>3.18.1-GA</version>
-    </dependency>-->
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>

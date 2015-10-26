@@ -431,7 +431,6 @@ public class RunTime {
   public int debuglevelAPI = -1;
   private boolean runningScripts = false;
   public String linuxDistro  = "???LINUX???";
-  public String linuxAppSupport = "";
   public String linuxNeededLibs = "";
 
 //</editor-fold>
@@ -1154,7 +1153,7 @@ Point pNull = new Point(0, 0);
   }
 
   public boolean isOSX10() {
-    return osVersion.startsWith("10.10.");
+    return osVersion.startsWith("10.10.") || osVersion.startsWith("10.11.");
   }
 
   /**

@@ -157,7 +157,6 @@ public class LinuxSupport {
       if (libOpenCVcore == null || libOpenCVhighgui == null || libOpenCVimgproc == null) {
         log(-1, "checking: OpenCV not in loader cache (see doc-note on OpenCV)");
         opencvAvail = checkSuccess = false;
-        runTime.linuxNeededLibs += "libopencv ";
       } else {
         log(lvl, "checking: found OpenCV libs:\n%s\n%s\n%s",
                 libOpenCVcore, libOpenCVhighgui, libOpenCVimgproc);
@@ -165,7 +164,6 @@ public class LinuxSupport {
       if (libTesseract == null) {
         log(-1, "checking: Tesseract not in loader cache (see doc-note on Tesseract)");
         tessAvail = checkSuccess = false;
-        runTime.linuxNeededLibs += "libtesseract ";
       } else {
         log(lvl, "checking: found Tesseract lib:\n%s", libTesseract);
       }
@@ -174,13 +172,11 @@ public class LinuxSupport {
     cmdRet = runTime.runcmd("wmctrl -m");
     if (cmdRet.contains(runTime.runCmdError)) {
       log(-1, "checking: wmctrl not available or not working");
-      runTime.linuxAppSupport += "wmctrl ";
     } else {
       log(lvl, "checking: wmctrl seems to be available");
     }
     cmdRet = runTime.runcmd("xdotool version");
     if (cmdRet.contains(runTime.runCmdError)) {
-      runTime.linuxAppSupport += "xdotool ";
       log(-1, "checking: xdotool not available or not working");
     } else {
       log(lvl, "checking: xdotool seems to be available");

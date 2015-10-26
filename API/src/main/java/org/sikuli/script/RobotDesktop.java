@@ -62,7 +62,7 @@ public class RobotDesktop extends Robot implements IRobot {
   }
   
   private void fakeHighlight(boolean onOff) {
-    if (runTime.runningMac && runTime.osVersion.startsWith("10.10")) {
+    if (runTime.runningMac && runTime.isOSX10()) {
       Region reg = Screen.getFakeRegion();
       reg.silentHighlight(onOff);
     }
