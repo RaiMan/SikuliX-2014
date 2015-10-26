@@ -13,7 +13,7 @@
 
 	<groupId>com.sikulix</groupId>
 	<artifactId>sikulixsetup</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.1</version>
 
 	<name>SikuliX Setup</name>
 	<description>... for visual testing and automation</description>
@@ -44,7 +44,7 @@
 		<dependency>
 			<groupId>com.sikulix</groupId>
 			<artifactId>sikulixapi</artifactId>
-			<version>1.1.0</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.swinglabs</groupId>
