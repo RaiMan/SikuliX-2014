@@ -99,4 +99,5 @@
       </plugin>
     </plugins>
   </build>
+    <name>sikulix1</name>
 </project>
