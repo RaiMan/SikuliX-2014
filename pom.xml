@@ -15,7 +15,7 @@
   </parent>-->
 
   <groupId>com.sikulix</groupId>
-  <artifactId>SikuliX-2014</artifactId>
+  <artifactId>sikulix1</artifactId>
   <version>1.1.1</version>
 
   <!-- to globally change the pom version:
@@ -99,5 +99,4 @@
       </plugin>
     </plugins>
   </build>
-    <name>sikulix1</name>
 </project>
