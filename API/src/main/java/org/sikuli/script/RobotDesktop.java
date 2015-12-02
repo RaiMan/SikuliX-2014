@@ -151,6 +151,7 @@ public class RobotDesktop extends Robot implements IRobot {
     Debug.log(4, "RobotDesktop: smoothMove (%.1f): " + src.toString() + "---" + dest.toString(), Settings.MoveMouseDelay);
     if (ms == 0) {
       doMouseMove(dest.x, dest.y);
+      waitForIdle();
       checkMousePosition(dest);
       return;
     }

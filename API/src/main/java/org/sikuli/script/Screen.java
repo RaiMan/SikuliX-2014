@@ -175,7 +175,7 @@ public class Screen extends Region implements EventObserver, IScreen {
     } else {
 			curID = id;
 		}
-    monitor = screens[id].monitor;
+    monitor = screens[curID].monitor;
     initScreen();
   }
 

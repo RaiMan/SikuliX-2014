@@ -140,7 +140,14 @@ public class Sikulix {
     }
     
     Debug.on(3);
-    //******Test Space*************************************
+    Settings.InfoLogs = true;
+    Settings.ActionLogs = true;
+
+    ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
+    String bundlePath = ImagePath.getPaths().get(1).getPath();
+    Location posStart = Mouse.at();
+
+//******Test Space*************************************
 //    Screen.showMonitors();
 //    Screen s = Screen.as(0);
 
@@ -152,24 +159,27 @@ public class Sikulix {
 //    p(Run.send("EVAL?r=Region.create(100,100,100,100);r.toJSON();"));
 //    Run.close();
 //    Run.stop();
-    //*********************************
-
-    Settings.InfoLogs = false;
-    Settings.ActionLogs = false;
     
-    ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
+    Screen scr = new Screen();
+    Screen scr1 = new Screen(1);
+    
+    //*********************************
+    
+    scr.hover(posStart);
+    System.exit(1);
 
-    if (rt.runningWinApp) {
-      popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
-      try {
-        Screen scr = new Screen();
-        scr.find(new Image(scr.userCapture("grab something to find"))).highlight(3);
-      } catch (Exception ex) {
-        popup("Uuups :-(\n" + ex.getMessage(), rt.fSxBaseJar.getName());
-      }
-      popup("Hello World\nNothing else to do ( yet ;-)", rt.fSxBaseJar.getName());
-      System.exit(1);
-    }
+//    if (rt.runningWinApp) {
+//      popup("Hello World\nNot much else to do ( yet ;-)", rt.fSxBaseJar.getName());
+//      try {
+//        scr = new Screen();
+//        scr.find(new Image(scr.userCapture("grab something to find"))).highlight(3);
+//      } catch (Exception ex) {
+//        popup("Uuups :-(\n" + ex.getMessage(), rt.fSxBaseJar.getName());
+//      }
+//      popup("Hello World\nNothing else to do ( yet ;-)", rt.fSxBaseJar.getName());
+//      System.exit(1);
+//    }
+
     String version = String.format("(%s-%s)", rt.getVersionShort(), rt.sxBuildStamp);
     File lastSession = new File(rt.fSikulixStore, "LastAPIJavaScript.js");
     String runSomeJS = "";
