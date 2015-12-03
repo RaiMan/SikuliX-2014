@@ -144,7 +144,7 @@ public class Sikulix {
     Settings.ActionLogs = true;
 
     ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
-    String bundlePath = ImagePath.getPaths().get(1).getPath();
+    String shotPath = new File(ImagePath.getPaths().get(1).getPath()).getParent();
     Location posStart = Mouse.at();
 
 //******Test Space*************************************
@@ -163,6 +163,9 @@ public class Sikulix {
     Screen scr = new Screen();
     Screen scr1 = new Screen(1);
     
+    Debug.on(4);
+    scr.userCapture().getFile(shotPath, "shot");
+    Debug.on(3);
     //*********************************
     
     scr.hover(posStart);

@@ -2061,7 +2061,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
   }
 
-  class ButtonSubregion extends ButtonOnToolbar implements ActionListener, EventObserver {
+  class ButtonSubregion extends ButtonOnToolbar implements ActionListener {
 
     String promptText;
     String buttonText;
@@ -2089,21 +2089,13 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     @Override
     public void actionPerformed(ActionEvent ae) {
       sikulixIDE.setVisible(false);
-//      OverlayCapturePrompt prompt = new OverlayCapturePrompt(null, this);
-//      prompt.prompt(promptText, 500);
       RunTime.pause(0.5f);
-      Screen.startPrompt(promptText, this);
-    }
+      OverlayCapturePrompt cp = Screen.doPrompt(promptText);
+      captureComplete(cp);
+     }
 
-    @Override
-    public void update(EventSubject s) {
-      if (s instanceof OverlayCapturePrompt) {
-        complete((OverlayCapturePrompt) s);
-      }
-    }
-
-    public void complete(OverlayCapturePrompt cp) {
-      int x, y, w, h;
+    public void captureComplete(OverlayCapturePrompt cp) {
+     int x, y, w, h;
       EditorPane codePane = getCurrentCodePane();
       ScreenImage r = cp.getSelection();
       Screen.closePrompt();
@@ -2125,12 +2117,13 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
           codePane.insertString(codePane.getRegionString(x, y, w, h));
         }
       }
+      Screen.resetPrompt(cp);
       sikulixIDE.setVisible(true);
       codePane.requestFocus();
     }
   }
 
-  class ButtonLocation extends ButtonSubregion implements ActionListener, EventObserver {
+  class ButtonLocation extends ButtonSubregion implements ActionListener {
 
     public ButtonLocation() {
       super();
@@ -2141,7 +2134,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
 
     @Override
-    public void complete(OverlayCapturePrompt cp) {
+    public void captureComplete(OverlayCapturePrompt cp) {
       int x, y;
       EditorPane codePane = getCurrentCodePane();
       ScreenImage simg = cp.getSelection();
@@ -2153,12 +2146,13 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         sikulixIDE.setVisible(false);
         codePane.insertString(String.format("Location(%d, %d)", x, y));
       }
+      Screen.resetPrompt(cp);
       sikulixIDE.setVisible(true);
       codePane.requestFocus();
     }
   }
 
-  class ButtonOffset extends ButtonSubregion implements ActionListener, EventObserver {
+  class ButtonOffset extends ButtonSubregion implements ActionListener {
 
     public ButtonOffset() {
       super();
@@ -2169,7 +2163,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
 
     @Override
-    public void complete(OverlayCapturePrompt cp) {
+    public void captureComplete(OverlayCapturePrompt cp) {
       int x, y, ox, oy;
       EditorPane codePane = getCurrentCodePane();
       ScreenImage simg = cp.getSelection();
@@ -2183,6 +2177,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         sikulixIDE.setVisible(false);
         codePane.insertString(String.format("Region(%d, %d, %d, %d).asOffset()", x, y, ox, oy));
       }
+      Screen.resetPrompt(cp);
       sikulixIDE.setVisible(true);
       codePane.requestFocus();
     }

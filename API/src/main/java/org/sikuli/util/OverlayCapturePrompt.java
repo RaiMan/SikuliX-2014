@@ -6,18 +6,14 @@
  */
 package org.sikuli.util;
 
-import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.*;
-import org.sikuli.natives.SysUtil;
 import org.sikuli.script.IScreen;
 import org.sikuli.script.Location;
-import org.sikuli.script.RunTime;
 import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenImage;
-import org.sikuli.script.ScreenUnion;
 
 /**
  * INTERNAL USE implements the screen overlay used with the capture feature
@@ -42,54 +38,42 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
   private BufferedImage bi = null;
   private float darker_factor;
   private Rectangle rectSelection;
-  private int srcScreenId = 0;
+  private int srcScreenId = -1;
   private Location srcScreenLocation = null;
   private Location destScreenLocation = null;
   private int srcx, srcy, destx, desty;
   private boolean canceled = false;
   private String promptMsg;
-  private boolean didPurgeMessage = false;
   private boolean dragging = false;
+  private boolean hasFinished = false;
+  private boolean hasStarted = false;
 
   public OverlayCapturePrompt(IScreen scr, EventObserver ob) {
     super();
     init(scr, ob);
   }
+  
+  public int getScrID() {
+    return srcScreenId;
+  }
 
   private void init(IScreen scr, EventObserver ob) {
     addObserver(ob);
-    if (RunTime.get().isOSX10()) {
-      scrOCP = scr;
-    } else {
-      if (Screen.getNumberScreens() > 1) {
-        scrOCP = new ScreenUnion();
-      } else {
-        scrOCP = Screen.getPrimaryScreen();
-      }
-    }
+    scrOCP = scr;
     canceled = false;
     setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
     rectSelection = new Rectangle();
+     
     addMouseListener(new MouseAdapter() {
-
-      @Override
-      public void mouseMoved(java.awt.event.MouseEvent e) {
-        if (promptMsg == null) {
-          return;
-        }
-        promptMsg = null;
-        repaint();
-      }
-
       @Override
       public void mousePressed(java.awt.event.MouseEvent e) {
         if (scr_img == null) {
           return;
         }
-        if (promptMsg != null) {
-          promptMsg = null;
-          didPurgeMessage = true;
+        if (e.getButton() != java.awt.event.MouseEvent.BUTTON1) {
+          return;
         }
+        hasStarted = true;
         destx = srcx = e.getX();
         desty = srcy = e.getY();
         srcScreenId = scrOCP.getIdFromPoint(srcx, srcy);
@@ -98,24 +82,20 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
                 srcScreenLocation.toStringShort(), srcScreenId);
         repaint();
       }
-
       @Override
       public void mouseReleased(java.awt.event.MouseEvent e) {
         if (scr_img == null) {
           return;
         }
-        if (!dragging && didPurgeMessage) {
-          didPurgeMessage = false;
-          return;
-        }
-        if (e.getButton() == java.awt.event.MouseEvent.BUTTON3) {
+        if (e.getButton() != java.awt.event.MouseEvent.BUTTON1) {
           canceled = true;
-          Debug.log(3, "CapturePrompt: aborted using right mouse button");
+          Debug.log(3, "CapturePrompt: aborted: not using left mouse button");
         } else {
           destScreenLocation = new Location(destx + scrOCP.getX(), desty + scrOCP.getY());
           Debug.log(4, "CapturePrompt: finished at (%d,%d) as %s on %d", destx, desty,
                   destScreenLocation.toStringShort(), srcScreenId);
         }
+        hasFinished = true;
         setVisible(false);
         notifyObserver();
       }
@@ -123,11 +103,22 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
 
     addMouseMotionListener(new MouseMotionAdapter() {
       @Override
-      public void mouseDragged(java.awt.event.MouseEvent e) {
-        if (scr_img == null) {
+      public void mouseMoved(java.awt.event.MouseEvent e) {
+        if (promptMsg == null) {
           return;
         }
-        dragging = true;
+        promptMsg = null;
+        repaint();
+      }
+      @Override
+      public void mouseDragged(java.awt.event.MouseEvent e) {
+        if (!hasStarted || scr_img == null) {
+          return;
+        }
+        if (!dragging) {
+          Screen.closePrompt((Screen) scrOCP);
+          dragging = true;
+        }
         destx = e.getX();
         desty = e.getY();
         repaint();
@@ -143,7 +134,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
             repaint();
             return;
           }
-          canceled = true;
+          hasFinished = canceled = true;
           Debug.log(3, "CapturePrompt: aborted using key ESC");
           setVisible(false);
           notifyObserver();
@@ -154,7 +145,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
 
   @Override
   public void close() {
-    Debug.log(4, "CapturePrompt.close: freeing resources");
+    Debug.log(4, "CapturePrompt.close: S(%d) freeing resources", scrOCP.getID());
     setVisible(false);
     dispose();
     scr_img = null;
@@ -169,7 +160,9 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
 
   @Override
   public void notifyObserver() {
-    obs.update(this);
+    if (obs != null) {
+      obs.update(this);
+    }
   }
 
   public void prompt(String msg, int delayMS) {
@@ -189,28 +182,22 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
   }
 
   public void prompt(String msg) {
-    captureScreen(scrOCP);
+    ScreenImage simg = scrOCP.capture();
+    scr_img = simg.getImage();
+    darker_factor = 0.6f;
+    RescaleOp op = new RescaleOp(darker_factor, 0, null);
+    scr_img_darker = op.filter(scr_img, null);
     Rectangle rect = new Rectangle(scrOCP.getBounds());
     this.setBounds(rect);
     promptMsg = msg;
     Debug.log(4, "CapturePrompt: [%d,%d (%d, %d)] %s", rect.x, rect.y, rect.width, rect.height, promptMsg);
     this.setVisible(true);
-    if (!Settings.isJava7()) {
-      if (Settings.isMac()) {
-        SysUtil.getOSUtil().bringWindowToFront(this, false);
-      }
-    }
-    this.requestFocus();
   }
 
-  private void captureScreen(IScreen scr) {
-    ScreenImage simg = scr.capture();
-    scr_img = simg.getImage();
-    darker_factor = 0.6f;
-    RescaleOp op = new RescaleOp(darker_factor, 0, null);
-    scr_img_darker = op.filter(scr_img, null);
+  public boolean isComplete() {
+    return hasFinished;
   }
-
+  
   public ScreenImage getSelection() {
     if (canceled) {
       return null;
@@ -224,7 +211,7 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
     ScreenImage ret = new ScreenImage(rectSelection, cropImg);
     return ret;
   }
-
+  
   private BufferedImage cropSelection() {
     int w = rectSelection.width, h = rectSelection.height;
     if (w <= 0 || h <= 0) {
@@ -251,8 +238,12 @@ public class OverlayCapturePrompt extends OverlayTransparentWindow implements Ev
     g2d.setColor(new Color(1f, 1f, 1f, 1));
     int sw = g2d.getFontMetrics().stringWidth(promptMsg);
     int sh = g2d.getFontMetrics().getMaxAscent();
-    Rectangle ubound = (new ScreenUnion()).getBounds();
+//    Rectangle ubound = (new ScreenUnion()).getBounds();
+    Rectangle ubound = scrOCP.getBounds();
     for (int i = 0; i < Screen.getNumberScreens(); i++) {
+      if (!Screen.getScreen(i).hasPrompt()) {
+        continue;
+      }
       Rectangle bound = Screen.getBounds(i);
       int cx = bound.x + (bound.width - sw) / 2 - ubound.x;
       int cy = bound.y + (bound.height - sh) / 2 - ubound.y;

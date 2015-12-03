@@ -14,12 +14,10 @@ import org.sikuli.util.OverlayCapturePrompt;
 import org.sikuli.script.IScreen;
 import org.sikuli.script.Region;
 import org.sikuli.script.ScreenImage;
-import org.sikuli.util.EventSubject;
 import org.sikuli.basics.Debug;
 import org.sikuli.script.Screen;
-import org.sikuli.util.EventObserver;
 
-class EditorRegionButton extends JButton implements ActionListener, EventObserver {
+class EditorRegionButton extends JButton implements ActionListener {
 
   private static final String me = "EditorRegionButton: ";
   EditorPane _pane;
@@ -40,36 +38,28 @@ class EditorRegionButton extends JButton implements ActionListener, EventObserve
   @Override
   public void actionPerformed(ActionEvent ae) {
     SikuliIDE ide = SikuliIDE.getInstance();
-    EditorPane codePane = ide.getCurrentCodePane();
     ide.setVisible(false);
-//    OverlayCapturePrompt prompt = new OverlayCapturePrompt(null, this);
-//    prompt.prompt(SikuliIDE._I("msgCapturePrompt"), 500);
-    Screen.startPrompt(SikuliIDE._I("msgCapturePrompt"), this);
-  }
-
-  @Override
-  public void update(EventSubject s) {
-    if (s instanceof OverlayCapturePrompt) {
-      OverlayCapturePrompt cp = (OverlayCapturePrompt) s;
-      ScreenImage r = cp.getSelection();
-      Screen.closePrompt();
-      if (r != null) {
-        try {
-          Thread.sleep(300);
-        } catch (InterruptedException ie) {
-        }
-        Rectangle roi = r.getROI();
-        _x = (int) roi.getX();
-        _y = (int) roi.getY();
-        _w = (int) roi.getWidth();
-        _h = (int) roi.getHeight();
-        BufferedImage img = getRegionImage(_x, _y, _w, _h);
-        setIcon(new ImageIcon(img));
-        setToolTipText(this.toString());
+    OverlayCapturePrompt cp = Screen.doPrompt(SikuliIDE._I("msgCapturePrompt"));
+    ScreenImage simg = cp.getSelection();
+    Screen.closePrompt();
+    if (simg != null) {
+      try {
+        Thread.sleep(300);
+      } catch (InterruptedException ie) {
       }
+      Rectangle roi = simg.getROI();
+      _x = (int) roi.getX();
+      _y = (int) roi.getY();
+      _w = (int) roi.getWidth();
+      _h = (int) roi.getHeight();
+      BufferedImage img = getRegionImage(_x, _y, _w, _h);
+      setIcon(new ImageIcon(img));
+      setToolTipText(this.toString());
     }
+    Screen.resetPrompt(cp);
     SikuliIDE.getInstance().setVisible(true);
   }
+
 
   private BufferedImage getRegionImage(int x, int y, int w, int h) {
     Region region = Region.create(x, y, w, h);

@@ -17,7 +17,6 @@ import javax.swing.JLabel;
 import javax.swing.border.Border;
 import org.sikuli.script.RunTime;
 import org.sikuli.script.Screen;
-import org.sikuli.util.EventObserver;
 import org.sikuli.util.EventSubject;
 import org.sikuli.util.OverlayCapturePrompt;
 import org.sikuli.script.ScreenImage;
@@ -26,7 +25,7 @@ import org.sikuli.script.ScreenImage;
  *
  * @author rhocke
  */
-public class EditorRegionLabel extends JLabel implements MouseListener, EventObserver {
+public class EditorRegionLabel extends JLabel implements MouseListener {
 
   protected String pyText;
   protected String oldPyText = null;
@@ -76,31 +75,6 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
   }
 
   @Override
-  public void update(EventSubject s) {
-    if (s instanceof OverlayCapturePrompt) {
-      OverlayCapturePrompt cp = (OverlayCapturePrompt) s;
-      ScreenImage r = cp.getSelection();
-      Screen.closePrompt();
-      if (r != null) {
-        try {
-          Thread.sleep(300);
-        } catch (InterruptedException ie) {
-        }
-        doUpdate(r);
-      }
-    }
-    SikuliIDE.getInstance().setVisible(true);
-  }
-
-  public void doUpdate(ScreenImage simg) {
-    Rectangle roi = simg.getROI();
-    pyText = String.format("%d,%d,%d,%d",
-            (int) roi.x, (int) roi.y, (int) roi.width, (int) roi.height);
-    setText(pyText);
-    pyText = "Region(" + pyText + ")";
-  }
-
-  @Override
   public String toString() {
     return pyText;
   }
@@ -133,14 +107,26 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
       return;
     }
     SikuliIDE ide = SikuliIDE.getInstance();
-    EditorPane codePane = ide.getCurrentCodePane();
     ide.setVisible(false);
     setForeground(fc);
     setBorder(bfinal);
-//    OverlayCapturePrompt prompt = new OverlayCapturePrompt(null, this);
-//    prompt.prompt(SikuliIDE._I("msgCapturePrompt"), 500);
     RunTime.pause(0.5f);
-    Screen.startPrompt(SikuliIDE._I("msgCapturePrompt"), this);
+    OverlayCapturePrompt cp = Screen.doPrompt(SikuliIDE._I("msgCapturePrompt"));
+    ScreenImage simg = cp.getSelection();
+    Screen.closePrompt();
+    if (simg != null) {
+      try {
+        Thread.sleep(300);
+      } catch (InterruptedException ie) {
+      }
+      Rectangle roi = simg.getROI();
+      pyText = String.format("%d,%d,%d,%d",
+              (int) roi.x, (int) roi.y, (int) roi.width, (int) roi.height);
+      setText(pyText);
+      pyText = "Region(" + pyText + ")";
+    }
+    Screen.resetPrompt(cp);
+    SikuliIDE.getInstance().setVisible(true);
   }
 
   @Override

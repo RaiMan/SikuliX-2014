@@ -15,15 +15,13 @@ import javax.swing.*;
 import javax.swing.text.*;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
-import org.sikuli.util.EventObserver;
-import org.sikuli.util.EventSubject;
 import org.sikuli.util.OverlayCapturePrompt;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.Key;
 import org.sikuli.script.Screen;
 
-class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable, EventObserver {
+class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable {
 
   private static final String me = "ButtonCapture: ";
   protected Element _line;
@@ -88,25 +86,51 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
       return;
     }
     String line = "";
-    EditorPane codePane = SikuliIDE.getInstance().getCurrentCodePane();
+    SikuliIDE ide = SikuliIDE.getInstance();
+    ide.setVisible(false);
+    EditorPane codePane = ide.getCurrentCodePane();
     line = codePane.getLineTextAtCaret();
     givenName = codePane.parseLineText("#" + line.trim());
-    Thread t = new Thread("capture") {
-      @Override
-      public void run() {
-        _isCapturing = true;
-        SikuliIDE ide = SikuliIDE.getInstance();
-        ide.setVisible(false);
-        try {
-          Thread.sleep(delay);
-        } catch (Exception e) {
+    OverlayCapturePrompt cp = Screen.doPrompt("Select an image");
+    ScreenImage simg = cp.getSelection();
+    Screen.closePrompt();
+    String filename = null;
+    EditorPane pane = SikuliIDE.getInstance().getCurrentCodePane();
+    boolean saveOverwrite = Settings.OverwriteImages;
+    if (simg != null) {
+      if (!givenName.isEmpty()) {
+        filename = givenName + ".png";
+        Settings.OverwriteImages = true;
+      } else {
+        int naming = PreferencesUser.getInstance().getAutoNamingMethod();
+        if (naming == PreferencesUser.AUTO_NAMING_TIMESTAMP) {
+          filename = Settings.getTimestamp();
+        } else if (naming == PreferencesUser.AUTO_NAMING_OCR) {
+          filename = PatternPaneNaming.getFilenameFromImage(simg.getImage());
+          if (filename == null || filename.length() == 0) {
+            filename = Settings.getTimestamp();
+          }
+        } else {
+          String nameOCR = "";
+          try {
+            nameOCR = PatternPaneNaming.getFilenameFromImage(simg.getImage());
+          } catch (Exception e) {
+          }
+          filename = getFilenameFromUser(nameOCR);
         }
-//        OverlayCapturePrompt p = new OverlayCapturePrompt(null, ButtonCapture.this);
-//        p.prompt("Select an image");
-        Screen.startPrompt("Select an image", ButtonCapture.this);
       }
-    };
-    t.start();
+
+      if (filename != null) {
+        String fullpath = FileManager.saveImage(simg.getImage(), filename, pane.getSrcBundle());
+        if (fullpath != null) {
+          captureCompleted(FileManager.slashify(fullpath, false), cp);
+          Settings.OverwriteImages = saveOverwrite;
+          return;
+        }
+      }
+    }
+    Settings.OverwriteImages = saveOverwrite;
+    captureCompleted(null, cp);
   }
 
   //<editor-fold defaultstate="collapsed" desc="RaiMan not used">
@@ -126,53 +150,6 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
    * }*/
   //</editor-fold>
 
-  @Override
-  public void update(EventSubject s) {
-    if (s instanceof OverlayCapturePrompt) {
-      OverlayCapturePrompt cp = (OverlayCapturePrompt) s;
-      ScreenImage simg = cp.getSelection();
-      Screen.closePrompt();
-      String filename = null;
-      EditorPane pane = SikuliIDE.getInstance().getCurrentCodePane();
-      boolean saveOverwrite = Settings.OverwriteImages;
-
-      if (simg != null) {
-        if (!givenName.isEmpty()) {
-          filename = givenName + ".png";
-          Settings.OverwriteImages = true;
-        } else {
-          int naming = PreferencesUser.getInstance().getAutoNamingMethod();
-          if (naming == PreferencesUser.AUTO_NAMING_TIMESTAMP) {
-            filename = Settings.getTimestamp();
-          } else if (naming == PreferencesUser.AUTO_NAMING_OCR) {
-            filename = PatternPaneNaming.getFilenameFromImage(simg.getImage());
-            if (filename == null || filename.length() == 0) {
-              filename = Settings.getTimestamp();
-            }
-          } else {
-            String nameOCR = "";
-            try {
-              nameOCR = PatternPaneNaming.getFilenameFromImage(simg.getImage());
-            } catch (Exception e) {
-            }
-            filename = getFilenameFromUser(nameOCR);
-          }
-        }
-
-        if (filename != null) {
-          String fullpath = FileManager.saveImage(simg.getImage(), filename, pane.getSrcBundle());
-          if (fullpath != null) {
-            captureCompleted(FileManager.slashify(fullpath, false));
-            Settings.OverwriteImages = saveOverwrite;
-            return;
-          }
-        }
-      }
-      Settings.OverwriteImages = saveOverwrite;
-      captureCompleted(null);
-    }
-  }
-
   private String getFilenameFromUser(String hint) {
     return (String) JOptionPane.showInputDialog(
             _codePane,
@@ -184,7 +161,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
             hint);
   }
 
-  public void captureCompleted(String imgFullPath) {
+  public void captureCompleted(String imgFullPath, OverlayCapturePrompt cp) {
     Element src = getSrcElement();
     if (imgFullPath != null) {
       Debug.log(2, "captureCompleted: " + imgFullPath);
@@ -210,6 +187,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
       }
     }
     _isCapturing = false;
+    Screen.resetPrompt(cp);
     SikuliIDE ide = SikuliIDE.getInstance();
     ide.setVisible(true);
     ide.requestFocus();

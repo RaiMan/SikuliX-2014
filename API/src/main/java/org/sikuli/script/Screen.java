@@ -8,14 +8,13 @@ package org.sikuli.script;
 
 import org.sikuli.util.ScreenHighlighter;
 import org.sikuli.util.OverlayCapturePrompt;
-import org.sikuli.util.EventSubject;
 import org.sikuli.util.EventObserver;
 import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
 import java.awt.AWTException;
 import java.awt.Rectangle;
-import java.awt.Robot;
 import java.util.Date;
+import org.sikuli.util.EventSubject;
 
 /**
  * A screen represents a physical monitor with its coordinates and size according to the global
@@ -27,7 +26,7 @@ import java.util.Date;
  * the region of the screen more than once, you have to create new ones based on the screen.
  * <br>The so called primary screen is the one with top left (0,0) and has id 0.
  */
-public class Screen extends Region implements EventObserver, IScreen {
+public class Screen extends Region implements IScreen {
 
   static RunTime runTime = RunTime.get();
 
@@ -49,8 +48,24 @@ public class Screen extends Region implements EventObserver, IScreen {
   protected boolean waitPrompt;
   protected OverlayCapturePrompt prompt;
   private final static String promptMsg = "Select a region on the screen";
+  public static boolean ignorePrimaryAtCapture = false;
   private ScreenImage lastScreenImage = null;
+  private static boolean isActiveCapturePrompt = false;
+  private static ScreenImage capturedImage = null;
+  private static OverlayCapturePrompt capturePrompt = null;
+  
+  private static synchronized boolean setActiveCapturePrompt() {
+    if (isActiveCapturePrompt) {
+      return false;
+    }
+    isActiveCapturePrompt = true;
+    return true;
+  }
 
+  private static synchronized void resetActiveCapturePrompt() {
+    isActiveCapturePrompt = false;
+  }
+  
   //<editor-fold defaultstate="collapsed" desc="Initialization">
 
   static {
@@ -500,6 +515,53 @@ public class Screen extends Region implements EventObserver, IScreen {
     return capture(reg.getRect());
   }
 
+  public static OverlayCapturePrompt doPrompt(String message) {
+    capturedImage = Screen.getPrimaryScreen().userCapture(message);
+    return capturePrompt;
+  }
+  
+  public static void closePrompt() {
+    for (int is = 0; is < Screen.getNumberScreens(); is++) {
+      if (!Screen.getScreen(is).hasPrompt()) {
+        continue;
+      }
+      Screen.getScreen(is).prompt.close();
+    }
+  }
+  
+  public static void closePrompt(Screen scr) {
+    for (int is = 0; is < Screen.getNumberScreens(); is++) {
+      if (Screen.getScreen(is).getID() == scr.getID() || 
+          !Screen.getScreen(is).hasPrompt()) {
+        continue;
+      }
+      Screen.getScreen(is).prompt.close();
+      Screen.getScreen(is).prompt = null;
+    }
+  }
+  
+  public static void resetPrompt(OverlayCapturePrompt ocp) {
+    int scrID = ocp.getScrID();
+    if (scrID > -1) {
+      Screen.getScreen(scrID).prompt = null;
+    }
+  }
+
+  public boolean hasPrompt() {
+    return prompt != null;
+  }
+  
+  private static void addPrompt(String message, EventObserver obs) {
+    String msg = message.isEmpty() ? promptMsg : message;
+    for (int is = 0; is < Screen.getNumberScreens(); is++) {
+      if (ignorePrimaryAtCapture && is == 0) {
+        continue;
+      }
+      Screen.getScreen(is).prompt = new OverlayCapturePrompt(Screen.getScreen(is), obs);
+      Screen.getScreen(is).prompt.prompt(msg);
+    }
+  }
+
   /**
    * interactive capture with predefined message: lets the user capture a screen image using the
    * mouse to draw the rectangle
@@ -510,20 +572,6 @@ public class Screen extends Region implements EventObserver, IScreen {
     return userCapture("");
   }
 
-  public static void startPrompt(String message, EventObserver obs) {
-    String msg = message.isEmpty() ? promptMsg : message;
-    for (int is = 0; is < Screen.getNumberScreens(); is++) {
-      Screen.getScreen(is).prompt = new OverlayCapturePrompt(Screen.getScreen(is), obs);
-      Screen.getScreen(is).prompt.prompt(msg);
-    }
-  }
-  
-  public static void closePrompt() {
-    for (int is = 0; is < Screen.getNumberScreens(); is++) {
-      Screen.getScreen(is).prompt.close();
-    }
-  }
-  
   /**
    * interactive capture with given message: lets the user capture a screen image using the mouse to
    * draw the rectangle
@@ -533,43 +581,42 @@ public class Screen extends Region implements EventObserver, IScreen {
    */
   @Override
   public ScreenImage userCapture(final String message) {
+    if (!setActiveCapturePrompt()) {
+      return null;
+    }
     waitPrompt = true;
     Thread th = new Thread() {
       @Override
       public void run() {
-        String msg = message.isEmpty() ? promptMsg : message;
-        for (int is = 0; is < Screen.getNumberScreens(); is++) {
-          Screen.getScreen(is).prompt = new OverlayCapturePrompt(Screen.getScreen(is), Screen.this);
-          Screen.getScreen(is).prompt.prompt(msg);
-        }
+        addPrompt(message, null);
       }
     };
     th.start();
-    boolean hasShot = true;
-    try {
-      int count = 0;
-      while (waitPrompt) {
-        Thread.sleep(100);
-        if (count++ > waitForScreenshot) {
-          hasShot = false;
-          break;
-        }
-      }
-    } catch (InterruptedException e) {
-      hasShot = false;
-    }
+    boolean hasShot = false;
     ScreenImage simg = null;
-    if (hasShot) {
+    int count = 0;
+    while (!hasShot) {
+      this.wait(0.1f);
+      if (count++ > waitForScreenshot) {
+        break;
+      }
       for (int is = 0; is < Screen.getNumberScreens(); is++) {
-        if (simg == null) {
-          simg = Screen.getScreen(is).prompt.getSelection();
+        OverlayCapturePrompt ocp = Screen.getScreen(is).prompt;
+        if (ocp == null) {
+          continue;
+        }
+        if (ocp.isComplete()) {
+          simg = ocp.getSelection();
           if (simg != null) {
             Screen.getScreen(is).lastScreenImage = simg;
+            hasShot = true;
+            capturePrompt = ocp;
           }
+          ocp.close();
         }
-        Screen.getScreen(is).prompt.close();
       }
     }
+    resetActiveCapturePrompt();
     return simg;
   }
   
@@ -615,16 +662,6 @@ public class Screen extends Region implements EventObserver, IScreen {
     Rectangle r = sim.getROI();
     return Region.create((int) r.getX(), (int) r.getY(),
             (int) r.getWidth(), (int) r.getHeight());
-  }
-
-  /**
-   * Internal use only
-   *
-   * @param s EventSubject
-   */
-  @Override
-  public void update(EventSubject s) {
-    waitPrompt = false;
   }
   //</editor-fold>
 
