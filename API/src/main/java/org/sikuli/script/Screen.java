@@ -14,7 +14,6 @@ import org.sikuli.basics.Debug;
 import java.awt.AWTException;
 import java.awt.Rectangle;
 import java.util.Date;
-import org.sikuli.util.EventSubject;
 
 /**
  * A screen represents a physical monitor with its coordinates and size according to the global

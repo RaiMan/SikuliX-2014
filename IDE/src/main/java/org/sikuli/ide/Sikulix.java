@@ -2,6 +2,7 @@ package org.sikuli.ide;
 
 import java.security.CodeSource;
 import javax.swing.JOptionPane;
+import org.sikuli.script.Screen;
 
 public class Sikulix {
 
@@ -18,6 +19,7 @@ public class Sikulix {
               "sikulixsetupIDE", JOptionPane.ERROR_MESSAGE);
       System.exit(0);
     }
+//    Screen.ignorePrimaryAtCapture = true;
     SikuliIDE.run(args);
   }
 }
