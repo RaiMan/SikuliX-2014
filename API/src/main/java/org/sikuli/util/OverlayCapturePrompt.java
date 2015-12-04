@@ -21,7 +21,7 @@ import org.sikuli.script.ScreenImage;
 /**
  * INTERNAL USE implements the screen overlay used with the capture feature
  */
-public class OverlayCapturePrompt extends JFrame {
+public class OverlayCapturePrompt extends JFrame  implements EventSubject {
 
   final static float MIN_DARKER_FACTOR = 0.6f;
   final static long MSG_DISPLAY_TIME = 2000;
@@ -34,7 +34,7 @@ public class OverlayCapturePrompt extends JFrame {
   static final BasicStroke strokeScreenFrame = new BasicStroke(5);
   static final BasicStroke _StrokeCross = new BasicStroke(1, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND, 1, new float[]{2f}, 0);
   static final BasicStroke bs = new BasicStroke(1);
-  private EventObserver obs;
+  private EventObserver captureObserver = null;
   private IScreen scrOCP;
   private BufferedImage scr_img = null;
   private BufferedImage scr_img_darker = null;
@@ -157,6 +157,7 @@ public class OverlayCapturePrompt extends JFrame {
           hasFinished = canceled = true;
           Debug.log(3, "CapturePrompt: aborted using key ESC");
           setVisible(false);
+          notifyObserver();
         }
       }
     });
@@ -206,6 +207,18 @@ public class OverlayCapturePrompt extends JFrame {
 
   public boolean isComplete() {
     return hasFinished;
+  }
+  
+  @Override
+  public void addObserver(EventObserver obs) {
+    captureObserver = obs;
+  }
+  
+  @Override
+  public void notifyObserver() {
+    if (null != captureObserver) {
+      captureObserver.update(this);
+    }    
   }
   
   public ScreenImage getSelection() {

@@ -50,8 +50,8 @@ public class Screen extends Region implements IScreen {
   public static boolean ignorePrimaryAtCapture = false;
   private ScreenImage lastScreenImage = null;
   private static boolean isActiveCapturePrompt = false;
-  private static ScreenImage capturedImage = null;
   private static OverlayCapturePrompt capturePrompt = null;
+  private static EventObserver captureObserver = null;
   
   private static synchronized boolean setActiveCapturePrompt() {
     if (isActiveCapturePrompt) {
@@ -514,9 +514,9 @@ public class Screen extends Region implements IScreen {
     return capture(reg.getRect());
   }
 
-  public static OverlayCapturePrompt doPrompt(String message) {
-    capturedImage = Screen.getPrimaryScreen().userCapture(message);
-    return capturePrompt;
+  public static void doPrompt(String message, EventObserver obs) {
+    captureObserver = obs;
+    Screen.getPrimaryScreen().userCapture(message);
   }
   
   public static void closePrompt() {
@@ -583,10 +583,14 @@ public class Screen extends Region implements IScreen {
           }
           Screen.getScreen(is).prompt = new OverlayCapturePrompt(Screen.getScreen(is));
           Screen.getScreen(is).prompt.prompt(msg);
+          Screen.getScreen(is).prompt.addObserver(captureObserver);
         }
       }
     };
     th.start();
+    if (captureObserver != null) {
+      return null;
+    }
     boolean hasShot = false;
     ScreenImage simg = null;
     int count = 0;

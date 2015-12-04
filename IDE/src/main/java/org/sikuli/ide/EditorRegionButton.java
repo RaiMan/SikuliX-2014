@@ -16,8 +16,10 @@ import org.sikuli.script.Region;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.basics.Debug;
 import org.sikuli.script.Screen;
+import org.sikuli.util.EventObserver;
+import org.sikuli.util.EventSubject;
 
-class EditorRegionButton extends JButton implements ActionListener {
+class EditorRegionButton extends JButton implements ActionListener, EventObserver {
 
   private static final String me = "EditorRegionButton: ";
   EditorPane _pane;
@@ -39,7 +41,12 @@ class EditorRegionButton extends JButton implements ActionListener {
   public void actionPerformed(ActionEvent ae) {
     SikuliIDE ide = SikuliIDE.getInstance();
     ide.setVisible(false);
-    OverlayCapturePrompt cp = Screen.doPrompt(SikuliIDE._I("msgCapturePrompt"));
+    Screen.doPrompt(SikuliIDE._I("msgCapturePrompt"), this);
+  }
+  
+  @Override
+  public void update(EventSubject es) {
+    OverlayCapturePrompt cp = null;
     ScreenImage simg = cp.getSelection();
     Screen.closePrompt();
     if (simg != null) {
@@ -59,7 +66,6 @@ class EditorRegionButton extends JButton implements ActionListener {
     Screen.resetPrompt(cp);
     SikuliIDE.getInstance().setVisible(true);
   }
-
 
   private BufferedImage getRegionImage(int x, int y, int w, int h) {
     Region region = Region.create(x, y, w, h);

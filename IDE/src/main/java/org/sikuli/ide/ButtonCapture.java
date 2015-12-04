@@ -20,8 +20,10 @@ import org.sikuli.script.ScreenImage;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.Key;
 import org.sikuli.script.Screen;
+import org.sikuli.util.EventObserver;
+import org.sikuli.util.EventSubject;
 
-class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable {
+class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable, EventObserver {
 
   private static final String me = "ButtonCapture: ";
   protected Element _line;
@@ -91,10 +93,16 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
     EditorPane codePane = ide.getCurrentCodePane();
     line = codePane.getLineTextAtCaret();
     givenName = codePane.parseLineText("#" + line.trim());
-    OverlayCapturePrompt cp = Screen.doPrompt("Select an image");
-    ScreenImage simg = cp.getSelection();
+    Screen.doPrompt("Select an image", this);
+  }
+  
+  @Override
+  public void update(EventSubject es) {
+    OverlayCapturePrompt ocp = (OverlayCapturePrompt) es;
+    ScreenImage simg = ocp.getSelection();
     Screen.closePrompt();
     String filename = null;
+    String fullpath = null;
     EditorPane pane = SikuliIDE.getInstance().getCurrentCodePane();
     boolean saveOverwrite = Settings.OverwriteImages;
     if (simg != null) {
@@ -121,16 +129,48 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
       }
 
       if (filename != null) {
-        String fullpath = FileManager.saveImage(simg.getImage(), filename, pane.getSrcBundle());
+        fullpath = FileManager.saveImage(simg.getImage(), filename, pane.getSrcBundle());
         if (fullpath != null) {
-          captureCompleted(FileManager.slashify(fullpath, false), cp);
-          Settings.OverwriteImages = saveOverwrite;
-          return;
+          fullpath = FileManager.slashify(fullpath, false);
         }
       }
     }
     Settings.OverwriteImages = saveOverwrite;
-    captureCompleted(null, cp);
+    captureCompleted(fullpath);
+    Screen.resetPrompt(ocp);
+    SikuliIDE ide = SikuliIDE.getInstance();
+    ide.setVisible(true);
+    ide.requestFocus();
+  }
+  
+  
+
+  public void captureCompleted(String imgFullPath) {
+    Element src = getSrcElement();
+    if (imgFullPath != null) {
+      Debug.log(2, "captureCompleted: " + imgFullPath);
+      if (src == null) {
+        if (_codePane == null) {
+          if (_lbl == null) {
+            insertAtCursor(SikuliIDE.getInstance().getCurrentCodePane(), imgFullPath);
+          } else {
+            _lbl.setFile(imgFullPath);
+          }
+        } else {
+          insertAtCursor(_codePane, imgFullPath);
+        }
+      } else {
+        replaceButton(src, imgFullPath);
+      }
+    } else {
+      Debug.log(2, "ButtonCapture: Capture cancelled");
+      if (src != null) {
+        captureCancelled = true;
+        replaceButton(src, "");
+        captureCancelled = false;
+      }
+    }
+    _isCapturing = false;
   }
 
   //<editor-fold defaultstate="collapsed" desc="RaiMan not used">
@@ -159,38 +199,6 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
             null,
             null,
             hint);
-  }
-
-  public void captureCompleted(String imgFullPath, OverlayCapturePrompt cp) {
-    Element src = getSrcElement();
-    if (imgFullPath != null) {
-      Debug.log(2, "captureCompleted: " + imgFullPath);
-      if (src == null) {
-        if (_codePane == null) {
-          if (_lbl == null) {
-            insertAtCursor(SikuliIDE.getInstance().getCurrentCodePane(), imgFullPath);
-          } else {
-            _lbl.setFile(imgFullPath);
-          }
-        } else {
-          insertAtCursor(_codePane, imgFullPath);
-        }
-      } else {
-        replaceButton(src, imgFullPath);
-      }
-    } else {
-      Debug.log(2, "ButtonCapture: Capture cancelled");
-      if (src != null) {
-        captureCancelled = true;
-        replaceButton(src, "");
-        captureCancelled = false;
-      }
-    }
-    _isCapturing = false;
-    Screen.resetPrompt(cp);
-    SikuliIDE ide = SikuliIDE.getInstance();
-    ide.setVisible(true);
-    ide.requestFocus();
   }
 
   private Element getSrcElement() {

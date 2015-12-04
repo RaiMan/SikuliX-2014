@@ -34,8 +34,6 @@ import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXSearchField;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
-import org.sikuli.util.EventObserver;
-import org.sikuli.util.EventSubject;
 import org.sikuli.basics.HotkeyEvent;
 import org.sikuli.basics.HotkeyListener;
 import org.sikuli.basics.HotkeyManager;
@@ -57,6 +55,8 @@ import org.sikuli.script.RunServer;
 import org.sikuli.script.Runner;
 import org.sikuli.script.Screen;
 import org.sikuli.script.Sikulix;
+import org.sikuli.util.EventObserver;
+import org.sikuli.util.EventSubject;
 
 public class SikuliIDE extends JFrame implements InvocationHandler {
 
@@ -2061,7 +2061,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
   }
 
-  class ButtonSubregion extends ButtonOnToolbar implements ActionListener {
+  class ButtonSubregion extends ButtonOnToolbar implements ActionListener, EventObserver {
 
     String promptText;
     String buttonText;
@@ -2090,9 +2090,15 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     public void actionPerformed(ActionEvent ae) {
       sikulixIDE.setVisible(false);
       RunTime.pause(0.5f);
-      OverlayCapturePrompt cp = Screen.doPrompt(promptText);
+      Screen.doPrompt(promptText, this);
+      OverlayCapturePrompt cp = null;
       captureComplete(cp);
      }
+    
+    @Override
+    public void update(EventSubject es) {
+      
+    }
 
     public void captureComplete(OverlayCapturePrompt cp) {
      int x, y, w, h;
@@ -2458,7 +2464,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
   }
 
-   protected String getCurrentBundlePath() {
+  protected String getCurrentBundlePath() {
     EditorPane pane = getCurrentCodePane();
     return pane.getBundlePath();
   }

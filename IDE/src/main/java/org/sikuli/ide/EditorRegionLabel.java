@@ -20,12 +20,13 @@ import org.sikuli.script.Screen;
 import org.sikuli.util.EventSubject;
 import org.sikuli.util.OverlayCapturePrompt;
 import org.sikuli.script.ScreenImage;
+import org.sikuli.util.EventObserver;
 
 /**
  *
  * @author rhocke
  */
-public class EditorRegionLabel extends JLabel implements MouseListener {
+public class EditorRegionLabel extends JLabel implements MouseListener, EventObserver {
 
   protected String pyText;
   protected String oldPyText = null;
@@ -111,7 +112,12 @@ public class EditorRegionLabel extends JLabel implements MouseListener {
     setForeground(fc);
     setBorder(bfinal);
     RunTime.pause(0.5f);
-    OverlayCapturePrompt cp = Screen.doPrompt(SikuliIDE._I("msgCapturePrompt"));
+    Screen.doPrompt(SikuliIDE._I("msgCapturePrompt"), this);
+  }
+  
+  @Override
+  public void update(EventSubject es) {
+    OverlayCapturePrompt cp = null;
     ScreenImage simg = cp.getSelection();
     Screen.closePrompt();
     if (simg != null) {
