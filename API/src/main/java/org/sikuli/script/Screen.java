@@ -550,17 +550,6 @@ public class Screen extends Region implements IScreen {
     return prompt != null;
   }
   
-  private static void addPrompt(String message, EventObserver obs) {
-    String msg = message.isEmpty() ? promptMsg : message;
-    for (int is = 0; is < Screen.getNumberScreens(); is++) {
-      if (ignorePrimaryAtCapture && is == 0) {
-        continue;
-      }
-      Screen.getScreen(is).prompt = new OverlayCapturePrompt(Screen.getScreen(is), obs);
-      Screen.getScreen(is).prompt.prompt(msg);
-    }
-  }
-
   /**
    * interactive capture with predefined message: lets the user capture a screen image using the
    * mouse to draw the rectangle
@@ -587,7 +576,14 @@ public class Screen extends Region implements IScreen {
     Thread th = new Thread() {
       @Override
       public void run() {
-        addPrompt(message, null);
+        String msg = message.isEmpty() ? promptMsg : message;
+        for (int is = 0; is < Screen.getNumberScreens(); is++) {
+          if (ignorePrimaryAtCapture && is == 0) {
+            continue;
+          }
+          Screen.getScreen(is).prompt = new OverlayCapturePrompt(Screen.getScreen(is));
+          Screen.getScreen(is).prompt.prompt(msg);
+        }
       }
     };
     th.start();

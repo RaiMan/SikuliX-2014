@@ -394,39 +394,38 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 	public ScreenImage userCapture(final String msg) {
 		waitPrompt = true;
 		Thread th = new Thread() {
-
 			@Override
-			public void run() {
-				if ("".equals(msg)) {
-					prompt = new OverlayCapturePrompt(null, VNCScreen.this);
-					prompt.prompt(promptMsg);
-				}
-				else {
-					prompt = new OverlayCapturePrompt(VNCScreen.this, VNCScreen.this);
-					prompt.prompt(msg);
-				}
-			}
-		};
+      public void run() {
+        prompt = new OverlayCapturePrompt(VNCScreen.this);
+        prompt.prompt(msg);
+      }
+    };
 
 		th.start();
 
-		try {
-			int count = 0;
-			while (waitPrompt) {
-				Thread.sleep(100);
-				if (count++ > waitForScreenshot) {
-					return null;
-				}
-			}
-		}
-		catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-
-		ScreenImage ret = prompt.getSelection();
-		lastScreenImage = ret;
+    boolean hasShot = false;
+    ScreenImage simg = null;
+    int count = 0;
+    while (!hasShot) {
+      this.wait(0.1f);
+      if (count++ > waitForScreenshot) {
+        break;
+      }
+        if (prompt == null) {
+          continue;
+        }
+        if (prompt.isComplete()) {
+          simg = prompt.getSelection();
+          if (simg != null) {
+            lastScreenImage = simg;
+            hasShot = true;
+          }
+          prompt.close();
+        }
+    }
 		prompt.close();
-		return ret;
+    prompt = null;
+		return simg;
 	}
 
 	public Region selectRegion() {
