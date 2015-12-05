@@ -19,6 +19,7 @@ import org.sikuli.util.OverlayCapturePrompt;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.Key;
+import org.sikuli.script.RunTime;
 import org.sikuli.script.Screen;
 import org.sikuli.util.EventObserver;
 import org.sikuli.util.EventSubject;
@@ -32,7 +33,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
   private EditorPatternLabel _lbl = null;
   private String givenName = "";
   
-  public static boolean debugTrace = true;
+  public static boolean debugTrace = false;
 
   public ButtonCapture() {
     super();
@@ -92,6 +93,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
       Debug.on(4);
     }
     Debug.log(4, "TRACE: ButtonCapture: doPrompt");
+    RunTime.pause(((float) delay)/1000);
     Screen.doPrompt("Select an image", this);
   }
   

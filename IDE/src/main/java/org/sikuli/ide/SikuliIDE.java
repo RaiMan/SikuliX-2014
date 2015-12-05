@@ -51,6 +51,7 @@ import org.sikuli.script.RunTime;
 import org.sikuli.scriptrunner.ScriptingSupport;
 import org.sikuli.idesupport.IDESupport;
 import org.sikuli.script.Key;
+import org.sikuli.script.Region;
 import org.sikuli.script.RunServer;
 import org.sikuli.script.Runner;
 import org.sikuli.script.Screen;
@@ -143,11 +144,14 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   public static void showIDE() {
+    Debug.log(3, "showIDE");
     sikulixIDE.setVisible(true);
   }
 
   public static void hideIDE() {
+    Debug.log(3, "hideIDE");
     sikulixIDE.setVisible(false);
+    RunTime.pause(0.5f);
   }
 
   public static void showAgain() {
@@ -2097,9 +2101,19 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     @Override
     public void actionPerformed(ActionEvent ae) {
-      sikulixIDE.setVisible(false);
-      RunTime.pause(0.5f);
-      Screen.doPrompt(promptText, this);
+      if (shouldRun()) {
+        sikulixIDE.setVisible(false);
+        RunTime.pause(0.5f);
+        Screen.doPrompt(promptText, this);
+      } else {
+        nothingTodo();
+      }
+    }
+    
+    public void nothingTodo() {}
+    
+    public boolean shouldRun() {
+      return true;
     }
 
     @Override
@@ -2136,7 +2150,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
   }
 
-  class ButtonLocation extends ButtonSubregion implements ActionListener {
+  class ButtonLocation extends ButtonSubregion {
 
     public ButtonLocation() {
       super();
@@ -2158,7 +2172,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
   }
 
-  class ButtonOffset extends ButtonSubregion implements ActionListener {
+  class ButtonOffset extends ButtonSubregion {
 
     public ButtonOffset() {
       super();
@@ -2177,7 +2191,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         y = (int) roi.getY();
         ox = (int) roi.getWidth();
         oy = (int) roi.getHeight();
-        sikulixIDE.setVisible(false);
         getCurrentCodePane().insertString(String.format("Region(%d, %d, %d, %d).asOffset()", x, y, ox, oy));
       }
     }
@@ -2223,12 +2236,13 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         } else if (item.startsWith("Location")) {
           eval = "new " + item + ".grow(10).highlight(2);";
         } else if (item.startsWith("Pattern")) {
-          eval = "m = Screen.all().exists(new " + item + ", 0); if (m != null) m.highlight(2); print(m);";
+          eval = "m = Screen.all().exists(new " + item 
+                  + ", 0); if (m != null) m.highlight(2); else print(m);";
         } else if (item.startsWith("\"")) {
-          eval = "m = Screen.all().exists(" + item + ", 0); if (m != null) m.highlight(2);print(m);";
+          eval = "m = Screen.all().exists(" + item 
+                  + ", 0); if (m != null) m.highlight(2); else print(m);";
         }
         if (!eval.isEmpty()) {
-          Debug.log(lvl, "show: %s", eval);
           Runner.runjsEval(eval);
           return;
         }
@@ -2237,11 +2251,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
   }
 
-  class ButtonShowIn extends ButtonOnToolbar implements ActionListener {
-
-    String buttonText;
-    String iconFile;
-    String buttonHint;
+  class ButtonShowIn extends ButtonSubregion {
+    
+    String item = "";
 
     public ButtonShowIn() {
       super();
@@ -2249,42 +2261,40 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       iconFile = "/icons/region-icon.png";
       buttonHint = "Show the item at the cursor in the selected region";
     }
-
-    public ButtonShowIn init() {
-      URL imageURL = SikuliIDE.class.getResource(iconFile);
-      setIcon(new ImageIcon(imageURL));
-      setText(buttonText);
-      //setMaximumSize(new Dimension(26,26));
-      setToolTipText(buttonHint);
-      addActionListener(this);
-      return this;
+    
+    @Override
+    public boolean shouldRun() {
+      EditorPane codePane = getCurrentCodePane();
+      String line = codePane.getLineTextAtCaret();
+      item = codePane.parseLineText(line);
+      item = item.replaceAll("\"", "\\\"");
+      if (item.startsWith("Pattern")) {
+        item = "m = null; r = #region#; "
+                + "if (r != null) m = r.exists(new " + item + ", 0); "
+                + "if (m != null) m.highlight(2); else print(m);";
+      } else if (item.startsWith("\"")) {
+        item = "m = null; r = #region#; "
+                + "if (r != null) m = r.exists(" + item + ", 0); "
+                + "if (m != null) m.highlight(2); else print(m);";
+      }
+      return !item.isEmpty();
+    }
+    
+    @Override
+    public void nothingTodo() {
+      Sikulix.popup("Nothing to show");
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-      String line = "";
-      EditorPane codePane = getCurrentCodePane();
-      line = codePane.getLineTextAtCaret();
-      String item = codePane.parseLineText(line);
-      if (!item.isEmpty()) {
-        String eval = "";
-        item = item.replaceAll("\"", "\\\"");
-        if (item.startsWith("Pattern")) {
-          eval = "m = null; r = Screen.all().selectRegion(); "
-                  + "if (r != null) m = r.exists(new " + item + ", 0); "
-                  + "if (m != null) m.highlight(2); print(m);";
-        } else if (item.startsWith("\"")) {
-          eval = "m = null; r = Screen.all().selectRegion(); "
-                  + "if (r != null) m = r.exists(" + item + ", 0); "
-                  + "if (m != null) m.highlight(2); print(m);";
-        }
-        if (!eval.isEmpty()) {
-          Debug.log(lvl, "show: %s", eval);
-          Runner.runjsEval(eval);
-          return;
-        }
+    public void captureComplete(ScreenImage simg) {
+      if (simg != null) {
+        Region reg = new Region(simg.getROI());
+        String itemReg = String.format("new Region(%d, %d, %d, %d)", reg.x, reg.y, reg.w, reg.h);
+        item = item.replace("#region#", itemReg);
+        Runner.runjsEval(item);
+      } else {
+        nothingTodo();
       }
-      Sikulix.popup("Nothing to show");
     }
   }
 
