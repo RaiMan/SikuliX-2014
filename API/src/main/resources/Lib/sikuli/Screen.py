@@ -47,9 +47,9 @@ class Screen(Region):
 
     def selectRegion(self, msg=None):
         if msg:
-            r = self.getScreen().selectRegion(msg)
+            r = JScreen.getPrimaryScreen().selectRegion(msg)
         else:
-            r = self.getScreen().selectRegion()
+            r = JScreen.getPrimaryScreen().selectRegion()
         if r:
             return Region(r)
         else:
@@ -64,7 +64,7 @@ class Screen(Region):
     # @return The path to the captured image.
     #
     def capture(self, *args):
-        scr = self.getScreen()
+        scr = JScreen.getPrimaryScreen()
         if len(args) == 0:
             simg = scr.userCapture("Select an image")
             if simg:
