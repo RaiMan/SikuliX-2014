@@ -50,7 +50,6 @@ public class Screen extends Region implements IScreen {
   public static boolean ignorePrimaryAtCapture = false;
   private ScreenImage lastScreenImage = null;
   private static boolean isActiveCapturePrompt = false;
-  private static OverlayCapturePrompt capturePrompt = null;
   private static EventObserver captureObserver = null;
   
   private static synchronized boolean setActiveCapturePrompt() {
@@ -544,6 +543,7 @@ public class Screen extends Region implements IScreen {
     if (scrID > -1) {
       Screen.getScreen(scrID).prompt = null;
     }
+    resetActiveCapturePrompt();
   }
 
   public boolean hasPrompt() {
@@ -572,6 +572,7 @@ public class Screen extends Region implements IScreen {
     if (!setActiveCapturePrompt()) {
       return null;
     }
+    Debug.log(4, "TRACE: Screen: userCapture");
     waitPrompt = true;
     Thread th = new Thread() {
       @Override
@@ -591,10 +592,10 @@ public class Screen extends Region implements IScreen {
     if (captureObserver != null) {
       return null;
     }
-    boolean hasShot = false;
+    boolean isComplete = false;
     ScreenImage simg = null;
     int count = 0;
-    while (!hasShot) {
+    while (!isComplete) {
       this.wait(0.1f);
       if (count++ > waitForScreenshot) {
         break;
@@ -608,10 +609,9 @@ public class Screen extends Region implements IScreen {
           simg = ocp.getSelection();
           if (simg != null) {
             Screen.getScreen(is).lastScreenImage = simg;
-            hasShot = true;
-            capturePrompt = ocp;
           }
           ocp.close();
+          isComplete = true;
         }
       }
     }

@@ -117,8 +117,8 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
   
   @Override
   public void update(EventSubject es) {
-    OverlayCapturePrompt cp = null;
-    ScreenImage simg = cp.getSelection();
+    OverlayCapturePrompt ocp = (OverlayCapturePrompt) es;
+    ScreenImage simg = ocp.getSelection();
     Screen.closePrompt();
     if (simg != null) {
       try {
@@ -131,8 +131,8 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
       setText(pyText);
       pyText = "Region(" + pyText + ")";
     }
-    Screen.resetPrompt(cp);
-    SikuliIDE.getInstance().setVisible(true);
+    Screen.resetPrompt(ocp);
+    SikuliIDE.showAgain();
   }
 
   @Override

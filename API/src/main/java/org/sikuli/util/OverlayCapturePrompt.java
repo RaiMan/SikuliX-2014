@@ -57,6 +57,7 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
   
   public OverlayCapturePrompt(IScreen scr) {
 //    super();
+    Debug.log(4, "TRACE: OverlayCapturePrompt: init");
     scrOCP = scr;
     canceled = false;
 
@@ -113,6 +114,7 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
         }
         hasFinished = true;
         setVisible(false);
+        notifyObserver();
       }
     });
 
@@ -149,11 +151,6 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
       @Override
       public void keyPressed(KeyEvent e) {
         if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
-          if (promptMsg != null) {
-            promptMsg = null;
-            repaint();
-            return;
-          }
           hasFinished = canceled = true;
           Debug.log(3, "CapturePrompt: aborted using key ESC");
           setVisible(false);

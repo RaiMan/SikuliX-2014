@@ -164,7 +164,14 @@ public class Sikulix {
     Screen scr1 = new Screen(1);
     
     Debug.on(4);
-    scr.userCapture().getFile(shotPath, "shot");
+    ScreenImage simg = scr.userCapture();
+    if (null != simg) {
+      simg.getFile(shotPath, "shot");
+    }
+    simg = scr.userCapture();
+    if (null != simg) {
+      simg.getFile(shotPath, "shot");
+    }
     Debug.on(3);
     //*********************************
     

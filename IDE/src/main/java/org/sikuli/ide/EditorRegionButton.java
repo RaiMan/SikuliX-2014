@@ -46,8 +46,8 @@ class EditorRegionButton extends JButton implements ActionListener, EventObserve
   
   @Override
   public void update(EventSubject es) {
-    OverlayCapturePrompt cp = null;
-    ScreenImage simg = cp.getSelection();
+    OverlayCapturePrompt ocp = (OverlayCapturePrompt) es;
+    ScreenImage simg = ocp.getSelection();
     Screen.closePrompt();
     if (simg != null) {
       try {
@@ -63,8 +63,8 @@ class EditorRegionButton extends JButton implements ActionListener, EventObserve
       setIcon(new ImageIcon(img));
       setToolTipText(this.toString());
     }
-    Screen.resetPrompt(cp);
-    SikuliIDE.getInstance().setVisible(true);
+    Screen.resetPrompt(ocp);
+    SikuliIDE.showAgain();
   }
 
   private BufferedImage getRegionImage(int x, int y, int w, int h) {

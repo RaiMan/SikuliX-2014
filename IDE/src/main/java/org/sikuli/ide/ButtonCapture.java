@@ -28,10 +28,11 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
   private static final String me = "ButtonCapture: ";
   protected Element _line;
   protected EditorPane _codePane;
-  protected boolean _isCapturing;
   private boolean captureCancelled = false;
   private EditorPatternLabel _lbl = null;
   private String givenName = "";
+  
+  public static boolean debugTrace = true;
 
   public ButtonCapture() {
     super();
@@ -70,34 +71,33 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
 
   @Override
   public void actionPerformed(ActionEvent e) {
-    Debug.log(2, "capture!");
+    Debug.log(3, "ButtonCapture: capture!");
     captureWithAutoDelay();
   }
 
   public void captureWithAutoDelay() {
-    if (_isCapturing) {
-      return;
-    }
     PreferencesUser pref = PreferencesUser.getInstance();
     int delay = (int) (pref.getCaptureDelay() * 1000.0) + 1;
     capture(delay);
   }
 
   public void capture(final int delay) {
-    if (_isCapturing) {
-      return;
-    }
     String line = "";
     SikuliIDE ide = SikuliIDE.getInstance();
     ide.setVisible(false);
     EditorPane codePane = ide.getCurrentCodePane();
     line = codePane.getLineTextAtCaret();
     givenName = codePane.parseLineText("#" + line.trim());
+    if (debugTrace) {
+      Debug.on(4);
+    }
+    Debug.log(4, "TRACE: ButtonCapture: doPrompt");
     Screen.doPrompt("Select an image", this);
   }
   
   @Override
   public void update(EventSubject es) {
+    Debug.log(4, "TRACE: ButtonCapture: update");
     OverlayCapturePrompt ocp = (OverlayCapturePrompt) es;
     ScreenImage simg = ocp.getSelection();
     Screen.closePrompt();
@@ -138,13 +138,12 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
     Settings.OverwriteImages = saveOverwrite;
     captureCompleted(fullpath);
     Screen.resetPrompt(ocp);
-    SikuliIDE ide = SikuliIDE.getInstance();
-    ide.setVisible(true);
-    ide.requestFocus();
+    SikuliIDE.showAgain();
+    if (debugTrace) {
+      Debug.on(3);
+    }
   }
   
-  
-
   public void captureCompleted(String imgFullPath) {
     Element src = getSrcElement();
     if (imgFullPath != null) {
@@ -170,7 +169,6 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
         captureCancelled = false;
       }
     }
-    _isCapturing = false;
   }
 
   //<editor-fold defaultstate="collapsed" desc="RaiMan not used">
