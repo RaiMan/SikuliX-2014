@@ -694,6 +694,13 @@ public class Debug {
     String sout = "";
     String stime = "";
     if (level <= DEBUG_LEVEL) {
+      if (level == 3) {
+        if (message.startsWith("TRACE: ")) {
+          if (!Settings.TraceLogs) {
+            return "";
+          }
+        }
+      }
       if (Settings.LogTime && level != -99) {
         stime = String.format(" (%s)", df.format(new Date()));
       }

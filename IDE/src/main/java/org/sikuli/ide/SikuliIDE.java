@@ -2098,7 +2098,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       addActionListener(this);
       return this;
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent ae) {
       if (shouldRun()) {
@@ -2113,6 +2113,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     public void nothingTodo() {}
     
     public boolean shouldRun() {
+      Debug.log(3, "TRACE: ButtonSubRegion triggered");
       return true;
     }
 
@@ -2121,9 +2122,13 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       OverlayCapturePrompt ocp = (OverlayCapturePrompt) es;
       ScreenImage simg = ocp.getSelection();
       Screen.closePrompt();
-      captureComplete(simg);
       Screen.resetPrompt(ocp);
-      SikuliIDE.showAgain();
+      captureComplete(simg);
+      updateAfter();
+    }
+    
+    public void updateAfter() {
+      SikuliIDE.showAgain();      
     }
 
     public void captureComplete(ScreenImage simg) {
@@ -2264,6 +2269,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     
     @Override
     public boolean shouldRun() {
+      Debug.log(3, "TRACE: ButtonShowIn triggered");
       EditorPane codePane = getCurrentCodePane();
       String line = codePane.getLineTextAtCaret();
       item = codePane.parseLineText(line);
@@ -2293,9 +2299,13 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         item = item.replace("#region#", itemReg);
         Runner.runjsEval(item);
       } else {
+        SikuliIDE.showAgain();
         nothingTodo();
       }
     }
+    
+    @Override
+    public void updateAfter() {}    
   }
 
   class ButtonRun extends ButtonOnToolbar implements ActionListener {

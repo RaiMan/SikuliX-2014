@@ -57,7 +57,7 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
   
   public OverlayCapturePrompt(IScreen scr) {
 //    super();
-    Debug.log(4, "TRACE: OverlayCapturePrompt: init");
+    Debug.log(3, "TRACE: OverlayCapturePrompt: init");
     scrOCP = scr;
     canceled = false;
 
@@ -208,11 +208,13 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
   
   @Override
   public void addObserver(EventObserver obs) {
+    Debug.log(3, "TRACE: OverlayCapturePrompt: addObserver: %s", obs != null);
     captureObserver = obs;
   }
   
   @Override
   public void notifyObserver() {
+    Debug.log(3, "TRACE: OverlayCapturePrompt: notifyObserver: %s", captureObserver != null);
     if (null != captureObserver) {
       captureObserver.update(this);
     }    

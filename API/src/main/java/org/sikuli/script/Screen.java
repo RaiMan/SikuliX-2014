@@ -56,12 +56,15 @@ public class Screen extends Region implements IScreen {
     if (isActiveCapturePrompt) {
       return false;
     }
+    Debug.log(3, "TRACE: Screen: setActiveCapturePrompt");
     isActiveCapturePrompt = true;
     return true;
   }
 
   private static synchronized void resetActiveCapturePrompt() {
+    Debug.log(3, "TRACE: Screen: resetActiveCapturePrompt");
     isActiveCapturePrompt = false;
+    captureObserver = null;
   }
   
   //<editor-fold defaultstate="collapsed" desc="Initialization">
@@ -572,7 +575,7 @@ public class Screen extends Region implements IScreen {
     if (!setActiveCapturePrompt()) {
       return null;
     }
-    Debug.log(4, "TRACE: Screen: userCapture");
+    Debug.log(3, "TRACE: Screen: userCapture");
     waitPrompt = true;
     Thread th = new Thread() {
       @Override
@@ -654,6 +657,7 @@ public class Screen extends Region implements IScreen {
    * @return the region
    */
   public Region selectRegion(final String message) {
+    Debug.log(3, "TRACE: Screen: selectRegion");
     ScreenImage sim = userCapture(message);
     if (sim == null) {
       return null;
