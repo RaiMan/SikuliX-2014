@@ -609,6 +609,7 @@ public class Screen extends Region implements IScreen {
           continue;
         }
         if (ocp.isComplete()) {
+          closePrompt(Screen.getScreen(is));
           simg = ocp.getSelection();
           if (simg != null) {
             Screen.getScreen(is).lastScreenImage = simg;
@@ -627,16 +628,16 @@ public class Screen extends Region implements IScreen {
   }
   
   public String saveCapture(String name, Region reg) {
-    ScreenImage img;
+    ScreenImage simg;
     if (reg == null) {
-      img = userCapture("Capture for image " + name);
+      simg = userCapture("Capture for image " + name);
     } else {
-      img = capture(reg);
+      simg = capture(reg);
     }
-    if (img == null) {
+    if (simg == null) {
       return null;
     } else {
-      return img.saveInBundle(name);
+      return simg.saveInBundle(name);
     }
   }
 

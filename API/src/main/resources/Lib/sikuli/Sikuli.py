@@ -317,47 +317,13 @@ def select(msg="", title="Sikuli Selection", options=(), default=None):
 
 ## ----------------------------------------------------------------------
 def capture(*args):
-    scr = ScreenUnion()
-    if len(args) == 0:
-        simg = scr.userCapture()
-        if simg:
-            return simg.getFilename()
-        else:
-            return None
-    elif len(args) == 1:
-        if __builtin__.type(args[0]) is types.StringType or __builtin__.type(args[0]) is types.UnicodeType:
-            simg = scr.userCapture(args[0])
-            if simg:
-                return simg.getFilename()
-            else:
-                return None
-        else:
-            return scr.capture(args[0]).getFilename()
-    elif len(args) == 4:
-        return scr.capture(args[0], args[1], args[2], args[3]).getFilename()
-    else:
-        return None
+    return RUNTIME.capture(args)
 
 def saveCapture(*args):
-    scr = ScreenUnion()
-    if len(args) == 1:
-        return scr.saveCapture(args[0])
-    elif len(args) == 2:
-        return scr.saveCapture(args[0], args[1])
-    elif len(args) == 5:
-        return scr.saveCapture(args[0], Region.create(args[1], args[2], args[3], args[4]))
-    else:
-        return None
+    return RUNTIME.saveCapture(args)
 
 def selectRegion(msg=None):
-    if msg:
-        r = ScreenUnion().selectRegion(msg)
-    else:
-        r = ScreenUnion().selectRegion()
-    if r:
-        return Region(r)
-    else:
-        return None
+    return RUNTIME.selectRegion(msg)
 
 ## ----------------------------------------------------------------------
 # set the default screen to given or primary screen

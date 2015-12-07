@@ -5,6 +5,7 @@
 import types
 import sys
 
+from org.sikuli.script import RunTime as RUNTIME
 from org.sikuli.script import Screen as JScreen
 from org.sikuli.basics import Debug
 from Region import *
@@ -45,46 +46,17 @@ class Screen(Region):
     def getBounds(self):
         return self.getScreen().getBounds()
 
-    def selectRegion(self, msg=None):
-        if msg:
-            r = JScreen.getPrimaryScreen().selectRegion(msg)
-        else:
-            r = JScreen.getPrimaryScreen().selectRegion()
-        if r:
-            return Region(r)
-        else:
-            return None
-
-    ##
-    # Enters the screen-capture mode asking the user to capture a region of
-    # the screen if no arguments are given.
-    # If any arguments are specified, capture() automatically captures the given
-    # region of the screen.
-    # @param *args The args can be 4 integers: x, y, w, and h, a <a href="org/sikuli/script/Match.html">Match</a> object or a {@link #Region} object.
-    # @return The path to the captured image.
-    #
-    def capture(self, *args):
-        scr = JScreen.getPrimaryScreen()
-        if len(args) == 0:
-            simg = scr.userCapture("Select an image")
-            if simg:
-                return simg.getFile()
-            else:
-                return None
-        elif len(args) == 1:
-            if isinstance(args[0], (types.StringType, types.UnicodeType)):
-                simg = scr.userCapture(args[0])
-                if simg:
-                    return simg.getFile()
-                else:
-                    return None
-            else:
-                return scr.capture(args[0]).getFile()
-        elif len(args) == 4:
-            return scr.capture(args[0], args[1], args[2], args[3]).getFile()
-        else:
-            return None
-
     def toString(self):
         return self.getScreen().toString()
+
+## ----------------------------------------------------------------------
+    def capture(self, *args):
+        return RUNTIME.get().capture(args)
+
+    def saveCapture(self, *args):
+        return RUNTIME.get().saveCapture(args)
+
+    def selectRegion(self, msg=None):
+        return RUNTIME.get().selectRegion(msg)
+
 

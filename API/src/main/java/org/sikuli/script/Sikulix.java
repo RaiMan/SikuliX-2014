@@ -6,6 +6,7 @@
  */
 package org.sikuli.script;
 
+import java.awt.Color;
 import org.sikuli.basics.HotkeyManager;
 import org.sikuli.util.Tests;
 import org.sikuli.util.ScreenHighlighter;
@@ -15,6 +16,7 @@ import java.net.URL;
 import java.security.CodeSource;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -145,6 +147,7 @@ public class Sikulix {
 
     ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
     String shotPath = new File(ImagePath.getPaths().get(1).getPath()).getParent();
+    ImagePath.setBundlePath(shotPath);
     Location posStart = Mouse.at();
 
 //******Test Space*************************************
@@ -163,16 +166,7 @@ public class Sikulix {
     Screen scr = new Screen();
     Screen scr1 = new Screen(1);
     
-    Debug.on(4);
-    ScreenImage simg = scr.userCapture();
-    if (null != simg) {
-      simg.getFile(shotPath, "shot");
-    }
-    simg = scr.userCapture();
-    if (null != simg) {
-      simg.getFile(shotPath, "shot");
-    }
-    Debug.on(3);
+    //*********************************
     //*********************************
     
     scr.hover(posStart);
