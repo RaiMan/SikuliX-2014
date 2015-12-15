@@ -6,21 +6,17 @@
  */
 package org.sikuli.script;
 
+import edu.unh.iol.dlc.VNCScreen;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.Settings;
 import org.sikuli.util.ScreenHighlighter;
-import java.awt.Rectangle;
+
+import java.awt.*;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.util.Date;
-import java.util.Iterator;
+import java.util.*;
 import java.util.List;
-import org.sikuli.basics.Debug;
-import org.sikuli.basics.Settings;
-
-import edu.unh.iol.dlc.VNCScreen;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 /**
  * A Region is a rectengular area and lies always completely inside its parent screen
@@ -266,7 +262,7 @@ public class Region {
           }
         }
       }
-    } 
+    }
     if (screenOn != null) {
       x = screenRect.x;
       y = screenRect.y;
@@ -286,8 +282,8 @@ public class Region {
     }
     return loc.setOtherScreen(scr);
   }
-  
-  public static Region virtual(Rectangle rect) {    
+
+  public static Region virtual(Rectangle rect) {
     Region reg = new Region();
     reg.x = rect.x;
     reg.y = rect.y;
@@ -297,10 +293,10 @@ public class Region {
     reg.scr = Screen.getPrimaryScreen();
     return reg;
   }
-  
+
   /**
    * INTERNAL USE - EXPERIMENTAL
-   * if true: this region is not bound to any screen 
+   * if true: this region is not bound to any screen
    * @return the current state
    */
   public boolean isVirtual() {
@@ -309,7 +305,7 @@ public class Region {
 
   /**
    * INTERNAL USE - EXPERIMENTAL
-   * @param state if true: this region is not bound to any screen 
+   * @param state if true: this region is not bound to any screen
    */
   public void setVirtual(boolean state) {
     isVirtual = state;
@@ -425,7 +421,7 @@ public class Region {
   public Region(Region r) {
     init(r);
   }
-  
+
   public void init(Region r) {
     if (!r.isValid()) {
       return;
@@ -824,7 +820,7 @@ public class Region {
     if (getScreen() == null || isScreenUnion) {
       return Screen.getPrimaryScreen().getRobot();
     }
-    return getScreen().getRobot(); 
+    return getScreen().getRobot();
   }
 
   /**
@@ -1357,7 +1353,7 @@ public class Region {
   public boolean contains(Region region) {
     return getRect().contains(region.getRect());
   }
-  
+
   /**
    * create a Location object, that can be used as an offset taking the width and hight of this Region
    * @return a new Location object with width and height as x and y
@@ -1950,7 +1946,7 @@ public class Region {
       highlight(true, null);
     }
   }
-  
+
   protected Region silentHighlight(boolean onOff) {
     if (onOff && overlay == null) {
       return doHighlight(true, null, true);
@@ -2277,7 +2273,7 @@ public class Region {
       }
     }
   }
-  
+
   public <PSI> Match[] findAllByRow(PSI target) {
     Match[] matches = new Match[0];
     List<Match> mList = findAllCollect(target);
@@ -2328,7 +2324,7 @@ public class Region {
     }
     return mList;
   }
-  
+
   public <PSI> Match findBest(Object... args) {
     Debug.log(lvl, "findBest: enter");
     Match mResult = null;
@@ -2387,17 +2383,17 @@ public class Region {
     }
     return mList;
   }
-  
+
   private class SubFindRun implements Runnable {
-    
+
     Match[] mArray;
     ScreenImage base;
     Object target;
     Region reg;
     boolean finished = false;
     int subN;
-    
-    public SubFindRun(Match[] pMArray, int pSubN, 
+
+    public SubFindRun(Match[] pMArray, int pSubN,
             ScreenImage pBase, Object pTarget, Region pReg) {
       subN = pSubN;
       base = pBase;
@@ -2405,7 +2401,7 @@ public class Region {
       reg = pReg;
       mArray = pMArray;
     }
-    
+
     @Override
     public void run() {
       try {
@@ -2415,11 +2411,11 @@ public class Region {
       }
       hasFinished(true);
     }
-    
+
     public boolean hasFinished() {
       return hasFinished(false);
-    }    
-    
+    }
+
     public synchronized boolean hasFinished(boolean state) {
       if (state) {
         finished = true;
@@ -2427,7 +2423,7 @@ public class Region {
       return finished;
     }
   }
-  
+
   private Match findInImage(ScreenImage base, Object target) throws IOException {
     Finder finder = null;
     Match match = null;
@@ -2487,7 +2483,7 @@ public class Region {
     }
     return match;
   }
-  
+
   /**
    * Waits for the Pattern, String or Image to appear until the AutoWaitTimeout value is exceeded.
    *
@@ -2720,7 +2716,7 @@ public class Region {
     boolean findingText = false;
     lastFindTime = (new Date()).getTime();
     ScreenImage simg;
-    double findTimeout = autoWaitTimeout; 
+    double findTimeout = autoWaitTimeout;
     if (repeating != null) {
       findTimeout = repeating.getFindTimeOut();
     }
@@ -2730,9 +2726,9 @@ public class Region {
       f.setScreenImage(simg);
       f.setRepeating();
       if (Settings.FindProfiling) {
-        Debug.logp("[FindProfiling] Region.doFind repeat: %d msec", 
+        Debug.logp("[FindProfiling] Region.doFind repeat: %d msec",
                 new Date().getTime() - lastSearchTimeRepeat);
-      }      
+      }
       lastSearchTime = (new Date()).getTime();
       f.findRepeat();
     } else {
@@ -2805,11 +2801,11 @@ public class Region {
       m.setTimes(lastFindTime, lastSearchTime);
       if (Settings.FindProfiling) {
         Debug.logp("[FindProfiling] Region.doFind final: %d msec", lastSearchTime);
-      }      
+      }
     }
     return m;
   }
-  
+
   private void runFinder(Finder f, Object target) {
     if (Debug.shouldHighlight()) {
       if (this.scr.getW() > w + 20 && this.scr.getH() > h + 20)
@@ -2825,14 +2821,14 @@ public class Region {
   private Finder checkLastSeenAndCreateFinder(Image img, double findTimeout, Pattern ptn) {
     return doCheckLastSeenAndCreateFinder(null, img, findTimeout, ptn);
   }
-  
+
   private Finder doCheckLastSeenAndCreateFinder(ScreenImage base, Image img, double findTimeout, Pattern ptn) {
     if (base == null) {
       base = getScreen().capture(this);
     }
     if (!Settings.UseImageFinder && Settings.CheckLastSeen && null != img.getLastSeen()) {
       Region r = Region.create(img.getLastSeen());
-      float score = (float) (img.getLastSeenScore() - 0.01); 
+      float score = (float) (img.getLastSeenScore() - 0.01);
       if (this.contains(r)) {
         Finder f = null;
         if (this.scr instanceof VNCScreen) {
@@ -2842,7 +2838,7 @@ public class Region {
           if (Debug.shouldHighlight()) {
             if (this.scr.getW() > w + 10 && this.scr.getH() > h + 10)
               highlight(2, "#000255000");
-          }          
+          }
         }
         if (ptn == null) {
           f.find(new Pattern(img).similar(score));
@@ -2864,7 +2860,7 @@ public class Region {
       return new Finder(base, this);
     }
   }
-  
+
   public void saveLastScreenImage() {
     ScreenImage simg = getScreen().getLastScreenImageFromScreen();
     if (simg != null) {
@@ -2969,7 +2965,7 @@ public class Region {
           return false;
         }
         long after_find = (new Date()).getTime();
-        if (after_find - before_find < MaxTimePerScan) {          
+        if (after_find - before_find < MaxTimePerScan) {
           getRobotForRegion().delay((int) (MaxTimePerScan - (after_find - before_find)));
         } else {
           getRobotForRegion().delay(10);
@@ -3692,7 +3688,7 @@ public class Region {
     Settings.DelayBeforeMouseDown = Settings.DelayValue;
     Settings.DelayAfterDrag = Settings.DelayValue;
     Settings.DelayBeforeDrag = -Settings.DelayValue;
-    Settings.DelayBeforeDrop = Settings.DelayValue; 
+    Settings.DelayBeforeDrop = Settings.DelayValue;
     return retVal;
   }
 
@@ -3705,7 +3701,7 @@ public class Region {
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed if not found
    */
-  public <PFRML> int drag(PFRML target) throws FindFailed {    
+  public <PFRML> int drag(PFRML target) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     int retVal = 0;
     if (loc != null) {
@@ -3728,7 +3724,7 @@ public class Region {
     Settings.DelayBeforeMouseDown = Settings.DelayValue;
     Settings.DelayAfterDrag = Settings.DelayValue;
     Settings.DelayBeforeDrag = -Settings.DelayValue;
-    Settings.DelayBeforeDrop = Settings.DelayValue; 
+    Settings.DelayBeforeDrop = Settings.DelayValue;
     return retVal;
   }
 
@@ -3760,7 +3756,7 @@ public class Region {
     Settings.DelayBeforeMouseDown = Settings.DelayValue;
     Settings.DelayAfterDrag = Settings.DelayValue;
     Settings.DelayBeforeDrag = -Settings.DelayValue;
-    Settings.DelayBeforeDrop = Settings.DelayValue; 
+    Settings.DelayBeforeDrop = Settings.DelayValue;
     return retVal;
   }
   //</editor-fold>
@@ -3864,7 +3860,7 @@ public class Region {
   public <PFRML> int wheel(PFRML target, int direction, int steps) throws FindFailed {
     return wheel(target, direction, steps, Mouse.WHEEL_STEP_DELAY);
   }
-    
+
   /**
    * move the mouse pointer to the given target location<br> and move the wheel the given steps in the given direction:
    * <br>Button.WHEEL_DOWN, Button.WHEEL_UP
@@ -4228,12 +4224,12 @@ public class Region {
       Settings.TypeDelay = 0.0;
       profiler.lap("before typing");
       r.typeStarts();
+      r.pressModifiers(modifiers);
       for (int i = 0; i < text.length(); i++) {
-        r.pressModifiers(modifiers);
         r.typeChar(text.charAt(i), IRobot.KeyMode.PRESS_RELEASE);
-        r.releaseModifiers(modifiers);
         r.delay(pause);
       }
+      r.releaseModifiers(modifiers);
       r.typeEnds();
       profiler.lap("after typing, before waitForIdle");
       r.waitForIdle();
@@ -4343,7 +4339,7 @@ public class Region {
     return null;
   }
   //</editor-fold>
-  
+
   public String saveScreenCapture() {
     return getScreen().capture(this).save();
   }
