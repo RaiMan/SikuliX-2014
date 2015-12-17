@@ -345,7 +345,7 @@ public class WinUtil implements OSUtil {
       String keyCombo;
       if (isUtf8InputSupported()) {
           //use hex value as input
-          keyCombo = String.format("%04x", key);
+          keyCombo = String.format("%x", key);
           Debug.log(4, "determined unicode: 0x" + keyCombo);
       } else {
           if(key > 255) {
