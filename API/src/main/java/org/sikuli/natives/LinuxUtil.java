@@ -9,15 +9,18 @@ package org.sikuli.natives;
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.sikuli.basics.Debug;
+import org.sikuli.script.App;
 
 import java.awt.*;
-import java.io.*;
+import java.awt.event.KeyEvent;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import org.sikuli.basics.Debug;
-
-import org.sikuli.script.App;
 
 public class LinuxUtil implements OSUtil {
 
@@ -31,7 +34,6 @@ public class LinuxUtil implements OSUtil {
             CommandLine.parse("xdotool version"),
             CommandLine.parse("killall --version")
     );
-    String msg = "";
     for (CommandLine cmd : commands) {
       try {
         DefaultExecutor executor = new DefaultExecutor();
@@ -47,14 +49,10 @@ public class LinuxUtil implements OSUtil {
         if (executable.equals("xdotool")) {
           xdoToolAvail = false;
         }
-        msg += "command '" + executable + "' is not executable\n";
-      }
+                throw new NativeCommandException("[error] checking: command '" + executable + "' is not executable, please check if it is installed and available!");
+            }
+        }
     }
-    if (!msg.isEmpty()) {
-      msg += "Please check the availability - some features might not work without!";
-      Debug.error(msg);
-    }
-  }
 
   private boolean isAvailable(boolean module, String f) {
     if (module) {
@@ -101,19 +99,13 @@ public class LinuxUtil implements OSUtil {
 
   @Override
   public int switchto(String appName, int winNum) {
-    if (!isAvailable(wmctrlAvail, "switchApp")) {
-      return -1;
+      int windowPID = findWindowPID(appName, winNum);
+      if (windowPID > 1) {
+            return switchto(windowPID, winNum);
+        }
+        System.err.println("[error] switchApp: could not identify process with search name '" + appName + "'");
+        return -1;
     }
-    try {
-      String cmd[] = {"wmctrl", "-a", appName};
-      Process p = Runtime.getRuntime().exec(cmd);
-      p.waitFor();
-      return p.exitValue();
-    } catch (Exception e) {
-      System.out.println("[error] switchApp:\n" + e.getMessage());
-      return -1;
-    }
-  }
 
   @Override
   public int switchto(String appName) {
@@ -122,20 +114,36 @@ public class LinuxUtil implements OSUtil {
 
   @Override
   public int switchto(App.AppEntry app, int num) {
-    return switchto(app.execName, num);
+      if (app.pid > 0) {
+          return switchto(app.pid, num);
+      }
+      return switchto(app.execName, num);
   }
 
   @Override
   public int close(String appName) {
-    try {
-      String cmd[] = {"killall", appName};
-      Process p = Runtime.getRuntime().exec(cmd);
-      p.waitFor();
-      return p.exitValue();
-    } catch (Exception e) {
-      System.out.println("[error] closeApp:\n" + e.getMessage());
-      return -1;
-    }
+      try {
+          //on the success exit value = 0 -> so no exception will be thrown
+          CommandExecutorResult result1 = CommandExecutorHelper.execute("pidof " + appName, 0);
+          String pid = result1.getStandardOutput();
+          if (pid == null || pid.isEmpty()) {
+              throw new NativeCommandException("No app could be found with Name '" + appName + "'");
+          }
+          //use kill incase that killall could maybe not work in all environments
+          return CommandExecutorHelper.execute("kill " + pid, 0).getExitValue();
+      } catch (Exception e) {
+          //try to search for the appName
+          Integer windowPID = findWindowPID(appName, 1);
+          if (windowPID > 1) {
+              try {
+                  return CommandExecutorHelper.execute("kill " + windowPID.toString(), 0).getExitValue();
+              } catch (Exception e1) {
+                  e.addSuppressed(e1);
+              }
+          }
+          System.out.println("[error] closeApp:\n" + e.getMessage());
+          return -1;
+      }
   }
 
   @Override
@@ -149,13 +157,6 @@ public class LinuxUtil implements OSUtil {
   @Override
   public Map<Integer, String[]> getApps(String name) {
     return null;
-  }
-
-  private enum SearchType {
-
-    APP_NAME,
-    WINDOW_ID,
-    PID
   }
 
   @Override
@@ -199,77 +200,71 @@ public class LinuxUtil implements OSUtil {
     String[] found = {};
     int numFound = 0;
     try {
-      String cmd[] = {"wmctrl", "-lpGx"};
-      Process p = Runtime.getRuntime().exec(cmd);
-      InputStream in = p.getInputStream();
-      BufferedReader bufin = new BufferedReader(new InputStreamReader(in));
-      String str;
+          CommandExecutorResult result = CommandExecutorHelper.execute("wmctrl -lpGx", 0);
 
-      int slash = appName.lastIndexOf("/");
-      if (slash >= 0) {
-        // remove path: /usr/bin/....
-        appName = appName.substring(slash + 1);
-      }
-
-      if (type == SearchType.APP_NAME) {
-        appName = appName.toLowerCase();
-      }
-      while ((str = bufin.readLine()) != null) {
-        //Debug.log("read: " + str);
-        String winLine[] = str.split("\\s+");
-        boolean ok = false;
-
-        if (type == SearchType.WINDOW_ID) {
-          if (appName.equals(winLine[0])) {
-            ok = true;
-          }
-        } else if (type == SearchType.PID) {
-          if (appName.equals(winLine[2])) {
-            ok = true;
-          }
-        } else if (type == SearchType.APP_NAME) {
-          String pidFile = "/proc/" + winLine[2] + "/status";
-          char buf[] = new char[1024];
-          FileReader pidReader = null;
-          try {
-            pidReader = new FileReader(pidFile);
-            pidReader.read(buf);
-            String pidName = new String(buf);
-            String nameLine[] = pidName.split("[:\n]");
-            String name = nameLine[1].trim();
-            if (name.equals(appName)) {
-              ok = true;
-            }
-
-          } catch (FileNotFoundException e) {
-            // pid killed before we could read /proc/
-          } finally {
-            if (pidReader != null) {
-              pidReader.close();
-            }
+          int slash = appName.lastIndexOf("/");
+          if (slash >= 0) {
+              // remove path: /usr/bin/....
+              appName = appName.substring(slash + 1);
           }
 
-          if (!ok && winLine[7].toLowerCase().contains(appName)) {
-            ok = true;
+          if (type == SearchType.APP_NAME) {
+              appName = appName.toLowerCase();
           }
+          String[] lines = result.getStandardOutput().split("\\n");
+          for (String str : lines) {
+              //Debug.log("read: " + str);
+              String winLine[] = str.split("\\s+");
+              boolean ok = false;
+
+              if (type == SearchType.WINDOW_ID) {
+                  if (appName.equals(winLine[0])) {
+                      ok = true;
+                  }
+              } else if (type == SearchType.PID) {
+                  if (appName.equals(winLine[2])) {
+                      ok = true;
+                  }
+              } else if (type == SearchType.APP_NAME) {
+                  String winLineName = winLine[9].toLowerCase();
+                  if (appName.equals(winLineName)) {
+                      ok = true;
+                  }
+
+                  if (!ok && winLine[7].toLowerCase().contains(appName)) {
+                      ok = true;
+                  }
+              }
+
+              if (ok) {
+                  if (numFound >= winNum) {
+                      //Debug.log("Found window" + winLine);
+                      found = winLine;
+                      break;
+                  }
+                  numFound++;
+              }
+          }
+        } catch (Exception e) {
+            System.out.println("[error] findWindow:\n" + e.getMessage());
+            return null;
         }
-
-        if (ok) {
-          if (numFound >= winNum) {
-            //Debug.log("Found window" + winLine);
-            found = winLine;
-            break;
-          }
-          numFound++;
-        }
-      }
-      in.close();
-      p.waitFor();
-    } catch (Exception e) {
-      System.out.println("[error] findWindow:\n" + e.getMessage());
-      return null;
+        return found;
     }
-    return found;
+
+  /**
+   * Returns a PID of the givenAppname and the winNumber
+   *
+   * @param appName
+   * @param winNum
+   * @return the PID or -1 on errors
+   */
+  protected int findWindowPID(String appName, int winNum) {
+      String[] window = findWindow(appName, winNum, SearchType.APP_NAME);
+      if (window != null && window.length > 1) {
+          return Integer.parseInt(window[2]);
+      }
+      return -1;
   }
 
   @Override
@@ -313,21 +308,47 @@ public class LinuxUtil implements OSUtil {
       return -1;
     }
     String winLine[] = findWindow("" + pid, num, SearchType.PID);
-    if (winLine == null) {
-      return -1;
+    if (winLine == null || winLine.length < 1) {
+        System.err.println("[error] switchApp: window of PID '" + pid + "' couldn't be found!");
+        return -1;
     }
-    String cmd[] = {"wmctrl", "-ia", winLine[0]};
     try {
-      Process p = Runtime.getRuntime().exec(cmd);
-      p.waitFor();
-      return p.exitValue();
-    } catch (Exception e) {
-      System.out.println("[error] switchApp:\n" + e.getMessage());
-      return -1;
+        // execute wmctrl with hex, e.g. 'wmctrl -ia 0x00000'
+        CommandExecutorHelper.execute("wmctrl -ia " + winLine[0], 0);
+        //on the success exit value = 0 -> so no exception will be thrown
+         return pid;
+     } catch (Exception e) {
+         e.printStackTrace();
+         System.err.println("[error] switchApp:\n" + e.getMessage());
+         return -1;
     }
   }
 
   @Override
   public void bringWindowToFront(Window win, boolean ignoreMouse) {
+  }
+
+  @Override
+  public boolean isUtf8InputSupported() {
+      return true;
+  }
+
+  @Override
+  public int[] getUnicodeModifier() {
+      return new int[]{KeyEvent.VK_CONTROL, KeyEvent.VK_SHIFT, KeyEvent.VK_U};
+  }
+
+  @Override
+  public String getUnicodeKeyInputString(int key) {
+      //use hex value as input
+      String keyCombo = String.format("%x", key);
+      Debug.log(4, "determined unicode: 0x" + keyCombo);
+      return keyCombo;
+  }
+
+  private enum SearchType {
+      APP_NAME,
+      WINDOW_ID,
+      PID
   }
 }

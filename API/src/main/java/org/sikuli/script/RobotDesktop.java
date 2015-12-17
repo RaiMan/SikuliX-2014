@@ -6,22 +6,17 @@
  */
 package org.sikuli.script;
 
-import org.sikuli.basics.Animator;
-import org.sikuli.basics.AnimatorOutQuarticEase;
-import org.sikuli.basics.AnimatorTimeBased;
-import org.sikuli.basics.Settings;
-import org.sikuli.basics.Debug;
-import java.awt.AWTException;
-import java.awt.Color;
-import java.awt.MouseInfo;
-import java.awt.Point;
-import java.awt.PointerInfo;
-import java.awt.Rectangle;
-import java.awt.Robot;
+import org.sikuli.basics.*;
+import org.sikuli.script.keyboard.KeyPress;
+import org.sikuli.script.keyboard.KeyboardDelegator;
+
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * INTERNAL USE Implementation of IRobot making a DesktopRobot using java.awt.Robot
@@ -29,17 +24,28 @@ import java.util.Date;
 public class RobotDesktop extends Robot implements IRobot {
 
   final static int MAX_DELAY = 60000;
-  private static int heldButtons = 0;
-  private static String heldKeys = "";
   private static final ArrayList<Integer> heldKeyCodes = new ArrayList<Integer>();
   public static int stdAutoDelay = 0;
   public static int stdDelay = 10;
   public static int stdMaxElapsed = 1000;
-  private Screen scr = null;
+  private static int heldButtons = 0;
+  private static String heldKeys = "";
   private static RunTime runTime = RunTime.get();
-  private long start;
   private static boolean alwaysNewRobot = false;
-  
+  private Screen scr = null;
+  private long start;
+
+  public RobotDesktop(Screen screen) throws AWTException {
+    super(runTime.getGraphicsDevice(screen.getcurrentID()));
+    scr = screen;
+  }
+
+  public RobotDesktop() throws AWTException {
+    super();
+    setAutoDelay(stdAutoDelay);
+    setAutoWaitForIdle(false);
+  }
+
   private void logRobot(int delay, String msg) {
     start = new Date().getTime();
     int theDelay = getAutoDelay();
@@ -56,11 +62,11 @@ public class RobotDesktop extends Robot implements IRobot {
       setAutoWaitForIdle(false);
     }
   }
-  
+
   private void doMouseMove(int x, int y) {
     mouseMove(x, y);
   }
-  
+
   private void fakeHighlight(boolean onOff) {
     if (runTime.runningMac && runTime.isOSX10()) {
       Region reg = Screen.getFakeRegion();
@@ -94,32 +100,72 @@ public class RobotDesktop extends Robot implements IRobot {
     logRobot("MouseUp: extended delay: %d", stdMaxElapsed);
   }
 
-  private void doKeyPress(int keyCode) {
-    logRobot(stdAutoDelay, "KeyPress: WaitForIdle: %s - Delay: %d");
-    setAutoDelay(stdAutoDelay);
-    setAutoWaitForIdle(false);
-    keyPress(keyCode);
-    if (stdAutoDelay == 0) {
-      delay(stdDelay);
-    }
-    logRobot("KeyPress: extended delay: %d", stdMaxElapsed);
+  private void doKeyPress(KeyPress keyPress) {
+      logRobot(stdAutoDelay, "KeyPress: WaitForIdle: %s - Delay: %d");
+      setAutoDelay(stdAutoDelay);
+      setAutoWaitForIdle(false);
+      //press all modifiers
+      keyPressSequence(keyPress.getModifiers());
+      //then press all keys
+      keyPressSequence(keyPress.getKeys());
+      if (stdAutoDelay == 0) {
+          delay(stdDelay);
+      }
+      logRobot("KeyPress: extended delay: %d", stdMaxElapsed);
   }
-  
-  private void doKeyRelease(int keyCode) {
-    logRobot(stdAutoDelay, "KeyRelease: WaitForIdle: %s - Delay: %d");
-    setAutoDelay(stdAutoDelay);
-    setAutoWaitForIdle(false);
-    keyRelease(keyCode);
-    if (stdAutoDelay == 0) {
-      delay(stdDelay);
-    }
-    logRobot("KeyRelease: extended delay: %d", stdMaxElapsed);
+
+  /**
+   * Press a sequence of keys in one action, to enable multiple equal key inputs at the same time.
+   * @param keys arrays of int values of {@link KeyEvent}
+   */
+  private void keyPressSequence(int... keys) {
+      Set<Integer> pressed = new HashSet<Integer>();
+      if (keys != null) {
+          for (int key : keys) {
+              if (pressed.contains(key)) {
+                  //release keys to be able to typ unicode numbers with equal numbers in one action
+                  Debug.log(4,"RELEASE_KEY: " + KeyEvent.getKeyText(key));
+                  keyRelease(key);
+              }
+              Debug.log(4, "PRESS_KEY: " + KeyEvent.getKeyText(key));
+              keyPress(key);
+              pressed.add(key);
+          }
+      }
   }
-  
+
+  private void doKeyRelease(KeyPress keyPress) {
+      logRobot(stdAutoDelay, "KeyRelease: WaitForIdle: %s - Delay: %d");
+      setAutoDelay(stdAutoDelay);
+      setAutoWaitForIdle(false);
+      //release all keys
+      keyReleaseSequence(keyPress.getKeys());
+      //then release all modifiers
+      keyReleaseSequence(keyPress.getModifiers());
+      if (stdAutoDelay == 0) {
+          delay(stdDelay);
+      }
+      logRobot("KeyRelease: extended delay: %d", stdMaxElapsed);
+  }
+
+  /**
+   *  Release a sequence of keys in his reverse order.
+   *
+   * @param keys arrays of int values of {@link KeyEvent}
+   */
+  private void keyReleaseSequence(int[] keys) {
+      if(keys != null){
+          for (int i = keys.length - 1; i >= 0; i--) {
+              Debug.log(4, "RELEASE_KEY: " + KeyEvent.getKeyText(keys[i]));
+              keyRelease(keys[i]);
+          }
+      }
+  }
+
   private Robot getRobot() {
     return null;
   }
-  
+
   @Override
   public boolean isRemote() {
     return false;
@@ -128,17 +174,6 @@ public class RobotDesktop extends Robot implements IRobot {
   @Override
   public Screen getScreen() {
     return scr;
-  }
-
-  public RobotDesktop(Screen screen) throws AWTException {
-    super(runTime.getGraphicsDevice(screen.getcurrentID()));
-    scr = screen;
-  }
-
-  public RobotDesktop() throws AWTException {
-    super();
-    setAutoDelay(stdAutoDelay);
-    setAutoWaitForIdle(false);
   }
 
   @Override
@@ -207,7 +242,7 @@ public class RobotDesktop extends Robot implements IRobot {
     }
     return heldButtons;
   }
-  
+
   @Override
   public void clickStarts() {
   }
@@ -246,41 +281,17 @@ public class RobotDesktop extends Robot implements IRobot {
 
   @Override
   public void pressModifiers(int modifiers) {
-    if ((modifiers & KeyModifier.SHIFT) != 0) {
-      doKeyPress(KeyEvent.VK_SHIFT);
-    }
-    if ((modifiers & KeyModifier.CTRL) != 0) {
-      doKeyPress(KeyEvent.VK_CONTROL);
-    }
-    if ((modifiers & KeyModifier.ALT) != 0) {
-      doKeyPress(KeyEvent.VK_ALT);
-    }
-    if ((modifiers & KeyModifier.META) != 0) {
-      if (Settings.isWindows()) {
-        doKeyPress(KeyEvent.VK_WINDOWS);
-      } else {
-        doKeyPress(KeyEvent.VK_META);
-      }
+        char key = KeyModifier.lookUpKey(modifiers);
+    if (key > 0) {
+      doKeyPress(KeyboardDelegator.toJavaKeyCode(key));
     }
   }
 
   @Override
   public void releaseModifiers(int modifiers) {
-    if ((modifiers & KeyModifier.SHIFT) != 0) {
-      doKeyRelease(KeyEvent.VK_SHIFT);
-    }
-    if ((modifiers & KeyModifier.CTRL) != 0) {
-      doKeyRelease(KeyEvent.VK_CONTROL);
-    }
-    if ((modifiers & KeyModifier.ALT) != 0) {
-      doKeyRelease(KeyEvent.VK_ALT);
-    }
-    if ((modifiers & KeyModifier.META) != 0) {
-      if (Settings.isWindows()) {
-        doKeyRelease(KeyEvent.VK_WINDOWS);
-      } else {
-        doKeyRelease(KeyEvent.VK_META);
-      }
+    char key = KeyModifier.lookUpKey(modifiers);
+    if (key > 0) {
+      doKeyRelease(KeyboardDelegator.toJavaKeyCode(key));
     }
   }
 
@@ -300,7 +311,7 @@ public class RobotDesktop extends Robot implements IRobot {
   @Override
   public void keyDown(int code) {
     if (!heldKeyCodes.contains(code)) {
-      doKeyPress(code);
+      doKeyPress(new KeyPress(code));
       heldKeyCodes.add(code);
     }
   }
@@ -323,7 +334,7 @@ public class RobotDesktop extends Robot implements IRobot {
   @Override
   public void keyUp(int code) {
     if (heldKeyCodes.contains(code)) {
-      doKeyRelease(code);
+      doKeyRelease(new KeyPress(code));
       heldKeyCodes.remove((Object) code);
     }
   }
@@ -336,58 +347,53 @@ public class RobotDesktop extends Robot implements IRobot {
     }
   }
 
-  private void doType(KeyMode mode, int... keyCodes) {
-    if (mode == KeyMode.PRESS_ONLY) {
-      for (int i = 0; i < keyCodes.length; i++) {
-        doKeyPress(keyCodes[i]);
+  private void doType(KeyMode mode, KeyPress keyPress) {
+      switch (mode) {
+          case PRESS_ONLY:
+              doKeyPress(keyPress);
+              break;
+          case RELEASE_ONLY:
+              doKeyPress(keyPress);
+              break;
+          case PRESS_RELEASE:
+              doKeyPress(keyPress);
+              doKeyRelease(keyPress);
+              break;
       }
-    } else if (mode == KeyMode.RELEASE_ONLY) {
-      for (int i = 0; i < keyCodes.length; i++) {
-        doKeyRelease(keyCodes[i]);
-      }
-    } else {
-      for (int i = 0; i < keyCodes.length; i++) {
-        doKeyPress(keyCodes[i]);
-      }
-      for (int i = 0; i < keyCodes.length; i++) {
-        doKeyRelease(keyCodes[i]);
-      }
-    }
   }
 
   @Override
   public void typeChar(char character, KeyMode mode) {
-    Debug.log(4, "Robot: doType: %s ( %d )",
-            KeyEvent.getKeyText(Key.toJavaKeyCode(character)[0]).toString(),
-            Key.toJavaKeyCode(character)[0]);
-    doType(mode, Key.toJavaKeyCode(character));
+      KeyPress keyPress = KeyboardDelegator.toJavaKeyCode(character);
+      Debug.log(3, "Robot: doType: %s %s",character, keyPress);
+      doType(mode, keyPress);
   }
 
   @Override
   public void typeKey(int key) {
     Debug.log(4, "Robot: doType: %s ( %d )", KeyEvent.getKeyText(key), key);
     if (Settings.isMac()) {
-      if (key == Key.toJavaKeyCodeFromText("#N.")) {
-        doType(KeyMode.PRESS_ONLY, Key.toJavaKeyCodeFromText("#C."));
-        doType(KeyMode.PRESS_RELEASE, key);
-        doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyCodeFromText("#C."));
-        return;
-      } else if (key == Key.toJavaKeyCodeFromText("#T.")) {
-        doType(KeyMode.PRESS_ONLY, Key.toJavaKeyCodeFromText("#C."));
-        doType(KeyMode.PRESS_ONLY, Key.toJavaKeyCodeFromText("#A."));
-        doType(KeyMode.PRESS_RELEASE, key);
-        doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyCodeFromText("#A."));
-        doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyCodeFromText("#C."));
-        return;
-      } else if (key == Key.toJavaKeyCodeFromText("#X.")) {
-        key = Key.toJavaKeyCodeFromText("#T.");
-        doType(KeyMode.PRESS_ONLY, Key.toJavaKeyCodeFromText("#A."));
-        doType(KeyMode.PRESS_RELEASE, key);
-        doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyCodeFromText("#A."));
-        return;
-      }
+        if (key == Key.toJavaKeyCodeFromText("#N.")) {
+            doType(KeyMode.PRESS_ONLY, Key.toJavaKeyPressCodeFromText("#C."));
+            doType(KeyMode.PRESS_RELEASE, new KeyPress(key));
+            doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyPressCodeFromText("#C."));
+            return;
+        } else if (key == Key.toJavaKeyCodeFromText("#T.")) {
+            doType(KeyMode.PRESS_ONLY, Key.toJavaKeyPressCodeFromText("#C."));
+            doType(KeyMode.PRESS_ONLY, Key.toJavaKeyPressCodeFromText("#A."));
+            doType(KeyMode.PRESS_RELEASE, new KeyPress(key));
+            doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyPressCodeFromText("#A."));
+            doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyPressCodeFromText("#C."));
+            return;
+        } else if (key == Key.toJavaKeyCodeFromText("#X.")) {
+            key = Key.toJavaKeyCodeFromText("#T.");
+            doType(KeyMode.PRESS_ONLY, Key.toJavaKeyPressCodeFromText("#A."));
+            doType(KeyMode.PRESS_RELEASE, new KeyPress(key));
+            doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyPressCodeFromText("#A."));
+            return;
+        }
     }
-    doType(KeyMode.PRESS_RELEASE, key);
+    doType(KeyMode.PRESS_RELEASE, new KeyPress(key));
   }
 
   @Override

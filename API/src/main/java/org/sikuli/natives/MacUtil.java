@@ -6,12 +6,15 @@
  */
 package org.sikuli.natives;
 
+import org.sikuli.basics.Debug;
 import org.sikuli.script.App;
 import org.sikuli.script.RunTime;
 import org.sikuli.script.Runner;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyEvent;
+import java.awt.im.InputContext;
 import java.util.Map;
 
 public class MacUtil implements OSUtil {
@@ -291,6 +294,25 @@ public class MacUtil implements OSUtil {
   @Override
   public native void bringWindowToFront(Window win, boolean ignoreMouse);
 
+  @Override
+  public boolean isUtf8InputSupported() {
+      return UtfSupport.isEnabled();
+  }
+
+  @Override
+  public int[] getUnicodeModifier() {
+    //Works only if an unicode enabled keyboard is installed. See http://www.poynton.com/notes/misc/mac-unicode-hex-input.html.
+    return new int[]{KeyEvent.VK_ALT};
+  }
+
+  @Override
+  public String getUnicodeKeyInputString(int key) {
+      //use hex value as input
+      String keyCombo = String.format("%x", key);
+      Debug.log(4, "determined unicode: 0x" + keyCombo);
+      return keyCombo;
+  }
+
   public static native boolean _openApp(String appName);
 
   public static native int getPID(String appName);
@@ -306,5 +328,31 @@ public class MacUtil implements OSUtil {
   @Override
   public Map<Integer, String[]> getApps(String name) {
     return null;
+  }
+
+  private static class UtfSupport {
+    private static UtfSupport instance;
+    private final boolean enabled;
+
+    private UtfSupport(boolean enabled) {
+        this.enabled = enabled;
+    }
+
+    private static UtfSupport getInstance() {
+        if (instance == null) {
+            try {
+                boolean keyBoardIsUnicode = "Unicode".equals(InputContext.getInstance().getLocale().getVariant());
+                instance = new UtfSupport(keyBoardIsUnicode);
+            } catch (Exception e) {
+                Debug.log(3, e.getMessage());
+                instance = new UtfSupport(false);
+            }
+        }
+        return instance;
+    }
+
+    public static boolean isEnabled() {
+        return getInstance().enabled;
+    }
   }
 }

@@ -6,15 +6,13 @@
  */
 package org.sikuli.basics;
 
+import org.sikuli.script.keyboard.KeyPress;
+import org.sikuli.script.keyboard.KeyboardDelegator;
+
 import java.awt.event.KeyEvent;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
-import org.sikuli.basics.Debug;
-import org.sikuli.basics.PreferencesUser;
-import org.sikuli.basics.Settings;
-import org.sikuli.script.Key;
-import org.sikuli.script.Key;
 
 /**
  * Singleton class to bind hotkeys to hotkey listeners
@@ -179,8 +177,8 @@ public abstract class HotkeyManager {
    * @return true if success. false otherwise.
    */
   public boolean addHotkey(String key, int modifiers, HotkeyListener callback) {
-    int[] keyCodes = Key.toJavaKeyCode(key.toLowerCase());
-    int keyCode = keyCodes[0];
+    KeyPress keyPress = KeyboardDelegator.toJavaKeyCode(key.toLowerCase().charAt(0));
+    int keyCode = keyPress != null ? keyPress.getKeys()[0] : null;
     return installHotkey(keyCode, modifiers, callback, "");
   }
 
@@ -257,8 +255,8 @@ public abstract class HotkeyManager {
    * @return true if success. false otherwise.
    */
   public boolean removeHotkey(String key, int modifiers) {
-    int[] keyCodes = Key.toJavaKeyCode(key.toLowerCase());
-    int keyCode = keyCodes[0];
+    KeyPress keyPress = KeyboardDelegator.toJavaKeyCode(key.toLowerCase().charAt(0));
+    int keyCode = keyPress != null ? keyPress.getKeys()[0] : null;
     return uninstallHotkey(keyCode, modifiers, "");
   }
 

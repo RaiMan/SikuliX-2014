@@ -13,7 +13,9 @@ import org.sikuli.script.RunTime;
 import org.sikuli.script.Screen;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.File;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -325,6 +327,39 @@ public class WinUtil implements OSUtil {
   @Override
   public native void bringWindowToFront(Window win, boolean ignoreMouse);
 
+  @Override
+  public int[] getUnicodeModifier() {
+    if(isUtf8InputSupported()){
+        return new int[]{KeyEvent.VK_ALT, KeyEvent.VK_ADD};
+    }
+    return new int[]{KeyEvent.VK_ALT};
+  }
+
+  @Override
+  public boolean isUtf8InputSupported() {
+      return UtfSupport.isEnabled();
+  }
+
+  @Override
+  public String getUnicodeKeyInputString(int key) {
+      String keyCombo;
+      if (isUtf8InputSupported()) {
+          //use hex value as input
+          keyCombo = String.format("%04x", key);
+          Debug.log(4, "determined unicode: 0x" + keyCombo);
+      } else {
+          if(key > 255) {
+              throw new IllegalArgumentException(String.format(
+                      "Cannot convert character '%s'. To enable UTF-8 typing support, please " +
+                      "set under \"HKEY_Current_User\\Control Panel\\Input Method\" the key \"EnableHexNumpad\" to \"1\"",
+                      (char) key));
+          }//use decimal value as input
+          keyCombo = String.format("%04d", key);
+          Debug.log(4, "determined Windows ALT code: " + keyCombo);
+      }
+      return keyCombo;
+  }
+
   private static native long getHwnd(String appName, int winNum);
 
   private static native long getHwnd(int pid, int winNum);
@@ -337,4 +372,35 @@ public class WinUtil implements OSUtil {
     Rectangle rect = getRegion(hwnd, winNum);
     return rect;
   }
+
+  private static class UtfSupport {
+        public static final String REGISTRY_PATH = "\"HKEY_Current_User\\Control Panel\\Input Method\"";
+        public static final String REGISTRY_KEY = "EnableHexNumpad";
+        private final boolean enabled;
+        private static UtfSupport instance;
+
+        private UtfSupport(boolean enabled) {
+            this.enabled = enabled;
+        }
+
+        private static UtfSupport getInstance() {
+            if(instance == null) {
+                try {
+                    CommandExecutorResult result = CommandExecutorHelper.execute("reg query " + REGISTRY_PATH +
+                            " /v " + REGISTRY_KEY, 0);
+                    boolean registryKeySet = Arrays.asList(result.getStandardOutput().split("\\s"))
+                            .containsAll(Arrays.asList(REGISTRY_KEY, "1"));
+                    instance = new UtfSupport(registryKeySet);
+                } catch (Exception e) {
+                    Debug.log(3, e.getMessage());
+                    instance = new UtfSupport(false);
+                }
+            }
+            return instance;
+        }
+
+        public static boolean isEnabled() {
+            return getInstance().enabled;
+        }
+    }
 }

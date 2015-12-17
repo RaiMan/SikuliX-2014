@@ -62,4 +62,10 @@ public interface OSUtil {
   public Rectangle getFocusedWindow();
 
   public void bringWindowToFront(Window win, boolean ignoreMouse);
+
+  boolean isUtf8InputSupported();
+
+  int[] getUnicodeModifier();
+
+  String getUnicodeKeyInputString(int key);
 }

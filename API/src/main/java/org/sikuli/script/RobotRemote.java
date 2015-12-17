@@ -6,15 +6,18 @@
  */
 package org.sikuli.script;
 
-import java.awt.Color;
-import java.awt.Point;
-import java.awt.Rectangle;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.Settings;
+import org.sikuli.script.keyboard.KeyPress;
+import org.sikuli.script.keyboard.KeyboardDelegator;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
-import javax.swing.ImageIcon;
-import org.sikuli.basics.Debug;
-import org.sikuli.basics.Settings;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * INTERNAL USE - UNDER DEVELOPMENT - EXPERIMENTAL
@@ -24,10 +27,6 @@ import org.sikuli.basics.Settings;
  */
 public class RobotRemote implements IRobot {
 
-  private static int heldButtons = 0;
-  private static String heldKeys = "";
-  private static ArrayList<Integer> heldKeyCodes = new ArrayList<Integer>();
-  private ScreenRemote scr = null;
   private static final String key = "KEY";
   private static final String mouse = "MOUSE";
   private static final String capture = "CAPTURE";
@@ -36,19 +35,15 @@ public class RobotRemote implements IRobot {
   private static final String mMove = "MOVE";
   private static final String cSystem = "SYSTEM";
   private static final String cBounds = "BOUNDS";
+  private static int heldButtons = 0;
+  private static String heldKeys = "";
+  private static ArrayList<Integer> heldKeyCodes = new ArrayList<Integer>();
+  private ScreenRemote scr = null;
   private String clickCommand = null;
   private String typeCommand = null;
   private String result;
   private String system = "";
   private int numberScreens = 0;
-
-  private static void log(int level, String message, Object... args) {
-    Debug.logx(level, "RobotRemote: " + message, args);
-  }
-
-  private static void log(String message, Object... args) {
-    log(3, message, args);
-  }
 
   public RobotRemote(ScreenRemote sr) {
     init(sr);
@@ -56,6 +51,14 @@ public class RobotRemote implements IRobot {
 
   public RobotRemote() {
     init(null);
+  }
+
+  private static void log(int level, String message, Object... args) {
+    Debug.logx(level, "RobotRemote: " + message, args);
+  }
+
+  private static void log(String message, Object... args) {
+    log(3, message, args);
   }
 
   private void init(ScreenRemote sr) {
@@ -199,54 +202,99 @@ public class RobotRemote implements IRobot {
 
   @Override
   public void typeChar(char character, KeyMode mode) {
-    log(3, "doType: %s ( %d )",
-            KeyEvent.getKeyText(Key.toJavaKeyCode(character)[0]).toString(),
-            Key.toJavaKeyCode(character)[0]);
-    doType(mode, Key.toJavaKeyCode(character));
+    KeyPress keyPress = KeyboardDelegator.toJavaKeyCode(character);
+    log(3, "doType: %s %s",  character, keyPress);
+    doType(mode, keyPress);
   }
 
   @Override
   public void typeKey(int key) {
-    if ("MAC".equals(system)) {
-      if (key == Key.toJavaKeyCodeFromText("#N.")) {
-        doType(KeyMode.PRESS_ONLY, Key.toJavaKeyCodeFromText("#C."));
-        doType(KeyMode.PRESS_RELEASE, key);
-        doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyCodeFromText("#C."));
-      } else if (key == Key.toJavaKeyCodeFromText("#T.")) {
-        doType(KeyMode.PRESS_ONLY, Key.toJavaKeyCodeFromText("#C."));
-        doType(KeyMode.PRESS_ONLY, Key.toJavaKeyCodeFromText("#A."));
-        doType(KeyMode.PRESS_RELEASE, key);
-        doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyCodeFromText("#A."));
-        doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyCodeFromText("#C."));
-      } else if (key == Key.toJavaKeyCodeFromText("#X.")) {
-        key = Key.toJavaKeyCodeFromText("#T.");
-        doType(KeyMode.PRESS_ONLY, Key.toJavaKeyCodeFromText("#A."));
-        doType(KeyMode.PRESS_RELEASE, key);
-        doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyCodeFromText("#A."));
-      }
-    } else {
-      doType(KeyMode.PRESS_RELEASE, key);
+    Debug.log(4, "Robot: doType: %s ( %d )", KeyEvent.getKeyText(key), key);
+    if (Settings.isMac()) {
+        if (key == Key.toJavaKeyCodeFromText("#N.")) {
+            doType(KeyMode.PRESS_ONLY, Key.toJavaKeyPressCodeFromText("#C."));
+            doType(KeyMode.PRESS_RELEASE, new KeyPress(key));
+            doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyPressCodeFromText("#C."));
+            return;
+        } else if (key == Key.toJavaKeyCodeFromText("#T.")) {
+            doType(KeyMode.PRESS_ONLY, Key.toJavaKeyPressCodeFromText("#C."));
+            doType(KeyMode.PRESS_ONLY, Key.toJavaKeyPressCodeFromText("#A."));
+            doType(KeyMode.PRESS_RELEASE, new KeyPress(key));
+            doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyPressCodeFromText("#A."));
+            doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyPressCodeFromText("#C."));
+            return;
+        } else if (key == Key.toJavaKeyCodeFromText("#X.")) {
+            key = Key.toJavaKeyCodeFromText("#T.");
+            doType(KeyMode.PRESS_ONLY, Key.toJavaKeyPressCodeFromText("#A."));
+            doType(KeyMode.PRESS_RELEASE, new KeyPress(key));
+            doType(KeyMode.RELEASE_ONLY, Key.toJavaKeyPressCodeFromText("#A."));
+            return;
+        }
     }
-    log(3, "doType: %s ( %d )", KeyEvent.getKeyText(key), key);
+    doType(KeyMode.PRESS_RELEASE, new KeyPress(key));
+}
+
+  private void doType(KeyMode mode, KeyPress keyPress) {
+      switch (mode) {
+          case PRESS_ONLY:
+              doKeyPress(keyPress);
+              break;
+          case RELEASE_ONLY:
+              doKeyPress(keyPress);
+              break;
+          case PRESS_RELEASE:
+              doKeyPress(keyPress);
+              doKeyRelease(keyPress);
+              break;
+      }
   }
 
-  private void doType(KeyMode mode, int... keyCodes) {
-    if (mode == KeyMode.PRESS_ONLY) {
-      for (int i = 0; i < keyCodes.length; i++) {
-        keyPress(keyCodes[i]);
+  private void doKeyPress(KeyPress keyPress) {
+      //press all modifiers
+      keyPressSequence(keyPress.getModifiers());
+      //then press all keys
+      keyPressSequence(keyPress.getKeys());
+  }
+
+  /**
+   * Press a sequence of keys in one action, to enable multiple equal key inputs at the same time.
+   * @param keys arrays of int values of {@link KeyEvent}
+   */
+  private void keyPressSequence(int... keys) {
+      Set<Integer> pressed = new HashSet<Integer>();
+      if (keys != null) {
+          for (int key : keys) {
+              if (pressed.contains(key)) {
+                  //release keys to be able to typ unicode numbers with equal numbers in one action
+                  Debug.log(4,"RELEASE_KEY: " + KeyEvent.getKeyText(key));
+                  keyRelease(key);
+              }
+              Debug.log(4, "PRESS_KEY: " + KeyEvent.getKeyText(key));
+              keyPress(key);
+              pressed.add(key);
+          }
       }
-    } else if (mode == KeyMode.RELEASE_ONLY) {
-      for (int i = 0; i < keyCodes.length; i++) {
-        keyRelease(keyCodes[i]);
+  }
+
+  private void doKeyRelease(KeyPress keyPress) {
+      //release all keys
+      keyReleaseSequence(keyPress.getKeys());
+      //then release all modifiers
+      keyReleaseSequence(keyPress.getModifiers());
+  }
+
+  /**
+   *  Release a sequence of keys in his reverse order.
+   *
+   * @param keys arrays of int values of {@link KeyEvent}
+   */
+  private void keyReleaseSequence(int[] keys) {
+      if(keys != null){
+          for (int i = keys.length - 1; i >= 0; i--) {
+              Debug.log(4, "RELEASE_KEY: " + KeyEvent.getKeyText(keys[i]));
+              keyRelease(keys[i]);
+          }
       }
-    } else {
-      for (int i = 0; i < keyCodes.length; i++) {
-        keyPress(keyCodes[i]);
-      }
-      for (int i = 0; i < keyCodes.length; i++) {
-        keyRelease(keyCodes[i]);
-      }
-    }
   }
 
   @Override
