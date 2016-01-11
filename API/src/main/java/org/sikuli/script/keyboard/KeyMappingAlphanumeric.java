@@ -67,57 +67,57 @@ public class KeyMappingAlphanumeric implements KeyMapping {
                 return new KeyPress(KeyEvent.VK_Z);
 //Uppercase
             case 'A':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_A);
+                return new KeyPress(new int[]{KeyEvent.VK_A}, new int[]{KeyEvent.VK_SHIFT});
             case 'B':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_B);
+                return new KeyPress(new int[]{KeyEvent.VK_B}, new int[]{KeyEvent.VK_SHIFT});
             case 'C':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_C);
+                return new KeyPress(new int[]{KeyEvent.VK_C}, new int[]{KeyEvent.VK_SHIFT});
             case 'D':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_D);
+                return new KeyPress(new int[]{KeyEvent.VK_D}, new int[]{KeyEvent.VK_SHIFT});
             case 'E':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_E);
+                return new KeyPress(new int[]{KeyEvent.VK_E}, new int[]{KeyEvent.VK_SHIFT});
             case 'F':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_F);
+                return new KeyPress(new int[]{KeyEvent.VK_F}, new int[]{KeyEvent.VK_SHIFT});
             case 'G':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_G);
+                return new KeyPress(new int[]{KeyEvent.VK_G}, new int[]{KeyEvent.VK_SHIFT});
             case 'H':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_H);
+                return new KeyPress(new int[]{KeyEvent.VK_H}, new int[]{KeyEvent.VK_SHIFT});
             case 'I':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_I);
+                return new KeyPress(new int[]{KeyEvent.VK_I}, new int[]{KeyEvent.VK_SHIFT});
             case 'J':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_J);
+                return new KeyPress(new int[]{KeyEvent.VK_J}, new int[]{KeyEvent.VK_SHIFT});
             case 'K':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_K);
+                return new KeyPress(new int[]{KeyEvent.VK_K}, new int[]{KeyEvent.VK_SHIFT});
             case 'L':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_L);
+                return new KeyPress(new int[]{KeyEvent.VK_L}, new int[]{KeyEvent.VK_SHIFT});
             case 'M':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_M);
+                return new KeyPress(new int[]{KeyEvent.VK_M}, new int[]{KeyEvent.VK_SHIFT});
             case 'N':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_N);
+                return new KeyPress(new int[]{KeyEvent.VK_N}, new int[]{KeyEvent.VK_SHIFT});
             case 'O':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_O);
+                return new KeyPress(new int[]{KeyEvent.VK_O}, new int[]{KeyEvent.VK_SHIFT});
             case 'P':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_P);
+                return new KeyPress(new int[]{KeyEvent.VK_P}, new int[]{KeyEvent.VK_SHIFT});
             case 'Q':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_Q);
+                return new KeyPress(new int[]{KeyEvent.VK_Q}, new int[]{KeyEvent.VK_SHIFT});
             case 'R':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_R);
+                return new KeyPress(new int[]{KeyEvent.VK_R}, new int[]{KeyEvent.VK_SHIFT});
             case 'S':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_S);
+                return new KeyPress(new int[]{KeyEvent.VK_S}, new int[]{KeyEvent.VK_SHIFT});
             case 'T':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_T);
+                return new KeyPress(new int[]{KeyEvent.VK_T}, new int[]{KeyEvent.VK_SHIFT});
             case 'U':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_U);
+                return new KeyPress(new int[]{KeyEvent.VK_U}, new int[]{KeyEvent.VK_SHIFT});
             case 'V':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_V);
+                return new KeyPress(new int[]{KeyEvent.VK_V}, new int[]{KeyEvent.VK_SHIFT});
             case 'W':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_W);
+                return new KeyPress(new int[]{KeyEvent.VK_W}, new int[]{KeyEvent.VK_SHIFT});
             case 'X':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_X);
+                return new KeyPress(new int[]{KeyEvent.VK_X}, new int[]{KeyEvent.VK_SHIFT});
             case 'Y':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_Y);
+                return new KeyPress(new int[]{KeyEvent.VK_Y}, new int[]{KeyEvent.VK_SHIFT});
             case 'Z':
-                return new KeyPress(KeyEvent.VK_SHIFT, KeyEvent.VK_Z);
+                return new KeyPress(new int[]{KeyEvent.VK_Z}, new int[]{KeyEvent.VK_SHIFT});
 //Row 3 (below function keys)
 //      case 'Press': return new Key (192}; //not producab)e
             case '1':
@@ -162,13 +162,13 @@ public class KeyMappingAlphanumeric implements KeyMapping {
                 return new KeyPress(KeyEvent.VK_SPACE);
 //Modifier
             case Key.C_SHIFT:
-                return new KeyPress(KeyEvent.VK_SHIFT);
+                return new KeyPress(new int[]{}, new int[]{KeyEvent.VK_SHIFT});
             case Key.C_CTRL:
-                return new KeyPress(KeyEvent.VK_CONTROL);
+                return new KeyPress(new int[]{}, new int[]{KeyEvent.VK_CONTROL});
             case Key.C_ALT:
-                return new KeyPress(KeyEvent.VK_ALT);
+                return new KeyPress(new int[]{}, new int[]{KeyEvent.VK_ALT});
             case Key.C_META:
-                return new KeyPress(KeyEvent.VK_META);
+                return new KeyPress(new int[]{}, new int[]{KeyEvent.VK_META});
 //Cursor movement
             case Key.C_UP:
                 return new KeyPress(KeyEvent.VK_UP);

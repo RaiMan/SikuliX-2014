@@ -15,8 +15,6 @@ import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /**
  * INTERNAL USE Implementation of IRobot making a DesktopRobot using java.awt.Robot
@@ -43,7 +41,7 @@ public class RobotDesktop extends Robot implements IRobot {
   public RobotDesktop() throws AWTException {
     super();
     setAutoDelay(stdAutoDelay);
-    setAutoWaitForIdle(false);
+    setAutoWaitForIdle(true);
   }
 
   private void logRobot(int delay, String msg) {
@@ -59,7 +57,7 @@ public class RobotDesktop extends Robot implements IRobot {
     if (elapsed > maxElapsed) {
       Debug.log(0, msg, elapsed);
       setAutoDelay(stdAutoDelay);
-      setAutoWaitForIdle(false);
+      setAutoWaitForIdle(true);
     }
   }
 
@@ -78,7 +76,7 @@ public class RobotDesktop extends Robot implements IRobot {
     fakeHighlight(true);
     logRobot(stdAutoDelay, "MouseDown: WaitForIdle: %s - Delay: %d");
     setAutoDelay(stdAutoDelay);
-    setAutoWaitForIdle(false);
+    setAutoWaitForIdle(true);
     delay(100);
     fakeHighlight(false);
     delay(100);
@@ -92,7 +90,7 @@ public class RobotDesktop extends Robot implements IRobot {
   private void doMouseUp(int buttons) {
     logRobot(stdAutoDelay, "MouseUp: WaitForIdle: %s - Delay: %d");
     setAutoDelay(stdAutoDelay);
-    setAutoWaitForIdle(false);
+    setAutoWaitForIdle(true);
     mouseRelease(buttons);
     if (stdAutoDelay == 0) {
       delay(stdDelay);
@@ -103,7 +101,7 @@ public class RobotDesktop extends Robot implements IRobot {
   private void doKeyPress(KeyPress keyPress) {
       logRobot(stdAutoDelay, "KeyPress: WaitForIdle: %s - Delay: %d");
       setAutoDelay(stdAutoDelay);
-      setAutoWaitForIdle(false);
+      setAutoWaitForIdle(true);
       //press all modifiers
       keyPressSequence(keyPress.getModifiers());
       //then press all keys
@@ -115,21 +113,47 @@ public class RobotDesktop extends Robot implements IRobot {
   }
 
   /**
-   * Press a sequence of keys in one action, to enable multiple equal key inputs at the same time.
+   * Press and release a {@link KeyPress} event in the correct press-release-sequence.
+   */
+  private void doKeyPressRelease(KeyPress keyPress){
+      logRobot(stdAutoDelay, "KeyPress: WaitForIdle: %s - Delay: %d");
+      setAutoDelay(stdAutoDelay);
+      setAutoWaitForIdle(true);
+      //press all modifiers
+      keyPressSequence(keyPress.getModifiers());
+      //then press and release all keys
+      keyPressReleaseSequence(keyPress.getKeys());
+      if (stdAutoDelay == 0) {
+          delay(stdDelay);
+      }
+      keyReleaseSequence(keyPress.getModifiers());
+      logRobot("KeyPress: extended delay: %d", stdMaxElapsed);
+  }
+
+  /**
+   * Press and release a sequence of keys in one action, to enable multiple equal key inputs at the same time.
+   * @param keys arrays of int values of {@link KeyEvent}
+   */
+  private void keyPressReleaseSequence(int... keys) {
+      if (keys != null) {
+          for (int key : keys) {
+              Debug.log(4, "PRESS_KEY: " + KeyEvent.getKeyText(key));
+              keyPress(key);
+              keyRelease(key);
+              Debug.log(4, "RELEASE_KEY: " + KeyEvent.getKeyText(key));
+          }
+      }
+  }
+
+  /**
+   * Press a sequence of keys in one action.
    * @param keys arrays of int values of {@link KeyEvent}
    */
   private void keyPressSequence(int... keys) {
-      Set<Integer> pressed = new HashSet<Integer>();
       if (keys != null) {
           for (int key : keys) {
-              if (pressed.contains(key)) {
-                  //release keys to be able to typ unicode numbers with equal numbers in one action
-                  Debug.log(4,"RELEASE_KEY: " + KeyEvent.getKeyText(key));
-                  keyRelease(key);
-              }
               Debug.log(4, "PRESS_KEY: " + KeyEvent.getKeyText(key));
               keyPress(key);
-              pressed.add(key);
           }
       }
   }
@@ -137,7 +161,7 @@ public class RobotDesktop extends Robot implements IRobot {
   private void doKeyRelease(KeyPress keyPress) {
       logRobot(stdAutoDelay, "KeyRelease: WaitForIdle: %s - Delay: %d");
       setAutoDelay(stdAutoDelay);
-      setAutoWaitForIdle(false);
+      setAutoWaitForIdle(true);
       //release all keys
       keyReleaseSequence(keyPress.getKeys());
       //then release all modifiers
@@ -356,8 +380,7 @@ public class RobotDesktop extends Robot implements IRobot {
               doKeyPress(keyPress);
               break;
           case PRESS_RELEASE:
-              doKeyPress(keyPress);
-              doKeyRelease(keyPress);
+              doKeyPressRelease(keyPress);
               break;
       }
   }

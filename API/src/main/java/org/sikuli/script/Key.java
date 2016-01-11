@@ -385,13 +385,15 @@ public class Key {
     keyTexts.put("#M+", KeyboardDelegator.toJavaKeyCode(C_META));
     keyTexts.put("#M-", KeyboardDelegator.toJavaKeyCode(C_META));
     for (String k : keyTexts.keySet()) {
+      KeyPress keyPress = keyTexts.get(k);
       if (Debug.getDebugLevel() > 3) {
-        Debug.log(4, "Key: %s transformed to keypress event %s", k, keyTexts.get(k));
+        Debug.log(4, "Key: %s transformed to keypress event %s", k, keyPress);
       }
       if (k.length() < 4) {
         continue;
       }
-      keys.put(keyTexts.get(k).getKeys()[0], k);
+      //get key if present, if not use modifier
+      keys.put(keyPress.getKeys().length > 0 ? keyPress.getKeys()[0] : keyPress.getModifiers()[0], k);
     }
     //</editor-fold>
   }
