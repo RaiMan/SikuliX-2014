@@ -377,7 +377,7 @@ public class RobotDesktop extends Robot implements IRobot {
               doKeyPress(keyPress);
               break;
           case RELEASE_ONLY:
-              doKeyPress(keyPress);
+              doKeyRelease(keyPress);
               break;
           case PRESS_RELEASE:
               doKeyPressRelease(keyPress);
