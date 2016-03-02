@@ -6,13 +6,22 @@
  */
 package org.sikuli.util;
 
-import org.sikuli.basics.Debug;
-import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Cursor;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseMotionAdapter;
+import java.awt.image.BufferedImage;
+import java.awt.image.RasterFormatException;
+import java.awt.image.RescaleOp;
 import javax.swing.JFrame;
-import javax.swing.JPanel;
-import org.sikuli.basics.Settings;
+import org.sikuli.basics.Debug;
 import org.sikuli.script.IScreen;
 import org.sikuli.script.Location;
 import org.sikuli.script.Screen;
@@ -57,7 +66,7 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
   
   public OverlayCapturePrompt(IScreen scr) {
 //    super();
-    Debug.log(3, "TRACE: OverlayCapturePrompt: init");
+    Debug.log(3, "TRACE: OverlayCapturePrompt: init: S(%d)", scr.getID());
     scrOCP = scr;
     canceled = false;
 
@@ -94,7 +103,7 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
         desty = srcy = e.getY();
         srcScreenId = scrOCP.getIdFromPoint(srcx, srcy);
         srcScreenLocation = new Location(srcx + scrOCP.getX(), srcy + scrOCP.getY());
-        Debug.log(4, "CapturePrompt: started at (%d,%d) as %s on %d", srcx, srcy,
+        Debug.log(3, "CapturePrompt: started at (%d,%d) as %s on %d", srcx, srcy,
             srcScreenLocation.toStringShort(), srcScreenId);
         repaint();
       }
@@ -109,7 +118,7 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
           Debug.log(3, "CapturePrompt: aborted: not using left mouse button");
         } else {
           destScreenLocation = new Location(destx + scrOCP.getX(), desty + scrOCP.getY());
-          Debug.log(4, "CapturePrompt: finished at (%d,%d) as %s on %d", destx, desty,
+          Debug.log(3, "CapturePrompt: finished at (%d,%d) as %s on %d", destx, desty,
               destScreenLocation.toStringShort(), srcScreenId);
         }
         hasFinished = true;

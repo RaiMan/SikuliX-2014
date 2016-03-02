@@ -6,21 +6,20 @@
  */
 package org.sikuli.script;
 
-import org.sikuli.util.ScreenHighlighter;
+import edu.unh.iol.dlc.VNCScreen;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
-
-import edu.unh.iol.dlc.VNCScreen;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import org.sikuli.util.ScreenHighlighter;
 
 /**
  * A Region is a rectengular area and lies always completely inside its parent screen

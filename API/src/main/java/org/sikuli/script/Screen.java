@@ -6,14 +6,14 @@
  */
 package org.sikuli.script;
 
-import org.sikuli.util.ScreenHighlighter;
-import org.sikuli.util.OverlayCapturePrompt;
-import org.sikuli.util.EventObserver;
-import org.sikuli.basics.Settings;
-import org.sikuli.basics.Debug;
 import java.awt.AWTException;
 import java.awt.Rectangle;
 import java.util.Date;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.Settings;
+import org.sikuli.util.EventObserver;
+import org.sikuli.util.OverlayCapturePrompt;
+import org.sikuli.util.ScreenHighlighter;
 
 /**
  * A screen represents a physical monitor with its coordinates and size according to the global
@@ -615,6 +615,7 @@ public class Screen extends Region implements IScreen {
             Screen.getScreen(is).lastScreenImage = simg;
           }
           ocp.close();
+          Screen.getScreen(is).prompt = null;
           isComplete = true;
         }
       }

@@ -44,8 +44,8 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
 import org.sikuli.util.JythonHelper;
-import org.sikuli.util.SysJNA;
 import org.sikuli.util.LinuxSupport;
+import org.sikuli.util.SysJNA;
 
 /**
  * Intended to concentrate all, that is needed at startup of sikulix or sikulixapi
@@ -2778,6 +2778,7 @@ Point pNull = new Point(0, 0);
 //  else:
 //      return None
   public String capture(Object[] args) {
+    Debug.log(3, "TRACE: RunTime: capture: %d args", args.length);
     ScreenImage simg = null;
     try {
       if (args.length == 0) {
@@ -2792,7 +2793,8 @@ Point pNull = new Point(0, 0);
         simg = Screen.getPrimaryScreen().capture((Integer) args[0], (Integer) args[1], (Integer) args[2], (Integer) args[3]);
       }
     } catch (Exception ex) {
-      log(-1, "capture: invalid arguments");
+      Debug.log(3, "TRACE: RunTime: capture: Exception: %s", ex);
+      log(-1, "capture: invalid arguments or not possible");
     }
     if (simg != null) {
       return simg.getFile();
@@ -2810,6 +2812,7 @@ Point pNull = new Point(0, 0);
 //  else:
 //      return None
   public String saveCapture(Object[] args) {
+    Debug.log(3, "TRACE: RunTime: saveapture: %d args", args.length);
     String fsimg = null;
     try {
       if (args.length == 1) {
@@ -2821,7 +2824,7 @@ Point pNull = new Point(0, 0);
                 Region.create((Integer) args[1], (Integer) args[2], (Integer) args[3], (Integer) args[4]));
       }
     } catch (Exception ex) {
-      log(-1, "saveCapture: invalid arguments");
+      log(-1, "saveCapture: invalid arguments or impossible");
     }
     return fsimg;
   }
@@ -2836,6 +2839,7 @@ Point pNull = new Point(0, 0);
 //  else:
 //      return None
   public Region selectRegion(String msg) {
+    Debug.log(3, "TRACE: RunTime: selectRegion");
     Region reg = null;
     if (msg == null) {
       reg = Screen.getPrimaryScreen().selectRegion();
