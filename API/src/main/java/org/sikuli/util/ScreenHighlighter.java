@@ -189,8 +189,13 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
   }
 
   protected boolean isWindowTranslucencySupported() {
-    return GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice()
-            .isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT);
+    if(Settings.isLinux()){
+      GraphicsDevice screenDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+      return screenDevice.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT)
+              && screenDevice.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSLUCENT)
+              &&  screenDevice.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT);
+    }
+    return true;
   }
 
   public void highlight(Region r_, float secs) {
