@@ -222,7 +222,7 @@ public class Mouse {
       mouse.buttons = LEFT;
     }
     mouse.beforeWait = 0;
-    mouse.innerWait = 0;
+    mouse.innerWait = (int) (Settings.ClickDelay * 1000);
     mouse.afterWait = 0;
     if (args.length > 0) {
       if (args.length == 1) {
@@ -237,7 +237,7 @@ public class Mouse {
         mouse.afterWait = args[1];
         if (args.length > 2) {
           mouse.innerWait = args[2];
-        }
+        } 
       }
     }
   }
@@ -260,7 +260,6 @@ public class Mouse {
     }
     get().device.use(region);
     profiler.lap("after use");
-    Debug.action(getClickMsg(loc, buttons, modifiers, dblClick));
     if (shouldMove) {
       r.smoothMove(loc);
       profiler.lap("after move");
@@ -269,26 +268,34 @@ public class Mouse {
     r.pressModifiers(modifiers);
     int pause = Settings.ClickDelay > 1 ? 1 : (int) (Settings.ClickDelay * 1000);
     Settings.ClickDelay = 0.0;
+    profiler.lap("before Down");
     if (dblClick) {
       r.mouseDown(buttons);
+      profiler.lap("before Up");
       r.mouseUp(buttons);
+      profiler.lap("before Down");
+      r.delay(pause);
       r.mouseDown(buttons);
+      profiler.lap("before Up");
       r.mouseUp(buttons);
     } else {
       r.mouseDown(buttons);
       r.delay(pause);
+      profiler.lap("before Up");
       r.mouseUp(buttons);
     }
+    profiler.lap("after click");
     r.releaseModifiers(modifiers);
     r.clickEnds();
     r.waitForIdle();
     profiler.lap("before let");
     get().device.let(region);
-    profiler.end();
+    long duration = profiler.end();
+    Debug.action(getClickMsg(loc, buttons, modifiers, dblClick, duration));
     return 1;
   }
 
-  private static String getClickMsg(Location loc, int buttons, int modifiers, boolean dblClick) {
+  private static String getClickMsg(Location loc, int buttons, int modifiers, boolean dblClick, long duration) {
     String msg = "";
     if (modifiers != 0) {
       msg += KeyEvent.getKeyModifiersText(modifiers) + "+";
@@ -304,7 +311,7 @@ public class Mouse {
     } else if (buttons == InputEvent.BUTTON2_MASK) {
       msg += "MID CLICK";
     }
-    msg += " on " + loc;
+    msg += String.format(" on %s (%d msec)", loc, duration);
     return msg;
   }
 

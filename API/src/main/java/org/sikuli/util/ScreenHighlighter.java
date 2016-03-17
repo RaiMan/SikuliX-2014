@@ -47,6 +47,7 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
   BasicStroke _StrokeCircle = new BasicStroke(2);
   BasicStroke _StrokeBorder = new BasicStroke(3);
   Animator _aniX, _aniY;
+  boolean noWaitAfter = false;
 
   public ScreenHighlighter(IScreen scr, String color) {
     _scr = scr;
@@ -108,14 +109,21 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
     addMouseListener(this);
   }
 
+
+  public void setWaitAfter(boolean state) {
+    noWaitAfter = state;
+  }
+
   @Override
   public void close() {
     setVisible(false);
     _opened.remove(this);
     clean();
-    try {
-      Thread.sleep((int) (Settings.WaitAfterHighlight > 0.3f ? Settings.WaitAfterHighlight * 1000 - 300 : 300));
-    } catch (InterruptedException e) {
+    if (!noWaitAfter) {
+      try {
+        Thread.sleep((int) (Settings.WaitAfterHighlight > 0.3f ? Settings.WaitAfterHighlight * 1000 - 300 : 300));
+      } catch (InterruptedException e) {
+      }
     }
   }
 

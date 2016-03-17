@@ -61,23 +61,21 @@ public class RobotDesktop extends Robot implements IRobot {
     mouseMove(x, y);
   }
   
-  private void fakeHighlight(boolean onOff) {
-    if (runTime.runningMac && runTime.isOSX10()) {
-      Region reg = Screen.getFakeRegion();
-      reg.silentHighlight(onOff);
-    }
-  }
-
   private void doMouseDown(int buttons) {
-    fakeHighlight(true);
+    if (Settings.RobotFake && runTime.needsRobotFake()) {
+      Screen.getFakeRegion().silentHighlight(true);
+    }
     logRobot(stdAutoDelay, "MouseDown: WaitForIdle: %s - Delay: %d");
     setAutoDelay(stdAutoDelay);
-    setAutoWaitForIdle(false);
-    delay(100);
-    fakeHighlight(false);
-    delay(100);
+    setAutoWaitForIdle(Settings.ClickFast);
+    if (Settings.RobotFake && runTime.needsRobotFake()) {
+      delay(20);
+      Screen.getFakeRegion().silentHighlight(false);
+      delay(20);
+    }
     mousePress(buttons);
-    if (stdAutoDelay == 0) {
+    setAutoWaitForIdle(false);
+    if (!Settings.ClickFast && stdAutoDelay == 0) {
       delay(stdDelay);
     }
     logRobot("MouseDown: extended delay: %d", stdMaxElapsed);
@@ -86,9 +84,10 @@ public class RobotDesktop extends Robot implements IRobot {
   private void doMouseUp(int buttons) {
     logRobot(stdAutoDelay, "MouseUp: WaitForIdle: %s - Delay: %d");
     setAutoDelay(stdAutoDelay);
-    setAutoWaitForIdle(false);
+    setAutoWaitForIdle(Settings.ClickFast);
     mouseRelease(buttons);
-    if (stdAutoDelay == 0) {
+    setAutoWaitForIdle(false);
+    if (!Settings.ClickFast && stdAutoDelay == 0) {
       delay(stdDelay);
     }
     logRobot("MouseUp: extended delay: %d", stdMaxElapsed);

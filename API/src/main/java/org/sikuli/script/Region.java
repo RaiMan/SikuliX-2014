@@ -1955,7 +1955,7 @@ public class Region {
       return doHighlight(true, null, true);
     }
     if (!onOff && overlay != null) {
-      return doHighlight(true, null, true);
+      return doHighlight(false, null, true);
     }
     return this;
   }
@@ -2009,6 +2009,7 @@ public class Region {
     }
     if (toEnable) {
       overlay = new ScreenHighlighter(getScreen(), color);
+      overlay.setWaitAfter(silent);
       overlay.highlight(this);
     } else {
       if (overlay != null) {
@@ -2328,7 +2329,7 @@ public class Region {
     return mList;
   }
   
-  public <PSI> Match findBest(Object... args) {
+  public Match findBest(Object... args) {
     Debug.log(lvl, "findBest: enter");
     Match mResult = null;
     List<Match> mList = findAnyCollect(args);

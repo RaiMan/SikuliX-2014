@@ -1155,6 +1155,10 @@ Point pNull = new Point(0, 0);
   public boolean isOSX10() {
     return osVersion.startsWith("10.10.") || osVersion.startsWith("10.11.");
   }
+  
+  public boolean needsRobotFake() {
+    return !Settings.ClickFast && runningMac && isOSX10();
+  }
 
   /**
    * print out some basic information about the current runtime environment
