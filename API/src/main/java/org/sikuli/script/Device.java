@@ -321,7 +321,7 @@ public class Device {
     if (time == 0) {
       return;
     }
-    if (time < 60) {
+    if (time < 10) {
       time = time * 1000;
     }
     try {
