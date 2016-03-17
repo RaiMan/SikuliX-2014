@@ -6,15 +6,15 @@ package org.sikuli.natives;
  * @author tschneck
  *         Date: 9/15/15
  */
-public class NativeCommandException extends RuntimeException {
+public class CommandExecutorException extends RuntimeException {
     private final CommandExecutorResult commandExecutorResult;
 
-    public NativeCommandException(String message) {
+    public CommandExecutorException(String message) {
         super(message);
         this.commandExecutorResult = null;
     }
 
-    public NativeCommandException(String message, CommandExecutorResult commandExecutorResult) {
+    public CommandExecutorException(String message, CommandExecutorResult commandExecutorResult) {
         super(message);
         this.commandExecutorResult = commandExecutorResult;
     }

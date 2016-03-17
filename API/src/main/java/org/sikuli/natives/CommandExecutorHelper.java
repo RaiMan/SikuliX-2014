@@ -26,7 +26,7 @@ public class CommandExecutorHelper {
             if (e instanceof ExecuteException) {
                 exitValue = ((ExecuteException) e).getExitValue();
             }
-            throw new NativeCommandException(
+            throw new CommandExecutorException(
                     "error in command " + cmd.toString(),
                     new CommandExecutorResult(exitValue, stout.toString(), error.toString()));
         }

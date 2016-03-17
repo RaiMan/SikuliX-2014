@@ -48,7 +48,7 @@ public class LinuxUtil implements OSUtil {
                 if (executable.equals("xdotool")) {
                     xdoToolAvail = false;
                 }
-                throw new NativeCommandException("[error] checking: command '" + executable + "' is not executable, please check if it is installed and available!");
+                throw new CommandExecutorException("[error] checking: command '" + executable + "' is not executable, please check if it is installed and available!");
             }
         }
     }
@@ -126,7 +126,7 @@ public class LinuxUtil implements OSUtil {
             CommandExecutorResult result1 = CommandExecutorHelper.execute("pidof " + appName, 0);
             String pid = result1.getStandardOutput();
             if (pid == null || pid.isEmpty()) {
-                throw new NativeCommandException("No app could be found with Name '" + appName + "'");
+                throw new CommandExecutorException("No app could be found with Name '" + appName + "'");
             }
             //use kill incase that killall could maybe not work in all environments
             return CommandExecutorHelper.execute("kill " + pid, 0).getExitValue();
