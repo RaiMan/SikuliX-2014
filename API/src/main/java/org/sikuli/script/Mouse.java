@@ -180,7 +180,7 @@ public class Mouse {
    * 2nd wait after mouse up <br>
    * 3rd inner wait (milli secs, cut to 1000): pause between mouse down and up (Settings.ClickDelay)
    *
-   * wait before and after: &gt; 59 taken as milli secs - &lt; are seconds
+   * wait before and after: &gt; 9 taken as milli secs - 1 ... 9 are seconds
    *
    * @param loc where to click
    * @param action L,R,M left, right, middle - D means double click
