@@ -6,21 +6,19 @@
  */
 package org.sikuli.util;
 
-import org.sikuli.util.OverlayTransparentWindow;
 import org.sikuli.basics.Animator;
-import org.sikuli.basics.Settings;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.Settings;
+import org.sikuli.script.*;
+
 import java.awt.*;
-import java.awt.event.*;
-import java.awt.image.*;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
+import java.awt.image.RescaleOp;
+import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
-import java.lang.reflect.Field;
-import org.sikuli.script.IScreen;
-import org.sikuli.script.Location;
-import org.sikuli.script.Region;
-import org.sikuli.script.Screen;
-import org.sikuli.script.ScreenImage;
 
 /**
  * INTERNAL USE produces and manages the red framed rectangles from Region.highlight()
@@ -179,9 +177,11 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
   }
 
   public void highlight(Region r_) {
-    if (Settings.isLinux()) {
-      Debug.error("highlight does not work on Linux.");
-      return;
+    //change due to oracle blog: https://blogs.oracle.com/thejavatutorials/entry/translucent_and_shaped_windows_in
+    if (!isWindowTranslucencySupported()) {
+      Debug.error("highlight transparent is not support on " + System.getProperty("os.name")+ "!");
+      //use at least an not transparent color
+      _transparentColor = Color.pink;
     }
     _borderOnly = true;
     Region r;
@@ -194,6 +194,16 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
     this.setBackground(_transparentColor);
     setVisible(true);
     requestFocus();
+  }
+
+  protected boolean isWindowTranslucencySupported() {
+    if(Settings.isLinux()){
+      GraphicsDevice screenDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+      return screenDevice.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT)
+              && screenDevice.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSLUCENT)
+              &&  screenDevice.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT);
+    }
+    return true;
   }
 
   public void highlight(Region r_, float secs) {
