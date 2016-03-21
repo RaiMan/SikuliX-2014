@@ -6,12 +6,14 @@
  */
 package org.sikuli.util;
 
-import org.sikuli.basics.Animator;
-import org.sikuli.basics.Debug;
-import org.sikuli.basics.Settings;
-import org.sikuli.script.*;
-
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.image.BufferedImage;
@@ -19,6 +21,15 @@ import java.awt.image.RescaleOp;
 import java.lang.reflect.Field;
 import java.util.HashSet;
 import java.util.Set;
+import javax.swing.JPanel;
+import org.sikuli.basics.Animator;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.Settings;
+import org.sikuli.script.IScreen;
+import org.sikuli.script.Location;
+import org.sikuli.script.Region;
+import org.sikuli.script.Screen;
+import org.sikuli.script.ScreenImage;
 
 /**
  * INTERNAL USE produces and manages the red framed rectangles from Region.highlight()
@@ -38,14 +49,16 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
   int srcx, srcy, destx, desty;
   Location _lastTarget;
   boolean _borderOnly = false;
-  boolean _native_transparent = false;
-  boolean _double_buffered = false;
   Animator _anim;
   BasicStroke _StrokeCross = new BasicStroke(1);
   BasicStroke _StrokeCircle = new BasicStroke(2);
   BasicStroke _StrokeBorder = new BasicStroke(3);
   Animator _aniX, _aniY;
   boolean noWaitAfter = false;
+
+  boolean _native_transparent = false;
+  boolean _double_buffered = false;
+  boolean _isTransparentSupported = false;
 
   public ScreenHighlighter(IScreen scr, String color) {
     _scr = scr;
@@ -102,8 +115,11 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
     } else if (Settings.isMac()) {
       _native_transparent = true;
     }
-//		getRootPane().putClientProperty("Window.shadow", Boolean.FALSE);
-//		((JPanel) getContentPane()).setDoubleBuffered(true);
+    GraphicsDevice screenDevice = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+    _isTransparentSupported = screenDevice.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT)
+            && screenDevice.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSLUCENT)
+            && screenDevice.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT);
+		((JPanel) getContentPane()).setDoubleBuffered(_double_buffered);
     addMouseListener(this);
   }
 
@@ -178,7 +194,7 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
 
   public void highlight(Region r_) {
     //change due to oracle blog: https://blogs.oracle.com/thejavatutorials/entry/translucent_and_shaped_windows_in
-    if (!isWindowTranslucencySupported()) {
+    if (!_isTransparentSupported) {
       Debug.error("highlight transparent is not support on " + System.getProperty("os.name")+ "!");
       //use at least an not transparent color
       _transparentColor = Color.pink;
