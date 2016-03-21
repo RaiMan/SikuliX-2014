@@ -380,8 +380,8 @@ public class Key {
   public static final char C_DECIMAL = '\ue040'; // VK_DECIMAL
   public static final String CONTEXT = "\ue041";
   public static final char C_CONTEXT = '\ue041'; // VK_CONTEXT_MENU
-  public static final String NEXT = "\ue043";
-  public static final char C_NEXT = '\ue043'; // VK_CONTEXT_MENU
+  public static final String NEXT = "\ue044";
+  public static final char C_NEXT = '\ue044'; // VK_CONTEXT_MENU
 
   public static final char cMax = '\ue050';
   public static final char cMin = '\ue000';
