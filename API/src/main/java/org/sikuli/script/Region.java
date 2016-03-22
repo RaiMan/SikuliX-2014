@@ -11,6 +11,7 @@ import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -100,13 +101,14 @@ public class Region {
   private boolean isVirtual = false;
   private long lastSearchTimeRepeat = -1;
 
-	/**
-	 * in case of not found the total wait time
-	 * @return the duration of the last find op
-	 */
-	public long getLastTime() {
-		return lastFindTime;
-	}
+  /**
+   * in case of not found the total wait time
+   *
+   * @return the duration of the last find op
+   */
+  public long getLastTime() {
+    return lastFindTime;
+  }
 
   /**
    * the area constants for use with get()
@@ -166,9 +168,9 @@ public class Region {
     return String.format("R[%d,%d %dx%d]@S(%s)", x, y, w, h, (getScreen() == null ? "?" : getScreen().getID()));
   }
 
-	public String toJSON() {
-		return String.format("[\"R\", %d, %d, %d, %d]", x, y, w, h);
-	}
+  public String toJSON() {
+    return String.format("[\"R\", %d, %d, %d, %d]", x, y, w, h);
+  }
 
   //<editor-fold defaultstate="collapsed" desc="OFF: Specials for scripting environment">
   /*
@@ -192,7 +194,6 @@ public class Region {
    }
    */
   //</editor-fold>
-
   //<editor-fold defaultstate="collapsed" desc="Initialization">
   /**
    * Detects on which Screen the Region is present. The region is cropped to the intersection with the given screen or
@@ -265,7 +266,7 @@ public class Region {
           }
         }
       }
-    } 
+    }
     if (screenOn != null) {
       x = screenRect.x;
       y = screenRect.y;
@@ -285,8 +286,8 @@ public class Region {
     }
     return loc.setOtherScreen(scr);
   }
-  
-  public static Region virtual(Rectangle rect) {    
+
+  public static Region virtual(Rectangle rect) {
     Region reg = new Region();
     reg.x = rect.x;
     reg.y = rect.y;
@@ -296,10 +297,10 @@ public class Region {
     reg.scr = Screen.getPrimaryScreen();
     return reg;
   }
-  
+
   /**
-   * INTERNAL USE - EXPERIMENTAL
-   * if true: this region is not bound to any screen 
+   * INTERNAL USE - EXPERIMENTAL if true: this region is not bound to any screen
+   *
    * @return the current state
    */
   public boolean isVirtual() {
@@ -308,26 +309,26 @@ public class Region {
 
   /**
    * INTERNAL USE - EXPERIMENTAL
-   * @param state if true: this region is not bound to any screen 
+   *
+   * @param state if true: this region is not bound to any screen
    */
   public void setVirtual(boolean state) {
     isVirtual = state;
   }
 
   /**
-	 * INTERNAL USE:
-	 * checks wether this region belongs to a non-Desktop screen
-	 * @return true/false
-	 */
-	public boolean isOtherScreen() {
+   * INTERNAL USE: checks wether this region belongs to a non-Desktop screen
+   *
+   * @return true/false
+   */
+  public boolean isOtherScreen() {
     return otherScreen;
   }
 
-	/**
-	 * INTERNAL USE:
-	 * flags this region as belonging to a non-Desktop screen
-	 */
-	public void setOtherScreen() {
+  /**
+   * INTERNAL USE: flags this region as belonging to a non-Desktop screen
+   */
+  public void setOtherScreen() {
     otherScreen = true;
   }
 
@@ -350,13 +351,14 @@ public class Region {
     return rect;
   }
 
-	/**
-	 * Check wether thie Region is contained by any of the available screens
-	 * @return true if yes, false otherwise
-	 */
-	public boolean isValid() {
-		return scr != null && w != 0 && h != 0;
-	}
+  /**
+   * Check wether thie Region is contained by any of the available screens
+   *
+   * @return true if yes, false otherwise
+   */
+  public boolean isValid() {
+    return scr != null && w != 0 && h != 0;
+  }
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Constructors to be used with Jython">
@@ -424,7 +426,7 @@ public class Region {
   public Region(Region r) {
     init(r);
   }
-  
+
   public void init(Region r) {
     if (!r.isValid()) {
       return;
@@ -434,7 +436,7 @@ public class Region {
     w = r.w;
     h = r.h;
     scr = r.getScreen();
-    otherScreen =r.isOtherScreen();
+    otherScreen = r.isOtherScreen();
     rows = 0;
     autoWaitTimeout = r.autoWaitTimeout;
     findFailedResponse = r.findFailedResponse;
@@ -445,7 +447,6 @@ public class Region {
   }
 
   //</editor-fold>
-
   //<editor-fold defaultstate="collapsed" desc="Quasi-Constructors to be used in Java">
   /**
    * internal use only, used for new Screen objects to get the Region behavior
@@ -633,7 +634,6 @@ public class Region {
   }
 
   //</editor-fold>
-
   //<editor-fold defaultstate="collapsed" desc="handle coordinates">
   /**
    * check if current region contains given point
@@ -677,8 +677,8 @@ public class Region {
   }
 
   /**
-   * used in Observer.callChangeObserving, Finder.next to adjust region relative coordinates of matches to
- screen coordinates
+   * used in Observer.callChangeObserving, Finder.next to adjust region relative coordinates of matches to screen
+   * coordinates
    *
    * @param m
    * @return the modified match
@@ -691,8 +691,8 @@ public class Region {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="handle Settings">
-	//TODO should be possible to reset to current global value resetXXX()
-	/**
+  //TODO should be possible to reset to current global value resetXXX()
+  /**
    * true - (initial setting) should throw exception FindFailed if findX unsuccessful in this region<br> false - do not
    * abort script on FindFailed (might leed to null pointer exceptions later)
    *
@@ -791,6 +791,7 @@ public class Region {
 
   /**
    * INTERNAL USE: Observe
+   *
    * @return the regions current RepeatWaitTime time in seconds
    */
   public int getRepeatWaitTime() {
@@ -798,8 +799,7 @@ public class Region {
   }
 
   /**
-   * INTERNAL USE: Observe
-   * set the regions individual WaitForVanish
+   * INTERNAL USE: Observe set the regions individual WaitForVanish
    *
    * @param time in seconds
    */
@@ -808,7 +808,6 @@ public class Region {
   }
 
   //</editor-fold>
-
   //<editor-fold defaultstate="collapsed" desc="getters / setters / modificators">
   /**
    *
@@ -823,7 +822,7 @@ public class Region {
     if (getScreen() == null || isScreenUnion) {
       return Screen.getPrimaryScreen().getRobot();
     }
-    return getScreen().getRobot(); 
+    return getScreen().getRobot();
   }
 
   /**
@@ -841,7 +840,7 @@ public class Region {
    * Sets a new Screen for this region.
    *
    * @param scr the containing screen object
-	 * @return the region itself
+   * @return the region itself
    */
   protected Region setScreen(IScreen scr) {
     initScreen(scr);
@@ -852,7 +851,7 @@ public class Region {
    * Sets a new Screen for this region.
    *
    * @param id the containing screen object's id
-	 * @return the region itself
+   * @return the region itself
    */
   protected Region setScreen(int id) {
     return setScreen(Screen.getScreen(id));
@@ -1118,12 +1117,11 @@ public class Region {
   }
 
   // ****************************************************
-
-/**
+  /**
    * resets this region (usually a Screen object) to the coordinates of the containing screen
    *
-   * Because of the wanted side effect for the containing screen, this should only be used with screen objects.
-   * For Region objects use setRect() instead.
+   * Because of the wanted side effect for the containing screen, this should only be used with screen objects. For
+   * Region objects use setRect() instead.
    */
   public void setROI() {
     setROI(getScreen().getBounds());
@@ -1133,7 +1131,7 @@ public class Region {
    * resets this region to the given location, and size <br> this might move the region even to another screen
    *
    * <br>Because of the wanted side effect for the containing screen, this should only be used with screen objects.
-	 * <br>For Region objects use setRect() instead.
+   * <br>For Region objects use setRect() instead.
    *
    * @param X new x
    * @param Y new y
@@ -1152,7 +1150,7 @@ public class Region {
    * resets this region to the given rectangle <br> this might move the region even to another screen
    *
    * <br>Because of the wanted side effect for the containing screen, this should only be used with screen objects.
-	 * <br>For Region objects use setRect() instead.
+   * <br>For Region objects use setRect() instead.
    *
    * @param r AWT Rectangle
    */
@@ -1164,7 +1162,7 @@ public class Region {
    * resets this region to the given region <br> this might move the region even to another screen
    *
    * <br>Because of the wanted side effect for the containing screen, this should only be used with screen objects.
-	 * <br>For Region objects use setRect() instead.
+   * <br>For Region objects use setRect() instead.
    *
    * @param reg Region
    */
@@ -1315,7 +1313,7 @@ public class Region {
    * stores the lastScreenImage in the current bundle path with a created unique name
    *
    * @return the absolute file name
-	 * @throws java.io.IOException if not possible
+   * @throws java.io.IOException if not possible
    */
   public String getLastScreenImageFile() throws IOException {
     return getScreen().getLastScreenImageFile(ImagePath.getBundlePath(), null);
@@ -1326,7 +1324,7 @@ public class Region {
    *
    * @param name file name (.png is added if not there)
    * @return the absolute file name
-	 * @throws java.io.IOException if not possible
+   * @throws java.io.IOException if not possible
    */
   public String getLastScreenImageFile(String name) throws IOException {
     return getScreen().getLastScreenImageFromScreen().getFile(ImagePath.getBundlePath(), name);
@@ -1335,17 +1333,16 @@ public class Region {
   /**
    * stores the lastScreenImage in the given path with the given name
    *
-	 * @param path path to use
+   * @param path path to use
    * @param name file name (.png is added if not there)
    * @return the absolute file name
-	 * @throws java.io.IOException if not possible
+   * @throws java.io.IOException if not possible
    */
   public String getLastScreenImageFile(String path, String name) throws IOException {
     return getScreen().getLastScreenImageFromScreen().getFile(path, name);
   }
 
   //</editor-fold>
-
   //<editor-fold defaultstate="collapsed" desc="spatial operators - new regions">
   /**
    * check if current region contains given region
@@ -1356,9 +1353,10 @@ public class Region {
   public boolean contains(Region region) {
     return getRect().contains(region.getRect());
   }
-  
+
   /**
    * create a Location object, that can be used as an offset taking the width and hight of this Region
+   *
    * @return a new Location object with width and height as x and y
    */
   public Location asOffset() {
@@ -1429,8 +1427,7 @@ public class Region {
   }
 
   /**
-   * create a region enlarged w pixels on left and right side
-   * and h pixels at top and bottom
+   * create a region enlarged w pixels on left and right side and h pixels at top and bottom
    *
    * @param w pixels horizontally
    * @param h pixels vertically
@@ -1443,9 +1440,8 @@ public class Region {
   }
 
   /**
-   * create a region enlarged l pixels on left and r pixels right side
-   * and t pixels at top side and b pixels a bottom side.
-   * negative values go inside (shrink)
+   * create a region enlarged l pixels on left and r pixels right side and t pixels at top side and b pixels a bottom
+   * side. negative values go inside (shrink)
    *
    * @param l add to the left
    * @param r add to right
@@ -1459,6 +1455,7 @@ public class Region {
 
   /**
    * point middle on right edge
+   *
    * @return point middle on right edge
    */
   public Location rightAt() {
@@ -1466,10 +1463,9 @@ public class Region {
   }
 
   /**
-   * positive offset goes to the right.
-   * might be off current screen
+   * positive offset goes to the right. might be off current screen
    *
-	 * @param offset pixels
+   * @param offset pixels
    * @return point with given offset horizontally to middle point on right edge
    */
   public Location rightAt(int offset) {
@@ -1477,8 +1473,7 @@ public class Region {
   }
 
   /**
-   * create a region right of the right side with same height.
-   * the new region extends to the right screen border<br>
+   * create a region right of the right side with same height. the new region extends to the right screen border<br>
    * use grow() to include the current region
    *
    * @return the new region
@@ -1489,8 +1484,8 @@ public class Region {
   }
 
   /**
-   * create a region right of the right side with same height and given width.
-   * negative width creates the right part with width inside the region<br>
+   * create a region right of the right side with same height and given width. negative width creates the right part
+   * with width inside the region<br>
    * use grow() to include the current region
    *
    * @param width pixels
@@ -1517,7 +1512,7 @@ public class Region {
   /**
    * negative offset goes to the left <br>might be off current screen
    *
-	 * @param offset pixels
+   * @param offset pixels
    * @return point with given offset horizontally to middle point on left edge
    */
   public Location leftAt(int offset) {
@@ -1563,7 +1558,7 @@ public class Region {
   /**
    * negative offset goes towards top of screen <br>might be off current screen
    *
-	 * @param offset pixels
+   * @param offset pixels
    * @return point with given offset vertically to middle point on top edge
    */
   public Location aboveAt(int offset) {
@@ -1609,7 +1604,7 @@ public class Region {
   /**
    * positive offset goes towards bottom of screen <br>might be off current screen
    *
-	 * @param offset pixels
+   * @param offset pixels
    * @return point with given offset vertically to middle point on bottom edge
    */
   public Location belowAt(int offset) {
@@ -1667,279 +1662,278 @@ public class Region {
   }
 
   //</editor-fold>
-
   //<editor-fold defaultstate="collapsed" desc="parts of a Region">
-	/**
-	 * select the specified part of the region.
-	 *
-	 * <br>Constants for the top parts of a region (Usage: Region.CONSTANT)<br>
-	 * shown in brackets: possible shortcuts for the part constant<br>
-	 * NORTH (NH, TH) - upper half <br>
-	 * NORTH_WEST (NW, TL) - left third in upper third <br>
-	 * NORTH_MID (NM, TM) - middle third in upper third <br>
-	 * NORTH_EAST (NE, TR) - right third in upper third <br>
-	 * ... similar for the other directions: <br>
-	 * right side: EAST (Ex, Rx)<br>
-	 * bottom part: SOUTH (Sx, Bx) <br>
-	 * left side: WEST (Wx, Lx)<br>
-	 * <br>
-	 * specials for quartered:<br>
-	 * TT top left quarter<br>
-	 * RR top right quarter<br>
-	 * BB bottom right quarter<br>
-	 * LL bottom left quarter<br>
-	 * <br>
-	 * specials for the center parts:<br>
-	 * MID_VERTICAL (MV, CV) half of width vertically centered <br>
-	 * MID_HORIZONTAL (MH, CH) half of height horizontally centered <br>
-	 * MID_BIG (M2, C2) half of width / half of height centered <br>
-	 * MID_THIRD (MM, CC) third of width / third of height centered <br>
-	 * <br>
-	 * Based on the scheme behind these constants there is another possible usage:<br>
-	 * specify part as e 3 digit integer
-	 * where the digits xyz have the following meaning<br>
-	 * 1st x: use a raster of x rows and x columns<br>
-	 * 2nd y: the row number of the wanted cell<br>
-	 * 3rd z: the column number of the wanted cell<br>
-	 * y and z are counting from 0<br>
-	 * valid numbers: 200 up to 999 (&lt; 200 are invalid and return the region itself) <br>
-	 * example: get(522) will use a raster of 5 rows and 5 columns and return the cell in the middle<br>
-	 * special cases:<br>
-	 * if either y or z are == or &gt; x: returns the respective row or column<br>
-	 * example: get(525) will use a raster of 5 rows and 5 columns and return the row in the middle<br>
-	 * <br>
-	 * internally this is based on {@link #setRaster(int, int) setRaster}
-	 * and {@link #getCell(int, int) getCell} <br>
-	 * <br>
-	 * If you need only one row in one column with x rows or
-	 * only one column in one row with x columns you can use {@link #getRow(int, int) getRow} or {@link #getCol(int, int) getCol}
-	 * @param part the part to get (Region.PART long or short)
-	 * @return new region
-	 */
-	public Region get(int part) {
-		return Region.create(getRectangle(getRect(), part));
-	}
+  /**
+   * select the specified part of the region.
+   *
+   * <br>Constants for the top parts of a region (Usage: Region.CONSTANT)<br>
+   * shown in brackets: possible shortcuts for the part constant<br>
+   * NORTH (NH, TH) - upper half <br>
+   * NORTH_WEST (NW, TL) - left third in upper third <br>
+   * NORTH_MID (NM, TM) - middle third in upper third <br>
+   * NORTH_EAST (NE, TR) - right third in upper third <br>
+   * ... similar for the other directions: <br>
+   * right side: EAST (Ex, Rx)<br>
+   * bottom part: SOUTH (Sx, Bx) <br>
+   * left side: WEST (Wx, Lx)<br>
+   * <br>
+   * specials for quartered:<br>
+   * TT top left quarter<br>
+   * RR top right quarter<br>
+   * BB bottom right quarter<br>
+   * LL bottom left quarter<br>
+   * <br>
+   * specials for the center parts:<br>
+   * MID_VERTICAL (MV, CV) half of width vertically centered <br>
+   * MID_HORIZONTAL (MH, CH) half of height horizontally centered <br>
+   * MID_BIG (M2, C2) half of width / half of height centered <br>
+   * MID_THIRD (MM, CC) third of width / third of height centered <br>
+   * <br>
+   * Based on the scheme behind these constants there is another possible usage:<br>
+   * specify part as e 3 digit integer where the digits xyz have the following meaning<br>
+   * 1st x: use a raster of x rows and x columns<br>
+   * 2nd y: the row number of the wanted cell<br>
+   * 3rd z: the column number of the wanted cell<br>
+   * y and z are counting from 0<br>
+   * valid numbers: 200 up to 999 (&lt; 200 are invalid and return the region itself) <br>
+   * example: get(522) will use a raster of 5 rows and 5 columns and return the cell in the middle<br>
+   * special cases:<br>
+   * if either y or z are == or &gt; x: returns the respective row or column<br>
+   * example: get(525) will use a raster of 5 rows and 5 columns and return the row in the middle<br>
+   * <br>
+   * internally this is based on {@link #setRaster(int, int) setRaster} and {@link #getCell(int, int) getCell} <br>
+   * <br>
+   * If you need only one row in one column with x rows or only one column in one row with x columns you can use
+   * {@link #getRow(int, int) getRow} or {@link #getCol(int, int) getCol}
+   *
+   * @param part the part to get (Region.PART long or short)
+   * @return new region
+   */
+  public Region get(int part) {
+    return Region.create(getRectangle(getRect(), part));
+  }
 
-	protected static Rectangle getRectangle(Rectangle rect, int part) {
-		if (part < 200 || part > 999) {
-			return rect;
-		}
-		Region r = Region.create(rect);
-		int pTyp = (int) (part / 100);
-		int pPos = part - pTyp * 100;
-		int pRow = (int) (pPos / 10);
-		int pCol = pPos - pRow * 10;
-		r.setRaster(pTyp, pTyp);
-		if (pTyp == 3) {
+  protected static Rectangle getRectangle(Rectangle rect, int part) {
+    if (part < 200 || part > 999) {
+      return rect;
+    }
+    Region r = Region.create(rect);
+    int pTyp = (int) (part / 100);
+    int pPos = part - pTyp * 100;
+    int pRow = (int) (pPos / 10);
+    int pCol = pPos - pRow * 10;
+    r.setRaster(pTyp, pTyp);
+    if (pTyp == 3) {
 			// NW = 300, NORTH_WEST = NW;
-			// NM = 301, NORTH_MID = NM;
-			// NE = 302, NORTH_EAST = NE;
-			// EM = 312, EAST_MID = EM;
-			// SE = 322, SOUTH_EAST = SE;
-			// SM = 321, SOUTH_MID = SM;
-			// SW = 320, SOUTH_WEST = SW;
-			// WM = 310, WEST_MID = WM;
-			// MM = 311, MIDDLE = MM, M3 = MM;
-			return r.getCell(pRow, pCol).getRect();
-		}
-		if (pTyp == 2) {
+      // NM = 301, NORTH_MID = NM;
+      // NE = 302, NORTH_EAST = NE;
+      // EM = 312, EAST_MID = EM;
+      // SE = 322, SOUTH_EAST = SE;
+      // SM = 321, SOUTH_MID = SM;
+      // SW = 320, SOUTH_WEST = SW;
+      // WM = 310, WEST_MID = WM;
+      // MM = 311, MIDDLE = MM, M3 = MM;
+      return r.getCell(pRow, pCol).getRect();
+    }
+    if (pTyp == 2) {
 			// NH = 202, NORTH = NH;
-			// EH = 221, EAST = EH;
-			// SH = 212, SOUTH = SH;
-			// WH = 220, WEST = WH;
-			if (pRow > 1) {
-				return r.getCol(pCol).getRect();
-			} else if (pCol > 1) {
-				return r.getRow(pRow).getRect();
-			}
-			return r.getCell(pRow, pCol).getRect();
-		}
-		if (pTyp == 4) {
+      // EH = 221, EAST = EH;
+      // SH = 212, SOUTH = SH;
+      // WH = 220, WEST = WH;
+      if (pRow > 1) {
+        return r.getCol(pCol).getRect();
+      } else if (pCol > 1) {
+        return r.getRow(pRow).getRect();
+      }
+      return r.getCell(pRow, pCol).getRect();
+    }
+    if (pTyp == 4) {
 			// MV = 441, MID_VERTICAL = MV;
-			// MH = 414, MID_HORIZONTAL = MH;
-			// M2 = 444, MIDDLE_BIG = M2;
-			if (pRow > 3) {
-				if (pCol > 3 ) {
-					return r.getCell(1, 1).union(r.getCell(2, 2)).getRect();
-				}
-				return r.getCell(0, 1).union(r.getCell(3, 2)).getRect();
-			} else if (pCol > 3) {
-				return r.getCell(1, 0).union(r.getCell(2, 3)).getRect();
-			}
-			return r.getCell(pRow, pCol).getRect();
-		}
-		return rect;
-	}
+      // MH = 414, MID_HORIZONTAL = MH;
+      // M2 = 444, MIDDLE_BIG = M2;
+      if (pRow > 3) {
+        if (pCol > 3) {
+          return r.getCell(1, 1).union(r.getCell(2, 2)).getRect();
+        }
+        return r.getCell(0, 1).union(r.getCell(3, 2)).getRect();
+      } else if (pCol > 3) {
+        return r.getCell(1, 0).union(r.getCell(2, 3)).getRect();
+      }
+      return r.getCell(pRow, pCol).getRect();
+    }
+    return rect;
+  }
 
-	/**
-	 * store info: this region is divided vertically into n even rows <br>
-	 * a preparation for using getRow()
-	 *
-	 * @param n number of rows
-	 * @return the top row
-	 */
-	public Region setRows(int n) {
-		return setRaster(n, 0);
-	}
+  /**
+   * store info: this region is divided vertically into n even rows <br>
+   * a preparation for using getRow()
+   *
+   * @param n number of rows
+   * @return the top row
+   */
+  public Region setRows(int n) {
+    return setRaster(n, 0);
+  }
 
-	/**
-	 * store info: this region is divided horizontally into n even columns <br>
-	 * a preparation for using getCol()
-	 *
-	 * @param n number of columns
-	 * @return the leftmost column
-	 */
-	public Region setCols(int n) {
-		return setRaster(0, n);
-	}
+  /**
+   * store info: this region is divided horizontally into n even columns <br>
+   * a preparation for using getCol()
+   *
+   * @param n number of columns
+   * @return the leftmost column
+   */
+  public Region setCols(int n) {
+    return setRaster(0, n);
+  }
 
-	/**
-	 *
-	 * @return the number of rows or null
-	 */
-	public int getRows() {
-		return rows;
-	}
+  /**
+   *
+   * @return the number of rows or null
+   */
+  public int getRows() {
+    return rows;
+  }
 
-	/**
-	 *
-	 * @return the row height or 0
-	 */
-	public int getRowH() {
-		return rowH;
-	}
+  /**
+   *
+   * @return the row height or 0
+   */
+  public int getRowH() {
+    return rowH;
+  }
 
-	/**
-	 *
-	 * @return the number of columns or 0
-	 */
-	public int getCols() {
-		return cols;
-	}
+  /**
+   *
+   * @return the number of columns or 0
+   */
+  public int getCols() {
+    return cols;
+  }
 
-	/**
-	 *
-	 * @return the columnwidth or 0
-	 */
-	public int getColW() {
-		return colW;
-	}
+  /**
+   *
+   * @return the columnwidth or 0
+   */
+  public int getColW() {
+    return colW;
+  }
 
-	/**
-	 * Can be used to check, wether the Region currently has a valid raster
-	 * @return true if it has a valid raster (either getCols or getRows or both would return &gt; 0)
-	 * false otherwise
-	 */
-	public boolean isRasterValid() {
-		return (rows > 0 || cols > 0);
-	}
+  /**
+   * Can be used to check, wether the Region currently has a valid raster
+   *
+   * @return true if it has a valid raster (either getCols or getRows or both would return &gt; 0) false otherwise
+   */
+  public boolean isRasterValid() {
+    return (rows > 0 || cols > 0);
+  }
 
-	/**
-	 * store info: this region is divided into a raster of even cells <br>
-	 * a preparation for using getCell()<br>
-	 * @param r number of rows
-	 * @param c number of columns
-	 * @return the topleft cell
-	 */
-	public Region setRaster(int r, int c) {
-		rows = Math.max(r, h);
-		cols = Math.max(c, w);
-		if (r > 0) {
-			rowH = (int) (h / r);
-			rowHd = h - r * rowH;
-		}
-		if (c > 0) {
-			colW = (int) (w / c);
-			colWd = w - c * colW;
-		}
-		return getCell(0, 0);
-	}
+  /**
+   * store info: this region is divided into a raster of even cells <br>
+   * a preparation for using getCell()<br>
+   *
+   * @param r number of rows
+   * @param c number of columns
+   * @return the topleft cell
+   */
+  public Region setRaster(int r, int c) {
+    rows = Math.max(r, h);
+    cols = Math.max(c, w);
+    if (r > 0) {
+      rowH = (int) (h / r);
+      rowHd = h - r * rowH;
+    }
+    if (c > 0) {
+      colW = (int) (w / c);
+      colWd = w - c * colW;
+    }
+    return getCell(0, 0);
+  }
 
-	/**
-	 * get the specified row counting from 0, if rows or raster are setup negative counts reverse from the end (last = -1)
-	 * values outside range are 0 or last respectively
-	 *
-	 * @param r row number
-	 * @return the row as new region or the region itself, if no rows are setup
-	 */
-	public Region getRow(int r) {
-		if (rows == 0) {
-			return this;
-		}
-		if (r < 0) {
-			r = rows + r;
-		}
-		r = Math.max(0, r);
-		r = Math.min(r, rows - 1);
-		return Region.create(x, y + r * rowH, w, rowH);
-	}
+  /**
+   * get the specified row counting from 0, if rows or raster are setup negative counts reverse from the end (last = -1)
+   * values outside range are 0 or last respectively
+   *
+   * @param r row number
+   * @return the row as new region or the region itself, if no rows are setup
+   */
+  public Region getRow(int r) {
+    if (rows == 0) {
+      return this;
+    }
+    if (r < 0) {
+      r = rows + r;
+    }
+    r = Math.max(0, r);
+    r = Math.min(r, rows - 1);
+    return Region.create(x, y + r * rowH, w, rowH);
+  }
 
-	public Region getRow(int r, int n) {
-		return this;
-	}
+  public Region getRow(int r, int n) {
+    return this;
+  }
 
-	/**
-	 * get the specified column counting from 0, if columns or raster are setup negative counts reverse from the end (last
-	 * = -1) values outside range are 0 or last respectively
-	 *
-	 * @param c column number
-	 * @return the column as new region or the region itself, if no columns are setup
-	 */
-	public Region getCol(int c) {
-		if (cols == 0) {
-			return this;
-		}
-		if (c < 0) {
-			c = cols + c;
-		}
-		c = Math.max(0, c);
-		c = Math.min(c, cols - 1);
-		return Region.create(x + c * colW, y, colW, h);
-	}
+  /**
+   * get the specified column counting from 0, if columns or raster are setup negative counts reverse from the end (last
+   * = -1) values outside range are 0 or last respectively
+   *
+   * @param c column number
+   * @return the column as new region or the region itself, if no columns are setup
+   */
+  public Region getCol(int c) {
+    if (cols == 0) {
+      return this;
+    }
+    if (c < 0) {
+      c = cols + c;
+    }
+    c = Math.max(0, c);
+    c = Math.min(c, cols - 1);
+    return Region.create(x + c * colW, y, colW, h);
+  }
 
-	/**
-	 * divide the region in n columns and select column c as new Region
-	 * @param c the column to select counting from 0 or negative to count from the end
-	 * @param n how many columns to devide in
-	 * @return the selected part or the region itself, if parameters are invalid
-	 */
-	public Region getCol(int c, int n) {
-		Region r = new Region(this);
-		r.setCols(n);
-		return r.getCol(c);
-	}
+  /**
+   * divide the region in n columns and select column c as new Region
+   *
+   * @param c the column to select counting from 0 or negative to count from the end
+   * @param n how many columns to devide in
+   * @return the selected part or the region itself, if parameters are invalid
+   */
+  public Region getCol(int c, int n) {
+    Region r = new Region(this);
+    r.setCols(n);
+    return r.getCol(c);
+  }
 
-
-	/**
-	 * get the specified cell counting from (0, 0), if a raster is setup <br>
-	 * negative counts reverse from the end (last = -1) values outside range are 0 or last respectively
-	 *
-	 * @param r row number
-	 * @param c column number
-	 * @return the cell as new region or the region itself, if no raster is setup
-	 */
-	public Region getCell(int r, int c) {
-		if (rows == 0) {
-			return getCol(c);
-		}
-		if (cols == 0) {
-			return getRow(r);
-		}
-		if (rows == 0 && cols == 0) {
-			return this;
-		}
-		if (r < 0) {
-			r = rows - r;
-		}
-		if (c < 0) {
-			c = cols - c;
-		}
-		r = Math.max(0, r);
-		r = Math.min(r, rows - 1);
-		c = Math.max(0, c);
-		c = Math.min(c, cols - 1);
-		return Region.create(x + c * colW, y + r * rowH, colW, rowH);
-	}
+  /**
+   * get the specified cell counting from (0, 0), if a raster is setup <br>
+   * negative counts reverse from the end (last = -1) values outside range are 0 or last respectively
+   *
+   * @param r row number
+   * @param c column number
+   * @return the cell as new region or the region itself, if no raster is setup
+   */
+  public Region getCell(int r, int c) {
+    if (rows == 0) {
+      return getCol(c);
+    }
+    if (cols == 0) {
+      return getRow(r);
+    }
+    if (rows == 0 && cols == 0) {
+      return this;
+    }
+    if (r < 0) {
+      r = rows - r;
+    }
+    if (c < 0) {
+      c = cols - c;
+    }
+    r = Math.max(0, r);
+    r = Math.min(r, rows - 1);
+    c = Math.max(0, c);
+    c = Math.min(c, cols - 1);
+    return Region.create(x + c * colW, y + r * rowH, colW, rowH);
+  }
 //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="highlight">
@@ -1949,7 +1943,7 @@ public class Region {
       highlight(true, null);
     }
   }
-  
+
   protected Region silentHighlight(boolean onOff) {
     if (onOff && overlay == null) {
       return doHighlight(true, null, true);
@@ -1974,12 +1968,12 @@ public class Region {
   /**
    * Toggle the regions Highlight visibility (frame of specified color)<br>
    * allowed color specifications for frame color: <br>
-   * - a color name out of: black, blue, cyan, gray, green, magenta, orange, pink, red, white, yellow
-   * (lowercase and uppercase can be mixed, internally transformed to all uppercase) <br>
+   * - a color name out of: black, blue, cyan, gray, green, magenta, orange, pink, red, white, yellow (lowercase and
+   * uppercase can be mixed, internally transformed to all uppercase) <br>
    * - these colornames exactly written: lightGray, LIGHT_GRAY, darkGray and DARK_GRAY <br>
-   * - a hex value like in HTML: #XXXXXX (max 6 hex digits)
-   * - an RGB specification as: #rrrgggbbb where rrr, ggg, bbb are integer values in range 0 - 255
-   * padded with leading zeros if needed (hence exactly 9 digits)
+   * - a hex value like in HTML: #XXXXXX (max 6 hex digits) - an RGB specification as: #rrrgggbbb where rrr, ggg, bbb
+   * are integer values in range 0 - 255 padded with leading zeros if needed (hence exactly 9 digits)
+   *
    * @param color Color of frame
    * @return the region itself
    */
@@ -2004,8 +1998,8 @@ public class Region {
       return this;
     }
     if (!silent) {
-      Debug.action("toggle highlight " + toString() + ": " + toEnable +
-              (color != null ? " color: " + color : ""));
+      Debug.action("toggle highlight " + toString() + ": " + toEnable
+              + (color != null ? " color: " + color : ""));
     }
     if (toEnable) {
       overlay = new ScreenHighlighter(getScreen(), color);
@@ -2020,10 +2014,8 @@ public class Region {
     return this;
   }
 
-
   /**
-   * show the regions Highlight for the given time in seconds (red frame)
-   * if 0 - use the global Settings.SlowMotionDelay
+   * show the regions Highlight for the given time in seconds (red frame) if 0 - use the global Settings.SlowMotionDelay
    *
    * @param secs time in seconds
    * @return the region itself
@@ -2033,8 +2025,8 @@ public class Region {
   }
 
   /**
-   * show the regions Highlight for the given time in seconds (frame of specified color)
-   * if 0 - use the global Settings.SlowMotionDelay
+   * show the regions Highlight for the given time in seconds (frame of specified color) if 0 - use the global
+   * Settings.SlowMotionDelay
    *
    * @param secs time in seconds
    * @param color Color of frame (see method highlight(color))
@@ -2047,8 +2039,8 @@ public class Region {
     if (secs < 0.1) {
       return highlight((int) secs, color);
     }
-    Debug.action("highlight " + toString() + " for " + secs + " secs" +
-          (color != null ? " color: " + color : ""));
+    Debug.action("highlight " + toString() + " for " + secs + " secs"
+            + (color != null ? " color: " + color : ""));
     ScreenHighlighter _overlay = new ScreenHighlighter(getScreen(), color);
     _overlay.highlight(this, secs);
     return this;
@@ -2064,7 +2056,6 @@ public class Region {
   public Region highlight(int secs) {
     return highlight(secs, null);
   }
-
 
   /**
    * Show highlight in selected color
@@ -2134,14 +2125,6 @@ public class Region {
     return handleFindFailedShowDialog(target, false);
   }
 
-  private <PSI> boolean handleFindFailedQuietly(PSI target) {
-    try {
-      return handleFindFailedShowDialog(target, false);
-    } catch (FindFailed ex) {
-    }
-    return false;
-  }
-
   private <PSI> boolean handleFindFailedImageMissing(PSI target) {
     boolean shouldHandle = false;
     try {
@@ -2181,21 +2164,21 @@ public class Region {
       return false;
     } else if (response == FindFailedResponse.RETRY) {
       return true;
-		} else if (response == FindFailedResponse.ABORT) {
-			String targetStr = target.toString();
-			if (target instanceof String) {
-				targetStr = targetStr.trim();
-			}
-			throw new FindFailed(String.format("can not find %s in %s", targetStr, this.toStringShort()));
-		}
+    } else if (response == FindFailedResponse.ABORT) {
+      String targetStr = target.toString();
+      if (target instanceof String) {
+        targetStr = targetStr.trim();
+      }
+      throw new FindFailed(String.format("can not find %s in %s", targetStr, this.toStringShort()));
+    }
     return false;
   }
 
   /**
-   * finds the given Pattern, String or Image in the region and returns the best match. If AutoWaitTimeout
-   * is set, this is equivalent to wait(). Otherwise only one search attempt will be done.
+   * finds the given Pattern, String or Image in the region and returns the best match. If AutoWaitTimeout is set, this
+   * is equivalent to wait(). Otherwise only one search attempt will be done.
    *
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target A search criteria
    * @return If found, the element. null otherwise
    * @throws FindFailed if the Find operation failed
@@ -2205,13 +2188,13 @@ public class Region {
       return wait(target, autoWaitTimeout);
     }
     lastMatch = null;
-		String targetStr = target.toString();
-		if (target instanceof String) {
-			targetStr = targetStr.trim();
-		}
+    String targetStr = target.toString();
+    if (target instanceof String) {
+      targetStr = targetStr.trim();
+    }
     while (true) {
       try {
-        log(3, "find: waiting 0 secs for %s to appear in %s", targetStr, this.toStringShort());
+        log(lvl, "find: waiting 0 secs for %s to appear in %s", targetStr, this.toStringShort());
         lastMatch = doFind(target, null);
       } catch (IOException ex) {
         if (ex instanceof IOException) {
@@ -2227,10 +2210,10 @@ public class Region {
         if (img != null) {
           img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         }
-	      log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
+        log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
         return lastMatch;
       }
-	    log(3, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
+      log(lvl, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
       if (!handleFindFailed(target)) {
         return null;
       }
@@ -2239,19 +2222,19 @@ public class Region {
 
   /**
    * finds all occurences of the given Pattern, String or Image in the region and returns an Iterator of Matches.
-	 *
    *
-	 * @param <PSI> Pattern, String or Image
+   *
+   * @param <PSI> Pattern, String or Image
    * @param target A search criteria
    * @return All elements matching
    * @throws FindFailed if the Find operation failed
    */
   public <PSI> Iterator<Match> findAll(PSI target) throws FindFailed {
     lastMatches = null;
-		String targetStr = target.toString();
-		if (target instanceof String) {
-			targetStr = targetStr.trim();
-		}
+    String targetStr = target.toString();
+    if (target instanceof String) {
+      targetStr = targetStr.trim();
+    }
     while (true) {
       try {
         if (autoWaitTimeout > 0) {
@@ -2277,7 +2260,7 @@ public class Region {
       }
     }
   }
-  
+
   public <PSI> Match[] findAllByRow(PSI target) {
     Match[] matches = new Match[0];
     List<Match> mList = findAllCollect(target);
@@ -2328,7 +2311,7 @@ public class Region {
     }
     return mList;
   }
-  
+
   public Match findBest(Object... args) {
     Debug.log(lvl, "findBest: enter");
     Match mResult = null;
@@ -2352,7 +2335,9 @@ public class Region {
   }
 
   private List<Match> findAnyCollect(Object... args) {
-    if (args == null) return null;
+    if (args == null) {
+      return null;
+    }
     List<Match> mList = new ArrayList<Match>();
     Match[] mArray = new Match[args.length];
     SubFindRun[] theSubs = new SubFindRun[args.length];
@@ -2361,8 +2346,8 @@ public class Region {
     for (Object obj : args) {
       mArray[nobj] = null;
       if (obj instanceof Pattern || obj instanceof String || obj instanceof Image) {
-          theSubs[nobj] = new SubFindRun(mArray, nobj, base, obj, this);
-          new Thread(theSubs[nobj]).start();
+        theSubs[nobj] = new SubFindRun(mArray, nobj, base, obj, this);
+        new Thread(theSubs[nobj]).start();
       }
       nobj++;
     }
@@ -2387,17 +2372,17 @@ public class Region {
     }
     return mList;
   }
-  
+
   private class SubFindRun implements Runnable {
-    
+
     Match[] mArray;
     ScreenImage base;
     Object target;
     Region reg;
     boolean finished = false;
     int subN;
-    
-    public SubFindRun(Match[] pMArray, int pSubN, 
+
+    public SubFindRun(Match[] pMArray, int pSubN,
             ScreenImage pBase, Object pTarget, Region pReg) {
       subN = pSubN;
       base = pBase;
@@ -2405,7 +2390,7 @@ public class Region {
       reg = pReg;
       mArray = pMArray;
     }
-    
+
     @Override
     public void run() {
       try {
@@ -2415,11 +2400,11 @@ public class Region {
       }
       hasFinished(true);
     }
-    
+
     public boolean hasFinished() {
       return hasFinished(false);
-    }    
-    
+    }
+
     public synchronized boolean hasFinished(boolean state) {
       if (state) {
         finished = true;
@@ -2427,7 +2412,7 @@ public class Region {
       return finished;
     }
   }
-  
+
   private Match findInImage(ScreenImage base, Object target) throws IOException {
     Finder finder = null;
     Match match = null;
@@ -2487,11 +2472,11 @@ public class Region {
     }
     return match;
   }
-  
+
   /**
    * Waits for the Pattern, String or Image to appear until the AutoWaitTimeout value is exceeded.
    *
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target The target to search for
    * @return The found Match
    * @throws FindFailed if the Find operation finally failed
@@ -2507,7 +2492,7 @@ public class Region {
   /**
    * Waits for the Pattern, String or Image to appear or timeout (in second) is passed
    *
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target The target to search for
    * @param timeout Timeout in seconds
    * @return The found Match
@@ -2516,13 +2501,13 @@ public class Region {
   public <PSI> Match wait(PSI target, double timeout) throws FindFailed {
     RepeatableFind rf;
     lastMatch = null;
-		String targetStr = target.toString();
-		if (target instanceof String) {
-			targetStr = targetStr.trim();
-		}
+    String targetStr = target.toString();
+    if (target instanceof String) {
+      targetStr = targetStr.trim();
+    }
     while (true) {
       try {
-        log(3, "find: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
+        log(lvl, "find: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
         rf = new RepeatableFind(target);
         rf.repeat(timeout);
         lastMatch = rf.getMatch();
@@ -2542,7 +2527,7 @@ public class Region {
         log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
         break;
       }
-	    log(3, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
+      log(lvl, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
       if (!handleFindFailed(target)) {
         return null;
       }
@@ -2551,30 +2536,32 @@ public class Region {
   }
 
 //TODO 1.2.0 Region.compare as time optimized Region.exists
-	/**
-	 * time optimized Region.exists, when image-size == region-size<br>
-	 * 1.1.x: just using exists(img, 0), sizes not checked
-	 * @param img image file name
-	 * @return the match or null if not equal
-	 */
-		public Match compare(String img) {
-		return compare(Image.create(img));
-	}
+  /**
+   * time optimized Region.exists, when image-size == region-size<br>
+   * 1.1.x: just using exists(img, 0), sizes not checked
+   *
+   * @param img image file name
+   * @return the match or null if not equal
+   */
+  public Match compare(String img) {
+    return compare(Image.create(img));
+  }
 
-	/**
-	 * time optimized Region.exists, when image-size == region-size<br>
-	 * 1.1.x: just using exists(img, 0), sizes not checked
-	 * @param img Image object
-	 * @return the match or null if not equal
-	 */
-	public Match compare(Image img) {
-		return exists(img, 0);
-	}
+  /**
+   * time optimized Region.exists, when image-size == region-size<br>
+   * 1.1.x: just using exists(img, 0), sizes not checked
+   *
+   * @param img Image object
+   * @return the match or null if not equal
+   */
+  public Match compare(Image img) {
+    return exists(img, 0);
+  }
 
-	/**
+  /**
    * Check if target exists (with the default autoWaitTimeout)
    *
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target Pattern, String or Image
    * @return the match (null if not found or image file missing)
    */
@@ -2586,20 +2573,21 @@ public class Region {
    * Check if target exists with a specified timeout<br>
    * timout = 0: returns immediately after first search
    *
-	 * @param <PSI> Pattern, String or Image
+   * @param <PSI> Pattern, String or Image
    * @param target The target to search for
    * @param timeout Timeout in seconds
    * @return the match (null if not found or image file missing)
    */
   public <PSI> Match exists(PSI target, double timeout) {
     lastMatch = null;
-		String targetStr = target.toString();
-		if (target instanceof String) {
-			targetStr = targetStr.trim();
-		}
+    FindFailed shouldAbort = null;
+    String targetStr = target.toString();
+    if (target instanceof String) {
+      targetStr = targetStr.trim();
+    }
     while (true) {
       try {
-        log(3, "exists: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
+        log(lvl, "exists: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
         RepeatableFind rf = new RepeatableFind(target);
         if (rf.repeat(timeout)) {
           lastMatch = rf.getMatch();
@@ -2608,10 +2596,16 @@ public class Region {
           if (img != null) {
             img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
           }
-	        log(lvl, "exists: %s has appeared \nat %s", targetStr, lastMatch);
+          log(lvl, "exists: %s has appeared \nat %s", targetStr, lastMatch);
           return lastMatch;
         } else {
-          if (!handleFindFailedQuietly(target)) {
+          boolean response = false;
+          try {
+            response = handleFindFailedShowDialog(target, false);
+          } catch (FindFailed ex) {
+            shouldAbort = ex;
+          }
+          if (!response) {
             break;
           }
         }
@@ -2623,7 +2617,20 @@ public class Region {
         }
       }
     }
-    log(3, "exists: %s has not appeared [%d msec]", targetStr, lastFindTime);
+    if (shouldAbort != null) {
+      log(-1, "Abort requested: %s", shouldAbort.toStringShort());
+      try {
+        Class cIde = Class.forName("org.sikuli.ide.SikuliIDE");
+        Method ideGetInstance = cIde.getMethod("getInstance", new Class[0]);
+        Method ideOnStopRunning = cIde.getMethod("onStopRunning", new Class[0]);
+        Object ide = ideGetInstance.invoke(null, new Object[0]);
+        ideOnStopRunning.invoke(ide, new Object[0]);
+      } catch (Exception ex) {
+        log(-1, "Aborting ...");
+      }
+    } else {
+      log(lvl, "exists: %s has not appeared [%d msec]", targetStr, lastFindTime);
+    }
     return null;
   }
 
@@ -2633,7 +2640,7 @@ public class Region {
    * @param text text
    * @param timeout time
    * @return the matched region containing the text
-	 * @throws org.sikuli.script.FindFailed if not found
+   * @throws org.sikuli.script.FindFailed if not found
    */
   public Match findText(String text, double timeout) throws FindFailed {
     // the leading/trailing tab is used to internally switch to text search directly
@@ -2645,7 +2652,7 @@ public class Region {
    *
    * @param text text
    * @return the matched region containing the text
-	 * @throws org.sikuli.script.FindFailed if not found
+   * @throws org.sikuli.script.FindFailed if not found
    */
   public Match findText(String text) throws FindFailed {
     return findText(text, autoWaitTimeout);
@@ -2656,7 +2663,7 @@ public class Region {
    *
    * @param text text
    * @return the matched region containing the text
-	 * @throws org.sikuli.script.FindFailed  if not found
+   * @throws org.sikuli.script.FindFailed if not found
    */
   public Iterator<Match> findAllText(String text) throws FindFailed {
     // the leading/trailing tab is used to internally switch to text search directly
@@ -2664,11 +2671,10 @@ public class Region {
   }
 
   /**
-   * waits until target vanishes or timeout (in seconds) is
-   * passed (AutoWaitTimeout)
+   * waits until target vanishes or timeout (in seconds) is passed (AutoWaitTimeout)
    *
-	 * @param <PSI> Pattern, String or Image
-	 * @param target The target to wait for it to vanish
+   * @param <PSI> Pattern, String or Image
+   * @param target The target to wait for it to vanish
    * @return true if the target vanishes, otherwise returns false.
    */
   public <PSI> boolean waitVanish(PSI target) {
@@ -2676,12 +2682,11 @@ public class Region {
   }
 
   /**
-   * waits until target vanishes or timeout (in seconds) is
-   * passed
+   * waits until target vanishes or timeout (in seconds) is passed
    *
-	 * @param <PSI> Pattern, String or Image
-	 * @param target Pattern, String or Image
-	 * @param timeout time in seconds
+   * @param <PSI> Pattern, String or Image
+   * @param target Pattern, String or Image
+   * @param timeout time in seconds
    * @return true if target vanishes, false otherwise and if imagefile is missing.
    */
   public <PSI> boolean waitVanish(PSI target, double timeout) {
@@ -2720,7 +2725,7 @@ public class Region {
     boolean findingText = false;
     lastFindTime = (new Date()).getTime();
     ScreenImage simg;
-    double findTimeout = autoWaitTimeout; 
+    double findTimeout = autoWaitTimeout;
     if (repeating != null) {
       findTimeout = repeating.getFindTimeOut();
     }
@@ -2730,9 +2735,9 @@ public class Region {
       f.setScreenImage(simg);
       f.setRepeating();
       if (Settings.FindProfiling) {
-        Debug.logp("[FindProfiling] Region.doFind repeat: %d msec", 
+        Debug.logp("[FindProfiling] Region.doFind repeat: %d msec",
                 new Date().getTime() - lastSearchTimeRepeat);
-      }      
+      }
       lastSearchTime = (new Date()).getTime();
       f.findRepeat();
     } else {
@@ -2756,13 +2761,13 @@ public class Region {
             throw new IOException("Region: doFind: Image not loadable: " + ptn.toString());
           }
         }
-				if (findingText) {
-					if (TextRecognizer.getInstance() != null) {
-						log(lvl, "doFind: Switching to TextSearch");
-						f = new Finder(getScreen().capture(x, y, w, h), this);
-						lastSearchTime = (new Date()).getTime();
-						f.findText((String) ptn);
-					}
+        if (findingText) {
+          if (TextRecognizer.getInstance() != null) {
+            log(lvl, "doFind: Switching to TextSearch");
+            f = new Finder(getScreen().capture(x, y, w, h), this);
+            lastSearchTime = (new Date()).getTime();
+            f.findText((String) ptn);
+          }
         }
       } else if (ptn instanceof Pattern) {
         if (((Pattern) ptn).isValid()) {
@@ -2805,15 +2810,16 @@ public class Region {
       m.setTimes(lastFindTime, lastSearchTime);
       if (Settings.FindProfiling) {
         Debug.logp("[FindProfiling] Region.doFind final: %d msec", lastSearchTime);
-      }      
+      }
     }
     return m;
   }
-  
+
   private void runFinder(Finder f, Object target) {
     if (Debug.shouldHighlight()) {
-      if (this.scr.getW() > w + 20 && this.scr.getH() > h + 20)
+      if (this.scr.getW() > w + 20 && this.scr.getH() > h + 20) {
         highlight(2, "#000255000");
+      }
     }
     if (target instanceof Image) {
       f.find((Image) target);
@@ -2825,14 +2831,14 @@ public class Region {
   private Finder checkLastSeenAndCreateFinder(Image img, double findTimeout, Pattern ptn) {
     return doCheckLastSeenAndCreateFinder(null, img, findTimeout, ptn);
   }
-  
+
   private Finder doCheckLastSeenAndCreateFinder(ScreenImage base, Image img, double findTimeout, Pattern ptn) {
     if (base == null) {
       base = getScreen().capture(this);
     }
     if (!Settings.UseImageFinder && Settings.CheckLastSeen && null != img.getLastSeen()) {
       Region r = Region.create(img.getLastSeen());
-      float score = (float) (img.getLastSeenScore() - 0.01); 
+      float score = (float) (img.getLastSeenScore() - 0.01);
       if (this.contains(r)) {
         Finder f = null;
         if (this.scr instanceof VNCScreen) {
@@ -2840,9 +2846,10 @@ public class Region {
         } else {
           f = new Finder(base.getSub(r.getRect()), r);
           if (Debug.shouldHighlight()) {
-            if (this.scr.getW() > w + 10 && this.scr.getH() > h + 10)
+            if (this.scr.getW() > w + 10 && this.scr.getH() > h + 10) {
               highlight(2, "#000255000");
-          }          
+            }
+          }
         }
         if (ptn == null) {
           f.find(new Pattern(img).similar(score));
@@ -2864,14 +2871,13 @@ public class Region {
       return new Finder(base, this);
     }
   }
-  
+
   public void saveLastScreenImage() {
     ScreenImage simg = getScreen().getLastScreenImageFromScreen();
     if (simg != null) {
       simg.saveLastScreenImage(runTime.fSikulixStore);
     }
   }
-
 
   /**
    * Match findAllNow( Pattern/String/Image ) finds all the given pattern on the screen and returns the best matches
@@ -2903,8 +2909,8 @@ public class Region {
           }
         }
         if (findingText) {
-					if (TextRecognizer.getInstance() != null) {
-						log(lvl, "doFindAll: Switching to TextSearch");
+          if (TextRecognizer.getInstance() != null) {
+            log(lvl, "doFindAll: Switching to TextSearch");
             f.findAllText((String) ptn);
           }
         }
@@ -2969,7 +2975,7 @@ public class Region {
           return false;
         }
         long after_find = (new Date()).getTime();
-        if (after_find - before_find < MaxTimePerScan) {          
+        if (after_find - before_find < MaxTimePerScan) {
           getRobotForRegion().delay((int) (MaxTimePerScan - (after_find - before_find)));
         } else {
           getRobotForRegion().delay(10);
@@ -3061,7 +3067,6 @@ public class Region {
 //    }
 //    return null;
 //  }
-
   private <PSIMRL> Location getLocationFromTarget(PSIMRL target) throws FindFailed {
     if (target instanceof Pattern || target instanceof String || target instanceof Image) {
       Match m = find(target);
@@ -3088,8 +3093,7 @@ public class Region {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Observing">
-
-	  protected Observer getObserver() {
+  protected Observer getObserver() {
     if (regionObserver == null) {
       regionObserver = new Observer(this);
     }
@@ -3098,6 +3102,7 @@ public class Region {
 
   /**
    * evaluate if at least one event observer is defined for this region (the observer need not be running)
+   *
    * @return true, if the region has an observer with event observers
    */
   public boolean hasObserver() {
@@ -3125,6 +3130,7 @@ public class Region {
 
   /**
    * the region's events are removed from the list
+   *
    * @return the region's happened events as array if any (size might be 0)
    */
   public ObserveEvent[] getEvents() {
@@ -3133,6 +3139,7 @@ public class Region {
 
   /**
    * the event is removed from the list
+   *
    * @param name event's name
    * @return the named event if happened otherwise null
    */
@@ -3142,6 +3149,7 @@ public class Region {
 
   /**
    * set the observer with the given name inactive (not checked while observing)
+   *
    * @param name observers name
    */
   public void setInactive(String name) {
@@ -3153,7 +3161,8 @@ public class Region {
 
   /**
    * set the observer with the given name active (not checked while observing)
-   * @param name  observers name
+   *
+   * @param name observers name
    */
   public void setActive(String name) {
     if (!hasObserver()) {
@@ -3163,10 +3172,11 @@ public class Region {
   }
 
   /**
-   * a subsequently started observer in this region should wait for target
-   * and notify the given observer about this event<br>
+   * a subsequently started observer in this region should wait for target and notify the given observer about this
+   * event<br>
    * for details about the observe event handler: {@link ObserverCallBack}<br>
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br>
+   *
    * @param <PSI> Pattern, String or Image
    * @param target Pattern, String or Image
    * @param observer ObserverCallBack
@@ -3177,9 +3187,10 @@ public class Region {
   }
 
   /**
-   * a subsequently started observer in this region should wait for target
-   * success and details about the event can be obtained using @{link Observing}<br>
+   * a subsequently started observer in this region should wait for target success and details about the event can be
+   * obtained using @{link Observing}<br>
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br>
+   *
    * @param <PSI> Pattern, String or Image
    * @param target Pattern, String or Image
    * @return the event's name
@@ -3189,8 +3200,8 @@ public class Region {
   }
 
   private <PSIC> String onEvent(PSIC targetThreshhold, Object observer, ObserveEvent.Type obsType) {
-    if (observer != null && (observer.getClass().getName().contains("org.python") ||
-            observer.getClass().getName().contains("org.jruby"))) {
+    if (observer != null && (observer.getClass().getName().contains("org.python")
+            || observer.getClass().getName().contains("org.jruby"))) {
       observer = new ObserverCallBack(observer, obsType);
     }
     String name = Observing.add(this, (ObserverCallBack) observer, obsType, targetThreshhold);
@@ -3200,10 +3211,11 @@ public class Region {
   }
 
   /**
-   * a subsequently started observer in this region should wait for the target to vanish
-   * and notify the given observer about this event<br>
+   * a subsequently started observer in this region should wait for the target to vanish and notify the given observer
+   * about this event<br>
    * for details about the observe event handler: {@link ObserverCallBack}<br>
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br>
+   *
    * @param <PSI> Pattern, String or Image
    * @param target Pattern, String or Image
    * @param observer ObserverCallBack
@@ -3214,9 +3226,10 @@ public class Region {
   }
 
   /**
-   * a subsequently started observer in this region should wait for the target to vanish
-   * success and details about the event can be obtained using @{link Observing}<br>
+   * a subsequently started observer in this region should wait for the target to vanish success and details about the
+   * event can be obtained using @{link Observing}<br>
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}<br>
+   *
    * @param <PSI> Pattern, String or Image
    * @param target Pattern, String or Image
    * @return the event's name
@@ -3226,37 +3239,38 @@ public class Region {
   }
 
   /**
-   * a subsequently started observer in this region should wait for changes in the region
-   * and notify the given observer about this event
-   * for details about the observe event handler: {@link ObserverCallBack}
-   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   * a subsequently started observer in this region should wait for changes in the region and notify the given observer
+   * about this event for details about the observe event handler: {@link ObserverCallBack} for details about
+   * APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   *
    * @param threshold minimum size of changes (rectangle threshhold x threshold)
    * @param observer ObserverCallBack
    * @return the event's name
    */
   public String onChange(int threshold, Object observer) {
-    return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels),
+    return onEvent((threshold > 0 ? threshold : Settings.ObserveMinChangedPixels),
             observer, ObserveEvent.Type.CHANGE);
   }
 
   /**
-   * a subsequently started observer in this region should wait for changes in the region
-   * success and details about the event can be obtained using @{link Observing}<br>
+   * a subsequently started observer in this region should wait for changes in the region success and details about the
+   * event can be obtained using @{link Observing}<br>
    * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   *
    * @param threshold minimum size of changes (rectangle threshhold x threshold)
    * @return the event's name
    */
   public String onChange(int threshold) {
-    return onEvent( (threshold > 0 ? threshold : Settings.ObserveMinChangedPixels),
+    return onEvent((threshold > 0 ? threshold : Settings.ObserveMinChangedPixels),
             null, ObserveEvent.Type.CHANGE);
   }
 
   /**
-   * a subsequently started observer in this region should wait for changes in the region
-   * and notify the given observer about this event <br>
-   * minimum size of changes used: Settings.ObserveMinChangedPixels
-   * for details about the observe event handler: {@link ObserverCallBack}
-   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   * a subsequently started observer in this region should wait for changes in the region and notify the given observer
+   * about this event <br>
+   * minimum size of changes used: Settings.ObserveMinChangedPixels for details about the observe event handler:
+   * {@link ObserverCallBack} for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   *
    * @param observer ObserverCallBack
    * @return the event's name
    */
@@ -3265,10 +3279,11 @@ public class Region {
   }
 
   /**
-   * a subsequently started observer in this region should wait for changes in the region
-   * success and details about the event can be obtained using @{link Observing}<br>
-   * minimum size of changes used: Settings.ObserveMinChangedPixels
-   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   * a subsequently started observer in this region should wait for changes in the region success and details about the
+   * event can be obtained using @{link Observing}<br>
+   * minimum size of changes used: Settings.ObserveMinChangedPixels for details about APPEAR/VANISH/CHANGE events:
+   * {@link ObserveEvent}
+   *
    * @return the event's name
    */
   public String onChange() {
@@ -3310,7 +3325,6 @@ public class Region {
 //	}
 //
 //</editor-fold>
-
   public String onChangeDo(int threshold, Object observer) {
     String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.CHANGE, threshold);
     log(lvl, "%s: onChange%s: %s minSize: %d", toStringShort(),
@@ -3319,9 +3333,9 @@ public class Region {
   }
 
   /**
-   * start an observer in this region that runs forever (use stopObserving() in handler)
-   * for details about the observe event handler: {@link ObserverCallBack}
-   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   * start an observer in this region that runs forever (use stopObserving() in handler) for details about the observe
+   * event handler: {@link ObserverCallBack} for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   *
    * @return false if not possible, true if events have happened
    */
   public boolean observe() {
@@ -3329,9 +3343,9 @@ public class Region {
   }
 
   /**
-   * start an observer in this region for the given time
-   * for details about the observe event handler: {@link ObserverCallBack}
-   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   * start an observer in this region for the given time for details about the observe event handler:
+   * {@link ObserverCallBack} for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   *
    * @param secs time in seconds the observer should run
    * @return false if not possible, true if events have happened
    */
@@ -3340,7 +3354,8 @@ public class Region {
   }
 
   /**
-   *INTERNAL USE ONLY: for use with scripting API bridges
+   * INTERNAL USE ONLY: for use with scripting API bridges
+   *
    * @param secs time in seconds the observer should run
    * @param bg run in background true/false
    * @return false if not possible, true if events have happened
@@ -3405,9 +3420,9 @@ public class Region {
   }
 
   /**
-   * start an observer in this region for the given time that runs in background
-   * for details about the observe event handler: {@link ObserverCallBack}
-   * for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   * start an observer in this region for the given time that runs in background for details about the observe event
+   * handler: {@link ObserverCallBack} for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   *
    * @param secs time in seconds the observer should run
    * @return false if not possible, true otherwise
    */
@@ -3424,6 +3439,7 @@ public class Region {
   }
 
   private class ObserverThread implements Runnable {
+
     private double time;
 
     ObserverThread(double time) {
@@ -3444,8 +3460,9 @@ public class Region {
     observing = false;
   }
 
-   /**
+  /**
    * stops a running observer printing an info message
+   *
    * @param message text
    */
   public void stopObserver(String message) {
@@ -3623,7 +3640,7 @@ public class Region {
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed for Pattern or Filename
    */
-    public <PFRML> int rightClick(PFRML target, Integer modifiers) throws FindFailed {
+  public <PFRML> int rightClick(PFRML target, Integer modifiers) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     int ret = Mouse.click(loc, InputEvent.BUTTON3_MASK, modifiers, false, this);
 
@@ -3692,7 +3709,7 @@ public class Region {
     Settings.DelayBeforeMouseDown = Settings.DelayValue;
     Settings.DelayAfterDrag = Settings.DelayValue;
     Settings.DelayBeforeDrag = -Settings.DelayValue;
-    Settings.DelayBeforeDrop = Settings.DelayValue; 
+    Settings.DelayBeforeDrop = Settings.DelayValue;
     return retVal;
   }
 
@@ -3705,7 +3722,7 @@ public class Region {
    * @return 1 if possible, 0 otherwise
    * @throws FindFailed if not found
    */
-  public <PFRML> int drag(PFRML target) throws FindFailed {    
+  public <PFRML> int drag(PFRML target) throws FindFailed {
     Location loc = getLocationFromTarget(target);
     int retVal = 0;
     if (loc != null) {
@@ -3728,7 +3745,7 @@ public class Region {
     Settings.DelayBeforeMouseDown = Settings.DelayValue;
     Settings.DelayAfterDrag = Settings.DelayValue;
     Settings.DelayBeforeDrag = -Settings.DelayValue;
-    Settings.DelayBeforeDrop = Settings.DelayValue; 
+    Settings.DelayBeforeDrop = Settings.DelayValue;
     return retVal;
   }
 
@@ -3740,7 +3757,7 @@ public class Region {
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location
    * @param target Pattern, Filename, Text, Region, Match or Location
    * @return 1 if possible, 0 otherwise
-   * @throws FindFailed  if not found
+   * @throws FindFailed if not found
    */
   public <PFRML> int dropAt(PFRML target) throws FindFailed {
     Location loc = getLocationFromTarget(target);
@@ -3760,7 +3777,7 @@ public class Region {
     Settings.DelayBeforeMouseDown = Settings.DelayValue;
     Settings.DelayAfterDrag = Settings.DelayValue;
     Settings.DelayBeforeDrag = -Settings.DelayValue;
-    Settings.DelayBeforeDrop = Settings.DelayValue; 
+    Settings.DelayBeforeDrop = Settings.DelayValue;
     return retVal;
   }
   //</editor-fold>
@@ -3823,19 +3840,20 @@ public class Region {
     return Mouse.move(loc, this);
   }
 
-	/**
-	 * move the mouse from the current position to the offset position given by the parameters
-	 * @param xoff horizontal offset (&lt; 0 left, &gt; 0 right)
-	 * @param yoff vertical offset (&lt; 0 up, &gt; 0 down)
+  /**
+   * move the mouse from the current position to the offset position given by the parameters
+   *
+   * @param xoff horizontal offset (&lt; 0 left, &gt; 0 right)
+   * @param yoff vertical offset (&lt; 0 up, &gt; 0 down)
    * @return 1 if possible, 0 otherwise
-	 */
-	public int mouseMove(int xoff, int yoff) {
-		try {
-			return mouseMove(Mouse.at().offset(xoff, yoff));
-		} catch (Exception ex) {
-			return 0;
-		}
-	}
+   */
+  public int mouseMove(int xoff, int yoff) {
+    try {
+      return mouseMove(Mouse.at().offset(xoff, yoff));
+    } catch (Exception ex) {
+      return 0;
+    }
+  }
 
   /**
    * Move the wheel at the current mouse position<br> the given steps in the given direction: <br >Button.WHEEL_DOWN,
@@ -3864,7 +3882,7 @@ public class Region {
   public <PFRML> int wheel(PFRML target, int direction, int steps) throws FindFailed {
     return wheel(target, direction, steps, Mouse.WHEEL_STEP_DELAY);
   }
-    
+
   /**
    * move the mouse pointer to the given target location<br> and move the wheel the given steps in the given direction:
    * <br>Button.WHEEL_DOWN, Button.WHEEL_UP
@@ -3890,13 +3908,13 @@ public class Region {
     return 0;
   }
 
-	/**
-	 *
-	 * @return current location of mouse pointer
-	 * @deprecated use {@link Mouse#at()} instead
-	 */
-	@Deprecated
-	public static Location atMouse() {
+  /**
+   *
+   * @return current location of mouse pointer
+   * @deprecated use {@link Mouse#at()} instead
+   */
+  @Deprecated
+  public static Location atMouse() {
     return Mouse.at();
   }
   //</editor-fold>
@@ -3957,12 +3975,13 @@ public class Region {
    * but signals press-and-hold or release additionally.<br>
    * except #W / #w all special keys are not case-sensitive<br>
    * a #wn. inserts a wait of n millisecs or n secs if n less than 60 <br>
-   * a #Wn. sets the type delay for the following keys (must be &gt; 60 and denotes millisecs)
-   * - otherwise taken as normal wait<br>
+   * a #Wn. sets the type delay for the following keys (must be &gt; 60 and denotes millisecs) - otherwise taken as
+   * normal wait<br>
    * Example: wait 2 secs then type CMD/CTRL - N then wait 1 sec then type DOWN 3 times<br>
    * Windows/Linux: write("#w2.#C.n#W1.#d3.")<br>
    * Mac: write("#w2.#M.n#W1.#D3.")<br>
    * for more details about the special key codes and examples consult the docs <br>
+   *
    * @param text a coded text interpreted as a series of key actions (press/hold/release)
    * @return 0 for success 1 otherwise
    */
@@ -3983,7 +4002,7 @@ public class Region {
       boolean isModifier = false;
       if (c == '#') {
         if (text.charAt(i + 1) == '#') {
-          log(3, "write at: %d: %s", i, c);
+          log(lvl, "write at: %d: %s", i, c);
           i += 1;
           continue;
         }
@@ -4343,7 +4362,7 @@ public class Region {
     return null;
   }
   //</editor-fold>
-  
+
   public String saveScreenCapture() {
     return getScreen().capture(this).save();
   }

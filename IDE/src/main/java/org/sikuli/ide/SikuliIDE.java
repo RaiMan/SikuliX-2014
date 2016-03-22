@@ -6,14 +6,35 @@
  */
 package org.sikuli.ide;
 
-import org.sikuli.util.CommandArgsEnum;
-import org.sikuli.util.CommandArgs;
 import com.explodingpixels.macwidgets.MacUtils;
-import java.awt.*;
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
-import java.awt.event.*;
-import java.io.*;
+import java.awt.event.AWTEventListener;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+import java.awt.event.InputEvent;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -25,39 +46,64 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.text.*;
-import javax.swing.undo.*;
+import javax.swing.AbstractAction;
+import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JCheckBox;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSplitPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.ToolTipManager;
+import javax.swing.UIManager;
+import javax.swing.WindowConstants;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
 import org.apache.commons.cli.CommandLine;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXSearchField;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
 import org.sikuli.basics.HotkeyEvent;
 import org.sikuli.basics.HotkeyListener;
 import org.sikuli.basics.HotkeyManager;
-import org.sikuli.util.OverlayCapturePrompt;
-import org.sikuli.script.ScreenImage;
-import org.sikuli.basics.Debug;
-import org.sikuli.basics.FileManager;
-import org.sikuli.scriptrunner.IScriptRunner;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
 import org.sikuli.idesupport.IDESplash;
+import org.sikuli.idesupport.IDESupport;
 import org.sikuli.idesupport.IIDESupport;
 import org.sikuli.script.ImagePath;
-import org.sikuli.script.RunTime;
-import org.sikuli.scriptrunner.ScriptingSupport;
-import org.sikuli.idesupport.IDESupport;
 import org.sikuli.script.Key;
 import org.sikuli.script.Region;
 import org.sikuli.script.RunServer;
+import org.sikuli.script.RunTime;
 import org.sikuli.script.Runner;
 import org.sikuli.script.Screen;
+import org.sikuli.script.ScreenImage;
 import org.sikuli.script.Sikulix;
+import org.sikuli.scriptrunner.IScriptRunner;
+import org.sikuli.scriptrunner.ScriptingSupport;
+import org.sikuli.util.CommandArgs;
+import org.sikuli.util.CommandArgsEnum;
 import org.sikuli.util.EventObserver;
 import org.sikuli.util.EventSubject;
+import org.sikuli.util.OverlayCapturePrompt;
 
 public class SikuliIDE extends JFrame implements InvocationHandler {
 
@@ -2098,7 +2144,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       addActionListener(this);
       return this;
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent ae) {
       if (shouldRun()) {
@@ -2109,9 +2155,10 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         nothingTodo();
       }
     }
-    
-    public void nothingTodo() {}
-    
+
+    public void nothingTodo() {
+    }
+
     public boolean shouldRun() {
       Debug.log(3, "TRACE: ButtonSubRegion triggered");
       return true;
@@ -2126,9 +2173,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       captureComplete(simg);
       updateAfter();
     }
-    
+
     public void updateAfter() {
-      SikuliIDE.showAgain();      
+      SikuliIDE.showAgain();
     }
 
     public void captureComplete(ScreenImage simg) {
@@ -2241,10 +2288,10 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         } else if (item.startsWith("Location")) {
           eval = "new " + item + ".grow(10).highlight(2);";
         } else if (item.startsWith("Pattern")) {
-          eval = "m = Screen.all().exists(new " + item 
+          eval = "m = Screen.all().exists(new " + item
                   + ", 0); if (m != null) m.highlight(2); else print(m);";
         } else if (item.startsWith("\"")) {
-          eval = "m = Screen.all().exists(" + item 
+          eval = "m = Screen.all().exists(" + item
                   + ", 0); if (m != null) m.highlight(2); else print(m);";
         }
         if (!eval.isEmpty()) {
@@ -2257,7 +2304,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   class ButtonShowIn extends ButtonSubregion {
-    
+
     String item = "";
 
     public ButtonShowIn() {
@@ -2266,7 +2313,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       iconFile = "/icons/region-icon.png";
       buttonHint = "Show the item at the cursor in the selected region";
     }
-    
+
     @Override
     public boolean shouldRun() {
       Debug.log(3, "TRACE: ButtonShowIn triggered");
@@ -2285,7 +2332,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       }
       return !item.isEmpty();
     }
-    
+
     @Override
     public void nothingTodo() {
       Sikulix.popup("Nothing to show");
@@ -2303,9 +2350,10 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         nothingTodo();
       }
     }
-    
+
     @Override
-    public void updateAfter() {}    
+    public void updateAfter() {
+    }
   }
 
   class ButtonRun extends ButtonOnToolbar implements ActionListener {
@@ -2346,59 +2394,52 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
           EditorPane codePane = getCurrentCodePane();
           String cType = codePane.getContentType();
           File scriptFile = null;
-          try {
-            if (codePane.isDirty()) {
-              scriptFile = FileManager.createTempFile(Runner.typeEndings.get(cType));
-              if (scriptFile == null) {
-                log(-1, "runCurrentScript: temp file for running not available");
-                return;
+//          try {
+          if (codePane.isDirty()) {
+            scriptFile = FileManager.createTempFile(Runner.typeEndings.get(cType));
+            if (scriptFile != null) {
+              try {
+                codePane.write(new BufferedWriter(new OutputStreamWriter(
+                        new FileOutputStream(scriptFile), "UTF8")));
+              } catch (Exception ex) {
+                scriptFile = null; 
               }
-              BufferedWriter bw = new BufferedWriter(
-                      new OutputStreamWriter(
-                              new FileOutputStream(scriptFile),
-                              "UTF8"));
-              codePane.write(bw);
-            } else {
-              scriptFile = codePane.getCurrentFile();
             }
-            _console.clear();
-            resetErrorMark();
-            String parent = null;
-            File path = new File(getCurrentBundlePath());
-            if (path != null && !codePane.isSourceBundleTemp()) {
-              parent = path.getParent();
-            }
-            IScriptRunner srunner = ScriptingSupport.getRunner(null, cType);
-            if (srunner == null) {
-              log(-1, "runCurrentScript: Could not load a script runner for: %s", cType);
+            if (scriptFile == null) {
+              log(-1, "runCurrentScript: temp file for running not available");
               return;
             }
-            addScriptCode(srunner);
-            srunners[0] = srunner;
-            try {
-              ImagePath.reset(path.getAbsolutePath());
-              String tabtitle = tabPane.getTitleAt(tabPane.getSelectedIndex());
-              if (tabtitle.startsWith("*")) {
-                tabtitle = tabtitle.substring(1);
-              }
-              int ret = srunner.runScript(scriptFile, path, runTime.getArgs(),
-                      new String[]{parent, tabtitle});
-              addErrorMark(ret);
-              srunner.close();
-              srunners[0] = null;
-            } catch (Exception e) {
-              srunner.close();
-              srunners[0] = null;
-              throw e;
-            }
-          } catch (Exception e) {
-            e.getMessage();
-          } finally {
-            sikulixIDE.setIsRunningScript(false);
-            sikulixIDE.setVisible(true);
-            _runningThread = null;
-            Sikulix.cleanUp(0);
+          } else {
+            scriptFile = codePane.getCurrentFile();
           }
+          _console.clear();
+          resetErrorMark();
+          String parent = null;
+          File path = new File(getCurrentBundlePath());
+          if (path != null && !codePane.isSourceBundleTemp()) {
+            parent = path.getParent();
+          }
+          IScriptRunner srunner = ScriptingSupport.getRunner(null, cType);
+          if (srunner == null) {
+            log(-1, "runCurrentScript: Could not load a script runner for: %s", cType);
+            return;
+          }
+          addScriptCode(srunner);
+          srunners[0] = srunner;
+          ImagePath.reset(path.getAbsolutePath());
+          String tabtitle = tabPane.getTitleAt(tabPane.getSelectedIndex());
+          if (tabtitle.startsWith("*")) {
+            tabtitle = tabtitle.substring(1);
+          }
+          int ret = srunner.runScript(scriptFile, path, runTime.getArgs(),
+                  new String[]{parent, tabtitle});
+          addErrorMark(ret);
+          srunner.close();
+          srunners[0] = null;
+          sikulixIDE.setIsRunningScript(false);
+          sikulixIDE.setVisible(true);
+          _runningThread = null;
+          Sikulix.cleanUp(0);
         }
       };
       _runningThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
@@ -2412,7 +2453,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
           sikulixIDE.setIsRunningScript(false);
           sikulixIDE.setVisible(true);
           _runningThread = null;
-          Sikulix.cleanUp(0);
+//          Sikulix.cleanUp(0);
         }
       });
       _runningThread.start();

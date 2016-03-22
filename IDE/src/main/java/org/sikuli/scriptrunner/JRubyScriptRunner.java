@@ -7,39 +7,31 @@
 package org.sikuli.scriptrunner;
 
 //import java.io.File;
-import org.sikuli.basics.Debug;
-
-import java.io.File;
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStreamReader;
-//import java.io.InputStream;
 import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.List;
-//import java.io.PrintWriter;
-//import java.io.StringWriter;
-
-import org.sikuli.basics.FileManager;
-
-import org.jruby.embed.ScriptingContainer;
-import org.jruby.javasupport.JavaEmbedUtils.EvalUnit;
-import org.jruby.CompatVersion;
-import org.jruby.Ruby;
-import org.jruby.embed.LocalContextScope;
+import org.jruby.CompatVersion;import org.jruby.Ruby;
 import org.jruby.RubyInstanceConfig.CompileMode;
 import org.jruby.RubyProc;
+import org.jruby.embed.LocalContextScope;
+import org.jruby.embed.ScriptingContainer;
+import org.jruby.javasupport.JavaEmbedUtils.EvalUnit;
 import org.jruby.javasupport.JavaUtil;
 import org.jruby.runtime.ThreadContext;
 import org.jruby.runtime.builtin.IRubyObject;
+import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
 import org.sikuli.script.RunTime;
 import org.sikuli.script.Runner;
-import org.sikuli.script.Sikulix;
 
 public class JRubyScriptRunner implements IScriptRunner {
   

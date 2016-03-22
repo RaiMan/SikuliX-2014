@@ -28,4 +28,8 @@ public class SikuliException extends Exception {
         ret += "Line ?, in File ?";
         return ret;
     }
+
+    public String toStringShort() {
+        return _name + ": " + getMessage();
+    }
 }

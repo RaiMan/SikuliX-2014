@@ -16,12 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import org.python.core.Py;
-import org.python.core.PyFunction;
-import org.python.core.PyInstance;
 import org.python.core.PyList;
-import org.python.core.PyObject;
-import org.python.core.PyString;
 import org.python.util.PythonInterpreter;
 import org.python.util.jython;
 import org.sikuli.basics.Debug;
@@ -479,7 +474,10 @@ public class JythonScriptRunner implements IScriptRunner {
 	@Override
 	public void close() {
 		if (interpreter != null) {
-			interpreter.cleanup();
+      try {
+        interpreter.cleanup();
+      } catch (Exception e) {
+      }
 		}
 	}
 
