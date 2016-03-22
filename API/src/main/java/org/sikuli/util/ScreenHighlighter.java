@@ -119,7 +119,7 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
     _isTransparentSupported = screenDevice.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.TRANSLUCENT)
             && screenDevice.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSLUCENT)
             && screenDevice.isWindowTranslucencySupported(GraphicsDevice.WindowTranslucency.PERPIXEL_TRANSPARENT);
-		((JPanel) getContentPane()).setDoubleBuffered(_double_buffered);
+//		((JPanel) getContentPane()).setDoubleBuffered(_double_buffered);
     addMouseListener(this);
   }
 
