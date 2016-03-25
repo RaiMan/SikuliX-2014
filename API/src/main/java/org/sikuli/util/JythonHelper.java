@@ -21,12 +21,13 @@ public class JythonHelper {
 
   static RunTime runTime = RunTime.get();
 
-	//<editor-fold defaultstate="collapsed" desc="new logging concept">
-	private static final String me = "JythonSupport: ";
-	private static int lvl = 3;
-	public void log(int level, String message, Object... args) {
-		Debug.logx(level,	me + message, args);
-	}
+  //<editor-fold defaultstate="collapsed" desc="new logging concept">
+  private static final String me = "JythonSupport: ";
+  private static int lvl = 3;
+
+  public void log(int level, String message, Object... args) {
+    Debug.logx(level, me + message, args);
+  }
 
   private void logp(String message, Object... args) {
     Debug.logx(-3, message, args);
@@ -41,7 +42,7 @@ public class JythonHelper {
   public void terminate(int retVal, String msg, Object... args) {
     runTime.terminate(retVal, me + msg, args);
   }
-	//</editor-fold>
+  //</editor-fold>
 
   static JythonHelper instance = null;
   static Object interpreter = null;
@@ -64,7 +65,8 @@ public class JythonHelper {
   static Method mGetSystemState, mExec, mExecfile;
   static Field PI_path;
 
-  private JythonHelper(){}
+  private JythonHelper() {
+  }
 
   public static JythonHelper get() {
     if (instance == null) {
@@ -86,8 +88,8 @@ public class JythonHelper {
       try {
         cInterpreter = Class.forName("org.python.util.PythonInterpreter");
         mGetSystemState = cInterpreter.getMethod("getSystemState", nc);
-        mExec = cInterpreter.getMethod("exec", new Class[] {String.class});
-        mExecfile = cInterpreter.getMethod("execfile", new Class[] {String.class});
+        mExec = cInterpreter.getMethod("exec", new Class[]{String.class});
+        mExecfile = cInterpreter.getMethod("execfile", new Class[]{String.class});
         Constructor PI_new = cInterpreter.getConstructor(nc);
         interpreter = PI_new.newInstance(null);
         cPyException = Class.forName("org.python.core.PyException");
@@ -116,24 +118,28 @@ public class JythonHelper {
     return instance;
   }
 
-  private void noOp() {} // for debugging as breakpoint
+  private void noOp() {
+  } // for debugging as breakpoint
 
   class PyException {
+
     Object inst = null;
     Field fType = null;
     Field fValue = null;
     Field fTrBack = null;
+
     public PyException(Object i) {
       inst = i;
-			cPyException.cast(inst);
-			try {
-				fType = cPyException.getField("type");
+      cPyException.cast(inst);
+      try {
+        fType = cPyException.getField("type");
         fValue = cPyException.getField("value");
         fTrBack = cPyException.getField("traceback");
-			} catch (Exception ex) {
-				noOp();
-			}
+      } catch (Exception ex) {
+        noOp();
+      }
     }
+
     public int isTypeExit() {
       try {
         if (fType.get(inst).toString().contains("SystemExit")) {
@@ -147,119 +153,138 @@ public class JythonHelper {
   }
 
   class PyInstance {
+
     Object inst = null;
-		Method mGetAttr = null;
-		Method mInvoke = null;
+    Method mGetAttr = null;
+    Method mInvoke = null;
+
     public PyInstance(Object i) {
       inst = i;
-			cPyInstance.cast(inst);
-			try {
-				mGetAttr = cPyInstance.getMethod("__getattr__", String.class);
-				mInvoke = cPyInstance.getMethod("invoke", String.class, cPyObject);
-			} catch (Exception ex) {
-				noOp();
-			}
+      cPyInstance.cast(inst);
+      try {
+        mGetAttr = cPyInstance.getMethod("__getattr__", String.class);
+        mInvoke = cPyInstance.getMethod("invoke", String.class, cPyObject);
+      } catch (Exception ex) {
+        noOp();
+      }
     }
-		public Object get() {
-			return inst;
-		}
+
+    public Object get() {
+      return inst;
+    }
+
     Object __getattr__(String mName) {
       if (mGetAttr == null) {
-				return null;
-			}
-			Object method = null;
-			try {
-				method = mGetAttr.invoke(inst, mName);
-			} catch (Exception ex) {}
-			return method;
+        return null;
+      }
+      Object method = null;
+      try {
+        method = mGetAttr.invoke(inst, mName);
+      } catch (Exception ex) {
+      }
+      return method;
     }
+
     public void invoke(String mName, Object arg) {
       if (mInvoke != null) {
-				try {
-					mInvoke.invoke(inst, mName, arg);
-				} catch (Exception ex) {
-					noOp();
-				}
-			}
+        try {
+          mInvoke.invoke(inst, mName, arg);
+        } catch (Exception ex) {
+          noOp();
+        }
+      }
     }
   }
 
   class PyFunction {
+
     public String __name__;
     Object func = null;
-		Method mCall = null;
-		Method mCall1 = null;
+    Method mCall = null;
+    Method mCall1 = null;
+
     public PyFunction(Object f) {
       func = f;
-			try {
-				cPyFunction.cast(func);
-				mCall = cPyFunction.getMethod("__call__");
-				mCall1 = cPyFunction.getMethod("__call__", cPyObject);
-			} catch (Exception ex) {
-				func = null;
-			}
-			if (func == null) {
-				try {
-					func = f;
-					cPyMethod.cast(func);
-					mCall = cPyMethod.getMethod("__call__");
-					mCall1 = cPyMethod.getMethod("__call__", cPyObject);
-				} catch (Exception ex) {
-					func = null;
-				}
-			}
+      try {
+        cPyFunction.cast(func);
+        mCall = cPyFunction.getMethod("__call__");
+        mCall1 = cPyFunction.getMethod("__call__", cPyObject);
+      } catch (Exception ex) {
+        func = null;
+      }
+      if (func == null) {
+        try {
+          func = f;
+          cPyMethod.cast(func);
+          mCall = cPyMethod.getMethod("__call__");
+          mCall1 = cPyMethod.getMethod("__call__", cPyObject);
+        } catch (Exception ex) {
+          func = null;
+        }
+      }
     }
+
     void __call__(Object arg) {
-			if (mCall1 != null) {
-				try {
-				mCall1.invoke(func, arg);
-				} catch (Exception ex) {}
-			}
+      if (mCall1 != null) {
+        try {
+          mCall1.invoke(func, arg);
+        } catch (Exception ex) {
+        }
+      }
     }
+
     void __call__() {
-			if (mCall != null) {
-				try {
-				mCall.invoke(func);
-				} catch (Exception ex) {}
-			}
+      if (mCall != null) {
+        try {
+          mCall.invoke(func);
+        } catch (Exception ex) {
+        }
+      }
     }
   }
 
   class Py {
-		Method mJava2py = null;
-		public Py() {
-			try {
-				mJava2py = cPy.getMethod("java2py", Object.class);
-			} catch (Exception ex) {
-				noOp();
-			}
-		}
+
+    Method mJava2py = null;
+
+    public Py() {
+      try {
+        mJava2py = cPy.getMethod("java2py", Object.class);
+      } catch (Exception ex) {
+        noOp();
+      }
+    }
+
     Object java2py(Object arg) {
-			if (mJava2py == null) {
-				return null;
-			}
-			Object pyObject = null;
-			try {
-				pyObject = mJava2py.invoke(null, arg);
-			} catch (Exception ex) {
-				noOp();
-			}
+      if (mJava2py == null) {
+        return null;
+      }
+      Object pyObject = null;
+      try {
+        pyObject = mJava2py.invoke(null, arg);
+      } catch (Exception ex) {
+        noOp();
+      }
       return pyObject;
     }
   }
 
   class PyString {
+
     String aString = "";
-		Object pyString = null;
+    Object pyString = null;
+
     public PyString(String s) {
       aString = s;
-			try {
-				pyString = cPyString.getConstructor(String.class).newInstance(aString);
-			} catch (Exception ex) {}
+      try {
+        pyString = cPyString.getConstructor(String.class).newInstance(aString);
+      } catch (Exception ex) {
+      }
     }
-		public Object get() {
-			return pyString;
-		}
+
+    public Object get() {
+      return pyString;
+    }
   }
 
   public boolean exec(String code) {
@@ -300,7 +325,7 @@ public class JythonHelper {
     return true;
   }
 
-	public boolean runLoggerCallback(Object[] args) {
+  public boolean runLoggerCallback(Object[] args) {
     PyInstance inst = new PyInstance(args[0]);
     String mName = (String) args[1];
     String msg = (String) args[2];
@@ -409,10 +434,10 @@ public class JythonHelper {
       if (!fJar.exists()) {
         fJar = new File(runTime.fSikulixExtensions, fpJarOrFolder);
         if (!fJar.exists()) {
-					fJar = new File(runTime.fSikulixLib, fpJarOrFolder);
-					if (!fJar.exists()) {
-						fJar = null;
-					}
+          fJar = new File(runTime.fSikulixLib, fpJarOrFolder);
+          if (!fJar.exists()) {
+            fJar = null;
+          }
         }
       }
     }
@@ -449,7 +474,6 @@ public class JythonHelper {
 //  if Sikuli.load(module_name +".jar"):
 //      return None
 //  return None
-
     if (modName.endsWith(".*")) {
       return null;
     }
@@ -486,7 +510,6 @@ public class JythonHelper {
 //  ImagePath.add(self.path)
 //  Sikuli._addModPath(self.path)
 //  return self._load_module(module_name)
-
     log(lvl, "loadModulePrepare: %s in %s", modName, modPath);
     int nDot = modName.lastIndexOf(".");
     if (nDot > -1) {
@@ -521,7 +544,7 @@ public class JythonHelper {
       return;
     }
     try {
-      Object aState  = mGetSystemState.invoke(interpreter, (Object[]) null);
+      Object aState = mGetSystemState.invoke(interpreter, (Object[]) null);
       Field fArgv = aState.getClass().getField("argv");
       Object pyArgv = fArgv.get(aState);
       Integer argvLen = (Integer) mLen.invoke(pyArgv, (Object[]) null);
@@ -540,7 +563,7 @@ public class JythonHelper {
       return;
     }
     try {
-      Object aState  = mGetSystemState.invoke(interpreter, (Object[]) null);
+      Object aState = mGetSystemState.invoke(interpreter, (Object[]) null);
       Field fArgv = aState.getClass().getField("argv");
       Object pyArgv = fArgv.get(aState);
       mClear.invoke(pyArgv, null);
@@ -559,7 +582,7 @@ public class JythonHelper {
       return;
     }
     try {
-      Object aState  = mGetSystemState.invoke(interpreter, (Object[]) null);
+      Object aState = mGetSystemState.invoke(interpreter, (Object[]) null);
       Field fPath = aState.getClass().getField("path");
       Object pyPath = fPath.get(aState);
       Integer pathLen = (Integer) mLen.invoke(pyPath, (Object[]) null);
@@ -578,15 +601,15 @@ public class JythonHelper {
       return;
     }
     try {
-      Object aState  = mGetSystemState.invoke(interpreter, (Object[]) null);
+      Object aState = mGetSystemState.invoke(interpreter, (Object[]) null);
       Field fPath = aState.getClass().getField("path");
       Object pyPath = fPath.get(aState);
       Integer pathLen = (Integer) mLen.invoke(pyPath, (Object[]) null);
-  		for (int i = 0; i < pathLen && i < sysPath.size(); i++) {
+      for (int i = 0; i < pathLen && i < sysPath.size(); i++) {
         String entry = sysPath.get(i);
         log(lvl + 1, "sys.path.set[%2d] = %s", i, entry);
         mSet.invoke(pyPath, i, entry);
-  		}
+      }
       if (pathLen < sysPath.size()) {
         for (int i = pathLen; i < sysPath.size(); i++) {
           String entry = sysPath.get(i);
@@ -606,30 +629,30 @@ public class JythonHelper {
     }
   }
 
-	public void addSitePackages() {
-		File fLibFolder = runTime.fSikulixLib;
-		File fSitePackages = new File(fLibFolder, "site-packages");
-		if (fSitePackages.exists()) {
-			addSysPath(fSitePackages);
-			if (hasSysPath(fSitePackages.getAbsolutePath())) {
-				log(lvl, "added as Jython::sys.path[0]:\n%s", fSitePackages);
-			}
-			File fSites = new File(fSitePackages, "sites.txt");
-			String sSites = "";
-			if (fSites.exists()) {
-				sSites = FileManager.readFileToString(fSites);
-				if (!sSites.isEmpty()) {
-					String[] listSites = sSites.split("\n");
-					for (String site : listSites) {
+  public void addSitePackages() {
+    File fLibFolder = runTime.fSikulixLib;
+    File fSitePackages = new File(fLibFolder, "site-packages");
+    if (fSitePackages.exists()) {
+      addSysPath(fSitePackages);
+      if (hasSysPath(fSitePackages.getAbsolutePath())) {
+        log(lvl, "added as Jython::sys.path[0]:\n%s", fSitePackages);
+      }
+      File fSites = new File(fSitePackages, "sites.txt");
+      String sSites = "";
+      if (fSites.exists()) {
+        sSites = FileManager.readFileToString(fSites);
+        if (!sSites.isEmpty()) {
+          String[] listSites = sSites.split("\n");
+          for (String site : listSites) {
             String path = site.trim();
             if (!path.isEmpty()) {
               appendSysPath(path);
             }
-					}
-				}
-			}
-		}
-	}
+          }
+        }
+      }
+    }
+  }
 
   public void addSysPath(String fpFolder) {
     if (!hasSysPath(fpFolder)) {
@@ -733,6 +756,51 @@ public class JythonHelper {
         logp(lvl, "%2d: %s", i, sysPath.get(i));
       }
       log(lvl, "***** Jython sys.path end");
-		}
+    }
   }
+
+  public String getCurrentLine() {
+    String trace = "";
+    Object frame = null;
+    Object back = null;
+    try {
+      Method mGetFrame = cPy.getMethod("getFrame", nc);
+      Class cPyFrame = Class.forName("org.python.core.PyFrame");
+      Field fLineno = cPyFrame.getField("f_lineno");
+      Field fCode = cPyFrame.getField("f_code");
+      Field fBack = cPyFrame.getField("f_back");
+      Class cPyBaseCode = Class.forName("org.python.core.PyBaseCode");
+      Field fFilename = cPyBaseCode.getField("co_filename");
+      frame = mGetFrame.invoke(cPy, (Object[]) null);
+      back = fBack.get(frame);
+      if (null == back) {
+        trace = "Jython: at " + getCurrentLineTraceElement(fLineno, fCode, fFilename, frame);
+      } else {
+        trace = "Jython traceback - current first:\n"
+                + getCurrentLineTraceElement(fLineno, fCode, fFilename, frame);
+        while (null != back) {
+          trace += "\n" + getCurrentLineTraceElement(fLineno, fCode, fFilename, back);
+          back = fBack.get(back);
+        }
+      }
+    } catch (Exception ex) {
+      trace = String.format("Jython: getCurrentLine: INSPECT EXCEPTION: %s", ex);
+    }
+    return trace;
+  }
+
+  private String getCurrentLineTraceElement(Field fLineno, Field fCode, Field fFilename, Object frame) {
+    String trace = "";
+    try {
+      int lineno = fLineno.getInt(frame);
+      Object code = fCode.get(frame);
+      Object filename = fFilename.get(code);
+      String fname = FileManager.getName((String) filename);
+      fname = fname.replace(".py", "");
+      trace = String.format("%s (%d)", fname, lineno);
+    } catch (Exception ex) {
+    }
+    return trace;
+  }
+
 }
