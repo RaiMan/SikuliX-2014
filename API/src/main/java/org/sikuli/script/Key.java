@@ -689,7 +689,7 @@ public class Key {
       case Key.C_NEXT:   return new int[]{-KeyEvent.VK_TAB};
 
       default:
-        throw new IllegalArgumentException("Cannot convert character " + key);
+        throw new IllegalArgumentException("Key: Not supported character: " + key);
     }
   }
 

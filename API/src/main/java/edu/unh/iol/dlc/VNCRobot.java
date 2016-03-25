@@ -182,6 +182,11 @@ public class VNCRobot implements IRobot {
         
         return 0;
 	}
+  
+  @Override
+  public void mouseReset() {
+    //TODO implement mouse reset
+  }
 
 	/**
      * Method moves the mouse wheel at an x and y position an indicated amount.

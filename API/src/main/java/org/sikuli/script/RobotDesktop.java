@@ -92,6 +92,8 @@ public class RobotDesktop extends Robot implements IRobot {
     }
     logRobot("MouseUp: extended delay: %d", stdMaxElapsed);
   }
+  
+  
 
   private void doKeyPress(int keyCode) {
     logRobot(stdAutoDelay, "KeyPress: WaitForIdle: %s - Delay: %d");
@@ -205,6 +207,15 @@ public class RobotDesktop extends Robot implements IRobot {
       heldButtons &= ~buttons;
     }
     return heldButtons;
+  }
+  
+  @Override
+  public void mouseReset() {
+    if (heldButtons != 0) {
+      setAutoWaitForIdle(false);
+      mouseRelease(heldButtons);
+      heldButtons = 0;
+    }
   }
   
   @Override

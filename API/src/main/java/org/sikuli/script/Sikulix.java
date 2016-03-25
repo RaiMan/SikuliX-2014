@@ -461,11 +461,11 @@ public class Sikulix {
     log(lvl, "cleanUp: %d", n);
     ScreenHighlighter.closeAll();
     Observing.cleanUp();
-    Mouse.reset();
+    HotkeyManager.reset();
     //TODO move to class Keys after implementation
     Screen.getPrimaryScreen().getRobot().keyUp();
+    Mouse.reset();
     //TODO what about remote screen sessions????
-    HotkeyManager.reset();
   }
 
   /**

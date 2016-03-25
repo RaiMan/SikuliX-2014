@@ -100,11 +100,11 @@ public class Mouse {
     get().device.unblock(get().device.owner);
     mouse.get().device.let(get().device.owner);
     get().device.let(get().device.owner);
-    up();
     get().device.mouseMovedResponse = get().device.MouseMovedIgnore;
     get().device.mouseMovedCallback = null;
 		get().device.callback = null;
     get().device.lastPos = null;
+    Screen.getMouseRobot().mouseReset();
   }
 
   /**

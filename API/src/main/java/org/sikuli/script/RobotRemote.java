@@ -332,6 +332,11 @@ public class RobotRemote implements IRobot {
     heldButtons = bAfter;
     return heldButtons;
   }
+  
+  @Override
+  public void mouseReset() {
+    //TODO implement mouseReset
+  }
 
   @Override
   public void mouseWheel(int wheelAmt) {

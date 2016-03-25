@@ -31,6 +31,7 @@ public interface IRobot {
    void mouseMove(int x, int y);
    void mouseDown(int buttons);
    int mouseUp(int buttons);
+   void mouseReset();
    void clickStarts();
    void clickEnds();
    void smoothMove(Location dest);
