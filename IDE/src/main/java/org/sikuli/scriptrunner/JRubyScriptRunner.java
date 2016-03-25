@@ -253,7 +253,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 
   private boolean runObserveCallback(Object[] args) {
     if (runtime == null) {
-      runtime = Ruby.newInstance();
+      runtime = ((RubyProc) args[0]).getRuntime();
       context = runtime.getCurrentContext();
     }
     IRubyObject[] pargs;
