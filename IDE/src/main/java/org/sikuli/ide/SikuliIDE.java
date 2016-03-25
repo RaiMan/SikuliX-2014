@@ -46,6 +46,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.AbstractAction;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -2377,6 +2379,12 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
 
     public void runCurrentScript() {
+      if (System.out.checkError()) {
+        Sikulix.popError("System.out is broken (console output)!"
+                + "\nYou will not see any messages anymore!"
+                + "\nSave your work and restart the IDE!"
+                + "\nYou may ignore this on your own risk!", "Fatal Error");
+      }
       SikuliIDE.getStatusbar().setMessage("... PLEASE WAIT ... checking IDE state before running script");
       if (ideIsRunningScript
               || sikulixIDE.getCurrentCodePane().getDocument().getLength() == 0
@@ -2388,77 +2396,123 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       RunTime.pause(0.1f);
       sikulixIDE.setIsRunningScript(true);
       final IScriptRunner[] srunners = new IScriptRunner[]{null};
-      _runningThread = new Thread() {
-        @Override
-        public void run() {
-          EditorPane codePane = getCurrentCodePane();
-          String cType = codePane.getContentType();
-          File scriptFile = null;
-//          try {
-          if (codePane.isDirty()) {
-            scriptFile = FileManager.createTempFile(Runner.typeEndings.get(cType));
-            if (scriptFile != null) {
-              try {
-                codePane.write(new BufferedWriter(new OutputStreamWriter(
-                        new FileOutputStream(scriptFile), "UTF8")));
-              } catch (Exception ex) {
-                scriptFile = null; 
-              }
-            }
-            if (scriptFile == null) {
-              log(-1, "runCurrentScript: temp file for running not available");
-              return;
-            }
-          } else {
-            scriptFile = codePane.getCurrentFile();
+      EditorPane codePane = getCurrentCodePane();
+      String cType = codePane.getContentType();
+      File scriptFile = null;
+      if (codePane.isDirty()) {
+        scriptFile = FileManager.createTempFile(Runner.typeEndings.get(cType));
+        if (scriptFile != null) {
+          try {
+            codePane.write(new BufferedWriter(new OutputStreamWriter(
+                    new FileOutputStream(scriptFile), "UTF8")));
+          } catch (Exception ex) {
+            scriptFile = null;
           }
-          _console.clear();
-          resetErrorMark();
-          String parent = null;
-          File path = new File(getCurrentBundlePath());
-          if (path != null && !codePane.isSourceBundleTemp()) {
-            parent = path.getParent();
-          }
-          IScriptRunner srunner = ScriptingSupport.getRunner(null, cType);
-          if (srunner == null) {
-            log(-1, "runCurrentScript: Could not load a script runner for: %s", cType);
-            return;
-          }
-          addScriptCode(srunner);
-          srunners[0] = srunner;
-          ImagePath.reset(path.getAbsolutePath());
-          String tabtitle = tabPane.getTitleAt(tabPane.getSelectedIndex());
-          if (tabtitle.startsWith("*")) {
-            tabtitle = tabtitle.substring(1);
-          }
-          int ret = srunner.runScript(scriptFile, path, runTime.getArgs(),
-                  new String[]{parent, tabtitle});
-          addErrorMark(ret);
-          srunner.close();
-          srunners[0] = null;
-          sikulixIDE.setIsRunningScript(false);
-          sikulixIDE.setVisible(true);
-          _runningThread = null;
-          Sikulix.cleanUp(0);
         }
-      };
+        if (scriptFile == null) {
+          log(-1, "runCurrentScript: temp file for running not available");
+          return;
+        }
+      } else {
+        scriptFile = codePane.getCurrentFile();
+      }
+      _console.clear();
+      resetErrorMark();
+      String parent = null;
+      File path = new File(getCurrentBundlePath());
+      if (path != null && !codePane.isSourceBundleTemp()) {
+        parent = path.getParent();
+      }
+      IScriptRunner srunner = ScriptingSupport.getRunner(null, cType);
+      if (srunner == null) {
+        log(-1, "runCurrentScript: Could not load a script runner for: %s", cType);
+        return;
+      }
+      addScriptCode(srunner);
+      srunners[0] = srunner;
+      ImagePath.reset(path.getAbsolutePath());
+      String tabtitle = tabPane.getTitleAt(tabPane.getSelectedIndex());
+      if (tabtitle.startsWith("*")) {
+        tabtitle = tabtitle.substring(1);
+      }
+      final SubRun doRun = new SubRun(srunners, scriptFile, path, parent, tabtitle);
+      _runningThread = new Thread(doRun);
       _runningThread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
         @Override
         public void uncaughtException(Thread t, Throwable e) {
-          log(-1, "Jython UncaughtExceptionHandler: trying to cleanup.\n%s", e.getMessage());
-          if (srunners[0] != null) {
-            srunners[0].close();
-            srunners[0] = null;
+          if (System.out.checkError()) {
+            Sikulix.popError("System.out is broken (console output)!"
+                    + "\nYou will not see any messages anymore!"
+                    + "\nSave your work and restart the IDE!", "Fatal Error");
           }
-          sikulixIDE.setIsRunningScript(false);
-          sikulixIDE.setVisible(true);
-          _runningThread = null;
-//          Sikulix.cleanUp(0);
+          log(-1, "IDE Scriptrun: trying to cleanup: UncaughtExceptionHandler: %s", e.toString());
+          doRun.hasFinished();
+          doRun.afterRun();
         }
       });
       _runningThread.start();
     }
 
+    private class SubRun implements Runnable {
+      private boolean finished = false;
+      private int ret = 0;
+      private IScriptRunner[] srunners = null;
+      private File scriptFile = null;
+      private File path = null;
+      private String tabtitle = "";
+      private String parent;
+      
+      public SubRun(IScriptRunner[] srunners, File scriptFile, File path, 
+              String parent, String tabtitle) {
+        this.srunners = srunners;
+        this.scriptFile = scriptFile;
+        this.path = path;
+        this.tabtitle = tabtitle;
+        this.parent = parent;
+      }
+
+      @Override
+      public void run() {
+        try {
+          ret = srunners[0].runScript(scriptFile, path, runTime.getArgs(),
+                  new String[]{parent, tabtitle});
+        } catch (Exception ex) {
+        }
+        hasFinished(true);
+        afterRun();
+      }
+      
+      public int getRet() {
+        return ret;
+      }
+
+      public boolean hasFinished() {
+        return hasFinished(false);
+      }
+
+      public synchronized boolean hasFinished(boolean state) {
+        if (state) {
+          finished = true;
+        }
+        return finished;
+      }
+
+      public void afterRun() {
+//        try {
+//          _runningThread.join();
+//        } catch (InterruptedException ex) {
+//          Thread.interrupted();
+//        }
+        addErrorMark(ret);
+        srunners[0].close();
+        srunners[0] = null;
+        sikulixIDE.setIsRunningScript(false);
+        sikulixIDE.setVisible(true);
+        Sikulix.cleanUp(0);
+        _runningThread = null;
+      }
+    }
+    
     protected void addScriptCode(IScriptRunner srunner) {
       srunner.execBefore(null);
       srunner.execBefore(new String[]{"Settings.setShowActions(Settings.FALSE)"});

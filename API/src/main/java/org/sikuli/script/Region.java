@@ -11,7 +11,6 @@ import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -20,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
+import org.sikuli.util.JythonHelper;
 import org.sikuli.util.ScreenHighlighter;
 
 /**
@@ -1724,7 +1724,7 @@ public class Region {
     int pCol = pPos - pRow * 10;
     r.setRaster(pTyp, pTyp);
     if (pTyp == 3) {
-			// NW = 300, NORTH_WEST = NW;
+      // NW = 300, NORTH_WEST = NW;
       // NM = 301, NORTH_MID = NM;
       // NE = 302, NORTH_EAST = NE;
       // EM = 312, EAST_MID = EM;
@@ -1736,7 +1736,7 @@ public class Region {
       return r.getCell(pRow, pCol).getRect();
     }
     if (pTyp == 2) {
-			// NH = 202, NORTH = NH;
+      // NH = 202, NORTH = NH;
       // EH = 221, EAST = EH;
       // SH = 212, SOUTH = SH;
       // WH = 220, WEST = WH;
@@ -1748,7 +1748,7 @@ public class Region {
       return r.getCell(pRow, pCol).getRect();
     }
     if (pTyp == 4) {
-			// MV = 441, MID_VERTICAL = MV;
+      // MV = 441, MID_VERTICAL = MV;
       // MH = 414, MID_HORIZONTAL = MH;
       // M2 = 444, MIDDLE_BIG = M2;
       if (pRow > 3) {
@@ -2603,7 +2603,9 @@ public class Region {
           try {
             response = handleFindFailedShowDialog(target, false);
           } catch (FindFailed ex) {
-            shouldAbort = ex;
+            if (FindFailed.PROMPT.equals(findFailedResponse)) {
+              shouldAbort = ex;
+            }
           }
           if (!response) {
             break;
@@ -2618,16 +2620,15 @@ public class Region {
       }
     }
     if (shouldAbort != null) {
-      log(-1, "Abort requested: %s", shouldAbort.toStringShort());
-      try {
-        Class cIde = Class.forName("org.sikuli.ide.SikuliIDE");
-        Method ideGetInstance = cIde.getMethod("getInstance", new Class[0]);
-        Method ideOnStopRunning = cIde.getMethod("onStopRunning", new Class[0]);
-        Object ide = ideGetInstance.invoke(null, new Object[0]);
-        ideOnStopRunning.invoke(ide, new Object[0]);
-      } catch (Exception ex) {
-        log(-1, "Aborting ...");
+      Thread current = Thread.currentThread();
+      String where = "unknown";
+      if (runTime.isJythonReady) {
+        where = JythonHelper.get().getCurrentLine();
       }
+      log(-1, "Exists: Abort: %s", where);
+      log(-1, shouldAbort.toStringShort());
+      current.interrupt();
+      current.stop();
     } else {
       log(lvl, "exists: %s has not appeared [%d msec]", targetStr, lastFindTime);
     }
