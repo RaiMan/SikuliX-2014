@@ -31,6 +31,7 @@ public class Finder implements Iterator<Match> {
 
   private Region _region = null;
   private Pattern _pattern = null;
+  private Image _image = null;
   private FindInput _findInput = new FindInput();
   private FindResults _results = null;
   private int _cur_result_i;
@@ -293,6 +294,7 @@ public class Finder implements Iterator<Match> {
       return null;
     }
     Image img = Image.create(imageOrText);
+    _image = img;
     if (img.isText()) {
       return findAllText(imageOrText);
     }
@@ -314,6 +316,7 @@ public class Finder implements Iterator<Match> {
       return null;
     }
     if (aPtn.isValid()) {
+      _image = aPtn.getImage();
       _pattern = aPtn;
       _findInput.setTarget(aPtn.getImage().getMatNative());
       _findInput.setSimilarity(aPtn.getSimilar());
@@ -448,6 +451,7 @@ public class Finder implements Iterator<Match> {
         Location offset = _pattern.getTargetOffset();
         match.setTargetOffset(offset);
       }
+      match.setImage(_image);
     }
     return match;
   }
