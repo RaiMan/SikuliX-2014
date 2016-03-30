@@ -457,13 +457,11 @@ public class Image {
         return null;
       }
       if (imageName != null) {
-        if (!imageFiles.containsKey(fileURL)) {
-          imageFiles.put(fileURL, this);
-          imageNames.put(imageName, fileURL);
-          bwidth = bImage.getWidth();
-          bheight = bImage.getHeight();
-          bsize = bImage.getData().getDataBuffer().getSize();
-        }
+        imageFiles.put(fileURL, this);
+        imageNames.put(imageName, fileURL);
+        bwidth = bImage.getWidth();
+        bheight = bImage.getHeight();
+        bsize = bImage.getData().getDataBuffer().getSize();
         log(lvl, "loaded: %s (%s)", imageName, fileURL);
         if (isCaching()) {
           int maxMemory = Settings.getImageCache() * MB;
@@ -709,6 +707,27 @@ public class Image {
     return img;
   }
 
+	protected static void set(Image img) {
+    if (null == img || img.isValid()) {
+      return;
+    }
+    URL fURL = null;
+    File imgFile = new File(img.getName());
+    if (imgFile.isAbsolute()) {
+      if (imgFile.exists()) {
+        fURL = FileManager.makeURL(img.getName());
+      }
+    } else {
+      fURL = imageNames.get(img.getName());
+      if (fURL == null) {
+        fURL = ImagePath.find(img.getName());
+      }
+    }
+    if (fURL != null) {
+      img.init(img.getName(), fURL, false);
+    }
+  }
+
   protected static Image get(URL imgURL) {
     return imageFiles.get(imgURL);
   }
@@ -844,6 +863,31 @@ public class Image {
       imageNames.remove(name);
     }
   }
+  
+  public boolean isFile() {
+    if (isValid()) {
+      URL furl = getURL();
+      if ("file".equals(furl.getProtocol())) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  public File remove() {
+    URL furl = null;
+    if (isFile()) {
+      furl = getURL();
+      unCacheImage(furl);
+      return new File(furl.getPath());
+    }
+    return null;
+  }
+
+  public void delete() {
+    File fImg = remove();
+    if (null != fImg) FileManager.deleteFileOrFolder(fImg);
+  }
 
   /**
    * purge the given image file's in memory image data and remove it from cache.
@@ -863,6 +907,7 @@ public class Image {
     if (img == null) {
       return;
     }
+    currentMemoryDown(img.bsize);
     img.bimg = null;
     images.remove(img);
   }

@@ -2148,26 +2148,32 @@ public class Region {
     return state;
   }
 
-  private Boolean handleFindFailedImageMissing(Image target) {
-    FindFailedResponse response = handleFindFailedShowDialog(target, true);
+  private Boolean handleImageMissing(Image img) {
+    FindFailedResponse response = handleFindFailedShowDialog(img, true);
     if (findFailedResponse.RETRY.equals(response)) {
       getRobotForRegion().delay(500);
-      ScreenImage img = getScreen().userCapture("capture missing image");
-      if (img != null) {
+      ScreenImage simg = getScreen().userCapture("capture missing " + img.getName());
+      if (simg != null) {
         String path = ImagePath.getBundlePath();
         if (path == null) {
-          return false;
+          log(-1, "handleImageMissing: no bundle path - aborting");
+          return null;
         }
-        img.getFile(path, target.getImageName());
-        return true;
+        simg.getFile(path, img.getImageName());
+        Image.set(img);
+        if (img.isValid()) {
+          log(lvl, "handleImageMissing: captured: %s", img);
+          return true;
+        }
       }
-      return false;
+      return null;
     } else if (findFailedResponse.HANDLE.equals(response)) {
-      log(-1, "handleFindFailedImageMissing: HANDLE: not implemented");
+      log(-1, "handleImageMissing: HANDLE: not implemented");
       return null;
     } else if (findFailedResponse.ABORT.equals(response)) {
       return null;
     }
+    log(lvl, "handleImageMissing: skip requested");
     return false;
   }
 
@@ -2201,11 +2207,11 @@ public class Region {
     String targetStr = img.getName();
     Boolean response = true;
     if (!img.isValid() && img.hasIOException()) {
-      response = handleFindFailedImageMissing(img);
+      response = handleImageMissing(img);
     }
     while (null != response && response) {
       log(lvl, "find: waiting 0 secs for %s to appear in %s", targetStr, this.toStringShort());
-      lastMatch = doFind(target, null);
+      lastMatch = doFind(img, null);
       if (lastMatch != null) {
         lastMatch.setImage(img);
         if (img != null) {
@@ -2258,7 +2264,7 @@ public class Region {
     Image img = rf._image;
     boolean shouldDoFind = true;
     if (!img.isValid() && img.hasIOException()) {
-      shouldDoFind = handleFindFailedImageMissing(img);
+      shouldDoFind = handleImageMissing(img);
     }
     while (shouldDoFind) {
 //      try {
@@ -2324,7 +2330,7 @@ public class Region {
         }
       } catch (Exception ex) {
         if (ex instanceof IOException) {
-          if (handleFindFailedImageMissing(img)) {
+          if (handleImageMissing(img)) {
             continue;
           }
         }
@@ -2604,7 +2610,7 @@ public class Region {
         break;
       }
       Image img = rf._image;
-      if (handleFindFailedImageMissing(img)) {
+      if (handleImageMissing(img)) {
         continue;
       }
       log(lvl, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
@@ -2708,7 +2714,7 @@ public class Region {
         return false;
       } catch (Exception ex) {
         if (ex instanceof IOException) {
-          if (handleFindFailedImageMissing(rv._image)) {
+          if (handleImageMissing(rv._image)) {
             continue;
           }
         }
