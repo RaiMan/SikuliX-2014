@@ -15,17 +15,18 @@ import java.util.List;
 public class ObserveEvent {
 
   public enum Type {
-    APPEAR, VANISH, CHANGE, GENERIC
+    APPEAR, VANISH, CHANGE, GENERIC, FINDFAILED
   }
 
   /**
-   * the event's type as ObserveEvent.APPEAR, .VANISH, .CHANGE
+   * the event's type as ObserveEvent.APPEAR, .VANISH, .CHANGE, ...
    */
   private Type type;
 
   private Region region = null;
   private Object pattern = null;
   private Match match = null;
+  private Image image = null;
   private int index = -1;
   private List<Match> changes = null;
   private long time;
@@ -38,20 +39,20 @@ public class ObserveEvent {
   /**
    * INTERNAL USE ONLY: creates an observed event
    */
-  protected ObserveEvent(String name, Type type, Object ptn, Object m, Object r, long now) {
-    init(name, type, ptn, m, r, now);
+  protected ObserveEvent(String name, Type type, Object v1, Object v2, Object v3, long now) {
+    init(name, type, v1, v2, v3, now);
   }
 
-	private void init(String name, Type type, Object ptn, Object m, Object r, long now) {
+	private void init(String name, Type type, Object v1, Object v2, Object v3, long now) {
     this.name = name;
     this.type = type;
     time = now;
     if (type == Type.GENERIC) {
-      setVals(ptn, m, r);
+      setVals(v1, v2, v3);
     } else {
-      setRegion(r);
-      setMatch(m);
-      setPattern(ptn);
+      setRegion(v3);
+      setMatch(v2);
+      setPattern(v1);
     }
 	}
   
@@ -93,6 +94,14 @@ public class ObserveEvent {
    */
    public boolean isGeneric() {
     return type == Type.GENERIC;
+  }
+
+ /**
+   * check the observe event type
+   * @return true if it is FINDFAILED, false otherwise
+   */
+   public boolean isFindFailed() {
+    return type == Type.FINDFAILED;
   }
 
   /**
@@ -179,8 +188,10 @@ public class ObserveEvent {
     if (null != pattern) {
       if (pattern.getClass().isInstance("")) {
         return (new Pattern((String) pattern));
-      } else {
+      } else if (pattern instanceof Pattern) {
         return (new Pattern((Pattern) pattern));
+      } else if (pattern instanceof Image) {
+        return (new Pattern((Image) pattern));
       }
     }
     return null;
@@ -190,10 +201,10 @@ public class ObserveEvent {
     if (null != p) {
       if (p.getClass().isInstance("")) {
         pattern = new Pattern((String) p);
-      } else {
-        if (p instanceof Pattern) {
-          pattern = new Pattern((Pattern) p);
-        }
+      } else if (p instanceof Pattern) {
+        pattern = new Pattern((Pattern) p);
+      } else if (p instanceof Image) {
+        pattern = new Pattern((Pattern) p);
       }
     }
   }

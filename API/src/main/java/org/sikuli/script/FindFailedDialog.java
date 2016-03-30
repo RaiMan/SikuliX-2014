@@ -30,15 +30,15 @@ class FindFailedDialog extends JDialog implements ActionListener {
   FindFailedResponse _response;
   boolean isCapture = false;
 
-  public FindFailedDialog(Object target) {
+  public FindFailedDialog(org.sikuli.script.Image target) {
     init(target, false);
   }
 
-  public FindFailedDialog(Object target, boolean isCapture) {
+  public FindFailedDialog(org.sikuli.script.Image target, boolean isCapture) {
     init(target, isCapture);
   }
 
-  private void init(Object target, boolean isCapture) {
+  private void init(org.sikuli.script.Image target, boolean isCapture) {
     this.isCapture = isCapture;
     setModal(true);
     JPanel panel = new JPanel();
@@ -86,63 +86,45 @@ class FindFailedDialog extends JDialog implements ActionListener {
     return _response;
   }
 
-  <PatternString> Component createTargetComponent(PatternString target) {
-    org.sikuli.script.Image image = null;
-    JLabel c = null;
-    String targetTyp = "";
-    JPanel p;
-    if (!isCapture) {
-      if (target instanceof Pattern) {
-        Pattern pat = (Pattern) target;
-        targetTyp = "pattern";
-        target = (PatternString) pat.toString();
-        image = pat.getImage();
-      } else if (target instanceof String) {
-        image = org.sikuli.script.Image.get((String) target);
-        if (image != null) {
-          targetTyp = "image";
-        } else {
-          c = new JLabel("Sikuli cannot find text:" + (String) target);
-          return c;
+  <PatternString> Component createTargetComponent(org.sikuli.script.Image img) {
+    JLabel cause = null;
+    JPanel dialog = new JPanel();
+    dialog.setLayout(new BorderLayout());
+    if (img.isValid()) {
+      if (!img.isText()) {
+        String rescale = "";
+        Image bimage = img.get();
+        JLabel iconLabel = new JLabel();
+        int w = bimage.getWidth(this);
+        int h = bimage.getHeight(this);
+        if (w > 500) {
+          w = 500;
+          h = -h;
+          rescale = " (rescaled 500x...)";
         }
+        if (h > 300) {
+          h = 300;
+          w = -w;
+          rescale = " (rescaled ...x300)";
+        }
+        if (h < 0 && w < 0) {
+          w = 500;
+          h = 300;
+          rescale = " (rescaled 500x300)";
+        }
+        bimage = bimage.getScaledInstance(w, h, Image.SCALE_DEFAULT);
+        iconLabel.setIcon(new ImageIcon(bimage));
+        cause = new JLabel("Cannot find " + img.getName() + rescale);
+        dialog.add(iconLabel, BorderLayout.PAGE_END);
       } else {
-        return null;
+        cause = new JLabel("Sikuli cannot find text:" + img.getName());
       }
-    } else {
-      c = new JLabel("Request to capture: " + (String) target);
-      return c;
     }
-    p = new JPanel();
-    p.setLayout(new BorderLayout());
-    JLabel iconLabel = new JLabel();
-    String rescale = "";
-    Image bimage = null;
-    if (image != null) {
-      int w = image.get().getWidth(this);
-      int h = image.get().getHeight(this);
-      if (w > 500) {
-        w = 500;
-        h = -h;
-        rescale = " (rescaled to 500x...)";
-      }
-      if (h > 300) {
-        h = 300;
-        w = -w;
-        rescale = " (rescaled to ...x300)";
-      }
-      if (h < 0 && w < 0) {
-        w = 500;
-        h = 300;
-        rescale = " (rescaled to 500x300)";
-      }
-      bimage = image.get().getScaledInstance(w, h, Image.SCALE_DEFAULT);
+    if (isCapture) {
+      cause = new JLabel("Request to capture: " + img.getName());
     }
-    iconLabel.setIcon(new ImageIcon(bimage));
-    c = new JLabel("Sikuli cannot find " + targetTyp + rescale + ".");
-    p.add(c, BorderLayout.PAGE_START);
-    p.add(new JLabel((String) target));
-    p.add(iconLabel, BorderLayout.PAGE_END);
-    return p;
+    dialog.add(cause, BorderLayout.PAGE_START);
+    return dialog;
   }
 
   @Override

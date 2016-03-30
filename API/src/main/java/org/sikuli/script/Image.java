@@ -77,8 +77,8 @@ public class Image {
   private static List<Image> images = Collections.synchronizedList(new ArrayList<Image>());
   private static Map<URL, Image> imageFiles = Collections.synchronizedMap(new HashMap<URL, Image>());
   private static Map<String, URL> imageNames = Collections.synchronizedMap(new HashMap<String, URL>());
-  private static int KB = 1024;
-  private static int MB = KB * KB;
+  private static final int KB = 1024;
+  private static final int MB = KB * KB;
   private final static String isBImg = "__BufferedImage__";
 
   private static long currentMemory = 0;
@@ -144,6 +144,15 @@ public class Image {
 
 //<editor-fold defaultstate="collapsed" desc="imageName">
   private String imageName = null;
+  private boolean bHasIOException = false;
+  
+  public boolean hasIOException() {
+    return bHasIOException;
+  }
+
+  public void setHasIOException(boolean state) {
+    bHasIOException = state;
+  }
 
   public String getImageName() {
     return imageName;
@@ -209,6 +218,7 @@ public class Image {
   /**
    * wether this image's name should be taken as text
    * @param val
+   * @return the image
    */
   public Image setIsText(boolean val) {
     imageIsText = val;
@@ -239,6 +249,7 @@ public class Image {
   /**
    * mark this image as being contained in a bundle
    * @param imageIsBundled
+   * @return the image
    */
   public Image setIsBundled(boolean imageIsBundled) {
     this.imageIsBundled = imageIsBundled;
@@ -290,6 +301,7 @@ public class Image {
    * Set the value of waitAfter
    *
    * @param waitAfter new value of waitAfter
+   * @return the image
    */
   public Image setWaitAfter(int waitAfter) {
     this.waitAfter = waitAfter;
@@ -313,6 +325,7 @@ public class Image {
    * Set the value of offset
    *
    * @param offset new value of offset
+   * @return the image
    */
   public Image setOffset(Location offset) {
     this.offset = offset;
@@ -336,6 +349,7 @@ public class Image {
    * Set the value of similarity
    *
    * @param similarity new value of similarity
+   * @return the image
    */
   public Image setSimilarity(float similarity) {
     this.similarity = similarity;
@@ -371,6 +385,7 @@ public class Image {
    *
    * @param lastSeen Match
    * @param sim SimilarityScore
+   * @return the image
    */
   protected Image setLastSeen(Rectangle lastSeen, double sim) {
     this.lastSeen = lastSeen;
@@ -437,6 +452,7 @@ public class Image {
         if (!beSilent) {
           log(-1, "could not be loaded: %s", fileURL);
         }
+        bHasIOException = true;
 				fileURL = null;
         return null;
       }
@@ -476,6 +492,7 @@ public class Image {
         if (!beSilent) {
           log(-1, "could not be loaded again: %s", fileURL);
         }
+        bHasIOException = true;
 				imageFiles.remove(fileURL);
         return null;
       }
@@ -499,6 +516,7 @@ public class Image {
     imgTarget.setIsText(imageIsText);
     imgTarget.setIsBundled(imageIsBundled);
     imgTarget.setLastSeen(getLastSeen(), getLastSeenScore());
+    imgTarget.setHasIOException(hasIOException());
     if (isPattern()) {
       imgTarget.setSimilarity(similarity);
       imgTarget.setOffset(offset);
@@ -793,8 +811,8 @@ public class Image {
   }
 
   protected static synchronized void purge(URL pathURL) {
-    List<Image> imagePurgeList = new ArrayList<Image>();
-    List<String> imageNamePurgeList = new ArrayList<String>();
+    List<Image> imagePurgeList = new ArrayList<>();
+    List<String> imageNamePurgeList = new ArrayList<>();
     URL imgURL;
     Image img;
     log(lvl, "purge: ImagePath: %s", pathURL.getPath());

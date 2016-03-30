@@ -13,5 +13,6 @@ public enum FindFailedResponse{
    ABORT,
    PROMPT,
    SKIP,
-   RETRY
+   RETRY,
+   HANDLE
 };
