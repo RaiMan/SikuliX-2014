@@ -2179,12 +2179,30 @@ public class Region {
 
   private FindFailedResponse handleFindFailedShowDialog(Image img, boolean shouldCapture) {
     FindFailedResponse response = findFailedResponse;
-    if (findFailedResponse == FindFailedResponse.PROMPT) {
+    if (response == FindFailedResponse.PROMPT) {
       FindFailedDialog fd = new FindFailedDialog(img, shouldCapture);
       fd.setVisible(true);
       response = fd.getResponse();
       fd.dispose();
       wait(0.5);
+    }
+    if (response == FindFailedResponse.SKIP) {
+      // TODO HACK to allow recapture on FindFailed PROMPT
+      if (img.backup()) {
+        Boolean bResponse = handleImageMissing(img);
+        if (bResponse == null || !bResponse) {
+          if (!img.restore()) {
+            bResponse = null;
+          }
+        }
+        if (bResponse == null) {
+          response = FindFailedResponse.ABORT;
+        } else if (bResponse) {
+          response = FindFailedResponse.RETRY;
+        } else {
+          response = FindFailedResponse.SKIP;
+        }
+      }
     }
     return response;
   }

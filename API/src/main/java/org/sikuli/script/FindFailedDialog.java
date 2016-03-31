@@ -50,9 +50,13 @@ class FindFailedDialog extends JDialog implements ActionListener {
     if (isCapture) {
       textRetry = "Capture";
     }
+    String textSkip = "Capture";
+    if (isCapture) {
+      textSkip = "Skip";
+    }
     retryButton = new JButton(textRetry);
     retryButton.addActionListener(this);
-    skipButton = new JButton("Skip");
+    skipButton = new JButton(textSkip);
     skipButton.addActionListener(this);
     abortButton = new JButton("Abort");
     abortButton.addActionListener(this);

@@ -888,7 +888,37 @@ public class Image {
     File fImg = remove();
     if (null != fImg) FileManager.deleteFileOrFolder(fImg);
   }
+  
+  private String hasBackup = "";
 
+  protected boolean backup() {
+    if (isValid()) {
+      File fOrg = new File(fileURL.getPath());
+      File fBack = new File(fOrg.getParentFile(), "BACKUP_" + fOrg.getName());
+      if (FileManager.xcopy(fOrg, fBack)) {
+        hasBackup = fBack.getPath();
+        log(lvl, "backup: %s created", fBack.getName());
+        return true;
+      }
+      log(-1, "backup: %s did not work", fBack.getName());
+    }
+    return false;
+  }
+
+  protected boolean restore() {
+    if (!hasBackup.isEmpty()) {
+      File fBack = new File(hasBackup);
+      File fOrg = new File(hasBackup.replace("BACKUP_", ""));
+      if (FileManager.xcopy(fBack, fOrg)) {
+        log(lvl, "restore: %s restored", fOrg.getName());
+        hasBackup = "";
+        return true;
+      }
+      log(-1, "restore: %s did not work", fBack.getName());
+    }
+    return false;
+  }
+  
   /**
    * purge the given image file's in memory image data and remove it from cache.
    * @param imgFileName an absolute filename
