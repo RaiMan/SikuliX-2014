@@ -90,6 +90,7 @@ import org.sikuli.basics.Settings;
 import org.sikuli.idesupport.IDESplash;
 import org.sikuli.idesupport.IDESupport;
 import org.sikuli.idesupport.IIDESupport;
+import org.sikuli.script.Image;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.Key;
 import org.sikuli.script.Region;
@@ -2506,6 +2507,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         addErrorMark(ret);
         srunners[0].close();
         srunners[0] = null;
+        if (Image.getIDEshouldReload()) {
+          sikulixIDE.getCurrentCodePane().reparse();
+        }
         sikulixIDE.setIsRunningScript(false);
         sikulixIDE.setVisible(true);
         Sikulix.cleanUp(0);
