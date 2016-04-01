@@ -142,6 +142,17 @@ public class Image {
     }
   }
 
+  private static boolean ideShouldReload = false;
+  public static void setIDEshouldReload() {
+    ideShouldReload = true;
+  }
+
+  public static boolean getIDEshouldReload() {
+    boolean state = ideShouldReload;
+    ideShouldReload = false;
+    return state;
+  }
+  
 //<editor-fold defaultstate="collapsed" desc="imageName">
   private String imageName = null;
   private boolean bHasIOException = false;
@@ -708,7 +719,7 @@ public class Image {
   }
 
 	protected static void set(Image img) {
-    if (null == img || img.isValid()) {
+    if (null == img || !img.isValid()) {
       return;
     }
     URL fURL = null;
@@ -724,7 +735,7 @@ public class Image {
       }
     }
     if (fURL != null) {
-      img.init(img.getName(), fURL, false);
+      img.init(img.getName(), fURL, true);
     }
   }
 
@@ -911,6 +922,7 @@ public class Image {
       File fOrg = new File(hasBackup.replace("BACKUP_", ""));
       if (FileManager.xcopy(fBack, fOrg)) {
         log(lvl, "restore: %s restored", fOrg.getName());
+        FileManager.deleteFileOrFolder(fBack);
         hasBackup = "";
         return true;
       }
@@ -938,9 +950,11 @@ public class Image {
       return;
     }
     currentMemoryDown(img.bsize);
-    img.bimg = null;
+    img.setBimg(null);
     images.remove(img);
   }
+  
+  
 
   /**
    * Print the current state of the cache
@@ -1061,6 +1075,10 @@ public class Image {
 	 * @return BufferedImage (might be null)
    */
   public BufferedImage get() {
+    return get(true);
+  }
+  
+  protected BufferedImage get(boolean shouldLoad) {
     if (bimg != null) {
       if (fileURL == null) {
         log(lvl + 1, "getImage inMemory: %s", imageName);
@@ -1069,9 +1087,14 @@ public class Image {
       }
       return bimg;
     } else {
-      return load();
+      if (shouldLoad) {
+        return load();
+      } else {
+        return null;
+      }
     }
   }
+
 
   /**
    *

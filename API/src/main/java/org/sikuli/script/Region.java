@@ -2130,16 +2130,25 @@ public class Region {
    * return true to try again <br>
    * throw FindFailed to abort
    *
-   * @param target Handles a failed find action
+   * @param img Handles a failed find action
    * @throws FindFailed
    */
-  private Boolean handleFindFailed(Image target) {
-    FindFailedResponse response = handleFindFailedShowDialog(target, false);
+  private Boolean handleFindFailed(Image img) {
+    FindFailedResponse response = handleFindFailedShowDialog(img, false);
     Boolean state = null;
     if (FindFailedResponse.ABORT.equals(response)) {
       state = null;
     } else if (FindFailedResponse.SKIP.equals(response)) {
-      state = false;
+      // TODO HACK to allow recapture on FindFailed PROMPT
+      if (img.backup()) {
+        img.delete();
+        state = handleImageMissing(img, true);
+        if (state == null || !state) {
+          if (!img.restore()) {
+            state = null;
+          }
+        }
+      }
     } else if (FindFailedResponse.RETRY.equals(response)) {
       state = true;
     } else if (FindFailedResponse.HANDLE.equals(response)) {
@@ -2148,11 +2157,13 @@ public class Region {
     return state;
   }
 
-  private Boolean handleImageMissing(Image img) {
+  private Boolean handleImageMissing(Image img, boolean recap) {
+    log(lvl, "handleImageMissing: %s (%s)", img.getName(), (recap?"recapture ":"capture missing "));
     FindFailedResponse response = handleFindFailedShowDialog(img, true);
     if (findFailedResponse.RETRY.equals(response)) {
       getRobotForRegion().delay(500);
-      ScreenImage simg = getScreen().userCapture("capture missing " + img.getName());
+      ScreenImage simg = getScreen().userCapture(
+              (recap?"recapture ":"capture missing ") + img.getName());
       if (simg != null) {
         String path = ImagePath.getBundlePath();
         if (path == null) {
@@ -2162,7 +2173,8 @@ public class Region {
         simg.getFile(path, img.getImageName());
         Image.set(img);
         if (img.isValid()) {
-          log(lvl, "handleImageMissing: captured: %s", img);
+          log(lvl, "handleImageMissing: %scaptured: %s", (recap?"re":""), img);
+          Image.setIDEshouldReload();
           return true;
         }
       }
@@ -2173,7 +2185,7 @@ public class Region {
     } else if (findFailedResponse.ABORT.equals(response)) {
       return null;
     }
-    log(lvl, "handleImageMissing: skip requested");
+    log(lvl, "handleImageMissing: skip requested on %s", (recap?"recapture ":"capture missing "));
     return false;
   }
 
@@ -2185,24 +2197,6 @@ public class Region {
       response = fd.getResponse();
       fd.dispose();
       wait(0.5);
-    }
-    if (response == FindFailedResponse.SKIP) {
-      // TODO HACK to allow recapture on FindFailed PROMPT
-      if (img.backup()) {
-        Boolean bResponse = handleImageMissing(img);
-        if (bResponse == null || !bResponse) {
-          if (!img.restore()) {
-            bResponse = null;
-          }
-        }
-        if (bResponse == null) {
-          response = FindFailedResponse.ABORT;
-        } else if (bResponse) {
-          response = FindFailedResponse.RETRY;
-        } else {
-          response = FindFailedResponse.SKIP;
-        }
-      }
     }
     return response;
   }
@@ -2225,7 +2219,7 @@ public class Region {
     String targetStr = img.getName();
     Boolean response = true;
     if (!img.isValid() && img.hasIOException()) {
-      response = handleImageMissing(img);
+      response = handleImageMissing(img, false);
     }
     while (null != response && response) {
       log(lvl, "find: waiting 0 secs for %s to appear in %s", targetStr, this.toStringShort());
@@ -2282,7 +2276,7 @@ public class Region {
     Image img = rf._image;
     boolean shouldDoFind = true;
     if (!img.isValid() && img.hasIOException()) {
-      shouldDoFind = handleImageMissing(img);
+      shouldDoFind = handleImageMissing(img, false);
     }
     while (shouldDoFind) {
 //      try {
@@ -2348,7 +2342,7 @@ public class Region {
         }
       } catch (Exception ex) {
         if (ex instanceof IOException) {
-          if (handleImageMissing(img)) {
+          if (handleImageMissing(img, false)) {
             continue;
           }
         }
@@ -2628,7 +2622,7 @@ public class Region {
         break;
       }
       Image img = rf._image;
-      if (handleImageMissing(img)) {
+      if (handleImageMissing(img, false)) {
         continue;
       }
       log(lvl, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
@@ -2732,7 +2726,7 @@ public class Region {
         return false;
       } catch (Exception ex) {
         if (ex instanceof IOException) {
-          if (handleImageMissing(rv._image)) {
+          if (handleImageMissing(rv._image, false)) {
             continue;
           }
         }

@@ -96,30 +96,32 @@ class FindFailedDialog extends JDialog implements ActionListener {
     dialog.setLayout(new BorderLayout());
     if (img.isValid()) {
       if (!img.isText()) {
-        String rescale = "";
-        Image bimage = img.get();
-        JLabel iconLabel = new JLabel();
-        int w = bimage.getWidth(this);
-        int h = bimage.getHeight(this);
-        if (w > 500) {
-          w = 500;
-          h = -h;
-          rescale = " (rescaled 500x...)";
+        Image bimage = img.get(false);
+        if (bimage != null) {
+          String rescale = "";
+          JLabel iconLabel = new JLabel();
+          int w = bimage.getWidth(this);
+          int h = bimage.getHeight(this);
+          if (w > 500) {
+            w = 500;
+            h = -h;
+            rescale = " (rescaled 500x...)";
+          }
+          if (h > 300) {
+            h = 300;
+            w = -w;
+            rescale = " (rescaled ...x300)";
+          }
+          if (h < 0 && w < 0) {
+            w = 500;
+            h = 300;
+            rescale = " (rescaled 500x300)";
+          }
+          bimage = bimage.getScaledInstance(w, h, Image.SCALE_DEFAULT);
+          iconLabel.setIcon(new ImageIcon(bimage));
+          cause = new JLabel("Cannot find " + img.getName() + rescale);
+          dialog.add(iconLabel, BorderLayout.PAGE_END);
         }
-        if (h > 300) {
-          h = 300;
-          w = -w;
-          rescale = " (rescaled ...x300)";
-        }
-        if (h < 0 && w < 0) {
-          w = 500;
-          h = 300;
-          rescale = " (rescaled 500x300)";
-        }
-        bimage = bimage.getScaledInstance(w, h, Image.SCALE_DEFAULT);
-        iconLabel.setIcon(new ImageIcon(bimage));
-        cause = new JLabel("Cannot find " + img.getName() + rescale);
-        dialog.add(iconLabel, BorderLayout.PAGE_END);
       } else {
         cause = new JLabel("Sikuli cannot find text:" + img.getName());
       }
