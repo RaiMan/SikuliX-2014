@@ -750,13 +750,22 @@ public class Region {
   }
   
   public void setFindFailedHandler(Object handler) {
+    findFailedHandler = setHandler(handler, ObserveEvent.Type.FINDFAILED);
+    log(lvl, "Setting FindFailedHandler");
+  }
+
+  public void setImageMissingHandler(Object handler) {
+    findFailedHandler = setHandler(handler, ObserveEvent.Type.MISSING);
+    log(lvl, "Setting ImageMissingHandler");
+  }
+
+  private Object setHandler(Object handler, ObserveEvent.Type type) {
     findFailedResponse = FindFailedResponse.HANDLE;
     if (handler != null && (handler.getClass().getName().contains("org.python")
             || handler.getClass().getName().contains("org.jruby"))) {
-      handler = new ObserverCallBack(handler, ObserveEvent.Type.FINDFAILED);
+      handler = new ObserverCallBack(handler, type);
     }
-    findFailedHandler = handler;
-    log(lvl, "Setting FindFailedHandler");
+    return handler;
   }
 
   /**

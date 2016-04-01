@@ -15,7 +15,7 @@ import java.util.List;
 public class ObserveEvent {
 
   public enum Type {
-    APPEAR, VANISH, CHANGE, GENERIC, FINDFAILED
+    APPEAR, VANISH, CHANGE, GENERIC, FINDFAILED, MISSING
   }
 
   /**
@@ -69,7 +69,7 @@ public class ObserveEvent {
    * @return true if it is APPEAR, false otherwise
    */
   public boolean isAppear() {
-    return type == Type.APPEAR;
+    return Type.APPEAR.equals(type);
   }
 
  /**
@@ -77,7 +77,7 @@ public class ObserveEvent {
    * @return true if it is VANISH, false otherwise
    */
    public boolean isVanish() {
-    return type == Type.VANISH;
+    return Type.VANISH.equals(type);
   }
 
  /**
@@ -85,7 +85,7 @@ public class ObserveEvent {
    * @return true if it is CHANGE, false otherwise
    */
    public boolean isChange() {
-    return type == Type.CHANGE;
+    return Type.CHANGE.equals(type);
   }
 
  /**
@@ -93,7 +93,7 @@ public class ObserveEvent {
    * @return true if it is GENERIC, false otherwise
    */
    public boolean isGeneric() {
-    return type == Type.GENERIC;
+    return Type.GENERIC.equals(type);
   }
 
  /**
@@ -101,7 +101,15 @@ public class ObserveEvent {
    * @return true if it is FINDFAILED, false otherwise
    */
    public boolean isFindFailed() {
-    return type == Type.FINDFAILED;
+    return Type.FINDFAILED.equals(type);
+  }
+
+ /**
+   * check the observe event type
+   * @return true if it is MISSING, false otherwise
+   */
+   public boolean isMissing() {
+    return Type.MISSING.equals(type);
   }
 
   /**
