@@ -45,7 +45,8 @@ public class FindFailed extends SikuliException {
 	 */
 	public static final FindFailedResponse HANDLE = FindFailedResponse.HANDLE;
   
-  public static Object handler = null;
+  private static Object ffHandler = null;
+  private static Object imHandler = null;
   private static Object defaultHandler = null;
 
   /**
@@ -72,23 +73,44 @@ public class FindFailed extends SikuliException {
   }
   
   public static FindFailedResponse setHandler(Object observer) {
-    defaultFindFailedResponse = HANDLE;
     if (observer != null && (observer.getClass().getName().contains("org.python")
             || observer.getClass().getName().contains("org.jruby"))) {
       observer = new ObserverCallBack(observer, ObserveEvent.Type.FINDFAILED);
     }
-    handler = observer;
+    ffHandler = observer;
     Debug.log(3, "Setting Default FindFailedHandler");
     return defaultFindFailedResponse;
   }
   
-  public static Object getHandler() {
+  protected void setFindFailedHandler(Object handler) {
+    ffHandler = setHandler(handler, ObserveEvent.Type.FINDFAILED);
+  }
+
+  public void setImageMissingHandler(Object handler) {
+    imHandler = setHandler(handler, ObserveEvent.Type.MISSING);
+  }
+
+  private Object setHandler(Object handler, ObserveEvent.Type type) {
+    defaultFindFailedResponse = HANDLE;
+    if (handler != null && (handler.getClass().getName().contains("org.python")
+            || handler.getClass().getName().contains("org.jruby"))) {
+      handler = new ObserverCallBack(handler, type);
+    }
     return handler;
+  }
+  
+  public static Object getFindFailedHandler() {
+    return ffHandler;
+  }
+  
+  public static Object getImageMissingHandler() {
+    return imHandler;
   }
   
   public static FindFailedResponse reset() {
     defaultFindFailedResponse = ABORT;
-    handler = defaultHandler;
+    ffHandler = null;
+    imHandler = null;
     return defaultFindFailedResponse;
   }
 }

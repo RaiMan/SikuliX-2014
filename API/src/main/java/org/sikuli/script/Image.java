@@ -719,9 +719,6 @@ public class Image {
   }
 
 	protected static void set(Image img) {
-    if (null == img || !img.isValid()) {
-      return;
-    }
     URL fURL = null;
     File imgFile = new File(img.getName());
     if (imgFile.isAbsolute()) {

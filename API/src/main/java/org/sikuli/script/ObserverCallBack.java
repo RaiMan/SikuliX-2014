@@ -66,6 +66,10 @@ public class ObserverCallBack implements EventListener {
 			}
 		}
 	}
+  
+  public ObserveEvent.Type getType() {
+    return obsType;
+  }
 
   public void appeared(ObserveEvent e) {
     if (scriptRunner != null && ObserveEvent.Type.APPEAR.equals(obsType)) {
@@ -87,6 +91,18 @@ public class ObserverCallBack implements EventListener {
 
   public void happened(ObserveEvent e) {
     if (scriptRunner != null && ObserveEvent.Type.GENERIC.equals(obsType)) {
+      run(e);
+    }
+  }
+
+  public void findfailed(ObserveEvent e) {
+    if (scriptRunner != null && ObserveEvent.Type.FINDFAILED.equals(obsType)) {
+      run(e);
+    }
+  }
+
+  public void missing(ObserveEvent e) {
+    if (scriptRunner != null && ObserveEvent.Type.MISSING.equals(obsType)) {
       run(e);
     }
   }

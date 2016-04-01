@@ -7,6 +7,7 @@
 package org.sikuli.script;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,6 +28,7 @@ public class ObserveEvent {
   private Object pattern = null;
   private Match match = null;
   private Image image = null;
+  private FindFailedResponse response = FindFailed.defaultFindFailedResponse;
   private int index = -1;
   private List<Match> changes = null;
   private long time;
@@ -46,9 +48,17 @@ public class ObserveEvent {
 	private void init(String name, Type type, Object v1, Object v2, Object v3, long now) {
     this.name = name;
     this.type = type;
-    time = now;
-    if (type == Type.GENERIC) {
+    if (now > 0) {
+      time = now;
+    } else {
+      time = new Date().getTime();
+    }
+    if (Type.GENERIC.equals(type)) {
       setVals(v1, v2, v3);
+    } else if (Type.FINDFAILED.equals(type) || Type.MISSING.equals(type)) {
+      setRegion(v3);
+      setImage(v2);
+      setPattern(v1);
     } else {
       setRegion(v3);
       setMatch(v2);
@@ -193,19 +203,10 @@ public class ObserveEvent {
    * @return the used pattern for this event's observing
    */
   public Pattern getPattern() {
-    if (null != pattern) {
-      if (pattern.getClass().isInstance("")) {
-        return (new Pattern((String) pattern));
-      } else if (pattern instanceof Pattern) {
-        return (new Pattern((Pattern) pattern));
-      } else if (pattern instanceof Image) {
-        return (new Pattern((Image) pattern));
-      }
-    }
-    return null;
+    return (Pattern) pattern;
   }
 
-  protected void setPattern(Object p) {
+  public void setPattern(Object p) {
     if (null != p) {
       if (p.getClass().isInstance("")) {
         pattern = new Pattern((String) p);
@@ -217,6 +218,22 @@ public class ObserveEvent {
     }
   }
 
+  public Image getImage() {
+    return image;
+  }
+  
+  public void setImage(Object img) {
+    image = (Image) img;
+  }
+  
+  public void setResponse(FindFailedResponse resp) {
+    response = resp;
+  }
+  
+  public FindFailedResponse getResponse() {
+    return response;
+  }
+  
   public long getTime() {
     return time;
   }
