@@ -143,14 +143,23 @@ public class Image {
   }
 
   private static boolean ideShouldReload = false;
-  public static void setIDEshouldReload() {
+  protected boolean wasRecaptured = false;
+  public static void setIDEshouldReload(Image img) {
     ideShouldReload = true;
+    img.wasRecaptured = true;
+    img.lastSeen = null;
   }
 
   public static boolean getIDEshouldReload() {
     boolean state = ideShouldReload;
     ideShouldReload = false;
     return state;
+  }
+  
+  public boolean isRecaptured() {
+    boolean state = wasRecaptured;
+    wasRecaptured = false;
+    return state;    
   }
   
 //<editor-fold defaultstate="collapsed" desc="imageName">

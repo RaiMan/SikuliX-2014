@@ -2211,7 +2211,7 @@ public class Region {
         Image.set(img);
         if (img.isValid()) {
           log(lvl, "handleImageMissing: %scaptured: %s", (recap?"re":""), img);
-          Image.setIDEshouldReload();
+          Image.setIDEshouldReload(img);
           return true;
         }
       }
@@ -2300,7 +2300,7 @@ public class Region {
   public <PSI> Match exists(PSI target, double timeout) {
     lastMatch = null;
     FindFailed shouldAbort = null;
-    RepeatableFind rf = new RepeatableFind(target);
+    RepeatableFind rf = new RepeatableFind(target, null);
     Image img = rf._image;
     String targetStr = img.getName();
     Boolean response = true;
@@ -2322,6 +2322,9 @@ public class Region {
         if (null == response) {
           shouldAbort = FindFailed.createdefault(this, img);
         } else if (response) {
+          if (img.isRecaptured()) {
+            rf = new RepeatableFind(target, img);
+          }
           continue;
         }
         break;
@@ -2633,7 +2636,7 @@ public class Region {
     while (true) {
       try {
         log(lvl, "find: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
-        rf = new RepeatableFind(target);
+        rf = new RepeatableFind(target, null);
         rf.repeat(timeout);
         lastMatch = rf.getMatch();
       } catch (Exception ex) {
@@ -3034,8 +3037,13 @@ public class Region {
     Finder _finder = null;
     Image _image = null;
 
-    public <PSI> RepeatableFind(PSI target) {
+    public <PSI> RepeatableFind(PSI target, Image img) {
       _target = target;
+      if (img == null) {
+        _image = getImage(target);
+      } else {
+        _image = img;
+      }
     }
 
     public Match getMatch() {
@@ -3044,7 +3052,7 @@ public class Region {
       }
       return (_match == null) ? _match : new Match(_match);
     }
-
+    
     @Override
     public void run() {
       _match = doFind(_target, _image, this);
@@ -3059,7 +3067,7 @@ public class Region {
   private class RepeatableVanish extends RepeatableFind {
 
     public <PSI> RepeatableVanish(PSI target) {
-      super(target);
+      super(target, null);
     }
 
     @Override

@@ -123,6 +123,10 @@ public class Finder implements Iterator<Match> {
     log(lvl, "Image: %s", img);
     _findInput.setSource(Image.convertBufferedImageToMat(img.get()));
   }
+  
+  public void resetImage(Image img) {
+    _findInput.setSource(Image.convertBufferedImageToMat(img.get()));
+  }
 
   private void initScreenFinder(ScreenImage simg, Region region) {
     setScreenImage(simg);
