@@ -2143,7 +2143,7 @@ public class Region {
    * @param img Handles a failed find action
    * @throws FindFailed
    */
-  private <PSI> Boolean handleFindFailed(PSI target, Image img) {
+  private <PSI> Boolean handleFindFailed(PSI target, Image img, boolean isExists) {
     log(lvl, "handleFindFailed: %s", target);
     Boolean state = null;
     ObserveEvent evt = null;
@@ -2157,8 +2157,20 @@ public class Region {
         response = evt.getResponse();
       } 
     }
+    if (FindFailedResponse.ABORT.equals(response)) {
+      state = null;
+      if (isExists) {
+        state = false;
+      }
+    }  else if (FindFailedResponse.SKIP.equals(response)) {
+      state = false;
+    }  else if (FindFailedResponse.RETRY.equals(response)) {
+      state = true;
+    }
     if (FindFailedResponse.PROMPT.equals(response)) {
       response = handleFindFailedShowDialog(img, false);
+    } else {
+      return state;
     }
     if (FindFailedResponse.ABORT.equals(response)) {
       state = null;
@@ -2266,7 +2278,7 @@ public class Region {
       }
       log(lvl, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
       if (null == lastMatch) {
-        response = handleFindFailed(target, img);
+        response = handleFindFailed(target, img, false);
         if (null != response && response) {
           continue;
         }
@@ -2308,17 +2320,17 @@ public class Region {
       response = handleImageMissing(img, false);
     }
     while (null != response && response) {
-        log(lvl, "exists: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
-        if (rf.repeat(timeout)) {
-          lastMatch = rf.getMatch();
-          lastMatch.setImage(img);
-          if (img != null) {
-            img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
-          }
-          log(lvl, "exists: %s has appeared \nat %s", targetStr, lastMatch);
-          return lastMatch;
-        } else {
-        response = handleFindFailed(target, img);
+      log(lvl, "exists: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
+      if (rf.repeat(timeout)) {
+        lastMatch = rf.getMatch();
+        lastMatch.setImage(img);
+        if (img != null) {
+          img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
+        }
+        log(lvl, "exists: %s has appeared \nat %s", targetStr, lastMatch);
+        return lastMatch;
+      } else {
+        response = handleFindFailed(target, img, true);
         if (null == response) {
           shouldAbort = FindFailed.createdefault(this, img);
         } else if (response) {
@@ -2382,7 +2394,7 @@ public class Region {
       if (lastMatches != null) {
         return lastMatches;
       }
-      if (!handleFindFailed(target, img)) {
+      if (!handleFindFailed(target, img, false)) {
         return null;
       }
     }
@@ -2626,40 +2638,42 @@ public class Region {
    * @throws FindFailed if the Find operation finally failed
    */
   public <PSI> Match wait(PSI target, double timeout) throws FindFailed {
-    RepeatableFind rf;
     lastMatch = null;
-    //Image img = null;
-    String targetStr = target.toString();
-    if (target instanceof String) {
-      targetStr = targetStr.trim();
+    FindFailed shouldAbort = null;
+    RepeatableFind rf = new RepeatableFind(target, null);
+    Image img = rf._image;
+    String targetStr = img.getName();
+    Boolean response = true;
+    if (!img.isValid() && img.hasIOException()) {
+      response = handleImageMissing(img, false);
     }
-    while (true) {
-      try {
-        log(lvl, "find: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
-        rf = new RepeatableFind(target, null);
-        rf.repeat(timeout);
+    while (null != response && response) {
+      log(lvl, "find: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
+      if (rf.repeat(timeout)) {
         lastMatch = rf.getMatch();
-      } catch (Exception ex) {
-        if (ex instanceof IOException) {
-        }
-        throw new FindFailed(ex.getMessage());
-      }
-      if (lastMatch != null) {
-        lastMatch.setImage(rf._image);
-        if (rf._image != null) {
-          rf._image.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
+        lastMatch.setImage(img);
+        if (img != null) {
+          img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         }
         log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
+        return lastMatch;
+      } else {
+        response = handleFindFailed(target, img, false);
+        if (null == response) {
+          shouldAbort = FindFailed.createdefault(this, img);
+          break;
+        } else if (response) {
+          if (img.isRecaptured()) {
+            rf = new RepeatableFind(target, img);
+          }
+          continue;
+        }
         break;
       }
-      Image img = rf._image;
-      if (handleImageMissing(img, false)) {
-        continue;
-      }
-      log(lvl, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
-      if (!handleFindFailed(target, img)) {
-        return null;
-      }
+    }
+    log(lvl, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
+    if (shouldAbort != null) {
+      throw shouldAbort;
     }
     return lastMatch;
   }

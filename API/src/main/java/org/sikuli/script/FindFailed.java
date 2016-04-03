@@ -59,7 +59,12 @@ public class FindFailed extends SikuliException {
   }
   
   public static FindFailed createdefault(Region reg, Image img) {
-    String msg = String.format("FindFailed: %s in %s", img, reg);
+    String msg = "";
+    if (img.getSize().width < 0 && img.getSize().height < 0) {
+      msg = String.format("FindFailed: %s not loaded", img.getName());
+    } else {
+      msg = String.format("FindFailed: %s in %s", img, reg);
+    }
     return new FindFailed(msg);
   }
 
