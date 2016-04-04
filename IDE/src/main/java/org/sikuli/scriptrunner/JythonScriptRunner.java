@@ -249,8 +249,8 @@ public class JythonScriptRunner implements IScriptRunner {
       errorClass = PY_JAVA;
       err = thr.getCause().toString();
     }
-//      log(-1,"------------- Traceback -------------\n" + err +
-//              "------------- Traceback -------------\n");
+//    log(-1,"------------- Traceback -------------\n" + err +
+//            "------------- Traceback -------------\n");
     errorLine = -1;
     errorColumn = -1;
     errorType = "--UnKnown--";
@@ -356,7 +356,7 @@ public class JythonScriptRunner implements IScriptRunner {
       pModule = Pattern.compile(".*/(.*?)\\.py");
     }
     String mod;
-    String modIgnore = "SikuliImporter,";
+    String modIgnore = "SikuliImporter,Region,";
     StringBuilder trace = new StringBuilder();
     String telem;
     while (m.find()) {

@@ -58,14 +58,14 @@ public class FindFailed extends SikuliException {
     _name = "FindFailed";
   }
   
-  public static FindFailed createdefault(Region reg, Image img) {
+  public static String createdefault(Region reg, Image img) {
     String msg = "";
     if (img.getSize().width < 0 && img.getSize().height < 0) {
-      msg = String.format("FindFailed: %s not loaded", img.getName());
+      msg = String.format("%s not loaded", img.getName());
     } else {
-      msg = String.format("FindFailed: %s in %s", img, reg);
+      msg = String.format("%s in %s", img, reg);
     }
-    return new FindFailed(msg);
+    return msg;
   }
 
   public static FindFailedResponse getResponse() {

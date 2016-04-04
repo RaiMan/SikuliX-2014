@@ -2182,6 +2182,8 @@ public class Region {
         if (state == null || !state) {
           if (!img.restore()) {
             state = null;
+          } else {
+            img.get();
           }
         }
       }
@@ -2279,13 +2281,10 @@ public class Region {
       log(lvl, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
       if (null == lastMatch) {
         response = handleFindFailed(target, img, false);
-        if (null != response && response) {
-          continue;
-        }
       }
     }
     if (null == response) {
-      throw FindFailed.createdefault(this, img);
+      throw new FindFailed(FindFailed.createdefault(this, img));
     }
     return lastMatch;
   }
@@ -2311,7 +2310,7 @@ public class Region {
    */
   public <PSI> Match exists(PSI target, double timeout) {
     lastMatch = null;
-    FindFailed shouldAbort = null;
+    String shouldAbort = "";
     RepeatableFind rf = new RepeatableFind(target, null);
     Image img = rf._image;
     String targetStr = img.getName();
@@ -2342,14 +2341,14 @@ public class Region {
         break;
       }
     }
-    if (shouldAbort != null) {
+    if (!shouldAbort.isEmpty()) {
       Thread current = Thread.currentThread();
       String where = "unknown";
       if (runTime.isJythonReady) {
         where = JythonHelper.get().getCurrentLine();
       }
       log(-1, "Exists: Abort: %s", where);
-      log(-1, shouldAbort.toStringShort());
+      log(-1, "FindFailed: " + shouldAbort);
       current.interrupt();
       current.stop();
     } else {
@@ -2639,7 +2638,7 @@ public class Region {
    */
   public <PSI> Match wait(PSI target, double timeout) throws FindFailed {
     lastMatch = null;
-    FindFailed shouldAbort = null;
+    String shouldAbort = "";
     RepeatableFind rf = new RepeatableFind(target, null);
     Image img = rf._image;
     String targetStr = img.getName();
@@ -2672,8 +2671,8 @@ public class Region {
       }
     }
     log(lvl, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
-    if (shouldAbort != null) {
-      throw shouldAbort;
+    if (!shouldAbort.isEmpty()) {
+      throw new FindFailed(shouldAbort);
     }
     return lastMatch;
   }
