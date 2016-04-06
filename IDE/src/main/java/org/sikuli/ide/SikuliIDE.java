@@ -2446,8 +2446,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
                     + "\nYou will not see any messages anymore!"
                     + "\nSave your work and restart the IDE!", "Fatal Error");
           }
-          log(-1, "IDE Scriptrun: trying to cleanup: UncaughtExceptionHandler: %s", e.toString());
-          doRun.hasFinished();
+          log(-1, "Scriptrun: trying to cleanup: UncaughtExceptionHandler: %s", e.toString());
+          doRun.hasFinished(true);
           doRun.afterRun();
         }
       });
@@ -2478,6 +2478,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
           ret = srunners[0].runScript(scriptFile, path, runTime.getArgs(),
                   new String[]{parent, tabtitle});
         } catch (Exception ex) {
+          log(-1, "(%s).runScript: Exception: %s", srunners[0], ex);
         }
         hasFinished(true);
         afterRun();
@@ -2499,16 +2500,14 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       }
 
       public void afterRun() {
-//        try {
-//          _runningThread.join();
-//        } catch (InterruptedException ex) {
-//          Thread.interrupted();
-//        }
         addErrorMark(ret);
         srunners[0].close();
         srunners[0] = null;
         if (Image.getIDEshouldReload()) {
+          EditorPane pane = sikulixIDE.getCurrentCodePane();
+          int line = pane.getLineNumberAtCaret(pane.getCaretPosition());
           sikulixIDE.getCurrentCodePane().reparse();
+          sikulixIDE.getCurrentCodePane().jumpTo(line);
         }
         sikulixIDE.setIsRunningScript(false);
         sikulixIDE.setVisible(true);
@@ -2521,8 +2520,12 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       srunner.execBefore(null);
       srunner.execBefore(new String[]{"Settings.setShowActions(Settings.FALSE)"});
     }
-
-    public boolean stopRunning() {
+    
+    public boolean isRunning() {
+      return _runningThread != null;
+    }
+    
+    public boolean stopRunScript() {
       if (_runningThread != null) {
         _runningThread.interrupt();
         _runningThread.stop();
@@ -2871,11 +2874,11 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   public void onStopRunning() {
     Debug.log(3, "AbortKey was pressed");
     boolean shouldCleanUp = true;
-    if (_btnRun != null) {
-      shouldCleanUp &= _btnRun.stopRunning();
+    if (_btnRun != null && _btnRun.isRunning()) {
+      shouldCleanUp &= _btnRun.stopRunScript();
     }
-    if (_btnRunViz != null) {
-      shouldCleanUp &= _btnRunViz.stopRunning();
+    if (_btnRunViz != null && _btnRunViz.isRunning()) {
+      shouldCleanUp &= _btnRunViz.stopRunScript();
     }
     if (_btnRun == null && _btnRunViz == null) {
       ideSplash.showAction("... accepted - please wait ...");
