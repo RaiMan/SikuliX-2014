@@ -2238,6 +2238,7 @@ public class Region {
   }
 
   private FindFailedResponse handleFindFailedShowDialog(Image img, boolean shouldCapture) {
+    log(lvl, "handleFindFailedShowDialog: requested %s", (shouldCapture?"(with capture)":""));
     FindFailedResponse response;
     FindFailedDialog fd = new FindFailedDialog(img, shouldCapture);
     fd.setVisible(true);
@@ -2275,10 +2276,10 @@ public class Region {
         if (img != null) {
           img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         }
-        log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
+        log(lvl, "find: %s appeared (%s)", targetStr, lastMatch);
         break;
       }
-      log(lvl, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
+      log(lvl, "find: %s did not appear [%d msec]", targetStr, lastFindTime);
       if (null == lastMatch) {
         response = handleFindFailed(target, img, false);
       }
@@ -2326,7 +2327,7 @@ public class Region {
         if (img != null) {
           img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         }
-        log(lvl, "exists: %s has appeared \nat %s", targetStr, lastMatch);
+        log(lvl, "exists: %s has appeared (%s)", targetStr, lastMatch);
         return lastMatch;
       } else {
         response = handleFindFailed(target, img, true);
@@ -2352,7 +2353,7 @@ public class Region {
       current.interrupt();
       current.stop();
     } else {
-      log(lvl, "exists: %s has not appeared [%d msec]", targetStr, lastFindTime);
+      log(lvl, "exists: %s did not appear [%d msec]", targetStr, lastFindTime);
     }
     return null;
   }
@@ -2368,35 +2369,29 @@ public class Region {
    */
   public <PSI> Iterator<Match> findAll(PSI target) throws FindFailed {
     lastMatches = null;
-    Image img = null;
-    String targetStr = target.toString();
-    if (target instanceof String) {
-      targetStr = targetStr.trim();
+    RepeatableFindAll rf = new RepeatableFindAll(target, null);
+    Image img = rf._image;
+    String targetStr = img.getName();
+    Boolean response = true;
+    if (!img.isValid() && img.hasIOException()) {
+      response = handleImageMissing(img, false);
     }
-    while (true) {
-      try {
-        if (autoWaitTimeout > 0) {
-          RepeatableFindAll rf = new RepeatableFindAll(target);
-          rf.repeat(autoWaitTimeout);
-          lastMatches = rf.getMatches();
-        } else {
-          lastMatches = doFindAll(target, null);
-        }
-      } catch (Exception ex) {
-        if (ex instanceof IOException) {
-          if (handleImageMissing(img, false)) {
-            continue;
-          }
-        }
-        throw new FindFailed(ex.getMessage());
+    if (null != response && response) {
+      log(lvl, "findAll: waiting %.1f secs for (multiple) %s to appear in %s", 
+              autoWaitTimeout, targetStr, this.toStringShort());
+      if (autoWaitTimeout > 0) {
+        rf.repeat(autoWaitTimeout);
+        lastMatches = rf.getMatches();
+      } else {
+        lastMatches = doFindAll(target, null);
       }
       if (lastMatches != null) {
-        return lastMatches;
-      }
-      if (!handleFindFailed(target, img, false)) {
-        return null;
+        log(lvl, "findAll: %s has appeared", targetStr);
+      } else {
+        log(lvl, "findAll: %s did not appear", targetStr);
       }
     }
+    return lastMatches;
   }
 
   public <PSI> Match[] findAllByRow(PSI target) {
@@ -2647,14 +2642,14 @@ public class Region {
       response = handleImageMissing(img, false);
     }
     while (null != response && response) {
-      log(lvl, "find: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
+      log(lvl, "wait: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
       if (rf.repeat(timeout)) {
         lastMatch = rf.getMatch();
         lastMatch.setImage(img);
         if (img != null) {
           img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         }
-        log(lvl, "find: %s has appeared \nat %s", targetStr, lastMatch);
+        log(lvl, "wait: %s appeared (%s)", targetStr, lastMatch);
         return lastMatch;
       } else {
         response = handleFindFailed(target, img, false);
@@ -2670,11 +2665,50 @@ public class Region {
         break;
       }
     }
-    log(lvl, "find: %s has not appeared [%d msec]", targetStr, lastFindTime);
+    log(lvl, "wait: %s did not appear [%d msec]", targetStr, lastFindTime);
     if (!shouldAbort.isEmpty()) {
       throw new FindFailed(shouldAbort);
     }
     return lastMatch;
+  }
+
+  /**
+   * waits until target vanishes or timeout (in seconds) is passed (AutoWaitTimeout)
+   *
+   * @param <PSI> Pattern, String or Image
+   * @param target The target to wait for it to vanish
+   * @return true if the target vanishes, otherwise returns false.
+   */
+  public <PSI> boolean waitVanish(PSI target) {
+    return waitVanish(target, autoWaitTimeout);
+  }
+
+  /**
+   * waits until target vanishes or timeout (in seconds) is passed
+   *
+   * @param <PSI> Pattern, String or Image
+   * @param target Pattern, String or Image
+   * @param timeout time in seconds
+   * @return true if target vanishes, false otherwise and if imagefile is missing.
+   */
+  public <PSI> boolean waitVanish(PSI target, double timeout) {
+    RepeatableVanish rv = new RepeatableVanish(target);
+    Image img = rv._image;
+    String targetStr = img.getName();
+    Boolean response = true;
+    if (!img.isValid() && img.hasIOException()) {
+      response = handleImageMissing(img, false);
+    }
+    if (null != response && response) {
+        log(lvl, "waiting for " + targetStr + " to vanish within %.1f secs", timeout);
+        if (rv.repeat(timeout)) {
+          log(lvl, "%s vanished", targetStr);
+          return true;
+        }
+        log(lvl, "%s did not vanish before timeout", targetStr);
+        return false;
+    }
+    return false;
   }
 
 //TODO 1.2.0 Region.compare as time optimized Region.exists
@@ -2735,49 +2769,6 @@ public class Region {
   public Iterator<Match> findAllText(String text) throws FindFailed {
     // the leading/trailing tab is used to internally switch to text search directly
     return findAll("\t" + text + "\t");
-  }
-
-  /**
-   * waits until target vanishes or timeout (in seconds) is passed (AutoWaitTimeout)
-   *
-   * @param <PSI> Pattern, String or Image
-   * @param target The target to wait for it to vanish
-   * @return true if the target vanishes, otherwise returns false.
-   */
-  public <PSI> boolean waitVanish(PSI target) {
-    return waitVanish(target, autoWaitTimeout);
-  }
-
-  /**
-   * waits until target vanishes or timeout (in seconds) is passed
-   *
-   * @param <PSI> Pattern, String or Image
-   * @param target Pattern, String or Image
-   * @param timeout time in seconds
-   * @return true if target vanishes, false otherwise and if imagefile is missing.
-   */
-  public <PSI> boolean waitVanish(PSI target, double timeout) {
-    RepeatableVanish rv = null;
-    while (true) {
-      try {
-        log(lvl, "waiting for " + target + " to vanish");
-        rv = new RepeatableVanish(target);
-        if (rv.repeat(timeout)) {
-          log(lvl, "" + target + " has vanished");
-          return true;
-        }
-        log(lvl, "" + target + " has not vanished before timeout");
-        return false;
-      } catch (Exception ex) {
-        if (ex instanceof IOException) {
-          if (handleImageMissing(rv._image, false)) {
-            continue;
-          }
-        }
-        break;
-      }
-    }
-    return false;
   }
   //</editor-fold>
 
@@ -3096,8 +3087,13 @@ public class Region {
     Finder _finder = null;
     Image _image = null;
 
-    public <PSI> RepeatableFindAll(PSI target) {
+    public <PSI> RepeatableFindAll(PSI target, Image img) {
       _target = target;
+      if (img == null) {
+        _image = getImage(target);
+      } else {
+        _image = img;
+      }
     }
 
     public Iterator<Match> getMatches() {
