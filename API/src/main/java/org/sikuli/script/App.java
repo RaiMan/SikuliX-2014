@@ -16,17 +16,28 @@ import java.io.*;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
+import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpResponseException;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.entity.ContentType;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.sikuli.basics.FileManager;
 
 /**
- * App implements features to manage (open, switch to, close) applications.
- * on the system we are running on and
- * to access their assets like windows
+ * App implements features to manage (open, switch to, close) applications. on the system we are running on and to
+ * access their assets like windows
  * <br>
- * TAKE CARE: function behavior differs depending on the running system
- * (cosult the docs for more info)
+ * TAKE CARE: function behavior differs depending on the running system (cosult the docs for more info)
  */
 public class App {
 
@@ -57,9 +68,74 @@ public class App {
     appsMac.put(Type.EDITOR, "TextEdit");
     appsMac.put(Type.BROWSER, "Safari");
     appsMac.put(Type.VIEWER, "Preview");
-}
+
+  }
+
+  private static CloseableHttpClient httpclient = null;
+
+  public static boolean wwwStart() {
+    httpclient = HttpClients.createDefault();
+    if (httpclient != null) {
+      return true;
+    }
+    return false;
+  }
+  
+  public static void wwwStop() {
+    if (httpclient != null) {
+      try {
+        httpclient.close();
+      } catch (IOException ex) {
+      }
+      httpclient = null;
+    }
+  }
+
+  public static String wwwGet(String url) throws IOException {
+    HttpGet httpget = new HttpGet(url);
+    CloseableHttpResponse response = null;
+    ResponseHandler rh = new ResponseHandler() {
+      @Override
+      public String handleResponse(final HttpResponse response) throws IOException {
+        StatusLine statusLine = response.getStatusLine();
+        HttpEntity entity = response.getEntity();
+        if (statusLine.getStatusCode() >= 300) {
+          throw new HttpResponseException(
+                  statusLine.getStatusCode(),
+                  statusLine.getReasonPhrase());
+        }
+        if (entity == null) {
+          throw new ClientProtocolException("Response contains no content");
+        }
+        InputStream is = entity.getContent();
+        ByteArrayOutputStream result = new ByteArrayOutputStream();
+        byte[] buffer = new byte[1024];
+        int length;
+        while ((length = is.read(buffer)) != -1) {
+          result.write(buffer, 0, length);
+        }
+        return result.toString("UTF-8");
+      }
+    };
+    Object content = httpclient.execute(httpget, rh);
+    return (String) content;
+  }
+  
+  public static String wwwSave(String url, String pOut) throws IOException {
+    String content = wwwGet(url);
+    File out = null;
+    if (pOut == null) {
+      out = new File(ImagePath.getBundleFolder(), "www.Save.txt");
+    } else {
+      out = new File(pOut);
+    }
+    FileManager.writeStringToFile(content, out);
+    return content;
+  }
+
   //<editor-fold defaultstate="collapsed" desc="special app features">
   public static enum Type {
+
     EDITOR, BROWSER, VIEWER
   }
 
@@ -127,7 +203,8 @@ public class App {
       } else if (Type.VIEWER.equals(appType)) {
         return null;
       }
-    } catch (Exception ex) {}
+    } catch (Exception ex) {
+    }
     return null;
   }
 
@@ -163,7 +240,7 @@ public class App {
       return null;
     }
   }
-  
+
   public static void pause(int time) {
     try {
       Thread.sleep(time * 1000);
@@ -181,6 +258,7 @@ public class App {
 
   //<editor-fold defaultstate="collapsed" desc="AppEntry">
   public static class AppEntry {
+
     public String name;
     public String execName;
     public String options;
@@ -195,7 +273,8 @@ public class App {
       execName = theExec;
       try {
         pid = Integer.parseInt(thePID);
-      } catch (Exception ex) {}
+      } catch (Exception ex) {
+      }
     }
   }
 
@@ -219,8 +298,7 @@ public class App {
 
   //<editor-fold defaultstate="collapsed" desc="constructors">
   /**
-   * creates an instance for an app with this name
-   * (nothing done yet)
+   * creates an instance for an app with this name (nothing done yet)
    *
    * @param name name
    */
@@ -231,7 +309,7 @@ public class App {
     appWindow = "";
     appOptions = "";
     String execName = "";
-    if(appNameGiven.startsWith("+")) {
+    if (appNameGiven.startsWith("+")) {
       isImmediate = true;
       appNameGiven = appNameGiven.substring(1);
       Debug.log(3, "App.immediate: %s", appNameGiven);
@@ -241,7 +319,7 @@ public class App {
         parts = appName.substring(1).split("\"");
         if (parts.length > 1) {
           appOptions = appName.substring(parts[0].length() + 3);
-          appName = "\"" + parts[0] +  "\"";
+          appName = "\"" + parts[0] + "\"";
         }
       } else {
         parts = appName.split(" ");
@@ -251,7 +329,7 @@ public class App {
         }
       }
       if (appName.startsWith("\"")) {
-        execName = appName.substring(1, appName.length()-1);
+        execName = appName.substring(1, appName.length() - 1);
       } else {
         execName = appName;
       }
@@ -302,7 +380,7 @@ public class App {
   }
 
   private void init(int pid) {
-    AppEntry app =_osUtil.getApp(pid, appName);
+    AppEntry app = _osUtil.getApp(pid, appName);
     if (app != null) {
       appName = app.name;
       appPID = app.pid;
@@ -319,14 +397,16 @@ public class App {
       init(appPID);
     } else {
       String name = appName;
-      if (name.isEmpty() && appOptions.isEmpty()) name = appNameGiven;
+      if (name.isEmpty() && appOptions.isEmpty()) {
+        name = appNameGiven;
+      }
       init(name);
     }
   }
 //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="getter/setter">
-  public static void getApps(String name){
+  public static void getApps(String name) {
     Map<Integer, String[]> theApps = _osUtil.getApps(name);
     int count = 0;
     String[] item;
@@ -343,7 +423,7 @@ public class App {
     Debug.logp("App.getApps: %d apps (%d having window)", theApps.size(), count);
   }
 
-  public static void getApps(){
+  public static void getApps() {
     getApps(null);
   }
 
@@ -393,7 +473,7 @@ public class App {
       }
       wait = 1000 - new Date().getTime() + wait;
       if (wait > 0) {
-        RunTime.pause(wait/1000f);
+        RunTime.pause(wait / 1000f);
       }
     }
     return appPID > -1;
@@ -423,6 +503,7 @@ public class App {
   //<editor-fold defaultstate="collapsed" desc="open">
   /**
    * creates an instance for an app with this name and tries to open it
+   *
    * @param appName name
    * @return the App instance or null on failure
    */
@@ -433,6 +514,7 @@ public class App {
   /**
    * tries to open the app defined by this App instance<br>
    * do not wait for the app to get running
+   *
    * @return this or null on failure
    */
   public App open() {
@@ -441,12 +523,13 @@ public class App {
 
   /**
    * tries to open the app defined by this App instance
+   *
    * @return this or null on failure
    */
   public App open(int waitTime) {
     return openAndWait(waitTime);
   }
-  
+
   public App openAndWait(int waitTime) {
     if (isImmediate) {
       appPID = _osUtil.open(appNameGiven);
@@ -464,7 +547,7 @@ public class App {
       return null;
     }
     if (waitTime > 0) {
-      if (! isRunning(waitTime)) {
+      if (!isRunning(waitTime)) {
         return null;
       }
     }
@@ -474,8 +557,8 @@ public class App {
 
   //<editor-fold defaultstate="collapsed" desc="close">
   /**
-   * tries to identify a running app with the given name
-   * and then tries to close it
+   * tries to identify a running app with the given name and then tries to close it
+   *
    * @param appName name
    * @return 0 for success -1 otherwise
    */
@@ -485,6 +568,7 @@ public class App {
 
   /**
    * tries to close the app defined by this App instance
+   *
    * @return this or null on failure
    */
   public int close() {
@@ -510,10 +594,9 @@ public class App {
 
   //<editor-fold defaultstate="collapsed" desc="focus">
   /**
-   * tries to identify a running app with name and
-   * if not running tries to open it
-   * and tries to make it the foreground application
-   * bringing its topmost window to front
+   * tries to identify a running app with name and if not running tries to open it and tries to make it the foreground
+   * application bringing its topmost window to front
+   *
    * @param appName name
    * @return the App instance or null on failure
    */
@@ -522,10 +605,9 @@ public class App {
   }
 
   /**
-   * tries to identify a running app with name and
-   * if not running tries to open it
-   * and tries to make it the foreground application
-   * bringing its window with the given number to front
+   * tries to identify a running app with name and if not running tries to open it and tries to make it the foreground
+   * application bringing its window with the given number to front
+   *
    * @param appName name
    * @param num window
    * @return the App instance or null on failure
@@ -535,8 +617,8 @@ public class App {
   }
 
   /**
-   * tries to make it the foreground application
-   * bringing its topmost window to front
+   * tries to make it the foreground application bringing its topmost window to front
+   *
    * @return the App instance or null on failure
    */
   public App focus() {
@@ -547,8 +629,8 @@ public class App {
   }
 
   /**
-   * tries to make it the foreground application
-   * bringing its window with the given number to front
+   * tries to make it the foreground application bringing its window with the given number to front
+   *
    * @param num window
    * @return the App instance or null on failure
    */
@@ -578,10 +660,9 @@ public class App {
 
   //<editor-fold defaultstate="collapsed" desc="window">
   /**
-   * evaluates the region currently occupied
-   * by the topmost window of this App instance.
-   * The region might not be fully visible, not visible at all
-   * or invalid with respect to the current monitor configuration (outside any screen)
+   * evaluates the region currently occupied by the topmost window of this App instance. The region might not be fully
+   * visible, not visible at all or invalid with respect to the current monitor configuration (outside any screen)
+   *
    * @return the region
    */
   public Region window() {
@@ -592,10 +673,10 @@ public class App {
   }
 
   /**
-   * evaluates the region currently occupied
-   * by the window with the given number of this App instance.
-   * The region might not be fully visible, not visible at all
-   * or invalid with respect to the current monitor configuration (outside any screen)
+   * evaluates the region currently occupied by the window with the given number of this App instance. The region might
+   * not be fully visible, not visible at all or invalid with respect to the current monitor configuration (outside any
+   * screen)
+   *
    * @param winNum window
    * @return the region
    */
@@ -607,8 +688,9 @@ public class App {
   }
 
   /**
-   * evaluates the region currently occupied by the systemwide frontmost window
-   * (usually the one that has focus for mouse and keyboard actions)
+   * evaluates the region currently occupied by the systemwide frontmost window (usually the one that has focus for
+   * mouse and keyboard actions)
+   *
    * @return the region
    */
   public static Region focusedWindow() {
@@ -623,13 +705,14 @@ public class App {
   public static String lastRunResult = "";
 
   /**
-   * the given text is parsed into a String[] suitable for issuing a Runtime.getRuntime().exec(args).
-   * quoting is preserved/obeyed. the first item must be an executable valid for the running system.<br>
+   * the given text is parsed into a String[] suitable for issuing a Runtime.getRuntime().exec(args). quoting is
+   * preserved/obeyed. the first item must be an executable valid for the running system.<br>
    * After completion, the following information is available: <br>
    * App.lastRunResult: a string containing the complete result according to the docs of the run() command<br>
    * App.lastRunStdout: a string containing only the output lines that went to stdout<br>
    * App.lastRunStderr: a string containing only the output lines that went to stderr<br>
    * App.lastRunReturnCode: the value, that is returnd as returncode
+   *
    * @param cmd the command to run starting with an executable item
    * @return the final returncode of the command execution
    */
@@ -639,11 +722,12 @@ public class App {
     String[] res = lastRunResult.split(NL);
     try {
       lastRunReturnCode = Integer.parseInt(res[0].trim());
-    } catch (Exception ex) {}
+    } catch (Exception ex) {
+    }
     lastRunStdout = "";
     lastRunStderr = "";
     boolean isError = false;
-    for (int n=1; n < res.length; n++) {
+    for (int n = 1; n < res.length; n++) {
       if (isError) {
         lastRunStderr += res[n] + NL;
         continue;
@@ -661,6 +745,7 @@ public class App {
   //<editor-fold defaultstate="collapsed" desc="clipboard">
   /**
    * evaluates the current textual content of the system clipboard
+   *
    * @return the textual content or empty string if not possible
    */
   public static String getClipboard() {
@@ -686,6 +771,7 @@ public class App {
 
   /**
    * sets the current textual content of the system clipboard to the given text
+   *
    * @param text text
    */
   public static void setClipboard(String text) {
@@ -733,6 +819,7 @@ public class App {
     }
 
     private static class TextTransferable implements Transferable, ClipboardOwner {
+
       private String data;
       private DataFlavor flavor;
 
@@ -756,17 +843,13 @@ public class App {
       public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
         if (flavor.isRepresentationClassInputStream()) {
           return new StringReader(data);
-        }
-        else if (flavor.isRepresentationClassReader()) {
+        } else if (flavor.isRepresentationClassReader()) {
           return new StringReader(data);
-        }
-        else if (flavor.isRepresentationClassCharBuffer()) {
+        } else if (flavor.isRepresentationClassCharBuffer()) {
           return CharBuffer.wrap(data);
-        }
-        else if (flavor.isRepresentationClassByteBuffer()) {
+        } else if (flavor.isRepresentationClassByteBuffer()) {
           return ByteBuffer.wrap(data.getBytes());
-        }
-        else if (flavor.equals(DataFlavor.stringFlavor)){
+        } else if (flavor.equals(DataFlavor.stringFlavor)) {
           return data;
         }
         throw new UnsupportedFlavorException(flavor);
@@ -781,6 +864,7 @@ public class App {
      * Enumeration for the text type property in MIME types
      */
     public static class TextType {
+
       private String type;
 
       private TextType(String type) {
@@ -797,6 +881,7 @@ public class App {
      * Enumeration for the charset property in MIME types (UTF-8, UTF-16, etc.)
      */
     public static class Charset {
+
       private String name;
 
       private Charset(String name) {
@@ -813,6 +898,7 @@ public class App {
      * Enumeration for the transferScriptt type property in MIME types (InputStream, CharBuffer, etc.)
      */
     public static class TransferType {
+
       private Class dataClass;
 
       private TransferType(Class streamClass) {
