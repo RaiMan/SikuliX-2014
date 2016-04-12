@@ -80,9 +80,9 @@ public class Visual extends JComponent
   Color color;
   public static Color defColorFront = Color.MAGENTA;
   Color colorFront;
-  public static Color defColorBack = Color.RED;
+  public static Color defColorBack = Color.WHITE;
   Color colorBack;
-  public static Color defColorFrame = Color.WHITE;
+  public static Color defColorFrame = Color.BLACK;
   Color colorFrame;
   public static Color defColorText = Color.BLACK;
   Color colorText;
@@ -750,7 +750,7 @@ public class Visual extends JComponent
   }
   //</editor-fold>
   
-//<editor-fold defaultstate="collapsed" desc="layout">
+  //<editor-fold defaultstate="collapsed" desc="layout">
   public Visual left() {
     left(0);
     return this;
@@ -798,6 +798,7 @@ public class Visual extends JComponent
     return this;
   }
 //</editor-fold>
+  
   //<editor-fold defaultstate="collapsed" desc="AutoLayout">
   AutoLayout autolayout = null;
 
