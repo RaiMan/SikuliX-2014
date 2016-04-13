@@ -2245,6 +2245,7 @@ public class Region {
     response = fd.getResponse();
     fd.dispose();
     wait(0.5);
+    log(lvl, "handleFindFailedShowDialog: answer is %s", response);
     return response;
   }
 
