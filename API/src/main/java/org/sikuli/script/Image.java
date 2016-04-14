@@ -911,7 +911,7 @@ public class Image {
   protected boolean backup() {
     if (isValid()) {
       File fOrg = new File(fileURL.getPath());
-      File fBack = new File(fOrg.getParentFile(), "BACKUP_" + fOrg.getName());
+      File fBack = new File(fOrg.getParentFile(), "_BACKUP_" + fOrg.getName());
       if (FileManager.xcopy(fOrg, fBack)) {
         hasBackup = fBack.getPath();
         log(lvl, "backup: %s created", fBack.getName());
