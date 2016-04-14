@@ -925,7 +925,7 @@ public class Image {
   protected boolean restore() {
     if (!hasBackup.isEmpty()) {
       File fBack = new File(hasBackup);
-      File fOrg = new File(hasBackup.replace("BACKUP_", ""));
+      File fOrg = new File(hasBackup.replace("_BACKUP_", ""));
       if (FileManager.xcopy(fBack, fOrg)) {
         log(lvl, "restore: %s restored", fOrg.getName());
         FileManager.deleteFileOrFolder(fBack);
