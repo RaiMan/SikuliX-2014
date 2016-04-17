@@ -474,6 +474,7 @@ public class Sikulix {
     //TODO move to class Keys after implementation
     Screen.getPrimaryScreen().getRobot().keyUp();
     Mouse.reset();
+    popat();
     //TODO what about remote screen sessions????
   }
 
@@ -616,7 +617,9 @@ public class Sikulix {
         }
       } 
     }
-    anchor.dispose();
+    if (anchor != null) {
+      anchor.dispose();
+    }
     return ret;
   }
 
