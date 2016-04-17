@@ -256,6 +256,15 @@ def highlightOff():
     SH.closeAll()
 
 ## ----------------------------------------------------------------------
+# set location, where the center of the pop... should be
+# no-args: use center of primary screen (default)
+# is used until changed again
+def popat(*args):
+    if len(args) == 0:
+        Sikulix.popat()
+    else:
+        Sikulix.popat(args[0])
+
 # Shows a message dialog containing the given message.
 # @param msg The given message string.
 # @param title gets the window title.
