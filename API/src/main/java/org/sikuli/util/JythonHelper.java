@@ -642,16 +642,22 @@ public class JythonHelper {
       if (fSites.exists()) {
         sSites = FileManager.readFileToString(fSites);
         if (!sSites.isEmpty()) {
+          log(lvl, "found Lib/site-packages/sites.txt");
           String[] listSites = sSites.split("\n");
           for (String site : listSites) {
             String path = site.trim();
             if (!path.isEmpty()) {
               appendSysPath(path);
+              log(lvl, "adding from Lib/site-packages/sites.txt:\n%s", path);
             }
           }
         }
       }
     }
+    String fpBundle = ImagePath.getPath(0);
+    if (fpBundle != null) {
+      addSysPath(fpBundle);
+    }    
   }
 
   public void addSysPath(String fpFolder) {

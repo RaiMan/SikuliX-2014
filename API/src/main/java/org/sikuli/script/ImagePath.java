@@ -184,6 +184,15 @@ public class ImagePath {
     }
     return paths;
   }
+  
+  public static String getPath(int ix) {
+    PathEntry pe = imagePaths.get(0);
+    String path = null;
+    if (pe != null) {
+      path = pe.getPath();
+    }
+    return path;
+  }
 
   /**
    * print the list of path entries
