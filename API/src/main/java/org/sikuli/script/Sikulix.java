@@ -565,7 +565,11 @@ public class Sikulix {
   }
 
   public static void popError(String message, String title) {
-    JOptionPane.showMessageDialog(null, message, title, JOptionPane.ERROR_MESSAGE);
+    JFrame anchor = popLocation();
+    JOptionPane.showMessageDialog(anchor, message, title, JOptionPane.ERROR_MESSAGE);
+    if (anchor != null) {
+      anchor.dispose();
+    }
   }
 
   /**
@@ -581,15 +585,14 @@ public class Sikulix {
    * @return the text entered
    */
   public static String input(String msg, String preset, String title, boolean hidden) {
+    JFrame anchor = popLocation();
+    String ret = "";
     if (!hidden) {
       if ("".equals(title)) {
         title = "Sikuli input request";
       }
-      JFrame anchor = popLocation();
-      String ret = (String) JOptionPane.showInputDialog(anchor, msg, title, 
+      ret = (String) JOptionPane.showInputDialog(anchor, msg, title, 
               JOptionPane.PLAIN_MESSAGE, null, null, preset);
-      anchor.dispose();
-      return ret;
     } else {
       preset = "";
       JTextArea tm = new JTextArea(msg);
@@ -604,18 +607,17 @@ public class Sikulix {
       pnl.add(pw);
       pnl.add(Box.createVerticalStrut(10));
       pnl.add(tm);
-      if (0 == JOptionPane.showConfirmDialog(null, pnl, title, JOptionPane.OK_CANCEL_OPTION)) {
+      int retval = JOptionPane.showConfirmDialog(anchor, pnl, title, JOptionPane.OK_CANCEL_OPTION);
+      if (0 == retval) {
         char[] pwc = pw.getPassword();
-        String pwr = "";
         for (int i = 0; i < pwc.length; i++) {
-          pwr = pwr + pwc[i];
+          ret = ret + pwc[i];
           pwc[i] = 0;
         }
-        return pwr;
-      } else {
-        return "";
-      }
+      } 
     }
+    anchor.dispose();
+    return ret;
   }
 
   public static String input(String msg, String title, boolean hidden) {
@@ -648,7 +650,9 @@ public class Sikulix {
     }
     JFrame anchor = popLocation();
     int ret = JOptionPane.showConfirmDialog(anchor, msg, title, JOptionPane.YES_NO_OPTION);
-    anchor.dispose();
+    if (anchor != null) {
+      anchor.dispose();
+    }
     if (ret == JOptionPane.CLOSED_OPTION || ret == JOptionPane.NO_OPTION) {
       return false;
     }
@@ -661,12 +665,10 @@ public class Sikulix {
 
   public static void popup(String message, String title) {
     JFrame anchor = popLocation();
-    doPopup(anchor, message, title);
-    anchor.dispose();
-  }
-  
-  private static void doPopup(JFrame anchor, String message, String title) {
     JOptionPane.showMessageDialog(anchor, message, title, JOptionPane.PLAIN_MESSAGE);
+    if (anchor != null) {
+      anchor.dispose();
+    }
   }
   
   public static void popat(Location at) {
@@ -687,7 +689,7 @@ public class Sikulix {
 
   private static JFrame popLocation() {
     if (locPopAt == null) {
-      return popLocation(new Screen().getCenter().x, new Screen().getCenter().y);   
+      return null;   
     } else {
       return popLocation(locPopAt.x, locPopAt.y);
     }
@@ -734,6 +736,9 @@ public class Sikulix {
     JFrame anchor = popLocation();
     String ret = (String) JOptionPane.showInputDialog(anchor, msg, title,
             JOptionPane.PLAIN_MESSAGE, null, options, preset);
+    if (anchor != null) {
+      anchor.dispose();
+    }
     return ret;
   }
 
@@ -780,14 +785,15 @@ public class Sikulix {
     pnl.add(Box.createVerticalStrut(10));
     JFrame anchor = popLocation();
     int ret = JOptionPane.showConfirmDialog(anchor, pnl, title, JOptionPane.OK_CANCEL_OPTION);
-    anchor.dispose();
+    if (anchor != null) {
+      anchor.dispose();
+    }
     if (0 == ret) {
       return ta.getText();
     } else {
       return "";
     }
   }
-
 
   public static boolean importPrefs(String path) {
     return true;
