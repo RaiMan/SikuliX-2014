@@ -59,6 +59,7 @@ public class Sikulix {
   private static RunTime rt = null;
   public static int testNumber = -1;
   private static boolean shouldRunServer = false;
+  private static Location locPopAt = null;
 
   static {
     String jarName = "";
@@ -148,6 +149,14 @@ public class Sikulix {
     ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
     String shotPath = new File(ImagePath.getPaths().get(1).getPath()).getParent();
     ImagePath.setBundlePath(shotPath);
+    
+    Screen s = new Screen();
+    App.focus("Safari");
+    popat(s.get(211));
+    popup("test");
+    RunTime.pause(3);
+    
+    System.exit(1);
 
     String version = String.format("(%s-%s)", rt.getVersionShort(), rt.sxBuildStamp);
     File lastSession = new File(rt.fSikulixStore, "LastAPIJavaScript.js");
@@ -576,7 +585,11 @@ public class Sikulix {
       if ("".equals(title)) {
         title = "Sikuli input request";
       }
-      return (String) JOptionPane.showInputDialog(null, msg, title, JOptionPane.PLAIN_MESSAGE, null, null, preset);
+      JFrame anchor = popLocation();
+      String ret = (String) JOptionPane.showInputDialog(anchor, msg, title, 
+              JOptionPane.PLAIN_MESSAGE, null, null, preset);
+      anchor.dispose();
+      return ret;
     } else {
       preset = "";
       JTextArea tm = new JTextArea(msg);
@@ -633,7 +646,9 @@ public class Sikulix {
     if (title == null) {
       title = "... something to decide!";
     }
-    int ret = JOptionPane.showConfirmDialog(null, msg, title, JOptionPane.YES_NO_OPTION);
+    JFrame anchor = popLocation();
+    int ret = JOptionPane.showConfirmDialog(anchor, msg, title, JOptionPane.YES_NO_OPTION);
+    anchor.dispose();
     if (ret == JOptionPane.CLOSED_OPTION || ret == JOptionPane.NO_OPTION) {
       return false;
     }
@@ -645,7 +660,47 @@ public class Sikulix {
   }
 
   public static void popup(String message, String title) {
-    JOptionPane.showMessageDialog(null, message, title, JOptionPane.PLAIN_MESSAGE);
+    JFrame anchor = popLocation();
+    doPopup(anchor, message, title);
+    anchor.dispose();
+  }
+  
+  private static void doPopup(JFrame anchor, String message, String title) {
+    JOptionPane.showMessageDialog(anchor, message, title, JOptionPane.PLAIN_MESSAGE);
+  }
+  
+  public static void popat(Location at) {
+    locPopAt = at;
+  }
+
+  public static void popat(Region at) {
+    locPopAt = at.getCenter();
+  }
+  
+  public static void popat(int atx, int aty) {
+    locPopAt = new Location(atx, aty);
+  }
+  
+  public static void popat() {
+    locPopAt = null;
+  }
+
+  private static JFrame popLocation() {
+    if (locPopAt == null) {
+      return popLocation(new Screen().getCenter().x, new Screen().getCenter().y);   
+    } else {
+      return popLocation(locPopAt.x, locPopAt.y);
+    }
+  }
+
+  private static JFrame popLocation(int x, int y) {
+    JFrame anchor = new JFrame();
+    anchor.setAlwaysOnTop(true);
+    anchor.setUndecorated(true);
+    anchor.setSize(1,1);
+    anchor.setLocation(x, y);
+    anchor.setVisible(true);
+    return anchor;
   }
 
   public static String popSelect(String msg, String[] options, String preset) {
@@ -676,7 +731,10 @@ public class Sikulix {
     if (preset == null) {
       preset = options[0];
     }
-    return (String) JOptionPane.showInputDialog(null, msg, title, JOptionPane.PLAIN_MESSAGE, null, options, preset);
+    JFrame anchor = popLocation();
+    String ret = (String) JOptionPane.showInputDialog(anchor, msg, title,
+            JOptionPane.PLAIN_MESSAGE, null, options, preset);
+    return ret;
   }
 
   /**
@@ -720,7 +778,10 @@ public class Sikulix {
     pnl.add(Box.createVerticalStrut(10));
     pnl.add(tm);
     pnl.add(Box.createVerticalStrut(10));
-    if (0 == JOptionPane.showConfirmDialog(null, pnl, title, JOptionPane.OK_CANCEL_OPTION)) {
+    JFrame anchor = popLocation();
+    int ret = JOptionPane.showConfirmDialog(anchor, pnl, title, JOptionPane.OK_CANCEL_OPTION);
+    anchor.dispose();
+    if (0 == ret) {
       return ta.getText();
     } else {
       return "";
