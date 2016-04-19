@@ -1527,7 +1527,7 @@ public class RunTime {
   private final String dlDevLink = "http://nightly.sikuli.de/";
   public String SikuliRepo;
   public String SikuliLocalRepo = "";
-  public String[] ServerList = {"http://dl.dropboxusercontent.com/u/42895525/SikuliX"};
+  public String[] ServerList = {};
   private String sversion;
   private String bversion;
   public String SikuliVersionDefault;
