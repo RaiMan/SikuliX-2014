@@ -461,8 +461,9 @@ public class Sikulix {
   }
 
   /**
-   * INTERNAL USE: resets stateful Sikuli X features: ScreenHighlighter, Observing, Mouse, Key, Hotkeys When in IDE:
-   * resets selected options to defaults (TODO)
+   * INTERNAL USE: resets stateful Sikuli X features: <br>
+   * ScreenHighlighter, Observing, Mouse, Key, Hotkeys <br> 
+   * When in IDE: resets selected options to defaults (TODO)
    *
    * @param n returncode
    */
