@@ -772,12 +772,13 @@ public class RunSetup {
         downloadedFiles.replace(downloadJython, downloadJython25);
       } else {
         if (popAsk("If you click YES, you will get Jython version 2.7.0 (recommended)\n"
-                + "... but there is an issue with some rare UTF-8/Unicode situations,\n"
-                + "that usually appear on startup with UTF-8 ccharacters\n"
-                + "somewhere in the system environment\n"
+                + "... but there might be a rare issue with UTF-8/Unicode\n"
+                + "that usually appears on startup when UTF-8 characters\n"
+                + "are present somewhere in the system environment\n"
                 + "If you encounter such problems with Jython 2.7.0\n"
                 + "run setup again and\n"
                 + "click NO to get Jython 2.5.4rc1")) {
+          // TODO: use runtime.SikuliJythonVersion25 in the message above
           sDownloadedName = new File(runTime.SikuliJythonMaven).getName();
           fDownloaded = downloadedAlready("python", "Jython 2.7", false);
           if (fDownloaded == null) {
