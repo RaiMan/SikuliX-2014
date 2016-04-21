@@ -772,8 +772,8 @@ public class RunSetup {
         downloadedFiles.replace(downloadJython, downloadJython25);
       } else {
         if (popAsk("If you click YES, you will get Jython version 2.7.0 (recommended)\n"
-                + "... but there might be a rare issue with UTF-8/Unicode\n"
-                + "that usually appears on startup when UTF-8 characters\n"
+                + "... but in rare cases there might be issues with UTF-8/Unicode\n"
+                + "that usually appear on startup when UTF-8 characters\n"
                 + "are present somewhere in the system environment\n"
                 + "If you encounter such problems with Jython 2.7.0\n"
                 + "run setup again and\n"
