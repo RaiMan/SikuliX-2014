@@ -2446,7 +2446,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
                     + "\nYou will not see any messages anymore!"
                     + "\nSave your work and restart the IDE!", "Fatal Error");
           }
-          log(-1, "Scriptrun: trying to cleanup: UncaughtExceptionHandler: %s", e.toString());
+          log(lvl, "Scriptrun: cleanup in handler for uncaughtException: %s", e.toString());
           doRun.hasFinished(true);
           doRun.afterRun();
         }
