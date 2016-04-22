@@ -1,4 +1,33 @@
 <h1>Changelog version 1.1.1</h1>
+<h4>Build: 2016-04-21</h4>
+revised: The target parameter type in find, wait, exists and findAll is now checked for validity.<br>
+... same goes for the respective indirect finds in click, ... (valid only: single Pattern, String, Image)<br>
+... If invalid the script aborts with an error message reporting the line number in Jython scripts.<br>
+added: class App: experimental: issue http requests based on Apache org.apache.httpcomponents.httpclient 
+(App.wwwStart(), App.wwwStop(), App.wwwGet(), App.wwwSave() see javadocs)<br>
+added: FindFailed handler support: it is now possible, to define a handler function (as with observe), 
+that is visited in case of FindFailed situations (before any other actions). 
+A handler might also be specified for situations, that an image is not found on the imagepath (not loadable).
+This new feature allows much easier, to implement corrective actions and logging for these cases.
+How to finally handle the case can be specified in the handler. (see docs: Exception FindFailed)<br>
+revised: FindFailed PROMPT: now an image can be recaptured in case of not found. This might make it easier, 
+to make a script work in changed environments, where images are no longer found. 
+The original image is preserved as _BACKUP_original.png. 
+These backups have to be managed manually at this time and 
+are overwritten without notice with the next recapture<br>
+added: input and pop... features can now be placed on the screen where needed 
+(center of the dialogbox goes to a given location or center of a region - 
+related function is popat())<br>
+revised: input, popup and the other pop... features now are always on top 
+from beginning no matter which app is frontmost<br>
+revised: Jython scripting support: possible now to setup a folder 
+myscript (no .sikuli needed) containing a myscript.py, other .py files to be imported
+and folders .sikuli intended to contain images.<br>
+... This allows to setup projects in IDE's like PyCharm and 
+run them from PyCharm as well as using SikuliX from commandline. <br>
+... The image folders .sikuli are intended to be managed in the SikuliX IDE (capture support).<br>
+About the prerequisites and the possibilities see the docs. 
+This folder structure is not yet supported in the SikuliX IDE.
 <h4>Build: 2016-03-26</h4>
 fixed: findAll: Match.getImageFilename now works
 <h4>Build: 2016-03-25</h4>
