@@ -16,7 +16,6 @@ import java.io.*;
 import java.net.URI;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
-import java.nio.charset.Charset;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -28,7 +27,6 @@ import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.sikuli.basics.FileManager;
@@ -71,9 +69,17 @@ public class App {
 
   }
 
+  //<editor-fold defaultstate="collapsed" desc="features based on org.apache.httpcomponents.httpclient">
   private static CloseableHttpClient httpclient = null;
 
+  /**
+   * create a HTTP Client (for use of wwGet, ... multiple times as session)
+   * @return true on success, false otherwise
+   */
   public static boolean wwwStart() {
+    if (httpclient != null) {
+      return true;
+    }
     httpclient = HttpClients.createDefault();
     if (httpclient != null) {
       return true;
@@ -81,6 +87,9 @@ public class App {
     return false;
   }
   
+  /**
+   * stop a started HTTP Client
+   */
   public static void wwwStop() {
     if (httpclient != null) {
       try {
@@ -91,6 +100,12 @@ public class App {
     }
   }
 
+  /**
+   * issue a http(s) request 
+   * @param url a valid url as used in a browser
+   * @return textual content of the response or empty (UTF-8)
+   * @throws IOException
+   */
   public static String wwwGet(String url) throws IOException {
     HttpGet httpget = new HttpGet(url);
     CloseableHttpResponse response = null;
@@ -105,7 +120,7 @@ public class App {
                   statusLine.getReasonPhrase());
         }
         if (entity == null) {
-          throw new ClientProtocolException("Response contains no content");
+          throw new ClientProtocolException("Response has no content");
         }
         InputStream is = entity.getContent();
         ByteArrayOutputStream result = new ByteArrayOutputStream();
@@ -117,22 +132,38 @@ public class App {
         return result.toString("UTF-8");
       }
     };
+    boolean oneTime = false;
+    if (httpclient == null) {
+      wwwStart();
+      oneTime = true;
+    }
     Object content = httpclient.execute(httpget, rh);
+    if (oneTime) {
+      wwwStop();
+    }
     return (String) content;
   }
   
+  /**
+   * same as wwwGet(), but the content is also saved to a file 
+   * @param url a valid url as used in a browser
+   * @param pOut absolute path to output file (overwritten) (if null: bundlePath/wwwSave.txt is taken)
+   * @return textual content of the response or empty (UTF-8)
+   * @throws IOException
+   */
   public static String wwwSave(String url, String pOut) throws IOException {
     String content = wwwGet(url);
     File out = null;
     if (pOut == null) {
-      out = new File(ImagePath.getBundleFolder(), "www.Save.txt");
+      out = new File(ImagePath.getBundleFolder(), "wwwSave.txt");
     } else {
       out = new File(pOut);
     }
     FileManager.writeStringToFile(content, out);
     return content;
   }
-
+  //</editor-fold>
+  
   //<editor-fold defaultstate="collapsed" desc="special app features">
   public static enum Type {
 
