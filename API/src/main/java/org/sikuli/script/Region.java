@@ -2123,7 +2123,7 @@ public class Region {
    * @param target The Pattern, String or Image
    * @return the Image
    */
-  private <PSI> Image getImage(PSI target) {
+  private <PSI> Image getImageFromTarget(PSI target) {
     if (target instanceof Pattern) {
       return ((Pattern) target).getImage();
     } else if (target instanceof String) {
@@ -2131,8 +2131,10 @@ public class Region {
     } else if (target instanceof Image) {
       return (Image) target;
     } else {
-      return null;
+        abortScripting("aborting script at:", 
+                String.format("find, wait, exists: invalid parameter: %s", target));
     }
+    return null;
   }
 
   /**
@@ -2263,7 +2265,7 @@ public class Region {
       return wait(target, autoWaitTimeout);
     }
     lastMatch = null;
-    Image img = getImage(target);
+    Image img = getImageFromTarget(target);
     String targetStr = img.getName();
     Boolean response = true;
     if (!img.isValid() && img.hasIOException()) {
@@ -2344,19 +2346,23 @@ public class Region {
       }
     }
     if (!shouldAbort.isEmpty()) {
-      Thread current = Thread.currentThread();
-      String where = "unknown";
-      if (runTime.isJythonReady) {
-        where = JythonHelper.get().getCurrentLine();
-      }
-      log(-1, "Exists: Abort: %s", where);
-      log(-1, "FindFailed: " + shouldAbort);
-      current.interrupt();
-      current.stop();
+      abortScripting("Exists: Abort:", "FindFailed: " + shouldAbort);
     } else {
       log(lvl, "exists: %s did not appear [%d msec]", targetStr, lastFindTime);
     }
     return null;
+  }
+  
+  private void abortScripting(String msg1, String msg2) {
+    Thread current = Thread.currentThread();
+    String where = "unknown";
+    if (runTime.isJythonReady) {
+      where = JythonHelper.get().getCurrentLine();
+    }
+    log(-1, msg1 + " %s", where);
+    log(-1, msg2);
+    current.interrupt();
+    current.stop();
   }
 
   /**
@@ -2848,8 +2854,8 @@ public class Region {
           }
         }
       } else {
-        log(-1, "doFind: invalid parameter: %s", ptn);
-        Sikulix.terminate(999);
+        abortScripting("aborting script at:", 
+                String.format("find, wait, exists: invalid parameter: %s", ptn));
       }
       if (repeating != null) {
         repeating._finder = f;
@@ -3045,7 +3051,7 @@ public class Region {
     public <PSI> RepeatableFind(PSI target, Image img) {
       _target = target;
       if (img == null) {
-        _image = getImage(target);
+        _image = getImageFromTarget(target);
       } else {
         _image = img;
       }
@@ -3091,7 +3097,7 @@ public class Region {
     public <PSI> RepeatableFindAll(PSI target, Image img) {
       _target = target;
       if (img == null) {
-        _image = getImage(target);
+        _image = getImageFromTarget(target);
       } else {
         _image = img;
       }
