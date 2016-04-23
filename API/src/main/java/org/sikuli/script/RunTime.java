@@ -2646,6 +2646,7 @@ public class RunTime {
     }
     String result = "";
     String error = runCmdError + NL;
+    String errorOut = "";
     boolean hasError = false;
     int retVal;
     try {
@@ -2665,11 +2666,14 @@ public class RunTime {
           result += s + NL;
         }
       }
-      if ((s = stdError.readLine()) != null) {
-        hasError = true;
+      while ((s = stdError.readLine()) != null) {
         if (!s.isEmpty()) {
-          error += s + NL;
+          errorOut += s + NL;
         }
+      }
+      if (!errorOut.isEmpty()) {
+        error = error + errorOut;
+        hasError = true;
       }
       process.waitFor();
       retVal = process.exitValue();
