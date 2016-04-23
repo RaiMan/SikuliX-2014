@@ -2118,26 +2118,6 @@ public class Region {
   }
 
   /**
-   * Returns the image of the given Pattern, String or Image
-   *
-   * @param target The Pattern, String or Image
-   * @return the Image
-   */
-  private <PSI> Image getImageFromTarget(PSI target) {
-    if (target instanceof Pattern) {
-      return ((Pattern) target).getImage();
-    } else if (target instanceof String) {
-      return Image.get((String) target);
-    } else if (target instanceof Image) {
-      return (Image) target;
-    } else {
-        abortScripting("aborting script at:", 
-                String.format("find, wait, exists: invalid parameter: %s", target));
-    }
-    return null;
-  }
-
-  /**
    * return false to skip <br>
    * return true to try again <br>
    * throw FindFailed to abort
@@ -2265,11 +2245,14 @@ public class Region {
       return wait(target, autoWaitTimeout);
     }
     lastMatch = null;
-    Image img = getImageFromTarget(target);
+    Image img = Image.getImageFromTarget(target);
     String targetStr = img.getName();
     Boolean response = true;
     if (!img.isValid() && img.hasIOException()) {
       response = handleImageMissing(img, false);
+      if (response == null) {
+        runTime.abortScripting("Find: Abort:", "ImageMissing: " + target.toString());
+      }
     }
     while (null != response && response) {
       log(lvl, "find: waiting 0 secs for %s to appear in %s", targetStr, this.toStringShort());
@@ -2321,6 +2304,9 @@ public class Region {
     Boolean response = true;
     if (!img.isValid() && img.hasIOException()) {
       response = handleImageMissing(img, false);
+      if (response == null) {
+        runTime.abortScripting("Exists: Abort:", "ImageMissing: " + target.toString());
+      }
     }
     while (null != response && response) {
       log(lvl, "exists: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
@@ -2346,25 +2332,13 @@ public class Region {
       }
     }
     if (!shouldAbort.isEmpty()) {
-      abortScripting("Exists: Abort:", "FindFailed: " + shouldAbort);
+      runTime.abortScripting("Exists: Abort:", "FindFailed: " + shouldAbort);
     } else {
       log(lvl, "exists: %s did not appear [%d msec]", targetStr, lastFindTime);
     }
     return null;
   }
   
-  private void abortScripting(String msg1, String msg2) {
-    Thread current = Thread.currentThread();
-    String where = "unknown";
-    if (runTime.isJythonReady) {
-      where = JythonHelper.get().getCurrentLine();
-    }
-    log(-1, msg1 + " %s", where);
-    log(-1, msg2);
-    current.interrupt();
-    current.stop();
-  }
-
   /**
    * finds all occurences of the given Pattern, String or Image in the region and returns an Iterator of Matches.
    *
@@ -2382,6 +2356,9 @@ public class Region {
     Boolean response = true;
     if (!img.isValid() && img.hasIOException()) {
       response = handleImageMissing(img, false);
+      if (response == null) {
+        runTime.abortScripting("FindAll: Abort:", "ImageMissing: " + target.toString());
+      }      
     }
     if (null != response && response) {
       log(lvl, "findAll: waiting %.1f secs for (multiple) %s to appear in %s", 
@@ -2647,6 +2624,9 @@ public class Region {
     Boolean response = true;
     if (!img.isValid() && img.hasIOException()) {
       response = handleImageMissing(img, false);
+      if (response == null) {
+        runTime.abortScripting("Wait: Abort:", "ImageMissing: " + target.toString());
+      }
     }
     while (null != response && response) {
       log(lvl, "wait: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
@@ -2854,7 +2834,7 @@ public class Region {
           }
         }
       } else {
-        abortScripting("aborting script at:", 
+        runTime.abortScripting("aborting script at:", 
                 String.format("find, wait, exists: invalid parameter: %s", ptn));
       }
       if (repeating != null) {
@@ -3051,7 +3031,7 @@ public class Region {
     public <PSI> RepeatableFind(PSI target, Image img) {
       _target = target;
       if (img == null) {
-        _image = getImageFromTarget(target);
+        _image = Image.getImageFromTarget(target);
       } else {
         _image = img;
       }
@@ -3097,7 +3077,7 @@ public class Region {
     public <PSI> RepeatableFindAll(PSI target, Image img) {
       _target = target;
       if (img == null) {
-        _image = getImageFromTarget(target);
+        _image = Image.getImageFromTarget(target);
       } else {
         _image = img;
       }
@@ -3270,6 +3250,17 @@ public class Region {
             || observer.getClass().getName().contains("org.jruby"))) {
       observer = new ObserverCallBack(observer, obsType);
     }
+    if (! (targetThreshhold instanceof Integer)) {
+      Image img = Image.getImageFromTarget(targetThreshhold);
+      Boolean response = true;
+      if (!img.isValid() && img.hasIOException()) {
+        response = handleImageMissing(img, false);
+        if (response == null) {
+          runTime.abortScripting("onEvent(" + obsType.name() + "): Abort:", 
+                  "ImageMissing: " + targetThreshhold.toString());
+        }
+      }
+    }
     String name = Observing.add(this, (ObserverCallBack) observer, obsType, targetThreshhold);
     log(lvl, "%s: observer %s %s: %s with: %s", toStringShort(), obsType,
             (observer == null ? "" : " with callback"), name, targetThreshhold);
@@ -3313,7 +3304,7 @@ public class Region {
    * @param observer ObserverCallBack
    * @return the event's name
    */
-  public String onChange(int threshold, Object observer) {
+  public String onChange(Integer threshold, Object observer) {
     return onEvent((threshold > 0 ? threshold : Settings.ObserveMinChangedPixels),
             observer, ObserveEvent.Type.CHANGE);
   }
@@ -3326,7 +3317,7 @@ public class Region {
    * @param threshold minimum size of changes (rectangle threshhold x threshold)
    * @return the event's name
    */
-  public String onChange(int threshold) {
+  public String onChange(Integer threshold) {
     return onEvent((threshold > 0 ? threshold : Settings.ObserveMinChangedPixels),
             null, ObserveEvent.Type.CHANGE);
   }
@@ -3391,7 +3382,7 @@ public class Region {
 //	}
 //
 //</editor-fold>
-  public String onChangeDo(int threshold, Object observer) {
+  public String onChangeDo(Integer threshold, Object observer) {
     String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.CHANGE, threshold);
     log(lvl, "%s: onChange%s: %s minSize: %d", toStringShort(),
             (observer == null ? "" : " with callback"), name, threshold);

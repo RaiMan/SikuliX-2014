@@ -604,22 +604,20 @@ public class Image {
     return createImageValidate(img, true);
   }
 
-	/**
-	 * create new Image from
-	 * @param obj String, Pattern or other Image
-	 * @return Image
-	 */
-	protected static Image createFromObject(Object obj) {
-    if (obj instanceof String) {
-      return create((String) obj);
-    } else if (obj instanceof Image) {
-      return (Image) obj;
-    }  else if (obj instanceof Pattern) {
-      return Image.create((Pattern) obj);
+  protected static <PSI> Image getImageFromTarget(PSI target) {
+    if (target instanceof Pattern) {
+      return ((Pattern) target).getImage();
+    } else if (target instanceof String) {
+      return get((String) target);
+    } else if (target instanceof Image) {
+      return (Image) target;
+    } else {
+        runTime.abortScripting("aborting script at:", 
+                String.format("find, wait, exists: invalid parameter: %s", target));
     }
-    return new Image();
+    return null;
   }
-
+  
   /**
    * FOR INTERNAL USE: from IDE - suppresses load error message
    *

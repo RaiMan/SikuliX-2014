@@ -77,6 +77,18 @@ public class RunTime {
     }
   }
 
+  protected void abortScripting(String msg1, String msg2) {
+    Thread current = Thread.currentThread();
+    String where = "unknown";
+    if (Region.runTime.isJythonReady) {
+      where = JythonHelper.get().getCurrentLine();
+    }
+    log(-1, msg1 + " %s", where);
+    log(-1, msg2);
+    current.interrupt();
+    current.stop();
+  }
+
 //<editor-fold defaultstate="collapsed" desc="logging">
   private final String me = "RunTime%s: ";
   private int lvl = 3;

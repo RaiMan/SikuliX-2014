@@ -785,7 +785,10 @@ public class JythonHelper {
         trace = "Jython traceback - current first:\n"
                 + getCurrentLineTraceElement(fLineno, fCode, fFilename, frame);
         while (null != back) {
-          trace += "\n" + getCurrentLineTraceElement(fLineno, fCode, fFilename, back);
+          String line = getCurrentLineTraceElement(fLineno, fCode, fFilename, back);
+          if (! line.startsWith("Region (")) {
+            trace += "\n" + line;
+          }
           back = fBack.get(back);
         }
       }

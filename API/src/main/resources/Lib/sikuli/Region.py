@@ -48,8 +48,7 @@ class Region(JRegion):
     else:
       return JRegion.wait(self, target, timeout)
 
-    # the new Region.text() feature (Tesseract 3) returns utf8
-
+  # the new Region.text() feature (Tesseract 3) returns utf8
   def text(self):
     return JRegion.text(self).encode("utf8")
 
