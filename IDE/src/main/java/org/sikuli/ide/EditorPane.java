@@ -45,6 +45,7 @@ import org.sikuli.syntaxhighlight.ResolutionException;
 import org.sikuli.syntaxhighlight.grammar.Lexer;
 import org.sikuli.syntaxhighlight.grammar.Token;
 import org.sikuli.syntaxhighlight.grammar.TokenType;
+import org.sikuli.util.SikulixFileChooser;
 
 public class EditorPane extends JTextPane implements KeyListener, CaretListener {
 
@@ -261,7 +262,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	//</editor-fold>
 
 	public String loadFile(boolean accessingAsFile) throws IOException {
-		File file = new SikuliIDEFileChooser(sikuliIDE, accessingAsFile).load();
+		File file = new SikulixFileChooser(sikuliIDE, accessingAsFile).load();
 		if (file == null) {
 			return null;
 		}
@@ -275,7 +276,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 		if (_editingFile == null) {
 			return null;
 		}
-		return fname;
+    return _editingFile.getParent();
 	}
 
 	public void loadFile(String filename) {
@@ -346,7 +347,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	}
 
 	public String saveAsFile(boolean accessingAsFile) throws IOException {
-		File file = new SikuliIDEFileChooser(sikuliIDE, accessingAsFile).save();
+		File file = new SikulixFileChooser(sikuliIDE, accessingAsFile).save();
 		if (file == null) {
 			return null;
 		}
@@ -549,7 +550,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 	}
 
 	public String exportAsZip() throws IOException, FileNotFoundException {
-		File file = new SikuliIDEFileChooser(sikuliIDE).export();
+		File file = new SikulixFileChooser(sikuliIDE).export();
 		if (file == null) {
 			return null;
 		}

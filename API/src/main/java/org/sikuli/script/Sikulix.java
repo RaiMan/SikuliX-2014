@@ -28,6 +28,7 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
 import org.sikuli.util.JythonHelper;
+import org.sikuli.util.SikulixFileChooser;
 
 /**
  * global services for package API
@@ -693,10 +694,9 @@ public class Sikulix {
 
   private static JFrame popLocation() {
     if (locPopAt == null) {
-      return null;   
-    } else {
-      return popLocation(locPopAt.x, locPopAt.y);
-    }
+      locPopAt = new Screen().getCenter();
+    } 
+    return popLocation(locPopAt.x, locPopAt.y);
   }
 
   private static JFrame popLocation(int x, int y) {
@@ -744,6 +744,16 @@ public class Sikulix {
       anchor.dispose();
     }
     return ret;
+  }
+  
+  public static String popFile(String title) {
+    popat(new Screen(0).getCenter());
+    JFrame anchor = popLocation();
+    SikulixFileChooser fc = new SikulixFileChooser(anchor);
+    File ret = fc.show(title);
+    fc = null;
+    popat();
+    return ret.getAbsolutePath();
   }
 
   /**

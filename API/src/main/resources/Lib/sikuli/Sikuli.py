@@ -366,6 +366,9 @@ def select(msg="", title="Sikuli Selection", options=(), default=None):
         default = None
   return Sikulix.popSelect(msg, title, options, default)
 
+def popFile(title = "Select File or Folder"):
+  return Sikulix.popFile(title)
+
 ## ----------------------------------------------------------------------
 def capture(*args):
   return RUNTIME.capture(args)

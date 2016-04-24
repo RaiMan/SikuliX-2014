@@ -107,6 +107,7 @@ import org.sikuli.util.CommandArgsEnum;
 import org.sikuli.util.EventObserver;
 import org.sikuli.util.EventSubject;
 import org.sikuli.util.OverlayCapturePrompt;
+import org.sikuli.util.SikulixFileChooser;
 
 public class SikuliIDE extends JFrame implements InvocationHandler {
 
@@ -689,7 +690,12 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
   public void setFileTabTitle(String fName, int tabIndex) {
     String sName = new File(fName).getName();
-    tabPane.setTitleAt(tabIndex, sName.substring(0, sName.lastIndexOf(".")));
+    int i = sName.lastIndexOf(".");
+    if (i > 0) {
+      tabPane.setTitleAt(tabIndex, sName.substring(0, i));
+    } else {
+      tabPane.setTitleAt(tabIndex, sName);
+    }
     this.setTitle(new File(fName).getAbsolutePath());
   }
 
@@ -2106,7 +2112,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     @Override
     public void actionPerformed(ActionEvent ae) {
       EditorPane codePane = getCurrentCodePane();
-      File file = new SikuliIDEFileChooser(sikulixIDE).loadImage();
+      File file = new SikulixFileChooser(sikulixIDE).loadImage();
       if (file == null) {
         return;
       }
