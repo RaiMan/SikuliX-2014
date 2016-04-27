@@ -104,7 +104,7 @@ public class Mouse {
     get().device.mouseMovedCallback = null;
 		get().device.callback = null;
     get().device.lastPos = null;
-    Screen.getMouseRobot().mouseReset();
+    Screen.getPrimaryScreen().getRobot().mouseReset();
   }
 
   /**
@@ -253,7 +253,7 @@ public class Mouse {
       loc = at();
     }
     IRobot r = null;
-    r = Screen.getMouseRobot();
+    r = loc.getScreen().getRobot();
     if (r == null) {
       profiler.end();
       return 0;
@@ -341,7 +341,7 @@ public class Mouse {
     }
     if (loc != null) {
       IRobot r = null;
-      r = Screen.getMouseRobot();
+      r = loc.getScreen().getRobot();
       if (r == null) {
         return 0;
       }
@@ -372,7 +372,7 @@ public class Mouse {
       return;
     }
     get().device.use(region);
-    Screen.getMouseRobot().mouseDown(buttons);
+    Screen.getRobot(region).mouseDown(buttons);
   }
 
   /**
@@ -396,7 +396,7 @@ public class Mouse {
     if (get().device.isSuspended()) {
       return;
     }
-    Screen.getMouseRobot().mouseUp(buttons);
+    Screen.getRobot(region).mouseUp(buttons);
     if (region != null) {
       get().device.let(region);
     }
@@ -421,7 +421,7 @@ public class Mouse {
     if (get().device.isSuspended()) {
       return;
     }
-    IRobot r = Screen.getMouseRobot();
+    IRobot r = Screen.getRobot(region);
     get().device.use(region);
     Debug.log(3, "Region: wheel: %s steps: %d",
             (direction == WHEEL_UP ? "WHEEL_UP" : "WHEEL_DOWN"), steps);

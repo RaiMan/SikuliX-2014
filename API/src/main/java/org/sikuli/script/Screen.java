@@ -89,7 +89,7 @@ public class Screen extends Region implements IScreen {
     }
     log(lvl+1, "initScreens: entry");
     primaryScreen = 0;
-    globalRobot = getMouseRobot();
+    setMouseRobot();
     screens = new Screen[runTime.nMonitors];
     screens[0] = new Screen(0, runTime.mainMonitor);
     screens[0].initScreen();
@@ -126,7 +126,7 @@ public class Screen extends Region implements IScreen {
     }
   }
 
-  protected static IRobot getMouseRobot() {
+  private static void setMouseRobot() {
     try {
       if (globalRobot == null) {
         globalRobot = new RobotDesktop();
@@ -135,6 +135,10 @@ public class Screen extends Region implements IScreen {
       Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
       Sikulix.terminate(999);
     }
+  }
+
+  private IRobot getMouseRobot() {
+    setMouseRobot();
     return globalRobot;
   }
   
@@ -419,7 +423,15 @@ public class Screen extends Region implements IScreen {
    */
   @Override
   public IRobot getRobot() {
-    return robot;
+    return getMouseRobot();
+  }
+
+  protected static IRobot getRobot(Region reg) {
+    if (reg == null) {
+      return getPrimaryScreen().getMouseRobot();
+    } else {
+      return reg.getScreen().getRobot();
+    }
   }
 
   /**

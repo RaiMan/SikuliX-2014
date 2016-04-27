@@ -498,7 +498,6 @@ public class Location implements Comparable<Location>{
 		return String.format("[\"L\", %d, %d]", x, y);
 	}
 
-  // to avoid NPE for points outside any screen
   protected IRobot getRobotForPoint(String action) {
     if (getScreen() == null) {
       Debug.error("Point %s outside any screen not useable for %s", this, action);
@@ -507,7 +506,6 @@ public class Location implements Comparable<Location>{
     if (!getScreen().isOtherScreen()) {
       getScreen().showTarget(this);
     }
-    return Screen.getMouseRobot();
-//    return getScreen().getRobot();
+    return getScreen().getRobot();
   }
 }
