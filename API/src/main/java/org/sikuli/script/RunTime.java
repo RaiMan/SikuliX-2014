@@ -6,46 +6,26 @@
  */
 package org.sikuli.script;
 
-import java.awt.GraphicsDevice;
-import java.awt.GraphicsEnvironment;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.io.BufferedReader;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.PrintWriter;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.security.CodeSource;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
-import java.util.StringTokenizer;
-import java.util.prefs.Preferences;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
 import org.sikuli.util.JythonHelper;
 import org.sikuli.util.LinuxSupport;
 import org.sikuli.util.SysJNA;
+
+import java.awt.*;
+import java.io.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.security.CodeSource;
+import java.util.*;
+import java.util.List;
+import java.util.prefs.Preferences;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 /**
  * Intended to concentrate all, that is needed at startup of sikulix or sikulixapi and may be at runtime by SikuliX or
@@ -134,7 +114,7 @@ public class RunTime {
    */
   private RunTime() {
   }
-  
+
   public static synchronized RunTime get(Type typ) {
     return get(typ, null);
   }
@@ -2339,6 +2319,7 @@ public class RunTime {
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="classpath handling">
   private void storeClassPath() {
+    //TODO Java9
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     classPath = Arrays.asList(sysLoader.getURLs());
   }
