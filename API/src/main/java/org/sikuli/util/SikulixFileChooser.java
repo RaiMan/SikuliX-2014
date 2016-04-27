@@ -44,7 +44,7 @@ public class SikulixFileChooser {
     String type = "Sikuli Script (*.sikuli)";
     String title = "Save a Sikuli Script";    
     File ret = showFileChooser(title, SAVE, DIRS, new GeneralFileFilter("sikuli", type));
-    if (isExt(ret.getName(), "skl")) {
+    if (ret == null || isExt(ret.getName(), "skl")) {
       return null;
     }
     return ret;
