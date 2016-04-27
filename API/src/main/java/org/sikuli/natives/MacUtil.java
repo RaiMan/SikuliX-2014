@@ -86,16 +86,25 @@ public class MacUtil implements OSUtil {
     }
     int retVal = Runner.runas(theCmd, true);
     String result = RunTime.get().getLastCommandResult();
+    String title = "???";
+    String sPid = "-1";
+    String sName = "NotKnown";
     if (retVal > -1) {
       if (!result.contains("NotFound")) {
         String[] parts = result.split(",");
-        String title = parts[2];
+        if (parts.length > 1) {
+          sName = parts[0];
+          sPid = parts[1];
+        }
+        if (parts.length > 2) {
+          title = parts[2];
+        }
         if (parts.length > 3) {
           for (int i = 3; i < parts.length; i++) {
             title += "," + parts[i];
           }
         }
-        app = new App.AppEntry(parts[0].trim(), parts[1].trim(), title.trim(), "", "");
+        app = new App.AppEntry(sName.trim(), sPid.trim(), title.trim(), "", "");
       }
     }
     return app;

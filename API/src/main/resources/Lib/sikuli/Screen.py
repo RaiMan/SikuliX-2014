@@ -50,13 +50,4 @@ class Screen(Region):
         return self.getScreen().toString()
 
 ## ----------------------------------------------------------------------
-    def capture(self, *args):
-        return RUNTIME.get().capture(args)
-
-    def saveCapture(self, *args):
-        return RUNTIME.get().saveCapture(args)
-
-    def selectRegion(self, msg=None):
-        return RUNTIME.get().selectRegion(msg)
-
 

@@ -43,12 +43,26 @@ Debug.log(4, "Jython: sikuli: Sikuli: import Region")
 from Region import *
 
 Debug.log(4, "Jython: sikuli: Sikuli: import Screen")
-from Screen import *
+# from Screen import *
+import org.sikuli.script.Screen as JScreen
+
+class Screen(JScreen):
+  pass
 
 SCREEN = None
 
-def getCenter(*args):
-  SCREEN.getCenter(args)
+def capture(*args):
+  return SCREEN.cmdCapture(args)
+
+def wait(*args):
+  if len(args) == 1:
+    try:
+      return SCREEN.wait(float(args[0]))
+    except:
+      return SCREEN.wait(args[0])
+  if len(args) == 2:
+    return SCREEN.wait(args[0], args[1])
+  return None
 
 Debug.log(4, "Jython: sikuli: Sikuli: import ScreenUnion")
 from org.sikuli.script import ScreenUnion
@@ -370,16 +384,6 @@ def popFile(title = "Select File or Folder"):
   return Sikulix.popFile(title)
 
 ## ----------------------------------------------------------------------
-def capture(*args):
-  return RUNTIME.capture(args)
-
-def saveCapture(*args):
-  return RUNTIME.saveCapture(args)
-
-def selectRegion(msg=None):
-  return RUNTIME.selectRegion(msg)
-
-## ----------------------------------------------------------------------
 # set the default screen to given or primary screen
 #
 # TODO where else to remember an opened remote screen?
@@ -396,7 +400,7 @@ def use(scr=None, remote=False):
     remoteScreen.close()
     remoteScreen = None
   if not scr:
-    SCREEN = Screen()
+    SCREEN = JScreen()
   else:
     SCREEN = scr
   Debug.log(3, "Jython: requested to use as default region: " + SCREEN.toStringShort())
@@ -534,9 +538,11 @@ def _exposeAllMethods(anyObject, saved, theGlobals, exclude_list):
     exclude_list = ['class', 'classDictInit', 'clone', 'equals', 'finalize',
                     'getClass', 'hashCode', 'notify', 'notifyAll',
                     'toGlobalCoord', 'toString', 'getLocationFromPSRML', 'getRegionFromPSRM',
-                    'capture', 'selectRegion', 'create', 'observeInBackground', 'waitAll',
+                    'create', 'observeInBackground', 'waitAll',
                     'updateSelf', 'findNow', 'findAllNow', 'getEventManager',
-                    'lastMatch', 'lastMatches', 'lastScreenImage', 'lastScreenImageFile']
+                    'lastMatch', 'lastMatches', 'lastScreenImage', 'lastScreenImageFile',
+                    'capture', 'wait'
+                   ]
   # Debug.log(3, "Sikuli: _exposeAllMethods: %s called from: %s", anyObject, theGlobals['__name__'])
   tosave = []
   if not saved:
@@ -564,5 +570,5 @@ def _exposeAllMethods(anyObject, saved, theGlobals, exclude_list):
 
 ############### set SCREEN as primary screen at startup ################
 use()
-ALL = SCREEN.all().getRegion()
+ALL = JScreen.all().getRegion()
 Debug.log(3, "Jython: sikuli: Sikuli: ending init")
