@@ -38,16 +38,6 @@ class Region(JRegion):
   # ---- SIKULI  PUBLIC  API
   #######################################################################
 
-  # Python wait() needs to be here because Java Object has a final method: wait(long timeout).
-  # If we want to let Sikuli users use wait(int/long timeout), we need this Python method.
-  def wait(self, target, timeout=None):
-    if isinstance(target, int) or isinstance(target, long):
-      target = float(target)
-    if timeout == None:
-      return JRegion.wait(self, target)
-    else:
-      return JRegion.wait(self, target, timeout)
-
   # the new Region.text() feature (Tesseract 3) returns utf8
   def text(self):
     return JRegion.text(self).encode("utf8")

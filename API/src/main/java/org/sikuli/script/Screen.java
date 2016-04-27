@@ -467,6 +467,36 @@ public class Screen extends Region implements IScreen {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Capture - SelectRegion">
+
+  public ScreenImage cmdCapture(Object... args) {
+    if (args.length == 0) {
+      return userCapture("capture an image");
+    }
+    if (args.length == 1) {
+      Object arg0 = args[0];
+      if (arg0 instanceof String) {
+        return userCapture((String) arg0);
+      } else if (arg0 instanceof Region) {
+        return capture((Region) arg0);
+      }
+    }
+    if (args.length == 4) {
+      Integer argInt = null;
+      for (Object arg : args){
+        argInt = null;
+        try {
+          argInt = (Integer) arg;
+        } catch (Exception ex) {
+          break;
+        }
+      }
+      if (argInt != null) {
+        return capture((int) args[2], (int) args[2], (int) args[2], (int) args[3]);
+      }
+    }
+    return userCapture("Invalid parameter for capture");
+  }
+
   /**
    * create a ScreenImage with the physical bounds of this screen
    *

@@ -54,15 +54,15 @@ SCREEN = None
 def capture(*args):
   return SCREEN.cmdCapture(args)
 
-def wait(*args):
-  if len(args) == 1:
-    try:
-      return SCREEN.wait(float(args[0]))
-    except:
-      return SCREEN.wait(args[0])
-  if len(args) == 2:
-    return SCREEN.wait(args[0], args[1])
-  return None
+# Python wait() needs to be here because Java Object has a final method: wait(long timeout).
+# If we want to let Sikuli users use wait(int/long timeout), we need this Python method.
+def wait(target, timeout=None):
+  if isinstance(target, int) or isinstance(target, long):
+    target = float(target)
+  if timeout == None:
+    return SCREEN.wait(target)
+  else:
+    return SCREEN.wait(target, timeout)
 
 Debug.log(4, "Jython: sikuli: Sikuli: import ScreenUnion")
 from org.sikuli.script import ScreenUnion
@@ -537,7 +537,7 @@ def _exposeAllMethods(anyObject, saved, theGlobals, exclude_list):
   if not exclude_list:
     exclude_list = ['class', 'classDictInit', 'clone', 'equals', 'finalize',
                     'getClass', 'hashCode', 'notify', 'notifyAll',
-                    'toGlobalCoord', 'toString', 'getLocationFromPSRML', 'getRegionFromPSRM',
+                    'toGlobalCoord', 'getLocationFromPSRML', 'getRegionFromPSRM',
                     'create', 'observeInBackground', 'waitAll',
                     'updateSelf', 'findNow', 'findAllNow', 'getEventManager',
                     'lastMatch', 'lastMatches', 'lastScreenImage', 'lastScreenImageFile',
