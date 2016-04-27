@@ -165,6 +165,7 @@ public class ScreenImage {
       Debug.error("ScreenImage.saveInBundle: IOException", iOException);
       return null;
     }
+    Image.reload(fImage.getAbsolutePath());
     return fImage.getAbsolutePath();
   }
   

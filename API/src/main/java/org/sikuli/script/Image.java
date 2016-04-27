@@ -138,6 +138,7 @@ public class Image {
       int sizeOld = image.bsize;
       if (null != image.loadAgain()) {
         currentMemoryDownUp(sizeOld, image.bsize);
+        image.setLastSeen(null, 0);
       }
     }
   }
