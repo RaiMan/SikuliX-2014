@@ -188,6 +188,14 @@ public class ScreenImage {
 
 	/**
 	 *
+	 * @return the Region, the iamge was created from
+	 */
+	public Region getRegion() {
+		return new Region(_roi);
+	}
+
+	/**
+	 *
 	 * @return the screen rectangle, the iamge was created from
 	 */
 	public Rectangle getROI() {
