@@ -56,7 +56,7 @@ public class App {
   static {
 //TODO Sikuli hangs if App is used before Screen
     new Screen();
-    _osUtil.checkLibAvailability();
+    _osUtil.checkFeatureAvailability();
 
     appsWindows = new HashMap<Type, String>();
     appsWindows.put(Type.EDITOR, "Notepad");

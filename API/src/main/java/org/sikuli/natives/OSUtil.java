@@ -16,11 +16,10 @@ public interface OSUtil {
   // Others: return 0 if succeeds, -1 if fails
 
   /**
-   * check if all needed native command libraries or packages are installed<br>
-   * and load needed libraries<br>
-   * terminates if something is wrong
+   * check if needed command libraries or packages are installed and working<br>
+   * if not ok, respective features will do nothing but issue error messages
    */
-  public void checkLibAvailability();
+  public void checkFeatureAvailability();
 
   public App.AppEntry getApp(int pid, String name);
 

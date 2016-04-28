@@ -21,7 +21,7 @@ public class MacUtil implements OSUtil {
   private static RunTime runTime = null;
   
 	@Override
-  public void checkLibAvailability() {
+  public void checkFeatureAvailability() {
     runTime = RunTime.get();
     RunTime.loadLibrary("MacUtil");
   }

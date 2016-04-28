@@ -20,7 +20,7 @@ import java.util.Map;
 public class WinUtil implements OSUtil {
 
   @Override
-  public void checkLibAvailability() {
+  public void checkFeatureAvailability() {
     RunTime.loadLibrary("WinUtil");
   }
 

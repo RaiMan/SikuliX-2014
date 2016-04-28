@@ -27,20 +27,20 @@ public class LinuxUtil implements OSUtil {
     private static boolean xdoToolAvail = true;
 
     @Override
-    public void checkLibAvailability() {
+    public void checkFeatureAvailability() {
         List<CommandLine> commands = Arrays.asList(
                 CommandLine.parse("wmctrl -m"),
-                CommandLine.parse("xdotool version"),
-                CommandLine.parse("killall --version")
+                CommandLine.parse("xdotool version")
         );
         for (CommandLine cmd : commands) {
             try {
                 DefaultExecutor executor = new DefaultExecutor();
+                // other return values throw exception
                 executor.setExitValue(0);
                 //suppress system output
                 executor.setStreamHandler(new PumpStreamHandler(null));
                 executor.execute(cmd);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 String executable = cmd.toStrings()[0];
                 if (executable.equals("wmctrl")) {
                     wmctrlAvail = false;
@@ -48,16 +48,16 @@ public class LinuxUtil implements OSUtil {
                 if (executable.equals("xdotool")) {
                     xdoToolAvail = false;
                 }
-                throw new CommandExecutorException("[error] checking: command '" + executable + "' is not executable, please check if it is installed and available!");
+                Debug.error("App: command %s is not executable, the App features will not work", executable);
             }
         }
     }
 
-    private boolean isAvailable(boolean module, String f) {
+    private boolean isAvailable(boolean module, String cmd, String feature) {
         if (module) {
             return true;
         }
-        Debug.error("%s: wmctrl not available or not working", f);
+        Debug.error("%s: feature %s: not available or not working", cmd, feature);
         return false;
     }
 
@@ -160,7 +160,7 @@ public class LinuxUtil implements OSUtil {
 
     @Override
     public Rectangle getFocusedWindow() {
-        if (!isAvailable(xdoToolAvail, "getFocusedWindow")) {
+        if (!isAvailable(xdoToolAvail, "getFocusedWindow", "xdoTool")) {
             return null;
         }
         String cmd[] = {"xdotool", "getactivewindow"};
@@ -283,7 +283,7 @@ public class LinuxUtil implements OSUtil {
 
     @Override
     public int close(int pid) {
-        if (!isAvailable(wmctrlAvail, "closeApp")) {
+        if (!isAvailable(wmctrlAvail, "closeApp", "wmctrl")) {
             return -1;
         }
         String winLine[] = findWindow("" + pid, 0, SearchType.PID);
@@ -303,7 +303,7 @@ public class LinuxUtil implements OSUtil {
 
     @Override
     public int switchto(int pid, int num) {
-        if (!isAvailable(wmctrlAvail, "switchApp")) {
+        if (!isAvailable(wmctrlAvail, "switchApp", "wmctrl")) {
             return -1;
         }
         String winLine[] = findWindow("" + pid, num, SearchType.PID);
