@@ -1094,31 +1094,6 @@ public class FileManager {
   }
 
   //TODO consolidate with FileManager and Settings
-  public static void zip(String path, String outZip) throws IOException, FileNotFoundException {
-    ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(outZip));
-    zipDir(path, zos);
-    zos.close();
-  }
-
-  private static void zipDir(String dir, ZipOutputStream zos) throws IOException {
-    File zipDir = new File(dir);
-    String[] dirList = zipDir.list();
-    byte[] readBuffer = new byte[1024];
-    int bytesIn;
-    for (int i = 0; i < dirList.length; i++) {
-      File f = new File(zipDir, dirList[i]);
-      if (f.isFile()) {
-        FileInputStream fis = new FileInputStream(f);
-        ZipEntry anEntry = new ZipEntry(f.getName());
-        zos.putNextEntry(anEntry);
-        while ((bytesIn = fis.read(readBuffer)) != -1) {
-          zos.write(readBuffer, 0, bytesIn);
-        }
-        fis.close();
-      }
-    }
-  }
-
 	public static void deleteNotUsedImages(String bundle, Set<String> usedImages) {
 		File scriptFolder = new File(bundle);
 		if (!scriptFolder.isDirectory()) {
