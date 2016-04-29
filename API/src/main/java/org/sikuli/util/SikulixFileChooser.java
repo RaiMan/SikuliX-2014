@@ -158,17 +158,21 @@ public class SikulixFileChooser {
 
     @Override
     public boolean accept(File f) {
+      if ("o".equals(_type) && (isExt(f.getName(), "sikuli") || isExt(f.getName(), "skl"))) {
+        return true;
+      }
+      if ("s".equals(_type) && isExt(f.getName(), "sikuli")) {
+        return true;
+      }
+      if ("e".equals(_type)) {
+        if (isExt(f.getName(), "skl")) {
+          return true;
+        }
+        if (Settings.isMac() && isExt(f.getName(), "sikuli")) {
+          return false;
+        }
+      }
       if (f.isDirectory()) {
-        return true;
-      }
-      if ("o".equals(_type) && ((Settings.isMac() && isExt(f.getName(), "sikuli"))
-              || isExt(f.getName(), "skl"))) {
-        return true;
-      }
-      if ("s".equals(_type) && Settings.isMac() && isExt(f.getName(), "sikuli")) {
-        return true;
-      }
-      if ("e".equals(_type) && isExt(f.getName(), "skl")) {
         return true;
       }
       return false;
