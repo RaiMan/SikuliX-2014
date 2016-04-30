@@ -17,7 +17,7 @@ import org.sikuli.basics.FileManager;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.RunTime;
 
-public class JythonHelper {
+public class JythonHelper implements JLangHelperInterface {
 
   static RunTime runTime = RunTime.get();
 
@@ -344,6 +344,7 @@ public class JythonHelper {
     return true;
   }
 
+  @Override
   public boolean runObserveCallback(Object[] args) {
     PyFunction func = new PyFunction(args[0]);
     boolean success = true;
