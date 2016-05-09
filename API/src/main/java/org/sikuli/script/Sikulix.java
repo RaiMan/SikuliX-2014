@@ -60,7 +60,7 @@ public class Sikulix {
   private static RunTime rt = null;
   public static int testNumber = -1;
   private static boolean shouldRunServer = false;
-  private static Location locPopAt = null;
+  private static Location locPopAt = new Screen().getCenter();
 
   static {
     String jarName = "";
@@ -676,26 +676,27 @@ public class Sikulix {
     }
   }
   
-  public static void popat(Location at) {
+  public static Location popat(Location at) {
     locPopAt = at;
+    return locPopAt;
   }
 
-  public static void popat(Region at) {
+  public static Location popat(Region at) {
     locPopAt = at.getCenter();
+    return locPopAt;
   }
   
-  public static void popat(int atx, int aty) {
+  public static Location popat(int atx, int aty) {
     locPopAt = new Location(atx, aty);
+    return locPopAt;
   }
   
-  public static void popat() {
-    locPopAt = null;
+  public static Location popat() {
+    locPopAt = new Screen().getCenter();
+    return locPopAt;
   }
 
   private static JFrame popLocation() {
-    if (locPopAt == null) {
-      locPopAt = new Screen().getCenter();
-    } 
     return popLocation(locPopAt.x, locPopAt.y);
   }
 

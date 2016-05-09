@@ -90,13 +90,11 @@ from org.sikuli.script import ImagePath
 
 Debug.log(4, "Jython: sikuli: Sikuli: import Pattern")
 from org.sikuli.script import Pattern as JPattern
-
 class Pattern(JPattern):
   pass
 
 Debug.log(4, "Jython: sikuli: Sikuli: import Image")
 import org.sikuli.script.Image as JImage
-
 class Image(JImage):
   pass
 
@@ -105,16 +103,23 @@ from Env import *
 
 Debug.log(4, "Jython: sikuli: Sikuli: import App")
 import org.sikuli.script.App as JApp
-
 class App(JApp):
   pass
 
 Debug.log(4, "Jython: sikuli: Sikuli: import KeyBoard/Mouse")
-from org.sikuli.script import Key
+from org.sikuli.script import Key as JKey
+class Key(JKey):
+  pass
+
 from org.sikuli.script import KeyModifier
 from org.sikuli.script.KeyModifier import KEY_CTRL, KEY_SHIFT, KEY_META, KEY_CMD, KEY_WIN, KEY_ALT
 from org.sikuli.script import Device
+
 from org.sikuli.script import Mouse
+
+def at():
+  return Mouse.at()
+
 from org.sikuli.script import Keys
 
 Debug.log(4, "Jython: sikuli: Sikuli: import from compare")
@@ -315,11 +320,11 @@ def highlightOff():
 # is used until changed again
 def popat(*args):
   if len(args) == 0:
-    Sikulix.popat()
+    return Sikulix.popat()
   elif len(args) > 1:
-    Sikulix.popat(args[0], args[1])
+    return Sikulix.popat(args[0], args[1])
   else:
-    Sikulix.popat(args[0])
+    return Sikulix.popat(args[0])
 
 # Shows a message dialog containing the given message.
 # @param msg The given message string.
