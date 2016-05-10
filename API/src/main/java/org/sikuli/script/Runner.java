@@ -526,10 +526,12 @@ public class Runner {
 //    }
     pyRunner.exec("from sikuli import *;");
     pyRunner.exec("import robot.run;");
-    pyRunner.exec(String.format(
-                  "robot.run(\"%s\", "
-                  + "outputdir=\"%s\""
-                  + ");", fRobot, fRobotWork));
+    String robotCmd = String.format(
+            "robot.run(\"%s\", "
+                    + "outputdir=\"%s\""
+                    + ");", fRobot, fRobotWork);
+    if (RunTime.get().runningWindows) robotCmd = robotCmd.replaceAll("\\\\", "\\\\\\\\");
+    pyRunner.exec(robotCmd);
     return 0;
   }
   
