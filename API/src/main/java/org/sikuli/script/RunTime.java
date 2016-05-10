@@ -1106,7 +1106,9 @@ public class RunTime {
 //<editor-fold defaultstate="collapsed" desc="init for API">
   private void initAPI() {
     log(lvl, "initAPI: entering");
-    if (runType == Type.API && (shouldExport || !fSikulixLib.exists())) {
+    if (runType == Type.API && (shouldExport || !fSikulixLib.exists())
+            || !new File(fSikulixLib, "robot").exists()
+            || !new File(fSikulixLib, "sikuli").exists()) {
       fSikulixLib.mkdir();
       extractResourcesToFolder("Lib", fSikulixLib, null);
     }
@@ -1842,7 +1844,7 @@ public class RunTime {
         throw new IOException("resource not accessible");
       }
       if (encoding == null) {
-        encoding = "RAW-BYTE";
+        encoding = "UTF-8";
         out = new String(copy(aIS));
       } else if (encoding.isEmpty()) {
         out = new String(copy(aIS), "UTF-8");
@@ -2588,7 +2590,7 @@ public class RunTime {
   /**
    * run a system command finally using Java::Runtime.getRuntime().exec(args) and waiting for completion
    *
-   * @param cmd the command as it would be given on command line splitted into the space devided parts, first part is
+   * @param args the command as it would be given on command line splitted into the space devided parts, first part is
    * the command, the rest are parameters and their values
    * @return the output produced by the command (sysout [+ "*** error ***" + syserr] if the syserr part is present, the
    * command might have failed
