@@ -11,6 +11,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
@@ -459,26 +460,42 @@ public class JythonHelper implements JLangHelperInterface {
     return fJar.getAbsolutePath();
   }
 
-  public String findModule(String modName, Object packPath, Object sysPath) {
+  private long lastRun = 0;
+  private List<File> importedScripts = new ArrayList<File>();
+  String name = "";
+  public void reloadImported() {
+    if (lastRun > 0) {
+      for (File fMod : importedScripts) {
+        name = getPyName(fMod);
+        if (new File(fMod, name + ".py").lastModified() > lastRun) {
+          log(lvl, "reload: %s", fMod);
+          get().exec("reload(" + name + ")");
+        };
+      }
+    }
+    lastRun = new Date().getTime();
+  }
 
-//  module_name = _stripPackagePrefix(module_name)
-//  if module_name[0:1] == "*":
-//      return None
-//  if package_path:
-//      paths = package_path
-//  else:
-//      paths = sys.path
-//  for path in paths:
-//      mod = self._find_module(module_name, path)
-//      if mod:
-//          return mod
-//  if Sikuli.load(module_name +".jar"):
-//      return None
-//  return None
+  private String getPyName(File fMod) {
+    String ending = ".sikuli";
+    String name = fMod.getName();
+    if (name.endsWith(ending)) {
+      name = name.substring(0, name.length() - ending.length());
+    }
+    return name;
+  }
+
+  public String findModule(String modName, Object packPath, Object sysPath) {
     if (modName.endsWith(".*")) {
+      log(lvl + 1, "findModule: %s", modName);
+      return null;
+    }
+    if (packPath != null) {
+      log(lvl + 1, "findModule: in pack: %s (%s)", modName, packPath);
       return null;
     }
     int nDot = modName.lastIndexOf(".");
+    String modNameFull =  modName;
     if (nDot > -1) {
       modName = modName.substring(nDot + 1);
     }
@@ -489,29 +506,22 @@ public class JythonHelper implements JLangHelperInterface {
       fParentBundle = new File(fpBundle).getParentFile();
       fModule = existsModule(modName, fParentBundle);
     }
-    if (fModule == null && packPath != null) {
-//      log(lvl, "findModule: packpath not null");
-    }
     if (fModule == null) {
       fModule = existsSysPathModule(modName);
       if (fModule == null) {
         return null;
       }
     }
-    log(lvl, "findModule: %s (%s)", fModule.getName(), packPath);
-    if (!fModule.getName().endsWith(".sikuli")) {
-      fModule = fModule.getParentFile();
+    log(lvl + 1, "findModule: final: %s [%s]", fModule.getName(), fModule.getParent());
+    if (fModule.getName().endsWith(".sikuli")) {
+      importedScripts.add(fModule);
+      return fModule.getAbsolutePath();
     }
-    return fModule.getAbsolutePath();
+    return null;
   }
 
   public String loadModulePrepare(String modName, String modPath) {
-
-//  module_name = _stripPackagePrefix(module_name)
-//  ImagePath.add(self.path)
-//  Sikuli._addModPath(self.path)
-//  return self._load_module(module_name)
-    log(lvl, "loadModulePrepare: %s in %s", modName, modPath);
+    log(lvl + 1, "loadModulePrepare: %s in %s", modName, modPath);
     int nDot = modName.lastIndexOf(".");
     if (nDot > -1) {
       modName = modName.substring(nDot + 1);

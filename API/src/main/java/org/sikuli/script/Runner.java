@@ -243,7 +243,7 @@ public class Runner {
         return false;
       }
       pyRunner.exec("# -*- coding: utf-8 -*- ");
-      pyRunner.exec("import org.sikuli.basics.SikulixForJython");
+      pyRunner.exec("import org.sikuli.script.SikulixForJython");
       pyRunner.exec("from sikuli import *");
     }
     return true;
@@ -466,6 +466,7 @@ public class Runner {
   }
 
   public static int runrobot(String code) {
+
     File script = new File(ImagePath.getBundlePath());
     File fRobotWork = new File(script.getAbsolutePath() + ".robot");
     FileManager.deleteFileOrFolder(fRobotWork);
