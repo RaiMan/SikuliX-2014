@@ -14,10 +14,10 @@ import java.io.PipedOutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.python.core.PyList;
-import org.python.core.PyObject;
 import org.python.util.PythonInterpreter;
 import org.python.util.jython;
 import org.sikuli.basics.Debug;
@@ -165,6 +165,7 @@ public class JythonScriptRunner implements IScriptRunner {
     }
     if (isFromIDE) {
       JythonHelper.get().insertSysPath(fScriptPath);
+      JythonHelper.get().reloadImported();
     }
     pyFile = new File(pyFile.getAbsolutePath());
     fillSysArgv(pyFile, argv);
@@ -197,8 +198,7 @@ public class JythonScriptRunner implements IScriptRunner {
           if (scriptPaths.length > 1) {
             scr = FileManager.slashify(scriptPaths[0], true) + scriptPaths[1] + ".sikuli";
             log(lvl, "runPython: running script from IDE: \n" + scr);
-            interpreter.exec("sys.argv[0] = \""
-                    + scr + "\"");
+            interpreter.exec("sys.argv[0] = \"" + scr + "\"");
           } else {
             scr = FileManager.slashify(scriptPaths[0], false);
             log(lvl, "runPython: running script: \n%s", scr);
