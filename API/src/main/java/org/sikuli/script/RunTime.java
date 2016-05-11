@@ -2146,7 +2146,7 @@ public class RunTime {
       return files;
     }
     logp(localLevel, "scanning jar:\n%s", uJar);
-    fpResource = fpResource.startsWith("/") ? fpResource.substring(1) : fpResource;
+    fpResource = (fpResource.startsWith("/") ? fpResource.substring(1) : fpResource) + "/";
     File fFolder = new File(fpResource);
     File fSubFolder = null;
     ZipEntry zEntry;
@@ -2160,11 +2160,11 @@ public class RunTime {
         }
         String zePath = zEntry.getName();
         if (zePath.startsWith(fpResource)) {
-          if (fpResource.length() == zePath.length()) {
-            files.add(zePath);
-            return files;
-          }
-          String zeName = zePath.substring(fpResource.length() + 1);
+//          if (fpResource.length()  == zePath.length()) {
+//            files.add(zePath);
+//            return files;
+//          }
+          String zeName = zePath.substring(fpResource.length());
           int nSep = zeName.lastIndexOf(fileSep);
           String zefName = zeName.substring(nSep + 1, zeName.length());
           String zeSub = "";
