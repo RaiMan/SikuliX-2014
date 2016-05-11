@@ -475,7 +475,6 @@ public class Runner {
       }
       JythonHelper.get().insertSysPath(rt.fSikulixLib);
     }
-    JythonHelper.get().showSysPath();
     File script = new File(ImagePath.getBundlePath());
     File fRobotWork = new File(script.getAbsolutePath() + ".robot");
     FileManager.deleteFileOrFolder(fRobotWork);
@@ -484,44 +483,30 @@ public class Runner {
     File fPyCode = new File(script, sName + ".py");
     String pyCode = FileManager.readFileToString(fPyCode);
     int prefix = pyCode.indexOf("\"\"\")");
-    if (prefix < 0) {
-      log(-1, "runRobot: invalid robot text structure");
-      return -1;
-    }
-    pyCode = pyCode.substring(prefix + 4).trim();
-    int refLib = code.indexOf("./inline/");
-    String sLib = "";
-    File fInline = null;
-    String fpInline = "";
-    if (!pyCode.isEmpty()) {
-      if (refLib < 0) {
-        log(-1, "runRobot: invalid robot text structure");
-        return -1;
-      }
-      sLib = code.substring(refLib + 9);
-      sLib = sLib.substring(0, sLib.indexOf("\n")).trim();
-    } else {
-      if (refLib > -1) {
-        log(-1, "runRobot: invalid robot text structure");
-        return -1;
-      }
-      refLib = code.indexOf("./jar/");
-      if (refLib > -1) {
-        sLib = code.substring(refLib + 6);
-        sLib = sLib.substring(0, sLib.indexOf("\n")).trim();
-        fInline = new File (sLib + ".jar");
-        if (!fInline.isAbsolute()) {
-          fInline = new File(fRobotWork, sLib + ".jar");
+    if (prefix > 0) {
+      pyCode = pyCode.substring(prefix + 4).trim();
+      int refLib = code.indexOf("./inline/");
+      String inlineLib = "";
+      File fInline = null;
+      String fpInline = "";
+      // Keyword implementations are inline
+      if (!pyCode.isEmpty()) {
+        if (refLib < 0) {
+          log(-1, "runRobot: inline code ignored - no ./inline/");
         }
-        runTime.addToClasspath(fInline.getAbsolutePath());
-        sLib = "";
+        inlineLib = code.substring(refLib + 9);
+        inlineLib = inlineLib.substring(0, inlineLib.indexOf("\n")).trim();
+        fInline = new File(fRobotWork, inlineLib + ".py");
+        pyCode = "from sikuli import *\n" + pyCode;
+        FileManager.writeStringToFile(pyCode, fInline);
+        fpInline = FileManager.slashify(fInline.getAbsolutePath(), false);
+        code = code.replace("./inline/" + inlineLib, fpInline);
+      } else {
+        if (refLib > -1) {
+          log(-1, "runRobot: having ./inline/, but no inline code found");
+          return -1;
+        }
       }
-    }
-    if (!sLib.isEmpty()) {
-      fInline = new File(fRobotWork, sLib + ".py");      
-      FileManager.writeStringToFile(pyCode, fInline);
-      fpInline = FileManager.slashify(fInline.getAbsolutePath(), false);
-      code = code.replace("./inline/" + sLib, fpInline );
     }
     File fRobot = new File(fRobotWork, sName + ".robot");
     FileManager.writeStringToFile(code, fRobot);
@@ -529,10 +514,6 @@ public class Runner {
       log(-1, "Running Python scripts:init failed");
       return -999;
     }
-//    String jarR4S = runTime.isOnClasspath("robot4sikulix");
-//    if (null != jarR4S) {
-//      pyRunner.addSysPath(jarR4S);
-//    }
     pyRunner.exec("from sikuli import *;");
     pyRunner.exec("import robot.run;");
     String robotCmd = String.format(
