@@ -466,7 +466,16 @@ public class Runner {
   }
 
   public static int runrobot(String code) {
-
+    RunTime rt = RunTime.get();
+    if (rt.isRunningFromJar()) {
+      File fLibRobot = new File(rt.fSikulixLib, "robot");
+      if (!fLibRobot.exists()) {
+        log(-1, "runrobot: not available: %s", fLibRobot);
+        Sikulix.terminate(1);
+      }
+      JythonHelper.get().insertSysPath(rt.fSikulixLib);
+    }
+    JythonHelper.get().showSysPath();
     File script = new File(ImagePath.getBundlePath());
     File fRobotWork = new File(script.getAbsolutePath() + ".robot");
     FileManager.deleteFileOrFolder(fRobotWork);
