@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,6 +14,8 @@
 
 import os
 
+from robot.utils import file_writer
+
 
 class LibdocOutput(object):
 
@@ -24,7 +26,7 @@ class LibdocOutput(object):
 
     def __enter__(self):
         if self._format == 'HTML':
-            self._output_file = open(self._output_path, 'w')
+            self._output_file = file_writer(self._output_path)
             return self._output_file
         return self._output_path
 

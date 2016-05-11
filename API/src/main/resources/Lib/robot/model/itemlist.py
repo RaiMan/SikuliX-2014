@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,7 +12,14 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from robot.utils import py2to3, PY3
 
+
+if PY3:
+    unicode = str
+
+
+@py2to3
 class ItemList(object):
     __slots__ = ['_item_class', '_common_attrs', '_items']
 
@@ -31,25 +38,28 @@ class ItemList(object):
         self._items += (item,)
         return item
 
-    def _check_type_and_set_attrs(self, item):
-        if not isinstance(item, self._item_class):
-            raise TypeError("Only '%s' objects accepted, got '%s'."
-                            % (self._item_class.__name__, type(item).__name__))
-        if self._common_attrs:
-            for attr in self._common_attrs:
-                setattr(item, attr, self._common_attrs[attr])
+    def _check_type_and_set_attrs(self, *items):
+        common_attrs = self._common_attrs or {}
+        for item in items:
+            if not isinstance(item, self._item_class):
+                raise TypeError("Only %s objects accepted, got %s."
+                                % (self._item_class.__name__,
+                                   item.__class__.__name__))
+            for attr in common_attrs:
+                setattr(item, attr, common_attrs[attr])
+        return items
 
     def extend(self, items):
-        for item in items:
-            self._check_type_and_set_attrs(item)
-        self._items += tuple(items)
+        self._items += self._check_type_and_set_attrs(*items)
 
-    if hasattr(tuple, 'index'):  # tuples got index method in Python 2.6
-        def index(self, item):
-            return self._items.index(item)
-    else:
-        def index(self, item):
-            return list(self._items).index(item)
+    def insert(self, index, item):
+        self._check_type_and_set_attrs(item)
+        items = list(self._items)
+        items.insert(index, item)
+        self._items = tuple(items)
+
+    def index(self, item, *start_and_end):
+        return self._items.index(item, *start_and_end)
 
     def clear(self):
         self._items = ()
@@ -62,16 +72,18 @@ class ItemList(object):
         return iter(self._items)
 
     def __getitem__(self, index):
-        if isinstance(index, slice):
-            raise TypeError("'%s' objects do not support slicing."
-                            % type(self).__name__)
-        return self._items[index]
+        if not isinstance(index, slice):
+            return self._items[index]
+        items = self.__class__(self._item_class)
+        items._common_attrs = self._common_attrs
+        items.extend(self._items[index])
+        return items
 
     def __setitem__(self, index, item):
         if isinstance(index, slice):
-            raise TypeError("'%s' objects do not support slicing."
-                            % type(self).__name__)
-        self._check_type_and_set_attrs(item)
+            self._check_type_and_set_attrs(*item)
+        else:
+            self._check_type_and_set_attrs(item)
         items = list(self._items)
         items[index] = item
         self._items = tuple(items)
@@ -81,6 +93,3 @@ class ItemList(object):
 
     def __unicode__(self):
         return u'[%s]' % ', '.join(unicode(item) for item in self)
-
-    def __str__(self):
-        return unicode(self).encode('ASCII', 'replace')

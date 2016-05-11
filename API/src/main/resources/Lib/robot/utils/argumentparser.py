@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,10 +12,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from __future__ import with_statement
 import getopt     # optparse was not supported by Jython 2.2
 import os
 import re
+import shlex
 import sys
 import glob
 import string
@@ -25,8 +25,10 @@ from robot.errors import DataError, Information, FrameworkError
 from robot.version import get_full_version
 
 from .misc import plural_or_not
-from .encoding import decode_output, decode_from_system
+from .encoding import console_decode, system_decode
+from .platform import PY2
 from .utf8reader import Utf8Reader
+from .robottypes import is_falsy, is_integer, is_list_like, is_string, is_unicode
 
 
 ESCAPES = dict(
@@ -38,7 +40,25 @@ ESCAPES = dict(
 )
 
 
-class ArgumentParser:
+def cmdline2list(args, escaping=False):
+    if PY2 and is_unicode(args):
+        args = args.encode('UTF-8')
+        decode = lambda item: item.decode('UTF-8')
+    else:
+        decode = lambda item: item
+    lexer = shlex.shlex(args, posix=True)
+    if is_falsy(escaping):
+        lexer.escape = ''
+    lexer.escapedquotes = '"\''
+    lexer.commenters = ''
+    lexer.whitespace_split = True
+    try:
+        return [decode(token) for token in lexer]
+    except ValueError as err:
+        raise ValueError("Parsing '%s' failed: %s" % (args, err))
+
+
+class ArgumentParser(object):
     _opt_line_re = re.compile('''
     ^\s{1,4}      # 1-4 spaces in the beginning of the line
     ((-\S\s)*)    # all possible short options incl. spaces (group 1)
@@ -72,8 +92,7 @@ class ArgumentParser:
         self._short_opts = ''
         self._long_opts = []
         self._multi_opts = []
-        self._toggle_opts = []
-        self._names = []
+        self._flag_opts = []
         self._short_to_long = {}
         self._expected_args = ()
         self._create_options(usage)
@@ -123,9 +142,8 @@ class ArgumentParser:
         amount of horizontal space as <---ESCAPES--->. Both help and version
         are wrapped to Information exception.
         """
-        if self._env_options:
-            args = os.getenv(self._env_options, '').split() + list(args)
-        args = [decode_from_system(a) for a in args]
+        args = self._get_env_options() + list(args)
+        args = [system_decode(a) for a in args]
         if self._auto_argumentfile:
             args = self._process_possible_argfile(args)
         opts, args = self._parse_args(args)
@@ -134,6 +152,13 @@ class ArgumentParser:
         if self._validator:
             opts, args = self._validator(opts, args)
         return opts, args
+
+    def _get_env_options(self):
+        if self._env_options:
+            options = os.getenv(self._env_options)
+            if options:
+                return cmdline2list(options)
+        return []
 
     def _handle_special_options(self, opts, args):
         if self._auto_escape and opts.get('escape'):
@@ -157,7 +182,7 @@ class ArgumentParser:
         args = [self._lowercase_long_option(a) for a in args]
         try:
             opts, args = getopt.getopt(args, self._short_opts, self._long_opts)
-        except getopt.GetoptError, err:
+        except getopt.GetoptError as err:
             raise DataError(err.msg)
         return self._process_opts(opts), self._glob_args(args)
 
@@ -205,7 +230,7 @@ class ArgumentParser:
     def _unescape(self, value, escapes):
         if value in [None, True, False]:
             return value
-        if isinstance(value, list):
+        if is_list_like(value):
             return [self._unescape(item, escapes) for item in value]
         for esc_name, esc_value in escapes.items():
             if esc_name in value:
@@ -213,16 +238,27 @@ class ArgumentParser:
         return value
 
     def _process_opts(self, opt_tuple):
-        opts = self._init_opts()
+        opts = self._get_default_opts()
         for name, value in opt_tuple:
             name = self._get_name(name)
             if name in self._multi_opts:
                 opts[name].append(value)
-            elif name in self._toggle_opts:
-                opts[name] = not opts[name]
+            elif name in self._flag_opts:
+                opts[name] = True
+            elif name.startswith('no') and name[2:] in self._flag_opts:
+                opts[name[2:]] = False
             else:
                 opts[name] = value
         return opts
+
+    def _get_default_opts(self):
+        defaults = {}
+        for opt in self._long_opts:
+            opt = opt.rstrip('=')
+            if opt.startswith('no') and opt[2:] in self._flag_opts:
+                continue
+            defaults[opt] = [] if opt in self._multi_opts else None
+        return defaults
 
     def _glob_args(self, args):
         temp = []
@@ -233,17 +269,6 @@ class ArgumentParser:
             else:
                 temp.append(path)
         return temp
-
-    def _init_opts(self):
-        opts = {}
-        for name in self._names:
-            if name in self._multi_opts:
-                opts[name] = []
-            elif name in self._toggle_opts:
-                opts[name] = False
-            else:
-                opts[name] = None
-        return opts
 
     def _get_name(self, name):
         name = name.lstrip('-')
@@ -262,9 +287,7 @@ class ArgumentParser:
                                     is_multi=bool(res.group(5)))
 
     def _create_option(self, short_opts, long_opt, takes_arg, is_multi):
-        if long_opt in self._names:
-            self._raise_option_multiple_times_in_usage('--' + long_opt)
-        self._names.append(long_opt)
+        self._verify_long_not_already_used(long_opt, not takes_arg)
         for sopt in short_opts:
             if sopt in self._short_to_long:
                 self._raise_option_multiple_times_in_usage('-' + sopt)
@@ -275,12 +298,24 @@ class ArgumentParser:
             long_opt += '='
             short_opts = [sopt+':' for sopt in short_opts]
         else:
-            self._toggle_opts.append(long_opt)
+            if long_opt.startswith('no'):
+                long_opt = long_opt[2:]
+            self._long_opts.append('no' + long_opt)
+            self._flag_opts.append(long_opt)
         self._long_opts.append(long_opt)
         self._short_opts += (''.join(short_opts))
 
+    def _verify_long_not_already_used(self, opt, flag=False):
+        if flag:
+            if opt.startswith('no'):
+                opt = opt[2:]
+            self._verify_long_not_already_used(opt)
+            self._verify_long_not_already_used('no' + opt)
+        elif opt in [o.rstrip('=') for o in self._long_opts]:
+            self._raise_option_multiple_times_in_usage('--' + opt)
+
     def _get_pythonpath(self, paths):
-        if isinstance(paths, basestring):
+        if is_string(paths):
             paths = [paths]
         temp = []
         for path in self._split_pythonpath(paths):
@@ -304,7 +339,7 @@ class ArgumentParser:
             if drive:
                 ret.append(drive)
                 drive = ''
-            if len(item) == 1 and item in string.letters:
+            if len(item) == 1 and item in string.ascii_letters:
                 drive = item
             else:
                 ret.append(item)
@@ -342,11 +377,11 @@ class ArgLimitValidator(object):
 
     def _parse_arg_limits(self, arg_limits):
         if arg_limits is None:
-            return 0, sys.maxint
-        if isinstance(arg_limits, int):
+            return 0, sys.maxsize
+        if is_integer(arg_limits):
             return arg_limits, arg_limits
         if len(arg_limits) == 1:
-            return arg_limits[0], sys.maxint
+            return arg_limits[0], sys.maxsize
         return arg_limits[0], arg_limits[1]
 
     def __call__(self, args):
@@ -357,7 +392,7 @@ class ArgLimitValidator(object):
         min_end = plural_or_not(min_args)
         if min_args == max_args:
             expectation = "%d argument%s" % (min_args, min_end)
-        elif max_args != sys.maxint:
+        elif max_args != sys.maxsize:
             expectation = "%d to %d arguments" % (min_args, max_args)
         else:
             expectation = "at least %d argument%s" % (min_args, min_end)
@@ -400,15 +435,12 @@ class ArgFileParser(object):
         try:
             with Utf8Reader(path) as reader:
                 return reader.read()
-        except (IOError, UnicodeError), err:
+        except (IOError, UnicodeError) as err:
             raise DataError("Opening argument file '%s' failed: %s"
                             % (path, err))
 
     def _read_from_stdin(self):
-        content = sys.__stdin__.read()
-        if sys.platform != 'cli':
-            content = decode_output(content)
-        return content
+        return console_decode(sys.__stdin__.read())
 
     def _process_file(self, content):
         args = []

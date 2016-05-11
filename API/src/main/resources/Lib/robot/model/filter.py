@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,7 +12,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from robot.utils import setter
+from robot.utils import py2to3, setter
 
 from .tags import TagPatterns
 from .namepatterns import SuiteNamePatterns, TestNamePatterns
@@ -31,6 +31,7 @@ class EmptySuiteRemover(SuiteVisitor):
         pass
 
 
+@py2to3
 class Filter(EmptySuiteRemover):
 
     def __init__(self, include_suites=None, include_tests=None,

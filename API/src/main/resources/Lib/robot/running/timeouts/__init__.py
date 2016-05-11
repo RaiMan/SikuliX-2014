@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,27 +12,24 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import sys
-import os
 import time
 
-from robot import utils
+from robot.utils import (Sortable, py2to3, secs_to_timestr, timestr_to_secs,
+                         IRONPYTHON, JYTHON, WINDOWS)
 from robot.errors import TimeoutError, DataError, FrameworkError
 
-if sys.platform == 'cli':
-    from .timeoutthread import Timeout
-elif os.name == 'nt':
-    from .timeoutwin import Timeout
+if JYTHON:
+    from .jython import Timeout
+elif IRONPYTHON:
+    from .ironpython import Timeout
+elif WINDOWS:
+    from .windows import Timeout
 else:
-    try:
-        # python 2.6 or newer in *nix or mac
-        from .timeoutsignaling import Timeout
-    except ImportError:
-        # python < 2.6 and jython don't have complete signal module
-        from .timeoutthread import Timeout
+    from .posix import Timeout
 
 
-class _Timeout(object):
+@py2to3
+class _Timeout(Sortable):
 
     def __init__(self, timeout=None, message='', variables=None):
         self.string = timeout or ''
@@ -52,13 +49,13 @@ class _Timeout(object):
             self.string = variables.replace_string(self.string)
             if not self:
                 return
-            self.secs = utils.timestr_to_secs(self.string)
-            self.string = utils.secs_to_timestr(self.secs)
+            self.secs = timestr_to_secs(self.string)
+            self.string = secs_to_timestr(self.secs)
             self.message = variables.replace_string(self.message)
-        except (DataError, ValueError), err:
-            self.secs = 0.000001 # to make timeout active
-            self.error = 'Setting %s timeout failed: %s' \
-                    % (self.type.lower(), unicode(err))
+        except (DataError, ValueError) as err:
+            self.secs = 0.000001  # to make timeout active
+            self.error = (u'Setting %s timeout failed: %s'
+                          % (self.type.lower(), err))
 
     def start(self):
         if self.secs > 0:
@@ -74,19 +71,6 @@ class _Timeout(object):
 
     def timed_out(self):
         return self.active and self.time_left() <= 0
-
-    def __str__(self):
-        return unicode(self).encode('utf-8')
-
-    def __unicode__(self):
-        return self.string
-
-    def __cmp__(self, other):
-        return cmp(not self.active, not other.active) \
-            or cmp(self.time_left(), other.time_left())
-
-    def __nonzero__(self):
-        return bool(self.string and self.string.upper() != 'NONE')
 
     def run(self, runnable, args=None, kwargs=None):
         if self.error:
@@ -112,6 +96,22 @@ class _Timeout(object):
         if self.message:
             return self.message
         return '%s timeout %s exceeded.' % (self.type, self.string)
+
+    def __unicode__(self):
+        return self.string
+
+    def __nonzero__(self):
+        return bool(self.string and self.string.upper() != 'NONE')
+
+    @property
+    def _sort_key(self):
+        return not self.active, self.time_left()
+
+    def __eq__(self, other):
+        return self is other
+
+    def __hash__(self):
+        return id(self)
 
 
 class TestTimeout(_Timeout):

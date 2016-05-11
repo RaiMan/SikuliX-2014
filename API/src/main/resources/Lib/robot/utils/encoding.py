@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -14,50 +14,76 @@
 
 import sys
 
-from .encodingsniffer import get_output_encoding, get_system_encoding
+from .encodingsniffer import get_console_encoding, get_system_encoding
+from .compat import isatty
+from .platform import JYTHON, IRONPYTHON, PY3
+from .robottypes import is_unicode
 from .unic import unic
 
 
-OUTPUT_ENCODING = get_output_encoding()
+CONSOLE_ENCODING = get_console_encoding()
 SYSTEM_ENCODING = get_system_encoding()
 
 
-def decode_output(string, force=False):
+def console_decode(string, encoding=CONSOLE_ENCODING, force=False):
     """Decodes bytes from console encoding to Unicode.
 
-    By default returns Unicode strings as-is. `force` argument can be used
+    By default uses the system console encoding, but that can be configured
+    using the `encoding` argument. In addition to the normal encodings,
+    it is possible to use case-insensitive values `CONSOLE` and `SYSTEM` to
+    use the system console and system encoding, respectively.
+
+    By default returns Unicode strings as-is. The `force` argument can be used
     on IronPython where all strings are `unicode` and caller knows decoding
     is needed.
     """
-    if isinstance(string, unicode) and not force:
+    if is_unicode(string) and not (IRONPYTHON and force):
         return string
-    return unic(string, OUTPUT_ENCODING)
+    encoding = {'CONSOLE': CONSOLE_ENCODING,
+                'SYSTEM': SYSTEM_ENCODING}.get(encoding.upper(), encoding)
+    try:
+        return string.decode(encoding)
+    except UnicodeError:
+        return unic(string)
 
 
-def encode_output(string, errors='replace'):
-    """Encodes Unicode to bytes in console encoding."""
-    # http://ironpython.codeplex.com/workitem/29487
-    if sys.platform == 'cli':
-        return string
-    return string.encode(OUTPUT_ENCODING, errors)
+def console_encode(string, errors='replace', stream=sys.__stdout__):
+    """Encodes Unicode to bytes in console or system encoding.
 
-
-def decode_from_system(string, can_be_from_java=True):
-    """Decodes bytes from system (e.g. cli args or env vars) to Unicode."""
-    if sys.platform == 'cli':
-        return string
-    if sys.platform.startswith('java') and can_be_from_java:
-        # http://bugs.jython.org/issue1592
-        from java.lang import String
-        string = String(string)
-    return unic(string, SYSTEM_ENCODING)
-
-
-def encode_to_system(string, errors='replace'):
-    """Encodes Unicode to system encoding (e.g. cli args and env vars).
-
-    Non-Unicode strings are first converted to Unicode.
+    Uses console encoding if the given `stream` is a console and system
+    encoding otherwise.
     """
-    if not isinstance(string, unicode):
-        string = unicode(string)
-    return string.encode(SYSTEM_ENCODING, errors)
+    encoding = CONSOLE_ENCODING if isatty(stream) else SYSTEM_ENCODING
+    if PY3 and encoding != 'UTF-8':
+        return string.encode(encoding, errors).decode(encoding)
+    if PY3 or IRONPYTHON:
+        return string
+    return string.encode(encoding, errors)
+
+
+# These interpreters handle communication with system APIs using Unicode.
+if PY3 or JYTHON or IRONPYTHON:
+
+    def system_decode(string):
+        return string if is_unicode(string) else unic(string)
+
+    def system_encode(string, errors='replace'):
+        return string if is_unicode(string) else unic(string)
+
+else:
+
+    def system_decode(string):
+        """Decodes bytes from system (e.g. cli args or env vars) to Unicode."""
+        try:
+            return string.decode(SYSTEM_ENCODING)
+        except UnicodeError:
+            return unic(string)
+
+    def system_encode(string, errors='replace'):
+        """Encodes Unicode to system encoding (e.g. cli args and env vars).
+
+        Non-Unicode values are first converted to Unicode.
+        """
+        if not is_unicode(string):
+            string = unic(string)
+        return string.encode(SYSTEM_ENCODING, errors)

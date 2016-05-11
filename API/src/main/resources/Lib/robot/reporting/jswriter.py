@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -53,7 +53,7 @@ class JsResultWriter(object):
         prefix = '%s = %s.concat(' % (variable, variable)
         postfix = ');\n'
         threshold = self._split_threshold
-        for index in xrange(0, len(strings), threshold):
+        for index in range(0, len(strings), threshold):
             self._write_json(prefix, strings[index:index+threshold], postfix)
 
     def _write_data(self, data):

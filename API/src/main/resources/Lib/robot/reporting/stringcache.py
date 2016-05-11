@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -12,19 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from operator import itemgetter
-
-from robot.utils import compress_text
+from robot.utils import OrderedDict, compress_text
 
 
-class StringIndex(long):
-    # Methods below are needed due to http://bugs.jython.org/issue1828
-
-    def __str__(self):
-        return long.__str__(self).rstrip('L')
-
-    def __nonzero__(self):
-        return bool(long(self))
+class StringIndex(int):
+    pass
 
 
 class StringCache(object):
@@ -33,7 +25,7 @@ class StringCache(object):
     _zero_index = StringIndex(0)
 
     def __init__(self):
-        self._cache = {'*': self._zero_index}
+        self._cache = OrderedDict({'*': self._zero_index})
 
     def add(self, text):
         if not text:
@@ -56,5 +48,4 @@ class StringCache(object):
         return '*'+text
 
     def dump(self):
-        return tuple(item[0] for item in sorted(self._cache.iteritems(),
-                                                key=itemgetter(1)))
+        return tuple(self._cache)

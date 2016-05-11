@@ -1,4 +1,4 @@
-#  Copyright 2008-2014 Nokia Solutions and Networks
+#  Copyright 2008-2015 Nokia Solutions and Networks
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -15,9 +15,12 @@
 import base64
 import sys
 
+from .platform import PY2
+
 
 def compress_text(text):
-    return base64.b64encode(_compress(text.encode('UTF-8')))
+    result = base64.b64encode(_compress(text.encode('UTF-8')))
+    return result if PY2 else result.decode('ASCII')
 
 
 if not sys.platform.startswith('java'):
@@ -28,10 +31,10 @@ if not sys.platform.startswith('java'):
         return zlib.compress(text, 9)
 
 else:
-    # Custom compress implementation needed to avoid memory leak:
-    # http://bugs.jython.org/issue1775
-    # This is based on the zlib.compress in Jython 2.5.2 but has a memory
-    # leak fix and is also a little faster.
+
+    # Custom compress implementation was originally used to avoid memory leak
+    # (http://bugs.jython.org/issue1775). Kept around still because it is a bit
+    # faster than Jython's standard zlib.compress.
 
     from java.util.zip import Deflater
     import jarray
