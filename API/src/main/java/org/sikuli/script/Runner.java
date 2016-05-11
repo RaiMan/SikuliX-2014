@@ -1,14 +1,5 @@
 package org.sikuli.script;
 
-import java.io.File;
-import java.io.FileReader;
-import java.lang.reflect.Method;
-import java.net.URL;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import org.apache.commons.cli.CommandLine;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
@@ -16,6 +7,16 @@ import org.sikuli.basics.Settings;
 import org.sikuli.util.CommandArgs;
 import org.sikuli.util.CommandArgsEnum;
 import org.sikuli.util.JythonHelper;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import java.io.File;
+import java.io.FileReader;
+import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Runner {
 
@@ -448,8 +449,8 @@ public class Runner {
       }
     }
     Object[] vars = new Object[]{givenScriptHost, givenScriptFolder, givenScriptName,
-      givenScriptScript, givenScriptType, givenScriptScriptType,
-      uGivenScript, uGivenScriptFile, givenScriptExists, scriptProject, uScriptProject};
+            givenScriptScript, givenScriptType, givenScriptScriptType,
+            uGivenScript, uGivenScriptFile, givenScriptExists, scriptProject, uScriptProject};
     return vars;
   }
 
@@ -517,14 +518,18 @@ public class Runner {
     pyRunner.exec("from sikuli import *;");
     pyRunner.exec("import robot.run;");
     String robotCmd = String.format(
-            "robot.run(\"%s\", "
-                    + "outputdir=\"%s\""
-                    + ");", fRobot, fRobotWork);
+            "ret = robot.run(\"%s\", "
+                    + "outputdir=\"%s\"", fRobot, fRobotWork);
     if (RunTime.get().runningWindows) robotCmd = robotCmd.replaceAll("\\\\", "\\\\\\\\");
+    robotCmd += String.format("); print \"robot.run returned:\", ret; " +
+                    "print \"robot.run output is here:\\n%s\";", fRobotWork);
     pyRunner.exec(robotCmd);
+    if (new File(fRobotWork, "report.html").exists()) {
+      App.openLink("file://" + new File(fRobotWork, "report.html").getAbsolutePath());
+    }
     return 0;
   }
-  
+
   //<editor-fold defaultstate="collapsed" desc="robot run options">
 //  -N --name name           Set the name of the top level test suite. Underscores
 //                          in the name are converted to spaces. Default name is
@@ -838,13 +843,13 @@ public class Runner {
     File aFile = FileManager.createTempFile("ps1");
     FileManager.writeStringToFile(givenScriptScript, aFile);
     String[] psDirect = new String[]{
-      "powershell.exe", "-ExecutionPolicy", "UnRestricted",
-      "-NonInteractive", "-NoLogo", "-NoProfile", "-WindowStyle", "Hidden",
-      "-File", aFile.getAbsolutePath()
+            "powershell.exe", "-ExecutionPolicy", "UnRestricted",
+            "-NonInteractive", "-NoLogo", "-NoProfile", "-WindowStyle", "Hidden",
+            "-File", aFile.getAbsolutePath()
     };
     String[] psCmdType = new String[]{
-      "cmd.exe", "/S", "/C",
-      "type " + aFile.getAbsolutePath() + " | powershell -noprofile -"
+            "cmd.exe", "/S", "/C",
+            "type " + aFile.getAbsolutePath() + " | powershell -noprofile -"
     };
     String retVal = runTime.runcmd(psCmdType);
     String[] parts = retVal.split("\\s");
@@ -998,7 +1003,7 @@ public class Runner {
       return 0;
     }
 
-//    static File scriptProject = null;
+    //    static File scriptProject = null;
 //    static URL uScriptProject = null;
     RunTime runTime = RunTime.get();
     boolean asTest = false;
