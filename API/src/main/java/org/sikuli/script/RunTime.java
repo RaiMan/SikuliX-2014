@@ -1106,13 +1106,15 @@ public class RunTime {
 //<editor-fold defaultstate="collapsed" desc="init for API">
   private void initAPI() {
     log(lvl, "initAPI: entering");
-    if (runType == Type.API && (shouldExport || !fSikulixLib.exists()
+    if (shouldExport
+            || !fSikulixLib.exists()
             || !new File(fSikulixLib, "robot").exists()
-            || !new File(fSikulixLib, "sikuli").exists())) {
+            || !new File(fSikulixLib, "sikuli").exists()) {
       fSikulixLib.mkdir();
       extractResourcesToFolder("Lib", fSikulixLib, null);
+    } else {
+      extractResourcesToFolder("Lib/sikuli", new File(fSikulixLib, "sikuli"), null);
     }
-    extractResourcesToFolder("Lib/sikuli", fSikulixLib, null);
     log(lvl, "initAPI: leaving");
   }
 //</editor-fold>
