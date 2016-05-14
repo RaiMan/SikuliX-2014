@@ -887,12 +887,16 @@ public class RunTime {
     }
     if (shouldExport) {
       String sysShort = "win";
+      boolean shouldAddLibsJar = false;
       if (!runningWinApp && !testingWinApp) {
         sysShort = runningOn.toString().toLowerCase();
       }
       String fpLibsFrom = "";
       if (runningJar) {
         fpLibsFrom = fSxBaseJar.getAbsolutePath();
+        if (fpLibsFrom.contains("forsetup")) {
+          shouldAddLibsJar = true;
+        }
       } else {
         String fSrcFolder = typ.toString();
         if (Type.SETUP.toString().equals(fSrcFolder)) {
@@ -900,7 +904,6 @@ public class RunTime {
         }
         fpLibsFrom = fSxBaseJar.getPath().replace(fSrcFolder, "Libs" + sysShort) + "/";
       }
-      boolean shouldAddLibsJar = false;
       if (testing && !runningJar) {
         if (testingWinApp || testSwitch()) {
           logp("***** for testing: exporting from classes");
@@ -909,13 +912,14 @@ public class RunTime {
           shouldAddLibsJar = true;
         }
       }
-      if (null != isJarOnClasspath("sikulix.jar") || null != isJarOnClasspath("sikulixapi.jar")) {
+      if (!shouldAddLibsJar &&
+              (null != isJarOnClasspath("sikulix.jar") || null != isJarOnClasspath("sikulixapi.jar"))) {
         shouldAddLibsJar = false;
         fpLibsFrom = "";
       }
       if (shouldAddLibsJar) {
         fpLibsFrom = new File(fSxProject,
-                String.format("Libs%s/target/sikulixlibs%s-1.1.0.jar", sysShort, sysShort)).getAbsolutePath();
+                String.format("Libs%s/target/sikulixlibs%s-1.1.1.jar", sysShort, sysShort)).getAbsolutePath();
       }
       log(lvl, "now exporting libs");
       if (!fpLibsFrom.isEmpty()) {
