@@ -181,6 +181,9 @@ public class ImagePath {
         continue;
       }
       paths[i++] = p.getPath();
+      if (p.isFile()) {
+        paths[i - 1] = new File(p.getPath()).getAbsolutePath();
+      }
     }
     return paths;
   }
