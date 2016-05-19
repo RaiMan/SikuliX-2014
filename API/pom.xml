@@ -46,11 +46,6 @@
       <artifactId>jintellitype</artifactId>
       <version>1.3.9</version>
     </dependency>
-    <!--		<dependency>
-      <groupId>jxgrabkey</groupId>
-      <artifactId>jxgrabkey</artifactId>
-      <version>1.0</version>
-    </dependency>-->
     <dependency>
       <groupId>com.nativelibs4java</groupId>
       <artifactId>bridj</artifactId>
