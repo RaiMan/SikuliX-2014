@@ -133,12 +133,14 @@ public class Screen extends Region implements IScreen {
       }
     } catch (AWTException e) {
       Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
-      Sikulix.terminate(999);
     }
   }
 
   private IRobot getMouseRobot() {
     setMouseRobot();
+    if (null == globalRobot) {
+      Sikulix.terminate(999);
+    }
     return globalRobot;
   }
   
