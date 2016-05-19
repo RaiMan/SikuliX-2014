@@ -589,7 +589,7 @@ public class Sikulix {
    */
   public static String input(String msg, String preset, String title, boolean hidden) {
     JFrame anchor = popLocation();
-    String ret = "";
+    String ret = null;
     if (!hidden) {
       if ("".equals(title)) {
         title = "Sikuli input request";
