@@ -90,39 +90,44 @@ public class Screen extends Region implements IScreen {
     log(lvl+1, "initScreens: entry");
     primaryScreen = 0;
     setMouseRobot();
-    screens = new Screen[runTime.nMonitors];
-    screens[0] = new Screen(0, runTime.mainMonitor);
-    screens[0].initScreen();
-    int nMonitor = 0;
-    for (int i = 1; i < screens.length; i++) {
-      if (nMonitor == runTime.mainMonitor) {
+    if (null == globalRobot) {
+      screens = new Screen[1];
+      screens[0] = null;
+    } else {
+      screens = new Screen[runTime.nMonitors];
+      screens[0] = new Screen(0, runTime.mainMonitor);
+      screens[0].initScreen();
+      int nMonitor = 0;
+      for (int i = 1; i < screens.length; i++) {
+        if (nMonitor == runTime.mainMonitor) {
+          nMonitor++;
+        }
+        screens[i] = new Screen(i, nMonitor);
+        screens[i].initScreen();
         nMonitor++;
       }
-      screens[i] = new Screen(i, nMonitor);
-      screens[i].initScreen();
-      nMonitor++;
-    }
-    Mouse.init();
-    Keys.init();
-    if (getNumberScreens() > 1) {
-      log(lvl, "initScreens: multi monitor mouse check");
-      Location lnow = Mouse.at();
-      float mmd = Settings.MoveMouseDelay;
-      Settings.MoveMouseDelay = 0f;
-      Location lc = null, lcn = null;
-      for (Screen s : screens) {
-        lc = s.getCenter();
-        Mouse.move(lc);
-        lcn = Mouse.at();
-        if (!lc.equals(lcn)) {
-          log(lvl, "*** multimonitor click check: %s center: (%d, %d) --- NOT OK:  (%d, %d)",
-                  s.toStringShort(), lc.x, lc.y, lcn.x, lcn.y);
-        } else {
-          log(lvl, "*** checking: %s center: (%d, %d) --- OK", s.toStringShort(), lc.x, lc.y);
+      Mouse.init();
+      Keys.init();
+      if (getNumberScreens() > 1) {
+        log(lvl, "initScreens: multi monitor mouse check");
+        Location lnow = Mouse.at();
+        float mmd = Settings.MoveMouseDelay;
+        Settings.MoveMouseDelay = 0f;
+        Location lc = null, lcn = null;
+        for (Screen s : screens) {
+          lc = s.getCenter();
+          Mouse.move(lc);
+          lcn = Mouse.at();
+          if (!lc.equals(lcn)) {
+            log(lvl, "*** multimonitor click check: %s center: (%d, %d) --- NOT OK:  (%d, %d)",
+                    s.toStringShort(), lc.x, lc.y, lcn.x, lcn.y);
+          } else {
+            log(lvl, "*** checking: %s center: (%d, %d) --- OK", s.toStringShort(), lc.x, lc.y);
+          }
         }
+        Mouse.move(lnow);
+        Settings.MoveMouseDelay = mmd;
       }
-      Mouse.move(lnow);
-      Settings.MoveMouseDelay = mmd;
     }
   }
 
