@@ -176,10 +176,12 @@ public class RunSetup {
     minorversion = runTime.getVersionShort().substring(0, 5);
     majorversion = runTime.getVersionShort().substring(0, 3);
 
-    String msg = String.format("You are about to run a setup for %s (%s)", version, runTime.sxBuildStamp);
-    if (!Sikulix.popAsk(msg +"\n\nYou should have a suitable backup, " +
-            "\nto go back in case to what you have now." +
-            "\n\nClick NO to stop here", "... Be sure to have a BACKUP ...")) userTerminated("");
+    if (!hasOptions) {
+      String msg = String.format("You are about to run a setup for %s (%s)", version, runTime.sxBuildStamp);
+      if (!Sikulix.popAsk(msg + "\n\nYou should have a suitable backup, " +
+              "\nto go back in case to what you have now." +
+              "\n\nClick NO to stop here", "... Be sure to have a BACKUP ...")) userTerminated("");
+    }
 
     localSetup = String.format("sikulixsetup-%s-%s-project.jar", version, runTime.sxBuildStamp);
     if (runTime.fSxBaseJar.getPath().contains(localSetup)) {
