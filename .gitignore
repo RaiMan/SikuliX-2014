@@ -14,6 +14,7 @@ opencvsrc/
 .project
 .classpath
 *$py.class
+*.pyc
 .exe
 original/
 *.sikuli.robot/

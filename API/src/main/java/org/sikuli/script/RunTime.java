@@ -2547,6 +2547,9 @@ public class RunTime {
     if (isHeadless()) {
       return new Rectangle(0, 0, 1, 1);
     }
+    if (null == monitorBounds) {
+      return null;
+    }
     n = (n < 0 || n >= nMonitors) ? mainMonitor : n;
     return monitorBounds[n];
   }

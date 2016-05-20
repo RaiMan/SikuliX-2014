@@ -6,11 +6,12 @@
  */
 package org.sikuli.script;
 
-import java.awt.Color;
+import java.awt.*;
+
 import org.sikuli.basics.HotkeyManager;
 import org.sikuli.util.Tests;
 import org.sikuli.util.ScreenHighlighter;
-import java.awt.Dimension;
+
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
@@ -60,7 +61,7 @@ public class Sikulix {
   private static RunTime rt = null;
   public static int testNumber = -1;
   private static boolean shouldRunServer = false;
-  private static Location locPopAt = new Screen().getCenter();
+  private static Point locPopAt = null;
 
   static {
     String jarName = "";
@@ -677,26 +678,40 @@ public class Sikulix {
   }
   
   public static Location popat(Location at) {
-    locPopAt = at;
-    return locPopAt;
+    locPopAt = new Point(at.x, at.y);
+    return new Location(locPopAt);
   }
 
   public static Location popat(Region at) {
-    locPopAt = at.getCenter();
-    return locPopAt;
+    locPopAt = new Point(at.getCenter().x, at.getCenter().y);
+    return new Location(locPopAt);
   }
   
   public static Location popat(int atx, int aty) {
-    locPopAt = new Location(atx, aty);
-    return locPopAt;
+    locPopAt = new Point(atx, aty);
+    return new Location(locPopAt);
   }
   
   public static Location popat() {
-    locPopAt = new Screen().getCenter();
-    return locPopAt;
+    locPopAt = getLocPopAt();
+    return new Location(locPopAt);
+  }
+
+  private static Point getLocPopAt() {
+    Rectangle screen0 = rt.getMonitor(0);
+    if (null == screen0) {
+      return null;
+    }
+    return new Point((int) screen0.getCenterX(), (int) screen0.getCenterY());
   }
 
   private static JFrame popLocation() {
+    if (null == locPopAt) {
+      locPopAt = getLocPopAt();
+      if (null == locPopAt) {
+        return null;
+      }
+    }
     return popLocation(locPopAt.x, locPopAt.y);
   }
 

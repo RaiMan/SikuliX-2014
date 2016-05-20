@@ -519,13 +519,18 @@ public class Runner {
     pyRunner.exec("import robot.run;");
     String robotCmd = String.format(
             "ret = robot.run(\"%s\", "
-                    + "outputdir=\"%s\"", fRobot, fRobotWork);
-    if (RunTime.get().runningWindows) robotCmd = robotCmd.replaceAll("\\\\", "\\\\\\\\");
-    robotCmd += String.format("); print \"robot.run returned:\", ret; " +
-                    "print \"robot.run output is here:\\n%s\";", fRobotWork);
-    pyRunner.exec(robotCmd);
+                    + "outputdir=\"%s\")", fRobot, fRobotWork);
+    File fReport = new File(fRobotWork, "report.html");
+    String urlReport = fReport.getAbsolutePath();
+    if (RunTime.get().runningWindows) {
+      robotCmd = robotCmd.replaceAll("\\\\", "\\\\\\\\");
+      urlReport = "/" + urlReport.replaceAll("\\\\", "/");
+    }
+    pyRunner.exec(robotCmd + "; print \"robot.run returned:\", ret; " +
+            String.format("print \"robot.run output is here:\\n%s\";",
+            fRobotWork.getAbsolutePath().replaceAll("\\\\", "\\\\\\\\")));
     if (new File(fRobotWork, "report.html").exists()) {
-      App.openLink("file://" + new File(fRobotWork, "report.html").getAbsolutePath());
+      App.openLink("file:" + urlReport);
     }
     return 0;
   }
