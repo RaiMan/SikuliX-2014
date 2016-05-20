@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.zip.ZipEntry;
-import javax.swing.JFrame;
+import javax.swing.*;
 import javax.swing.border.Border;
 import javax.swing.border.LineBorder;
 import org.rauschig.jarchivelib.Archiver;
@@ -36,7 +36,7 @@ import org.sikuli.basics.SplashFrame;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.script.RunTime;
 import org.sikuli.basics.Settings;
-import org.sikuli.script.Sikulix;
+//import org.sikuli.script.Sikulix;
 import org.sikuli.util.LinuxSupport;
 
 public class RunSetup {
@@ -341,12 +341,15 @@ public class RunSetup {
       }
     }
 
-//    if (!hasOptions) {
-//      String msg = String.format("You are about to run a setup for %s (%s)", version, runTime.sxBuildStamp);
-//      if (!Sikulix.popAsk(msg + "\n\nYou should have a suitable backup, " +
-//              "\nto go back in case to what you have now." +
-//              "\n\nClick NO to stop here", "... Be sure to have a BACKUP ...")) userTerminated("");
-//    }
+    if (!hasOptions) {
+      String msg = String.format("You are about to run a setup for %s (%s)", version, runTime.sxBuildStamp);
+      msg += "\n\nYou should have a suitable backup, ";
+      msg += "\nto go back in case to what you have now.";
+      msg += "\n\nClick NO to stop here";
+      if (!popAsk(msg)) {
+        userTerminated("");
+      }
+    }
 
     localLogfile = "SikuliX-" + version + "-SetupLog.txt";
 
@@ -426,7 +429,7 @@ public class RunSetup {
     }
 
     if (args.length > 0) {
-      logPlus(lvl, "... starting with: " + Sikulix.arrayToString(args));
+      logPlus(lvl, "... starting with: " + arrayToString(args));
     } else {
       logPlus(lvl, "... starting with no args given");
     }
@@ -1200,6 +1203,17 @@ public class RunSetup {
 
     System.exit(RunTime.testing ? 1 : 0);
   }
+
+  private static String arrayToString(String[] args) {
+    String ret = "";
+    for (String s : args) {
+      if (s.contains(" ")) {
+        s = "\"" + s + "\"";
+      }
+      ret += s + " ";
+    }
+    return ret;
+  }
   
   private static void finalCleanup() {
     if (hasAPI) jarsList[1] = null;
@@ -1560,14 +1574,14 @@ public class RunSetup {
   private static void popError(String msg) {
     logPlus(3, "\npopError: " + packMessage(msg));
     if (!hasOptions) {
-      Sikulix.popError(msg, "SikuliX-Setup: having problems ...");
+      JOptionPane.showMessageDialog(null, msg, "SikuliX-Setup: having problems ...", JOptionPane.ERROR_MESSAGE);
     }
   }
 
   private static void popInfo(String msg) {
     logPlus(3, "\npopInfo: " + packMessage(msg));
     if (!hasOptions) {
-      Sikulix.popup(msg, "SikuliX-Setup: info ...");
+      JOptionPane.showMessageDialog(null, msg, "SikuliX-Setup: info ...", JOptionPane.PLAIN_MESSAGE);
     }
   }
 
@@ -1576,7 +1590,11 @@ public class RunSetup {
     if (hasOptions) {
       return true;
     }
-    return Sikulix.popAsk(msg, "SikuliX-Setup: question ...");
+    int ret = JOptionPane.showConfirmDialog(null, msg, "SikuliX-Setup: question ...", JOptionPane.YES_NO_OPTION);
+    if (ret == JOptionPane.CLOSED_OPTION || ret == JOptionPane.NO_OPTION) {
+      return false;
+    }
+    return true;
   }
 
   private static JFrame showSplash(String title, String msg) {
