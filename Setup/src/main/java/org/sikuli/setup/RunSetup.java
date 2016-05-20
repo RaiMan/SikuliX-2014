@@ -341,12 +341,12 @@ public class RunSetup {
       }
     }
 
-    if (!hasOptions) {
-      String msg = String.format("You are about to run a setup for %s (%s)", version, runTime.sxBuildStamp);
-      if (!Sikulix.popAsk(msg + "\n\nYou should have a suitable backup, " +
-              "\nto go back in case to what you have now." +
-              "\n\nClick NO to stop here", "... Be sure to have a BACKUP ...")) userTerminated("");
-    }
+//    if (!hasOptions) {
+//      String msg = String.format("You are about to run a setup for %s (%s)", version, runTime.sxBuildStamp);
+//      if (!Sikulix.popAsk(msg + "\n\nYou should have a suitable backup, " +
+//              "\nto go back in case to what you have now." +
+//              "\n\nClick NO to stop here", "... Be sure to have a BACKUP ...")) userTerminated("");
+//    }
 
     localLogfile = "SikuliX-" + version + "-SetupLog.txt";
 
