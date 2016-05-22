@@ -2113,7 +2113,6 @@ public class Region {
     try {
       Thread.sleep((long) (timeout * 1000L));
     } catch (InterruptedException e) {
-      e.printStackTrace();
     }
   }
 
