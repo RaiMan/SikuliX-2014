@@ -359,18 +359,25 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
     return gdevsBounds[_curID];
   }
 
+  public Region newRegion(int x, int y, int width, int height) {
+    return new Region(x, y, width, height, this);
+  }
+
   public Region newRegion(Location loc, int width, int height) {
-    //return Region.create(loc.copyTo(this), width, height);
-    return new Region(loc.x, loc.y, width, height, loc.getScreen());
+    return new Region(loc.x, loc.y, width, height, this);
+  }
+
+  public Region newRegion(Region r) {
+    return new Region(r.x, r.y, r.w, r.h, this);
+  }
+
+  public Location newLocation(Location loc) {
+    return loc.setOtherScreen(this);
   }
 
   @Override
   public ScreenImage getLastScreenImageFromScreen() {
     return lastScreenImage;
-  }
-
-  public Location newLocation(Location loc) {
-    return loc.setOtherScreen(this);
   }
 
   @Override
