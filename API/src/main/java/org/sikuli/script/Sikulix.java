@@ -769,6 +769,9 @@ public class Sikulix {
     File ret = fc.show(title);
     fc = null;
     popat();
+    if (ret == null) {
+      return "";
+    }
     return ret.getAbsolutePath();
   }
 
