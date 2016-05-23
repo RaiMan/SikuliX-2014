@@ -31,6 +31,10 @@ public class SikulixFileChooser {
     this.accessingAsFile = accessingAsFile;
   }
 
+  private boolean isGeneric() {
+    return (_parent.getWidth() == 1 && _parent.getHeight() == 1);
+  }
+
   public File show(String title) {
     File ret = showFileChooser(title, LOAD, DIRSANDFILES);
     return ret;
@@ -74,43 +78,48 @@ public class SikulixFileChooser {
         fchooser.setCurrentDirectory(new File(last_dir));
       }
       fchooser.setSelectedFile(null);
-      if (Settings.isMac() && Settings.isJava7() && selectionMode == DIRS) {
-        selectionMode = DIRSANDFILES;
-      }
-      fchooser.setFileSelectionMode(selectionMode);
       fchooser.setDialogTitle(title);
-      String btnApprove = "Select";
-      if (mode == FileDialog.SAVE) {
-        fchooser.setDialogType(JFileChooser.SAVE_DIALOG);
-        btnApprove = "Save";
-      }
       boolean shouldTraverse = false;
-      if (filters.length == 0) {
+      String btnApprove = "Select";
+      if (isGeneric()) {
+        fchooser.setFileSelectionMode(DIRSANDFILES);
         fchooser.setAcceptAllFileFilterUsed(true);
         shouldTraverse = true;
       } else {
-        fchooser.setAcceptAllFileFilterUsed(false);
-        for (Object filter : filters) {
-          if (filter instanceof SikulixFileFilter) {
-            fchooser.addChoosableFileFilter((SikulixFileFilter) filter);
-          } else {
-            fchooser.setFileFilter((FileNameExtensionFilter) filter);
-            shouldTraverse = true;
+        if (Settings.isMac() && Settings.isJava7() && selectionMode == DIRS) {
+          selectionMode = DIRSANDFILES;
+        }
+        fchooser.setFileSelectionMode(selectionMode);
+        if (mode == FileDialog.SAVE) {
+          fchooser.setDialogType(JFileChooser.SAVE_DIALOG);
+          btnApprove = "Save";
+        }
+        if (filters.length == 0) {
+          fchooser.setAcceptAllFileFilterUsed(true);
+          shouldTraverse = true;
+        } else {
+          fchooser.setAcceptAllFileFilterUsed(false);
+          for (Object filter : filters) {
+            if (filter instanceof SikulixFileFilter) {
+              fchooser.addChoosableFileFilter((SikulixFileFilter) filter);
+            } else {
+              fchooser.setFileFilter((FileNameExtensionFilter) filter);
+              shouldTraverse = true;
+            }
           }
         }
       }
       if (shouldTraverse && Settings.isMac()) {
         fchooser.putClientProperty("JFileChooser.packageIsTraversable", "always");
       }
-
       if (fchooser.showDialog(_parent, btnApprove) != JFileChooser.APPROVE_OPTION) {
         return null;
       }
       fileChoosen = fchooser.getSelectedFile();
       // folders must contain a valid scriptfile
-      if (mode == FileDialog.LOAD && !isValidScript(fileChoosen)) {
+      if (!isGeneric() && mode == FileDialog.LOAD && !isValidScript(fileChoosen)) {
         Sikulix.popError("Folder not a valid SikuliX script\nTry again.");
-        last_dir = fileChoosen.getAbsolutePath();
+        last_dir = fileChoosen.getParentFile().getAbsolutePath();
         continue;
       }
       break;
