@@ -143,7 +143,7 @@ public class VNCRobot implements IRobot {
     /**
      * Presses a mouse button at the current location
      * 
-     * @param button can be InputEvent.BUTTON1_MASK
+     * @param buttons can be InputEvent.BUTTON1_MASK
 	 *						InputEvent.BUTTON2_MASK
 	 *						InputEvent.BUTTON3_MASK
      */

@@ -2258,7 +2258,9 @@ public class Region {
       lastMatch = doFind(target, img, null);
       if (lastMatch != null) {
         lastMatch.setImage(img);
-        if (img != null) {
+        if (isOtherScreen()) {
+          lastMatch.setOtherScreen();
+        } else if (img != null) {
           img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         }
         log(lvl, "find: %s appeared (%s)", targetStr, lastMatch);
@@ -2312,7 +2314,9 @@ public class Region {
       if (rf.repeat(timeout)) {
         lastMatch = rf.getMatch();
         lastMatch.setImage(img);
-        if (img != null) {
+        if (isOtherScreen()) {
+          lastMatch.setOtherScreen();
+        } else if (img != null) {
           img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         }
         log(lvl, "exists: %s has appeared (%s)", targetStr, lastMatch);
@@ -2632,7 +2636,9 @@ public class Region {
       if (rf.repeat(timeout)) {
         lastMatch = rf.getMatch();
         lastMatch.setImage(img);
-        if (img != null) {
+        if (isOtherScreen()) {
+          lastMatch.setOtherScreen();
+        } else if (img != null) {
           img.setLastSeen(lastMatch.getRect(), lastMatch.getScore());
         }
         log(lvl, "wait: %s appeared (%s)", targetStr, lastMatch);
