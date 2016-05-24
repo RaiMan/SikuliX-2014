@@ -124,7 +124,11 @@ public class SikulixFileChooser {
       }
       break;
     }
-    PreferencesUser.getInstance().put("LAST_OPEN_DIR", fileChoosen.getParent());
+    String lastDir = fileChoosen.getParent();
+    if (null == lastDir) {
+      lastDir = fileChoosen.getAbsolutePath();
+    }
+    PreferencesUser.getInstance().put("LAST_OPEN_DIR", lastDir);
     return fileChoosen;
   }
 
