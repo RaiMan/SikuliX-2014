@@ -750,7 +750,9 @@ public class Sikulix {
     SikulixFileChooser fc = new SikulixFileChooser(anchor);
     File ret = fc.show(title);
     fc = null;
-    popat();
+    if (anchor != null) {
+      anchor.dispose();
+    }
     if (ret == null) {
       return "";
     }
@@ -883,9 +885,5 @@ public class Sikulix {
    */
   public static void prefRemove() {
     PreferencesUser.getInstance().removeAll(prefNonSikuli);
-  }
-
-  private static Exception Exception() {
-    throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
   }
 }
