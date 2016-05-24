@@ -107,8 +107,6 @@ public class Sikulix {
     if (args.length > 0 && args[0].toLowerCase().startsWith("-s")) {
       shouldRunServer = true;
     } else {
-      System.out.println("********** Running Sikulix.main");
-
       int dl = RunTime.checkArgs(args, RunTime.Type.API);
       if (dl > -1 && dl < 999) {
         testNumber = dl;
@@ -143,22 +141,6 @@ public class Sikulix {
         System.exit(1);
       }
     }
-    
-    Debug.on(3);
-    Settings.InfoLogs = true;
-    Settings.ActionLogs = true;
-
-    ImagePath.add("org.sikuli.script.Sikulix/ImagesAPI.sikuli");
-    String shotPath = new File(ImagePath.getPaths().get(1).getPath()).getParent();
-    ImagePath.setBundlePath(shotPath);
-    
-    Screen s = new Screen();
-    App.focus("Safari");
-    popat(s.get(211));
-    popup("test");
-    RunTime.pause(3);
-    
-    System.exit(1);
 
     String version = String.format("(%s-%s)", rt.getVersionShort(), rt.sxBuildStamp);
     File lastSession = new File(rt.fSikulixStore, "LastAPIJavaScript.js");
