@@ -26,6 +26,7 @@ class RunTime(JRunTime):
 
 RUNTIME = RunTime.get()
 
+
 import org.sikuli.basics.Settings as JSettings
 
 class Settings(JSettings):
@@ -162,6 +163,52 @@ def show():
 # a token to check the availability
 #
 SIKULIX_IS_WORKING = sys.version.split("(")[0]
+
+##
+# public for options handling (property file)
+##
+
+def makeOpts():
+  return RUNTIME.makeOpts()
+
+def loadOpts(filePath):
+  return RUNTIME.loadOpts(filePath)
+
+def getOpts(props):
+  return RUNTIME.getOpts(props)
+
+def hasOpts(props):
+  return RUNTIME.hasOpts(props)
+
+def setOpts(props, adict):
+  return RUNTIME.setOpts(props, adict)
+
+def delOpts(props):
+  return RUNTIME.delOpts(props)
+
+def saveOpts(props, filePath = None):
+  if not filePath:
+    return RUNTIME.saveOpts(props)
+  else:
+    return RUNTIME.saveOpts(props, filePath)
+
+def hasOpt(props, key):
+  return RUNTIME.hasOpt(props, key)
+
+def getOpt(props, key, deflt = ""):
+  return RUNTIME.getOpt(props, key, deflt)
+
+def getOptNum(props, key, deflt = 0):
+  return RUNTIME.getOptNum(props, key, deflt)
+
+def setOpt(props, key, value):
+  return RUNTIME.setOpt(props, key, value)
+
+def setOptNum(props, key, value):
+  return RUNTIME.setOptNum(props, key, value)
+
+def delOpt(props, key):
+  return RUNTIME.delOpt(props, key)
 
 ##
 # some support for handling unicode and strings
