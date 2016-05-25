@@ -17,16 +17,16 @@
  */
 package edu.unh.iol.dlc;
 
-import java.awt.AWTException;
-import java.awt.GraphicsDevice;
-import java.awt.Point;
-import java.awt.Rectangle;
+import java.awt.*;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 
 import org.sikuli.basics.Debug;
-import org.sikuli.basics.FileManager;
 import org.sikuli.script.*;
 import org.sikuli.basics.Settings;
 import org.sikuli.util.*;
+
+import org.sikuli.script.Sikulix;
 
 /**
  * The VNCScreen is an implementation of IScreen that uses a VNCRobot to
@@ -68,14 +68,53 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 
   private static boolean isFake;
   private static VNCScreen fakeScreen = null;
+  private static String myIP = "";
+  private static int myPort = 0;
+
+  public static VNCScreen start(String theIP, int thePort, int theConnectTimeout, int theIOTimeout) {
+    Socket sock = null;
+    try {
+      sock = new Socket();
+      sock.setSoTimeout(theIOTimeout);
+      sock.connect(new InetSocketAddress(theIP ,thePort), theConnectTimeout * 1000);
+    } catch (Exception e) {
+      if (e.getClass().toString().contains("SocketTimeoutException")) {
+        Debug.error("VNC init: not possible to connect to %s:%s within %d seconds", theIP, thePort, theConnectTimeout);
+      } else {
+        Debug.error("VNC init socket problem: %s", e.getMessage());
+      }
+      Sikulix.endError(1);
+    }
+    ConnectionController cc = new ConnectionController(sock);
+    cc.openConnection(0);
+    cc.start(0);
+    VNCScreen vnc = new VNCScreen();
+    vnc.setConnection(cc, 0);
+    Debug.info("");
+    Debug.info("VNCScreen: running as connection 0 on %s:%d", theIP, thePort);
+    myIP = theIP;
+    myPort = thePort;
+    return vnc;
+  }
+
+  public void stop() {
+    if (null != ConContr) {
+      ConContr.closeConnection(connection);
+      Debug.info("VNCScreen: stopped connection 0 on %s:%d", myIP, myPort);
+    }
+  }
+
+  private ConnectionController ConContr = null;
+  private int connection = -1;
+
+  protected void setConnection(ConnectionController cc, int con) {
+    ConContr = cc;
+    connection = con;
+  }
 
   public VNCScreen() {
     super();
-    //this needs to be called because while with a normal screen it
-    //is not expected that a new one will be connected during the normal
-    //operation of the program, a VNCScreen can be arbitratily connected and
-    //disconnected so _gdev needs to be updated to a new size
-    initScreens(true);
+    initScreens();
     _curID = _primaryScreen;
     initScreen();
     super.initScreen(this);
@@ -83,11 +122,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 
   public VNCScreen(int id) {
     super();
-    //this needs to be called because while with a normal screen it
-    //is not expected that a new one will be connected during the normal
-    //operation of the program, a VNCScreen can be arbitratily connected and
-    //disconnected so _gdev needs to be updated to a new size
-    initScreens(true);
+    initScreens();
     if (id < 0 || id >= _gdev.length) {
       throw new IllegalArgumentException("VNCScreen ID " + id + " not in valid range " +
               "(between 0 and " + (_gdev.length - 1));
@@ -105,16 +140,20 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
     super.initScreen(this);
   }
 
-  private static void initScreens(boolean reset) {
-
-    log(lvl + 1, "initScreens: entry");
-    if (_genv != null && !reset) {
-      return;
-    }
+  private static void initScreens() {
 
     isFake = System.getProperty("sikuli.vncfake") != null;
 
-    if (!isFake) {
+    if (isFake) {
+      _gdev = new Framebuffer[]{null};
+      gdevsBounds = new Rectangle[]{new Rectangle(0, 0, 1024, 768)};
+      screens = new VNCScreen[1];
+      fakeScreen = new VNCScreen(0, true);
+      screens[0] = fakeScreen;
+      _primaryScreen = 0;
+      log(lvl, "********** running in fake mode: %s", fakeScreen);
+      return;
+    } else {
       _genv = ConnectionController.getActiveController(0);
       if (_genv == null) {
         Debug.error("Did not find any active ConnectionControllers.  " +
@@ -133,8 +172,15 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 
       _primaryScreen = -1;
 
+      boolean hasConnections = false;
       for (int i = 0; i < getNumberScreens(); i++) {
-        gdevsBounds[i] = _gdev[i].getDefaultConfiguration().getBounds();
+        GraphicsConfiguration defaultConfiguration = _gdev[i].getDefaultConfiguration();
+        if (null == defaultConfiguration) {
+          log(-1, "initScreens: %d has no connection yet", i);
+          continue;
+        }
+        hasConnections = true;
+        gdevsBounds[i] = defaultConfiguration.getBounds();
 
         if (gdevsBounds[i].contains(new Point(0, 0))) {
           if (_primaryScreen < 0) {
@@ -145,43 +191,20 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
           }
         }
       }
-      if (_primaryScreen < 0) {
+      if (hasConnections && _primaryScreen < 0) {
         Debug.log("Screen: initScreens: no ScreenDevice contains (0,0) --- using first ScreenDevice as primary");
         _primaryScreen = 0;
       }
+    }
+
+    if (_primaryScreen < 0) {
+      log(-1, "initScreens: none of the remote screens has a valid connection");
+      Sikulix.endError(1);
     } else {
-      _gdev = new Framebuffer[]{null};
-      gdevsBounds = new Rectangle[]{new Rectangle(0, 0, 1024, 768)};
-      screens = new VNCScreen[1];
-      fakeScreen = new VNCScreen(0, true);
-      screens[0] = fakeScreen;
-      _primaryScreen = 0;
-      log(lvl, "********** running in fake mode: %s", fakeScreen);
-      return;
-    }
-
-    log(lvl + 1, "initScreens: after GD evaluation");
-    for (int i = 0; i < screens.length; i++) {
-      screens[i] = new VNCScreen(i, true);
-      screens[i].initScreen();
-    }
-
-//TODO not used
-//    try {
-//      log(lvl + 1, "initScreens: getting mouseRobot");
-//
-//      mouseRobot = new VNCRobot[screens.length];
-//
-//      for (int i = 0; i < screens.length; i++) {
-//        mouseRobot[i] = new VNCRobot(_gdev[i]);
-//        mouseRobot[i].setAutoDelay(10);
-//      }
-//    } catch (AWTException e) {
-//      Debug.error("Can't initialize global Robot for Mouse: " + e.getMessage());
-//      Sikulix.terminate(999);
-//    }
-
-    if (!reset) {
+      for (int i = 0; i < screens.length; i++) {
+        screens[i] = new VNCScreen(i, true);
+        screens[i].initScreen();
+      }
       log(lvl, "initScreens: basic initialization (%d VNCScreen(s) found)", _gdev.length);
       log(lvl, "*** monitor configuration (primary: %d) ***", _primaryScreen);
       for (int i = 0; i < _gdev.length; i++) {
@@ -189,32 +212,6 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
       }
       log(lvl, "*** end monitor configuration ***");
     }
-
-//TODO to be checked
-//    //im not sure if this is valid for VNCScreens yet,
-//    //with multiple normal screens there is only one mouse
-//    //but with VNCScreens there is a separate mouse for each
-//    //screen
-//    if (getNumberScreens() > 1) {
-//      log(lvl, "initScreens: multi monitor mouse check");
-//      Location lnow = Mouse.at();
-//      float mmd = Settings.MoveMouseDelay;
-//      Settings.MoveMouseDelay = 0f;
-//      Location lc = null, lcn = null;
-//      for (VNCScreen s : screens) {
-//        lc = s.getCenter();
-//        Mouse.move(lc);
-//        lcn = Mouse.at();
-//        if (!lc.equals(lcn)) {
-//          log(lvl, "*** multimonitor click check: %s center: (%d, %d) --- NOT OK:  (%d, %d)",
-//                  s.toStringShort(), lc.x, lc.y, lcn.x, lcn.y);
-//        } else {
-//          log(lvl, "*** checking: %s center: (%d, %d) --- OK", s.toStringShort(), lc.x, lc.y);
-//        }
-//      }
-//      Mouse.move(lnow);
-//      Settings.MoveMouseDelay = mmd;
-//    }
   }
 
   private void initScreen() {
@@ -238,23 +235,6 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
       }
     }
   }
-
-//TODO check: does not make sense
-//  public VNCScreen(boolean isScreenUnion) {
-//    super();
-//    initScreen();
-//    super.initScreen(this);
-//  }
-
-//TODO not used
-//  protected static VNCRobot getMouseRobot() {
-//    return mouseRobot[0];
-//  }
-
-//TODO check: does not make sense
-//  public static ScreenUnion all() {
-//    return new ScreenUnion();
-//  }
 
   public static int getNumberScreens() {
     return _gdev.length;
@@ -298,21 +278,6 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
     }
     Debug.info("*** end monitor configuration ***");
   }
-
-  public static void resetMonitors() {
-    Debug.error("*** BE AWARE: experimental - might not work ***");
-    Debug.error("Re-evaluation of the monitor setup has been requested");
-    Debug.error("... Current Region/Screen objects might not be valid any longer");
-    Debug.error("... Use existing Region/Screen objects only if you know what you are doing!");
-    initScreens(true);
-    Debug.info("*** new monitor configuration [ %s Screen(s)] ***", VNCScreen.getNumberScreens());
-    Debug.info("*** Primary is VNCScreen %d", _primaryScreen);
-    for (int i = 0; i < _gdev.length; i++) {
-      Debug.info("VNCScreen %d: %s", i, VNCScreen.getScreen(i).toStringShort());
-    }
-    Debug.error("*** end new monitor configuration ***");
-  }
-
 
   public void setAsScreenUnion() {
     oldID = _curID;

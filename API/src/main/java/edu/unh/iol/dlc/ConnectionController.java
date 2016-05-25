@@ -104,6 +104,7 @@ public class ConnectionController extends GraphicsEnvironment {
 	public void closeConnection(int index){
 		threads.get(index).terminate();
 		threads.remove(index);
+		Debug.log(3, "VNC.ConnectionController: closed connection: %d", index);
 	}
 	
 	/**
@@ -187,7 +188,7 @@ public class ConnectionController extends GraphicsEnvironment {
 	/**
 	 * Returns a Graphics2D object used to render on the BufferedImage.
 	 * 
-	 * @param the BufferedImage
+	 * @param img BufferedImage
 	 * @return the Grpahics2D
 	 */
 	@Override
