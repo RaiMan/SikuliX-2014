@@ -64,11 +64,46 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
   static {
     RunTime.loadLibrary("VisionProxy");
     isFake = false;
-    initScreens(false);
   }
 
   private static boolean isFake;
   private static VNCScreen fakeScreen = null;
+
+  public VNCScreen() {
+    super();
+    //this needs to be called because while with a normal screen it
+    //is not expected that a new one will be connected during the normal
+    //operation of the program, a VNCScreen can be arbitratily connected and
+    //disconnected so _gdev needs to be updated to a new size
+    initScreens(true);
+    _curID = _primaryScreen;
+    initScreen();
+    super.initScreen(this);
+  }
+
+  public VNCScreen(int id) {
+    super();
+    //this needs to be called because while with a normal screen it
+    //is not expected that a new one will be connected during the normal
+    //operation of the program, a VNCScreen can be arbitratily connected and
+    //disconnected so _gdev needs to be updated to a new size
+    initScreens(true);
+    if (id < 0 || id >= _gdev.length) {
+      throw new IllegalArgumentException("VNCScreen ID " + id + " not in valid range " +
+              "(between 0 and " + (_gdev.length - 1));
+    }
+    _curID = id;
+    initScreen();
+    super.initScreen(this);
+  }
+
+  //TODO prevent initScreens loop
+  private VNCScreen(int id, boolean b) {
+    super();
+    _curID = id;
+    initScreen();
+    super.initScreen(this);
+  }
 
   private static void initScreens(boolean reset) {
 
@@ -182,14 +217,44 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 //    }
   }
 
+  private void initScreen() {
+    setOtherScreen();
+    _curGD = _gdev[_curID];
+    Rectangle bounds = getBounds();
+    x = (int) bounds.getX();
+    y = (int) bounds.getY();
+    w = (int) bounds.getWidth();
+    h = (int) bounds.getHeight();
+
+    if (isFake) {
+      robot = new FakeRobot();
+    } else {
+      try {
+        robot = new VNCRobot(_curGD);
+        robot.setAutoDelay(10);
+      } catch (AWTException e) {
+        Debug.error("Can't initialize Java Robot on VNCScreen " + _curID + ": " + e.getMessage());
+        robot = null;
+      }
+    }
+  }
+
+//TODO check: does not make sense
+//  public VNCScreen(boolean isScreenUnion) {
+//    super();
+//    initScreen();
+//    super.initScreen(this);
+//  }
+
 //TODO not used
 //  protected static VNCRobot getMouseRobot() {
 //    return mouseRobot[0];
 //  }
 
-  public static ScreenUnion all() {
-    return new ScreenUnion();
-  }
+//TODO check: does not make sense
+//  public static ScreenUnion all() {
+//    return new ScreenUnion();
+//  }
 
   public static int getNumberScreens() {
     return _gdev.length;
@@ -248,63 +313,6 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
     Debug.error("*** end new monitor configuration ***");
   }
 
-  public VNCScreen() {
-    super();
-    _curID = _primaryScreen;
-    initScreen();
-    super.initScreen(this);
-  }
-
-  public VNCScreen(int id) {
-    super();
-    //this needs to be called because while with a normal screen it
-    //is not expected that a new one will be connected during the normal
-    //operation of the program, a VNCScreen can be arbitratily connected and
-    //disconnected so _gdev needs to be updated to a new size
-    initScreens(true);
-    if (id < 0 || id >= _gdev.length) {
-      throw new IllegalArgumentException("VNCScreen ID " + id + " not in valid range " +
-              "(between 0 and " + (_gdev.length - 1));
-    }
-    _curID = id;
-    initScreen();
-    super.initScreen(this);
-  }
-
-  public VNCScreen(int id, boolean b) {
-    super();
-    _curID = id;
-    initScreen();
-    super.initScreen(this);
-  }
-
-  public VNCScreen(boolean isScreenUnion) {
-    super();
-    initScreen();
-    super.initScreen(this);
-  }
-
-  private void initScreen() {
-    setOtherScreen();
-    _curGD = _gdev[_curID];
-    Rectangle bounds = getBounds();
-    x = (int) bounds.getX();
-    y = (int) bounds.getY();
-    w = (int) bounds.getWidth();
-    h = (int) bounds.getHeight();
-
-    if (isFake) {
-      robot = new FakeRobot();
-    } else {
-      try {
-        robot = new VNCRobot(_curGD);
-        robot.setAutoDelay(10);
-      } catch (AWTException e) {
-        Debug.error("Can't initialize Java Robot on VNCScreen " + _curID + ": " + e.getMessage());
-        robot = null;
-      }
-    }
-  }
 
   public void setAsScreenUnion() {
     oldID = _curID;

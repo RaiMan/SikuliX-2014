@@ -48,8 +48,8 @@ public class Framebuffer extends GraphicsDevice {
 	/**
 	 * Method that sets the pixel format of the framebuffer.
 	 * 
-	 * @param int[] sets the pixel format of the framebuffer for the connection
-	 * @param String name of the remote desktop
+	 * @param data sets the pixel format of the framebuffer for the connection
+	 * @param name name of the remote desktop
 	 * @return true if the pixel format is valid for what the VNC stack
 	 * 		   	    currently supports
 	 * 		   false if the pixel format is not valid
@@ -73,8 +73,7 @@ public class Framebuffer extends GraphicsDevice {
 	/**
 	 * Resets the pixel format to a different configuration
 	 * 
-	 * @param int[] sets the pixel format of the framebuffer for the connection
-	 * @param String name of the remote desktop
+	 * @param data sets the pixel format of the framebuffer for the connection
 	 * @return true if the pixel format is valid for what the VNC stack
 	 * 		   	    currently supports
 	 * 		   false if the pixel format is not valid
