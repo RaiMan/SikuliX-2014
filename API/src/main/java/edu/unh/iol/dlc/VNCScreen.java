@@ -71,30 +71,53 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
   private static String myIP = "";
   private static int myPort = 0;
 
+  private static VNCScreen theOneScreen = null;
+
   public static VNCScreen start(String theIP, int thePort, int theConnectTimeout, int theIOTimeout) {
+    cleanUp();
     Socket sock = null;
     try {
       sock = new Socket();
       sock.setSoTimeout(theIOTimeout);
       sock.connect(new InetSocketAddress(theIP ,thePort), theConnectTimeout * 1000);
     } catch (Exception e) {
+      sock = null;
       if (e.getClass().toString().contains("SocketTimeoutException")) {
         Debug.error("VNC init: not possible to connect to %s:%s within %d seconds", theIP, thePort, theConnectTimeout);
       } else {
         Debug.error("VNC init socket problem: %s", e.getMessage());
       }
-      Sikulix.endError(1);
+    }
+    if (sock == null) {
+      throw new UnsupportedOperationException("VNCScreen: connection not possible");
     }
     ConnectionController cc = new ConnectionController(sock);
     cc.openConnection(0);
     cc.start(0);
     VNCScreen vnc = new VNCScreen();
-    vnc.setConnection(cc, 0);
-    Debug.info("");
-    Debug.info("VNCScreen: running as connection 0 on %s:%d", theIP, thePort);
-    myIP = theIP;
-    myPort = thePort;
-    return vnc;
+    if (vnc.isUsable()) {
+      theOneScreen = vnc;
+      vnc.setConnection(cc, 0);
+      Debug.info("");
+      Debug.info("VNCScreen: running as connection 0 on %s:%d", theIP, thePort);
+      myIP = theIP;
+      myPort = thePort;
+      return vnc;
+    } else {
+      return null;
+    }
+  }
+
+  public static void cleanUp() {
+    if (theOneScreen != null) {
+      theOneScreen.stop();
+      theOneScreen = null;
+    }
+  }
+
+  public boolean isUsable() {
+    //TODO check useable
+    return true;
   }
 
   public void stop() {
@@ -140,7 +163,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
     super.initScreen(this);
   }
 
-  private static void initScreens() {
+  private static void initScreens() throws UnsupportedOperationException {
 
     isFake = System.getProperty("sikuli.vncfake") != null;
 
@@ -156,9 +179,8 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
     } else {
       _genv = ConnectionController.getActiveController(0);
       if (_genv == null) {
-        Debug.error("Did not find any active ConnectionControllers.  " +
+        throw new UnsupportedOperationException("Did not find any active ConnectionControllers.  " +
                 "Cannot use VNCScreen without a ConnectionController instance.");
-        Sikulix.terminate(999);
       }
       _gdev = (Framebuffer[]) _genv.getScreenDevices();
 
@@ -166,8 +188,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
       screens = new VNCScreen[_gdev.length];
 
       if (_gdev.length == 0) {
-        Debug.error("VNCScreen: initScreens: GraphicsEnvironment has no screens");
-        Sikulix.terminate(999);
+        throw new UnsupportedOperationException("VNCScreen: initScreens: GraphicsEnvironment has no screens");
       }
 
       _primaryScreen = -1;
@@ -198,8 +219,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
     }
 
     if (_primaryScreen < 0) {
-      log(-1, "initScreens: none of the remote screens has a valid connection");
-      Sikulix.endError(1);
+      throw new UnsupportedOperationException("initScreens: none of the remote screens has a valid connection");
     } else {
       for (int i = 0; i < screens.length; i++) {
         screens[i] = new VNCScreen(i, true);

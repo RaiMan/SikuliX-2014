@@ -144,7 +144,8 @@ public class Screen extends Region implements IScreen {
   private IRobot getMouseRobot() {
     setMouseRobot();
     if (null == globalRobot) {
-      Sikulix.terminate(999);
+      log(-1, "problem getting a java.awt.Robot");
+      Sikulix.endError(999);
     }
     return globalRobot;
   }

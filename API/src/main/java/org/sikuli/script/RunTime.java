@@ -1001,13 +1001,12 @@ public class RunTime {
     } else {
       String libsPath = (fLibsFolder.getAbsolutePath()).replaceAll("/", "\\");
       if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
-        if (!SysJNA.WinKernel32.setEnvironmentVariable("PATH", libsPath + ";" + syspath)) {
-          Sikulix.terminate(999);
-        }
-        syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
-        if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
-          log(-1, "addToWindowsSystemPath: adding to system path did not work:\n%s", syspath);
-          terminate(1, "addToWindowsSystemPath: did not work - see error");
+        if (SysJNA.WinKernel32.setEnvironmentVariable("PATH", libsPath + ";" + syspath)) {
+          syspath = SysJNA.WinKernel32.getEnvironmentVariable("PATH");
+          if (!syspath.toUpperCase().contains(libsPath.toUpperCase())) {
+            log(-1, "addToWindowsSystemPath: adding to system path did not work:\n%s", syspath);
+            terminate(1, "addToWindowsSystemPath: did not work - see error");
+          }
         }
         log(lvl, "addToWindowsSystemPath: added to systempath:\n%s", libsPath);
       }
@@ -1628,7 +1627,7 @@ public class RunTime {
 //      log(lvl, "%s version: downloading from %s", svt, downloadBaseDir);
     } catch (Exception e) {
       Debug.error("Settings: load version file %s did not work", svf);
-      Sikulix.terminate(999);
+      Sikulix.endError(999);
     }
     tessData.put("eng", "http://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz");
     Env.setSikuliVersion(SikuliVersion);

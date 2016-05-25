@@ -8,6 +8,7 @@ package org.sikuli.script;
 
 import java.awt.*;
 
+import edu.unh.iol.dlc.VNCScreen;
 import org.sikuli.basics.HotkeyManager;
 import org.sikuli.util.Tests;
 import org.sikuli.util.ScreenHighlighter;
@@ -453,14 +454,14 @@ public class Sikulix {
    */
   public static void cleanUp(int n) {
     log(lvl, "cleanUp: %d", n);
+    VNCScreen.cleanUp();
     ScreenHighlighter.closeAll();
     Observing.cleanUp();
     HotkeyManager.reset();
-    //TODO move to class Keys after implementation
-    Screen.getPrimaryScreen().getRobot().keyUp();
+    try {
+      new RobotDesktop().keyUp();
+    } catch (AWTException e) {}
     Mouse.reset();
-    popat();
-    //TODO what about remote screen sessions????
   }
 
   /**
@@ -885,5 +886,18 @@ public class Sikulix {
    */
   public static void prefRemove() {
     PreferencesUser.getInstance().removeAll(prefNonSikuli);
+  }
+
+  /**
+   * convenience for a VNCScreen connection (use vncScreen.stop() to stop the connection)
+   *
+   * @param theIP the server IP
+   * @param thePort the port number
+   * @param cTimeout seconds to wait for a valid connection
+   * @param timeout value in milli-seconds during normal operation
+   * @return a VNCScreen object
+   */
+  public static VNCScreen vncStart(String theIP, int thePort, int cTimeout, int timeout) {
+    return VNCScreen.start(theIP, thePort, cTimeout, timeout);
   }
 }

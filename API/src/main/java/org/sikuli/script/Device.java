@@ -177,7 +177,9 @@ public class Device {
     }
     if (!inUse) {
       inUse = true;
-      checkLastPos();
+      try {
+        checkLastPos();
+      } catch (Exception ex) {}
       checkShouldRunCallback();
 			if (shouldTerminate) {
 				shouldTerminate = false;
@@ -243,7 +245,7 @@ public class Device {
     }
   }
 
-  private void checkLastPos() {
+  private void checkLastPos() throws UnsupportedOperationException {
     if (lastPos == null) {
       return;
     }
@@ -267,8 +269,8 @@ public class Device {
 				if (pos.x < 1) {
 					return;
 				}
-				log(-1, "Terminating in MouseMovedResponse = Pause");
-				Sikulix.endError(1);
+        throw new UnsupportedOperationException("Terminating in MouseMovedResponse = Pause");
+
       }
       if (mouseMovedResponse == MouseMovedAction) {
 //TODO implement 3
