@@ -156,6 +156,9 @@ def load(jar):
   """
   return JythonHelper.get().load(jar)
 
+def prepareRobot():
+  return JythonHelper.get().prepareRobot()
+
 def show():
   RUNTIME.show()
 
@@ -547,9 +550,9 @@ def run(cmd):
 # @return returns the scripts return code given with exit(n)
 def runScript(script, *args):
   if SCRIPT_SUPPORT:
-    return ScriptingSupport.run(script, args)
+    return ScriptingSupport.run(unicd(script), args)
   else:
-    return Runner.run(script, args)
+    return Runner.run(unicd(script), args)
 
 def getLastReturnCode():
   if SCRIPT_SUPPORT:

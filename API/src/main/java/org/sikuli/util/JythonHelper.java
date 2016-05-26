@@ -15,8 +15,10 @@ import java.util.Date;
 import java.util.List;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.basics.Settings;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.RunTime;
+import org.sikuli.script.Sikulix;
 
 public class JythonHelper implements JLangHelperInterface {
 
@@ -396,6 +398,20 @@ public class JythonHelper implements JLangHelperInterface {
     return instance;
   }
 
+  public boolean prepareRobot() {
+    if (runTime.isRunningFromJar()) {
+      File fLibRobot = new File(runTime.fSikulixLib, "robot");
+      if (!fLibRobot.exists()) {
+        log(-1, "prepareRobot: not available: %s", fLibRobot);
+        Sikulix.terminate(1);
+      }
+      insertSysPath(runTime.fSikulixLib);
+    }
+    appendSysPath(new File(Settings.BundlePath).getParent());
+    exec("import robot");
+    return true;
+  }
+
   public String load(String fpJarOrFolder) {
 //##
 //# loads a Sikuli extension (.jar) from
@@ -461,6 +477,7 @@ public class JythonHelper implements JLangHelperInterface {
   }
 
   private long lastRun = 0;
+
   private List<File> importedScripts = new ArrayList<File>();
   String name = "";
   public void reloadImported() {

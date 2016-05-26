@@ -467,14 +467,8 @@ public class Runner {
   }
 
   public static int runrobot(String code) {
-    RunTime rt = RunTime.get();
-    if (rt.isRunningFromJar()) {
-      File fLibRobot = new File(rt.fSikulixLib, "robot");
-      if (!fLibRobot.exists()) {
-        log(-1, "runrobot: not available: %s", fLibRobot);
-        Sikulix.terminate(1);
-      }
-      JythonHelper.get().insertSysPath(rt.fSikulixLib);
+    if (!JythonHelper.get().prepareRobot()) {
+      return -1;
     }
     File script = new File(ImagePath.getBundlePath());
     File fRobotWork = new File(script.getAbsolutePath() + ".robot");
@@ -516,7 +510,7 @@ public class Runner {
       return -999;
     }
     pyRunner.exec("from sikuli import *;");
-    pyRunner.exec("import robot.run;");
+    //pyRunner.exec("import robot.run;");
     String robotCmd = String.format(
             "ret = robot.run(\"%s\", "
                     + "outputdir=\"%s\")", fRobot, fRobotWork);
