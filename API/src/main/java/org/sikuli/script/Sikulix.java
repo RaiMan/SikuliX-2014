@@ -6,41 +6,24 @@
  */
 package org.sikuli.script;
 
-import java.awt.*;
-
 import edu.unh.iol.dlc.VNCScreen;
-import org.sikuli.basics.HotkeyManager;
-import org.sikuli.util.Tests;
+import org.sikuli.basics.*;
+import org.sikuli.util.JythonHelper;
 import org.sikuli.util.ScreenHighlighter;
+import org.sikuli.util.SikulixFileChooser;
+import org.sikuli.util.Tests;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.File;
 import java.net.URL;
 import java.security.CodeSource;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JPasswordField;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
-import org.sikuli.basics.Debug;
-import org.sikuli.basics.FileManager;
-import org.sikuli.basics.PreferencesUser;
-import org.sikuli.basics.Settings;
-import org.sikuli.util.JythonHelper;
-import org.sikuli.util.SikulixFileChooser;
 
 /**
  * global services for package API
  */
 public class Sikulix {
-
-  private static String imgLink = "http://www.sikulix.com/uploads/1/4/2/8/14281286";
-  private static String imgHttp = "1389888228.jpg";
-  private static String imgNet = imgLink + "/" + imgHttp;
-
+  
   private static int lvl = 3;
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "Sikulix: " + message, args);
@@ -435,14 +418,22 @@ public class Sikulix {
         popError(String.format(msg, n));
       }
     } else {
-      Debug.error("***** Terminating SikuliX after a fatal error"
+      msg = "***** Terminating SikuliX after a fatal error"
               + (n == 0 ? "*****\n" : " %d *****\n")
               + "It makes no sense to continue!\n"
               + "If you do not have any idea about the error cause or solution, run again\n"
-              + "with a Debug level of 3. You might paste the output to the Q&A board.", n);
-      cleanUp(0);
+              + "with a Debug level of 3. You might paste the output to the Q&A board.";
+      log(-1, msg, n);
+      if (Settings.isRunningIDE) {
+        popError(String.format(msg, n));
+      }
+      cleanUp(n);
     }
-    System.exit(1);
+    if (!Settings.isRunningIDE) {
+      System.exit(1);
+    } else {
+      throw new IllegalStateException("Aborting script due to an internal error - see log");
+    }
   }
 
   /**
