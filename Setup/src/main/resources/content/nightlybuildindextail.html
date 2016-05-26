@@ -1,4 +1,13 @@
 <h1>Changelog version 1.1.1</h1>
+<h4>Build: 2016-05-27</h4>
+<b>revised:</b> RobotFramework support: robot module auto-imported in all cases,
+sys.path adjusted in all cases including parent folder of script,
+added prepareRobot() to support the seamless use of robot.run(),
+runScript() now is aware of UTF-8/UniCode (see docs)<br>
+<b>revised:</b> internal SikuliX errors leading to termination now during script run
+no longer terminate the IDE but only the scriptrun so leaving
+the problem messages visible even in IDE and avoid loss of unsaved scripts<br>
+<b>revised:</b> vncStart(): to allow more than one connection in parallel
 <h4>Build: 2016-05-26</h4>
 <b>revised/added:</b> VNCScreen: revised: init process, added: convenience features start() and stop() for one VNC
 connection 0 to IP:Port (example see docs)
@@ -16,7 +25,7 @@ and/or to persist information from one scriptrun to the next (based on a propert
 <h4>Build: 2016-05-20</h4>
 <b>fixed:</b> Region.wait() should not do anything at InteruptedException
 <h4>Build: 2016-05-20</h4>
-<b>fixed:</b> RobotFramework support on Windows
+<b>fixed:</b> RobotFramework support on Windows<br>
 <b>fixed:</b> getImagePath() on Windows now returns useable path strings<br>
 <b>fixed:</b> input dialog (with hidden) should return null/None when cancelled<br>
 <b>added:</b> IDE: imported .sikuli scripts are now internally reloaded (reimported)
