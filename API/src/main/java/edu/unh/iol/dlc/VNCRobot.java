@@ -82,14 +82,14 @@ public class VNCRobot implements IRobot {
     	}
     	int key = getKeysym(keycode);
     	if(key == 0xffffff){
-    		Debug.log(3, "Error: Key not supprted-"+keycode);
+    		Debug.log(-1, "Error: Key not supprted-"+keycode);
     	}
         else{
             try{
                con.getC(index).keyDown(key);
             }
             catch(IOException e){
-            	Debug.log(3, "Cannot KeyDown: "+e);
+            	Debug.log(-1, "Cannot KeyDown: "+e);
             }
         }
         tidyUp();
@@ -108,14 +108,14 @@ public class VNCRobot implements IRobot {
     	}
     	int key = getKeysym(keycode);
         if(key==0xffffff){
-        	Debug.log(3, "Key not supported "+keycode);
+        	Debug.log(-1, "Key not supported "+keycode);
         }
         else{
             try{
             	con.getC(index).keyUp(key);
             }
             catch(IOException e){
-            	Debug.log(3, "Cannot KeyUp: "+e);
+            	Debug.log(-1, "Cannot KeyUp: "+e);
             }
         }
         tidyUp();
@@ -133,7 +133,7 @@ public class VNCRobot implements IRobot {
     		con.getC(index).mouseEvent(0, 0, 0, 0, 0, 0, 0, 0, x, y);
     	}
     	catch(IOException e){
-    		Debug.log(3, "Cannot generate mouse event: "+e);
+    		Debug.log(-1, "Cannot generate mouse event: "+e);
     	}
     	last_x = x;
 		last_y = y;
@@ -161,7 +161,7 @@ public class VNCRobot implements IRobot {
                     b[3], b[4], b[5], b[6], b[7], last_x, last_y);
         }
         catch(IOException e){
-        	Debug.log(3, "Cannot generate mouse event: "+e);
+        	Debug.log(-1, "Cannot generate mouse event: "+e);
         }
         tidyUp();
 	}
@@ -176,7 +176,7 @@ public class VNCRobot implements IRobot {
 			con.getC(index).mouseEvent(0,0,0,0,0,0,0,0, last_x, last_y);
         }
         catch(IOException e){
-        	Debug.log(3, "Cannot generate mouse event: "+e);
+        	Debug.log(-1, "Cannot generate mouse event: "+e);
         }
         tidyUp();
         
@@ -204,7 +204,7 @@ public class VNCRobot implements IRobot {
                 	con.getC(index).mouseEvent(0,0,0,0,0,0,0,0,last_x,last_y);
                 }
                 catch(IOException e){
-                	Debug.log(3, "Cannot generate mouse event: "+e);
+                	Debug.log(-1, "Cannot generate mouse event: "+e);
                 }
             }
         }
@@ -215,7 +215,7 @@ public class VNCRobot implements IRobot {
                 	con.getC(index).mouseEvent(0,0,0,0,0,0,0,0,last_x,last_y);
                 }
                 catch(IOException e){
-                	Debug.log(3, "Cannot generate mouse event: "+e);
+                	Debug.log(-1, "Cannot generate mouse event: "+e);
                 }
             }
         }
@@ -225,15 +225,16 @@ public class VNCRobot implements IRobot {
 	/**
 	 * Creates a screen capture of the remote screen.
 	 * 
-	 * @param screenRect - region to capture
+	 * @param sr - region to capture
 	 * @return ScreenImage of the remote screen
 	 */
 	@Override
-	public ScreenImage captureScreen(Rectangle screenRect) {
-		return new ScreenImage(screenRect,
-				con.getF(index).getBuffer().getSubimage(
-						screenRect.x, screenRect.y, 
-						screenRect.width, screenRect.height));
+	public ScreenImage captureScreen(Rectangle sr) {
+		BufferedImage bimg = null;
+		while (bimg == null) {
+			bimg = con.getF(index).getBuffer();
+		}
+		return new ScreenImage(sr, bimg.getSubimage(sr.x, sr.y, sr.width, sr.height));
 	}
 
 	/**
@@ -258,7 +259,7 @@ public class VNCRobot implements IRobot {
 			new java.awt.Robot().waitForIdle();
 		}
 		catch (AWTException e) {
-			Debug.log(3, "Error-could non instantiate robot: "+e);
+			Debug.log(-1, "Error-could non instantiate robot: "+e);
 		}
 	}
 
@@ -277,7 +278,7 @@ public class VNCRobot implements IRobot {
 			Thread.sleep(ms);
 		}
 		catch(InterruptedException e){
-			Debug.log(3, "Thread Interrupted: "+e);
+			Debug.log(-1, "Thread Interrupted: "+e);
 		}
 	}
 

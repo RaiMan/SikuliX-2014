@@ -104,7 +104,7 @@ public class ConnectionController extends GraphicsEnvironment {
 	public void closeConnection(int index){
 		threads.get(index).terminate();
 		threads.remove(index);
-		Debug.log(3, "VNC.ConnectionController: closed connection: %d", index);
+		Debug.log(4, "VNC.ConnectionController: closed connection: %d", index);
 	}
 	
 	/**
@@ -114,20 +114,21 @@ public class ConnectionController extends GraphicsEnvironment {
 	public void setPixelFormat(int index, String format, 
 			int bitsPerPixel, int bigEndianFlag) {
 		try {
-			Debug.log(3, "Setting Pixel format for thread: "+index);
+			Debug.log(4, "Setting Pixel format for thread: "+index);
 			threads.get(index).setPixelFormat(format, 
 					bitsPerPixel, bigEndianFlag);
 		}
 		catch (IOException io) {
-			Debug.log(3, "Error: IO Exception"+io);
+			Debug.log(-1, "Error: IO Exception "+io);
 		}
 	}
 	
 	/**
 	 * Adds a new VNCThread to the list of connections
 	 */
-	public void newConnection(Socket s){
+	public int newConnection(Socket s){
 		threads.add(new VNCThread(s));
+		return threads.size() -1;
 	}
 	
 	public void start(int index){

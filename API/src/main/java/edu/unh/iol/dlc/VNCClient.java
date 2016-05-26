@@ -69,7 +69,7 @@ public class VNCClient {
                 new BufferedInputStream(socket.getInputStream()));
         }
         catch(IOException e){
-        	Debug.log(3, "Error: IO Exception"+e);
+        	Debug.log(-1, "Error: IO Exception"+e);
         }
     }
 
@@ -116,7 +116,7 @@ public class VNCClient {
          if (version >= 7){
             int numSecurityTypes = (int)dataIn.readByte();
             if (numSecurityTypes == 0){
-            	Debug.log(3, "Error: Server reported" +
+            	Debug.log(-1, "Error: Server reported" +
                         " an error, closing connection");
                 socket.close();
             }
@@ -134,7 +134,7 @@ public class VNCClient {
                 selectedType = desiredSecurityType;
                 return selectedType;
             }
-            Debug.log(3, "Error: Desired Security Type" +
+            Debug.log(-1, "Error: Desired Security Type" +
                         " Not supported by Server, closing connection");
             socket.close();
         }
@@ -155,12 +155,12 @@ public class VNCClient {
         switch (type){
             case 0:
                 try{
-                	Debug.log(3, "Error: Server" +
+                	Debug.log(-1, "Error: Server" +
                         " reported an error, closing connection");
                     socket.close();
                 }
                 catch(IOException e){
-                	Debug.log(3, "Error: IO Exception"+e);
+                	Debug.log(-1, "Error: IO Exception"+e);
                 }
                 break;
             case 1:
@@ -182,12 +182,12 @@ public class VNCClient {
                 break;
             default:
                 try{
-                	Debug.log(3, "Error: Desired Security" +
+                	Debug.log(-1, "Error: Desired Security" +
                             " Type Not supported, closing connection");
                     socket.close();
                 }
                 catch(IOException e){
-                	Debug.log(3, "Error: IO Exception"+e);
+                	Debug.log(-1, "Error: IO Exception"+e);
                 }
                 break;
         }
@@ -206,7 +206,7 @@ public class VNCClient {
             }
         }
         catch(IOException e){
-        	Debug.log(3, "Error: IO Exception"+e);
+        	Debug.log(-1, "Error: IO Exception"+e);
         }
     }
 
@@ -276,7 +276,7 @@ public class VNCClient {
      *
      * @param bpp The number of bits per pixel
      * @param Depth The number of bits used for data
-     * @param bef The big endian flag
+     * @param be The big endian flag
      * @param tcf The true color flag
      * @param rm The maximum red value
      * @param gm The maximum blue value
@@ -342,7 +342,7 @@ public class VNCClient {
     		int incremental,short x, short y,
             short w, short h) throws IOException{
     	if(flag == true){
-    		Debug.log(3, "Error: SetPixelFormat Required.");
+    		Debug.log(-1, "Error: SetPixelFormat Required.");
     		return;
     	}
         dataOut.writeByte(3); //message identifier
@@ -367,7 +367,7 @@ public class VNCClient {
         dataOut.writeByte(0); //padding
         dataOut.writeInt(key);
         dataOut.flush();
-        Debug.log(3, "Writing key down-"+Integer.toHexString(key));
+        Debug.log(4, "Writing key down-"+Integer.toHexString(key));
     }
 
     /**
@@ -383,7 +383,7 @@ public class VNCClient {
         dataOut.writeByte(0); //padding
         dataOut.writeInt(key);
         dataOut.flush();
-        Debug.log(3, "Writing key up-"+Integer.toHexString(key));
+        Debug.log(4, "Writing key up-"+Integer.toHexString(key));
     }
 
     /**
@@ -417,7 +417,7 @@ public class VNCClient {
         dataOut.writeShort(x);
         dataOut.writeShort(y);
         dataOut.flush();
-        Debug.log(3, "MouseEvent-"+Byte.toString(flag));
+        Debug.log(4, "MouseEvent-"+Byte.toString(flag));
     }
 
     /**

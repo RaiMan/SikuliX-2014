@@ -20,6 +20,8 @@ package edu.unh.iol.dlc;
 import java.awt.*;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.sikuli.basics.Debug;
 import org.sikuli.script.*;
@@ -68,50 +70,43 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 
   private static boolean isFake;
   private static VNCScreen fakeScreen = null;
-  private static String myIP = "";
-  private static int myPort = 0;
 
-  private static VNCScreen theOneScreen = null;
+  private String myIP = "";
+  private int myPort = 0;
+  private int connNum = 0;
+
+  private static List<VNCScreen> activeScreens = new ArrayList<>();
 
   public static VNCScreen start(String theIP, int thePort, int theConnectTimeout, int theIOTimeout) {
-    cleanUp();
+    log(lvl, "VNCScreen: request for connection %s:%d", theIP, thePort);
     Socket sock = null;
     try {
       sock = new Socket();
       sock.setSoTimeout(theIOTimeout);
-      sock.connect(new InetSocketAddress(theIP ,thePort), theConnectTimeout * 1000);
+      sock.connect(new InetSocketAddress(theIP, thePort), theConnectTimeout * 1000);
     } catch (Exception e) {
       sock = null;
       if (e.getClass().toString().contains("SocketTimeoutException")) {
-        Debug.error("VNC init: not possible to connect to %s:%s within %d seconds", theIP, thePort, theConnectTimeout);
+        log(-1, "VNC init: not possible to connect within %d seconds", theConnectTimeout);
       } else {
-        Debug.error("VNC init socket problem: %s", e.getMessage());
+        log(-1, "VNC init socket problem: %s", e.getMessage());
       }
     }
     if (sock == null) {
       throw new UnsupportedOperationException("VNCScreen: connection not possible");
     }
-    ConnectionController cc = new ConnectionController(sock);
-    cc.openConnection(0);
-    cc.start(0);
-    VNCScreen vnc = new VNCScreen();
+    VNCScreen vnc = new VNCScreen(sock);
     if (vnc.isUsable()) {
-      theOneScreen = vnc;
-      vnc.setConnection(cc, 0);
-      Debug.info("");
-      Debug.info("VNCScreen: running as connection 0 on %s:%d", theIP, thePort);
-      myIP = theIP;
-      myPort = thePort;
+      if (!activeScreens.contains(vnc)) {
+        activeScreens.add(vnc);
+      }
+      vnc.myIP = theIP;
+      vnc.myPort = thePort;
+      log(lvl, "VNCScreen: connected %s:%d", theIP, thePort);
       return vnc;
     } else {
+      //TODO if not valid (close socket?)
       return null;
-    }
-  }
-
-  public static void cleanUp() {
-    if (theOneScreen != null) {
-      theOneScreen.stop();
-      theOneScreen = null;
     }
   }
 
@@ -121,22 +116,40 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
   }
 
   public void stop() {
-    if (null != ConContr) {
-      ConContr.closeConnection(connection);
-      Debug.info("VNCScreen: stopped connection 0 on %s:%d", myIP, myPort);
+    if (activeScreens.contains(this)) {
+      log(lvl, "VNCScreen: stopping connection to %s:%d", myIP, myPort);
+      ConnectionController.getActiveController(0).closeConnection(0);
+      activeScreens.remove(this);
     }
   }
 
-  private ConnectionController ConContr = null;
-  private int connection = -1;
-
-  protected void setConnection(ConnectionController cc, int con) {
-    ConContr = cc;
-    connection = con;
+  public static void cleanUp() {
+    List<VNCScreen> toRemove = new ArrayList<>();
+    toRemove.addAll(activeScreens);
+    for (VNCScreen vnc : toRemove) {
+      vnc.stop();
+    }
   }
 
   public VNCScreen() {
     super();
+    initScreens();
+    _curID = _primaryScreen;
+    initScreen();
+    super.initScreen(this);
+  }
+
+  public VNCScreen(Socket sock) {
+    super();
+    ConnectionController cc = ConnectionController.getActiveController(0);
+    connNum = 0;
+    if (cc == null) {
+      cc = new ConnectionController(sock);
+    } else {
+      connNum = cc.newConnection(sock);
+    }
+    cc.openConnection(connNum);
+    cc.start(connNum);
     initScreens();
     _curID = _primaryScreen;
     initScreen();
@@ -194,7 +207,7 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
       _primaryScreen = -1;
 
       boolean hasConnections = false;
-      for (int i = 0; i < getNumberScreens(); i++) {
+      for (int i = 0; i < _gdev.length; i++) {
         GraphicsConfiguration defaultConfiguration = _gdev[i].getDefaultConfiguration();
         if (null == defaultConfiguration) {
           log(-1, "initScreens: %d has no connection yet", i);
@@ -206,14 +219,14 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
         if (gdevsBounds[i].contains(new Point(0, 0))) {
           if (_primaryScreen < 0) {
             _primaryScreen = i;
-            log(lvl, "initScreens: ScreenDevice %d contains (0,0) --- will be used as primary", i);
+            log(lvl + 1, "initScreens: ScreenDevice %d contains (0,0) --- will be used as primary", i);
           } else {
-            log(lvl, "initScreens: ScreenDevice %d too contains (0,0)!", i);
+            log(lvl + 1, "initScreens: ScreenDevice %d too contains (0,0)!", i);
           }
         }
       }
       if (hasConnections && _primaryScreen < 0) {
-        Debug.log("Screen: initScreens: no ScreenDevice contains (0,0) --- using first ScreenDevice as primary");
+        log(lvl + 1, "Screen: initScreens: no ScreenDevice contains (0,0) --- using first ScreenDevice as primary");
         _primaryScreen = 0;
       }
     }
@@ -225,12 +238,9 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
         screens[i] = new VNCScreen(i, true);
         screens[i].initScreen();
       }
-      log(lvl, "initScreens: basic initialization (%d VNCScreen(s) found)", _gdev.length);
-      log(lvl, "*** monitor configuration (primary: %d) ***", _primaryScreen);
       for (int i = 0; i < _gdev.length; i++) {
         log(lvl, "%d: %s", i, screens[i].toStringShort());
       }
-      log(lvl, "*** end monitor configuration ***");
     }
   }
 
@@ -386,11 +396,13 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
 
   @Override
   public ScreenImage capture(Rectangle rect) {
-    log(lvl + 1, "VNCScreen.capture: (%d,%d) %dx%d", rect.x, rect.y, rect.width, rect.height);
     ScreenImage simg = null;
     if (isFake) {
       simg = FakeRobot.getDesktopRobot().captureScreen(rect);
     } else {
+      if (robot != null) {
+        log(lvl, "VNCScreen.capture: (%d,%d) %dx%d", rect.x, rect.y, rect.width, rect.height);
+      }
       simg = robot.captureScreen(rect);
     }
     lastScreenImage = simg;

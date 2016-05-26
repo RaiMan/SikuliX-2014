@@ -481,7 +481,7 @@ def useRemote(adr, port=0):
 # connectionTimeout seconds to wait for a valid connection (default 10)
 # timeout the timout value in milli-seconds during normal operation (default 1000)
 # returns a VNCScreen object
-# use this object to stop the connection as: vncScreen.stop()
+# use theVNCScreen.stop() to stop this connection again (auto-stopped at script end)
 
 def vncStart(ip="127.0.0.1", port=5900, connectionTimeout=10, timeout=1000):
   return Sikulix.vncStart(ip, port, connectionTimeout, timeout)

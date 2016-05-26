@@ -889,7 +889,8 @@ public class Sikulix {
   }
 
   /**
-   * convenience for a VNCScreen connection (use vncScreen.stop() to stop the connection)
+   * convenience for a VNCScreen connection (use theVNCScreen.stop() to stop the connection)
+   * active screens are auto-stopped at cleanup
    *
    * @param theIP the server IP
    * @param thePort the port number

@@ -80,35 +80,31 @@ public class FBConfig extends GraphicsConfiguration {
 		desktopName = name;
 		bounds = new Rectangle(0,0,width,height);
 		
-		Debug.log(3, "VNC Server Response:");
+		Debug.log(3, "VNC Server found: %s (%dx%d)", desktopName, width, height);
 		for(int i : config){
-			Debug.log(3, ""+i);
+			Debug.log(4, ""+i);
 		}
-		Debug.log(3, "Name: "+desktopName);
+		Debug.log(4, "Name: "+desktopName);
 		
 		switch(bitsPerPixel){
 			case 8:
 				if(trueColorFlag!=0){
 					idnum=3;
-					Debug.log(3, "Error: Unsupported bits per pixel," +
-					" setPixelFormatRequired");
+					Debug.log(-1, "Unsupported bits per pixel (8), setPixelFormatRequired");
 				}
 				else{
 					idnum=0;
-					Debug.log(3, "Error: Unsupported bits per pixel," +
-					" setPixelFormatRequired");
+					Debug.log(-1, "Unsupported bits per pixel (8), setPixelFormatRequired");
 				}
 				break;
 			case 16:
 				if(trueColorFlag!=0){
 					idnum=4;
-					Debug.log(3, "Error: Unsupported bits per pixel," +
-					" setPixelFormatRequired");
+					Debug.log(-1, "Unsupported bits per pixel (16), setPixelFormatRequired");
 				}
 				else{
 					idnum=1;
-					Debug.log(3, "Error: Unsupported bits per pixel," +
-					" setPixelFormatRequired");
+					Debug.log(-1, "Unsupported bits per pixel (16), setPixelFormatRequired");
 				}
 				break;
 			case 32:
@@ -123,13 +119,11 @@ public class FBConfig extends GraphicsConfiguration {
 				}
 				else{
 					idnum=2;
-					Debug.log(3, "Error: Unsupported bits per pixel," +
-					" setPixelFormatRequired");
+					Debug.log(-1, "Unsupported bits per pixel (32 noTC), setPixelFormatRequired");
 				}
 				break;
 			default:
-				Debug.log(3, "Error: Unrecognized bits per pixel," +
-				" setPixelFormatRequired");
+				Debug.log(-1, "Unsupported bits per pixel (??), setPixelFormatRequired");
 				break;
 		}
 	}

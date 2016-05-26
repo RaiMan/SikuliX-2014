@@ -111,7 +111,6 @@ public class VNCThread extends Thread{
      * The SetPixelFormat method sets the format of the raw pixel data sent
      * across the network by the VNC Server.
      *
-     *@param the index in the array of the VNCClient
      * @param format Can be either "Truecolor" or "Colormap"
      * @param bits The number of bits per pixel
      * @param bef The BigEndianFlag (0 is little endian)
