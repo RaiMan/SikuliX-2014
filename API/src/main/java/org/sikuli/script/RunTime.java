@@ -6,6 +6,7 @@
  */
 package org.sikuli.script;
 
+import edu.unh.iol.dlc.VNCScreen;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
@@ -488,6 +489,7 @@ public class RunTime {
           }
           isRunning.delete();
         }
+        VNCScreen.cleanUp();
         if (shouldCleanDownloads) {
           FileManager.deleteFileOrFolder(fSikulixDownloadsBuild);
         }

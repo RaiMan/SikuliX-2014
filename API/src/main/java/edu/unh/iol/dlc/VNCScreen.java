@@ -124,6 +124,9 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
   }
 
   public static void cleanUp() {
+    if (activeScreens.size() == 0) {
+      return;
+    }
     List<VNCScreen> toRemove = new ArrayList<>();
     toRemove.addAll(activeScreens);
     for (VNCScreen vnc : toRemove) {
