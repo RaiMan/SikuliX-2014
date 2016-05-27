@@ -374,8 +374,20 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
     return new Region(r.x, r.y, r.w, r.h, this);
   }
 
+  public Region newRegion(Rectangle r) {
+    return new Region(r.x, r.y, r.width, r.height, this);
+  }
+
   public Location newLocation(Location loc) {
     return loc.setOtherScreen(this);
+  }
+
+  public Location newLocation(int x, int y) {
+    return new Location(x, y).setOtherScreen(this);
+  }
+
+  public Location newLocation(Point p) {
+    return new Location(p.x, p.y).setOtherScreen(this);
   }
 
   @Override
