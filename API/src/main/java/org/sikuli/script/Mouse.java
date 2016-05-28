@@ -253,7 +253,12 @@ public class Mouse {
       loc = at();
     }
     IRobot r = null;
-    r = loc.getScreen().getRobot();
+    IScreen s = loc.getScreen();
+    if (s == null) {
+      profiler.end();
+      return 0;
+    }
+    r = s.getRobot();
     if (r == null) {
       profiler.end();
       return 0;
@@ -341,7 +346,11 @@ public class Mouse {
     }
     if (loc != null) {
       IRobot r = null;
-      r = loc.getScreen().getRobot();
+      IScreen s = loc.getScreen();
+      if (s == null) {
+        return 0;
+      }
+      r = s.getRobot();
       if (r == null) {
         return 0;
       }

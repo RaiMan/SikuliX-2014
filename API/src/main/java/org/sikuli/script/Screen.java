@@ -131,6 +131,10 @@ public class Screen extends Region implements IScreen {
     }
   }
 
+  public static IRobot getGlobalRobot() {
+    return globalRobot;
+  }
+
   private static void setMouseRobot() {
     try {
       if (globalRobot == null) {

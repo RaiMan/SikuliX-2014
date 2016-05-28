@@ -92,8 +92,6 @@ public class RobotDesktop extends Robot implements IRobot {
     }
     logRobot("MouseUp: extended delay: %d", stdMaxElapsed);
   }
-  
-  
 
   private void doKeyPress(int keyCode) {
     logRobot(stdAutoDelay, "KeyPress: WaitForIdle: %s - Delay: %d");

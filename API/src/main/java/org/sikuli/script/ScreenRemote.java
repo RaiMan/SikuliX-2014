@@ -176,7 +176,7 @@ public class ScreenRemote extends Screen implements IScreen {
 
   @Override
   public Region newRegion (Location loc, int w, int h) {
-    return new Region(loc.x, loc.y, w, h, loc.getScreen());
+    return new Region(loc.x, loc.y, w, h, this);
   }
 
   public Region newRegion (int x, int y, int w, int h) {

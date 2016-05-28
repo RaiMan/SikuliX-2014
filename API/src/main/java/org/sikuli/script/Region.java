@@ -501,7 +501,14 @@ public class Region {
    * @return then new region
    */
   public static Region create(Location loc, int w, int h) {
-    return Region.create(loc.x, loc.y, w, h, loc.getScreen());
+    int _x = loc.x;
+    int _y = loc.y;
+    IScreen s = loc.getScreen();
+    if (s == null) {
+      _x = _y = 0;
+      s = Screen.getPrimaryScreen();
+    }
+    return Region.create(_x, _y, w, h, s);
   }
   /**
    * Flag for the {@link #create(Location, int, int, int, int)} method. Sets the Location to be on the left corner of
@@ -536,28 +543,35 @@ public class Region {
    * @return the new region
    */
   public static Region create(Location loc, int create_x_direction, int create_y_direction, int w, int h) {
+    int _x = loc.x;
+    int _y = loc.y;
+    IScreen s = loc.getScreen();
+    if (s == null) {
+      _x = _y = 0;
+      s = Screen.getPrimaryScreen();
+    }
     int X;
     int Y;
     int W = w;
     int H = h;
     if (create_x_direction == CREATE_X_DIRECTION_LEFT) {
       if (create_y_direction == CREATE_Y_DIRECTION_TOP) {
-        X = loc.x;
-        Y = loc.y;
+        X = _x;
+        Y = _y;
       } else {
-        X = loc.x;
-        Y = loc.y - h;
+        X = _x;
+        Y = _y - h;
       }
     } else {
       if (create_y_direction == CREATE_Y_DIRECTION_TOP) {
-        X = loc.x - w;
-        Y = loc.y;
+        X = _x - w;
+        Y = _y;
       } else {
-        X = loc.x - w;
-        Y = loc.y - h;
+        X = _x - w;
+        Y = _y - h;
       }
     }
-    return Region.create(X, Y, W, H, loc.getScreen());
+    return Region.create(X, Y, W, H, s);
   }
 
   /**
@@ -620,9 +634,16 @@ public class Region {
    * @return the new region
    */
   public static Region grow(Location loc, int w, int h) {
-    int X = loc.x - (int) w / 2;
-    int Y = loc.y - (int) h / 2;
-    return Region.create(X, Y, w, h, loc.getScreen());
+    int _x = loc.x;
+    int _y = loc.y;
+    IScreen s = loc.getScreen();
+    if (s == null) {
+      _x = _y = 0;
+      s = Screen.getPrimaryScreen();
+    }
+    int X = _x - (int) w / 2;
+    int Y = _y - (int) h / 2;
+    return Region.create(X, Y, w, h, s);
   }
 
   /**
@@ -632,7 +653,14 @@ public class Region {
    * @return the new region
    */
   public static Region grow(Location loc) {
-    return Region.create(loc.x, loc.y, 1, 1, loc.getScreen());
+    int _x = loc.x;
+    int _y = loc.y;
+    IScreen s = loc.getScreen();
+    if (s == null) {
+      _x = _y = 0;
+      s = Screen.getPrimaryScreen();
+    }
+    return Region.create(_x, _y, 1, 1, s);
   }
 
   //</editor-fold>
