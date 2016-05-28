@@ -439,7 +439,7 @@ public class Screen extends Region implements IScreen {
   }
 
   protected static IRobot getRobot(Region reg) {
-    if (reg == null) {
+    if (reg == null || null == reg.getScreen()) {
       return getPrimaryScreen().getMouseRobot();
     } else {
       return reg.getScreen().getRobot();
