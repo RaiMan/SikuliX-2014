@@ -26,11 +26,7 @@ class RunTime(JRunTime):
 
 RUNTIME = RunTime.get()
 
-
-import org.sikuli.basics.Settings as JSettings
-
-class Settings(JSettings):
-  pass
+import org.sikuli.basics.Settings as Settings
 
 Debug.log(4, "Jython: sikuli: Sikuli: constants")
 import org.sikuli.script.FindFailed as FindFailed
