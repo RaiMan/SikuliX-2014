@@ -509,7 +509,7 @@ public class Runner {
       log(-1, "Running Python scripts:init failed");
       return -999;
     }
-    pyRunner.exec("from sikuli import *;");
+    pyRunner.exec("from sikuli import *; from threading import currentThread; currentThread().name = \"MainThread\"");
     //pyRunner.exec("import robot.run;");
     String robotCmd = String.format(
             "ret = robot.run(\"%s\", "
