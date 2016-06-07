@@ -490,6 +490,8 @@ public class Screen extends Region implements IScreen {
         return userCapture((String) arg0);
       } else if (arg0 instanceof Region) {
         return capture((Region) arg0);
+      } else if (arg0 instanceof Rectangle) {
+        return capture((Rectangle) arg0);
       }
     }
     if (args.length == 4) {
@@ -503,7 +505,7 @@ public class Screen extends Region implements IScreen {
         }
       }
       if (argInt != null) {
-        return capture((int) args[2], (int) args[2], (int) args[2], (int) args[3]);
+        return capture((int) args[0], (int) args[1], (int) args[2], (int) args[3]);
       }
     }
     return userCapture("Invalid parameter for capture");

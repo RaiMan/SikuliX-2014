@@ -49,7 +49,7 @@ class Screen(JScreen):
 SCREEN = None
 
 def capture(*args):
-  return SCREEN.cmdCapture(args)
+  return SCREEN.cmdCapture(args).getFile()
 
 # Python wait() needs to be here because Java Object has a final method: wait(long timeout).
 # If we want to let Sikuli users use wait(int/long timeout), we need this Python method.
