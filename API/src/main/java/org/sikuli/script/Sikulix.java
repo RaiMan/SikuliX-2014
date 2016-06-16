@@ -126,20 +126,6 @@ public class Sikulix {
       }
     }
 
-    Region r = new Region(0, 0, 300, 300);
-    r.highlight(2);
-    ScreenImage simg = new Screen(0).userCapture();
-    //Pattern img = new Pattern(simg);
-    Image img = new Image(simg);
-    r.onAppear(img, new ObserverCallBack() {
-      public void appeared(ObserveEvent e) {
-        e.getMatch().hover();
-        e.stopObserver();
-      }
-    });
-    r.observe(10);
-    System.exit(1);
-
     String version = String.format("(%s-%s)", rt.getVersionShort(), rt.sxBuildStamp);
     File lastSession = new File(rt.fSikulixStore, "LastAPIJavaScript.js");
     String runSomeJS = "";
