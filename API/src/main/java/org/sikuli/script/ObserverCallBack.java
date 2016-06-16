@@ -17,10 +17,10 @@ import org.sikuli.util.JythonHelper;
 /**
  * Use this class to implement call back methods for the Region observers
  * onAppear, onVanish and onChange. <br>
- * by overriding the contained empty methods appeared, vanished and changed
+ * by overriding the respective method appeared, vanished or changed
  * <pre>
  * example:
- * aRegion.onAppear(anImage,
+ * aRegion.onAppear(anImageOrPattern,
  *   new ObserverCallBack() {
  *     appeared(ObserveEvent e) {
  *       // do something
@@ -28,16 +28,18 @@ import org.sikuli.util.JythonHelper;
  *   }
  * );
  * </pre>
- * when the image appears, your above call back appeared() will be called
+ * when the image appears, your above call back appeared() will be called<br>
  * see {@link ObserveEvent} about the features available in the callback function
  */
 public class ObserverCallBack implements EventListener {
 
-  Object callback = null;
-  ObserveEvent.Type obsType = ObserveEvent.Type.GENERIC;
-  JLangHelperInterface scriptHelper = null;
-  String scriptRunnerType = null;
-  Method doSomethingSpecial = null;
+  private Object callback = null;
+  private ObserveEvent.Type obsType = ObserveEvent.Type.GENERIC;
+  private JLangHelperInterface scriptHelper = null;
+  private String scriptRunnerType = null;
+
+  public ObserverCallBack() {
+  }
 
   public ObserverCallBack(Object callback, ObserveEvent.Type obsType) {
     this.callback = callback;
@@ -105,8 +107,5 @@ public class ObserverCallBack implements EventListener {
                 callback.getClass().getName());
       }
     }
-  }
-
-  private ObserverCallBack() {
   }
 }

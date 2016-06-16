@@ -213,7 +213,7 @@ public class ObserveEvent {
       } else if (p instanceof Pattern) {
         pattern = new Pattern((Pattern) p);
       } else if (p instanceof Image) {
-        pattern = new Pattern((Pattern) p);
+        pattern = new Pattern((Image) p);
       }
     }
   }
