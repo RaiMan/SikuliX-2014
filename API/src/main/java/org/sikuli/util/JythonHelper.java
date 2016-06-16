@@ -405,9 +405,13 @@ public class JythonHelper implements JLangHelperInterface {
         log(-1, "prepareRobot: not available: %s", fLibRobot);
         Sikulix.terminate(1);
       }
-      insertSysPath(runTime.fSikulixLib);
+      if (!hasSysPath(runTime.fSikulixLib.getAbsolutePath())) {
+        insertSysPath(runTime.fSikulixLib);
+      }
     }
-    appendSysPath(new File(Settings.BundlePath).getParent());
+    if (!hasSysPath(new File(Settings.BundlePath).getParent())) {
+      appendSysPath(new File(Settings.BundlePath).getParent());
+    }
     exec("import robot");
     return true;
   }
