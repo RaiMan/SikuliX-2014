@@ -39,6 +39,26 @@ The automatic build is planned for about 01:00 am and new builds should be avail
 <a href="https://github.com/RaiMan/SikuliX-2014" target="_blank">GitHub</a>
 <hr>
 <a href="docs/index.html" target="_blank">View the corresponding JavaDocs of selected classes (relevant for API usage)</a>
+<br><br>
+If you want to use the latest nightly build <b>(sikulixapi.jar) in your Maven project:</b>
+<br>it is available in the <b>OSSRH snapshot repository</b><br>
+Add this appropriately to your pom:
+<pre>
+  &lt;repositories&gt;
+    &lt;repository&gt;
+      &lt;id&gt;sonatype-ossrh&lt;/id&gt;
+      &lt;url&gt;https://oss.sonatype.org/content/repositories/snapshots/&lt;/url&gt;
+    &lt;/repository&gt;
+  &lt;/repositories&gt;
+
+  &lt;dependencies&gt;
+    &lt;dependency&gt;
+      &lt;groupId&gt;com.sikulix&lt;/groupId&gt;
+      &lt;artifactId&gt;sikulixapi&lt;/artifactId&gt;
+      &lt;version&gt;1.1.1-SNAPSHOT&lt;/version&gt;
+    &lt;/dependency&gt;
+  &lt;/dependencies&gt;
+</pre>
 <hr>
 The only file you need to download is <strong>sikulixsetup-1.1.1-#timestamp#.jar</strong>:
 <br>
