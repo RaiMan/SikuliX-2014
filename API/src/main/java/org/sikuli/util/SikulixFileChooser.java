@@ -21,6 +21,7 @@ public class SikulixFileChooser {
   static final int LOAD = FileDialog.LOAD;
   Frame _parent;
   boolean accessingAsFile = false;
+  boolean loadingImage = false;
 
   public SikulixFileChooser(Frame parent) {
     _parent = parent;
@@ -62,6 +63,7 @@ public class SikulixFileChooser {
   }
 
   public File loadImage() {
+    loadingImage = true;
     File ret = showFileChooser("Load Image File", LOAD, FILES,
             new FileNameExtensionFilter("Image files (jpg, png)", "jpg", "jpeg", "png"));
     return ret;
@@ -135,7 +137,7 @@ public class SikulixFileChooser {
   private boolean isValidScript(File f) {
     String[] endings = new String[]{".py", ".rb", ".js"};
     String fName = f.getName();
-    if (fName.endsWith(".skl")) {
+    if (loadingImage || fName.endsWith(".skl")) {
       return true;
     }
     if (fName.endsWith(".sikuli")) {
