@@ -1709,11 +1709,11 @@ public class RunSetup {
       itemSuffix = "-" + parts[1];
     }
     if (runTime.isVersionRelease()) {
-      if (itemSuffix.contains("forsetup") || item.contains("sikulixlibs")) {
-        mPath = runTime.downloadBaseDir;
-      } else {
+//      if (itemSuffix.contains("forsetup") || item.contains("sikulixlibs")) {
+//        mPath = runTime.downloadBaseDir;
+//      } else {
         mPath = String.format("%s%s/%s/", sikulixMavenGroup, item, version);
-      }
+//      }
       mJar = String.format("%s-%s%s.jar", item, version, itemSuffix);
     } else {
       String dlMavenSnapshotPath = version + "-SNAPSHOT";
