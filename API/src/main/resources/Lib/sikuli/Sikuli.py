@@ -440,9 +440,9 @@ def popFile(title = "Select File or Folder"):
 # TODO where else to remember an opened remote screen?
 remoteScreen = None
 
-def use(scr=None, remote=False):
+def use(scr=None, remote=False, fromWith = False):
   global SCREEN
-  if remote:
+  if remote or fromWith:
     theGlobals = inspect.currentframe().f_back.f_back.f_globals
   else:
     theGlobals = inspect.currentframe().f_back.f_globals

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2014, Sikuli.org, sikulix.com
+ * Copyright 2010-2016, Sikuli.org, sikulix.com
  * Released under the MIT License.
  *
  * modified RaiMan 2013
@@ -35,7 +35,8 @@ public class Debug {
 
   private static int DEBUG_LEVEL = 0;
 	private static boolean loggerRedirectSupported = true;
-  private long _beginTime = 0;
+	public static boolean shouldLogJython = false;
+	private long _beginTime = 0;
   private String _message;
   private String _title = null;
   private static PrintStream printout = null;
@@ -629,7 +630,24 @@ public class Debug {
     log(0, message, args);
   }
 
-  /**
+	public static boolean logJython() {
+		return logJython(null);
+	}
+
+	public static boolean logJython(Boolean state) {
+		if (null != state) {
+			shouldLogJython = state;
+		}
+		return shouldLogJython;
+	}
+
+	public static void logj(String message, Object... args) {
+		if (shouldLogJython) {
+			log(0, "Jython: " + message, args);
+		}
+	}
+
+	/**
    * messages given by the user<br> switch on/off: Settings.UserLogs<br> depending on
    * Settings.UserLogTime, the prefix contains a timestamp <br> the user prefix (default "user")
    * can be set: Settings,UserLogPrefix
