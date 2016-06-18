@@ -1,8 +1,7 @@
 /*
- * Copyright 2015, sikulix.com
+ * Copyright (c) 2010-2016, Sikuli.org, sikulix.com
  * Released under the MIT License.
  *
- * by RaiMan
  */
 package org.sikuli.script;
 
