@@ -104,6 +104,7 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
         srcScreenLocation = new Location(srcx + scrOCP.getX(), srcy + scrOCP.getY());
         Debug.log(3, "CapturePrompt: started at (%d,%d) as %s on %d", srcx, srcy,
             srcScreenLocation.toStringShort(), srcScreenId);
+        promptMsg = null;
         repaint();
       }
 
