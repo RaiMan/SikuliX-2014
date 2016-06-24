@@ -57,4 +57,7 @@ class Region(JRegion):
 
   # still needed, to be backwards compatible
   def observe(self, waitTime=FOREVER, background=False):
-    return JRegion.observeJ(waitTime, background)
+    if background :
+      return self.observeInBackground(waitTime)
+    else:
+      return self.observe(waitTime);

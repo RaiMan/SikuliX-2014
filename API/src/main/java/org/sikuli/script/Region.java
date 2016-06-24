@@ -358,6 +358,9 @@ public class Region {
    * @return true if yes, false otherwise
    */
   public boolean isValid() {
+    if (this instanceof Screen) {
+      return true;
+    }
     return scr != null && w != 0 && h != 0;
   }
   //</editor-fold>
@@ -3379,7 +3382,7 @@ public class Region {
     return onEvent(Settings.ObserveMinChangedPixels, null, ObserveEvent.Type.CHANGE);
   }
 
-//<editor-fold defaultstate="collapsed" desc="obsolete">
+  //<editor-fold defaultstate="collapsed" desc="obsolete">
 //	/**
 //	 *INTERNAL USE ONLY: for use with scripting API bridges
 //	 * @param <PSI> Pattern, String or Image
@@ -3414,6 +3417,7 @@ public class Region {
 //	}
 //
 //</editor-fold>
+
   public String onChangeDo(Integer threshold, Object observer) {
     String name = Observing.add(this, (ObserverCallBack) observer, ObserveEvent.Type.CHANGE, threshold);
     log(lvl, "%s: onChange%s: %s minSize: %d", toStringShort(),
@@ -3442,20 +3446,22 @@ public class Region {
     return observeDo(secs);
   }
 
-  /**
-   * INTERNAL USE ONLY: for use with scripting API bridges
-   *
-   * @param secs time in seconds the observer should run
-   * @param bg run in background true/false
-   * @return false if not possible, true if events have happened
-   */
-  public boolean observeJ(double secs, boolean bg) {
-    if (bg) {
-      return observeInBackground(secs);
-    } else {
-      return observeDo(secs);
-    }
-  }
+  //<editor-fold desc="obsolete observeJ">
+//  /**
+//   * INTERNAL USE ONLY: for use with scripting API bridges
+//   *
+//   * @param secs time in seconds the observer should run
+//   * @param bg run in background true/false
+//   * @return false if not possible, true if events have happened
+//   */
+//  public boolean observeJ(double secs, boolean bg) {
+//    if (bg) {
+//      return observeInBackground(secs);
+//    } else {
+//      return observeDo(secs);
+//    }
+//  }
+  //</editor-fold>
 
   private boolean observeDo(double secs) {
     if (regionObserver == null) {
