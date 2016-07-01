@@ -11,7 +11,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-
 /**
  * UNDER DEVELOPMENT --- SURELY HAS BUGS ;-)
  * An ImageGroup object represents images, that are all in the same folder.<br>
@@ -23,7 +22,7 @@ import java.util.Map;
  * Based on the stored match data you might produce a new ImageGroup on the fly.<br>
  */
 public class ImageGroup {
-  
+
   static RunTime runTime = RunTime.get();
 
   private static Map<String, ImageGroup> imageGroups =

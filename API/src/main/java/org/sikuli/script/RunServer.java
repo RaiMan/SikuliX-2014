@@ -17,7 +17,6 @@ import java.util.Scanner;
 import javax.script.ScriptEngine;
 import org.sikuli.basics.Debug;
 
-
 public class RunServer {
   private static ServerSocket server = null;
   private static PrintWriter out = null;
@@ -42,7 +41,7 @@ public class RunServer {
 
   static File isRunning = null;
   static FileOutputStream isRunningFile = null;
-  
+
   public static boolean run(String[] args) {
 		if (args == null) {
 			args = new String[0];
@@ -233,8 +232,8 @@ public class RunServer {
                 shouldKeep = false;
               } else if (rCommand.contains("EXIT")) {
                 rMessage = "stopping client";
-                shouldKeep = false;                
-              // START  
+                shouldKeep = false;
+              // START
               } else if (rCommand.startsWith("START")) {
                 runType = runTypeJS;
                 if (rCommand.length() > 5) {
@@ -250,7 +249,7 @@ public class RunServer {
                   rMessage = "startRunner: not possible for: " + runType;
                   rStatus = rStatusServiceNotAvail;
                 }
-              // SCRIPTS  
+              // SCRIPTS
               } else if (rCommand.startsWith("SCRIPTS")) {
                 if (rRessource.isEmpty()) {
                   rMessage = "no scriptFolder given ";
@@ -260,7 +259,7 @@ public class RunServer {
                   scriptFolder = getFolder(rRessource);
                   if (scriptFolder.getPath().startsWith("__NET/")) {
                     scriptFolderNet = "http://" + scriptFolder.getPath().substring(6);
-                    rMessage = "scriptFolder now: " + scriptFolderNet;                    
+                    rMessage = "scriptFolder now: " + scriptFolderNet;
                   } else {
                     scriptFolderNet = null;
                     rMessage = "scriptFolder now: " + scriptFolder.getAbsolutePath();
@@ -271,7 +270,7 @@ public class RunServer {
                     }
                   }
                 }
-              // IMAGES  
+              // IMAGES
               } else if (rCommand.startsWith("IMAGES")) {
                 String asImagePath;
                 if (rRessource.isEmpty()) {
@@ -294,7 +293,7 @@ public class RunServer {
                         success = false;
                       }
                     }
-                    asImagePath = imageFolder.getAbsolutePath(); 
+                    asImagePath = imageFolder.getAbsolutePath();
                   }
                   rMessage = "imageFolder now: " + asImagePath;
                   ImagePath.add(asImagePath);
@@ -326,7 +325,7 @@ public class RunServer {
                     fScriptScript = new File(fScript, scriptScript + ".py");
                     success = fScript.exists() && fScriptScript.exists();
                     if (!success) {
-                      rMessage = "runScript: script not found, not valid or not supported " 
+                      rMessage = "runScript: script not found, not valid or not supported "
                               + fScriptScript.toString();
                     }
                     runType = runTypePY;
@@ -334,7 +333,7 @@ public class RunServer {
                 }
                 if (success) {
                   ImagePath.setBundlePath(fScript.getAbsolutePath());
-                  success = startRunner(runType, fScript, fScriptScript);                  
+                  success = startRunner(runType, fScript, fScriptScript);
                 }
               } else if (rCommand.startsWith("EVAL")) {
                 if (jsRunner != null) {
@@ -385,7 +384,7 @@ public class RunServer {
         stopRunning();
       }
     }
-    
+
     public void stopRunning() {
       if (!shouldKeep) {
         in.close();
@@ -413,7 +412,7 @@ public class RunServer {
       }
       return aFolder;
     }
-    
+
     private boolean checkRequest(String request) {
       shouldKeep = false;
       rCommand = "NOOP";
@@ -425,7 +424,7 @@ public class RunServer {
       }
       if (!rVersion.equals(parts[2])) {
         return false;
-      }      
+      }
       String cmd = parts[1].substring(1);
       if (cmd.startsWith("X")) {
         cmd = cmd.substring(1);

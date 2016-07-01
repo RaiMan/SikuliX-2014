@@ -16,7 +16,7 @@ import org.jdesktop.beans.AbstractBean;
  * Although it is possible to use {@link Toolkit#getLockingKeyState(int)} to determine the current
  * state of the CAPS LOCK key, that method is not guaranteed to work on all platforms. This class
  * attempts to handle those shortfalls and provide an easy mechanism for listening to state changes.
- * 
+ *
  * <pre>
  * CapsLockSupport cls = CapsLockSupport.getInstance();
  * // for get the current state of the caps lock key
@@ -24,28 +24,28 @@ import org.jdesktop.beans.AbstractBean;
  * // for listening to changes in the caps lock state
  * cls.addPropertyChangeListener(&quot;capsLockEnabled&quot;, myListener);
  * </pre>
- * 
+ *
  * There is one special case to be aware of. If {@code CapsLockSupport} is not able to determine the
  * state of the CAPS LOCK key, then {@link #isInitialized()} will return {@code false} until it is
  * able to introspect a {@link KeyEvent} and determine the current locking state. If
  * {@code CapsLockSupport} must use delayed initialization, it will fire a property change to notify
  * listeners that it is now in an accurate state.
- * 
+ *
  * @author kschaefer
  */
 public final class CapsLockSupport extends AbstractBean implements KeyEventDispatcher {
     private boolean useToolkit;
     private boolean capsLockeEnabled;
     private boolean updateViaKeyEvent;
-    
+
     private static class SingletonHolder {
         private static final CapsLockSupport INSTANCE = new CapsLockSupport();
-        
+
         static {
             KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher(INSTANCE);
         }
     }
-    
+
     private CapsLockSupport() {
         try {
             capsLockeEnabled = Toolkit.getDefaultToolkit().getLockingKeyState(VK_CAPS_LOCK);
@@ -57,10 +57,10 @@ public final class CapsLockSupport extends AbstractBean implements KeyEventDispa
             updateViaKeyEvent = true;
         }
     }
-    
+
     /**
      * Gets the only instance of {@code CapsLockSupport}.
-     * 
+     *
      * @return the {@code CapsLockSupport} instance
      */
     public static CapsLockSupport getInstance() {
@@ -74,17 +74,17 @@ public final class CapsLockSupport extends AbstractBean implements KeyEventDispa
      * {@code Toolkit#getLockingKeyState(int)} throws an exception; in that case, it will initialize
      * as soon as it receives a valid key event (that can be used to determine the current locking
      * state).
-     * 
+     *
      * @return {@code true} if {@code CapsLockSupport} accurately knows the state of the CAPS LOCK
      *         key
      */
     public boolean isInitialized() {
         return useToolkit || (useToolkit ^ updateViaKeyEvent);
     }
-    
+
     /**
      * Determines the current state of the {@link java.awt.event.KeyEvent.VK_CAPS_LOCK CAPS LOCK key}.
-     * 
+     *
      * @return {@code true} if CAPS LOCK is enabled; {@code false} otherwise
      */
     public boolean isCapsLockEnabled() {
@@ -95,10 +95,10 @@ public final class CapsLockSupport extends AbstractBean implements KeyEventDispa
                 return capsLockeEnabled;
             }
         }
-        
+
         return capsLockeEnabled;
     }
-    
+
     void setCapsLockEnabled(boolean capsLockEnabled) {
         boolean oldValue = this.capsLockeEnabled;
         this.capsLockeEnabled = capsLockEnabled;
@@ -114,7 +114,7 @@ public final class CapsLockSupport extends AbstractBean implements KeyEventDispa
     public boolean dispatchKeyEvent(KeyEvent e) {
         if (e.getID() == KeyEvent.KEY_PRESSED) {
             int keyCode = e.getKeyCode();
-            
+
             if (keyCode == VK_CAPS_LOCK) {
                 if (!updateViaKeyEvent) {
                     if (useToolkit) {
@@ -133,12 +133,12 @@ public final class CapsLockSupport extends AbstractBean implements KeyEventDispa
                 } else {
                     capsLockeEnabled = e.isShiftDown();
                 }
-                
+
                 updateViaKeyEvent = false;
                 firePropertyChange("initialized", false, true); //$NON-NLS-1$
             }
         }
-        
+
         return false;
     }
 }

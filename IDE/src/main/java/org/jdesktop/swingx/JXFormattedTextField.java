@@ -13,14 +13,13 @@ import org.jdesktop.swingx.prompt.PromptSupport;
 import org.jdesktop.swingx.prompt.BuddySupport.Position;
 import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
 
-
 /**
  * {@link JFormattedTextField}, with integrated support for prompts and buddies.
- * 
+ *
  * @see PromptSupport
  * @see BuddySupport
  * @author Peter Weishapl <petw@gmx.net>
- * 
+ *
  */
 public class JXFormattedTextField extends JFormattedTextField {
 	public JXFormattedTextField() {
@@ -34,7 +33,7 @@ public class JXFormattedTextField extends JFormattedTextField {
 	public JXFormattedTextField(String promptText, Color promptForeground) {
 		this(promptText, promptForeground, null);
 	}
-	
+
 	public JXFormattedTextField(String promptText, Color promptForeground, Color promptBackground) {
 		PromptSupport.init(promptText, promptForeground, promptBackground, this);
 	}
@@ -59,7 +58,7 @@ public class JXFormattedTextField extends JFormattedTextField {
 	public Color getPromptForeground() {
 		return PromptSupport.getForeground(this);
 	}
-	
+
 	/**
 	 * @see PromptSupport#getForeground(javax.swing.text.JTextComponent)
 	 */
@@ -94,7 +93,7 @@ public class JXFormattedTextField extends JFormattedTextField {
 	public void setPromptForeground(Color promptTextColor) {
 		PromptSupport.setForeground(promptTextColor, this);
 	}
-	
+
 	/**
 	 * @see PromptSupport#setBackground(Color, javax.swing.text.JTextComponent)
 	 */
@@ -109,7 +108,7 @@ public class JXFormattedTextField extends JFormattedTextField {
 	public void setPromptFontStyle(Integer fontStyle) {
 		PromptSupport.setFontStyle(fontStyle, this);
 	}
-	
+
 	/**
 	 * @see BuddySupport#setOuterMargin(JTextField, Insets)
 	 */

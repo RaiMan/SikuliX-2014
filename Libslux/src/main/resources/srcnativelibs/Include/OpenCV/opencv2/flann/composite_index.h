@@ -61,7 +61,6 @@ struct CompositeIndexParams : public IndexParams
     }
 };
 
-
 /**
  * This index builds a kd-tree index and a k-means index and performs nearest
  * neighbour search both indexes. This gives a slight boost in search performance

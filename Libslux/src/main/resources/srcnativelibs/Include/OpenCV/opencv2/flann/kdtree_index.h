@@ -46,7 +46,6 @@
 #include "random.h"
 #include "saving.h"
 
-
 namespace cvflann
 {
 
@@ -58,7 +57,6 @@ struct KDTreeIndexParams : public IndexParams
         (*this)["trees"] = trees;
     }
 };
-
 
 /**
  * Randomized kd-tree index
@@ -72,7 +70,6 @@ class KDTreeIndex : public NNIndex<Distance>
 public:
     typedef typename Distance::ElementType ElementType;
     typedef typename Distance::ResultType DistanceType;
-
 
     /**
      * KDTree constructor
@@ -100,7 +97,6 @@ public:
         mean_ = new DistanceType[veclen_];
         var_ = new DistanceType[veclen_];
     }
-
 
     KDTreeIndex(const KDTreeIndex&);
     KDTreeIndex& operator=(const KDTreeIndex&);
@@ -130,12 +126,10 @@ public:
         }
     }
 
-
     flann_algorithm_t getType() const
     {
         return FLANN_INDEX_KDTREE;
     }
-
 
     void saveIndex(FILE* stream)
     {
@@ -144,7 +138,6 @@ public:
             save_tree(stream, tree_roots_[i]);
         }
     }
-
 
 
     void loadIndex(FILE* stream)
@@ -216,7 +209,6 @@ public:
 
 private:
 
-
     /*--------------------- Internal Data Structures --------------------------*/
     struct Node
     {
@@ -238,7 +230,6 @@ private:
     typedef BranchSt* Branch;
 
 
-
     void save_tree(FILE* stream, NodePtr tree)
     {
         save_value(stream, *tree);
@@ -249,7 +240,6 @@ private:
             save_tree(stream, tree->child2);
         }
     }
-
 
     void load_tree(FILE* stream, NodePtr& tree)
     {
@@ -262,7 +252,6 @@ private:
             load_tree(stream, tree->child2);
         }
     }
-
 
     /**
      * Create a tree node that subdivides the list of vecs from vind[first]
@@ -296,7 +285,6 @@ private:
 
         return node;
     }
-
 
     /**
      * Choose which feature to use in order to subdivide this set of vectors.
@@ -347,7 +335,6 @@ private:
         if ((lim1==count)||(lim2==0)) index = count/2;
     }
 
-
     /**
      * Select the top RAND_DIM largest values from v and return the index of
      * one of these selected at random.
@@ -379,7 +366,6 @@ private:
         int rnd = rand_int(num);
         return (int)topind[rnd];
     }
-
 
     /**
      *  Subdivide the list of points by a plane perpendicular on axe corresponding
@@ -457,7 +443,6 @@ private:
 
         assert(result.full());
     }
-
 
     /**
      *  Search starting from a given node of the tree.  Based on any mismatches at
@@ -550,7 +535,6 @@ private:
         }
     }
 
-
 private:
 
     enum
@@ -570,7 +554,6 @@ private:
          */
         RAND_DIM=5
     };
-
 
     /**
      * Number of randomized trees that are used
@@ -592,10 +575,8 @@ private:
     size_t size_;
     size_t veclen_;
 
-
     DistanceType* mean_;
     DistanceType* var_;
-
 
     /**
      * Array of k-d trees used to find neighbours.
@@ -612,7 +593,6 @@ private:
     PooledAllocator pool_;
 
     Distance distance_;
-
 
 };   // class KDTreeForest
 

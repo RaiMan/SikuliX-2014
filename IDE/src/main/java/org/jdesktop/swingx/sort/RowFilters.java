@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -31,16 +31,16 @@ import org.jdesktop.swingx.util.Contract;
 
 /**
  * Factory of additional <code>RowFilter</code>s. <p>
- * 
+ *
  * Trigger is the missing of Pattern/Regex+matchflags factory method in core.
  * Can't do much other than c&p core as both abstract base class GeneralFilter and
  * concrete RowFilter are private. Expose the base as public for custom subclasses
- * 
+ *
  * @author Jeanette Winzenburg
  */
 @SuppressWarnings("unchecked")
 public class RowFilters {
-    
+
     /**
      * Returns a <code>RowFilter</code> that uses a regular
      * expression to determine which entries to include.  Only entries
@@ -76,7 +76,7 @@ public class RowFilters {
             int... indices) {
         return regexFilter(0, regex, indices);
     }
-    
+
     /**
      * Returns a <code>RowFilter</code> that uses a regular
      * expression to determine which entries to include.  Only entries
@@ -96,7 +96,7 @@ public class RowFilters {
      * {@link java.util.regex.Pattern} for a complete description of
      * the supported regular-expression constructs.
      *
-     * @param matchFlags      
+     * @param matchFlags
      *         Match flags, a bit mask that may include
      *         {@link Pattern#CASE_INSENSITIVE}, {@link Pattern#MULTILINE}, {@link Pattern#DOTALL},
      *         {@link Pattern#UNICODE_CASE}, {@link Pattern#CANON_EQ}, {@link Pattern#UNIX_LINES},
@@ -121,11 +121,11 @@ public class RowFilters {
             int... indices) {
         return regexFilter(Pattern.compile(regex, matchFlags), indices);
     }
-    
+
     /**
      * Returns a <code>RowFilter</code> that uses a regular
-     * expression to determine which entries to include.  
-     * 
+     * expression to determine which entries to include.
+     *
      * @param pattern the Pattern to use for matching
      * @param indices the indices of the values to check.  If not supplied all
      *               values are evaluated
@@ -211,7 +211,7 @@ public class RowFilters {
             return matcher.find();
         }
     }
-    
+
     private RowFilters() {};
-    
+
 }

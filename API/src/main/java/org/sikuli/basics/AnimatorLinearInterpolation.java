@@ -23,4 +23,3 @@ public class AnimatorLinearInterpolation extends AnimatorTimeValueFunction {
     return _beginVal + _stepUnit * t;
   }
 }
-

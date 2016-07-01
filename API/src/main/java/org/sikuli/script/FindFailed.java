@@ -43,7 +43,7 @@ public class FindFailed extends SikuliException {
 	 * FindFailedResponse HANDLE: should call a given handler on FindFailed
 	 */
 	public static final FindFailedResponse HANDLE = FindFailedResponse.HANDLE;
-  
+
   private static Object ffHandler = null;
   private static Object imHandler = null;
   private static Object defaultHandler = null;
@@ -56,7 +56,7 @@ public class FindFailed extends SikuliException {
     super(message);
     _name = "FindFailed";
   }
-  
+
   public static String createdefault(Region reg, Image img) {
     String msg = "";
     if (img.getSize().width < 0 && img.getSize().height < 0) {
@@ -75,7 +75,7 @@ public class FindFailed extends SikuliException {
     defaultFindFailedResponse = response;
     return defaultFindFailedResponse;
   }
-  
+
   public static FindFailedResponse setHandler(Object observer) {
     if (observer != null && (observer.getClass().getName().contains("org.python")
             || observer.getClass().getName().contains("org.jruby"))) {
@@ -85,7 +85,7 @@ public class FindFailed extends SikuliException {
     Debug.log(3, "Setting Default FindFailedHandler");
     return defaultFindFailedResponse;
   }
-  
+
   protected void setFindFailedHandler(Object handler) {
     ffHandler = setHandler(handler, ObserveEvent.Type.FINDFAILED);
   }
@@ -102,15 +102,15 @@ public class FindFailed extends SikuliException {
     }
     return handler;
   }
-  
+
   public static Object getFindFailedHandler() {
     return ffHandler;
   }
-  
+
   public static Object getImageMissingHandler() {
     return imHandler;
   }
-  
+
   public static FindFailedResponse reset() {
     defaultFindFailedResponse = ABORT;
     ffHandler = null;

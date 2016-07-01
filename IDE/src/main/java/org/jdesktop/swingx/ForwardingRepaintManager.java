@@ -39,13 +39,13 @@ import org.jdesktop.swingx.util.Contract;
  * handle the rest of the work.
  * <p>
  * Install a forwarding repaint manager:
- * 
+ *
  * <pre>
  * RepaintManager manager = RepaintManager.currentManager(this);
  * RepaintManager frm = new ForwardingRepaintManager(manager);
  * RepaintManager.setCurrentManager(frm);
  * </pre>
- * 
+ *
  * @author Karl George Schaefer
  * @author pietblok (original facade/delegate idea)
  */
@@ -54,7 +54,7 @@ public class ForwardingRepaintManager extends RepaintManager {
 
     /**
      * Creates a new forwarding manager that forwards all calls to the delegate.
-     * 
+     *
      * @param delegate
      *            the manager backing this {@code ForwardingRepaintManager}
      * @throws NullPointerException
@@ -63,7 +63,7 @@ public class ForwardingRepaintManager extends RepaintManager {
     public ForwardingRepaintManager(RepaintManager delegate) {
         this.delegate = Contract.asNotNull(delegate, "delegate is null");
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -211,7 +211,7 @@ public class ForwardingRepaintManager extends RepaintManager {
     /**
      * Gets the delegate repaint manager backing this forwarding repaint
      * manager.
-     * 
+     *
      * @return the delegate for this forwarding manager
      */
     public final RepaintManager getDelegateManager() {

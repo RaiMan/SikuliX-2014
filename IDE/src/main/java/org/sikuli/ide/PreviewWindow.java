@@ -21,7 +21,7 @@ import org.sikuli.util.OverlayTransparentWindow;
 public class PreviewWindow extends OverlayTransparentWindow implements MouseListener {
 
   public PreviewWindow() {
-   
+
   }
 
   @Override

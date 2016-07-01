@@ -59,7 +59,7 @@ public class BuddyLayoutAndBorder implements LayoutManager, Border, PropertyChan
 
 	/**
 	 * Does nothing.
-	 * 
+	 *
 	 * @see BuddySupport#add(javax.swing.JComponent, Position, JTextField)
 	 */
 	@Override
@@ -98,7 +98,7 @@ public class BuddyLayoutAndBorder implements LayoutManager, Border, PropertyChan
 
 	/**
 	 * Does nothing.
-	 * 
+	 *
 	 * @see BuddySupport#remove(javax.swing.JComponent, JTextField)
 	 */
 	@Override
@@ -141,7 +141,7 @@ public class BuddyLayoutAndBorder implements LayoutManager, Border, PropertyChan
 	 * @return the rectangle allocated by the text field, including the space
 	 *         allocated by the child components left and right, the text fields
 	 *         original border insets and the outer margin.
-	 * 
+	 *
 	 */
 	protected Rectangle getVisibleRect() {
 		Rectangle alloc = SwingUtilities.getLocalBounds(textField);
@@ -164,7 +164,7 @@ public class BuddyLayoutAndBorder implements LayoutManager, Border, PropertyChan
 	/**
 	 * Returns the {@link Insets} of the original {@link Border} plus the space
 	 * required by the child components.
-	 * 
+	 *
 	 * @see javax.swing.border.Border#getBorderInsets(java.awt.Component)
 	 */
 	@Override
@@ -183,7 +183,7 @@ public class BuddyLayoutAndBorder implements LayoutManager, Border, PropertyChan
 		if (textField == null) {
 			return insets;
 		}
-		
+
 		for (Component comp : BuddySupport.getLeft(textField)) {
 			insets.left += comp.isVisible() ? comp.getPreferredSize().width : 0;
 		}
@@ -205,7 +205,7 @@ public class BuddyLayoutAndBorder implements LayoutManager, Border, PropertyChan
 	/**
 	 * Returns the insets of the original border (without the margin! Beware of
 	 * {@link MarginBorder}!).
-	 * 
+	 *
 	 * @return the insets of the border delegate
 	 */
 	public Insets getRealBorderInsets() {

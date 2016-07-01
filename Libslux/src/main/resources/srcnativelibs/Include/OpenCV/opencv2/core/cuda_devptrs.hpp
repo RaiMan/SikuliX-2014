@@ -122,7 +122,6 @@ namespace cv
         typedef PtrStep<float> PtrStepf;
         typedef PtrStep<int> PtrStepi;
 
-
 #if defined __GNUC__
     #define __CV_GPU_DEPR_BEFORE__
     #define __CV_GPU_DEPR_AFTER__ __attribute__ ((deprecated))

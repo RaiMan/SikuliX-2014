@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -37,7 +37,7 @@ import org.jdesktop.beans.JavaBean;
 public class JDBCLoginService extends LoginService {
     private static final Logger LOG = Logger.getLogger(JDBCLoginService.class
             .getName());
-    
+
     /**
      * The connection to the database
      */
@@ -52,7 +52,7 @@ public class JDBCLoginService extends LoginService {
      * any additional properties to use when connecting.
      */
     private Properties properties;
-    
+
     /**
      * Create a new JDBCLoginService and initializes it to connect to a
      * database using the given params.
@@ -70,7 +70,7 @@ public class JDBCLoginService extends LoginService {
         }
         this.setUrl(url);
     }
-    
+
     /**
      * Create a new JDBCLoginService and initializes it to connect to a
      * database using the given params.
@@ -90,7 +90,7 @@ public class JDBCLoginService extends LoginService {
         this.setUrl(url);
         this.setProperties(props);
     }
-    
+
     /**
      * Create a new JDBCLoginService and initializes it to connect to a
      * database using the given params.
@@ -100,14 +100,14 @@ public class JDBCLoginService extends LoginService {
         super(jndiContext);
         this.jndiContext = jndiContext;
     }
-    
+
     /**
      * Default JavaBean constructor
      */
     public JDBCLoginService() {
         super();
     }
-    
+
     /**
      * @return the JDBC connection url
      */
@@ -140,17 +140,17 @@ public class JDBCLoginService extends LoginService {
         this.properties = properties;
         firePropertyChange("properties", old, getProperties());
     }
-    
+
     public Connection getConnection() {
         return conn;
     }
-    
+
     public void setConnection(Connection conn) {
         Connection old = getConnection();
         this.conn = conn;
         firePropertyChange("connection", old, getConnection());
     }
-    
+
     /**
      * Attempts to get a JDBC Connection from a JNDI javax.sql.DataSource, using
      * that connection for interacting with the database.
@@ -162,7 +162,7 @@ public class JDBCLoginService extends LoginService {
         conn = ds.getConnection(userName, new String(password));
         conn.setTransactionIsolation(Connection.TRANSACTION_REPEATABLE_READ);
     }
-    
+
     /**
      * Attempts to get a JDBC Connection from a DriverManager. If properties
      * is not null, it tries to connect with those properties. If that fails,

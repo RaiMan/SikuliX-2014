@@ -48,7 +48,6 @@ namespace cvflann
 template<typename Distance>
 NNIndex<Distance>* create_index_by_type(const Matrix<typename Distance::ElementType>& dataset, const IndexParams& params, const Distance& distance);
 
-
 struct AutotunedIndexParams : public IndexParams
 {
     AutotunedIndexParams(float target_precision = 0.8, float build_weight = 0.01, float memory_weight = 0, float sample_fraction = 0.1)
@@ -64,7 +63,6 @@ struct AutotunedIndexParams : public IndexParams
         (*this)["sample_fraction"] = sample_fraction;
     }
 };
-
 
 template <typename Distance>
 class AutotunedIndex : public NNIndex<Distance>
@@ -155,7 +153,6 @@ public:
         }
     }
 
-
     IndexParams getParameters() const
     {
         return bestIndex_->getParameters();
@@ -170,7 +167,6 @@ public:
     {
         return speedup_;
     }
-
 
     /**
      *      Number of features in this index.
@@ -241,7 +237,6 @@ private:
         Logger::info("KMeansTree buildTime=%g, searchTime=%g, build_weight=%g\n", buildTime, searchTime, build_weight_);
     }
 
-
     void evaluate_kdtree(CostData& cost)
     {
         StartStopTimer t;
@@ -265,7 +260,6 @@ private:
         cost.buildTimeCost = buildTime;
         Logger::info("KDTree buildTime=%g, searchTime=%g\n", buildTime, searchTime);
     }
-
 
     //    struct KMeansSimpleDownhillFunctor {
     //
@@ -314,7 +308,6 @@ private:
     //    };
 
 
-
     void optimizeKMeans(std::vector<CostData>& costs)
     {
         Logger::info("KMEANS, Step 1: Exploring parameter space\n");
@@ -361,7 +354,6 @@ private:
         //             kmeansCosts[i].timeCost = kmeansVals[i];
         //         }
     }
-
 
     void optimizeKDTree(std::vector<CostData>& costs)
     {
@@ -476,7 +468,6 @@ private:
     }
 
 
-
     /**
      *  Estimates the search time parameters needed to get the desired precision.
      *  Precondition: the index is built
@@ -575,7 +566,6 @@ private:
     float sample_fraction_;
 
     Distance distance_;
-
 
 };
 }

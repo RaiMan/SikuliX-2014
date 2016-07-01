@@ -186,7 +186,7 @@ public class ImagePath {
     }
     return paths;
   }
-  
+
   public static String getPath(int ix) {
     PathEntry pe = imagePaths.get(0);
     String path = null;
@@ -366,7 +366,7 @@ public class ImagePath {
 		}
 		return true;
   }
-  
+
   public static boolean removeHTTP(String pathHTTP) {
 		try {
       String proto = "http://";
@@ -418,7 +418,7 @@ public class ImagePath {
     }
     return false;
   }
-  
+
   public static boolean addJar(String fpJar, String fpImage) {
     URL pathURL = null;
     if (new File(fpJar).exists()) {
@@ -616,7 +616,7 @@ public class ImagePath {
 			return null;
 		}
 		URL pathURL = null;
-    File fPath = new File(FileManager.normalizeAbsolute(fpMainPath, false)); 
+    File fPath = new File(FileManager.normalizeAbsolute(fpMainPath, false));
 		if (fPath.exists()) {
 			pathURL = FileManager.makeURL(fPath.getAbsolutePath());
 		} else {

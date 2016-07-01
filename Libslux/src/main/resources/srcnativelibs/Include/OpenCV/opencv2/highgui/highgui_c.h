@@ -86,7 +86,6 @@ enum {CV_PUSH_BUTTON = 0, CV_CHECKBOX = 1, CV_RADIOBOX = 2};
 CVAPI(int) cvCreateButton( const char* button_name CV_DEFAULT(NULL),CvButtonCallback on_change CV_DEFAULT(NULL), void* userdata CV_DEFAULT(NULL) , int button_type CV_DEFAULT(CV_PUSH_BUTTON), int initial_button_state CV_DEFAULT(0));
 //----------------------
 
-
 /* this function is used to set some external parameters in case of X Window */
 CVAPI(int) cvInitSystem( int argc, char** argv );
 
@@ -130,7 +129,6 @@ CVAPI(void) cvShowImage( const char* name, const CvArr* image );
 CVAPI(void) cvResizeWindow( const char* name, int width, int height );
 CVAPI(void) cvMoveWindow( const char* name, int x, int y );
 
-
 /* destroy window and all the trackers associated with it */
 CVAPI(void) cvDestroyWindow( const char* name );
 
@@ -141,7 +139,6 @@ CVAPI(void*) cvGetWindowHandle( const char* name );
 
 /* get name of highgui window given its native handle */
 CVAPI(const char*) cvGetWindowName( void* window_handle );
-
 
 typedef void (CV_CDECL *CvTrackbarCallback)(int pos);
 
@@ -257,7 +254,6 @@ CVAPI(void) cvSetOpenGlDrawCallback(const char* window_name, CvOpenGlDrawCallbac
 
 CVAPI(void) cvSetOpenGlContext(const char* window_name);
 CVAPI(void) cvUpdateWindow(const char* window_name);
-
 
 /****************************************************************************************\
 *                         Working with Video Files and Cameras                           *

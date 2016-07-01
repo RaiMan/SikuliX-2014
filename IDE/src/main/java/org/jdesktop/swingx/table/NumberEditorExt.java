@@ -41,66 +41,65 @@ import javax.swing.text.NumberFormatter;
 import org.jdesktop.swingx.text.StrictNumberFormatter;
 import org.jdesktop.swingx.text.NumberFormatExt;
 
-
 /**
- * 
+ *
  * Issue #393-swingx: localized NumberEditor. Added feature to use StrictNumberFormatter.
- * 
+ *
  * @author Noel Grandin
  * @author Jeanette Winzenburg
  */
 public class NumberEditorExt extends DefaultCellEditor {
-    
+
     private static Class<?>[] argTypes = new Class[]{String.class};
     java.lang.reflect.Constructor<?> constructor;
     private boolean useStrictFormatter;
-    
+
     /**
      * Instantiates an editor with default NumberFormat and default NumberFormatter.
      */
     public NumberEditorExt() {
         this(null);
     }
-    
+
     /**
      * Instantiates an editor with the given NumberFormat and default NumberFormatter.
-     * 
-     * @param format the NumberFormat to use for conversion, may be null to indicate 
+     *
+     * @param format the NumberFormat to use for conversion, may be null to indicate
      *    usage of default NumberFormat.
      */
     public NumberEditorExt(NumberFormat format) {
         this(format, false);
     }
-    
+
     /**
      * Instantiates an editor with default NumberFormat and NumberFormatter depending
      * on useStrictFormatter.
-     * 
+     *
      * @param useStrictFormatter if true, uses a StrictNumberFormatter, else uses
      *    default NumberFormatter
      */
     public NumberEditorExt(boolean useStrictFormatter) {
         this(null, useStrictFormatter);
     }
-    
+
     /**
      * Instantiates an editor with the given NumberFormat and NumberFormatter depending on
      * useStrictFormatter.
-     * 
+     *
      * @param format the NumberFormat to use for conversion, may be null to indicate
      *    usage of default NumberFormat
      * @param useStrictFormatter if true, uses a StrictNumberFormatter, else uses
      *    default NumberFormatter
      */
     public NumberEditorExt(NumberFormat format, boolean useStrictFormatter) {
-        
+
         super(useStrictFormatter ? createFormattedTextFieldX(format) : createFormattedTextField(format));
         this.useStrictFormatter = useStrictFormatter;
         final JFormattedTextField textField = getComponent();
-        
+
         textField.setName("Table.editor");
         textField.setHorizontalAlignment(JTextField.RIGHT);
-        
+
         // remove action listener added in DefaultCellEditor
         textField.removeActionListener(delegate);
         // replace the delegate created in DefaultCellEditor
@@ -122,17 +121,17 @@ public class NumberEditorExt extends DefaultCellEditor {
         };
         textField.addActionListener(delegate);
     }
-    
+
     @Override
     public boolean stopCellEditing() {
         if (!isValid()) return false;
         return super.stopCellEditing();
     }
-    
+
     /**
      * Returns a boolean indicating whether the current text is valid for
      * instantiating the expected Number type.
-     * 
+     *
      * @return true if text is valid, false otherwise.
      */
     protected boolean isValid() {
@@ -142,16 +141,16 @@ public class NumberEditorExt extends DefaultCellEditor {
                 getNumber();
             return true;
         } catch (Exception ex) {
-            
+
         }
         return false;
     }
-    
+
     /**
      * Returns the editor value as number. May fail for a variety of reasons,
      * as it forces parsing of the current text as well as reflective construction
      * of the target type.
-     * 
+     *
      * @return the editor value or null
      * @throws Exception if creation of the expected type fails in some way.
      */
@@ -168,7 +167,7 @@ public class NumberEditorExt extends DefaultCellEditor {
     protected boolean hasStrictFormatter() {
         return useStrictFormatter;
     }
-    
+
     /** Override and set the border back to normal in case there was an error previously */
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value,
@@ -189,7 +188,7 @@ public class NumberEditorExt extends DefaultCellEditor {
                 }
                 constructor = type.getConstructor(argTypes);
             }
-            // JW: in strict mode this may fail in setting the value in the formatter 
+            // JW: in strict mode this may fail in setting the value in the formatter
             return super.getTableCellEditorComponent(table, value, isSelected, row, column);
         } catch (Exception ex) {
             // PENDING JW: super generic editor swallows all failures and returns null
@@ -197,17 +196,17 @@ public class NumberEditorExt extends DefaultCellEditor {
             throw new IllegalStateException("value/type not compatible with Number", ex);
         }
     }
-    
+
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to instantiate a Number of the expected type. Note that this
-     * may throw a IllegalStateException if invoked without querying 
+     * may throw a IllegalStateException if invoked without querying
      * for a valid value with stopCellEditing. This should not happen during
      * normal usage.
-     * 
+     *
      * @throws IllegalStateException if current value invalid
-     * 
+     *
      */
     @Override
     public Number getCellEditorValue() throws IllegalStateException {
@@ -216,25 +215,24 @@ public class NumberEditorExt extends DefaultCellEditor {
         } catch (Exception ex) {
             throw new IllegalStateException("Number conversion not possible from " +
             		"current string " + getComponent().getText());
-        } 
+        }
     }
-
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Convenience override with type cast.
      */
     @Override
     public JFormattedTextField getComponent() {
         return (JFormattedTextField) super.getComponent();
     }
-    
+
     /**
      * Creates and returns a JFormattedTextField configured with SwingX extended
      * NumberFormat and StrictNumberFormatter. This method is called if
      * the constructor parameter useStrictFormatter is true.
-     * 
+     *
      * Use a static method so that we can do some stuff before calling the
      * superclass.
      */
@@ -286,12 +284,11 @@ public class NumberEditorExt extends DefaultCellEditor {
         });
         return textField;
     }
-    
-    
+
     /**
      * Creates and returns a JFormattedTextField configured with defaults. This
-     * method is called if the contructor useStrictFormatter is false.<p> 
-     * 
+     * method is called if the contructor useStrictFormatter is false.<p>
+     *
      * Use a static method so that we can do some stuff before calling the
      * superclass.
      */

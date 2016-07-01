@@ -29,4 +29,3 @@ public class SWIGTYPE_p_cv__Rect {
     return (obj == null) ? 0 : obj.swigCPtr;
   }
 }
-

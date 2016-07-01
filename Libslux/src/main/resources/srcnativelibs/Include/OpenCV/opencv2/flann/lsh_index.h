@@ -100,7 +100,6 @@ public:
         fill_xor_mask(0, key_size_, multi_probe_level_, xor_masks_);
     }
 
-
     LshIndex(const LshIndex&);
     LshIndex& operator=(const LshIndex&);
 
@@ -123,7 +122,6 @@ public:
     {
         return FLANN_INDEX_LSH;
     }
-
 
     void saveIndex(FILE* stream)
     {
@@ -173,7 +171,6 @@ public:
         return (int)(dataset_.rows * sizeof(int));
     }
 
-
     IndexParams getParameters() const
     {
         return index_params_;
@@ -195,7 +192,6 @@ public:
         assert(int(indices.cols) >= knn);
         assert(int(dists.cols) >= knn);
 
-
         KNNUniqueResultSet<DistanceType> resultSet(knn);
         for (size_t i = 0; i < queries.rows; i++) {
             resultSet.clear();
@@ -206,7 +202,6 @@ public:
             else resultSet.copy(indices[i], dists[i], knn);
         }
     }
-
 
     /**
      * Find set of nearest neighbors to vec. Their indices are stored inside

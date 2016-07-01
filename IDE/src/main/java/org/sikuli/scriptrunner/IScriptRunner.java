@@ -89,7 +89,7 @@ public interface IScriptRunner {
    * Is executed before Sikuli closes. Can be used to cleanup the ScriptRunner
    */
   public void close();
-  
+
   /**
    * generic interface to a special runner action
    * @param action identifies what to do

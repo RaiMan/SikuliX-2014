@@ -23,13 +23,10 @@ import javax.swing.Timer;
 
 import org.sikuli.util.OverlayTransparentWindow;
 
-
 public class TransitionDialog extends OverlayTransparentWindow implements Transition{
-
 
    // the location user moved to by dragging
    static Point userPreferredLocation = null;
-
 
    Box buttons;
    JLabel titleBar;
@@ -179,7 +176,6 @@ public class TransitionDialog extends OverlayTransparentWindow implements Transi
          userPreferredLocation = endLocation;
       }
 
-
       setVisible(false);
       return command;
    }
@@ -199,7 +195,6 @@ public class TransitionDialog extends OverlayTransparentWindow implements Transi
       textPane.setText(text);
       pack();
    }
-
 
    class Button extends JButton implements ActionListener{
 
@@ -229,7 +224,4 @@ public class TransitionDialog extends OverlayTransparentWindow implements Transi
       }
    }
 
-
 }
-
-

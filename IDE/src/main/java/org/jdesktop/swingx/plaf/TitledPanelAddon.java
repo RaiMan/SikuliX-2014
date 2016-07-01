@@ -8,18 +8,17 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package org.jdesktop.swingx.plaf;
-
 
 import java.awt.Color;
 import java.awt.Font;
@@ -46,7 +45,7 @@ public class TitledPanelAddon extends AbstractComponentAddon {
   @Override
   protected void addBasicDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
     super.addBasicDefaults(addon, defaults);
-    
+
     defaults.add(JXTitledPanel.uiClassID, "org.jdesktop.swingx.plaf.basic.BasicTitledPanelUI");
     defaults.add("JXTitledPanel.titleFont", UIManagerExt.getSafeFont("Button.font",
             new FontUIResource("Dialog", Font.PLAIN, 12)));
@@ -58,7 +57,7 @@ public class TitledPanelAddon extends AbstractComponentAddon {
     defaults.add("JXTitledPanel.rightDecorationInsets", new InsetsUIResource(1,1,1,1));
     defaults.add("JXTitledPanel.leftDecorationInsets", new InsetsUIResource(1,1,1,1));
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -66,7 +65,7 @@ public class TitledPanelAddon extends AbstractComponentAddon {
   protected void addLinuxDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
     addMetalDefaults(addon, defaults);
   }
-  
+
   /**
    * {@inheritDoc}
    */
@@ -82,7 +81,7 @@ public class TitledPanelAddon extends AbstractComponentAddon {
     } else {
       defaults.add("JXTitledPanel.titleForeground", new ColorUIResource(Color.WHITE));
       defaults.add("JXTitledPanel.titlePainter", new PainterUIResource<JXTitledPanel>(
-                new MattePainter(new GradientPaint(0, 0, 
+                new MattePainter(new GradientPaint(0, 0,
                     MetalLookAndFeel.getCurrentTheme().getPrimaryControl(), 0, 1,
                     MetalLookAndFeel.getCurrentTheme().getPrimaryControlDarkShadow()),true)));
     }
@@ -91,12 +90,12 @@ public class TitledPanelAddon extends AbstractComponentAddon {
   @Override
   protected void addWindowsDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
     super.addWindowsDefaults(addon, defaults);
-  
+
     // JW: hot fix for #291-swingx
-    // was tracked down by Neil Weber - the requested colors are not available in 
+    // was tracked down by Neil Weber - the requested colors are not available in
     // all LFs, so changed to fall-back to something real
     // don't understand why this has blown when trying to toggle to Metal...
-    // definitely needs deeper digging 
+    // definitely needs deeper digging
     // kgs: moved to using getSafeXXX from UIManagerExt
     defaults.add("JXTitledPanel.titleForeground", UIManagerExt.getSafeColor(
             "InternalFrame.activeTitleForeground", new ColorUIResource(Color.WHITE)));
@@ -105,6 +104,6 @@ public class TitledPanelAddon extends AbstractComponentAddon {
                     "InternalFrame.inactiveTitleGradient", new ColorUIResource(49, 121, 242)),
                     0, 1, UIManagerExt.getSafeColor( "InternalFrame.activeTitleBackground",
                                 new ColorUIResource(198, 211, 247))), true)));
-  
+
   }
 }

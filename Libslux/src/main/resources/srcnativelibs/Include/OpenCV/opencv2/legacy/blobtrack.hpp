@@ -39,7 +39,6 @@
 //
 //M*/
 
-
 #ifndef __OPENCV_VIDEOSURVEILLANCE_H__
 #define __OPENCV_VIDEOSURVEILLANCE_H__
 
@@ -148,7 +147,6 @@ public:
 CV_EXPORTS void cvReleaseFGDetector(CvFGDetector** ppT );
 CV_EXPORTS CvFGDetector* cvCreateFGDetectorBase(int type, void *param);
 
-
 /* BLOB STRUCTURE*/
 struct CvBlob
 {
@@ -174,7 +172,6 @@ inline CvBlob cvBlob(float x,float y, float w, float h)
 #define CV_BLOB_RY(pB) (0.5f*CV_BLOB_WY(pB))
 #define CV_BLOB_RECT(pB) cvRect(cvRound(((CvBlob*)(pB))->x-CV_BLOB_RX(pB)),cvRound(((CvBlob*)(pB))->y-CV_BLOB_RY(pB)),cvRound(CV_BLOB_WX(pB)),cvRound(CV_BLOB_WY(pB)))
 /* END BLOB STRUCTURE*/
-
 
 /* simple BLOBLIST */
 class CV_EXPORTS CvBlobSeq
@@ -261,7 +258,6 @@ protected:
 };
 /* simple BLOBLIST */
 
-
 /* simple TRACKLIST */
 struct CvBlobTrack
 {
@@ -288,7 +284,6 @@ protected:
 };
 
 /* simple TRACKLIST */
-
 
 /* BLOB DETECTOR INTERFACE */
 class CV_EXPORTS CvBlobDetector: public CvVSModule
@@ -323,7 +318,6 @@ CV_INLINE CvDetectedBlob cvDetectedBlob( float x, float y, float w, float h, int
     return b;
 }
 
-
 class CV_EXPORTS CvObjectDetector
 {
 public:
@@ -353,7 +347,6 @@ protected:
     class CvObjectDetectorImpl* impl;
 };
 
-
 CV_INLINE CvRect cvRectIntersection( const CvRect r1, const CvRect r2 )
 {
     CvRect r = cvRect( MAX(r1.x, r2.x), MAX(r1.y, r2.y), 0, 0 );
@@ -363,7 +356,6 @@ CV_INLINE CvRect cvRectIntersection( const CvRect r1, const CvRect r2 )
 
     return r;
 }
-
 
 /*
  * CvImageDrawer
@@ -405,7 +397,6 @@ protected:
 };
 
 
-
 /* Trajectory generation module: */
 class CV_EXPORTS CvBlobTrackGen: public CvVSModule
 {
@@ -426,7 +417,6 @@ inline void cvReleaseBlobTrackGen(CvBlobTrackGen** pBTGen)
 /* Declarations of constructors of implemented modules: */
 CV_EXPORTS CvBlobTrackGen* cvCreateModuleBlobTrackGen1();
 CV_EXPORTS CvBlobTrackGen* cvCreateModuleBlobTrackGenYML();
-
 
 
 /* BLOB TRACKER INTERFACE */
@@ -456,7 +446,6 @@ public:
 
     /* Release blob tracker: */
     virtual void    Release() = 0;
-
 
     /* Process one blob (for multi hypothesis tracing): */
     virtual void ProcessBlob(int BlobIndex, CvBlob* pBlob, IplImage* /*pImg*/, IplImage* /*pImgFG*/ = NULL);
@@ -636,12 +625,10 @@ public:
 /* Create blob tracking post processing module based on simle module: */
 CV_EXPORTS CvBlobTrackPostProc* cvCreateBlobTrackPostProcList(CvBlobTrackPostProcOne* (*create)());
 
-
 /* Declarations of constructors of implemented modules: */
 CV_EXPORTS CvBlobTrackPostProc* cvCreateModuleBlobTrackPostProcKalman();
 CV_EXPORTS CvBlobTrackPostProc* cvCreateModuleBlobTrackPostProcTimeAverRect();
 CV_EXPORTS CvBlobTrackPostProc* cvCreateModuleBlobTrackPostProcTimeAverExp();
-
 
 /* PREDICTORS */
 /* blob PREDICTOR */
@@ -654,7 +641,6 @@ public:
     virtual void    Release() = 0;
 };
 CV_EXPORTS CvBlobTrackPredictor* cvCreateModuleBlobTrackPredictKalman();
-
 
 
 /* Trajectory analyser module: */
@@ -671,7 +657,6 @@ public:
     virtual void    SetFileName(char* /*DataBaseName*/){};
     virtual void    Release() = 0;
 };
-
 
 inline void cvReleaseBlobTrackAnalysis(CvBlobTrackAnalysis** pBTPP)
 {
@@ -695,7 +680,6 @@ public:
     virtual float*  GetFVMin() = 0; /* Returns pointer to array of minimal values of FV, if returns 0 then FVrange does not exist */
     virtual float*  GetFVMax() = 0; /* Returns pointer to array of maximal values of FV, if returns 0 then FVrange does not exist */
 };
-
 
 /* Trajectory Analyser module: */
 class CV_EXPORTS CvBlobTrackAnalysisOne
@@ -724,7 +708,6 @@ CV_EXPORTS CvBlobTrackAnalysis* cvCreateModuleBlobTrackAnalysisHistPVS();
 
 /* Based on histogram analysis of 4D FV (startpos,stoppos): */
 CV_EXPORTS CvBlobTrackAnalysis* cvCreateModuleBlobTrackAnalysisHistSS();
-
 
 
 /* Based on SVM classifier analysis of 2D FV (x,y): */
@@ -757,7 +740,6 @@ public:
 //CV_EXPORTS CvBlobTrackAnalysisHeight* cvCreateModuleBlobTrackAnalysisHeightScale();
 
 
-
 /* AUTO BLOB TRACKER INTERFACE -- pipeline of 3 modules: */
 class CV_EXPORTS CvBlobTrackerAuto: public CvVSModule
 {
@@ -780,7 +762,6 @@ inline void cvReleaseBlobTrackerAuto(CvBlobTrackerAuto** ppT)
     ppT[0] = 0;
 }
 /* END AUTO BLOB TRACKER INTERFACE */
-
 
 /* Constructor functions and data for specific BlobTRackerAuto modules: */
 
@@ -820,7 +801,6 @@ inline CvBlobTrackerAuto* cvCreateBlobTrackerAuto(int type, void* param)
 }
 
 
-
 struct CvTracksTimePos
 {
     int len1,len2;
@@ -834,13 +814,11 @@ struct CvTracksTimePos
                    CvBlobTrackSeq *result,
                    FILE *file);*/
 
-
 /* Constructor functions:  */
 
 CV_EXPORTS void cvCreateTracks_One(CvBlobTrackSeq *TS);
 CV_EXPORTS void cvCreateTracks_Same(CvBlobTrackSeq *TS1, CvBlobTrackSeq *TS2);
 CV_EXPORTS void cvCreateTracks_AreaErr(CvBlobTrackSeq *TS1, CvBlobTrackSeq *TS2, int addW, int addH);
-
 
 /* HIST API */
 class CV_EXPORTS CvProb
@@ -879,7 +857,6 @@ inline CvProb* cvCreateProb(int type, int dim, CvSize size = cvSize(1,1), void* 
     if(type == CV_BT_HIST_TYPE_H) return cvCreateProbHist(dim, size);
     return NULL;
 }
-
 
 
 /* Noise type definitions: */

@@ -33,9 +33,9 @@ import org.jdesktop.swingx.painter.AbstractPainter;
 
 /**
  * Painter used to cross-out unselectable dates.
- * 
- * PENDING JW: subclass (or maybe even use?) one of the painter subclasses. 
- * 
+ *
+ * PENDING JW: subclass (or maybe even use?) one of the painter subclasses.
+ *
  * @author Jeanette Winzenburg
  */
 class TextCrossingPainter<T extends JComponent> extends AbstractPainter<T> {
@@ -46,8 +46,8 @@ class TextCrossingPainter<T extends JComponent> extends AbstractPainter<T> {
     Color crossColor;
     /**
      * {@inheritDoc} <p>
-     * 
-     *  Paints a diagonal cross over the text if the comp is of type JLabel, 
+     *
+     *  Paints a diagonal cross over the text if the comp is of type JLabel,
      *  does nothing otherwise.
      */
     @Override
@@ -62,14 +62,14 @@ class TextCrossingPainter<T extends JComponent> extends AbstractPainter<T> {
         paintViewR.height = height - (insets.top + insets.bottom);
         paintIconR.x = paintIconR.y = paintIconR.width = paintIconR.height = 0;
         paintTextR.x = paintTextR.y = paintTextR.width = paintTextR.height = 0;
-        SwingUtilities.layoutCompoundLabel(label, 
+        SwingUtilities.layoutCompoundLabel(label,
                 label.getFontMetrics(label.getFont()), label.getText(), null,
-                label.getVerticalAlignment(), label.getHorizontalAlignment(), 
+                label.getVerticalAlignment(), label.getHorizontalAlignment(),
                 label.getVerticalTextPosition(), label.getHorizontalTextPosition(),
                 paintViewR, paintIconR, paintTextR, label.getIconTextGap());
         doPaint(g, paintTextR);
     }
-    
+
     private void doPaint(Graphics2D g, Rectangle r) {
         Color old = g.getColor();
         g.setColor(getForeground());
@@ -78,11 +78,11 @@ class TextCrossingPainter<T extends JComponent> extends AbstractPainter<T> {
         g.drawLine(r.x + r.width, r.y, r.x, r.y + r.height);
         g.drawLine(r.x + r.width - 1, r.y, r.x - 1, r.y + r.height);
         g.setColor(old);
-        
+
     }
 
     /**
-     * 
+     *
      * @param crossColor the color to paint the cross with
      */
     public void setForeground(Color crossColor) {
@@ -93,7 +93,7 @@ class TextCrossingPainter<T extends JComponent> extends AbstractPainter<T> {
 
     /**
      * Returns the color to use for painting the cross.
-     * 
+     *
      * @return the color used for painting.
      */
     public Color getForeground() {

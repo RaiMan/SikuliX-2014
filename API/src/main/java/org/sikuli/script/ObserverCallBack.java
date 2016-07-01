@@ -13,7 +13,6 @@ import org.sikuli.util.JLangHelperInterface;
 import org.sikuli.util.JRubyHelper;
 import org.sikuli.util.JythonHelper;
 
-
 /**
  * Use this class to implement call back methods for the Region observers
  * onAppear, onVanish and onChange. <br>

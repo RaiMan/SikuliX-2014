@@ -19,4 +19,3 @@ public interface CloseableTabbedPaneListener extends EventListener {
    */
   boolean closeTab(int tabIndexToClose);
 }
-

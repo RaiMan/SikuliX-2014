@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -48,9 +48,9 @@ public class GradientTrackRenderer extends JComponent implements TrackRenderer {
     public GradientTrackRenderer() {
         checker_paint = PaintUtils.getCheckerPaint();
     }
-    
+
     private JXMultiThumbSlider slider;
-    
+
     @Override
     public void paint(Graphics g) {
         super.paint(g);
@@ -60,7 +60,7 @@ public class GradientTrackRenderer extends JComponent implements TrackRenderer {
     @Override
     protected void paintComponent(Graphics gfx) {
         Graphics2D g = (Graphics2D)gfx;
-        
+
         // get the list of colors
         List<Thumb<Color>> stops = slider.getModel().getSortedThumbs();
         int len = stops.size();

@@ -16,7 +16,7 @@ import org.jdesktop.swingx.plaf.TextUIWrapper;
 
 public class BuddySupport {
 	public enum Position {
-		LEFT, RIGHT    
+		LEFT, RIGHT
 	};
 
 	public static final String OUTER_MARGIN = "outerMargin";
@@ -52,7 +52,7 @@ public class BuddySupport {
 
 		addToComponentHierarchy(c, pos, textField);
 	}
-	
+
 	public static void addGap(int width, Position pos, JTextField textField) {
 		add(createGap(width), pos, textField);
 	}
@@ -106,7 +106,7 @@ public class BuddySupport {
 	/**
 	 * Because {@link BasicTextUI} removes all components when uninstalled and
 	 * therefore all buddies are removed when the LnF changes.
-	 * 
+	 *
 	 * @param c
 	 * @param textField
 	 */
@@ -128,7 +128,7 @@ public class BuddySupport {
 			textField.remove(c);
 		}
 		right.clear();
-		
+
 	}
 
 	public static void setOuterMargin(JTextField buddyField, Insets margin) {
@@ -150,7 +150,7 @@ public class BuddySupport {
 
 	/**
 	 * Create a gap to insert between to buddies.
-	 * 
+	 *
 	 * @param width
 	 * @return
 	 */

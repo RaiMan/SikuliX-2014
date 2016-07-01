@@ -155,17 +155,17 @@ public class Image {
     ideShouldReload = false;
     return state;
   }
-  
+
   public boolean isRecaptured() {
     boolean state = wasRecaptured;
     wasRecaptured = false;
-    return state;    
+    return state;
   }
-  
+
 //<editor-fold defaultstate="collapsed" desc="imageName">
   private String imageName = null;
   private boolean bHasIOException = false;
-  
+
   public boolean hasIOException() {
     return bHasIOException;
   }
@@ -612,12 +612,12 @@ public class Image {
     } else if (target instanceof Image) {
       return (Image) target;
     } else {
-        runTime.abortScripting("aborting script at:", 
+        runTime.abortScripting("aborting script at:",
                 String.format("find, wait, exists: invalid parameter: %s", target));
     }
     return null;
   }
-  
+
   /**
    * FOR INTERNAL USE: from IDE - suppresses load error message
    *
@@ -661,7 +661,6 @@ public class Image {
     }
     return imageAsFile;
   }
-
 
   /**
    * FOR INTERNAL USE: see get(String, boolean)
@@ -878,7 +877,7 @@ public class Image {
       imageNames.remove(name);
     }
   }
-  
+
   public boolean isFile() {
     if (isValid()) {
       URL furl = getURL();
@@ -888,7 +887,7 @@ public class Image {
     }
     return false;
   }
-  
+
   public File remove() {
     URL furl = null;
     if (isFile()) {
@@ -903,7 +902,7 @@ public class Image {
     File fImg = remove();
     if (null != fImg) FileManager.deleteFileOrFolder(fImg);
   }
-  
+
   private String hasBackup = "";
 
   protected boolean backup() {
@@ -934,7 +933,7 @@ public class Image {
     }
     return false;
   }
-  
+
   /**
    * purge the given image file's in memory image data and remove it from cache.
    * @param imgFileName an absolute filename
@@ -957,8 +956,7 @@ public class Image {
     img.setBimg(null);
     images.remove(img);
   }
-  
-  
+
 
   /**
    * Print the current state of the cache
@@ -1081,7 +1079,7 @@ public class Image {
   public BufferedImage get() {
     return get(true);
   }
-  
+
   protected BufferedImage get(boolean shouldLoad) {
     if (bimg != null) {
       if (fileURL == null) {
@@ -1098,7 +1096,6 @@ public class Image {
       }
     }
   }
-
 
   /**
    *
@@ -1367,7 +1364,7 @@ public class Image {
       byte[] data = convertBufferedImageToByteArray(img);
       org.sikuli.natives.Mat theMat = Vision.createMat(img.getHeight(), img.getWidth(), data);
       if (Settings.FindProfiling) {
-        Debug.logp("[FindProfiling] createCVMat [%d x %d]: %d msec", 
+        Debug.logp("[FindProfiling] createCVMat [%d x %d]: %d msec",
                 img.getWidth(), img.getHeight(), new Date().getTime() - theMatTime);
       }
       return theMat;

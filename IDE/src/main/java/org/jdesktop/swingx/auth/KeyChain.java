@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -39,7 +39,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * <b>KeyChain</b> is a class that implements the "KeyChain" concept.
- * Fundamentally, it allows you to store multiple keys/credentials 
+ * Fundamentally, it allows you to store multiple keys/credentials
  * in a central password store. Access to this central store is
  * controlled through a master password. This mechanism is used in
  * many popular client applications where you need to store credentials
@@ -54,13 +54,13 @@ import javax.crypto.spec.SecretKeySpec;
  * KeyChain. To persist the KeyChain and reflect any changes, you need to
  * call <b>store</b> method with an OutputStream.
  * </p>
- * 
+ *
  * @author Bino George
  */
 public class KeyChain {
     private static final Logger LOG = Logger
             .getLogger(KeyChain.class.getName());
-    
+
     private KeyStore store;
 
     private char[] masterPassword;
@@ -68,7 +68,7 @@ public class KeyChain {
     /**
      * Creates an instance of KeyChain and initializes the store
      * from the InputStream.
-     * 
+     *
      * @param masterPassword
      * @param inputStream
      * @throws IOException
@@ -97,7 +97,7 @@ public class KeyChain {
      * Fetches the password for a given account/user and server.
      * @param user
      * @param server
-     * @return <code>null</code> if no password could be obtained, the password 
+     * @return <code>null</code> if no password could be obtained, the password
      *         otherwise
      */
     public String getPassword(String user, String server) {
@@ -121,7 +121,7 @@ public class KeyChain {
 
     /**
      * Adds a password to the KeyChain for a given account/user and server.
-     * 
+     *
      * @param user
      * @param server
      * @param password
@@ -141,7 +141,7 @@ public class KeyChain {
 
     /**
      * Removes a password for a given account/user and server.
-     * 
+     *
      * @param user
      * @param server
      */
@@ -155,7 +155,7 @@ public class KeyChain {
 
     /**
      * Persists the KeyChain to an OutputStream
-     * 
+     *
      * @param ostream
      * @throws IOException
      */
@@ -171,7 +171,6 @@ public class KeyChain {
                         LOG.log(Level.WARNING, "", ex);
         }
     }
-
 
     public static void main(String[] args) {
         try {
@@ -201,5 +200,5 @@ public class KeyChain {
             LOG.log(Level.WARNING, "", e);
         }
     }
-    
+
 }

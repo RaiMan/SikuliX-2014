@@ -46,8 +46,8 @@ class TESS_API ResultIterator : public LTRResultIterator {
   virtual ~ResultIterator() {}
 
   // ============= Moving around within the page ============.
-  /** 
-   * Moves the iterator to point to the start of the page to begin 
+  /**
+   * Moves the iterator to point to the start of the page to begin
    * an iteration.
    */
   virtual void Begin();
@@ -181,7 +181,7 @@ class TESS_API ResultIterator : public LTRResultIterator {
   void MoveToLogicalStartOfTextline();
 
   /**
-   * Precondition: current_paragraph_is_ltr_ and in_minor_direction_ 
+   * Precondition: current_paragraph_is_ltr_ and in_minor_direction_
    * are set.
    */
   void MoveToLogicalStartOfWord();

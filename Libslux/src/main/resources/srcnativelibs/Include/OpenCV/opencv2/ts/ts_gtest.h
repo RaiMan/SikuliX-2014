@@ -2324,7 +2324,6 @@ GTEST_API_ std::string GetCapturedStderr();
 
 #endif  // GTEST_HAS_STREAM_REDIRECTION
 
-
 #if GTEST_HAS_DEATH_TEST
 
 const ::std::vector<testing::internal::string>& GetInjectableArgvs();
@@ -3172,7 +3171,6 @@ const char* StringFromGTestEnv(const char* flag, const char* default_val);
 
 #include <limits>
 
-
 // Ensures that there is at least one operator<< in the global namespace.
 // See Message& operator<<(...) below for why.
 void operator<<(const testing::internal::Secret&, int);
@@ -3422,7 +3420,6 @@ std::string StreamableToString(const T& streamable) {
 #include <string.h>
 #include <string>
 
-
 namespace testing {
 namespace internal {
 
@@ -3578,7 +3575,6 @@ GTEST_API_ std::string StringStreamToString(::std::stringstream* stream);
 
 #ifndef GTEST_INCLUDE_GTEST_INTERNAL_GTEST_FILEPATH_H_
 #define GTEST_INCLUDE_GTEST_INTERNAL_GTEST_FILEPATH_H_
-
 
 namespace testing {
 namespace internal {
@@ -3787,7 +3783,6 @@ class GTEST_API_ FilePath {
 
 #ifndef GTEST_INCLUDE_GTEST_INTERNAL_GTEST_TYPE_UTIL_H_
 #define GTEST_INCLUDE_GTEST_INTERNAL_GTEST_TYPE_UTIL_H_
-
 
 // #ifdef __GNUC__ is too general here.  It is possible to use gcc without using
 // libstdc++ (which is where cxxabi.h comes from).
@@ -4451,7 +4446,6 @@ struct Types50 {
       T30, T31, T32, T33, T34, T35, T36, T37, T38, T39, T40, T41, T42, T43,
       T44, T45, T46, T47, T48, T49, T50> Tail;
 };
-
 
 }  // namespace internal
 
@@ -6161,7 +6155,6 @@ struct Templates50 {
       T29, T30, T31, T32, T33, T34, T35, T36, T37, T38, T39, T40, T41, T42,
       T43, T44, T45, T46, T47, T48, T49, T50> Tail;
 };
-
 
 // We don't want to require the users to write TemplatesN<...> directly,
 // as that would require them to count the length.  Templates<...> is much
@@ -8122,7 +8115,6 @@ class NativeArray {
       fail("Expected: " #statement " throws an exception.\n" \
            "  Actual: it doesn't.")
 
-
 // Implements Boolean test assertions such as EXPECT_TRUE. expression can be
 // either a boolean expression or an AssertionResult. text is a textual
 // represenation of expression as it was passed into the EXPECT_TRUE.
@@ -8255,7 +8247,6 @@ void GTEST_TEST_CLASS_NAME_(test_case_name, test_name)::TestBody()
 
 #ifndef GTEST_INCLUDE_GTEST_INTERNAL_GTEST_DEATH_TEST_INTERNAL_H_
 #define GTEST_INCLUDE_GTEST_INTERNAL_GTEST_DEATH_TEST_INTERNAL_H_
-
 
 #include <stdio.h>
 
@@ -8831,7 +8822,6 @@ class GTEST_API_ KilledBySignal {
 #ifndef GTEST_INCLUDE_GTEST_GTEST_PARAM_TEST_H_
 #define GTEST_INCLUDE_GTEST_GTEST_PARAM_TEST_H_
 
-
 // Value-parameterized tests allow you to test your code with different
 // parameters without writing multiple copies of the same test.
 //
@@ -8969,7 +8959,6 @@ TEST_P(DerivedTest, DoesBlah) {
 
 #endif  // 0
 
-
 #if !GTEST_OS_SYMBIAN
 # include <utility>
 #endif
@@ -9092,7 +9081,6 @@ TEST_P(DerivedTest, DoesBlah) {
 
 #include <stdlib.h>
 #include <assert.h>
-
 
 namespace testing {
 namespace internal {
@@ -10318,7 +10306,6 @@ class RangeGenerator : public ParamGeneratorInterface<T> {
   // sequence are indexed (0-based) to aid iterator comparison.
   const int end_index_;
 };  // class RangeGenerator
-
 
 // Generates values from a pair of STL-style iterators. Used in the
 // ValuesIn() function. The elements are copied from the source range
@@ -13946,7 +13933,6 @@ class CartesianProductGenerator2
   const ParamGenerator<T2> g2_;
 };  // class CartesianProductGenerator2
 
-
 template <typename T1, typename T2, typename T3>
 class CartesianProductGenerator3
     : public ParamGeneratorInterface< ::std::tr1::tuple<T1, T2, T3> > {
@@ -14077,7 +14063,6 @@ class CartesianProductGenerator3
   const ParamGenerator<T2> g2_;
   const ParamGenerator<T3> g3_;
 };  // class CartesianProductGenerator3
-
 
 template <typename T1, typename T2, typename T3, typename T4>
 class CartesianProductGenerator4
@@ -14228,7 +14213,6 @@ class CartesianProductGenerator4
   const ParamGenerator<T3> g3_;
   const ParamGenerator<T4> g4_;
 };  // class CartesianProductGenerator4
-
 
 template <typename T1, typename T2, typename T3, typename T4, typename T5>
 class CartesianProductGenerator5
@@ -14395,7 +14379,6 @@ class CartesianProductGenerator5
   const ParamGenerator<T4> g4_;
   const ParamGenerator<T5> g5_;
 };  // class CartesianProductGenerator5
-
 
 template <typename T1, typename T2, typename T3, typename T4, typename T5,
     typename T6>
@@ -14581,7 +14564,6 @@ class CartesianProductGenerator6
   const ParamGenerator<T5> g5_;
   const ParamGenerator<T6> g6_;
 };  // class CartesianProductGenerator6
-
 
 template <typename T1, typename T2, typename T3, typename T4, typename T5,
     typename T6, typename T7>
@@ -14784,7 +14766,6 @@ class CartesianProductGenerator7
   const ParamGenerator<T6> g6_;
   const ParamGenerator<T7> g7_;
 };  // class CartesianProductGenerator7
-
 
 template <typename T1, typename T2, typename T3, typename T4, typename T5,
     typename T6, typename T7, typename T8>
@@ -15006,7 +14987,6 @@ class CartesianProductGenerator8
   const ParamGenerator<T7> g7_;
   const ParamGenerator<T8> g8_;
 };  // class CartesianProductGenerator8
-
 
 template <typename T1, typename T2, typename T3, typename T4, typename T5,
     typename T6, typename T7, typename T8, typename T9>
@@ -15245,7 +15225,6 @@ class CartesianProductGenerator9
   const ParamGenerator<T8> g8_;
   const ParamGenerator<T9> g9_;
 };  // class CartesianProductGenerator9
-
 
 template <typename T1, typename T2, typename T3, typename T4, typename T5,
     typename T6, typename T7, typename T8, typename T9, typename T10>
@@ -15501,7 +15480,6 @@ class CartesianProductGenerator10
   const ParamGenerator<T9> g9_;
   const ParamGenerator<T10> g10_;
 };  // class CartesianProductGenerator10
-
 
 // INTERNAL IMPLEMENTATION - DO NOT USE IN USER CODE.
 //
@@ -17003,7 +16981,6 @@ internal::CartesianProductHolder10<Generator1, Generator2, Generator3,
 # endif  // GTEST_HAS_COMBINE
 
 
-
 # define TEST_P(test_case_name, test_name) \
   class GTEST_TEST_CLASS_NAME_(test_case_name, test_name) \
       : public test_case_name { \
@@ -17428,7 +17405,6 @@ INSTANTIATE_TYPED_TEST_CASE_P(My, FooTest, MyTypes);
 //   INSTANTIATE_TYPED_TEST_CASE_P(My, FooTest, int);
 
 #endif  // 0
-
 
 // Implements typed tests.
 
@@ -19095,7 +19071,6 @@ GTEST_API_ AssertionResult CmpHelperSTRCASENE(const char* s1_expression,
                                               const char* s1,
                                               const char* s2);
 
-
 // Helper function for *_STREQ on wide strings.
 //
 // INTERNAL IMPLEMENTATION - DO NOT USE IN A USER PROGRAM.
@@ -19484,7 +19459,6 @@ class TestWithParam : public Test, public WithParamInterface<T> {
   else \
     on_failure(gtest_ar.failure_message())
 
-
 // Helper function for implementing {EXPECT|ASSERT}_PRED1.  Don't use
 // this in your code.
 template <typename Pred,
@@ -19523,7 +19497,6 @@ AssertionResult AssertPred1Helper(const char* pred_text,
   GTEST_PRED_FORMAT1_(pred_format, v1, GTEST_FATAL_FAILURE_)
 #define ASSERT_PRED1(pred, v1) \
   GTEST_PRED1_(pred, v1, GTEST_FATAL_FAILURE_)
-
 
 
 // Helper function for implementing {EXPECT|ASSERT}_PRED2.  Don't use
@@ -19571,7 +19544,6 @@ AssertionResult AssertPred2Helper(const char* pred_text,
   GTEST_PRED_FORMAT2_(pred_format, v1, v2, GTEST_FATAL_FAILURE_)
 #define ASSERT_PRED2(pred, v1, v2) \
   GTEST_PRED2_(pred, v1, v2, GTEST_FATAL_FAILURE_)
-
 
 
 // Helper function for implementing {EXPECT|ASSERT}_PRED3.  Don't use
@@ -19626,7 +19598,6 @@ AssertionResult AssertPred3Helper(const char* pred_text,
   GTEST_PRED_FORMAT3_(pred_format, v1, v2, v3, GTEST_FATAL_FAILURE_)
 #define ASSERT_PRED3(pred, v1, v2, v3) \
   GTEST_PRED3_(pred, v1, v2, v3, GTEST_FATAL_FAILURE_)
-
 
 
 // Helper function for implementing {EXPECT|ASSERT}_PRED4.  Don't use
@@ -19688,7 +19659,6 @@ AssertionResult AssertPred4Helper(const char* pred_text,
   GTEST_PRED_FORMAT4_(pred_format, v1, v2, v3, v4, GTEST_FATAL_FAILURE_)
 #define ASSERT_PRED4(pred, v1, v2, v3, v4) \
   GTEST_PRED4_(pred, v1, v2, v3, v4, GTEST_FATAL_FAILURE_)
-
 
 
 // Helper function for implementing {EXPECT|ASSERT}_PRED5.  Don't use
@@ -19757,7 +19727,6 @@ AssertionResult AssertPred5Helper(const char* pred_text,
   GTEST_PRED_FORMAT5_(pred_format, v1, v2, v3, v4, v5, GTEST_FATAL_FAILURE_)
 #define ASSERT_PRED5(pred, v1, v2, v3, v4, v5) \
   GTEST_PRED5_(pred, v1, v2, v3, v4, v5, GTEST_FATAL_FAILURE_)
-
 
 
 #endif  // GTEST_INCLUDE_GTEST_GTEST_PRED_IMPL_H_
@@ -19948,7 +19917,6 @@ GTEST_API_ AssertionResult FloatLE(const char* expr1, const char* expr2,
                                    float val1, float val2);
 GTEST_API_ AssertionResult DoubleLE(const char* expr1, const char* expr2,
                                     double val1, double val2);
-
 
 #if GTEST_OS_WINDOWS
 

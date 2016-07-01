@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -44,24 +44,24 @@ import org.jdesktop.swingx.plaf.UIManagerExt;
 
 /**
  * First cut for enhanced Dialog. The idea is to have a pluggable content
- * from which the dialog auto-configures all its "dialogueness". 
- * 
+ * from which the dialog auto-configures all its "dialogueness".
+ *
  * <ul>
- * <li> accepts a content and configures itself from content's properties - 
+ * <li> accepts a content and configures itself from content's properties -
  *  replaces the execute action from the appropriate action in content's action map (if any)
- *  and set's its title from the content's name. 
+ *  and set's its title from the content's name.
  * <li> registers stand-in actions for close/execute with the dialog's RootPane
  * <li> registers keyStrokes for esc/enter to trigger the close/execute actions
  * <li> takes care of building the button panel using the close/execute actions.
- * </ul> 
- * 
+ * </ul>
+ *
  * <ul>
- * <li>TODO: add link to forum discussion, wiki summary? 
+ * <li>TODO: add link to forum discussion, wiki summary?
  * <li>PENDING: add support for vetoing the close.
  * <li>PENDING: add complete set of constructors
  * <li>PENDING: add windowListener to delegate to close action
  * </ul>
- * 
+ *
  * @author Jeanette Winzenburg
  * @author Karl Schaefer
  */
@@ -72,15 +72,15 @@ public class JXDialog extends JDialog {
         // Hack to enforce loading of SwingX framework ResourceBundle
         LookAndFeelAddons.getAddon();
     }
-    
+
     public static final String EXECUTE_ACTION_COMMAND = "execute";
     public static final String CLOSE_ACTION_COMMAND = "close";
     public static final String UIPREFIX = "XDialog.";
 
     protected JComponent content;
-    
+
     /**
-     * Creates a non-modal dialog with the given component as 
+     * Creates a non-modal dialog with the given component as
      * content and without specified owner.  A shared, hidden frame will be
      * set as the owner of the dialog.
      * <p>
@@ -90,8 +90,7 @@ public class JXDialog extends JDialog {
         super();
         setContent(content);
     }
-    
-    
+
     /**
      * Creates a non-modal dialog with the given component as content and the
      * specified <code>Frame</code> as owner.
@@ -103,7 +102,7 @@ public class JXDialog extends JDialog {
         super(frame);
         setContent(content);
     }
-    
+
     /**
      * Creates a non-modal dialog with the given component as content and the
      * specified <code>Dialog</code> as owner.
@@ -115,7 +114,7 @@ public class JXDialog extends JDialog {
         super(dialog);
         setContent(content);
     }
-    
+
     /**
      * Creates a non-modal dialog with the given component as content and the
      * specified <code>Window</code> as owner.
@@ -143,10 +142,10 @@ public class JXDialog extends JDialog {
     public JXRootPane getRootPane() {
         return (JXRootPane) super.getRootPane();
     }
-    
+
     /**
      * Sets the status bar property on the underlying {@code JXRootPane}.
-     * 
+     *
      * @param statusBar
      *            the {@code JXStatusBar} which is to be the status bar
      * @see #getStatusBar()
@@ -155,11 +154,11 @@ public class JXDialog extends JDialog {
     public void setStatusBar(JXStatusBar statusBar) {
         getRootPane().setStatusBar(statusBar);
     }
-    
+
     /**
      * Returns the value of the status bar property from the underlying
      * {@code JXRootPane}.
-     * 
+     *
      * @return the {@code JXStatusBar} which is the current status bar
      * @see #setStatusBar(JXStatusBar)
      * @see JXRootPane#getStatusBar()
@@ -170,7 +169,7 @@ public class JXDialog extends JDialog {
 
     /**
      * Sets the tool bar property on the underlying {@code JXRootPane}.
-     * 
+     *
      * @param toolBar
      *            the {@code JToolBar} which is to be the tool bar
      * @see #getToolBar()
@@ -179,11 +178,11 @@ public class JXDialog extends JDialog {
     public void setToolBar(JToolBar toolBar) {
         getRootPane().setToolBar(toolBar);
     }
-    
+
     /**
      * Returns the value of the tool bar property from the underlying
      * {@code JXRootPane}.
-     * 
+     *
      * @return the {@code JToolBar} which is the current tool bar
      * @see #setToolBar(JToolBar)
      * @see JXRootPane#getToolBar()
@@ -191,11 +190,11 @@ public class JXDialog extends JDialog {
     public JToolBar getToolBar() {
         return getRootPane().getToolBar();
     }
-    
+
     /**
-     * PENDING: widen access - this could be public to make the content really 
+     * PENDING: widen access - this could be public to make the content really
      * pluggable?
-     * 
+     *
      * @param content
      */
     private void setContent(JComponent content) {
@@ -217,10 +216,10 @@ public class JXDialog extends JDialog {
     }
 
     /**
-     * Infers and sets this dialog's title from the the content. 
-     * Does nothing if content is null. 
-     * 
-     * Here: uses the content's name as title. 
+     * Infers and sets this dialog's title from the the content.
+     * Does nothing if content is null.
+     *
+     * Here: uses the content's name as title.
      */
     protected void setTitleFromContent() {
         if (content == null) return;
@@ -232,65 +231,64 @@ public class JXDialog extends JDialog {
      *
      */
     private void build() {
-        JComponent contentBox = new Box(BoxLayout.PAGE_AXIS); 
+        JComponent contentBox = new Box(BoxLayout.PAGE_AXIS);
         contentBox.add(content);
         JComponent buttonPanel = createButtonPanel();
         contentBox.add(buttonPanel);
         contentBox.setBorder(BorderFactory.createEmptyBorder(14, 14, 14, 14));
 //        content.applyComponentOrientation(ComponentOrientation.RIGHT_TO_LEFT);
-        
+
 //        fieldPanel.setAlignmentX();
 //      buttonPanel.setAlignmentX(Component.RIGHT_ALIGNMENT);
         add(contentBox);
-        
+
     }
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * Overridden to check if content is available. <p>
      * PENDING: doesn't make sense - the content is immutable and guaranteed
      * to be not null.
      */
     @Override
     public void setVisible(boolean visible) {
-        if (content == null) throw 
+        if (content == null) throw
             new IllegalStateException("content must be built before showing the dialog");
         super.setVisible(visible);
     }
 
 //------------------------ dynamic locale support
-    
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to set the content's Locale and then updated
      * this dialog's internal state. <p>
-     * 
-     * 
+     *
+     *
      */
     @Override
     public void setLocale(Locale l) {
         /*
          * NOTE: this is called from super's constructor as one of the
          * first methods (prior to setting the rootPane!). So back out
-         * 
-         */  
+         *
+         */
         if (content != null) {
             content.setLocale(l);
             updateLocaleState(l);
         }
         super.setLocale(l);
     }
-    
+
     /**
      * Updates this dialog's locale-dependent state.
-     * 
+     *
      * Here: updates title and actions.
      * <p>
-     * 
-     * 
+     *
+     *
      * @see #setLocale(Locale)
      */
     protected void updateLocaleState(Locale locale) {
@@ -308,16 +306,16 @@ public class JXDialog extends JDialog {
             }
         }
     }
-    
+
     /**
      * The callback method executed when closing the dialog. <p>
-     * Here: calls dispose. 
+     * Here: calls dispose.
      *
      */
     public void doClose() {
         dispose();
     }
-    
+
     private void initActions() {
         Action defaultAction = createCloseAction();
         putAction(CLOSE_ACTION_COMMAND, defaultAction);
@@ -334,8 +332,8 @@ public class JXDialog extends JDialog {
 
     /**
      * create the dialog button controls.
-     * 
-     * 
+     *
+     *
      * @return panel containing button controls
      */
     protected JComponent createButtonPanel() {
@@ -355,13 +353,13 @@ public class JXDialog extends JDialog {
         JButton defaultButton = new JButton(executeAction);
         panel.add(defaultButton);
         getRootPane().setDefaultButton(defaultButton);
-        
+
         if (executeAction != closeAction) {
             JButton b = new JButton(closeAction);
             panel.add(b);
             getRootPane().setCancelButton(b);
         }
-        
+
         return panel;
     }
 
@@ -373,10 +371,10 @@ public class JXDialog extends JDialog {
     private void putAction(Object key, Action action) {
         getRootPane().getActionMap().put(key, action);
     }
-    
+
     /**
      * convenience wrapper to access rootPane's actionMap.
-     * 
+     *
      * @param key
      * @return root pane's <code>ActionMap</code>
      */
@@ -389,7 +387,7 @@ public class JXDialog extends JDialog {
      * is prefixed by this component|s <code>UIPREFIX</code> before doing the
      * lookup. The lookup respects this table's current <code>locale</code>
      * property. Returns the key, if no value is found.
-     * 
+     *
      * @param key the bare key to look up in the UIManager.
      * @return the value mapped to UIPREFIX + key or key if no value is found.
      */
@@ -398,11 +396,11 @@ public class JXDialog extends JDialog {
     }
 
     /**
-     * Returns a potentially localized value from the UIManager for the 
+     * Returns a potentially localized value from the UIManager for the
      * given locale. The given key
      * is prefixed by this component's <code>UIPREFIX</code> before doing the
      * lookup. Returns the key, if no value is found.
-     * 
+     *
      * @param key the bare key to look up in the UIManager.
      * @param locale the locale use for lookup
      * @return the value mapped to UIPREFIX + key in the given locale,

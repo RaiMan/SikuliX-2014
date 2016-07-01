@@ -33,7 +33,7 @@ public class Run {
 
   private Run() {
   }
-  
+
   public static void main(String[] args) {
     String adr = "";
     String p = "-1";
@@ -41,12 +41,12 @@ public class Run {
       error("not possible");
     }
   }
-  
+
   public static boolean connect() {
     keepAlive = true;
     return init();
   }
-  
+
   private static Boolean init() {
     if (socketValid) {
       if (!close()) {
@@ -155,11 +155,11 @@ public class Run {
   public static boolean close() {
     return close(false);
   }
-  
+
   public static boolean stop() {
     return close(true);
   }
-  
+
   private static boolean close(boolean stopServer) {
     disconnecting = true;
     if (stopServer) {

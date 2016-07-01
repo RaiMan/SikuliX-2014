@@ -53,7 +53,6 @@ public:
     typedef typename Distance::ElementType ElementType;
     typedef typename Distance::ResultType DistanceType;
 
-
     LinearIndex(const Matrix<ElementType>& inputData, const IndexParams& params = LinearIndexParams(),
                 Distance d = Distance()) :
         dataset_(inputData), index_params_(params), distance_(d)
@@ -68,7 +67,6 @@ public:
         return FLANN_INDEX_LINEAR;
     }
 
-
     size_t size() const
     {
         return dataset_.rows;
@@ -78,7 +76,6 @@ public:
     {
         return dataset_.cols;
     }
-
 
     int usedMemory() const
     {
@@ -94,7 +91,6 @@ public:
     {
         /* nothing to do here for linear search */
     }
-
 
     void loadIndex(FILE*)
     {

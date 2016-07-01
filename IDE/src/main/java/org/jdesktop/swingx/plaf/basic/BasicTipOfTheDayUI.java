@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -69,7 +69,7 @@ import org.jdesktop.swingx.tips.TipOfTheDayModel.Tip;
 
 /**
  * Base implementation of the <code>JXTipOfTheDay</code> UI.
- * 
+ *
  * @author <a href="mailto:fred@L2FProd.com">Frederic Lavigne</a>
  */
 public class BasicTipOfTheDayUI extends TipOfTheDayUI {
@@ -94,7 +94,7 @@ public class BasicTipOfTheDayUI extends TipOfTheDayUI {
     final ShowOnStartupChoice choice) {
     return createDialog(parentComponent, choice, true);
   }
-  
+
   protected JDialog createDialog(Component parentComponent,
     final ShowOnStartupChoice choice,
     boolean showPreviousButton) {
@@ -140,23 +140,23 @@ public class BasicTipOfTheDayUI extends TipOfTheDayUI {
     JPanel buttons =
       new JPanel(new GridLayout(1, showPreviousButton?3:2, 9, 0));
     controls.add(buttons, BorderLayout.LINE_END);
-    
+
     if (showPreviousButton) {
       JButton previousTipButton = new JButton(UIManagerExt
         .getString("TipOfTheDay.previousTipText", locale));
       buttons.add(previousTipButton);
       previousTipButton.addActionListener(getActionMap().get("previousTip"));
     }
-    
+
     JButton nextTipButton = new JButton(UIManagerExt
       .getString("TipOfTheDay.nextTipText", locale));
     buttons.add(nextTipButton);
     nextTipButton.addActionListener(getActionMap().get("nextTip"));
-    
+
     JButton closeButton = new JButton(UIManagerExt
       .getString("TipOfTheDay.closeText", locale));
     buttons.add(closeButton);
-    
+
     final ActionListener saveChoice = new ActionListener() {
       @Override
     public void actionPerformed(ActionEvent e) {
@@ -169,24 +169,24 @@ public class BasicTipOfTheDayUI extends TipOfTheDayUI {
 
     closeButton.addActionListener(new ActionListener() {
       @Override
-    public void actionPerformed(ActionEvent e) {        
+    public void actionPerformed(ActionEvent e) {
         dialog.setVisible(false);
         saveChoice.actionPerformed(null);
       }
     });
     dialog.getRootPane().setDefaultButton(closeButton);
-    
+
     dialog.addWindowListener(new WindowAdapter() {
       @Override
     public void windowClosing(WindowEvent e) {
         saveChoice.actionPerformed(null);
       }
     });
-    
+
     ((JComponent)dialog.getContentPane()).registerKeyboardAction(saveChoice,
       KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0),
       JComponent.WHEN_IN_FOCUSED_WINDOW);
-    
+
     dialog.pack();
     dialog.setLocationRelativeTo(parentComponent);
 
@@ -276,7 +276,7 @@ public class BasicTipOfTheDayUI extends TipOfTheDayUI {
     if (tipPane.getModel() == null || tipPane.getModel().getTipCount() == 0
       || (currentTip < 0 && currentTip >= tipPane.getModel().getTipCount())) {
       currentTipComponent = new JLabel();
-    } else {    
+    } else {
       Tip tip = tipPane.getModel().getTipAt(currentTip);
 
       Object tipObject = tip.getTip();
@@ -319,7 +319,7 @@ public class BasicTipOfTheDayUI extends TipOfTheDayUI {
         currentTipComponent = tipScroll;
       }
     }
-    
+
     tipArea.add("Center", currentTipComponent);
     tipArea.revalidate();
     tipArea.repaint();
@@ -377,5 +377,5 @@ public class BasicTipOfTheDayUI extends TipOfTheDayUI {
       return tipPane.isEnabled();
     }
   }
-  
+
 }

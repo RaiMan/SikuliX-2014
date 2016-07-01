@@ -38,7 +38,6 @@ import org.sikuli.syntaxhighlight.grammar.def.ChangeStateTokenRuleDef;
 import org.sikuli.syntaxhighlight.grammar.def.IncludeDef;
 import org.sikuli.syntaxhighlight.grammar.def.TokenRuleDef;
 
-
 /**
  * @author Tal Liron
  */

@@ -42,7 +42,6 @@ public class MatOfDMatch extends Mat {
             super.create(elemNumber, 1, CvType.makeType(_depth, _channels));
     }
 
-
     public void fromArray(DMatch...a) {
         if(a==null || a.length==0)
             return;

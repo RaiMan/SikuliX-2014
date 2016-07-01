@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -31,7 +31,7 @@ import org.jdesktop.swingx.plaf.TaskPaneContainerUI;
 /**
  * <code>JXTaskPaneContainer</code> provides an elegant view
  * to display a list of tasks ordered by groups ({@link org.jdesktop.swingx.JXTaskPane}s).
- * 
+ *
  * <p>
  * Although {@link org.jdesktop.swingx.JXTaskPane} can be added to any other
  * container, the <code>JXTaskPaneContainer</code> will provide better
@@ -43,19 +43,19 @@ import org.jdesktop.swingx.plaf.TaskPaneContainerUI;
  * {@link org.jdesktop.swingx.JXCollapsiblePane}) so that
  * {@link org.jdesktop.swingx.JXTaskPane} behaves correctly when collapsing and
  * expanding its content.
- *  
+ *
  * <p>
  * <code>JXTaskPaneContainer<code> can be added to a JScrollPane.
- * 
+ *
  * <p>
  * Example:
  * <pre>
  * <code>
  * JXFrame frame = new JXFrame();
- * 
+ *
  * // a container to put all JXTaskPane together
  * JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
- * 
+ *
  * // add JXTaskPanes to the container
  * JXTaskPane actionPane = createActionPane();
  * JXTaskPane miscActionPane = createMiscActionPane();
@@ -66,29 +66,29 @@ import org.jdesktop.swingx.plaf.TaskPaneContainerUI;
  *
  * // put the action list on the left in a JScrollPane
  * // as we have several taskPane and we want to make sure they
- * // all get visible.   
+ * // all get visible.
  * frame.add(new JScrollPane(taskPaneContainer), BorderLayout.EAST);
- * 
+ *
  * // and a file browser in the middle
  * frame.add(fileBrowser, BorderLayout.CENTER);
- * 
+ *
  * frame.pack().
  * frame.setVisible(true);
  * </code>
  * </pre>
  *
  * @author <a href="mailto:fred@L2FProd.com">Frederic Lavigne</a>
- * 
+ *
  * @javabean.attribute
  *          name="isContainer"
  *          value="Boolean.TRUE"
  *          rtexpr="true"
- * 
+ *
  * @javabean.class
  *          name="JXTaskPaneContainer"
  *          shortDescription="A component that contains JTaskPaneGroups."
  *          stopClass="java.awt.Component"
- * 
+ *
  * @javabean.icons
  *          mono16="JXTaskPaneContainer16-mono.gif"
  *          color16="JXTaskPaneContainer16.gif"
@@ -120,7 +120,7 @@ public class JXTaskPaneContainer extends JXPanel {
         });
         setScrollableHeightHint(ScrollableSizeHint.PREFERRED_STRETCH);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -128,12 +128,12 @@ public class JXTaskPaneContainer extends JXPanel {
     public TaskPaneContainerUI getUI() {
         return (TaskPaneContainerUI) super.getUI();
     }
-  
+
     /**
      * Notification from the <code>UIManager</code> that the L&F has changed.
      * Replaces the current UI object with the latest version from the
      * <code>UIManager</code>.
-     * 
+     *
      * @see javax.swing.JComponent#updateUI
      */
     @Override
@@ -144,10 +144,10 @@ public class JXTaskPaneContainer extends JXPanel {
 
     /**
      * Sets the L&F object that renders this component.
-     * 
+     *
      * @param ui the <code>TaskPaneContainerUI</code> L&F object
      * @see javax.swing.UIDefaults#getUI
-     * 
+     *
      * @beaninfo bound: true hidden: true description: The UI object that
      *           implements the taskpane's LookAndFeel.
      */
@@ -157,7 +157,7 @@ public class JXTaskPaneContainer extends JXPanel {
 
     /**
      * Returns the name of the L&F class that renders this component.
-     * 
+     *
      * @return the string {@link #uiClassID}
      * @see javax.swing.JComponent#getUIClassID
      * @see javax.swing.UIDefaults#getUI

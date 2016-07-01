@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -29,8 +29,8 @@ import javax.swing.SwingUtilities;
 
 /**
  * <p>An implementation of {@link RepaintManager} which adds support for transparency
- * in {@link JXPanel}s. <code>JXPanel</code> (which supports translucency) will 
- * replace the current RepaintManager with an instance of RepaintManagerX 
+ * in {@link JXPanel}s. <code>JXPanel</code> (which supports translucency) will
+ * replace the current RepaintManager with an instance of RepaintManagerX
  * <em>unless</em> the current RepaintManager is tagged by the {@link TranslucentRepaintManager}
  * annotation.</p>
  *
@@ -42,7 +42,7 @@ import javax.swing.SwingUtilities;
 public class RepaintManagerX extends ForwardingRepaintManager {
     /**
      * Creates a new manager that forwards all calls to the delegate.
-     * 
+     *
      * @param delegate
      *            the manager backing this {@code RepaintManagerX}
      * @throws NullPointerException
@@ -51,14 +51,14 @@ public class RepaintManagerX extends ForwardingRepaintManager {
     public RepaintManagerX(RepaintManager delegate) {
         super(delegate);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void addDirtyRegion(JComponent c, int x, int y, int w, int h) {
         AlphaPaintable alphaPaintable = (AlphaPaintable) SwingUtilities.getAncestorOfClass(AlphaPaintable.class, c);
-        
+
         if (alphaPaintable != null && alphaPaintable.getAlpha() < 1f) {
             Point p = SwingUtilities.convertPoint(c, x, y, (JComponent) alphaPaintable);
             addDirtyRegion((JComponent) alphaPaintable, p.x, p.y, w, h);

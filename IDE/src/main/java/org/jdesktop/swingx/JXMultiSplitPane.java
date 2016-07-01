@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -48,7 +48,7 @@ import org.jdesktop.swingx.painter.Painter;
  * <p>
  * All properties in this class are bound: when a properties value
  * is changed, all PropertyChangeListeners are fired.
- * 
+ *
  * @author Hans Muller
  * @author Luan O'Carroll
  */
@@ -61,7 +61,7 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
     private boolean paintBorderInsets;
 
     /**
-     * Creates a MultiSplitPane with it's LayoutManager set to 
+     * Creates a MultiSplitPane with it's LayoutManager set to
      * to an empty MultiSplitLayout.
      */
     public JXMultiSplitPane() {
@@ -80,11 +80,11 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
         addKeyListener(inputHandler);
         setFocusable(true);
     }
-    
-    /** 
-     * A convenience method that returns the layout manager cast 
+
+    /**
+     * A convenience method that returns the layout manager cast
      * to MutliSplitLayout.
-     * 
+     *
      * @return this MultiSplitPane's layout manager
      * @see java.awt.Container#getLayout
      * @see #setModel
@@ -93,10 +93,10 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
         return (MultiSplitLayout)getLayout();
     }
 
-    /** 
+    /**
      * A convenience method that sets the MultiSplitLayout model.
      * Equivalent to <code>getMultiSplitLayout.setModel(model)</code>
-     * 
+     *
      * @param model the root of the MultiSplitLayout model
      * @see #getMultiSplitLayout
      * @see MultiSplitLayout#setModel
@@ -105,11 +105,11 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
         getMultiSplitLayout().setModel(model);
     }
 
-    /** 
+    /**
      * A convenience method that sets the MultiSplitLayout dividerSize
-     * property. Equivalent to 
+     * property. Equivalent to
      * <code>getMultiSplitLayout().setDividerSize(newDividerSize)</code>.
-     * 
+     *
      * @param dividerSize the value of the dividerSize property
      * @see #getMultiSplitLayout
      * @see MultiSplitLayout#setDividerSize
@@ -118,11 +118,11 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
         getMultiSplitLayout().setDividerSize(dividerSize);
     }
 
-    /** 
+    /**
      * A convenience method that returns the MultiSplitLayout dividerSize
-     * property. Equivalent to 
+     * property. Equivalent to
      * <code>getMultiSplitLayout().getDividerSize()</code>.
-     * 
+     *
      * @see #getMultiSplitLayout
      * @see MultiSplitLayout#getDividerSize
      */
@@ -147,7 +147,7 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
 
     /**
      * Returns true if dragging a divider only updates
-     * the layout when the drag gesture ends (typically, when the 
+     * the layout when the drag gesture ends (typically, when the
      * mouse button is released).
      *
      * @return the value of the <code>continuousLayout</code> property
@@ -157,10 +157,10 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
         return continuousLayout;
     }
 
-    /** 
+    /**
      * Returns the Divider that's currently being moved, typically
      * because the user is dragging it, or null.
-     * 
+     *
      * @return the Divider that's being moved or null.
      */
     public Divider activeDivider() {
@@ -169,8 +169,8 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
 
     /**
      * Draws a single Divider.  Typically used to specialize the
-     * way the active Divider is painted.  
-     * 
+     * way the active Divider is painted.
+     *
      * @see #getDividerPainter
      * @see #setDividerPainter
      */
@@ -187,10 +187,10 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
         }
     }
 
-    /** 
+    /**
      * The DividerPainter that's used to paint Dividers on this MultiSplitPane.
      * This property may be null.
-     * 
+     *
      * @return the value of the dividerPainter Property
      * @see #setDividerPainter
      */
@@ -198,15 +198,15 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
     return dividerPainter;
     }
 
-    /** 
-     * Sets the DividerPainter that's used to paint Dividers on this 
+    /**
+     * Sets the DividerPainter that's used to paint Dividers on this
      * MultiSplitPane.  The default DividerPainter only draws
-     * the activeDivider (if there is one) and then, only if 
-     * continuousLayout is false.  The value of this property is 
+     * the activeDivider (if there is one) and then, only if
+     * continuousLayout is false.  The value of this property is
      * used by the paintChildren method: Dividers are painted after
-     * the MultiSplitPane's children have been rendered so that 
+     * the MultiSplitPane's children have been rendered so that
      * the activeDivider can appear "on top of" the children.
-     * 
+     *
      * @param dividerPainter the value of the dividerPainter property, can be null
      * @see #paintChildren
      * @see #activeDivider
@@ -255,19 +255,19 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
             if (isOpaque()) {
                 super.paintComponent(g);
             }
-            
+
             Graphics2D g2 = (Graphics2D) g.create();
-            
+
             try {
                 SwingXUtilities.paintBackground(this, g2);
             } finally {
                 g2.dispose();
             }
-            
+
             getUI().paint(g, this);
         }
     }
-    
+
     /**
      * Specifies a Painter to use to paint the background of this JXPanel.
      * If <code>p</code> is not null, then setOpaque(false) will be called
@@ -280,20 +280,20 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
     {
         Painter old = getBackgroundPainter();
         this.backgroundPainter = p;
-        
+
         if (p != null) {
             setOpaque(false);
         }
-        
+
         firePropertyChange("backgroundPainter", old, getBackgroundPainter());
         repaint();
     }
-    
+
     @Override
     public Painter getBackgroundPainter() {
         return backgroundPainter;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -315,7 +315,7 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
     /**
      * Uses the DividerPainter (if any) to paint each Divider that
      * overlaps the clip Rectangle.  This is done after the call to
-     * <code>super.paintChildren()</code> so that Dividers can be 
+     * <code>super.paintChildren()</code> so that Dividers can be
      * rendered "on top of" the children.
      * <p>
      * {@inheritDoc}
@@ -349,7 +349,7 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
     private int dragOffsetY = 0;
     private int dragMin = -1;
     private int dragMax = -1;
-    
+
     private void startDrag(int mx, int my) {
         requestFocusInWindow();
         MultiSplitLayout msl = getMultiSplitLayout();
@@ -365,32 +365,32 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
             dragOffsetX = mx - initialDividerBounds.x;
             dragOffsetY = my - initialDividerBounds.y;
             dragDivider  = divider;
-        
+
             Rectangle prevNodeBounds = prevNode.getBounds();
             Rectangle nextNodeBounds = nextNode.getBounds();
             if (dragDivider.isVertical()) {
                 dragMin = prevNodeBounds.x;
                 dragMax = nextNodeBounds.x + nextNodeBounds.width;
                 dragMax -= dragDivider.getBounds().width;
-                if ( msl.getLayoutMode() == MultiSplitLayout.USER_MIN_SIZE_LAYOUT ) 
+                if ( msl.getLayoutMode() == MultiSplitLayout.USER_MIN_SIZE_LAYOUT )
                   dragMax -= msl.getUserMinSize();
             }
             else {
                 dragMin = prevNodeBounds.y;
                 dragMax = nextNodeBounds.y + nextNodeBounds.height;
                 dragMax -= dragDivider.getBounds().height;
-                if ( msl.getLayoutMode() == MultiSplitLayout.USER_MIN_SIZE_LAYOUT ) 
+                if ( msl.getLayoutMode() == MultiSplitLayout.USER_MIN_SIZE_LAYOUT )
                   dragMax -= msl.getUserMinSize();
             }
-            
+
             if ( msl.getLayoutMode() == MultiSplitLayout.USER_MIN_SIZE_LAYOUT ) {
               dragMin = dragMin + msl.getUserMinSize();
             }
             else {
-              if (dragDivider.isVertical()) {           
+              if (dragDivider.isVertical()) {
                 dragMin = Math.max( dragMin, dragMin + getMinNodeSize(msl,prevNode).width );
                 dragMax = Math.min( dragMax, dragMax - getMinNodeSize(msl,nextNode).width );
-    
+
                 Dimension maxDim = getMaxNodeSize(msl,prevNode);
                 if ( maxDim != null )
                   dragMax = Math.min( dragMax, prevNodeBounds.x + maxDim.width );
@@ -398,13 +398,13 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
               else {
                 dragMin = Math.max( dragMin, dragMin + getMinNodeSize(msl,prevNode).height );
                 dragMax = Math.min( dragMax, dragMax - getMinNodeSize(msl,nextNode).height );
-    
+
                 Dimension maxDim  = getMaxNodeSize(msl,prevNode);
                 if ( maxDim != null )
                   dragMax = Math.min( dragMax, prevNodeBounds.y + maxDim.height );
               }
             }
-                    
+
             oldFloatingDividers = getMultiSplitLayout().getFloatingDividers();
             getMultiSplitLayout().setFloatingDividers(false);
             dragUnderway = true;
@@ -416,9 +416,9 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
     }
 
     /**
-     * Set the maximum node size. This method can be overridden to limit the 
-     * size of a node during a drag operation on a divider. When implementing 
-     * this method in a subclass the node instance should be checked, for 
+     * Set the maximum node size. This method can be overridden to limit the
+     * size of a node during a drag operation on a divider. When implementing
+     * this method in a subclass the node instance should be checked, for
      * example:
      * <code>
      * class MyMultiSplitPane extends JXMultiSplitPane
@@ -440,8 +440,8 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
     }
 
     /**
-     * Set the minimum node size. This method can be overridden to limit the 
-     * size of a node during a drag operation on a divider. 
+     * Set the minimum node size. This method can be overridden to limit the
+     * size of a node during a drag operation on a divider.
      * @param msl the MultiSplitLayout used by this pane
      * @param n the node being resized
      * @return the maximum size or null (by default) to ignore the maximum size.
@@ -449,7 +449,7 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
     protected Dimension getMinNodeSize( MultiSplitLayout msl, Node n ) {
       return msl.minimumNodeSize(n);
     }
-    
+
     private void repaintDragLimits() {
         Rectangle damageR = dragDivider.getBounds();
         if (dragDivider.isVertical()) {
@@ -508,8 +508,8 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
         }
         setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
     }
-    
-    private void cancelDrag() {       
+
+    private void cancelDrag() {
         if (dragUnderway) {
             dragDivider.setBounds(initialDividerBounds);
             getMultiSplitLayout().setFloatingDividers(oldFloatingDividers);
@@ -528,14 +528,13 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
         if (show) {
             MultiSplitLayout.Divider divider = getMultiSplitLayout().dividerAt(x, y);
             if (divider != null) {
-            cursorID  = (divider.isVertical()) ? 
-                Cursor.E_RESIZE_CURSOR : 
+            cursorID  = (divider.isVertical()) ?
+                Cursor.E_RESIZE_CURSOR :
                 Cursor.N_RESIZE_CURSOR;
             }
         }
         setCursor(Cursor.getPredefinedCursor(cursorID));
     }
-
 
     private class InputHandler extends MouseInputAdapter implements KeyListener {
 
@@ -543,17 +542,17 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
         public void mouseEntered(MouseEvent e) {
             updateCursor(e.getX(), e.getY(), true);
         }
-    
+
         @Override
         public void mouseMoved(MouseEvent e) {
             updateCursor(e.getX(), e.getY(), true);
         }
-    
+
         @Override
         public void mouseExited(MouseEvent e) {
             updateCursor(e.getX(), e.getY(), false);
         }
-    
+
         @Override
         public void mousePressed(MouseEvent e) {
             startDrag(e.getX(), e.getY());
@@ -564,17 +563,17 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
         }
         @Override
         public void mouseDragged(MouseEvent e) {
-            updateDrag(e.getX(), e.getY());        
+            updateDrag(e.getX(), e.getY());
         }
         @Override
-        public void keyPressed(KeyEvent e) { 
+        public void keyPressed(KeyEvent e) {
             if (e.getKeyCode() == KeyEvent.VK_ESCAPE) {
             cancelDrag();
             }
         }
         @Override
         public void keyReleased(KeyEvent e) { }
-        
+
         @Override
         public void keyTyped(KeyEvent e) { }
     }
@@ -586,7 +585,7 @@ public class JXMultiSplitPane extends JPanel implements BackgroundPaintable {
         }
         return accessibleContext;
     }
-    
+
     protected class AccessibleMultiSplitPane extends AccessibleJPanel {
         @Override
         public AccessibleRole getAccessibleRole() {

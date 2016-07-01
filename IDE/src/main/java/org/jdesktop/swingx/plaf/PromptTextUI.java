@@ -43,9 +43,9 @@ import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
  * Subclasses of this class must provide a prompt component used for rendering
  * the prompt text.
  * </p>
- * 
+ *
  * @author Peter Weishapl <petw@gmx.net>
- * 
+ *
  */
 public abstract class PromptTextUI extends TextUI {
     protected class PainterHighlighter implements Highlighter {
@@ -147,7 +147,7 @@ public abstract class PromptTextUI extends TextUI {
     /**
      * Creates a new {@link PromptTextUI} which delegates most work to another
      * {@link TextUI}.
-     * 
+     *
      * @param delegate
      */
     public PromptTextUI(TextUI delegate) {
@@ -156,7 +156,7 @@ public abstract class PromptTextUI extends TextUI {
 
     /**
      * Creates a component which should be used to render the prompt text.
-     * 
+     *
      * @return
      */
     protected abstract JTextComponent createPromptComponent();
@@ -191,7 +191,7 @@ public abstract class PromptTextUI extends TextUI {
      * Creates a label component, if none has already been created. Sets the
      * prompt components properties to reflect the given {@link JTextComponent}s
      * properties and returns it.
-     * 
+     *
      * @param txt
      * @return the adjusted prompt component
      */
@@ -235,7 +235,7 @@ public abstract class PromptTextUI extends TextUI {
         promptComponent.setOpaque(txt.isOpaque());
         promptComponent.setBounds(txt.getBounds());
         Border b = txt.getBorder();
-        
+
         if (b == null) {
             promptComponent.setBorder(txt.getBorder());
         } else {
@@ -243,7 +243,7 @@ public abstract class PromptTextUI extends TextUI {
             promptComponent.setBorder(
                     createEmptyBorder(insets.top, insets.left, insets.bottom, insets.right));
         }
-        
+
         promptComponent.setSelectedTextColor(txt.getSelectedTextColor());
         promptComponent.setSelectionColor(txt.getSelectionColor());
         promptComponent.setEditable(txt.isEditable());
@@ -296,7 +296,7 @@ public abstract class PromptTextUI extends TextUI {
     /**
      * Returns if the prompt or the text field should be painted, depending on
      * the state of <code>txt</code>.
-     * 
+     *
      * @param txt
      * @return true when <code>txt</code> contains not text, otherwise false
      */
@@ -437,7 +437,7 @@ public abstract class PromptTextUI extends TextUI {
      * we should also override {@link #getBaselineResizeBehavior(JComponent)},
      * but that's impossible since the {@link BaselineResizeBehavior} class,
      * which does not exist in Java 5, is involved.
-     * 
+     *
      * @return the baseline, or -2 if <code>getBaseline</code> could not be
      *         invoked on the delegate.
      */

@@ -30,9 +30,9 @@ import java.text.ParsePosition;
 /**
  * A specialised Format for the NumberEditor that returns a null for empty
  * strings.
- * 
+ *
  * @author Noel Grandin
- * 
+ *
  * @deprecated (pre-1.6.2) replaced by NumberEditorExt, no longer used internally
  */
 @Deprecated

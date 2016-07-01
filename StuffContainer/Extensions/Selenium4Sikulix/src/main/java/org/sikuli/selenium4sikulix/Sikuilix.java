@@ -11,7 +11,7 @@ public class Sikuilix {
 
   public static void main(String[] args) throws InterruptedException {
     // Create a new instance of the Firefox driver
-    // Notice that the remainder of the code relies on the interface, 
+    // Notice that the remainder of the code relies on the interface,
     // not the implementation.
     WebDriver driver = new FirefoxDriver();
 
@@ -42,7 +42,7 @@ public class Sikuilix {
 
     // Should see: "cheese! - Google Search"
     System.out.println("Page title is: " + driver.getTitle());
-    
+
     //Close the browser
     driver.quit();
   }

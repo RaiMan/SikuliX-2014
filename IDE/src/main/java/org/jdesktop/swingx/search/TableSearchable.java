@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -30,7 +30,7 @@ import org.jdesktop.swingx.decorator.Highlighter;
 
 /**
  * An Searchable implementation for use in JXTable.
- * 
+ *
  * @author Jeanette Winzenburg
  */
 public class TableSearchable extends AbstractSearchable {
@@ -40,7 +40,7 @@ public class TableSearchable extends AbstractSearchable {
 
     /**
      * Instantiates a TableSearchable with the given table as target.
-     * 
+     *
      * @param table the JXTable to search.
      */
     public TableSearchable(JXTable table) {
@@ -50,7 +50,7 @@ public class TableSearchable extends AbstractSearchable {
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * This implementation loops through the cells in a row to find a match.
      */
     @Override
@@ -83,7 +83,7 @@ public class TableSearchable extends AbstractSearchable {
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Implemented to search for an extension in the cell given by row and
      * foundColumn.
      */
@@ -97,7 +97,7 @@ public class TableSearchable extends AbstractSearchable {
      * lastFoundColumn or first column if lastFoundColumn < 0. returns an
      * appropriate SearchResult if a matching cell is found in this row or null
      * if no match is found. A row index out off range results in a no-match.
-     * 
+     *
      * @param pattern <code>Pattern</code> that we will try to locate
      * @param row the row to search
      * @return an appropriate <code>SearchResult</code> if a matching cell is
@@ -121,7 +121,7 @@ public class TableSearchable extends AbstractSearchable {
      * lastFoundColumn or first column if lastFoundColumn < 0. returns an
      * appropriate SearchResult if a matching cell is found in this row or null
      * if no match is found. A row index out off range results in a no-match.
-     * 
+     *
      * @param pattern <code>Pattern</code> that we will try to locate
      * @param row the row to search
      * @return an appropriate <code>SearchResult</code> if a matching cell is
@@ -143,7 +143,7 @@ public class TableSearchable extends AbstractSearchable {
     /**
      * Matches the cell content at row/col against the given Pattern. Returns an
      * appropriate SearchResult if matching or null if no matching
-     * 
+     *
      * @param pattern <code>Pattern</code> that we will try to locate
      * @param row a valid row index in view coordinates
      * @param column a valid column index in view coordinates
@@ -161,10 +161,10 @@ public class TableSearchable extends AbstractSearchable {
     }
 
     /**
-     * 
+     *
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Overridden to adjust the column index to -1.
      */
     @Override
@@ -176,7 +176,7 @@ public class TableSearchable extends AbstractSearchable {
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Overridden to loop through all columns in a row.
      */
     @Override
@@ -199,7 +199,7 @@ public class TableSearchable extends AbstractSearchable {
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Overridden to check the column index of last find.
      */
     @Override
@@ -210,7 +210,7 @@ public class TableSearchable extends AbstractSearchable {
 
     /**
      * Checks if row is in range: 0 <= row < getRowCount().
-     * 
+     *
      * @param column the column index to check in view coordinates.
      * @return true if the column is in range, false otherwise
      */
@@ -237,9 +237,9 @@ public class TableSearchable extends AbstractSearchable {
     /**
      * Configures the match highlighter to the current match. Ensures that the
      * matched cell is visible, if there is a match.
-     * 
+     *
      * PRE: markByHighlighter
-     * 
+     *
      */
     protected void moveMatchByHighlighter() {
         AbstractHighlighter searchHL = getConfiguredMatchHighlighter();
@@ -256,11 +256,11 @@ public class TableSearchable extends AbstractSearchable {
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Overridden to convert the column index in the table's view coordinate
      * system to model coordinate.
      * <p>
-     * 
+     *
      * PENDING JW: this is only necessary because the SearchPredicate wants its
      * highlight column in model coordinates. But code comments in the
      * SearchPredicate seem to indicate that we probably want to revise that
@@ -274,7 +274,7 @@ public class TableSearchable extends AbstractSearchable {
     /**
      * Moves the row selection to the matching cell and ensures its visibility,
      * if any. Does nothing if there is no match.
-     * 
+     *
      */
     protected void moveMatchBySelection() {
         if (!hasMatch()) {

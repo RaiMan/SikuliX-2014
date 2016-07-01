@@ -23,4 +23,3 @@
  * mechanism to support custom component look-and-feels.
  */
 package org.jdesktop.swingx.plaf.windows;
-

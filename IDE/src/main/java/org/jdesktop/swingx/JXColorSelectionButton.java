@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -66,14 +66,14 @@ public class JXColorSelectionButton extends JButton {
     private JDialog dialog = null;
     private JColorChooser chooser = null;
     private Color initialColor = null;
-    
+
     /**
      * Creates a new instance of JXColorSelectionButton
      */
     public JXColorSelectionButton() {
         this(Color.red);
     }
-    
+
     /**
      * Creates a new instance of JXColorSelectionButton set to the specified color.
      * @param col The default color
@@ -83,21 +83,20 @@ public class JXColorSelectionButton extends JButton {
         this.addActionListener(new ActionHandler());
         this.setContentAreaFilled(false);
         this.setOpaque(false);
-        
+
         try {
             colorwell = ImageIO.read(JXColorSelectionButton.class.getResourceAsStream("color/colorwell.png"));
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
+
         this.addPropertyChangeListener("background",new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent propertyChangeEvent) {
                 getChooser().setColor(getBackground());
             }
         });
     }
-    
-    
+
     /**
      * A listener class to update the button's background when the selected
      * color changes.
@@ -120,12 +119,12 @@ public class JXColorSelectionButton extends JButton {
         // want disabledForeground when disabled, current colour otherwise
         final Color FILL_COLOR = isEnabled() ? PaintUtils.removeAlpha(getBackground())
                 : UIManagerExt.getSafeColor("Button.disabledForeground", Color.LIGHT_GRAY);
-        
+
         // draw the colorwell image (should only be on OSX)
         if(OS.isMacOSX() && colorwell != null) {
             Insets ins = new Insets(5,5,5,5);
             GraphicsUtilities.tileStretchPaint(g, this, colorwell, ins);
-            
+
             // fill in the color area
             g.setColor(FILL_COLOR);
             g.fillRect(ins.left, ins.top,
@@ -141,7 +140,7 @@ public class JXColorSelectionButton extends JButton {
                     getHeight() - ins.top - ins.bottom - 3);
         }else{
             Graphics2D g2 = (Graphics2D) g.create();
-            
+
             try {
                 g2.setRenderingHint(KEY_ANTIALIASING, VALUE_ANTIALIAS_ON);
                 g2.setColor(Color.LIGHT_GRAY);
@@ -154,7 +153,7 @@ public class JXColorSelectionButton extends JButton {
             } finally {
                 g2.dispose();
             }
-            
+
         }
     }
 
@@ -170,7 +169,7 @@ public class JXColorSelectionButton extends JButton {
 //        btn.setEnabled(true);
 //        panel.add(btn);
 //        panel.add(new javax.swing.JLabel("ColorSelectionButton test"));
-//        
+//
 //        frame.add(panel);
 //        frame.pack();
 //        frame.setVisible(true);
@@ -200,12 +199,12 @@ public class JXColorSelectionButton extends JButton {
             getChooser().getSelectionModel().addChangeListener(
                     new ColorChangeListener(JXColorSelectionButton.this));
         }
-        
+
         initialColor = getBackground();
         dialog.setVisible(true);
 
     }
-    
+
     /**
      * Get the JColorChooser that is used by this JXColorSelectionButton. This
      * chooser instance is shared between all invocations of the chooser, but is unique to
@@ -220,7 +219,7 @@ public class JXColorSelectionButton extends JButton {
         }
         return chooser;
     }
-    
+
     /**
      * Set the JColorChooser that is used by this JXColorSelectionButton.
      * chooser instance is shared between all invocations of the chooser,
@@ -233,7 +232,7 @@ public class JXColorSelectionButton extends JButton {
         this.chooser = chooser;
         firePropertyChange("chooser",oldChooser,chooser);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -242,7 +241,7 @@ public class JXColorSelectionButton extends JButton {
         if (isPreferredSizeSet() || colorwell == null) {
             return super.getPreferredSize();
         }
-        
+
         return new Dimension(colorwell.getWidth(), colorwell.getHeight());
     }
 
@@ -251,7 +250,7 @@ public class JXColorSelectionButton extends JButton {
      * dialog.
      */
     private class ActionHandler implements ActionListener {
-        
+
         public void actionPerformed(ActionEvent actionEvent) {
             showDialog();
         }

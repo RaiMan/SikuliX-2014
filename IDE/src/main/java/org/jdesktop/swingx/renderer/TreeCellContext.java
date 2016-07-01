@@ -35,8 +35,8 @@ import javax.swing.tree.TreePath;
 import org.jdesktop.swingx.JXTree;
 
 /**
- * Tree specific <code>CellContext</code>. 
- * 
+ * Tree specific <code>CellContext</code>.
+ *
  * <ul>
  * <li>PENDING: use focus border as returned from list or table instead of
  * rolling its own? The missing ui-border probably is a consequence of the
@@ -64,7 +64,7 @@ public class TreeCellContext extends CellContext {
      * Sets state of the cell's context. Note that the component might be null
      * to indicate a cell without a concrete context. All accessors must cope
      * with.
-     * 
+     *
      * @param component the component the cell resides on, might be null
      * @param value the content value of the cell
      * @param row the cell's row index in view coordinates
@@ -93,17 +93,17 @@ public class TreeCellContext extends CellContext {
         }
         return false;
     }
-   
+
     @Override
     public JTree getComponent() {
         return (JTree) super.getComponent();
     }
-    
+
 //------------------- accessors for derived state
-    
+
     /**
      * Returns the treePath for the row or null if invalid.
-     * 
+     *
      */
     public TreePath getTreePath() {
         if (getComponent() == null) return null;
@@ -164,7 +164,7 @@ public class TreeCellContext extends CellContext {
 
     /**
      * Returns the default icon to use for leaf cell.
-     * 
+     *
      * @return the icon to use for leaf cell.
      */
     protected Icon getLeafIcon() {
@@ -174,7 +174,7 @@ public class TreeCellContext extends CellContext {
 
     /**
      * Returns the default icon to use for open cell.
-     * 
+     *
      * @return the icon to use for open cell.
      */
     protected Icon getOpenIcon() {
@@ -184,7 +184,7 @@ public class TreeCellContext extends CellContext {
 
     /**
      * Returns the default icon to use for closed cell.
-     * 
+     *
      * @return the icon to use for closed cell.
      */
     protected Icon getClosedIcon() {
@@ -195,7 +195,7 @@ public class TreeCellContext extends CellContext {
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Overridden to return a default depending for the leaf/open cell state.
      */
     @Override

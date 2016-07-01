@@ -34,7 +34,7 @@ import org.sikuli.script.RunTime;
 import org.sikuli.script.Runner;
 
 public class JRubyScriptRunner implements IScriptRunner {
-  
+
   static RunTime sxRunTime = RunTime.get();
 
 	//<editor-fold defaultstate="collapsed" desc="new logging concept">
@@ -84,7 +84,7 @@ public class JRubyScriptRunner implements IScriptRunner {
 
 	private boolean isFromIDE;
 	private boolean isCompileOnly;
-  
+
   private static Ruby runtime;
   private static ThreadContext context;
 
@@ -253,7 +253,7 @@ public class JRubyScriptRunner implements IScriptRunner {
       pargs = new IRubyObject[] {JavaUtil.convertJavaToRuby(runtime, args[1])};
       ((RubyProc) args[0]).call(context, pargs);
     } catch (Exception ex) {
-      log(-1, "runObserveCallback: jruby invoke: %s\n%s\n%s", args[0].getClass(),args[0], ex.getMessage());    
+      log(-1, "runObserveCallback: jruby invoke: %s\n%s\n%s", args[0].getClass(),args[0], ex.getMessage());
     }
     return true;
   }

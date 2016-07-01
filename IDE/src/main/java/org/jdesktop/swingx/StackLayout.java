@@ -46,12 +46,12 @@ import java.util.List;
  * If you don't specify the constraint, the component will be added at the top
  * of the components stack.</p>
  * <p>All the components managed by this layout will be given the same size as
- * the container itself. The minimum, maximum and preferred size of the 
+ * the container itself. The minimum, maximum and preferred size of the
  * container are based upon the largest minimum, maximum and preferred size of
  * the children components.</p>
  * <p><code>StackLayout</code> works only with JSE 1.5 and Java SE 6 and
  * greater.</p>
- * 
+ *
  * @author Romain Guy <romain.guy@mac.com>
  */
 
@@ -99,7 +99,7 @@ public class StackLayout implements LayoutManager2 {
             components.remove(comp);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -141,7 +141,7 @@ public class StackLayout implements LayoutManager2 {
             Insets insets = parent.getInsets();
             width += insets.left + insets.right;
             height += insets.top + insets.bottom;
-            
+
             return new Dimension(width, height);
         }
     }
@@ -164,7 +164,7 @@ public class StackLayout implements LayoutManager2 {
             Insets insets = parent.getInsets();
             width += insets.left + insets.right;
             height += insets.top + insets.bottom;
-            
+
             return new Dimension(width, height);
         }
     }
@@ -186,11 +186,11 @@ public class StackLayout implements LayoutManager2 {
         synchronized (parent.getTreeLock()) {
             int width = parent.getWidth();
             int height = parent.getHeight();
-            
+
             Rectangle bounds = new Rectangle(0, 0, width, height);
 
             int componentsCount = components.size();
-            
+
             for (int i = 0; i < componentsCount; i++) {
                 Component comp = components.get(i);
                 comp.setBounds(bounds);

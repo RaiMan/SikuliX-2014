@@ -474,7 +474,7 @@ public class Key {
       return keyTexts.get(key).intValue();
     }
   }
-  
+
   public static void dump() {
     Map<Integer, String> namesVK = new HashMap<Integer, String>();
     for (int i = 0; i < keyVK.length; i += 2) {
@@ -489,7 +489,7 @@ public class Key {
       if (keyN < 1) {
         continue;
       }
-      System.out.println(String.format("%s = %d (%s)", key, keyN, namesVK.get(keyN)));      
+      System.out.println(String.format("%s = %d (%s)", key, keyN, namesVK.get(keyN)));
     }
   }
   //</editor-fold>

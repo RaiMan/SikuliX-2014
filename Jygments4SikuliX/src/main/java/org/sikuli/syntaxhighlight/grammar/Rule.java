@@ -11,7 +11,6 @@
 
 package org.sikuli.syntaxhighlight.grammar;
 
-
 /**
  * @author Tal Liron
  */

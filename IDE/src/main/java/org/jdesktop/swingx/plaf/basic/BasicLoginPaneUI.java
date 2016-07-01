@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -50,21 +50,21 @@ public class BasicLoginPaneUI extends LoginPaneUI {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             Object src = evt.getSource();
-            
+
             if (src instanceof JComponent) {
                 ((JComponent) src).updateUI();
             }
         }
     }
-    
+
     private JXLoginPane dlg;
-    
+
     /** Creates a new instance of BasicLoginDialogUI */
     public BasicLoginPaneUI(JXLoginPane dlg) {
         this.dlg = dlg;
 //        dlg.addPropertyChangeListener("locale", new LocaleHandler());
     }
-    
+
   public static ComponentUI createUI(JComponent c) {
     return new BasicLoginPaneUI((JXLoginPane)c);
   }
@@ -73,19 +73,19 @@ public class BasicLoginPaneUI extends LoginPaneUI {
     public void installUI(JComponent c) {
         installDefaults();
     }
-    
+
     protected void installDefaults() {
         String s = dlg.getBannerText();
         if (s == null || s.equals("")) {
             dlg.setBannerText(UIManagerExt.getString("JXLoginPane.bannerString", dlg.getLocale()));
         }
-        
+
         s = dlg.getErrorMessage();
         if (s == null || s.equals("")) {
             dlg.setErrorMessage(UIManagerExt.getString("JXLoginPane.errorMessage", dlg.getLocale()));
         }
     }
-    
+
     /**
      * Creates default 400x60 banner for the login panel.
      * @see org.jdesktop.swingx.plaf.LoginPaneUI#getBanner()

@@ -46,7 +46,7 @@ public class HeaderAddon extends AbstractComponentAddon {
     @Override
     protected void addBasicDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
         super.addBasicDefaults(addon, defaults);
-        
+
         defaults.add(JXHeader.uiClassID, "org.jdesktop.swingx.plaf.basic.BasicHeaderUI");
         //TODO image is missing
         defaults.add("JXHeader.defaultIcon",
@@ -67,7 +67,7 @@ public class HeaderAddon extends AbstractComponentAddon {
     @Override
     protected void addMacDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
         super.addMacDefaults(addon, defaults);
-        
+
         defaults.add("JXHeader.background", new ColorUIResource(new Color(218, 218, 218)));
         defaults.add("JXHeader.startBackground", new ColorUIResource(new Color(235, 235, 235)));
     }
@@ -78,7 +78,7 @@ public class HeaderAddon extends AbstractComponentAddon {
     @Override
     protected void addNimbusDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
         super.addNimbusDefaults(addon, defaults);
-        
+
         defaults.add("JXHeader.background", new ColorUIResource(new Color(214, 217, 223, 255)));
     }
 }

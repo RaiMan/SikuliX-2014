@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -34,7 +34,7 @@ import javax.swing.SwingUtilities;
 
 /**
  * An applet that uses {@link JXRootPane} as its root container.
- * 
+ *
  * @author kschaefer
  */
 @SuppressWarnings("nls")
@@ -46,7 +46,7 @@ public class JXApplet extends JApplet {
      * <p>
      * This constructor sets the component's locale property to the value returned by
      * <code>JComponent.getDefaultLocale</code>.
-     * 
+     *
      * @throws HeadlessException
      *             if GraphicsEnvironment.isHeadless() returns true.
      * @see java.awt.GraphicsEnvironment#isHeadless
@@ -61,7 +61,7 @@ public class JXApplet extends JApplet {
      * Event Dispatch Thread. Some applet containers do not start applets on the EDT; this method,
      * therefore, protects against that. Actual, root pane creation occurs in
      * {@link #createRootPaneSafely()}.
-     * 
+     *
      * @return the root pane for this applet
      * @see #createRootPaneSafely()
      */
@@ -70,7 +70,7 @@ public class JXApplet extends JApplet {
         if (SwingUtilities.isEventDispatchThread()) {
             return createRootPaneSafely();
         }
-        
+
         try {
             return SwingXUtilities.invokeAndWait(new Callable<JXRootPane>() {
                 @Override
@@ -83,27 +83,27 @@ public class JXApplet extends JApplet {
         } catch (InvocationTargetException e) {
             IllegalComponentStateException thrown = new IllegalComponentStateException("cannot construct root pane");
             thrown.initCause(e);
-            
+
             throw thrown;
         }
-        
+
         return null;
     }
-    
+
     /**
      * This method performs the actual creation of the root pane and is guaranteed to be performed on the Event Dispatch Thread.
      * <p>
      * Subclasses that need to configure the root pane or create a custom root pane should override this method.
-     * 
+     *
      * @return the root pane for this applet
      */
     protected JXRootPane createRootPaneSafely() {
         JXRootPane rp = new JXRootPane();
         rp.setOpaque(true);
-        
+
         return rp;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -111,11 +111,11 @@ public class JXApplet extends JApplet {
     public JXRootPane getRootPane() {
         return (JXRootPane) super.getRootPane();
     }
-    
+
     /**
      * Returns the value of the status bar property from the underlying
      * {@code JXRootPane}.
-     * 
+     *
      * @return the {@code JXStatusBar} which is the current status bar
      * @see #setStatusBar(JXStatusBar)
      * @see JXRootPane#getStatusBar()
@@ -123,10 +123,10 @@ public class JXApplet extends JApplet {
     public JXStatusBar getStatusBar() {
         return getRootPane().getStatusBar();
     }
-    
+
     /**
      * Sets the status bar property on the underlying {@code JXRootPane}.
-     * 
+     *
      * @param statusBar
      *            the {@code JXStatusBar} which is to be the status bar
      * @see #getStatusBar()
@@ -135,11 +135,11 @@ public class JXApplet extends JApplet {
     public void setStatusBar(JXStatusBar statusBar) {
         getRootPane().setStatusBar(statusBar);
     }
-    
+
     /**
      * Returns the value of the tool bar property from the underlying
      * {@code JXRootPane}.
-     * 
+     *
      * @return the {@code JToolBar} which is the current tool bar
      * @see #setToolBar(JToolBar)
      * @see JXRootPane#getToolBar()
@@ -147,10 +147,10 @@ public class JXApplet extends JApplet {
     public JToolBar getToolBar() {
         return getRootPane().getToolBar();
     }
-    
+
     /**
      * Sets the tool bar property on the underlying {@code JXRootPane}.
-     * 
+     *
      * @param toolBar
      *            the {@code JToolBar} which is to be the tool bar
      * @see #getToolBar()
@@ -159,11 +159,11 @@ public class JXApplet extends JApplet {
     public void setToolBar(JToolBar toolBar) {
         getRootPane().setToolBar(toolBar);
     }
-    
+
     /**
      * Returns the value of the default button property from the underlying
      * {@code JRootPane}.
-     * 
+     *
      * @return the {@code JButton} which is the default button
      * @see #setDefaultButton(JButton)
      * @see JRootPane#getDefaultButton()
@@ -171,10 +171,10 @@ public class JXApplet extends JApplet {
     public JButton getDefaultButton() {
         return getRootPane().getDefaultButton();
     }
-    
+
     /**
      * Sets the default button property on the underlying {@code JRootPane}.
-     * 
+     *
      * @param button
      *            the {@code JButton} which is to be the default button
      * @see #getDefaultButton()
@@ -183,11 +183,11 @@ public class JXApplet extends JApplet {
     public void setDefaultButton(JButton button) {
         getRootPane().setDefaultButton(button);
     }
-    
+
     /**
      * Returns the value of the cancel button property from the underlying
      * {@code JXRootPane}.
-     * 
+     *
      * @return the {@code JButton} which is the cancel button
      * @see #setCancelButton(JButton)
      * @see JXRootPane#getCancelButton()
@@ -198,7 +198,7 @@ public class JXApplet extends JApplet {
 
     /**
      * Sets the cancel button property on the underlying {@code JXRootPane}.
-     * 
+     *
      * @param button
      *            the {@code JButton} which is to be the cancel button
      * @see #getCancelButton()

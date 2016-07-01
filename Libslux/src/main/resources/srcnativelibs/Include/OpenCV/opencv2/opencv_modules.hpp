@@ -24,5 +24,3 @@
 #define HAVE_OPENCV_TS
 #define HAVE_OPENCV_VIDEO
 #define HAVE_OPENCV_VIDEOSTAB
-
-

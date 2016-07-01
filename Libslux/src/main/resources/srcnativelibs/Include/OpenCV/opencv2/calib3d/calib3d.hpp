@@ -59,7 +59,6 @@ typedef struct CvPOSITObject CvPOSITObject;
 /* Allocates and initializes CvPOSITObject structure before doing cvPOSIT */
 CVAPI(CvPOSITObject*)  cvCreatePOSITObject( CvPoint3D32f* points, int point_count );
 
-
 /* Runs POSIT (POSe from ITeration) algorithm for determining 3d position of
    an object given its model and projection in a weak-perspective case */
 CVAPI(void)  cvPOSIT(  CvPOSITObject* posit_object, CvPoint2D32f* image_points,
@@ -116,7 +115,6 @@ CVAPI(void) cvTriangulatePoints(CvMat* projMatr1, CvMat* projMatr2,
 
 CVAPI(void) cvCorrectMatches(CvMat* F, CvMat* points1, CvMat* points2,
                              CvMat* new_points1, CvMat* new_points2);
-
 
 /* Computes the optimal new camera matrix according to the free scaling parameter alpha:
    alpha=0 - only valid pixels will be retained in the undistorted image
@@ -300,7 +298,6 @@ CVAPI(int) cvStereoRectifyUncalibrated( const CvMat* points1, const CvMat* point
                                         double threshold CV_DEFAULT(5));
 
 
-
 /* stereo correspondence parameters and functions */
 
 #define CV_STEREO_BM_NORMALIZED_RESPONSE  0
@@ -364,7 +361,6 @@ CVAPI(void) cvValidateDisparity( CvArr* disparity, const CvArr* cost,
 CVAPI(void)  cvReprojectImageTo3D( const CvArr* disparityImage,
                                    CvArr* _3dImage, const CvMat* Q,
                                    int handleMissingValues CV_DEFAULT(0) );
-
 
 #ifdef __cplusplus
 }
@@ -575,7 +571,6 @@ CV_EXPORTS_W double stereoCalibrate( InputArrayOfArrays objectPoints,
                                      TermCriteria criteria = TermCriteria(TermCriteria::COUNT+TermCriteria::EPS, 30, 1e-6),
                                      int flags=CALIB_FIX_INTRINSIC );
 
-
 //! computes the rectification transformation for a stereo camera from its intrinsic and extrinsic parameters
 CV_EXPORTS_W void stereoRectify( InputArray cameraMatrix1, InputArray distCoeffs1,
                                InputArray cameraMatrix2, InputArray distCoeffs2,
@@ -676,7 +671,6 @@ public:
     //! pointer to the underlying CvStereoBMState
     Ptr<CvStereoBMState> state;
 };
-
 
 /*!
  Semi-Global Block Matching Stereo Correspondence Algorithm

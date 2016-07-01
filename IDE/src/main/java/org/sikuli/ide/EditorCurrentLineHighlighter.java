@@ -13,7 +13,7 @@ import javax.swing.text.*;
 import org.sikuli.basics.Debug;
 
 public class EditorCurrentLineHighlighter implements CaretListener {
-  
+
   private static final String me = "EditorCurrentLineHighlighter: ";
   static final Color DEFAULT_COLOR = new Color(230, 230, 210);
   static final Color ERROR_COLOR = new Color(255, 105, 105);
@@ -69,7 +69,6 @@ public class EditorCurrentLineHighlighter implements CaretListener {
     }
   }
 }
-
 
 //<editor-fold defaultstate="collapsed" desc="class MyHighlighter extends DefaultHighlighter">
 class MyHighlighter extends DefaultHighlighter {

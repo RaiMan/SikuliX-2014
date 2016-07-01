@@ -26,4 +26,3 @@ public class AnimatorStopExtention extends AnimatorTimeValueFunction {
     return t >= _totalTime;
   }
 }
-

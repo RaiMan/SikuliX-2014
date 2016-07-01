@@ -63,7 +63,6 @@ struct CV_EXPORTS ImageFeatures
     Mat descriptors;
 };
 
-
 class CV_EXPORTS FeaturesFinder
 {
 public:
@@ -75,7 +74,6 @@ public:
 protected:
     virtual void find(const Mat &image, ImageFeatures &features) = 0;
 };
-
 
 class CV_EXPORTS SurfFeaturesFinder : public FeaturesFinder
 {
@@ -103,7 +101,6 @@ private:
     Size grid_size;
 };
 
-
 #if defined(HAVE_OPENCV_NONFREE) && defined(HAVE_OPENCV_GPU) && !defined(ANDROID)
 class CV_EXPORTS SurfFeaturesFinderGpu : public FeaturesFinder
 {
@@ -126,7 +123,6 @@ private:
 };
 #endif
 
-
 struct CV_EXPORTS MatchesInfo
 {
     MatchesInfo();
@@ -140,7 +136,6 @@ struct CV_EXPORTS MatchesInfo
     Mat H;                              // Estimated homography
     double confidence;                  // Confidence two images are from the same panorama
 };
-
 
 class CV_EXPORTS FeaturesMatcher
 {
@@ -165,7 +160,6 @@ protected:
 
     bool is_thread_safe_;
 };
-
 
 class CV_EXPORTS BestOf2NearestMatcher : public FeaturesMatcher
 {

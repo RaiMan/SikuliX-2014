@@ -60,7 +60,7 @@ public class Style extends NestedDef<Style>
 	public static Style getByFullName( String name ) throws ResolutionException {
     return getByFullName("", "", name);
   }
-          
+
 	@SuppressWarnings("unchecked")
 	public static Style getByFullName( String pack, String sub, String name ) throws ResolutionException
 	{

@@ -19,7 +19,7 @@ public class JRubyHelper implements JLangHelperInterface {
 
     /**
      * Mandatory method which returns an instance of the helper
-     * 
+     *
      * @return
      */
     public static JRubyHelper get() {

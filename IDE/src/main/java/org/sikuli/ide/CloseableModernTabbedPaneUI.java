@@ -31,7 +31,6 @@ import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 import javax.swing.plaf.basic.BasicTabbedPaneUI;
 
-
 public class CloseableModernTabbedPaneUI extends BasicTabbedPaneUI {
 
 	private static final String TABBED_PANE_UI_LOGGER = "TabbedPaneUI";

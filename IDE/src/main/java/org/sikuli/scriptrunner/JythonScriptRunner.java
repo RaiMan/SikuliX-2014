@@ -394,7 +394,7 @@ public class JythonScriptRunner implements IScriptRunner {
       log(lvl + 2, "cause: " + t);
     }
   }
-  
+
   @Override
   public int runTest(File scriptfile, File imagepath, String[] argv, String[] forIDE) {
     log(-1, "runTest: Sikuli Test Feature is not implemented at the moment");

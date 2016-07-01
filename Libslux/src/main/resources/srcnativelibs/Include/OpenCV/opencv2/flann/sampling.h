@@ -26,7 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *************************************************************************/
 
-
 #ifndef OPENCV_FLANN_SAMPLING_H_
 #define OPENCV_FLANN_SAMPLING_H_
 
@@ -76,6 +75,5 @@ Matrix<T> random_sample(const Matrix<T>& srcMatrix, size_t size)
 }
 
 } // namespace
-
 
 #endif /* OPENCV_FLANN_SAMPLING_H_ */

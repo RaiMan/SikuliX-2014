@@ -78,7 +78,6 @@
     break;                                 \
     }
 
-
 #define LOG(msg) LOG_(1, msg)
 #define LOG_CHAT(msg) LOG_(0, msg)
 
@@ -112,7 +111,6 @@ private:
     std::vector<int> rank_;
 };
 
-
 struct CV_EXPORTS GraphEdge
 {
     GraphEdge(int from, int to, float weight);
@@ -124,7 +122,6 @@ struct CV_EXPORTS GraphEdge
 };
 
 inline GraphEdge::GraphEdge(int _from, int _to, float _weight) : from(_from), to(_to), weight(_weight) {}
-
 
 class CV_EXPORTS Graph
 {
@@ -139,7 +136,6 @@ public:
 private:
     std::vector< std::list<GraphEdge> > edges_;
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 // Auxiliary functions

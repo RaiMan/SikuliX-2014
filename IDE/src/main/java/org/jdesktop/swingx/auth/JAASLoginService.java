@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -38,9 +38,9 @@ import org.jdesktop.beans.JavaBean;
 
 /**
  * <b>JAASLoginService</b> implements a <b>LoginService</b>
- * that uses JAAS for authentication. <b>JAASLoginService</b> uses the 
+ * that uses JAAS for authentication. <b>JAASLoginService</b> uses the
  * server name as name of the configuration for JAAS.
- * 
+ *
  * @author Bino George
  */
 @JavaBean
@@ -57,18 +57,17 @@ public class JAASLoginService extends LoginService {
     public JAASLoginService(String server) {
         super(server);
     }
-    
+
         /**
          * Default JavaBeans constructor
          */
         public JAASLoginService() {
             super();
         }
-        
-    
+
     /**
      * @inheritDoc
-     *      
+     *
      */
     @Override
     public boolean authenticate(String name, char[] password, String server) throws Exception {
@@ -120,8 +119,8 @@ public class JAASLoginService extends LoginService {
 	}
 
 	/**
-	 * Returns the <code>Subject</code> representing the authenticated 
-	 * individual, or <code>null</code> if the user has not yet been 
+	 * Returns the <code>Subject</code> representing the authenticated
+	 * individual, or <code>null</code> if the user has not yet been
 	 * successfully authenticated.
 	 */
 	public Subject getSubject()

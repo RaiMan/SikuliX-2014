@@ -170,7 +170,6 @@ inline Mat::Mat(Size _sz, int _type, void* _data, size_t _step)
     dataend = datalimit - _step + minstep;
 }
 
-
 template<typename _Tp> inline Mat::Mat(const vector<_Tp>& vec, bool copyData)
     : flags(MAGIC_VAL | DataType<_Tp>::type | CV_MAT_CONT_FLAG),
     dims(2), rows((int)vec.size()), cols(1), data(0), refcount(0),
@@ -188,7 +187,6 @@ template<typename _Tp> inline Mat::Mat(const vector<_Tp>& vec, bool copyData)
         Mat((int)vec.size(), 1, DataType<_Tp>::type, (uchar*)&vec[0]).copyTo(*this);
 }
 
-
 template<typename _Tp, int n> inline Mat::Mat(const Vec<_Tp, n>& vec, bool copyData)
     : flags(MAGIC_VAL | DataType<_Tp>::type | CV_MAT_CONT_FLAG),
     dims(2), rows(n), cols(1), data(0), refcount(0),
@@ -203,7 +201,6 @@ template<typename _Tp, int n> inline Mat::Mat(const Vec<_Tp, n>& vec, bool copyD
     else
         Mat(n, 1, DataType<_Tp>::type, (void*)vec.val).copyTo(*this);
 }
-
 
 template<typename _Tp, int m, int n> inline Mat::Mat(const Matx<_Tp,m,n>& M, bool copyData)
     : flags(MAGIC_VAL | DataType<_Tp>::type | CV_MAT_CONT_FLAG),
@@ -220,7 +217,6 @@ template<typename _Tp, int m, int n> inline Mat::Mat(const Matx<_Tp,m,n>& M, boo
     else
         Mat(m, n, DataType<_Tp>::type, (uchar*)M.val).copyTo(*this);
 }
-
 
 template<typename _Tp> inline Mat::Mat(const Point_<_Tp>& pt, bool copyData)
     : flags(MAGIC_VAL | DataType<_Tp>::type | CV_MAT_CONT_FLAG),
@@ -241,7 +237,6 @@ template<typename _Tp> inline Mat::Mat(const Point_<_Tp>& pt, bool copyData)
     }
 }
 
-
 template<typename _Tp> inline Mat::Mat(const Point3_<_Tp>& pt, bool copyData)
     : flags(MAGIC_VAL | DataType<_Tp>::type | CV_MAT_CONT_FLAG),
     dims(2), rows(3), cols(1), data(0), refcount(0),
@@ -261,7 +256,6 @@ template<typename _Tp> inline Mat::Mat(const Point3_<_Tp>& pt, bool copyData)
         ((_Tp*)data)[2] = pt.z;
     }
 }
-
 
 template<typename _Tp> inline Mat::Mat(const MatCommaInitializer_<_Tp>& commaInitializer)
     : flags(MAGIC_VAL | DataType<_Tp>::type | CV_MAT_CONT_FLAG),
@@ -434,7 +428,6 @@ template<typename _Tp> inline const _Tp* Mat::ptr(int y) const
     CV_DbgAssert( y == 0 || (data && dims >= 1 && (unsigned)y < (unsigned)size.p[0]) );
     return (const _Tp*)(data + step.p[0]*y);
 }
-
 
 inline uchar* Mat::ptr(int i0, int i1)
 {
@@ -619,7 +612,6 @@ template<typename _Tp, int n> inline const _Tp& Mat::at(const Vec<int, n>& idx) 
     return *(const _Tp*)ptr(idx.val);
 }
 
-
 template<typename _Tp> inline MatConstIterator_<_Tp> Mat::begin() const
 {
     CV_DbgAssert( elemSize() == sizeof(_Tp) );
@@ -677,7 +669,6 @@ template<typename _Tp, int m, int n> inline Mat::operator Matx<_Tp, m, n>() cons
     convertTo(tmp, tmp.type());
     return mtx;
 }
-
 
 template<typename _Tp> inline void Mat::push_back(const _Tp& elem)
 {
@@ -920,7 +911,6 @@ template<typename _Tp> inline void Mat_<_Tp>::create(int _dims, const int* _sz)
     Mat::create(_dims, _sz, DataType<_Tp>::type);
 }
 
-
 template<typename _Tp> inline Mat_<_Tp> Mat_<_Tp>::cross(const Mat_& m) const
 { return Mat_<_Tp>(Mat::cross(m)); }
 
@@ -1058,7 +1048,6 @@ template<typename _Tp> inline const _Tp& Mat_<_Tp>::operator ()(int i0, int i1, 
     return this->at<_Tp>(i0, i1, i2);
 }
 
-
 template<typename _Tp> inline Mat_<_Tp>::operator vector<_Tp>() const
 {
     vector<_Tp> v;
@@ -1114,7 +1103,6 @@ process( const Mat_<T1>& m1, const Mat_<T2>& m2, Mat_<T3>& m3, Op op )
             dst[x] = op( src1[x], src2[x] );
     }
 }
-
 
 /////////////////////////////// Input/Output Arrays /////////////////////////////////
 
@@ -1209,7 +1197,6 @@ public:
     virtual int type(const MatExpr& expr) const;
 };
 
-
 class CV_EXPORTS MatExpr
 {
 public:
@@ -1256,7 +1243,6 @@ public:
     double alpha, beta;
     Scalar s;
 };
-
 
 CV_EXPORTS MatExpr operator + (const Mat& a, const Mat& b);
 CV_EXPORTS MatExpr operator + (const Mat& a, const Scalar& s);
@@ -1388,7 +1374,6 @@ template<typename _Tp> static inline void max(double s, const Mat_<_Tp>& a, Mat_
 {
     cv::max((const Mat&)a, s, (Mat&)c);
 }
-
 
 CV_EXPORTS MatExpr operator & (const Mat& a, const Mat& b);
 CV_EXPORTS MatExpr operator & (const Mat& a, const Scalar& s);
@@ -2125,7 +2110,6 @@ inline SparseMat SparseMat::clone() const
     return temp;
 }
 
-
 inline void SparseMat::assignTo( SparseMat& m, int _type ) const
 {
     if( _type < 0 )
@@ -2294,7 +2278,6 @@ template<typename _Tp> inline SparseMatIterator_<_Tp> SparseMat::end()
 template<typename _Tp> inline SparseMatConstIterator_<_Tp> SparseMat::end() const
 { SparseMatConstIterator_<_Tp> it(this); it.seekEnd(); return it; }
 
-
 inline SparseMatConstIterator::SparseMatConstIterator()
 : m(0), hashidx(0), ptr(0)
 {
@@ -2310,7 +2293,6 @@ static inline bool operator == (const SparseMatConstIterator& it1, const SparseM
 
 static inline bool operator != (const SparseMatConstIterator& it1, const SparseMatConstIterator& it2)
 { return !(it1 == it2); }
-
 
 inline SparseMatConstIterator& SparseMatConstIterator::operator = (const SparseMatConstIterator& it)
 {
@@ -2338,7 +2320,6 @@ inline SparseMatConstIterator SparseMatConstIterator::operator ++(int)
     ++*this;
     return it;
 }
-
 
 inline void SparseMatConstIterator::seekEnd()
 {
@@ -2387,7 +2368,6 @@ inline SparseMatIterator SparseMatIterator::operator ++(int)
     ++*this;
     return it;
 }
-
 
 template<typename _Tp> inline SparseMat_<_Tp>::SparseMat_()
 { flags = MAGIC_VAL | DataType<_Tp>::type; }

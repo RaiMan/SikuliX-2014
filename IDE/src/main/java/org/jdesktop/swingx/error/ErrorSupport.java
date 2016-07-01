@@ -35,7 +35,7 @@ import javax.swing.SwingUtilities;
 public class ErrorSupport {
     private List<ErrorListener> listeners;
     private Object source;
-    
+
     /**
      * Creates a new instance of <CODE>ErrorSupport</CODE>
      * @param source The object which will fire the <CODE>ErrorEvent</CODE>s
@@ -44,7 +44,7 @@ public class ErrorSupport {
         this.source = source;
         listeners = new ArrayList<ErrorListener>();
     }
-    
+
     /**
      * Add an ErrorListener
      * @param listener the listener to add
@@ -52,7 +52,7 @@ public class ErrorSupport {
     public void addErrorListener(ErrorListener listener) {
         listeners.add(listener);
     }
-    
+
     /**
      * Remove an error listener
      * @param listener the listener to remove
@@ -60,11 +60,11 @@ public class ErrorSupport {
     public void removeErrorListener(ErrorListener listener) {
         listeners.remove(listener);
     }
-        
+
     /**
-     * Returns an array of all the listeners which were added to the 
+     * Returns an array of all the listeners which were added to the
      * <CODE>ErrorSupport</CODE> object with <CODE>addErrorListener()</CODE>.
-     * @return all of the <CODE>ErrorListener</CODE>s added or an empty array if no listeners have been 
+     * @return all of the <CODE>ErrorListener</CODE>s added or an empty array if no listeners have been
      * added.
      */
     public ErrorListener[] getErrorListeners() {
@@ -86,5 +86,5 @@ public class ErrorSupport {
             }
         });
     }
-    
+
 }

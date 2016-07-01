@@ -8,18 +8,17 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package org.jdesktop.swingx.treetable;
-
 
 import javax.swing.tree.TreeModel;
 
@@ -28,10 +27,10 @@ import javax.swing.tree.TreeModel;
  * <p>
  * This model is a combination of {@link TreeModel} and
  * {@link javax.swing.table.TableModel} for use with the tree table. It does not
- * actually extends {@code TableModel}, but instead copies method signature as 
+ * actually extends {@code TableModel}, but instead copies method signature as
  * appropriate and alters other to work with the underlying {@code TreeModel}.
  * <p>
- * 
+ *
  * @see TreeModel
  * @see javax.swing.table.TableModel
  */
@@ -40,7 +39,7 @@ public interface TreeTableModel extends TreeModel {
      * Returns the most specific superclass for all the cell values in the
      * column. This is used by the {@code JXTreeTable} to set up a default
      * renderer and editor for the column.
-     * 
+     *
      * @param columnIndex
      *            the index of the column
      * @return the common ancestor class of the object values in the model.
@@ -52,7 +51,7 @@ public interface TreeTableModel extends TreeModel {
      * Returns the number of columns in the model. A {@code JXTreeTable} uses
      * this method to determine how many columns it should create and display by
      * default.
-     * 
+     *
      * @return the number of columns in the model
      * @see javax.swing.table.TableModel#getColumnCount()
      */
@@ -62,7 +61,7 @@ public interface TreeTableModel extends TreeModel {
      * Returns the name of the column at {@code columnIndex}. This is used to
      * initialize the table's column header name. Note: this name does not need
      * to be unique; two columns in a table can have the same name.
-     * 
+     *
      * @param column
      *            the index of the column
      * @return the name of the column
@@ -74,17 +73,17 @@ public interface TreeTableModel extends TreeModel {
      * Returns the column that is the "tree" column. While it is not required,
      * most implementations will default the first column to be the hierarchical
      * one.
-     * 
+     *
      * @return the index of the hierarchical column or -1 if no column is the
      *         hierarchical column.
      */
     public int getHierarchicalColumn();
-    
+
     /**
      * Returns the value for the {@code node} at {@code columnIndex}. The
      * {@code node} must be managed by this model. Unamanaged nodes should throw
      * an {@code IllegalArgumentException}.
-     * 
+     *
      * @param node
      *            the node whose value is to be queried
      * @param column
@@ -102,7 +101,7 @@ public interface TreeTableModel extends TreeModel {
      * editable. Otherwise, {@code setValueAt} on the cell will not change the
      * value of that cell. The {@code node} must be managed by this model.
      * Unamanaged nodes should throw an {@code IllegalArgumentException}.
-     * 
+     *
      * @param node
      *            the node whose value to be queried
      * @param column
@@ -119,8 +118,8 @@ public interface TreeTableModel extends TreeModel {
      * Sets the value for the {@code node} at {@code columnIndex} to
      * {@code value}. The {@code node} must be managed by this model.
      * Unamanaged nodes should throw an {@code IllegalArgumentException}.
-     * 
-     * 
+     *
+     *
      * @param value
      *            the new value
      * @param node

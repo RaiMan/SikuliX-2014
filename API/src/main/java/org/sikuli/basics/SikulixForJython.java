@@ -10,7 +10,7 @@ package org.sikuli.basics;
  */
 @Deprecated
 public class SikulixForJython {
-  
+
   static {
     org.sikuli.script.SikulixForJython.get();
   }

@@ -36,67 +36,67 @@ import org.sikuli.basics.Debug;
  *  created to manage the data from each connection.  Connection
  *  Controller also extends GraphicsEnvironment so that it can be used
  *  with the Java2D API
- *  
+ *
  *  @author Mike Johnson
  */
 public class ConnectionController extends GraphicsEnvironment {
 
 	protected ArrayList<VNCThread> threads = new ArrayList<VNCThread>();
-	
+
 	private static ArrayList<ConnectionController> cons = new ArrayList<ConnectionController>();
-	
+
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param sockets for connections
 	 */
 	public ConnectionController(Socket... sockets){
-		
+
 		for(int i = 0; i < sockets.length; i++){
 			threads.add(new VNCThread(sockets[i]));
 		}
-		
+
 		cons.add(this);
 	}
-	
+
 //Thread wrapper methods******************************************************/
-    
+
 	/**
 	 * Gets a protocol message object from the array at the given index
-	 * 
+	 *
 	 * @param index
 	 * @return VNC protocol message object
 	 */
 	protected VNCClient getC(int index){
 		return threads.get(index).getClient();
 	}
-	
+
 	/**
 	 * Gets a local framebuffer object from the array at the given index
-	 * 
+	 *
 	 * @param index
 	 * @return local framebuffer object
 	 */
 	protected Framebuffer getF(int index){
 		return threads.get(index).getScreen();
 	}
-	
+
 	/**
 	 * Tells one of the VNC Client Threads to connect to the VNC server
 	 */
 	public void openConnection(int index){
 		//since other security types are not yet supported
-		threads.get(index).openConnection(1, 1); 
+		threads.get(index).openConnection(1, 1);
 	}
-	
+
 	/**
-	 * Changes the rate at which one of the VNC Client Threads polls 
+	 * Changes the rate at which one of the VNC Client Threads polls
 	 * the server for changes
 	 */
 	public void changeUpdateInterval(int index, int milliseconds){
 		threads.get(index).changePollInterval(milliseconds);
 	}
-	
+
 	/**
 	 * Closes one of the VNC Client Threads and removes it from
 	 * the ArrayList
@@ -106,23 +106,23 @@ public class ConnectionController extends GraphicsEnvironment {
 		threads.remove(index);
 		Debug.log(4, "VNC.ConnectionController: closed connection: %d", index);
 	}
-	
+
 	/**
-	 * Sets the pixel format assoicated with one of the VNC 
+	 * Sets the pixel format assoicated with one of the VNC
 	 * Client Threads
 	 */
-	public void setPixelFormat(int index, String format, 
+	public void setPixelFormat(int index, String format,
 			int bitsPerPixel, int bigEndianFlag) {
 		try {
 			Debug.log(4, "Setting Pixel format for thread: "+index);
-			threads.get(index).setPixelFormat(format, 
+			threads.get(index).setPixelFormat(format,
 					bitsPerPixel, bigEndianFlag);
 		}
 		catch (IOException io) {
 			Debug.log(-1, "Error: IO Exception "+io);
 		}
 	}
-	
+
 	/**
 	 * Adds a new VNCThread to the list of connections
 	 */
@@ -130,20 +130,20 @@ public class ConnectionController extends GraphicsEnvironment {
 		threads.add(new VNCThread(s));
 		return threads.size() -1;
 	}
-	
+
 	public void start(int index){
 		threads.get(index).start();
 	}
-	
+
 	public int getNumberOfConnections(){
 		return threads.size();
 	}
-    
+
 //GraphicsEnvironment extension***********************************************/
-	
+
 	/**
 	 * Returns an active connection controller
-	 * 
+	 *
 	 * @param index the index in the array
 	 * @return active connectioncontroller
 	 */
@@ -153,10 +153,10 @@ public class ConnectionController extends GraphicsEnvironment {
 		}
 		return cons.get(index);
 	}
-	
+
 	/**
 	 * Returns an array of all of the screen devices
-	 * 
+	 *
 	 * @return Array of screen devices
 	 */
 	@Override
@@ -165,17 +165,17 @@ public class ConnectionController extends GraphicsEnvironment {
 			throw new HeadlessException();
 		}
 		Framebuffer[] fbs = new Framebuffer[threads.size()];
-		
+
 		for(int i = 0; i < fbs.length; i++){
 			fbs[i] = threads.get(i).getScreen();
 		}
-		
+
 		return fbs;
 	}
 
 	/**
 	 * Returns the default screen device
-	 * 
+	 *
 	 * @return The default screen device
 	 */
 	@Override
@@ -188,7 +188,7 @@ public class ConnectionController extends GraphicsEnvironment {
 
 	/**
 	 * Returns a Graphics2D object used to render on the BufferedImage.
-	 * 
+	 *
 	 * @param img BufferedImage
 	 * @return the Grpahics2D
 	 */
@@ -199,7 +199,7 @@ public class ConnectionController extends GraphicsEnvironment {
 
 	/**
 	 * Returns an array of the fonts for the local graphics environement.
-	 * 
+	 *
 	 * @return An array of fonts
 	 */
 	@Override
@@ -210,7 +210,7 @@ public class ConnectionController extends GraphicsEnvironment {
 	/**
 	 * Returns an array of the available font family names in the local
 	 * GraphicsEnvironment.
-	 * 
+	 *
 	 * @return The array of names
 	 */
 	@Override
@@ -222,7 +222,7 @@ public class ConnectionController extends GraphicsEnvironment {
 	/**
 	 * Returns an array of the available font family names based on
 	 * a specific locale.
-	 * 
+	 *
 	 * @return The array of names
 	 */
 	@Override
@@ -231,5 +231,3 @@ public class ConnectionController extends GraphicsEnvironment {
 				).getAvailableFontFamilyNames(l);
 	}
 }
-
-

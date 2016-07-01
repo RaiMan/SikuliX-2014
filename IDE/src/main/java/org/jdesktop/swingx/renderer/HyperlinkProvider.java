@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -30,36 +30,35 @@ import org.jdesktop.swingx.rollover.RolloverRenderer;
 
 /**
  * Renderer for hyperlinks". <p>
- * 
- * The renderer is configured with a LinkAction<T>. 
+ *
+ * The renderer is configured with a LinkAction<T>.
  * It's mostly up to the developer to guarantee that the all
  * values which are passed into the getXXRendererComponent(...) are
  * compatible with T: she can provide a runtime class to check against.
  * If it isn't the renderer will configure the
  * action with a null target. <p>
- * 
+ *
  * It's recommended to not use the given Action anywhere else in code,
  * as it is updated on each getXXRendererComponent() call which might
  * lead to undesirable side-effects. <p>
- * 
+ *
  * Internally uses JXHyperlink as rendering component. <p>
- * 
+ *
  * PENDING: can go from ButtonProvider? <p>
- * 
+ *
  * PENDING: make renderer respect selected cell state. <p>
- * 
+ *
  * PENDING: TreeCellRenderer has several issues <p>
  * <ol>
  *   <li> no icons
  *   <li> usual background highlighter issues
- * </ol>  
- * 
+ * </ol>
+ *
  * @author Jeanette Winzenburg
  */
 public class HyperlinkProvider
    extends ComponentProvider<JXHyperlink> implements
          RolloverRenderer {
-
 
     private AbstractHyperlinkAction<Object> linkAction;
     protected Class<?> targetClass;
@@ -75,20 +74,20 @@ public class HyperlinkProvider
 
     /**
      * Instantiate a LinkRenderer with the LinkAction to use with
-     * target values. 
-     * 
+     * target values.
+     *
      * @param linkAction the action that acts on values.
      */
     public HyperlinkProvider(AbstractHyperlinkAction linkAction) {
         this(linkAction, null);
     }
-    
+
     /**
      * Instantiate a LinkRenderer with a LinkAction to use with
      * target values and the type of values the action can cope with. <p>
-     * 
+     *
      * It's up to developers to take care of matching types.
-     * 
+     *
      * @param linkAction the action that acts on values.
      * @param targetClass the type of values the action can handle.
      */
@@ -97,12 +96,12 @@ public class HyperlinkProvider
 //        rendererComponent.addActionListener(createEditorActionListener());
         setLinkAction(linkAction, targetClass);
     }
-    
+
     /**
      * Sets the class the action is supposed to handle. <p>
-     * 
+     *
      * PENDING: make sense to set independently of LinkAction?
-     * 
+     *
      * @param targetClass the type of values the action can handle.
      */
     public void setTargetClass(Class<?> targetClass) {
@@ -111,45 +110,45 @@ public class HyperlinkProvider
 
     /**
      * Sets the LinkAction for handling the values. <p>
-     * 
+     *
      * The action is assumed to be able to cope with any type, that is
      * this method is equivalent to setLinkAction(linkAction, null).
-     * 
+     *
      * @param linkAction
      */
     public void setLinkAction(AbstractHyperlinkAction linkAction) {
         setLinkAction(linkAction, null);
     }
-    
+
     /**
-     * Sets the LinkAction for handling the values and the 
+     * Sets the LinkAction for handling the values and the
      * class the action can handle. <p>
-     * 
+     *
      * PENDING: in the general case this is not independent of the
      * targetClass. Need api to set them combined?
-     * 
+     *
      * @param linkAction
      */
     public void setLinkAction(AbstractHyperlinkAction linkAction, Class<?> targetClass) {
         if (linkAction == null) {
             linkAction = createDefaultLinkAction();
         }
-        setTargetClass(targetClass); 
+        setTargetClass(targetClass);
         this.linkAction = linkAction;
         rendererComponent.setAction(linkAction);
-        
+
     }
     /**
      * decides if the given target is acceptable for setTarget.
      * <p>
-     *  
+     *
      *  target == null is acceptable for all types.
      *  targetClass == null is the same as Object.class
-     *  
+     *
      * @param target the target to set.
-     * @return true if setTarget can cope with the object, 
+     * @return true if setTarget can cope with the object,
      *  false otherwise.
-     * 
+     *
      */
     public  boolean isTargetable(Object target) {
         // we accept everything
@@ -159,10 +158,9 @@ public class HyperlinkProvider
     }
 
 
-
-    /** 
+    /**
      * default action - does nothing... except showing the target.
-     * 
+     *
      * @return a default LinkAction for showing the target.
      */
     protected AbstractHyperlinkAction createDefaultLinkAction() {
@@ -171,14 +169,14 @@ public class HyperlinkProvider
             @Override
             public void actionPerformed(ActionEvent e) {
                 // TODO Auto-generated method stub
-                
+
             }
-            
+
         };
     }
 
 //----------------------- Implement RolloverRenderer
-    
+
     @Override
     public boolean isEnabled() {
         return true;
@@ -188,16 +186,16 @@ public class HyperlinkProvider
     public void doClick() {
         rendererComponent.doClick();
     }
-    
-//------------------------ ComponentProvider 
-    
+
+//------------------------ ComponentProvider
+
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * PENDING JW: Needs to be overridden - doesn't comply to contract!. Not sure
      * how to do it without disturbing the hyperlinks current setting?
      * All hyperlink properties are defined by the LinkAction configured
-     * with the target ...  
+     * with the target ...
      */
     @Override
     public String getString(Object value) {
@@ -211,12 +209,11 @@ public class HyperlinkProvider
         return super.getString(value);
     }
 
-   
 
     /**
      * {@inheritDoc} <p>
-     * 
-     * Overridden to set the hyperlink's rollover state. 
+     *
+     * Overridden to set the hyperlink's rollover state.
      */
     @Override
     protected void configureState(CellContext context) {
@@ -224,7 +221,7 @@ public class HyperlinkProvider
         if (context.getComponent() !=  null) {
             Point p = (Point) context.getComponent()
                     .getClientProperty(RolloverProducer.ROLLOVER_KEY);
-            if (/*hasFocus || */(p != null && (p.x >= 0) && 
+            if (/*hasFocus || */(p != null && (p.x >= 0) &&
                     (p.x == context.getColumn()) && (p.y == context.getRow()))) {
                 if (!rendererComponent.getModel().isRollover())
                  rendererComponent.getModel().setRollover(true);
@@ -237,20 +234,20 @@ public class HyperlinkProvider
 
     /**
      * {@inheritDoc}
-     * 
-     * Overridden to set the LinkAction's target to the context's value, if 
+     *
+     * Overridden to set the LinkAction's target to the context's value, if
      * targetable.<p>
-     * 
+     *
      * Forces foreground color to the one defined by hyperlink for unselected
      * cells, doesn't change the foreground for selected (as darkish text on dark selection
      * background might be unreadable, Issue #840-swingx). Not entirely safe because
      * the unselected background might be dark as well. Need to find a better way in
-     * the long run. Until then, client code can use Highlighters to repair 
+     * the long run. Until then, client code can use Highlighters to repair
      * (which is nasty!). <p>
-     * 
+     *
      * PENDING JW: by-passes XXValues - state currently is completely defined by
-     * the action. Hmm ... 
-     * 
+     * the action. Hmm ...
+     *
      */
     @Override
     protected void format(CellContext context) {
@@ -262,9 +259,9 @@ public class HyperlinkProvider
         }
         // hmm... the hyperlink should do this automatically..
         // Issue #840-swingx: hyperlink unreadable if selected (for dark selection colors)
-        // so we only force clicked/unclicked if unselected 
+        // so we only force clicked/unclicked if unselected
         if (!context.isSelected()) {
-            rendererComponent.setForeground(linkAction.isVisited() ? 
+            rendererComponent.setForeground(linkAction.isVisited() ?
                 rendererComponent.getClickedColor() : rendererComponent.getUnclickedColor());
         } else {
             // JW: workaround #845-swingx which was introduced by fixing #840
@@ -280,6 +277,5 @@ public class HyperlinkProvider
     protected JXHyperlink createRendererComponent() {
         return new JXRendererHyperlink();
     }
-
 
 }

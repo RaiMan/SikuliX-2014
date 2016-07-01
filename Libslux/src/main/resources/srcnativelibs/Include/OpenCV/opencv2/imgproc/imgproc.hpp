@@ -90,7 +90,6 @@ public:
     int ksize, anchor;
 };
 
-
 /*!
  The Base Class for Column-wise Filters
 
@@ -842,7 +841,6 @@ CV_EXPORTS_W int floodFill( InputOutputArray image, InputOutputArray mask,
                             Scalar loDiff=Scalar(), Scalar upDiff=Scalar(),
                             int flags=4 );
 
-
 enum
 {
     COLOR_BGR2BGRA    =0,
@@ -1086,7 +1084,6 @@ enum
     COLOR_COLORCVT_MAX  = 135
 };
 
-
 //! converts image from one color space to another
 CV_EXPORTS_W void cvtColor( InputArray src, OutputArray dst, int code, int dstCn=0 );
 
@@ -1201,7 +1198,6 @@ CV_EXPORTS_W void fitLine( InputArray points, OutputArray line, int distType,
                            double param, double reps, double aeps );
 //! checks if the point is inside the contour. Optionally computes the signed distance from the point to the contour boundary
 CV_EXPORTS_W double pointPolygonTest( InputArray contour, Point2f pt, bool measureDist );
-
 
 class CV_EXPORTS_W Subdiv2D
 {

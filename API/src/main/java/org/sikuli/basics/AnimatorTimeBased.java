@@ -41,4 +41,3 @@ public class AnimatorTimeBased implements Animator {
     return _running;
   }
 }
-

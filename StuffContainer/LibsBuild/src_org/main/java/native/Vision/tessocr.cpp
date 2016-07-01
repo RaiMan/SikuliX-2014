@@ -16,7 +16,6 @@ using namespace std;
 using namespace sikuli;
 using namespace tesseract;
 
-
 TessBaseAPI OCR::_tessAPI;
 
 #define COMPUTE_IMAGE_XDIM(xsize,bpp) ((bpp)>8 ? ((xsize)*(bpp)+7)/8 :((xsize)+8/(bpp)-1)/(8/(bpp)))
@@ -51,7 +50,6 @@ char* OCR::getText(const unsigned char* imagedata,
    return text;
 }
 
-
 OCRRect::OCRRect(int x_, int y_, int width_, int height_)
 : x(x_), y(y_), width(width_), height(height_){};
 
@@ -81,7 +79,6 @@ OCRRect::addOCRRect(const OCRRect& rect){
       x = left; y = top; width = right - left; height = bottom - top;
    }
 }
-
 
 void
 OCRWord::add(const OCRChar& ocr_char){
@@ -166,7 +163,6 @@ OCRParagraph::getLines(){
 //   ocr_lines_.push_back(ocr_line);
 //}
 
-
 void
 OCRText::save(const char* filename){
 // TODO: reimplement
@@ -185,7 +181,6 @@ OCRText::save(const char* filename){
 
 void
 OCRText::save_with_location(const char* filename){
-
 
    vector<OCRWord> words = getWords();
 
@@ -233,7 +228,6 @@ OCRText::getLineStrings(){
 
    return line_strings;
 }
-
 
 vector<OCRWord>
 OCRText::getWords(){
@@ -303,7 +297,6 @@ OCRText::getString(){
    if (word_strings.empty())
       return "";
 
-
    string ret = word_strings.front();
 
    for (vector<string>::iterator it = word_strings.begin() + 1;
@@ -314,7 +307,6 @@ OCRText::getString(){
 
    return ret;
 }
-
 
 char
 encode(char ch){
@@ -329,7 +321,6 @@ encode(char ch){
       code = 0;
    return code;
 }
-
 
 // produce a new image 200% the size of the given image
 unsigned char* x2(const unsigned char* imagedata,
@@ -529,7 +520,6 @@ vector<OCRWord> getWordsFromImage(const Mat& screen, const Blob& blob){
    Mat ocrImage;  // the image passed to tesseract
    float scale = preprocess_for_ocr(blobImage, ocrImage);
 
-
    vector<OCRWord> ocr_words;
    ocr_words = OCR::recognize_to_words((unsigned char*)ocrImage.data,
                               ocrImage.cols,
@@ -553,7 +543,6 @@ vector<OCRWord> getWordsFromImage(const Mat& screen, const Blob& blob){
 
    return ocr_words;
 }
-
 
 
 vector<OCRChar> run_ocr(const Mat& screen, const Blob& blob){
@@ -588,7 +577,6 @@ vector<OCRChar> run_ocr(const Mat& screen, const Blob& blob){
    return ocr_chars;
 }
 
-
 void
 find_phrase_helper(const Mat& screen_gray, vector<string> words, vector<LineBlob> lineblobs,
                    LineBlob resultblob, vector<FindResult>& results, bool is_find_one = true){
@@ -605,7 +593,6 @@ find_phrase_helper(const Mat& screen_gray, vector<string> words, vector<LineBlob
    vector<LineBlob> lineblobs_thisround = lineblobs;
    for (int r = 0; r < 3; ++r){
 
-
       for (int tolerance = 0; tolerance < 3; ++tolerance){
 
          vector<LineBlob> lineblobs_nextround;
@@ -614,7 +601,6 @@ find_phrase_helper(const Mat& screen_gray, vector<string> words, vector<LineBlob
               it != lineblobs_thisround.end(); ++it){
 
             LineBlob lineblob = *it;
-
 
             if (abs((int)lineblob.blobs.size() - (int)word.size()) > tolerance){
                lineblobs_nextround.push_back(lineblob);
@@ -643,7 +629,6 @@ find_phrase_helper(const Mat& screen_gray, vector<string> words, vector<LineBlob
 
             int d = findEditDistanceLessThanK(word.c_str(), ocrword.c_str(),3);
 
-
             dout("find_phrase") << '[' << d << ']';
 
             if (d > 2){
@@ -651,7 +636,6 @@ find_phrase_helper(const Mat& screen_gray, vector<string> words, vector<LineBlob
                lineblobs_nextround.push_back(lineblob);
                continue;
             }
-
 
             if (rest.empty()){
                dout("find_phrase") << " ... match!" << endl;
@@ -693,7 +677,6 @@ find_phrase_helper(const Mat& screen_gray, vector<string> words, vector<LineBlob
             }
 
 
-
             if (!rest.empty() && !nextblobs.empty()){
 
                LineBlob next_resultblob = resultblob;
@@ -701,7 +684,6 @@ find_phrase_helper(const Mat& screen_gray, vector<string> words, vector<LineBlob
 
                find_phrase_helper(screen_gray, rest, nextblobs, next_resultblob, results, is_find_one);
             }
-
 
 
             dout("find_phrase") << endl;
@@ -713,16 +695,13 @@ find_phrase_helper(const Mat& screen_gray, vector<string> words, vector<LineBlob
 
          }
 
-
          lineblobs_thisround = lineblobs_nextround;
 
       }
 
 
-
    }
 }
-
 
 int
 OCR::findEditDistance(const char *s1, const char *s2,
@@ -765,7 +744,6 @@ OCR::recognize_screenshot(const char* screenshot_filename){
 }
 
 
-
 OCRLine
 linkOCRCharsToOCRLine(const vector<OCRChar>& ocrchars){
 
@@ -788,7 +766,6 @@ linkOCRCharsToOCRLine(const vector<OCRChar>& ocrchars){
          //cout << '[' << spacing << ']';
       }
 
-
       if (it < ocrchars.end() - 1){
          const OCRChar& next_ocrchar = *(it+1);
          next_spacing = next_ocrchar.x - (ocrchar.x + ocrchar.width);
@@ -807,7 +784,6 @@ linkOCRCharsToOCRLine(const vector<OCRChar>& ocrchars){
          ocrword.clear();
          //cout << ' ';
       }
-
 
       previous_spacing = current_spacing;
 
@@ -846,7 +822,6 @@ recognize_line(const cv::Mat& screen_gray, const LineBlob& lineblob){
 }
 */
 
-
 OCRParagraph
 recognize_paragraph(const cv::Mat& screen_gray, const ParagraphBlob& parablob){
 
@@ -857,7 +832,6 @@ recognize_paragraph(const cv::Mat& screen_gray, const ParagraphBlob& parablob){
 
       const LineBlob& lineblob = *it;
       OCRLine ocrline = recognize_line(screen_gray, lineblob);
-
 
       if (!ocrline.getWords().empty())
          ocrparagraph.addLine(ocrline);
@@ -871,7 +845,6 @@ OCR::recognize(cv::Mat screen){
 
    OCRText ocrtext;
 
-
    vector<ParagraphBlob> parablobs;
    cvgui::getParagraphBlobs(screen, parablobs);
 
@@ -880,7 +853,6 @@ OCR::recognize(cv::Mat screen){
       cvtColor(screen,screen_gray,CV_RGB2GRAY);
    else
       screen_gray = screen;
-
 
    for (vector<ParagraphBlob>::iterator it = parablobs.begin();
         it != parablobs.end(); ++it){
@@ -897,10 +869,8 @@ OCR::recognize(cv::Mat screen){
    //Painter::drawOCRText(dark, ocrtext);
    //VLOG("OCR-result", dark);
 
-
    return ocrtext;
 }
-
 
 
 vector<OCRChar>
@@ -931,15 +901,12 @@ OCR::recognize(const unsigned char* imagedata,
          ret.push_back(ocr_char);
       };
 
-
       delete [] boxtext;
    }
 
 
-
    return ret;
 }
-
 
 
 vector<OCRWord>
@@ -986,4 +953,3 @@ OCR::recognize_to_words(const unsigned char* imagedata,
    }
    return ret;
 }
-

@@ -49,7 +49,6 @@
 #  endif
 #endif
 
-
 #ifndef SKIP_INCLUDES
 
 #include <assert.h>
@@ -356,7 +355,6 @@ CV_INLINE  int  cvFloor( double value )
 #endif
 }
 
-
 CV_INLINE  int  cvCeil( double value )
 {
 #if defined _MSC_VER && defined _M_X64 || (defined __GNUC__ && defined __SSE2__&& !defined __APPLE__)
@@ -384,7 +382,6 @@ CV_INLINE int cvIsNaN( double value )
            ((unsigned)ieee754.u != 0) > 0x7ff00000;
 }
 
-
 CV_INLINE int cvIsInf( double value )
 {
     Cv64suf ieee754;
@@ -392,7 +389,6 @@ CV_INLINE int cvIsInf( double value )
     return ((unsigned)(ieee754.u >> 32) & 0x7fffffff) == 0x7ff00000 &&
            (unsigned)ieee754.u == 0;
 }
-
 
 /*************** Random number generation *******************/
 
@@ -680,7 +676,6 @@ typedef struct CvMat
 }
 CvMat;
 
-
 #define CV_IS_MAT_HDR(mat) \
     ((mat) != NULL && \
     (((const CvMat*)(mat))->type & CV_MAGIC_MASK) == CV_MAT_MAGIC_VAL && \
@@ -747,7 +742,6 @@ CV_INLINE CvMat cvMat( int rows, int cols, int type, void* data CV_DEFAULT(NULL)
     return m;
 }
 
-
 #define CV_MAT_ELEM_PTR_FAST( mat, row, col, pix_size )  \
     (assert( (unsigned)(row) < (unsigned)(mat).rows &&   \
              (unsigned)(col) < (unsigned)(mat).cols ),   \
@@ -758,7 +752,6 @@ CV_INLINE CvMat cvMat( int rows, int cols, int type, void* data CV_DEFAULT(NULL)
 
 #define CV_MAT_ELEM( mat, elemtype, row, col )           \
     (*(elemtype*)CV_MAT_ELEM_PTR_FAST( mat, row, col, sizeof(elemtype)))
-
 
 CV_INLINE  double  cvmGet( const CvMat* mat, int row, int col )
 {
@@ -777,7 +770,6 @@ CV_INLINE  double  cvmGet( const CvMat* mat, int row, int col )
     }
 }
 
-
 CV_INLINE  void  cvmSet( CvMat* mat, int row, int col, double value )
 {
     int type;
@@ -794,14 +786,12 @@ CV_INLINE  void  cvmSet( CvMat* mat, int row, int col, double value )
     }
 }
 
-
 CV_INLINE int cvIplDepth( int type )
 {
     int depth = CV_MAT_DEPTH(type);
     return CV_ELEM_SIZE1(depth)*8 | (depth == CV_8S || depth == CV_16S ||
            depth == CV_32S ? IPL_DEPTH_SIGN : 0);
 }
-
 
 /****************************************************************************************\
 *                       Multi-dimensional dense array (CvMatND)                          *
@@ -844,7 +834,6 @@ CvMatND;
 
 #define CV_IS_MATND(mat) \
     (CV_IS_MATND_HDR(mat) && ((const CvMatND*)(mat))->data.ptr != NULL)
-
 
 /****************************************************************************************\
 *                      Multi-dimensional sparse array (CvSparseMat)                      *
@@ -969,7 +958,6 @@ CV_INLINE  CvRect  cvRect( int x, int y, int width, int height )
     return r;
 }
 
-
 CV_INLINE  IplROI  cvRectToROI( CvRect rect, int coi )
 {
     IplROI roi;
@@ -981,7 +969,6 @@ CV_INLINE  IplROI  cvRectToROI( CvRect rect, int coi )
 
     return roi;
 }
-
 
 CV_INLINE  CvRect  cvROIToRect( IplROI roi )
 {
@@ -1015,7 +1002,6 @@ CV_INLINE  CvTermCriteria  cvTermCriteria( int type, int max_iter, double epsilo
     return t;
 }
 
-
 /******************************* CvPoint and variants ***********************************/
 
 typedef struct CvPoint
@@ -1024,7 +1010,6 @@ typedef struct CvPoint
     int y;
 }
 CvPoint;
-
 
 CV_INLINE  CvPoint  cvPoint( int x, int y )
 {
@@ -1036,14 +1021,12 @@ CV_INLINE  CvPoint  cvPoint( int x, int y )
     return p;
 }
 
-
 typedef struct CvPoint2D32f
 {
     float x;
     float y;
 }
 CvPoint2D32f;
-
 
 CV_INLINE  CvPoint2D32f  cvPoint2D32f( double x, double y )
 {
@@ -1055,12 +1038,10 @@ CV_INLINE  CvPoint2D32f  cvPoint2D32f( double x, double y )
     return p;
 }
 
-
 CV_INLINE  CvPoint2D32f  cvPointTo32f( CvPoint point )
 {
     return cvPoint2D32f( (float)point.x, (float)point.y );
 }
-
 
 CV_INLINE  CvPoint  cvPointFrom32f( CvPoint2D32f point )
 {
@@ -1071,7 +1052,6 @@ CV_INLINE  CvPoint  cvPointFrom32f( CvPoint2D32f point )
     return ipt;
 }
 
-
 typedef struct CvPoint3D32f
 {
     float x;
@@ -1079,7 +1059,6 @@ typedef struct CvPoint3D32f
     float z;
 }
 CvPoint3D32f;
-
 
 CV_INLINE  CvPoint3D32f  cvPoint3D32f( double x, double y, double z )
 {
@@ -1092,14 +1071,12 @@ CV_INLINE  CvPoint3D32f  cvPoint3D32f( double x, double y, double z )
     return p;
 }
 
-
 typedef struct CvPoint2D64f
 {
     double x;
     double y;
 }
 CvPoint2D64f;
-
 
 CV_INLINE  CvPoint2D64f  cvPoint2D64f( double x, double y )
 {
@@ -1111,7 +1088,6 @@ CV_INLINE  CvPoint2D64f  cvPoint2D64f( double x, double y )
     return p;
 }
 
-
 typedef struct CvPoint3D64f
 {
     double x;
@@ -1119,7 +1095,6 @@ typedef struct CvPoint3D64f
     double z;
 }
 CvPoint3D64f;
-
 
 CV_INLINE  CvPoint3D64f  cvPoint3D64f( double x, double y, double z )
 {
@@ -1131,7 +1106,6 @@ CV_INLINE  CvPoint3D64f  cvPoint3D64f( double x, double y, double z )
 
     return p;
 }
-
 
 /******************************** CvSize's & CvBox **************************************/
 
@@ -1159,7 +1133,6 @@ typedef struct CvSize2D32f
 }
 CvSize2D32f;
 
-
 CV_INLINE  CvSize2D32f  cvSize2D32f( double width, double height )
 {
     CvSize2D32f s;
@@ -1179,7 +1152,6 @@ typedef struct CvBox2D
 }
 CvBox2D;
 
-
 /* Line iterator state: */
 typedef struct CvLineIterator
 {
@@ -1194,7 +1166,6 @@ typedef struct CvLineIterator
     int  minus_step;
 }
 CvLineIterator;
-
 
 
 /************************************* CvSlice ******************************************/
@@ -1217,7 +1188,6 @@ CV_INLINE  CvSlice  cvSlice( int start, int end )
 #define CV_WHOLE_SEQ_END_INDEX 0x3fffffff
 #define CV_WHOLE_SEQ  cvSlice(0, CV_WHOLE_SEQ_END_INDEX)
 
-
 /************************************* CvScalar *****************************************/
 
 typedef struct CvScalar
@@ -1234,7 +1204,6 @@ CV_INLINE  CvScalar  cvScalar( double val0, double val1 CV_DEFAULT(0),
     scalar.val[2] = val2; scalar.val[3] = val3;
     return scalar;
 }
-
 
 CV_INLINE  CvScalar  cvRealScalar( double val0 )
 {
@@ -1284,14 +1253,12 @@ CvMemStorage;
     ((storage) != NULL &&       \
     (((CvMemStorage*)(storage))->signature & CV_MAGIC_MASK) == CV_STORAGE_MAGIC_VAL)
 
-
 typedef struct CvMemStoragePos
 {
     CvMemBlock* top;
     int free_space;
 }
 CvMemStoragePos;
-
 
 /*********************************** Sequence *******************************************/
 
@@ -1305,7 +1272,6 @@ typedef struct CvSeqBlock
     schar* data;              /* Pointer to the first element of the block. */
 }
 CvSeqBlock;
-
 
 #define CV_TREE_NODE_FIELDS(node_type)                               \
     int       flags;             /* Miscellaneous flags.     */      \
@@ -1367,7 +1333,6 @@ typedef struct CvSet
 }
 CvSet;
 
-
 #define CV_SET_ELEM_IDX_MASK   ((1 << 26) - 1)
 #define CV_SET_ELEM_FREE_FLAG  (1 << (sizeof(int)*8-1))
 
@@ -1400,11 +1365,9 @@ CvSet;
     struct CvGraphEdge* next[2];    \
     struct CvGraphVtx* vtx[2];
 
-
 #define CV_GRAPH_VERTEX_FIELDS()    \
     int flags;                      \
     struct CvGraphEdge* first;
-
 
 typedef struct CvGraphEdge
 {
@@ -1605,7 +1568,6 @@ typedef struct CvSeqWriter
 }
 CvSeqWriter;
 
-
 #define CV_SEQ_READER_FIELDS()                                      \
     int          header_size;                                       \
     CvSeq*       seq;        /* sequence, beign read */             \
@@ -1615,7 +1577,6 @@ CvSeqWriter;
     schar*       block_max;  /* pointer to the end of block */      \
     int          delta_index;/* = seq->first->start_index   */      \
     schar*       prev_elem;  /* pointer to previous element */
-
 
 typedef struct CvSeqReader
 {
@@ -1660,7 +1621,6 @@ CvSeqReader;
     (writer).ptr += sizeof(elem);                     \
 }
 
-
 /* Move reader position forward: */
 #define CV_NEXT_SEQ_ELEM( elem_size, reader )                 \
 {                                                             \
@@ -1669,7 +1629,6 @@ CvSeqReader;
         cvChangeSeqBlock( &(reader), 1 );                     \
     }                                                         \
 }
-
 
 /* Move reader position backward: */
 #define CV_PREV_SEQ_ELEM( elem_size, reader )                \
@@ -1695,7 +1654,6 @@ CvSeqReader;
     memcpy(&(elem), (reader).ptr, sizeof((elem)));               \
     CV_PREV_SEQ_ELEM( sizeof(elem), reader )                     \
 }
-
 
 #define CV_READ_CHAIN_POINT( _pt, reader )                              \
 {                                                                       \
@@ -1729,7 +1687,6 @@ CvSeqReader;
 #define  CV_NEXT_GRAPH_EDGE( edge, vertex )                              \
      (assert((edge)->vtx[0] == (vertex) || (edge)->vtx[1] == (vertex)),  \
       (edge)->next[(edge)->vtx[1] == (vertex)])
-
 
 
 /****************************************************************************************\
@@ -1868,7 +1825,6 @@ typedef struct CvTypeInfo
     CvCloneFunc clone;
 }
 CvTypeInfo;
-
 
 /**** System data types ******/
 

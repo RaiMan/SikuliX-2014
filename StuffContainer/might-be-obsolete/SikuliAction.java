@@ -72,4 +72,3 @@ public class SikuliAction {
       this._source = _source;
    }
 }
-

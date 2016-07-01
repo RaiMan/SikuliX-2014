@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -28,49 +28,49 @@ import javax.swing.event.ChangeListener;
 import org.jdesktop.swingx.event.WeakEventListenerList;
 
 /**
- * Abstract <code>Highlighter</code> implementation which manages change 
- * notification and supports conditional highlighting. 
+ * Abstract <code>Highlighter</code> implementation which manages change
+ * notification and supports conditional highlighting.
  * Subclasses are required to fire ChangeEvents on internal changes which might
  * effect the highlight. The HighlightPredicate controls whether or not
- * a highlight should be applied for the given ComponentAdapter, 
- * subclasses must guarantee to respect its decision. 
+ * a highlight should be applied for the given ComponentAdapter,
+ * subclasses must guarantee to respect its decision.
  * <p>
- * 
+ *
  * Concrete custom implementations should focus on a single (or few) visual
  * attribute to highlight. This allows easy re-use by composition.  F.i. a custom
  * FontHighlighter:
- * 
+ *
  * <pre><code>
  * public static class FontHighlighter extends AbstractHighlighter {
- * 
+ *
  *     private Font font;
- * 
+ *
  *     public FontHighlighter(HighlightPredicate predicate, Font font) {
  *         super(predicate);
  *         setFont(font);
  *     }
- * 
+ *
  *     &#64;Override
  *     protected Component doHighlight(Component component,
  *             ComponentAdapter adapter) {
  *         component.setFont(font);
  *         return component;
  *     }
- *     
+ *
  *     public final void setFont(Font font) {
  *        if (equals(font, this.font)) return;
  *        this.font = font;
  *        fireStateChanged();
  *     }
- *     
- * 
+ *
+ *
  * }
- * 
+ *
  * </code></pre>
- * 
+ *
  * Client code can combine the effect with a f.i. Color decoration, and use a
  * shared HighlightPredicate to apply both for the same condition.
- * 
+ *
  * <pre><code>
  * HighlightPredicate predicate = new HighlightPredicate() {
  *     public boolean isHighlighted(Component renderer, ComponentAdapter adapter) {
@@ -82,9 +82,9 @@ import org.jdesktop.swingx.event.WeakEventListenerList;
  *         new ColorHighlighter(predicate, Color.RED, null),
  *         new FontHighlighter(predicate, myBoldFont));
  * </code></pre>
- * 
+ *
  * @author Jeanette Winzenburg
- * 
+ *
  * @see HighlightPredicate
  * @see org.jdesktop.swingx.renderer.ComponentProvider
  */
@@ -113,11 +113,11 @@ public abstract class AbstractHighlighter implements Highlighter {
     }
 
     /**
-     * Instantiates a Highlighter with the given 
+     * Instantiates a Highlighter with the given
      * HighlightPredicate.<p>
-     * 
+     *
      * @param predicate the HighlightPredicate to use.
-     * 
+     *
      * @see #setHighlightPredicate(HighlightPredicate)
      */
     public AbstractHighlighter(HighlightPredicate predicate) {
@@ -127,10 +127,10 @@ public abstract class AbstractHighlighter implements Highlighter {
     /**
      * Set the HighlightPredicate used to decide whether a cell should
      * be highlighted. If null, sets the predicate to HighlightPredicate.ALWAYS.
-     * 
-     * The default value is HighlightPredicate.ALWAYS. 
-     * 
-     * @param predicate the HighlightPredicate to use. 
+     *
+     * The default value is HighlightPredicate.ALWAYS.
+     *
+     * @param predicate the HighlightPredicate to use.
      */
     public void setHighlightPredicate(HighlightPredicate predicate) {
         if (predicate == null) {
@@ -142,9 +142,9 @@ public abstract class AbstractHighlighter implements Highlighter {
     }
 
     /**
-     * Returns the HighlightPredicate used to decide whether a cell 
+     * Returns the HighlightPredicate used to decide whether a cell
      * should be highlighted. Guaranteed to be never null.
-     * 
+     *
      * @return the HighlightPredicate to use, never null.
      */
     public HighlightPredicate getHighlightPredicate() {
@@ -155,20 +155,20 @@ public abstract class AbstractHighlighter implements Highlighter {
 
     /**
      * {@inheritDoc}
-     * 
+     *
      * This calls doHighlight to apply the decoration if both HighlightPredicate
      * isHighlighted and canHighlight return true. Returns the undecorated component otherwise.
-     * 
+     *
      * @param component the cell renderer component that is to be decorated
      * @param adapter the ComponentAdapter for this decorate operation
-     * 
+     *
      * @see #canHighlight(Component, ComponentAdapter)
      * @see #doHighlight(Component, ComponentAdapter)
      * @see #getHighlightPredicate()
      */
     @Override
     public Component highlight(Component component, ComponentAdapter adapter) {
-        if (canHighlight(component, adapter) && 
+        if (canHighlight(component, adapter) &&
                 getHighlightPredicate().isHighlighted(component, adapter)) {
             component = doHighlight(component, adapter);
         }
@@ -179,9 +179,9 @@ public abstract class AbstractHighlighter implements Highlighter {
      * Subclasses may override to further limit the highlighting based
      * on Highlighter state, f.i. a PainterHighlighter can only be applied
      * to PainterAware components. <p>
-     * 
+     *
      * This implementation returns true always.
-     * 
+     *
      * @param component
      * @param adapter
      * @return a boolean indication if the adapter can be highlighted based
@@ -191,25 +191,23 @@ public abstract class AbstractHighlighter implements Highlighter {
         return true;
     }
 
-
     /**
-     * Apply the highlights. 
-     * 
+     * Apply the highlights.
+     *
      * @param component the cell renderer component that is to be decorated
      * @param adapter the ComponentAdapter for this decorate operation
-     * 
+     *
      * @see #highlight(Component, ComponentAdapter)
      */
     protected abstract Component doHighlight(Component component,
             ComponentAdapter adapter);
 
-
     /**
      * Returns true if the to objects are either both null or equal
      * each other.
-     * 
+     *
      * @param oneItem one item
-     * @param anotherItem another item 
+     * @param anotherItem another item
      * @return true if both are null or equal other, false otherwise.
      */
     protected boolean areEqual(Object oneItem, Object anotherItem) {
@@ -224,7 +222,7 @@ public abstract class AbstractHighlighter implements Highlighter {
 
     /**
      * Adds a <code>ChangeListener</code>. ChangeListeners are
-     * notified after changes of any attribute. 
+     * notified after changes of any attribute.
      *
      * @param l the ChangeListener to add
      * @see #removeChangeListener
@@ -235,7 +233,7 @@ public abstract class AbstractHighlighter implements Highlighter {
     }
 
     /**
-     * Removes a <code>ChangeListener</code>e. 
+     * Removes a <code>ChangeListener</code>e.
      *
      * @param l the <code>ChangeListener</code> to remove
      * @see #addChangeListener
@@ -249,7 +247,7 @@ public abstract class AbstractHighlighter implements Highlighter {
      * Returns an array of all the change listeners
      * registered on this <code>Highlighter</code>.
      *
-     * @return all of this model's <code>ChangeListener</code>s 
+     * @return all of this model's <code>ChangeListener</code>s
      *         or an empty
      *         array if no change listeners are currently registered
      *
@@ -263,13 +261,13 @@ public abstract class AbstractHighlighter implements Highlighter {
         return listenerList.getListeners(ChangeListener.class);
     }
 
-    /** 
+    /**
      * Notifies registered <code>ChangeListener</code>s about
      * state changes.<p>
-     * 
+     *
      * Note: subclasses should be polite and implement any property
-     * setters to fire only if the property is really changed. 
-     *  
+     * setters to fire only if the property is really changed.
+     *
      */
     protected final void fireStateChanged() {
         Object[] listeners = listenerList.getListenerList();

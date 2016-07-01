@@ -85,7 +85,7 @@ public class App {
     }
     return false;
   }
-  
+
   /**
    * stop a started HTTP Client
    */
@@ -100,7 +100,7 @@ public class App {
   }
 
   /**
-   * issue a http(s) request 
+   * issue a http(s) request
    * @param url a valid url as used in a browser
    * @return textual content of the response or empty (UTF-8)
    * @throws IOException
@@ -142,9 +142,9 @@ public class App {
     }
     return (String) content;
   }
-  
+
   /**
-   * same as wwwGet(), but the content is also saved to a file 
+   * same as wwwGet(), but the content is also saved to a file
    * @param url a valid url as used in a browser
    * @param pOut absolute path to output file (overwritten) (if null: bundlePath/wwwSave.txt is taken)
    * @return textual content of the response or empty (UTF-8)
@@ -162,7 +162,7 @@ public class App {
     return content;
   }
   //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="special app features">
   public static enum Type {
 

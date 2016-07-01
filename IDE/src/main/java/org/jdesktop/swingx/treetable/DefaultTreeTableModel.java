@@ -27,7 +27,7 @@ import javax.swing.tree.TreePath;
 
 /**
  * {@code DefaultTreeTableModel} is a concrete implementation of
- * {@code AbstractTreeTableModel} and is provided purely as a convenience for 
+ * {@code AbstractTreeTableModel} and is provided purely as a convenience for
  * use with {@code TreeTableNode}s. Applications that use {@code JXTreeTable}
  * without {@code TreeTableNode}s are expected to provide their own
  * implementation of a {@code TreeTableModel}.
@@ -43,7 +43,7 @@ import javax.swing.tree.TreePath;
  * root node. Normally, the root node can be little more than a shell (in
  * displays that hide it), but without identifiers, the model relies on the root
  * node metadata for display.
- * 
+ *
  * @author Ramesh Gupta
  * @author Karl Schaefer
  */
@@ -63,7 +63,7 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
     /**
      * Creates a new {@code DefaultTreeTableModel} with the specified
      * {@code root}.
-     * 
+     *
      * @param root
      *            the root node of the tree
      */
@@ -74,7 +74,7 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
     /**
      * Creates a new {@code DefaultTreeTableModel} with the specified {@code
      * root} and column names.
-     * 
+     *
      * @param root
      *            the root node of the tree
      * @param columnNames
@@ -83,7 +83,7 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
      */
     public DefaultTreeTableModel(TreeTableNode root, List<?> columnNames) {
         super(root);
-        
+
         setColumnIdentifiers(columnNames);
     }
 
@@ -111,7 +111,7 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
      * number of columns, all the extra columns at the end of a row are
      * discarded.
      * <p>
-     * 
+     *
      * @param columnIdentifiers
      *            vector of column identifiers. If <code>null</code>, set the
      *            model to zero columns
@@ -123,7 +123,7 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
         this.columnIdentifiers = useAutoCalculatedIdentifiers
                 ? getAutoCalculatedIdentifiers(getRoot())
                 : columnIdentifiers;
-                
+
         modelSupport.fireNewRoot();
     }
 
@@ -140,13 +140,13 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
 
         return autoCalculatedIndentifiers;
     }
-    
+
     /**
      * Returns the root of the tree. Returns {@code null} only if the tree has
      * no nodes.
-     * 
+     *
      * @return the root of the tree
-     * 
+     *
      * @throws ClassCastException
      *             if {@code root} is not a {@code TreeTableNode}. Even though
      *             subclasses have direct access to {@code root}, they should
@@ -161,7 +161,7 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
 
     /**
      * Gets the value for the {@code node} at {@code column}.
-     * 
+     *
      * @impl delegates to {@code TreeTableNode.getValueAt(int)}
      * @param node
      *            the node whose value is to be queried
@@ -185,11 +185,11 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
         }
 
         TreeTableNode ttn = (TreeTableNode) node;
-        
+
         if (column >= ttn.getColumnCount()) {
             return null;
         }
-        
+
         return ttn.getValueAt(column);
     }
 
@@ -318,7 +318,7 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
 
     /**
      * Gets the path from the root to the specified node.
-     * 
+     *
      * @param aNode
      *            the node to query
      * @return an array of {@code TreeTableNode}s, where
@@ -349,7 +349,7 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
      * Sets the root for this table model. If no column identifiers have been
      * specified, this will rebuild the identifier list, using {@code root} as
      * an examplar of the table.
-     * 
+     *
      * @param root
      *            the node to set as root
      */
@@ -407,7 +407,7 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
      * the path. This change does not alter a nodes children in any way. If you
      * need to change structure of the node, use one of the provided mutator
      * methods.
-     * 
+     *
      * @param path
      *            path to the node that has changed
      * @param newValue
@@ -425,10 +425,10 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
         if (path.getPathComponent(0) != root) {
             throw new IllegalArgumentException("invalid path");
         }
-        
+
         TreeTableNode node = (TreeTableNode) path.getLastPathComponent();
         node.setUserObject(newValue);
-        
+
         modelSupport.firePathChanged(path);
     }
 
@@ -438,7 +438,7 @@ public class DefaultTreeTableModel extends AbstractTreeTableModel {
      * <p>
      * This method is a convenient cover for
      * {@link #valueForPathChanged(TreePath, Object)}.
-     * 
+     *
      * @param node
      *            the node to modify
      * @param userObject

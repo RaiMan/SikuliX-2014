@@ -582,7 +582,6 @@ void GenericVector<T>::init_to_size(int size, T t) {
     data_[i] = t;
 }
 
-
 // Return the object from an index.
 template <typename T>
 T &GenericVector<T>::get(int index) const {
@@ -760,7 +759,6 @@ void GenericVector<T>::delete_data_pointers() {
       delete data_[i];
     }
 }
-
 
 template <typename T>
 bool GenericVector<T>::write(
@@ -948,6 +946,5 @@ int GenericVector<T>::choose_nth_item(int target_index, int start, int end,
   else
     return choose_nth_item(target_index, prev_greater, end, seed);
 }
-
 
 #endif  // TESSERACT_CCUTIL_GENERICVECTOR_H_

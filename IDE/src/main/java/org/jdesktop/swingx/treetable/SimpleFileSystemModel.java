@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -44,7 +44,7 @@ import javax.swing.tree.TreePath;
  * deletion of files, and the movement of files. This simple implementation does
  * not intend to tackle such problems, but this implementation may be extended
  * to handle such details.
- * 
+ *
  * @author Ramesh Gupta
  * @author Karl Schaefer
  */
@@ -96,7 +96,7 @@ public class SimpleFileSystemModel implements TreeTableModel {
     public int getChildCount(Object parent) {
         if (parent instanceof File) {
             String[] children = ((File) parent).list();
-            
+
             if (children != null) {
                 return children.length;
             }
@@ -213,14 +213,14 @@ public class SimpleFileSystemModel implements TreeTableModel {
         if (parent instanceof File && child instanceof File) {
             File parentFile = (File) parent;
             File[] files = parentFile.listFiles();
-            
+
             for (int i = 0, len = files.length; i < len; i++) {
                 if (files[i].equals(child)) {
                     return i;
                 }
             }
         }
-        
+
         return -1;
     }
 
@@ -241,7 +241,7 @@ public class SimpleFileSystemModel implements TreeTableModel {
             //do not use isFile(); some system files return false
             return ((File) node).list() == null;
         }
-        
+
         return true;
     }
 
@@ -260,10 +260,10 @@ public class SimpleFileSystemModel implements TreeTableModel {
     public void valueForPathChanged(TreePath path, Object newValue) {
         //does nothing
     }
-    
+
     /**
      * Gets a an array of all the listeners attached to this model.
-     * 
+     *
      * @return an array of listeners; this array is guaranteed to be
      * non-{@code null}
      */

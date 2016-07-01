@@ -37,7 +37,6 @@
 // or tort (including negligence or otherwise) arising in any way out of
 // the use of this software, even if advised of the possibility of such damage.
 
-
 /////////////////////////////////////////////////////////////////////////////////
 //
 // Image class which provides a thin layer around an IplImage.  The goals
@@ -252,7 +251,6 @@ protected:
 };
 
 
-
 // Image class when both the pixel type and number of channels
 // are known at compile time.  This wrapper will speed up some of the operations
 // like accessing individual pixels using the () operator.
@@ -449,7 +447,6 @@ protected:
     IplImage header_;
 };
 
-
 template<typename T, int C>
 class WImageViewC : public WImageC<T, C>
 {
@@ -500,7 +497,6 @@ public:
 protected:
     IplImage header_;
 };
-
 
 // Specializations for depth
 template<>

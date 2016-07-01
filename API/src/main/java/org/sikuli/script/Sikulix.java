@@ -22,7 +22,7 @@ import java.security.CodeSource;
  * global services for package API
  */
 public class Sikulix {
-  
+
   private static int lvl = 3;
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "Sikulix: " + message, args);
@@ -118,7 +118,7 @@ public class Sikulix {
       Sikulix.popError("Not useable!\nRun setup first!");
       System.exit(0);
     }
-    
+
     if (shouldRunServer) {
       if (RunServer.run(null)) {
         System.exit(1);
@@ -148,14 +148,14 @@ public class Sikulix {
     }
     System.exit(0);
   }
-  
+
   /**
    * add a jar to the scripting environment<br>
    * Jython: added to sys.path<br>
    * JRuby: not yet supported<br>
    * JavaScript: not yet supported<br>
    * if no scripting active (API usage), jar is added to classpath if available
-   * @param fpJar absolute path to a jar (relative: searched according to Extension concept, 
+   * @param fpJar absolute path to a jar (relative: searched according to Extension concept,
    * but first on sys.path)
    * @return the absolute path to the jar or null, if not available
    */
@@ -170,7 +170,7 @@ public class Sikulix {
    * JavaScript: only added to classpath<br>
    * if no scripting is active (API usage), jar is added to classpath if available<br>
    * additionally: fpJar/fpJarImagePath is added to ImagePath (not checked)
-   * @param fpJar absolute path to a jar (relative: searched according to Extension concept, 
+   * @param fpJar absolute path to a jar (relative: searched according to Extension concept,
    * but first on sys.path)
    * @param fpJarImagePath path relative to jar root inside jar
    * @return the absolute path to the jar or null, if not available
@@ -189,20 +189,20 @@ public class Sikulix {
       if (fJarFound != null) {
         fpJarFound = fJarFound.getAbsolutePath();
         rt.addToClasspath(fpJarFound);
-      } 
+      }
     }
     if (fpJarFound != null && fpJarImagePath != null) {
       ImagePath.addJar(fpJarFound, fpJarImagePath);
     }
     return fpJarFound;
   }
-  
+
   /**
    * build a jar on the fly at runtime from a folder.<br>
-   * special for Jython: if the folder contains a __init__.py on first level, 
+   * special for Jython: if the folder contains a __init__.py on first level,
    * the folder will be copied to the jar root (hence preserving module folders)
-   * @param targetJar absolute path to the created jar (parent folder must exist, jar is overwritten) 
-   * @param sourceFolder absolute path to a folder, the contained folder structure 
+   * @param targetJar absolute path to the created jar (parent folder must exist, jar is overwritten)
+   * @param sourceFolder absolute path to a folder, the contained folder structure
    * will be copied to the jar root level
    * @return
    */
@@ -225,16 +225,16 @@ public class Sikulix {
         prefix = prefix.substring(0, prefix.length() - 1);
       }
     }
-    return FileManager.buildJar(targetJar, new String[]{null}, 
+    return FileManager.buildJar(targetJar, new String[]{null},
             new String[] {sourceFolder}, new String[] {prefix}, null);
   }
-  
+
   /**
-   * the foo.py files in the given source folder are compiled to JVM-ByteCode-classfiles foo$py.class 
+   * the foo.py files in the given source folder are compiled to JVM-ByteCode-classfiles foo$py.class
    * and stored in the target folder (thus securing your code against changes).<br>
    * A folder structure is preserved. All files not ending as .py will be copied also.
    * The target folder might then be packed to a jar using buildJarFromFolder.<br>
-   * Be aware: you will get no feedback about any compile problems, 
+   * Be aware: you will get no feedback about any compile problems,
    * so make sure your code compiles error free. Currently there is no support for running such a jar,
    * it can only be used with load()/import, but you might provide a simple script that does load()/import
    * and then runs something based on available functions in the jar code.
@@ -270,11 +270,11 @@ public class Sikulix {
     }
     return false;
   }
-  
+
   private static class CompileJythonFilter implements FileManager.FileFilter {
-    
+
     JythonHelper jython = null;
-    
+
     public CompileJythonFilter(JythonHelper jython) {
       this.jython = jython;
     }
@@ -287,7 +287,7 @@ public class Sikulix {
       return false;
     }
   }
-  
+
   private static JythonHelper doCompileJythonFolder(JythonHelper jython, File fSource) {
     String fpSource = FileManager.slashify(fSource.getAbsolutePath(), false);
     if (!jython.exec(String.format("compileall.compile_dir(\"%s\","
@@ -437,7 +437,7 @@ public class Sikulix {
 
   /**
    * INTERNAL USE: resets stateful Sikuli X features: <br>
-   * ScreenHighlighter, Observing, Mouse, Key, Hotkeys <br> 
+   * ScreenHighlighter, Observing, Mouse, Key, Hotkeys <br>
    * When in IDE: resets selected options to defaults (TODO)
    *
    * @param n returncode
@@ -568,7 +568,7 @@ public class Sikulix {
       if ("".equals(title)) {
         title = "Sikuli input request";
       }
-      ret = (String) JOptionPane.showInputDialog(anchor, msg, title, 
+      ret = (String) JOptionPane.showInputDialog(anchor, msg, title,
               JOptionPane.PLAIN_MESSAGE, null, null, preset);
     } else {
       preset = "";
@@ -591,7 +591,7 @@ public class Sikulix {
           ret = ret + pwc[i];
           pwc[i] = 0;
         }
-      } 
+      }
     }
     if (anchor != null) {
       anchor.dispose();
@@ -649,7 +649,7 @@ public class Sikulix {
       anchor.dispose();
     }
   }
-  
+
   public static Location popat(Location at) {
     locPopAt = new Point(at.x, at.y);
     return new Location(locPopAt);
@@ -659,12 +659,12 @@ public class Sikulix {
     locPopAt = new Point(at.getCenter().x, at.getCenter().y);
     return new Location(locPopAt);
   }
-  
+
   public static Location popat(int atx, int aty) {
     locPopAt = new Point(atx, aty);
     return new Location(locPopAt);
   }
-  
+
   public static Location popat() {
     locPopAt = getLocPopAt();
     return new Location(locPopAt);
@@ -734,7 +734,7 @@ public class Sikulix {
     }
     return ret;
   }
-  
+
   public static String popFile(String title) {
     popat(new Screen(0).getCenter());
     JFrame anchor = popLocation();

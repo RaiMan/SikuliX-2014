@@ -156,5 +156,4 @@ inline void Reverse64(void* ptr) {
   ReverseN(ptr, 8);
 }
 
-
 #endif // TESSERACT_CCUTIL_HELPERS_H_

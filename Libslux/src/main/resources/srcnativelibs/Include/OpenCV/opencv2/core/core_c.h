@@ -40,7 +40,6 @@
 //
 //M*/
 
-
 #ifndef __OPENCV_CORE_C_H__
 #define __OPENCV_CORE_C_H__
 
@@ -163,10 +162,8 @@ CV_INLINE  int  cvIncRefData( CvArr* arr )
     return refcount;
 }
 
-
 /* Creates an exact copy of the input matrix (except, may be, step value) */
 CVAPI(CvMat*) cvCloneMat( const CvMat* mat );
-
 
 /* Makes a new matrix from <rect> subrectangle of input array.
    No data is copied */
@@ -183,7 +180,6 @@ CV_INLINE  CvMat*  cvGetRow( const CvArr* arr, CvMat* submat, int row )
 {
     return cvGetRows( arr, submat, row, row + 1, 1 );
 }
-
 
 /* Selects column span of the input array: arr(:,start_col:end_col)
    (end_col is not included into the span) */
@@ -293,7 +289,6 @@ CVAPI(int) cvInitNArrayIterator( int count, CvArr** arrs,
 /* returns zero value if iteration is finished, non-zero (slice length) otherwise */
 CVAPI(int) cvNextNArraySlice( CvNArrayIterator* array_iterator );
 
-
 /* Returns type of array elements:
    CV_8UC1 ... CV_64FC4 ... */
 CVAPI(int) cvGetElemType( const CvArr* arr );
@@ -302,12 +297,10 @@ CVAPI(int) cvGetElemType( const CvArr* arr );
    optionally sizes of the dimensions */
 CVAPI(int) cvGetDims( const CvArr* arr, int* sizes CV_DEFAULT(NULL) );
 
-
 /* Retrieves size of a particular array dimension.
    For 2d arrays cvGetDimSize(arr,0) returns number of rows (image height)
    and cvGetDimSize(arr,1) returns number of columns (image width) */
 CVAPI(int) cvGetDimSize( const CvArr* arr, int index );
-
 
 /* ptr = &arr(idx0,idx1,...). All indexes are zero-based,
    the major dimensions go first (e.g. (y,x) for 2D, (z,y,x) for 3D */
@@ -364,7 +357,6 @@ CVAPI(CvMat*) cvGetMat( const CvArr* arr, CvMat* header,
 
 /* Converts CvArr (IplImage or CvMat) to IplImage */
 CVAPI(IplImage*) cvGetImage( const CvArr* arr, IplImage* image_header );
-
 
 /* Changes a shape of multi-dimensional array.
    new_cn == 0 means that number of channels remains unchanged.
@@ -425,7 +417,6 @@ CVAPI(void)  cvSet( CvArr* arr, CvScalar value,
 CVAPI(void)  cvSetZero( CvArr* arr );
 #define cvZero  cvSetZero
 
-
 /* Splits a multi-channel array into the set of single-channel arrays or
    extracts particular [color] plane */
 CVAPI(void)  cvSplit( const CvArr* src, CvArr* dst0, CvArr* dst1,
@@ -455,7 +446,6 @@ CVAPI(void)  cvConvertScale( const CvArr* src, CvArr* dst,
 #define cvScale  cvConvertScale
 #define cvConvert( src, dst )  cvConvertScale( (src), (dst), 1, 0 )
 
-
 /* Performs linear transformation on every source array element,
    stores absolute value of the result:
    dst(x,y,c) = abs(scale*src(x,y,c)+shift).
@@ -465,7 +455,6 @@ CVAPI(void)  cvConvertScaleAbs( const CvArr* src, CvArr* dst,
                                 double scale CV_DEFAULT(1),
                                 double shift CV_DEFAULT(0) );
 #define cvCvtScaleAbs  cvConvertScaleAbs
-
 
 /* checks termination criteria validity and
    sets eps to default_eps (if it is not set),
@@ -719,7 +708,6 @@ CVAPI(void)  cvFlip( const CvArr* src, CvArr* dst CV_DEFAULT(NULL),
                      int flip_mode CV_DEFAULT(0));
 #define cvMirror cvFlip
 
-
 #define CV_SVD_MODIFY_A   1
 #define CV_SVD_U_T        2
 #define CV_SVD_V_T        4
@@ -861,7 +849,6 @@ CVAPI(void)  cvNormalize( const CvArr* src, CvArr* dst,
                           int norm_type CV_DEFAULT(CV_L2),
                           const CvArr* mask CV_DEFAULT(NULL) );
 
-
 #define CV_REDUCE_SUM 0
 #define CV_REDUCE_AVG 1
 #define CV_REDUCE_MAX 2
@@ -907,21 +894,17 @@ CVAPI(void)  cvDCT( const CvArr* src, CvArr* dst, int flags );
 /* Calculates length of sequence slice (with support of negative indices). */
 CVAPI(int) cvSliceLength( CvSlice slice, const CvSeq* seq );
 
-
 /* Creates new memory storage.
    block_size == 0 means that default,
    somewhat optimal size, is used (currently, it is 64K) */
 CVAPI(CvMemStorage*)  cvCreateMemStorage( int block_size CV_DEFAULT(0));
 
-
 /* Creates a memory storage that will borrow memory blocks from parent storage */
 CVAPI(CvMemStorage*)  cvCreateChildMemStorage( CvMemStorage* parent );
-
 
 /* Releases memory storage. All the children of a parent must be released before
    the parent. A child storage returns all the blocks to parent when it is released */
 CVAPI(void)  cvReleaseMemStorage( CvMemStorage** storage );
-
 
 /* Clears memory storage. This is the only way(!!!) (besides cvRestoreMemStoragePos)
    to reuse memory allocated for the storage - cvClearSeq,cvClearSet ...
@@ -950,22 +933,17 @@ CVAPI(CvSeq*)  cvCreateSeq( int seq_flags, size_t header_size,
    The default size is ~1Kbyte */
 CVAPI(void)  cvSetSeqBlockSize( CvSeq* seq, int delta_elems );
 
-
 /* Adds new element to the end of sequence. Returns pointer to the element */
 CVAPI(schar*)  cvSeqPush( CvSeq* seq, const void* element CV_DEFAULT(NULL));
-
 
 /* Adds new element to the beginning of sequence. Returns pointer to it */
 CVAPI(schar*)  cvSeqPushFront( CvSeq* seq, const void* element CV_DEFAULT(NULL));
 
-
 /* Removes the last element from sequence and optionally saves it */
 CVAPI(void)  cvSeqPop( CvSeq* seq, void* element CV_DEFAULT(NULL));
 
-
 /* Removes the first element from sequence and optioanally saves it */
 CVAPI(void)  cvSeqPopFront( CvSeq* seq, void* element CV_DEFAULT(NULL));
-
 
 #define CV_FRONT 1
 #define CV_BACK 0
@@ -985,12 +963,10 @@ CVAPI(schar*)  cvSeqInsert( CvSeq* seq, int before_index,
 /* Removes specified sequence element */
 CVAPI(void)  cvSeqRemove( CvSeq* seq, int index );
 
-
 /* Removes all the elements from the sequence. The freed memory
    can be reused later only by the same sequence unless cvClearMemStorage
    or cvRestoreMemStoragePos is called */
 CVAPI(void)  cvClearSeq( CvSeq* seq );
-
 
 /* Retrieves pointer to specified sequence element.
    Negative indices are supported and mean counting from the end
@@ -1005,7 +981,6 @@ CVAPI(int)  cvSeqElemIdx( const CvSeq* seq, const void* element,
 /* Initializes sequence writer. The new elements will be added to the end of sequence */
 CVAPI(void)  cvStartAppendToSeq( CvSeq* seq, CvSeqWriter* writer );
 
-
 /* Combination of cvCreateSeq and cvStartAppendToSeq */
 CVAPI(void)  cvStartWriteSeq( int seq_flags, int header_size,
                               int elem_size, CvMemStorage* storage,
@@ -1017,21 +992,17 @@ CVAPI(void)  cvStartWriteSeq( int seq_flags, int header_size,
 */
 CVAPI(CvSeq*)  cvEndWriteSeq( CvSeqWriter* writer );
 
-
 /* Updates sequence header. May be useful to get access to some of previously
    written elements via cvGetSeqElem or sequence reader */
 CVAPI(void)   cvFlushSeqWriter( CvSeqWriter* writer );
-
 
 /* Initializes sequence reader.
    The sequence can be read in forward or backward direction */
 CVAPI(void) cvStartReadSeq( const CvSeq* seq, CvSeqReader* reader,
                            int reverse CV_DEFAULT(0) );
 
-
 /* Returns current sequence reader position (currently observed sequence element) */
 CVAPI(int)  cvGetSeqReaderPos( CvSeqReader* reader );
-
 
 /* Changes sequence reader position. It may seek to an absolute or
    to relative to the current position */
@@ -1086,7 +1057,6 @@ CVAPI(int)  cvSeqPartition( const CvSeq* seq, CvMemStorage* storage,
 /************ Internal sequence functions ************/
 CVAPI(void)  cvChangeSeqBlock( void* reader, int direction );
 CVAPI(void)  cvCreateSeqBlock( CvSeqWriter* writer );
-
 
 /* Creates a new set */
 CVAPI(CvSet*)  cvCreateSet( int set_flags, int header_size,
@@ -1145,11 +1115,9 @@ CVAPI(CvGraph*)  cvCreateGraph( int graph_flags, int header_size,
 CVAPI(int)  cvGraphAddVtx( CvGraph* graph, const CvGraphVtx* vtx CV_DEFAULT(NULL),
                            CvGraphVtx** inserted_vtx CV_DEFAULT(NULL) );
 
-
 /* Removes vertex from the graph together with all incident edges */
 CVAPI(int)  cvGraphRemoveVtx( CvGraph* graph, int index );
 CVAPI(int)  cvGraphRemoveVtxByPtr( CvGraph* graph, CvGraphVtx* vtx );
-
 
 /* Link two vertices specifed by indices or pointers if they
    are not connected or return pointer to already existing edge
@@ -1181,11 +1149,9 @@ CVAPI(CvGraphEdge*)  cvFindGraphEdgeByPtr( const CvGraph* graph,
 /* Remove all vertices and edges from the graph */
 CVAPI(void)  cvClearGraph( CvGraph* graph );
 
-
 /* Count number of edges incident to the vertex */
 CVAPI(int)  cvGraphVtxDegree( const CvGraph* graph, int vtx_idx );
 CVAPI(int)  cvGraphVtxDegreeByPtr( const CvGraph* graph, const CvGraphVtx* vtx );
-
 
 /* Retrieves graph vertex by given index */
 #define cvGetGraphVtx( graph, idx ) (CvGraphVtx*)cvGetSetElem((CvSet*)(graph), (idx))
@@ -1284,7 +1250,6 @@ CVAPI(void)  cvRectangleR( CvArr* img, CvRect r,
                            int line_type CV_DEFAULT(8),
                            int shift CV_DEFAULT(0));
 
-
 /* Draws a circle with specified center and radius.
    Thickness works in the same way as with cvRectangle */
 CVAPI(void)  cvCircle( CvArr* img, CvPoint center, int radius,
@@ -1354,7 +1319,6 @@ CVAPI(int)  cvInitLineIterator( const CvArr* image, CvPoint pt1, CvPoint pt2,
         ((line_iterator).plus_step & _line_iterator_mask);      \
 }
 
-
 /* basic font types */
 #define CV_FONT_HERSHEY_SIMPLEX         0
 #define CV_FONT_HERSHEY_PLAIN           1
@@ -1369,7 +1333,6 @@ CVAPI(int)  cvInitLineIterator( const CvArr* image, CvPoint pt1, CvPoint pt2,
 #define CV_FONT_ITALIC                 16
 
 #define CV_FONT_VECTOR0    CV_FONT_HERSHEY_SIMPLEX
-
 
 /* Font structure */
 typedef struct CvFont
@@ -1412,7 +1375,6 @@ CVAPI(void)  cvGetTextSize( const char* text_string, const CvFont* font,
                             CvSize* text_size, int* baseline );
 
 
-
 /* Unpacks color value, if arrtype is CV_8UC?, <color> is treated as
    packed color value, otherwise the first channels (depending on arrtype)
    of destination scalar are set to the same value = <color> */
@@ -1437,7 +1399,6 @@ CVAPI(void)  cvDrawContours( CvArr *img, CvSeq* contour,
 /* Does look-up transformation. Elements of the source array
    (that should be 8uC1 or 8sC1) are used as indexes in lutarr 256-element table */
 CVAPI(void) cvLUT( const CvArr* src, CvArr* dst, const CvArr* lut );
-
 
 /******************* Iteration through the sequence tree *****************/
 typedef struct CvTreeNodeIterator
@@ -1497,7 +1458,6 @@ typedef int (CV_CDECL *CvFreeFunc)(void* pptr, void* userdata);
 CVAPI(void) cvSetMemoryManager( CvAllocFunc alloc_func CV_DEFAULT(NULL),
                                CvFreeFunc free_func CV_DEFAULT(NULL),
                                void* userdata CV_DEFAULT(NULL));
-
 
 typedef IplImage* (CV_STDCALL* Cv_iplCreateImageHeader)
                             (int,int,int,char*,char*,int,int,int,int,int,
@@ -1597,13 +1557,11 @@ CV_INLINE int cvReadInt( const CvFileNode* node, int default_value CV_DEFAULT(0)
         CV_NODE_IS_REAL(node->tag) ? cvRound(node->data.f) : 0x7fffffff;
 }
 
-
 CV_INLINE int cvReadIntByName( const CvFileStorage* fs, const CvFileNode* map,
                          const char* name, int default_value CV_DEFAULT(0) )
 {
     return cvReadInt( cvGetFileNodeByName( fs, map, name ), default_value );
 }
-
 
 CV_INLINE double cvReadReal( const CvFileNode* node, double default_value CV_DEFAULT(0.) )
 {
@@ -1612,13 +1570,11 @@ CV_INLINE double cvReadReal( const CvFileNode* node, double default_value CV_DEF
         CV_NODE_IS_REAL(node->tag) ? node->data.f : 1e300;
 }
 
-
 CV_INLINE double cvReadRealByName( const CvFileStorage* fs, const CvFileNode* map,
                         const char* name, double default_value CV_DEFAULT(0.) )
 {
     return cvReadReal( cvGetFileNodeByName( fs, map, name ), default_value );
 }
-
 
 CV_INLINE const char* cvReadString( const CvFileNode* node,
                         const char* default_value CV_DEFAULT(NULL) )
@@ -1626,13 +1582,11 @@ CV_INLINE const char* cvReadString( const CvFileNode* node,
     return !node ? default_value : CV_NODE_IS_STRING(node->tag) ? node->data.str.ptr : 0;
 }
 
-
 CV_INLINE const char* cvReadStringByName( const CvFileStorage* fs, const CvFileNode* map,
                         const char* name, const char* default_value CV_DEFAULT(NULL) )
 {
     return cvReadString( cvGetFileNodeByName( fs, map, name ), default_value );
 }
-
 
 /* decodes standard or user-defined object and returns it */
 CVAPI(void*) cvRead( CvFileStorage* fs, CvFileNode* node,
@@ -1644,7 +1598,6 @@ CV_INLINE void* cvReadByName( CvFileStorage* fs, const CvFileNode* map,
 {
     return cvRead( fs, cvGetFileNodeByName( fs, map, name ), attributes );
 }
-
 
 /* starts reading data from sequence or scalar numeric node */
 CVAPI(void) cvStartReadRawData( const CvFileStorage* fs, const CvFileNode* src,
@@ -1717,7 +1670,6 @@ CVAPI(int)  cvGetNumThreads( void );
 CVAPI(void) cvSetNumThreads( int threads CV_DEFAULT(0) );
 /* get index of the thread being executed */
 CVAPI(int)  cvGetThreadNum( void );
-
 
 /********************************** Error Handling **************************************/
 
@@ -1794,7 +1746,6 @@ cvError((status),(func),(context),__FILE__,__LINE__)
 Func;                                                           \
 }
 
-
 /* CV_FUNCNAME macro defines icvFuncName constant which is used by CV_ERROR macro */
 #ifdef CV_NO_FUNC_NAMES
 #define CV_FUNCNAME( Name )
@@ -1803,7 +1754,6 @@ Func;                                                           \
 #define CV_FUNCNAME( Name )  \
 static char cvFuncName[] = Name
 #endif
-
 
 /*
  CV_ERROR macro unconditionally raises error with passed code and message.
@@ -1830,7 +1780,6 @@ static char cvFuncName[] = Name
         CV_ERROR( CV_StsBackTrace, "Inner function failed." );      \
 }
 
-
 /*
  CV_CALL macro calls CV (or IPL) function, checks error status and
  signals a error if the function failed. Useful in "parent node"
@@ -1841,7 +1790,6 @@ static char cvFuncName[] = Name
     Func;                                                           \
     CV_CHECK();                                                     \
 }
-
 
 /* Runtime assertion macro */
 #define CV_ASSERT( Condition )                                          \

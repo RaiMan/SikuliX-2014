@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -37,19 +37,19 @@ import org.jdesktop.swingx.event.DateSelectionEvent.EventType;
 /**
  * Abstract base implementation of DateSelectionModel. Implements
  * notification, Calendar related properties and lower/upper bounds.
- * 
+ *
  * @author Jeanette Winzenburg
  */
 public abstract class AbstractDateSelectionModel implements DateSelectionModel {
     public static final SortedSet<Date> EMPTY_DATES = Collections.unmodifiableSortedSet(new TreeSet<Date>());
-    
+
     protected EventListenerMap listenerMap;
     protected boolean adjusting;
     protected Calendar calendar;
     protected Date upperBound;
     protected Date lowerBound;
 
-    /** 
+    /**
      * the locale used by the calendar. <p>
      * NOTE: need to keep separately as a Calendar has no getter.
      */
@@ -61,14 +61,14 @@ public abstract class AbstractDateSelectionModel implements DateSelectionModel {
     public AbstractDateSelectionModel() {
         this(null);
     }
-    
+
     /**
      * Instantiates a DateSelectionModel with the given locale. If the locale is
      * null, the Locale's default is used.
-     * 
+     *
      * PENDING JW: fall back to JComponent.getDefaultLocale instead? We use this
      *   with components anyway?
-     * 
+     *
      * @param locale the Locale to use with this model, defaults to Locale.default()
      *    if null.
      */
@@ -121,7 +121,6 @@ public abstract class AbstractDateSelectionModel implements DateSelectionModel {
         fireValueChanged(EventType.CALENDAR_CHANGED);
     }
 
-    
     /**
      * {@inheritDoc}
      */
@@ -145,12 +144,12 @@ public abstract class AbstractDateSelectionModel implements DateSelectionModel {
     /**
      * Adjusts all stored dates to a new time zone.
      * This method is called after the change had been made. <p>
-     * 
-     * This implementation resets all dates to null, clears everything. 
+     *
+     * This implementation resets all dates to null, clears everything.
      * Subclasses may override to really map to the new time zone.
      *
      * @param oldTimeZone the old time zone
-     * 
+     *
      */
     protected void adjustDatesToTimeZone(TimeZone oldTimeZone) {
         clearSelection();
@@ -158,7 +157,7 @@ public abstract class AbstractDateSelectionModel implements DateSelectionModel {
         setUpperBound(null);
         setUnselectableDates(EMPTY_DATES);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -186,11 +185,11 @@ public abstract class AbstractDateSelectionModel implements DateSelectionModel {
     }
 
 //------------------- utility methods
-    
+
     /**
      * Returns the start of the day of the given date in this model's calendar.
      * NOTE: the calendar is changed by this operation.
-     * 
+     *
      * @param date the Date to get the start for.
      * @return the Date representing the start of the day of the input date.
      */
@@ -201,7 +200,7 @@ public abstract class AbstractDateSelectionModel implements DateSelectionModel {
     /**
      * Returns the end of the day of the given date in this model's calendar.
      * NOTE: the calendar is changed by this operation.
-     * 
+     *
      * @param date the Date to get the start for.
      * @return the Date representing the end of the day of the input date.
      */
@@ -212,7 +211,7 @@ public abstract class AbstractDateSelectionModel implements DateSelectionModel {
     /**
      * Returns a boolean indicating whether the given dates are on the same day in
      * the coordinates of the model's calendar.
-     * 
+     *
      * @param selected one of the dates to check, must not be null.
      * @param compare the other of the dates to check, must not be null.
      * @return true if both dates represent the same day in this model's calendar.
@@ -278,7 +277,6 @@ public abstract class AbstractDateSelectionModel implements DateSelectionModel {
         fireValueChanged(EventType.LOWER_BOUND_CHANGED);
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -295,10 +293,10 @@ public abstract class AbstractDateSelectionModel implements DateSelectionModel {
         if (adjusting == isAdjusting()) return;
         this.adjusting = adjusting;
        fireValueChanged(adjusting ? EventType.ADJUSTING_STARTED : EventType.ADJUSTING_STOPPED);
-        
+
     }
 
-//----------------- notification    
+//----------------- notification
     /**
      * {@inheritDoc}
      */
@@ -330,7 +328,6 @@ public abstract class AbstractDateSelectionModel implements DateSelectionModel {
             listener.valueChanged(e);
         }
     }
-
 
 
 }

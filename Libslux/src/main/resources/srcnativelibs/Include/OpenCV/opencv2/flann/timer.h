@@ -33,7 +33,6 @@
 
 #include <time.h>
 
-
 namespace cvflann
 {
 
@@ -51,7 +50,6 @@ public:
      * Value of the timer.
      */
     double value;
-
 
     /**
      * Constructor.

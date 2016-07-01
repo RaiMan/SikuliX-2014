@@ -49,7 +49,6 @@
 #include "saving.h"
 #include "logger.h"
 
-
 namespace cvflann
 {
 
@@ -70,7 +69,6 @@ struct KMeansIndexParams : public IndexParams
     }
 };
 
-
 /**
  * Hierarchical kmeans index
  *
@@ -85,14 +83,12 @@ public:
     typedef typename Distance::ResultType DistanceType;
 
 
-
     typedef void (KMeansIndex::* centersAlgFunction)(int, int*, int, int*, int&);
 
     /**
      * The function used for choosing the cluster centers.
      */
     centersAlgFunction chooseCenters;
-
 
 
     /**
@@ -134,7 +130,6 @@ public:
 
         centers_length = index;
     }
-
 
     /**
      * Chooses the initial centers in the k-means using Gonzales' algorithm
@@ -183,7 +178,6 @@ public:
         centers_length = index;
     }
 
-
     /**
      * Chooses the initial centers in the k-means using the algorithm
      * proposed in the KMeans++ paper:
@@ -213,7 +207,6 @@ public:
             closestDistSq[i] = distance_(dataset_[indices[i]], dataset_[indices[index]], dataset_.cols);
             currentPot += closestDistSq[i];
         }
-
 
         const int numLocalTries = 1;
 
@@ -255,7 +248,6 @@ public:
 
         delete[] closestDistSq;
     }
-
 
 
 public:
@@ -304,10 +296,8 @@ public:
 
     }
 
-
     KMeansIndex(const KMeansIndex&);
     KMeansIndex& operator=(const KMeansIndex&);
-
 
     /**
      * Index destructor.
@@ -339,7 +329,6 @@ public:
     {
         return veclen_;
     }
-
 
     void set_cb_index( float index)
     {
@@ -374,7 +363,6 @@ public:
         computeClustering(root_, indices_, (int)size_, branching_,0);
     }
 
-
     void saveIndex(FILE* stream)
     {
         save_value(stream, branching_);
@@ -385,7 +373,6 @@ public:
 
         save_tree(stream, root_);
     }
-
 
     void loadIndex(FILE* stream)
     {
@@ -411,7 +398,6 @@ public:
         index_params_["cb_index"] = cb_index_;
 
     }
-
 
     /**
      * Find set of nearest neighbors to vec. Their indices are stored inside
@@ -486,7 +472,6 @@ public:
         return index_params_;
     }
 
-
 private:
     /**
      * Struture representing a node in the hierarchical k-means tree.
@@ -551,7 +536,6 @@ private:
         }
     }
 
-
     void load_tree(FILE* stream, KMeansNodePtr& node)
     {
         node = pool_.allocate<KMeansNode>();
@@ -570,7 +554,6 @@ private:
             }
         }
     }
-
 
     /**
      * Helper function
@@ -628,7 +611,6 @@ private:
         node->pivot = mean;
     }
 
-
     /**
      * The method responsible with actually doing the recursive hierarchical
      * clustering
@@ -663,7 +645,6 @@ private:
             delete [] centers_idx;
             return;
         }
-
 
         Matrix<double> dcenters(new double[branching*veclen_],branching,veclen_);
         for (int i=0; i<centers_length; ++i) {
@@ -781,7 +762,6 @@ private:
             }
         }
 
-
         // compute kmeans clustering for each of the resulting clusters
         node->childs = pool_.allocate<KMeansNodePtr>(branching);
         int start = 0;
@@ -822,7 +802,6 @@ private:
     }
 
 
-
     /**
      * Performs one descent in the hierarchical k-means tree. The branches not
      * visited are stored in a priority queue.
@@ -834,7 +813,6 @@ private:
      *      checks = how many points in the dataset have been checked so far
      *      maxChecks = maximum dataset points to checks
      */
-
 
     void findNN(KMeansNodePtr node, ResultSet<DistanceType>& result, const ElementType* vec, int& checks, int maxChecks,
                 Heap<BranchSt>* heap)
@@ -909,7 +887,6 @@ private:
         return best_index;
     }
 
-
     /**
      * Function the performs exact nearest neighbor search by traversing the entire tree.
      */
@@ -930,7 +907,6 @@ private:
             }
         }
 
-
         if (node->childs==NULL) {
             for (int i=0; i<node->size; ++i) {
                 int index = node->indices[i];
@@ -950,7 +926,6 @@ private:
             delete[] sort_indices;
         }
     }
-
 
     /**
      * Helper function.
@@ -993,7 +968,6 @@ private:
 
         return sum*sum/sum2;
     }
-
 
     /**
      * Helper function the descends in the hierarchical k-means tree by spliting those clusters that minimize

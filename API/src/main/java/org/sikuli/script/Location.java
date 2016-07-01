@@ -161,7 +161,7 @@ public class Location implements Comparable<Location>{
     }
     return scr;
   }
-  
+
 	/**
 	 * INTERNAL USE
 	 * reveals wether the containing screen is a DeskTopScreen or not

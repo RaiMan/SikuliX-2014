@@ -769,7 +769,7 @@ public class Region {
 
   /**
    * FindFailedResponse.<br>
-   * ABORT - (initial value) abort script on FindFailed (= setThrowException(true) )<br> 
+   * ABORT - (initial value) abort script on FindFailed (= setThrowException(true) )<br>
    * SKIP - ignore FindFailed (same as setThrowException(false) )<br>
    * PROMPT - display prompt on FindFailed to let user decide how to proceed<br>
    * RETRY - continue to wait for appearence after FindFailed (caution: endless loop)
@@ -779,7 +779,7 @@ public class Region {
   public void setFindFailedResponse(FindFailedResponse response) {
     findFailedResponse = response;
   }
-  
+
   public void setFindFailedHandler(Object handler) {
     findFailedHandler = setHandler(handler, ObserveEvent.Type.FINDFAILED);
     log(lvl, "Setting FindFailedHandler");
@@ -2166,7 +2166,7 @@ public class Region {
         evt = new ObserveEvent("", type, target, img, this, 0);
         ((ObserverCallBack) findFailedHandler).findfailed(evt);
         response = evt.getResponse();
-      } 
+      }
     }
     if (FindFailedResponse.ABORT.equals(response)) {
       state = null;
@@ -2371,7 +2371,7 @@ public class Region {
     }
     return null;
   }
-  
+
   /**
    * finds all occurences of the given Pattern, String or Image in the region and returns an Iterator of Matches.
    *
@@ -2391,10 +2391,10 @@ public class Region {
       response = handleImageMissing(img, false);
       if (response == null) {
         runTime.abortScripting("FindAll: Abort:", "ImageMissing: " + target.toString());
-      }      
+      }
     }
     if (null != response && response) {
-      log(lvl, "findAll: waiting %.1f secs for (multiple) %s to appear in %s", 
+      log(lvl, "findAll: waiting %.1f secs for (multiple) %s to appear in %s",
               autoWaitTimeout, targetStr, this.toStringShort());
       if (autoWaitTimeout > 0) {
         rf.repeat(autoWaitTimeout);
@@ -2756,7 +2756,6 @@ public class Region {
     return exists(img, 0);
   }
 
-
   /**
    * Use findText() instead of find() in cases where the given string could be misinterpreted as an image filename
    *
@@ -2869,7 +2868,7 @@ public class Region {
           }
         }
       } else {
-        runTime.abortScripting("aborting script at:", 
+        runTime.abortScripting("aborting script at:",
                 String.format("find, wait, exists: invalid parameter: %s", ptn));
       }
       if (repeating != null) {
@@ -3078,7 +3077,7 @@ public class Region {
       }
       return (_match == null) ? _match : new Match(_match);
     }
-    
+
     @Override
     public void run() {
       _match = doFind(_target, _image, this);
@@ -3291,7 +3290,7 @@ public class Region {
       if (!img.isValid() && img.hasIOException()) {
         response = handleImageMissing(img, false);
         if (response == null) {
-          runTime.abortScripting("onEvent(" + obsType.name() + "): Abort:", 
+          runTime.abortScripting("onEvent(" + obsType.name() + "): Abort:",
                   "ImageMissing: " + targetThreshhold.toString());
         }
       }

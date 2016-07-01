@@ -91,7 +91,7 @@ public class HtmlFormatter extends Formatter
 	}
 
     private void format_partial_token(Token token, String part_tok, StringBuilder line)
-    {	
+    {
 		if( token.getType().getShortName().length() > 0 )
 		{
 			line.append( "<span class=\"" );
@@ -103,13 +103,12 @@ public class HtmlFormatter extends Formatter
 		else
 			line.append( Util.escapeHtml( part_tok ) );
     }
-	
+
 	public void format_line(String line, Writer writer, int line_no) throws IOException
     {
         writer.write(line);
         writer.write("\n");
     }
-	
 
 	// //////////////////////////////////////////////////////////////////////////
 	// Protected
@@ -124,27 +123,27 @@ public class HtmlFormatter extends Formatter
 	    return "    td.linenos { background-color: #f0f0f0; padding-right: 10px; }\n" + "    span.lineno { background-color: #f0f0f0; padding: 0 5px 0 5px; }\n"
 		+ "    pre { line-height: 125%; }\n";
     }
-    
+
 	protected String getDocHeader1()
 	{
 	    return "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\" \"http://www.w3.org/TR/html4/strict.dtd\">\n" + "<html>\n" + "<head>\n";
     }
-    
+
 	protected String getDocHeader2()
 	{
 	    return "  <meta http-equiv=\"content-type\" content=\"text/html; charset=";
     }
-    
+
 	protected String getDocHeader3()
 	{
 	    return "\">\n" + "  <style type=\"text/css\">\n";
     }
-    
+
 	protected String getDocHeader4()
 	{
 	    return "  </style>\n" + "</head>\n" + "<body>\n";
     }
-    
+
 	/*
 	 * private static final String DOC_HEADER_EXTERNAL_CSS =
 	 * "<!DOCTYPE html PUBLIC \"-//W3C//DTD HTML 4.01//EN\"\n" +

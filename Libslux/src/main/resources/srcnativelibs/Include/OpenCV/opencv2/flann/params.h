@@ -26,7 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *************************************************************************/
 
-
 #ifndef OPENCV_FLANN_PARAMS_H_
 #define OPENCV_FLANN_PARAMS_H_
 
@@ -34,7 +33,6 @@
 #include "general.h"
 #include <iostream>
 #include <map>
-
 
 namespace cvflann
 {
@@ -53,7 +51,6 @@ struct SearchParams : public IndexParams
         (*this)["sorted"] = sorted;
     }
 };
-
 
 template<typename T>
 T get_param(const IndexParams& params, std::string name, const T& default_value)
@@ -89,8 +86,6 @@ inline void print_params(const IndexParams& params)
 }
 
 
-
 }
-
 
 #endif /* OPENCV_FLANN_PARAMS_H_ */

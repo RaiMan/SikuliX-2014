@@ -11,11 +11,11 @@ import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
 
 /**
  * {@link JTextArea}, with integrated support for prompts.
- * 
+ *
  * @see PromptSupport
  * @see BuddySupport
  * @author Peter Weishapl <petw@gmx.net>
- * 
+ *
  */
 @JavaBean
 public class JXTextArea extends JTextArea {

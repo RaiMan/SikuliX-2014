@@ -15,4 +15,3 @@ public interface Animator {
 
   public boolean running();
 }
-

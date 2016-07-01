@@ -131,7 +131,6 @@ class NewAnimator implements ActionListener {
         sklComponent.getTopLevelAncestor().repaint(r.x, r.y, r.width, r.height);
       }
 
-
     } else {
       timer.stop();
       if (looping) {

@@ -76,7 +76,6 @@ public class LinuxHotkeyManager extends HotkeyManager {
       return false;
    }
 
-
    public void cleanUp(){
       JXGrabKey grabKey = JXGrabKey.getInstance();
       for( Map.Entry<Integer, HotkeyData> entry : _idCallbackMap.entrySet() ){
@@ -89,5 +88,3 @@ public class LinuxHotkeyManager extends HotkeyManager {
    }
 
 }
-
-

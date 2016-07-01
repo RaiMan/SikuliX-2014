@@ -47,13 +47,13 @@ public abstract class UserNameStore extends AbstractBean {
     /**
      */
     public abstract boolean containsUserName(String name);
-    
+
     /**
      * Add a username to the store.
      * @param userName
      */
     public abstract void addUserName(String userName);
-    
+
     /**
      * Removes a username from the list.
      * @param userName

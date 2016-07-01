@@ -1,4 +1,3 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
@@ -104,7 +103,6 @@ public class DescriptorMatcher {
     protected final long nativeObj;
     protected DescriptorMatcher(long addr) { nativeObj = addr; }
 
-
     public static final int
             FLANNBASED = 1,
             BRUTEFORCE = 2,
@@ -112,7 +110,6 @@ public class DescriptorMatcher {
             BRUTEFORCE_HAMMING = 4,
             BRUTEFORCE_HAMMINGLUT = 5,
             BRUTEFORCE_SL2 = 6;
-
 
     //
     // C++:  void javaDescriptorMatcher::add(vector_Mat descriptors)
@@ -136,7 +133,6 @@ public class DescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaDescriptorMatcher::clear()
     //
@@ -153,7 +149,6 @@ public class DescriptorMatcher {
 
         return;
     }
-
 
     //
     // C++:  javaDescriptorMatcher* javaDescriptorMatcher::jclone(bool emptyTrainData = false)
@@ -175,7 +170,6 @@ public class DescriptorMatcher {
         return retVal;
     }
 
-
     //
     // C++: static javaDescriptorMatcher* javaDescriptorMatcher::create(int matcherType)
     //
@@ -196,7 +190,6 @@ public class DescriptorMatcher {
         return retVal;
     }
 
-
     //
     // C++:  bool javaDescriptorMatcher::empty()
     //
@@ -213,7 +206,6 @@ public class DescriptorMatcher {
 
         return retVal;
     }
-
 
     //
     // C++:  vector_Mat javaDescriptorMatcher::getTrainDescriptors()
@@ -232,7 +224,6 @@ public class DescriptorMatcher {
         return retVal;
     }
 
-
     //
     // C++:  bool javaDescriptorMatcher::isMaskSupported()
     //
@@ -249,7 +240,6 @@ public class DescriptorMatcher {
 
         return retVal;
     }
-
 
     //
     // C++:  void javaDescriptorMatcher::knnMatch(Mat queryDescriptors, Mat trainDescriptors, vector_vector_DMatch& matches, int k, Mat mask = Mat(), bool compactResult = false)
@@ -314,7 +304,6 @@ public class DescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaDescriptorMatcher::knnMatch(Mat queryDescriptors, vector_vector_DMatch& matches, int k, vector_Mat masks = vector<Mat>(), bool compactResult = false)
     //
@@ -375,7 +364,6 @@ public class DescriptorMatcher {
         Converters.Mat_to_vector_vector_DMatch(matches_mat, matches);
         return;
     }
-
 
     //
     // C++:  void javaDescriptorMatcher::match(Mat queryDescriptors, Mat trainDescriptors, vector_DMatch& matches, Mat mask = Mat())
@@ -439,7 +427,6 @@ public class DescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaDescriptorMatcher::match(Mat queryDescriptors, vector_DMatch& matches, vector_Mat masks = vector<Mat>())
     //
@@ -499,7 +486,6 @@ public class DescriptorMatcher {
 
         return;
     }
-
 
     //
     // C++:  void javaDescriptorMatcher::radiusMatch(Mat queryDescriptors, Mat trainDescriptors, vector_vector_DMatch& matches, float maxDistance, Mat mask = Mat(), bool compactResult = false)
@@ -566,7 +552,6 @@ public class DescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaDescriptorMatcher::radiusMatch(Mat queryDescriptors, vector_vector_DMatch& matches, float maxDistance, vector_Mat masks = vector<Mat>(), bool compactResult = false)
     //
@@ -630,7 +615,6 @@ public class DescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaDescriptorMatcher::read(string fileName)
     //
@@ -642,7 +626,6 @@ public class DescriptorMatcher {
 
         return;
     }
-
 
     //
     // C++:  void javaDescriptorMatcher::train()
@@ -668,7 +651,6 @@ public class DescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaDescriptorMatcher::write(string fileName)
     //
@@ -681,12 +663,10 @@ public class DescriptorMatcher {
         return;
     }
 
-
     @Override
     protected void finalize() throws Throwable {
         delete(nativeObj);
     }
-
 
 
     // C++:  void javaDescriptorMatcher::add(vector_Mat descriptors)

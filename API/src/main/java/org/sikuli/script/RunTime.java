@@ -1318,7 +1318,6 @@ public class RunTime {
     }
   }
 
-
   /**
    * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)
    *

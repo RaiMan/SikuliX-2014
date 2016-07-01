@@ -13,7 +13,7 @@ import java.io.IOException;
  * function template for (alternative) Screen implementations
  */
 public interface IScreen {
-  
+
 	public IRobot getRobot();
 
 	public Rectangle getBounds();
@@ -43,12 +43,12 @@ public interface IScreen {
 	public int getW();
 
 	public int getY();
-	
+
 	public int getH();
 
 	public ScreenImage userCapture(String string);
 
 	public int getIdFromPoint(int srcx, int srcy);
-	
+
 	public String toStringShort();
 }

@@ -66,10 +66,8 @@ class CircleAnimatoOld extends Animator{
     this.radius = radius;
   }
 
-
   @Override
   public void actionPerformed(ActionEvent e) {
-
 
     float r = funcr.getValue(count);
 
@@ -95,7 +93,6 @@ class CircleAnimatoOld extends Animator{
       count = 0;
     else
       count++;
-
 
   }
 }
@@ -126,7 +123,6 @@ class MoveAnimator extends  Animator{
          int y = (int) tfuncy.getValue(count);
 
          count++;
-
 
 
          Rectangle r1 = comp.getBounds();

@@ -49,4 +49,3 @@ public interface IRobot {
     */
    IScreen getScreen();
 }
-

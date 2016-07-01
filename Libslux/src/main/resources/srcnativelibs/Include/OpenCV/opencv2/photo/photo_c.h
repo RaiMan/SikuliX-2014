@@ -56,11 +56,9 @@ enum
     CV_INPAINT_TELEA   =1
 };
 
-
 /* Inpaints the selected region in the image */
 CVAPI(void) cvInpaint( const CvArr* src, const CvArr* inpaint_mask,
                        CvArr* dst, double inpaintRange, int flags );
-
 
 #ifdef __cplusplus
 } //extern "C"

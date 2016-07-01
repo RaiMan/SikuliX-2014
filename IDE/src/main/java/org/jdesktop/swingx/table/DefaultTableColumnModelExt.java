@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -36,25 +36,24 @@ import javax.swing.table.TableColumn;
 
 import org.jdesktop.swingx.event.TableColumnModelExtListener;
 
-
 /**
  * A default implementation of <code>TableColumnModelExt</code>.
  * <p>
- * 
+ *
  * TODO: explain sub-optimal notification on showing/hiding columns.
  * (hot fixed issues #156, #157. To really do it
  * need enhanced TableColumnModelEvent and -Listeners that are
  * aware of the event.)
- * 
- *  
+ *
+ *
  * @author Richard Bair
  * @author Jeanette Winzenburg
  */
-public class DefaultTableColumnModelExt extends DefaultTableColumnModel 
+public class DefaultTableColumnModelExt extends DefaultTableColumnModel
     implements TableColumnModelExt {
     /** flag to distinguish a shown/hidden column from really added/removed
-     *  columns during notification. This is brittle! 
-     */ 
+     *  columns during notification. This is brittle!
+     */
 //    private static final String IGNORE_EVENT = "TableColumnModelExt.ignoreEvent";
     private boolean isVisibilityChange;
     /**
@@ -62,7 +61,7 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
      * added to the model.
      */
     private List<TableColumn> initialColumns = new ArrayList<TableColumn>();
-    
+
     /**
      * contains a list of all column, in the order they would appear if
      * all were visible.
@@ -74,16 +73,16 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
      * to their visibility status, and to hide/show the column as oppropriate
      */
     private VisibilityListener visibilityListener = new VisibilityListener();
-    
-    /** 
-     * Creates a an empty DefaultTableColumnModelExt. 
+
+    /**
+     * Creates a an empty DefaultTableColumnModelExt.
      */
     public DefaultTableColumnModelExt() {
         super();
     }
 
 //----------------------- implement TableColumnModelExt
-    
+
     /**
      * {@inheritDoc}
      */
@@ -91,7 +90,7 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
     public List<TableColumn> getColumns(boolean includeHidden) {
         if (includeHidden) {
             return new ArrayList<TableColumn>(initialColumns);
-        } 
+        }
         return Collections.list(getColumns());
     }
 
@@ -105,7 +104,7 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
         }
         return getColumnCount();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -119,7 +118,7 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
         }
         return null;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -131,13 +130,13 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
         }
         return null;
     }
-    
+
     /**
      * hot fix for #157: listeners that are aware of
      * the possible existence of invisible columns
      * should check if the received columnRemoved originated
      * from moving a column from visible to invisible.
-     * 
+     *
      * @param oldIndex the fromIndex of the columnEvent
      * @return true if the column was moved to invisible
      */
@@ -150,7 +149,7 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
      * the possible existence of invisible columns
      * should check if the received columnAdded originated
      * from moving a column from invisible to visible.
-     * 
+     *
      * @param newIndex the toIndex of the columnEvent
      * @return true if the column was moved to visible
      */
@@ -159,17 +158,17 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
     }
 
 //------------------------ TableColumnModel
-    
+
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to update internals related to column visibility.
      */
     @Override
     public void removeColumn(TableColumn column) {
         boolean oldVisible = true;
         //remove the visibility listener if appropriate
-        if (column instanceof TableColumnExt) {   
+        if (column instanceof TableColumnExt) {
             oldVisible = ((TableColumnExt) column).isVisible();
             ((TableColumnExt) column).setVisible(true);
             ((TableColumnExt)column).removePropertyChangeListener(visibilityListener);
@@ -185,7 +184,7 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to update internals related to column visibility.
      */
     @Override
@@ -200,7 +199,7 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
             xColumn.setVisible(true);
             xColumn.addPropertyChangeListener(visibilityListener);
         }
-        // append the column to the end of both initial- and currentColumns. 
+        // append the column to the end of both initial- and currentColumns.
         currentColumns.add(aColumn);
         initialColumns.add(aColumn);
         // let super handle the event notification, super.book-keeping
@@ -209,12 +208,12 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
             // reset original visibility
             ((TableColumnExt) aColumn).setVisible(oldVisible);
         }
-        
+
     }
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to update internals related to column visibility.
      */
     @Override
@@ -227,7 +226,7 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
 
     /**
      * Adjusts the current column sequence when a visible column is moved.
-     *  
+     *
      * @param oldIndex the old visible position.
      * @param newIndex the new visible position.
      */
@@ -238,30 +237,29 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
         int newPosition = currentColumns.indexOf(targetColumn);
         currentColumns.remove(oldPosition);
         currentColumns.add(newPosition, movedColumn);
-        
+
     }
 
     /**
      * Update internal state after the visibility of the column
      * was changed to invisible. The given column is assumed to
      * be contained in this model.
-     * 
+     *
      * @param col the column which was hidden.
-     */    
+     */
     protected void moveToInvisible(TableColumnExt col) {
         isVisibilityChange = true;
         super.removeColumn(col);
         isVisibilityChange = false;
     }
 
-
     /**
      * Update internal state after the visibility of the column
      * was changed to visible. The given column is assumed to
      * be contained in this model.
-     *  
+     *
      * @param col the column which was made visible.
-     */    
+     */
     protected void moveToVisible(TableColumnExt col) {
         isVisibilityChange = true;
         // two step process: first add at end of columns
@@ -282,13 +280,12 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
         isVisibilityChange = false;
     }
 
-
     /**
      * TODO JW: move into propertyChanged! No need for a dedicated listener.
      * Changed evaluation JW: may still be required as super removes itself as
-     * propertyChangeListener if column is hidden 
+     * propertyChangeListener if column is hidden
      */
-    private class VisibilityListener implements PropertyChangeListener, Serializable {        
+    private class VisibilityListener implements PropertyChangeListener, Serializable {
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
             if ("visible".equals(evt.getPropertyName())) {
@@ -305,10 +302,9 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
             }
         }
     }
- 
+
     // enhanced listener notification
-    
-    
+
     /**
      * Exposed for testing only - don't use! Will be removed again!
      * @return super's listener list
@@ -317,8 +313,7 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
         return listenerList;
     }
 
-    
-    
+
     /**
      * {@inheritDoc}
      */
@@ -349,14 +344,13 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
         }
     }
 
-    
     /**
      * {@inheritDoc} <p>
-     * 
-     * 
+     *
+     *
      * Overridden to install enhanced notification of listeners of type.
      * TableColumnModelListenerExt about property changes of contained columns.
-     *  
+     *
      */
     @Override
     public void addColumnModelListener(TableColumnModelListener x) {
@@ -368,7 +362,7 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to uninstall enhanced notification of listeners of type.
      * TableColumnModelListenerExt about property changes of contained columns.
      */
@@ -381,7 +375,7 @@ public class DefaultTableColumnModelExt extends DefaultTableColumnModel
     }
 
     /**
-     * @return array of all registered listeners 
+     * @return array of all registered listeners
      */
     public TableColumnModelExtListener[] getTableColumnModelExtListeners() {
         return listenerList.getListeners(TableColumnModelExtListener.class);

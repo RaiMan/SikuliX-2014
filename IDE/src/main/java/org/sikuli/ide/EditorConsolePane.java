@@ -51,7 +51,6 @@ public class EditorConsolePane extends JPanel implements Runnable {
   private JPopupMenu popup;
   Thread errorThrower; // just for testing (Throws an Exception at this Console)
 
-
   class PopupListener extends MouseAdapter {
     JPopupMenu popup;
 
@@ -115,7 +114,6 @@ public class EditorConsolePane extends JPanel implements Runnable {
         }
       }
     }
-
 
     //Create the popup menu.
     popup = new JPopupMenu();

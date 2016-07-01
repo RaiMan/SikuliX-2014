@@ -19,15 +19,14 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 /**
- * Contains API used to implement coordinated sorting, filtering 
- * and highlighting of the extended Swing cell-rendering component 
+ * Contains API used to implement coordinated sorting, filtering
+ * and highlighting of the extended Swing cell-rendering component
  * classes JXTable, JXTreeTable, JXTree, and JXList. <p>
- * 
+ *
  * For details, see
  * <a href="http://wiki.java.net/bin/view/Javadesktop/SwingXRendererBasedHighlight">
  * SwingX Highlighter Basics (in the wiki) </a>. <p>
- * 
+ *
  * PENDING JW: describe here instead of linking ;-)
  */
 package org.jdesktop.swingx.decorator;
-

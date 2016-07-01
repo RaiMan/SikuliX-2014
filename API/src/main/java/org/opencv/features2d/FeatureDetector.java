@@ -1,4 +1,3 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
@@ -50,12 +49,10 @@ public class FeatureDetector {
     protected final long nativeObj;
     protected FeatureDetector(long addr) { nativeObj = addr; }
 
-
     private static final int
             GRIDDETECTOR = 1000,
             PYRAMIDDETECTOR = 2000,
             DYNAMICDETECTOR = 3000;
-
 
     public static final int
             FAST = 1,
@@ -104,7 +101,6 @@ public class FeatureDetector {
             DYNAMIC_DENSE = DYNAMICDETECTOR + DENSE,
             DYNAMIC_BRISK = DYNAMICDETECTOR + BRISK;
 
-
     //
     // C++: static javaFeatureDetector* javaFeatureDetector::create(int detectorType)
     //
@@ -145,7 +141,6 @@ public class FeatureDetector {
         return retVal;
     }
 
-
     //
     // C++:  void javaFeatureDetector::detect(Mat image, vector_KeyPoint& keypoints, Mat mask = Mat())
     //
@@ -185,7 +180,6 @@ public class FeatureDetector {
 
         return;
     }
-
 
     //
     // C++:  void javaFeatureDetector::detect(vector_Mat images, vector_vector_KeyPoint& keypoints, vector_Mat masks = vector<Mat>())
@@ -230,7 +224,6 @@ public class FeatureDetector {
         return;
     }
 
-
     //
     // C++:  bool javaFeatureDetector::empty()
     //
@@ -242,7 +235,6 @@ public class FeatureDetector {
 
         return retVal;
     }
-
 
     //
     // C++:  void javaFeatureDetector::read(string fileName)
@@ -256,7 +248,6 @@ public class FeatureDetector {
         return;
     }
 
-
     //
     // C++:  void javaFeatureDetector::write(string fileName)
     //
@@ -269,12 +260,10 @@ public class FeatureDetector {
         return;
     }
 
-
     @Override
     protected void finalize() throws Throwable {
         delete(nativeObj);
     }
-
 
 
     // C++: static javaFeatureDetector* javaFeatureDetector::create(int detectorType)

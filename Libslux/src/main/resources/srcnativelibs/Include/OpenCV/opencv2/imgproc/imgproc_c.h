@@ -120,7 +120,6 @@ CVAPI(CvMat**) cvCreatePyramid( const CvArr* img, int extra_layers, double rate,
 /* Releases pyramid */
 CVAPI(void)  cvReleasePyramid( CvMat*** pyramid, int extra_layers );
 
-
 /* Filters image using meanshift algorithm */
 CVAPI(void) cvPyrMeanShiftFiltering( const CvArr* src, CvArr* dst,
     double sp, double sr, int max_level CV_DEFAULT(1),
@@ -142,7 +141,6 @@ CVAPI(void) cvLaplace( const CvArr* src, CvArr* dst,
 
 /* Converts input array pixels from one color space to another */
 CVAPI(void)  cvCvtColor( const CvArr* src, CvArr* dst, int code );
-
 
 /* Resizes image (input array is resized to fit the destination array) */
 CVAPI(void)  cvResize( const CvArr* src, CvArr* dst,
@@ -267,7 +265,6 @@ CVAPI(int)  cvSampleLine( const CvArr* image, CvPoint pt1, CvPoint pt2, void* bu
  Values of pixels with fractional coordinates are retrieved using bilinear interpolation*/
 CVAPI(void)  cvGetRectSubPix( const CvArr* src, CvArr* dst, CvPoint2D32f center );
 
-
 /* Retrieves quadrangle from the input array.
     matrixarr = ( a11  a12 | b1 )   dst(x,y) <- src(A[x y]' + b)
                 ( a21  a22 | b2 )   (bilinear interpolation is used to retrieve pixels
@@ -318,11 +315,9 @@ CVAPI(CvContourScanner)  cvStartFindContours( CvArr* image, CvMemStorage* storag
 /* Retrieves next contour */
 CVAPI(CvSeq*)  cvFindNextContour( CvContourScanner scanner );
 
-
 /* Substitutes the last retrieved contour with the new one
    (if the substitutor is null, the last retrieved contour is removed from the tree) */
 CVAPI(void)   cvSubstituteContour( CvContourScanner scanner, CvSeq* new_contour );
-
 
 /* Releases contour scanner and returns pointer to the first outer contour */
 CVAPI(CvSeq*)  cvEndFindContours( CvContourScanner* scanner );
@@ -341,7 +336,6 @@ CVAPI(void) cvStartReadChainPoints( CvChain* chain, CvChainPtReader* reader );
 
 /* Retrieves the next chain point */
 CVAPI(CvPoint) cvReadChainPoint( CvChainPtReader* reader );
-
 
 /****************************************************************************************\
 *                            Contour Processing and Shape Analysis                       *
@@ -363,7 +357,6 @@ CV_INLINE double cvContourPerimeter( const void* contour )
 {
     return cvArcLength( contour, CV_WHOLE_SEQ, 1 );
 }
-
 
 /* Calculates contour bounding rectangle (update=1) or
    just retrieves pre-calculated rectangle (update=0) */
@@ -394,7 +387,6 @@ CVAPI(CvSeq*) cvConvexHull2( const CvArr* input,
 
 /* Checks whether the contour is convex or not (returns 1 if convex, 0 if not) */
 CVAPI(int)  cvCheckContourConvexity( const CvArr* contour );
-
 
 /* Finds convexity defects for the contour */
 CVAPI(CvSeq*)  cvConvexityDefects( const CvArr* contour, const CvArr* convexhull,
@@ -453,15 +445,12 @@ CVAPI(void)  cvGetMinMaxHistValue( const CvHistogram* hist,
                                    int* min_idx CV_DEFAULT(NULL),
                                    int* max_idx CV_DEFAULT(NULL));
 
-
 /* Normalizes histogram by dividing all bins by sum of the bins, multiplied by <factor>.
    After that sum of histogram bins is equal to <factor> */
 CVAPI(void)  cvNormalizeHist( CvHistogram* hist, double factor );
 
-
 /* Clear all histogram bins that are below the threshold */
 CVAPI(void)  cvThreshHist( CvHistogram* hist, double threshold );
-
 
 /* Compares two histogram */
 CVAPI(double)  cvCompareHist( const CvHistogram* hist1,
@@ -471,7 +460,6 @@ CVAPI(double)  cvCompareHist( const CvHistogram* hist1,
 /* Copies one histogram to another. Destination histogram is created if
    the destination pointer is NULL */
 CVAPI(void)  cvCopyHist( const CvHistogram* src, CvHistogram** dst );
-
 
 /* Calculates bayesian probabilistic histograms
    (each or src and dst is an array of <number> histograms */
@@ -495,7 +483,6 @@ CVAPI(void)  cvCalcArrBackProject( CvArr** image, CvArr* dst,
                                    const CvHistogram* hist );
 #define  cvCalcBackProject(image, dst, hist) cvCalcArrBackProject((CvArr**)image, dst, hist)
 
-
 /* Does some sort of template matching but compares histograms of
    template and each window location */
 CVAPI(void)  cvCalcArrBackProjectPatch( CvArr** image, CvArr* dst, CvSize range,
@@ -504,14 +491,12 @@ CVAPI(void)  cvCalcArrBackProjectPatch( CvArr** image, CvArr* dst, CvSize range,
 #define  cvCalcBackProjectPatch( image, dst, range, hist, method, factor ) \
      cvCalcArrBackProjectPatch( (CvArr**)image, dst, range, hist, method, factor )
 
-
 /* calculates probabilistic density (divides one histogram by another) */
 CVAPI(void)  cvCalcProbDensity( const CvHistogram* hist1, const CvHistogram* hist2,
                                 CvHistogram* dst_hist, double scale CV_DEFAULT(255) );
 
 /* equalizes histogram of 8-bit single-channel image */
 CVAPI(void)  cvEqualizeHist( const CvArr* src, CvArr* dst );
-
 
 /* Applies distance transform to binary image */
 CVAPI(void)  cvDistTransform( const CvArr* src, CvArr* dst,
@@ -520,7 +505,6 @@ CVAPI(void)  cvDistTransform( const CvArr* src, CvArr* dst,
                               const float* mask CV_DEFAULT(NULL),
                               CvArr* labels CV_DEFAULT(NULL),
                               int labelType CV_DEFAULT(CV_DIST_LABEL_CCOMP));
-
 
 /* Applies fixed-level threshold to grayscale image.
    This is a basic operation applied before retrieving contours */

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -35,7 +35,7 @@ import org.jdesktop.swingx.plaf.basic.BasicTaskPaneUI;
 
 /**
  * Paints the JXTaskPane with a gradient in the title bar.
- * 
+ *
  * @author <a href="mailto:fred@L2FProd.com">Frederic Lavigne</a>
  */
 public class GlossyTaskPaneUI extends BasicTaskPaneUI {
@@ -48,7 +48,7 @@ public class GlossyTaskPaneUI extends BasicTaskPaneUI {
   protected Border createPaneBorder() {
     return new GlossyPaneBorder();
   }
-  
+
   /**
    * Overriden to paint the background of the component but keeping the rounded
    * corners.
@@ -67,10 +67,10 @@ public class GlossyTaskPaneUI extends BasicTaskPaneUI {
   /**
    * The border of the taskpane group paints the "text", the "icon", the
    * "expanded" status and the "special" type.
-   *  
+   *
    */
   class GlossyPaneBorder extends PaneBorder {
-    
+
     @Override
     protected void paintTitleBackground(JXTaskPane group, Graphics g) {
       if (group.isSpecial()) {
@@ -97,7 +97,7 @@ public class GlossyTaskPaneUI extends BasicTaskPaneUI {
             0f, //group.getWidth(),
             getTitleHeight(group),
             titleBackgroundGradientEnd);
-                
+
         ((Graphics2D)g).setRenderingHint(
           RenderingHints.KEY_COLOR_RENDERING,
           RenderingHints.VALUE_COLOR_RENDER_QUALITY);
@@ -108,7 +108,7 @@ public class GlossyTaskPaneUI extends BasicTaskPaneUI {
           RenderingHints.KEY_RENDERING,
           RenderingHints.VALUE_RENDER_QUALITY);
         ((Graphics2D)g).setPaint(gradient);
-        
+
         g.fillRoundRect(
           0,
           0,
@@ -123,7 +123,7 @@ public class GlossyTaskPaneUI extends BasicTaskPaneUI {
           getTitleHeight(group) - getRoundHeight());
         ((Graphics2D)g).setPaint(oldPaint);
       }
-      
+
       g.setColor(borderColor);
       g.drawRoundRect(
         0,
@@ -141,11 +141,11 @@ public class GlossyTaskPaneUI extends BasicTaskPaneUI {
       ((Graphics2D)g).setRenderingHint(
         RenderingHints.KEY_ANTIALIASING,
         RenderingHints.VALUE_ANTIALIAS_ON);
-      
+
       paintOvalAroundControls(group, g, x, y, width, height);
       g.setColor(getPaintColor(group));
       paintChevronControls(group, g, x, y, width, height);
-      
+
       ((Graphics2D)g).setRenderingHint(
         RenderingHints.KEY_ANTIALIASING,
         RenderingHints.VALUE_ANTIALIAS_OFF);

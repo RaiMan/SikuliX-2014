@@ -37,11 +37,11 @@ import org.jdesktop.swingx.painter.Painter;
 
 /**
  * Compound component for usage in tree renderer. <p>
- * 
- * Supports setting an icon for the node and a delegate component 
- * which is used to show the text/content of the node. The delegate 
+ *
+ * Supports setting an icon for the node and a delegate component
+ * which is used to show the text/content of the node. The delegate
  * component can be shared across renderers. <p>
- * 
+ *
  * This implements the PainterAware by delegating to the delegate component if that
  * is of type PainterAware. Does nothing if not.
  */
@@ -54,12 +54,11 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
     private Border rtolBorder;
     private boolean dropHackEnabled;
     private boolean extendsComponentOpacity;
-    
-    
+
     /**
      * Instantiates and configures a WrappingIconPanel with the dropHack
      * enabled.
-     * 
+     *
      */
     public WrappingIconPanel() {
         this(true);
@@ -67,10 +66,10 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
     /**
      * Instantiates and configures a WrappingIconPanel with the dropHack
      * property set as indicated by the boolean.
-     * 
+     *
      * @param dropHackEnabled a boolean indicating whether the drop hack should
      *        be enabled.
-     * 
+     *
      * @see #isVisible()
      */
     public WrappingIconPanel(boolean dropHackEnabled) {
@@ -84,10 +83,10 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
         add(iconLabel, BorderLayout.LINE_START);
         setDropHackEnabled(dropHackEnabled);
     }
-    
+
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to update the icon position.
      */
     @Override
@@ -103,7 +102,7 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
         if (ltorBorder == null) {
             ltorBorder = BorderFactory.createEmptyBorder(0, 0, 0, iconLabelGap);
             rtolBorder = BorderFactory.createEmptyBorder(0, iconLabelGap, 0, 0);
-        } 
+        }
         if (getComponentOrientation().isLeftToRight()) {
             iconLabel.setBorder(ltorBorder);
         } else {
@@ -113,7 +112,7 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
 
     /**
      * Sets the icon.
-     * 
+     *
      * @param icon the icon to use.
      */
     @Override
@@ -122,10 +121,10 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
         iconLabel.setText(null);
         validate();
     }
- 
+
     /**
      * Returns the icon used in this panel, may be null.
-     * 
+     *
      * @return the icon used in this panel, may be null.
      */
     @Override
@@ -133,10 +132,9 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
         return iconLabel.getIcon();
     }
 
-
     /**
-     * Sets the delegate component. 
-     * 
+     * Sets the delegate component.
+     *
      * @param comp the component to add as delegate.
      */
     public void setComponent(JComponent comp) {
@@ -157,7 +155,7 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
 
     /**
      * Returns the delegate component.
-     * 
+     *
      * @return the delegate component.
      */
     public JComponent getComponent() {
@@ -166,7 +164,7 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to set the background of the delegate and icon label as well.
      */
     @Override
@@ -182,7 +180,7 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to set the foreground of the delegate and icon label as well.
      */
     @Override
@@ -197,11 +195,11 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
     }
 
 
-    
-    
+
+
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to set the Font of the delegate as well.
      */
     @Override
@@ -212,19 +210,18 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
         super.setFont(font);
     }
 
-    
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Overridden to hack around #766-swingx: cursor flickering in DnD when
      * dragging over tree column. This is a core bug (#6700748) related to
      * painting the rendering component on a CellRendererPane. A trick around is
      * to let this return false.
      * <p>
-     * 
+     *
      * Some LayoutManagers don't layout an invisible component, so need to make
-     * the hack-enabled configurable. This implementation will return false 
+     * the hack-enabled configurable. This implementation will return false
      * if isDropHackEnabled, super.isVisible otherwise.
      */
     @Override
@@ -232,14 +229,13 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
         return dropHackEnabled ? false : super.isVisible();
     }
 
-
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Returns the delegate's Painter if it is of type PainterAware or null
      * otherwise.
-     * 
+     *
      * @return the delegate's Painter or null.
      */
     @Override
@@ -250,10 +246,9 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
         return null;
     }
 
-
     /**
      * Sets the delegate's Painter if it is of type PainterAware. Does nothing otherwise.
-     * 
+     *
      * @param painter the Painter to apply to the delegate.
      */
     @Override
@@ -261,15 +256,15 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
         if (delegate instanceof PainterAware) {
             ((PainterAware) delegate).setPainter(painter);
         }
-        
+
     }
-    
+
     /**
-     * 
+     *
      * Returns the bounds of the delegate component or null if the delegate is null.
-     * 
+     *
      * PENDING JW: where do we use it? Maybe it was for testing only?
-     * 
+     *
      * @return the bounds of the delegate, or null if the delegate is null.
      */
     public Rectangle getDelegateBounds() {
@@ -277,14 +272,13 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
         return delegate.getBounds();
     }
 
-
     /**
      * Sets the dropHackEnabled property. <p>
-     * 
+     *
      * The default value is true.
-     * 
-     * @param dropHackEnabled 
-     * 
+     *
+     * @param dropHackEnabled
+     *
      * @see #isVisible()
      */
     public void setDropHackEnabled(boolean dropHackEnabled) {
@@ -294,14 +288,14 @@ public class WrappingIconPanel extends JXPanel implements PainterAware, IconAwar
     /**
      * Sets a boolean indicating whether or not the main component's opacity
      * should be applied to the Icon region.<p>
-     * 
+     *
      * The default value is false. This covers the main use case in a JTree.
-     * 
+     *
      * @param extendsComponentOpacity
      */
     public void setExtendsComponentOpacity(boolean extendsComponentOpacity) {
         this.extendsComponentOpacity = extendsComponentOpacity;
-        
+
     }
     /**
      * @return the extendsComponentOpacity
