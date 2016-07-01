@@ -1793,7 +1793,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
 
     public void openQuickStart(ActionEvent ae) {
-      FileManager.openURL("http://www.sikulix.com/quickstart.html");
+      FileManager.openURL("http://sikulix.com/quickstart/");
     }
 
     public void openDoc(ActionEvent ae) {
