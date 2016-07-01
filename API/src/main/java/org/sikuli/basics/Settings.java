@@ -453,13 +453,13 @@ public class Settings {
     }
 
     public static int getOS() {
-        int osRet = ISNOTSUPPORTED;
+        int osRet;
         String os = System.getProperty("os.name").toLowerCase();
         if (os.startsWith("mac")) {
             osRet = ISMAC;
         } else if (os.startsWith("windows")) {
             osRet = ISWINDOWS;
-        } else if (os.startsWith("linux")) {
+        } else {
             osRet = ISLINUX;
         }
         return osRet;
