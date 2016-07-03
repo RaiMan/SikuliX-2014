@@ -96,7 +96,6 @@ public:
 
    static void initOCR(const char* ocrDataPath);
 
-
    // not used currently
    static string query(const char* index_filename, cv::Mat image);
 

@@ -233,7 +233,7 @@ public class JXLoginPane extends JXPanel {
      * save their password
      */
     private JCheckBox saveCB;
-    
+
     /**
      * Label displayed whenever caps lock is on.
      */
@@ -281,7 +281,7 @@ public class JXLoginPane extends JXPanel {
      * cursor after authentication ends, or is canceled;
      */
     private Cursor oldCursor;
-    
+
     private boolean namePanelEnabled = true;
 
     /**
@@ -293,7 +293,7 @@ public class JXLoginPane extends JXPanel {
      * Login/cancel control pane;
      */
     private JXBtnPanel buttonPanel;
-    
+
     /**
      * Card pane holding user/pwd fields view and the progress view.
      */
@@ -426,7 +426,6 @@ public class JXLoginPane extends JXPanel {
         setUserNameStore(userStore);
         setServers(servers);
 
-
         //create the login and cancel actions, and add them to the action map
         getActionMap().put(LOGIN_ACTION_COMMAND, createLoginAction());
         getActionMap().put(CANCEL_LOGIN_ACTION_COMMAND, createCancelAction());
@@ -544,7 +543,7 @@ public class JXLoginPane extends JXPanel {
      */
     private JXPanel createLoginPanel() {
         JXPanel loginPanel = new JXPanel();
-        
+
         JPasswordField oldPwd = passwordField;
         //create the password component
         passwordField = new JPasswordField("", 15);
@@ -586,7 +585,7 @@ public class JXLoginPane extends JXPanel {
         saveCB = new JCheckBox(UIManagerExt.getString(CLASS_NAME + ".rememberPasswordString", getLocale()));
         saveCB.setIconTextGap(10);
         //TODO should get this from preferences!!! And, it should be based on the user
-        saveCB.setSelected(false); 
+        saveCB.setSelected(false);
         //determine whether to show/hide the save check box based on the SaveMode
         saveCB.setVisible(saveMode == SaveMode.PASSWORD || saveMode == SaveMode.BOTH);
         saveCB.setOpaque(false);
@@ -627,7 +626,7 @@ public class JXLoginPane extends JXPanel {
         gridBagConstraints.anchor = GridBagConstraints.LINE_START;
         gridBagConstraints.insets = new Insets(5, lShift, 5, 11);
         loginPanel.add(passwordLabel, gridBagConstraints);
-        
+
         if (serverCombo != null) {
             gridBagConstraints = new GridBagConstraints();
             gridBagConstraints.gridx = 0;
@@ -645,7 +644,7 @@ public class JXLoginPane extends JXPanel {
             gridBagConstraints.weightx = 1.0;
             gridBagConstraints.insets = new Insets(0, 0, 5, 0);
             loginPanel.add(serverCombo, gridBagConstraints);
-            
+
             gridBagConstraints = new GridBagConstraints();
             gridBagConstraints.gridx = 0;
             gridBagConstraints.gridy = 3;
@@ -839,7 +838,7 @@ public class JXLoginPane extends JXPanel {
             firePropertyChange("saveMode", oldMode, getSaveMode());
         }
     }
-    
+
     public boolean isRememberPassword() {
 	return saveCB.isVisible() && saveCB.isSelected();
     }
@@ -976,7 +975,7 @@ public class JXLoginPane extends JXPanel {
     /**
      * Enables or disables <strong>User name</strong> for this panel.
      *
-     * @param enabled 
+     * @param enabled
      */
     public void setUserNameEnabled(boolean enabled) {
         boolean old = isUserNameEnabled();
@@ -987,7 +986,7 @@ public class JXLoginPane extends JXPanel {
         }
         firePropertyChange("userNameEnabled", old, isUserNameEnabled());
     }
-    
+
     /**
      * Gets current state of the user name field. Field can be either disabled (false) for editing or enabled (true).
      * @return True when user name field is enabled and editable, false otherwise.
@@ -1149,7 +1148,7 @@ public class JXLoginPane extends JXPanel {
             String name = getUserName();
             char[] password = getPassword();
             String server = servers.size() == 1 ? servers.get(0) : serverCombo == null ? null : (String)serverCombo.getSelectedItem();
-            
+
             loginService.startAuthentication(name, password, server);
         } catch(Exception ex) {
         //The status is set via the loginService listener, so no need to set
@@ -1235,8 +1234,8 @@ public class JXLoginPane extends JXPanel {
                 userNameStore.addUserName(userName);
                 userNameStore.saveUserNames();
             }
-            
-            // if the user and/or password store knows of this user, 
+
+            // if the user and/or password store knows of this user,
             // and the checkbox is unchecked, we remove them, otherwise
             // we save the password
             if (saveCB.isSelected()) {
@@ -1247,7 +1246,7 @@ public class JXLoginPane extends JXPanel {
         	    passwordStore.removeUserPassword(userName);
         	}
             }
-            
+
             setStatus(Status.SUCCEEDED);
         }
 
@@ -1359,12 +1358,12 @@ public class JXLoginPane extends JXPanel {
             //null op
             return false;
         }
-	
+
 	@Override
         public char[] get(String username, String server) {
             return new char[0];
         }
-	
+
 	@Override
 	public void removeUserPassword(String username) {
 	    return;
@@ -1391,19 +1390,19 @@ public class JXLoginPane extends JXPanel {
         public void setUserName(String userName);
         public JComponent getComponent();
     }
-    
+
     private void updatePassword(final String username) {
         String password = "";
         if (username != null) {
     		char[] pw = passwordStore.get(username, null);
     		password = pw == null ? "" : new String(pw);
-    		
-    		// if the userstore has this username, we should change the 
+
+    		// if the userstore has this username, we should change the
     		// 'remember me' checkbox to be selected. Unselecting this will
     		// result in the user being 'forgotten'.
     		saveCB.setSelected(userNameStore.containsUserName(username));
         }
-        
+
         passwordField.setText(password);
     }
 
@@ -1416,7 +1415,7 @@ public class JXLoginPane extends JXPanel {
 
 	public SimpleNamePanel() {
 	    super("", 15);
-	    
+
 	    // auto-complete based on the users input
 	    // AutoCompleteDecorator.decorate(this, Arrays.asList(userNameStore.getUserNames()), false);
 
@@ -1431,7 +1430,7 @@ public class JXLoginPane extends JXPanel {
 		});
 	    }
 	}
-        
+
         @Override
         public String getUserName() {
             return getText();
@@ -1445,7 +1444,7 @@ public class JXLoginPane extends JXPanel {
             return this;
         }
     }
-    
+
     /**
      * If a UserNameStore is used, then this combo box is presented allowing the user
      * to select a previous login name, or type in a new login name
@@ -1457,7 +1456,7 @@ public class JXLoginPane extends JXPanel {
             super();
             setModel(new NameComboBoxModel());
             setEditable(true);
-            
+
             // auto-complete based on the users input
             AutoCompleteDecorator.decorate(this);
 
@@ -1471,7 +1470,7 @@ public class JXLoginPane extends JXPanel {
         		updatePassword(textfield.getText());
         	    }
         	});
-        	
+
         	super.addItemListener(new ItemListener() {
         	    @Override
                 public void itemStateChanged(ItemEvent e) {
@@ -1480,7 +1479,7 @@ public class JXLoginPane extends JXPanel {
         	});
             }
         }
-        
+
         @Override
         public String getUserName() {
             Object item = getModel().getSelectedItem();
@@ -1497,7 +1496,7 @@ public class JXLoginPane extends JXPanel {
         public JComponent getComponent() {
             return this;
         }
-        
+
         private final class NameComboBoxModel extends AbstractListModel implements ComboBoxModel {
             private static final long serialVersionUID = 7097674687536018633L;
             private Object selectedItem;
@@ -1515,7 +1514,7 @@ public class JXLoginPane extends JXPanel {
                 if (index == -1) {
                     return null;
                 }
-                
+
                 return userNameStore.getUserNames()[index];
             }
             @Override
@@ -1616,7 +1615,7 @@ public class JXLoginPane extends JXPanel {
             this.panel = p;
             initWindow(this, panel);
         }
-    
+
         public JXLoginPane.Status getStatus() {
             return panel.getStatus();
         }
@@ -1755,7 +1754,7 @@ public class JXLoginPane extends JXPanel {
     private void setButtonPanel(JXBtnPanel buttonPanel) {
         this.buttonPanel = buttonPanel;
     }
-    
+
     private static class JXBtnPanel extends JXPanel {
         private static final long serialVersionUID = 4136611099721189372L;
         private JButton cancel;

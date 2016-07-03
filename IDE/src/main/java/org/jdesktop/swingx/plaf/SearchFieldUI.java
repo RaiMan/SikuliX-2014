@@ -28,16 +28,16 @@ import org.jdesktop.swingx.search.NativeSearchFieldSupport;
 
 /**
  * The default {@link JXSearchField} UI delegate.
- * 
+ *
  * @author Peter Weishapl <petw@gmx.net>
- * 
+ *
  */
 public class SearchFieldUI extends BuddyTextFieldUI {
     /**
      * The search field that we're a UI delegate for. Initialized by the
      * <code>installUI</code> method, and reset to null by
      * <code>uninstallUI</code>.
-     * 
+     *
      * @see #installUI
      * @see #uninstallUI
      */
@@ -196,7 +196,7 @@ public class SearchFieldUI extends BuddyTextFieldUI {
      * <code>createLayout</code>. Also calls {@link #replaceBorderIfNecessary()}
      * and {@link #updateButtons()}. This method is called by
      * {@link #installUI(JComponent)}.
-     * 
+     *
      * @see #installUI
      * @see #createLayout
      * @see JXSearchField#customSetUIProperty(String, Object)
@@ -271,7 +271,7 @@ public class SearchFieldUI extends BuddyTextFieldUI {
     /**
      * Returns true if <code>o</code> is <code>null</code> or of instance
      * {@link UIResource}.
-     * 
+     *
      * @param o an object
      * @return true if <code>o</code> is <code>null</code> or of instance
      *         {@link UIResource}
@@ -286,7 +286,7 @@ public class SearchFieldUI extends BuddyTextFieldUI {
      * belonging to <code>resKey</code>, if
      * {@link #shouldReplaceResource(Object)} with the <code>icon</code> as a
      * parameter returns <code>true</code>. Otherwise returns <code>icon</code>.
-     * 
+     *
      * @param icon the current icon
      * @param resKey the resource key identifying the default icon
      * @return the new icon
@@ -301,7 +301,7 @@ public class SearchFieldUI extends BuddyTextFieldUI {
 
     /**
      * Convienence method.
-     * 
+     *
      * @see JXSearchField#getCancelButton()
      * @return the clear button
      */
@@ -311,7 +311,7 @@ public class SearchFieldUI extends BuddyTextFieldUI {
 
     /**
      * Convienence method.
-     * 
+     *
      * @see JXSearchField#getFindButton()
      * @return the search button
      */
@@ -321,7 +321,7 @@ public class SearchFieldUI extends BuddyTextFieldUI {
 
     /**
      * Convienence method.
-     * 
+     *
      * @see JXSearchField#getPopupButton()
      * @return the popup button
      */
@@ -333,7 +333,7 @@ public class SearchFieldUI extends BuddyTextFieldUI {
      * Returns <code>true</code> if
      * {@link JXSearchField#isUseSeperatePopupButton()} is <code>true</code> and
      * a search popup menu has been set.
-     * 
+     *
      * @return the popup button is used in addition to the search button
      */
     public boolean usingSeperatePopupButton() {
@@ -346,7 +346,7 @@ public class SearchFieldUI extends BuddyTextFieldUI {
      * search) button as specified in the default table by
      * 'SearchField.popupOffset'. Returns 0 if
      * {@link #usingSeperatePopupButton()} returns <code>false</code>
-     * 
+     *
      * @return number of pixels between the popup button and the clear (or
      *         search) button
      */

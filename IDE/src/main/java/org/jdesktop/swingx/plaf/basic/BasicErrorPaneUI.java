@@ -221,14 +221,12 @@ public class BasicErrorPaneUI extends ErrorPaneUI {
     protected void installDefaults() {
     }
 
-
     /**
      * Uninstalls the default colors, and default font into the Error Pane.
      */
     protected void uninstallDefaults() {
         LookAndFeel.uninstallBorder(pane);
     }
-
 
     /**
      * Create and install the listeners for the Error Pane.
@@ -241,7 +239,6 @@ public class BasicErrorPaneUI extends ErrorPaneUI {
         pane.addPropertyChangeListener(errorPaneListener);
     }
 
-
     /**
      * Remove the installed listeners from the Error Pane.
      * The number and types of listeners removed and in this method should be
@@ -251,7 +248,6 @@ public class BasicErrorPaneUI extends ErrorPaneUI {
         //remove the property change listener from the pane
         pane.removePropertyChangeListener(errorPaneListener);
     }
-
 
     //    ===============================
     //     begin Sub-Component Management
@@ -704,7 +700,6 @@ public class BasicErrorPaneUI extends ErrorPaneUI {
             w.dispose();
         }
     }
-
 
     /**
      * Listener for Details click events.  Alternates whether the details section

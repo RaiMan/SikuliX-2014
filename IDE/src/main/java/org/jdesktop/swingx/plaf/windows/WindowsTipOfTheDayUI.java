@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -45,7 +45,7 @@ import org.jdesktop.swingx.plaf.basic.BasicTipOfTheDayUI;
 
 /**
  * Windows implementation of the TipOfTheDayUI.
- * 
+ *
  * @author <a href="mailto:fred@L2FProd.com">Frederic Lavigne</a>
  */
 public class WindowsTipOfTheDayUI extends BasicTipOfTheDayUI {
@@ -53,11 +53,11 @@ public class WindowsTipOfTheDayUI extends BasicTipOfTheDayUI {
   public static ComponentUI createUI(JComponent c) {
     return new WindowsTipOfTheDayUI((JXTipOfTheDay)c);
   }
-  
+
   public WindowsTipOfTheDayUI(JXTipOfTheDay tipPane) {
     super(tipPane);
   }
-  
+
   @Override
   public JDialog createDialog(Component parentComponent,
     final ShowOnStartupChoice choice) {
@@ -76,7 +76,7 @@ protected void installComponents() {
     tipIcon.setVerticalAlignment(JLabel.TOP);
     tipIcon.setBorder(BorderFactory.createEmptyBorder(24, 0, 0, 0));
     tipPane.add("West", tipIcon);
-    
+
     // tip area
     JPanel rightPane = new JPanel(new BorderLayout());
     JLabel didYouKnow = new JLabel(UIManagerExt
@@ -87,18 +87,18 @@ protected void installComponents() {
     didYouKnow.setBorder(new CompoundBorder(BorderFactory.createMatteBorder(0,
       0, 2, 0, tipPane.getBackground()), BorderFactory.createEmptyBorder(4, 4,
       4, 4)));
-    didYouKnow.setFont(tipPane.getFont().deriveFont(Font.BOLD, 15));    
+    didYouKnow.setFont(tipPane.getFont().deriveFont(Font.BOLD, 15));
     rightPane.add("North", didYouKnow);
-    
+
     tipArea = new JPanel(new BorderLayout());
     tipArea.setOpaque(true);
     tipArea.setBorder(BorderFactory.createEmptyBorder(4, 4, 4, 4));
     tipArea.setBackground(UIManager.getColor("TextArea.background"));
     rightPane.add("Center", tipArea);
-    
+
     tipPane.add("Center", rightPane);
   }
-  
+
   public static class TipAreaBorder implements Border {
     @Override
     public Insets getBorderInsets(Component c) {
@@ -114,11 +114,11 @@ protected void installComponents() {
       g.setColor(UIManager.getColor("TipOfTheDay.background"));
       g.drawLine(x, y, x + width - 1, y);
       g.drawLine(x, y, x, y + height - 1);
-  
+
       g.setColor(Color.black);
       g.drawLine(x + 1, y + 1, x + width - 3, y + 1);
       g.drawLine(x + 1, y + 1, x + 1, y + height - 3);
-  
+
       g.setColor(Color.white);
       g.drawLine(x, y + height - 1, x + width, y + height - 1);
       g.drawLine(x + width - 1, y, x + width - 1, y + height - 1);

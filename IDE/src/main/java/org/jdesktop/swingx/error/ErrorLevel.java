@@ -41,9 +41,9 @@ public class ErrorLevel extends Level {
      * program execution.   They should be reasonably intelligible
      * to end users and to system administrators.
      * This level is initialized to <CODE>1100</CODE>.
-     */    
+     */
     public static final ErrorLevel FATAL = new ErrorLevel("FATAL", 1100);
-    
+
     /** Creates a new instance of ErrorLevel */
     protected ErrorLevel(String name, int value) {
         super(name, value);

@@ -3,7 +3,6 @@ package org.opencv.core;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class MatOfInt extends Mat {
     // 32SC1
     private static final int _depth = CvType.CV_32S;

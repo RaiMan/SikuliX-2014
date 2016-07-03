@@ -15,4 +15,3 @@ public interface Image {
 
     float getSimilarity();
 }
-

@@ -36,7 +36,7 @@ public class SikuliIDEI18N {
       }
       return true;
    }
-   
+
    public static String getLocaleShow() {
      String ret = curLocale.toString();
      if (i18nRB == null) ret += " (using en_US)";

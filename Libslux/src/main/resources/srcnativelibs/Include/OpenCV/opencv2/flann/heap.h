@@ -61,7 +61,6 @@ class Heap
     int count;
 
 
-
 public:
     /**
      * Constructor.
@@ -134,7 +133,6 @@ public:
         std::push_heap(heap.begin(), heap.end(), compareT);
         ++count;
     }
-
 
 
     /**

@@ -432,7 +432,6 @@ public class Guide extends OverlayTransparentWindow implements EventObserver {
     }
   }
 
-
 //<editor-fold defaultstate="collapsed" desc="global tracking support - not used currently">
   public void addTracker(Pattern pattern, SxAnchor anchor) {
     Tracker tracker = null;
@@ -489,7 +488,6 @@ public class Guide extends OverlayTransparentWindow implements EventObserver {
   abstract class TrackerAdapter {
     abstract void patternAnchored();
   }
-
 
   //</editor-fold>
 

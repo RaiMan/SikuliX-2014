@@ -34,7 +34,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-
 namespace cvflann
 {
 
@@ -51,7 +50,6 @@ T* allocate(size_t count = 1)
     T* mem = (T*) ::malloc(sizeof(T)*count);
     return mem;
 }
-
 
 /**
  * Pooled storage allocator
@@ -78,12 +76,10 @@ class PooledAllocator
     /* Size of machine word in bytes.  Must be power of 2. */
     /* Minimum number of bytes requested at a time from	the system.  Must be multiple of WORDSIZE. */
 
-
     int     remaining;  /* Number of bytes left in current block of storage. */
     void*   base;     /* Pointer to base of current block of storage. */
     void*   loc;      /* Current location in block to next allocate memory. */
     int     blocksize;
-
 
 public:
     int     usedMemory;

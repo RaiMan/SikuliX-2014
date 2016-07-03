@@ -7,14 +7,14 @@ import javax.swing.JPanel;
 
 /**
  * An implementation of JPanel used for rendering. It overrides methods for performance reasons.
- * 
+ *
  * @author kschaefer
  */
 public class JRendererPanel extends JPanel {
     public JRendererPanel() {
         super();
     }
-    
+
     /**
      * @param layout
      */
@@ -24,10 +24,10 @@ public class JRendererPanel extends JPanel {
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to not automatically de/register itself from/to the ToolTipManager.
      * As rendering component it is not considered to be active in any way, so the
-     * manager must not listen. 
+     * manager must not listen.
      */
     @Override
     public void setToolTipText(String text) {
@@ -36,7 +36,7 @@ public class JRendererPanel extends JPanel {
 
     /**
      * Overridden for performance reasons.
-     * See the <a href="#override">Implementation Note</a> 
+     * See the <a href="#override">Implementation Note</a>
      * for more information.
      */
     @Override
@@ -44,7 +44,7 @@ public class JRendererPanel extends JPanel {
 
     /**
      * Overridden for performance reasons.
-     * See the <a href="#override">Implementation Note</a> 
+     * See the <a href="#override">Implementation Note</a>
      * for more information.
      */
     @Override
@@ -52,7 +52,7 @@ public class JRendererPanel extends JPanel {
 
     /**
      * Overridden for performance reasons.
-     * See the <a href="#override">Implementation Note</a> 
+     * See the <a href="#override">Implementation Note</a>
      * for more information.
      */
     @Override
@@ -60,7 +60,7 @@ public class JRendererPanel extends JPanel {
 
     /**
      * Overridden for performance reasons.
-     * See the <a href="#override">Implementation Note</a> 
+     * See the <a href="#override">Implementation Note</a>
      * for more information.
      *
      * @since 1.5
@@ -71,7 +71,7 @@ public class JRendererPanel extends JPanel {
 
     /**
      * Overridden for performance reasons.
-     * See the <a href="#override">Implementation Note</a> 
+     * See the <a href="#override">Implementation Note</a>
      * for more information.
      */
     @Override
@@ -79,7 +79,7 @@ public class JRendererPanel extends JPanel {
 
     /**
      * Overridden for performance reasons.
-     * See the <a href="#override">Implementation Note</a> 
+     * See the <a href="#override">Implementation Note</a>
      * for more information.
      */
     @Override

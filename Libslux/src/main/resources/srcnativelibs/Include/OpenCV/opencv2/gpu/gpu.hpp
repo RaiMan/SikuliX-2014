@@ -78,7 +78,6 @@ public:
     CudaMem(int rows, int cols, int type, int _alloc_type = ALLOC_PAGE_LOCKED);
     CudaMem(Size size, int type, int alloc_type = ALLOC_PAGE_LOCKED);
 
-
     //! creates from cv::Mat with coping data
     explicit CudaMem(const Mat& m, int alloc_type = ALLOC_PAGE_LOCKED);
 
@@ -117,7 +116,6 @@ public:
     size_t step1() const;
     Size size() const;
     bool empty() const;
-
 
     // Please see cv::Mat for descriptions
     int flags;
@@ -189,7 +187,6 @@ private:
 
     friend struct StreamAccessor;
 };
-
 
 //////////////////////////////// Filter Engine ////////////////////////////////
 
@@ -405,7 +402,6 @@ CV_EXPORTS void GaussianBlur(const GpuMat& src, GpuMat& dst, Size ksize, GpuMat&
 //! supports only ksize = 1 and ksize = 3
 CV_EXPORTS void Laplacian(const GpuMat& src, GpuMat& dst, int ddepth, int ksize = 1, double scale = 1, int borderType = BORDER_DEFAULT, Stream& stream = Stream::Null());
 
-
 ////////////////////////////// Arithmetics ///////////////////////////////////
 
 //! implements generalized matrix product algorithm GEMM from BLAS
@@ -470,7 +466,6 @@ CV_EXPORTS void normalize(const GpuMat& src, GpuMat& dst, double alpha = 1, doub
                           int norm_type = NORM_L2, int dtype = -1, const GpuMat& mask = GpuMat());
 CV_EXPORTS void normalize(const GpuMat& src, GpuMat& dst, double a, double b,
                           int norm_type, int dtype, const GpuMat& mask, GpuMat& norm_buf, GpuMat& cvt_buf);
-
 
 //////////////////////////// Per-element operations ////////////////////////////////////
 
@@ -588,7 +583,6 @@ enum { ALPHA_OVER, ALPHA_IN, ALPHA_OUT, ALPHA_ATOP, ALPHA_XOR, ALPHA_PLUS, ALPHA
 //! Composite two images using alpha opacity values contained in each image
 //! Supports CV_8UC4, CV_16UC4, CV_32SC4 and CV_32FC4 types
 CV_EXPORTS void alphaComp(const GpuMat& img1, const GpuMat& img2, GpuMat& dst, int alpha_op, Stream& stream = Stream::Null());
-
 
 ////////////////////////////// Image processing //////////////////////////////
 
@@ -767,7 +761,6 @@ struct CV_EXPORTS ConvolveBuf
     void create(Size image_size, Size templ_size);
     static Size estimateBlockSize(Size result_size, Size templ_size);
 };
-
 
 //! computes convolution (or cross-correlation) of two images using discrete Fourier transform
 //! supports source images of 32FC1 type only
@@ -990,7 +983,6 @@ CV_EXPORTS int countNonZero(const GpuMat& src, GpuMat& buf);
 //! reduces a matrix to a vector
 CV_EXPORTS void reduce(const GpuMat& mtx, GpuMat& vec, int dim, int reduceOp, int dtype = -1, Stream& stream = Stream::Null());
 
-
 ///////////////////////////// Calibration 3D //////////////////////////////////
 
 CV_EXPORTS void transformPoints(const GpuMat& src, const Mat& rvec, const Mat& tvec,
@@ -1141,7 +1133,6 @@ public:
     //! if disparity is empty output type will be CV_16S else output type will be disparity.type().
     void operator()(const GpuMat& left, const GpuMat& right, GpuMat& disparity, Stream& stream = Stream::Null());
 
-
     //! version for user specified data term
     void operator()(const GpuMat& data, GpuMat& disparity, Stream& stream = Stream::Null());
 
@@ -1257,7 +1248,6 @@ private:
     GpuMat table_space;
 };
 
-
 //////////////// HOG (Histogram-of-Oriented-Gradients) Descriptor and Object Detector //////////////
 struct CV_EXPORTS HOGConfidence
 {
@@ -1348,7 +1338,6 @@ protected:
 
     std::vector<GpuMat> image_scales;
 };
-
 
 ////////////////////////////////// BruteForceMatcher //////////////////////////////////
 
@@ -1809,7 +1798,6 @@ inline GoodFeaturesToTrackDetector_GPU::GoodFeaturesToTrackDetector_GPU(int maxC
     harrisK = harrisK_;
 }
 
-
 class CV_EXPORTS PyrLKOpticalFlow
 {
 public:
@@ -1839,7 +1827,6 @@ private:
     vector<GpuMat> unused;
     bool isDeviceArch11_;
 };
-
 
 class CV_EXPORTS FarnebackOpticalFlow
 {
@@ -1905,7 +1892,6 @@ private:
 
     bool isDeviceArch11_;
 };
-
 
 // Implementation of the Zach, Pock and Bischof Dual TV-L1 Optical Flow method
 //
@@ -1995,7 +1981,6 @@ private:
     GpuMat norm_buf;
 };
 
-
 //! Calculates optical flow for 2 images using block matching algorithm */
 CV_EXPORTS void calcOpticalFlowBM(const GpuMat& prev, const GpuMat& curr,
                                   Size block_size, Size shift_size, Size max_range, bool use_previous,
@@ -2012,7 +1997,6 @@ private:
     GpuMat extended_I0;
     GpuMat extended_I1;
 };
-
 
 //! Interpolate frames (images) using provided optical flow (displacement field).
 //! frame0   - frame 0 (32-bit floating point images, single channel)
@@ -2035,7 +2019,6 @@ CV_EXPORTS void interpolateFrames(const GpuMat& frame0, const GpuMat& frame1,
                                   Stream& stream = Stream::Null());
 
 CV_EXPORTS void createOpticalFlowNeedleMap(const GpuMat& u, const GpuMat& v, GpuMat& vertex, GpuMat& colors);
-
 
 //////////////////////// Background/foreground segmentation ////////////////////////
 
@@ -2415,7 +2398,6 @@ private:
     class Impl;
     std::auto_ptr<Impl> impl_;
 };
-
 
 ////////////////////////////////// Video Decoding //////////////////////////////////////////
 

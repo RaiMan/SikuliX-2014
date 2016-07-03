@@ -37,7 +37,7 @@ public abstract class TitledPanelUI extends PanelUI {
      */
     public abstract void setRightDecoration(JComponent decoration);
     public abstract JComponent getRightDecoration();
-    
+
     /**
      * Adds the given JComponent as a decoration on the left of the title
      * @param decoration

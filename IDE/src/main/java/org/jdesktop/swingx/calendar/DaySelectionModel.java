@@ -32,12 +32,12 @@ import org.jdesktop.swingx.event.DateSelectionEvent.EventType;
 import org.jdesktop.swingx.util.Contract;
 
 /**
- * 
- * DaySelectionModel is a (temporary?) implementation of DateSelectionModel 
- * which normalizes all dates to the start of the day, that is zeroes all 
+ *
+ * DaySelectionModel is a (temporary?) implementation of DateSelectionModel
+ * which normalizes all dates to the start of the day, that is zeroes all
  * time fields. Responsibility extracted from JXMonthView (which must
  * respect rules of model instead of trying to be clever itself).
- * 
+ *
  * @author Joshua Outwater
  */
 public class DaySelectionModel extends AbstractDateSelectionModel {
@@ -46,14 +46,14 @@ public class DaySelectionModel extends AbstractDateSelectionModel {
     private SortedSet<Date> unselectableDates;
 
     /**
-     * 
+     *
      */
     public DaySelectionModel() {
         this(null);
     }
 
     /**
-     * 
+     *
      */
     public DaySelectionModel(Locale locale) {
         super(locale);
@@ -61,10 +61,10 @@ public class DaySelectionModel extends AbstractDateSelectionModel {
         this.selectionMode = SelectionMode.SINGLE_SELECTION;
         this.selectedDates = new TreeSet<Date>();
         this.unselectableDates = new TreeSet<Date>();
-        
+
     }
     /**
-     * 
+     *
      */
     @Override
     public SelectionMode getSelectionMode() {
@@ -72,7 +72,7 @@ public class DaySelectionModel extends AbstractDateSelectionModel {
     }
 
     /**
-     * 
+     *
      */
     @Override
     public void setSelectionMode(final SelectionMode selectionMode) {
@@ -80,7 +80,7 @@ public class DaySelectionModel extends AbstractDateSelectionModel {
         clearSelection();
     }
 
-    //---------------------- selection ops    
+    //---------------------- selection ops
     /**
      * {@inheritDoc}
      */
@@ -137,7 +137,7 @@ public class DaySelectionModel extends AbstractDateSelectionModel {
     /**
      * Checks and returns if the single date interval bounded by startDate and endDate
      * is selected. This is useful only for SingleInterval mode.
-     * 
+     *
      * @param startDate the start of the interval
      * @param endDate the end of the interval, must be >= startDate
      * @return true the interval is selected, false otherwise.
@@ -146,7 +146,7 @@ public class DaySelectionModel extends AbstractDateSelectionModel {
         if (isSelectionEmpty()) return false;
         startDate = startOfDay(startDate);
         endDate = startOfDay(endDate);
-        return selectedDates.first().equals(startDate) 
+        return selectedDates.first().equals(startDate)
            && selectedDates.last().equals(endDate);
     }
 
@@ -266,7 +266,6 @@ public class DaySelectionModel extends AbstractDateSelectionModel {
                 unselectableDates != null && unselectableDates.contains(date);
     }
 
-
     private boolean addSelectionImpl(final Date startDate, final Date endDate) {
         boolean hasAdded = false;
         calendar.setTime(startDate);
@@ -282,14 +281,13 @@ public class DaySelectionModel extends AbstractDateSelectionModel {
         return hasAdded;
     }
 
-
     /**
      * {@inheritDoc}
      */
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Implemented to return the start of the day which contains the date.
      */
     @Override

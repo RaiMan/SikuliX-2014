@@ -1,4 +1,3 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
@@ -216,20 +215,17 @@ public class Algorithm {
     protected final long nativeObj;
     protected Algorithm(long addr) { nativeObj = addr; }
 
-
     //
     // C++: static Ptr_Algorithm Algorithm::_create(string name)
     //
 
     // Return type 'Ptr_Algorithm' is not supported, skipping the function
 
-
     //
     // C++:  Ptr_Algorithm Algorithm::getAlgorithm(string name)
     //
 
     // Return type 'Ptr_Algorithm' is not supported, skipping the function
-
 
     //
     // C++:  bool Algorithm::getBool(string name)
@@ -243,7 +239,6 @@ public class Algorithm {
         return retVal;
     }
 
-
     //
     // C++:  double Algorithm::getDouble(string name)
     //
@@ -255,7 +250,6 @@ public class Algorithm {
 
         return retVal;
     }
-
 
     //
     // C++:  int Algorithm::getInt(string name)
@@ -269,13 +263,11 @@ public class Algorithm {
         return retVal;
     }
 
-
     //
     // C++: static void Algorithm::getList(vector_string& algorithms)
     //
 
     // Unknown type 'vector_string' (O), skipping the function
-
 
     //
     // C++:  Mat Algorithm::getMat(string name)
@@ -289,7 +281,6 @@ public class Algorithm {
         return retVal;
     }
 
-
     //
     // C++:  vector_Mat Algorithm::getMatVector(string name)
     //
@@ -302,13 +293,11 @@ public class Algorithm {
         return retVal;
     }
 
-
     //
     // C++:  void Algorithm::getParams(vector_string& names)
     //
 
     // Unknown type 'vector_string' (O), skipping the function
-
 
     //
     // C++:  string Algorithm::getString(string name)
@@ -322,7 +311,6 @@ public class Algorithm {
         return retVal;
     }
 
-
     //
     // C++:  string Algorithm::paramHelp(string name)
     //
@@ -334,7 +322,6 @@ public class Algorithm {
 
         return retVal;
     }
-
 
     //
     // C++:  int Algorithm::paramType(string name)
@@ -348,13 +335,11 @@ public class Algorithm {
         return retVal;
     }
 
-
     //
     // C++:  void Algorithm::setAlgorithm(string name, Ptr_Algorithm value)
     //
 
     // Unknown type 'Ptr_Algorithm' (I), skipping the function
-
 
     //
     // C++:  void Algorithm::setBool(string name, bool value)
@@ -368,7 +353,6 @@ public class Algorithm {
         return;
     }
 
-
     //
     // C++:  void Algorithm::setDouble(string name, double value)
     //
@@ -380,7 +364,6 @@ public class Algorithm {
 
         return;
     }
-
 
     //
     // C++:  void Algorithm::setInt(string name, int value)
@@ -394,7 +377,6 @@ public class Algorithm {
         return;
     }
 
-
     //
     // C++:  void Algorithm::setMat(string name, Mat value)
     //
@@ -406,7 +388,6 @@ public class Algorithm {
 
         return;
     }
-
 
     //
     // C++:  void Algorithm::setMatVector(string name, vector_Mat value)
@@ -420,7 +401,6 @@ public class Algorithm {
         return;
     }
 
-
     //
     // C++:  void Algorithm::setString(string name, string value)
     //
@@ -433,12 +413,10 @@ public class Algorithm {
         return;
     }
 
-
     @Override
     protected void finalize() throws Throwable {
         delete(nativeObj);
     }
-
 
 
     // C++:  bool Algorithm::getBool(string name)

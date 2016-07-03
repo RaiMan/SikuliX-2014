@@ -33,7 +33,7 @@ public class SearchFieldAddon extends AbstractComponentAddon {
 		defaults.add("SearchField.clearPressedIcon", getIcon("basic/resources/clear_pressed.gif"));
 		defaults.add("SearchField.buttonMargin", new InsetsUIResource(1, 1, 1, 1));
 		defaults.add("SearchField.popupSource", BUTTON_SOURCE);
-		
+
 		//webstart fix
 		UIManagerExt.addResourceBundle("org.jdesktop.swingx.plaf.basic.resources.SearchField");
 //		UIManager.getDefaults().addResourceBundle("org.jdesktop.swingx.plaf.basic.resources.SearchField");
@@ -42,14 +42,14 @@ public class SearchFieldAddon extends AbstractComponentAddon {
     @Override
     protected void addMetalDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
         super.addMetalDefaults(addon, defaults);
-        
+
         defaults.add("SearchField.buttonMargin", new InsetsUIResource(0, 0, 1, 1));
     }
 
     @Override
     protected void addWindowsDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
         super.addWindowsDefaults(addon, defaults);
-        
+
         defaults.add("SearchField.promptFontStyle", Font.ITALIC);
         defaults.add("SearchField.layoutStyle", LayoutStyle.VISTA);
         defaults.add("SearchField.icon", getIcon("windows/resources/search.gif"));
@@ -77,7 +77,7 @@ public class SearchFieldAddon extends AbstractComponentAddon {
     @Override
     protected void addMotifDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
         super.addMotifDefaults(addon, defaults);
-        
+
         defaults.add("SearchField.icon", getIcon("macosx/resources/search.png"));
         defaults.add("SearchField.rolloverIcon", getIcon("macosx/resources/search.png"));
         defaults.add("SearchField.pressedIcon", getIcon("macosx/resources/search.png"));
@@ -92,7 +92,7 @@ public class SearchFieldAddon extends AbstractComponentAddon {
     @Override
     protected void addMacDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
         super.addMacDefaults(addon, defaults);
-        
+
         defaults.add("SearchField.icon", getIcon("macosx/resources/search.png"));
         defaults.add("SearchField.rolloverIcon", getIcon("macosx/resources/search.png"));
         defaults.add("SearchField.pressedIcon", getIcon("macosx/resources/search.png"));

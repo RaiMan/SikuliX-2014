@@ -67,7 +67,6 @@ public:
     virtual void getBackgroundImage(OutputArray backgroundImage) const;
 };
 
-
 /*!
  Gaussian Mixture-based Backbround/Foreground Segmentation Algorithm
 
@@ -106,7 +105,6 @@ protected:
     double backgroundRatio;
     double noiseSigma;
 };
-
 
 /*!
  The class implements the following algorithm:

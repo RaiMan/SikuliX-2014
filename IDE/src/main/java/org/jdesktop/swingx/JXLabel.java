@@ -114,25 +114,25 @@ import org.jdesktop.swingx.painter.Painter;
  */
 @JavaBean
 public class JXLabel extends JLabel implements BackgroundPaintable {
-    
+
     /**
      * Text alignment enums. Controls alignment of the text when line wrapping is enabled.
      */
     public enum TextAlignment implements IValue {
         LEFT(StyleConstants.ALIGN_LEFT), CENTER(StyleConstants.ALIGN_CENTER), RIGHT(StyleConstants.ALIGN_RIGHT), JUSTIFY(StyleConstants.ALIGN_JUSTIFIED);
-        
+
         private int value;
         private TextAlignment(int val) {
             value = val;
         }
-        
+
         @Override
         public int getValue() {
             return value;
         }
 
     }
-    
+
     protected interface IValue {
         int getValue();
     }
@@ -166,7 +166,7 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
     private int occupiedWidth;
 
     private static final String oldRendererKey = "was" + BasicHTML.propertyKey;
-    
+
 //    private static final Logger log = Logger.getAnonymousLogger();
 //    static {
 //        log.setLevel(Level.FINEST);
@@ -247,7 +247,7 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
             protected void doPaint(Graphics2D g, JXLabel label, int width, int height) {
                 Insets i = getInsets();
                 g = (Graphics2D) g.create(-i.left, -i.top, width, height);
-                
+
                 try {
                     label.paint(g);
                 } finally {
@@ -261,12 +261,12 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
             protected boolean shouldUseCache() {
                 return false;
             }
-            
+
             @Override
             public boolean equals(Object obj) {
                 return obj != null && this.getClass().equals(obj.getClass());
             }
-            
+
         };
         ((AbstractPainter<?>) foregroundPainter).setAntialiasing(false);
     }
@@ -325,7 +325,7 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
             view.setSize(w - occupiedWidth, h);
         }
     }
-    
+
     /**
      * Sets a new foregroundPainter on the label. This will replace the existing foreground painter. Existing painters
      * can be wrapped by using a CompoundPainter.
@@ -371,7 +371,7 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
     public final Painter getBackgroundPainter() {
         return backgroundPainter;
     }
-    
+
     /**
      * Gets current value of text rotation in rads.
      *
@@ -401,7 +401,7 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
                 if (isLineWrap() && !MultiLineSupport.isHTML(getText())) {
                     getMultiLineSupport();
                     // view might get lost on LAF change ...
-                    putClientProperty(BasicHTML.propertyKey, 
+                    putClientProperty(BasicHTML.propertyKey,
                             MultiLineSupport.createView(this));
                     view = (View) getClientProperty(BasicHTML.propertyKey);
                 } else {
@@ -670,7 +670,7 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
 
     /**
      * Gets current text wrapping style.
-     * 
+     *
      * @return the text alignment for this label
      */
     public TextAlignment getTextAlignment() {
@@ -699,7 +699,7 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
     public boolean isPaintBorderInsets() {
         return paintBorderInsets;
     }
-    
+
     @Override
     public boolean isOpaque() {
         return painting ? false : super.isOpaque();
@@ -742,7 +742,7 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
             pHeight = getHeight();
             if (backgroundPainter != null) {
                 Graphics2D tmp = (Graphics2D) g.create();
-                
+
                 try {
                     SwingXUtilities.paintBackground(this, tmp);
                 } finally {
@@ -1004,7 +1004,7 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
             BasicEditorKit kit = getFactory();
             float rightIndent = 0;
             if (c.getIcon() != null && c.getHorizontalTextPosition() != SwingConstants.CENTER) {
-                rightIndent = c.getIcon().getIconWidth() + c.getIconTextGap(); 
+                rightIndent = c.getIcon().getIconWidth() + c.getIconTextGap();
             }
             Document doc = kit.createDefaultDocument(c.getFont(), c.getForeground(), c.getTextAlignment(), rightIndent);
             Reader r = new StringReader(c.getText() == null ? "" : c.getText());
@@ -1115,7 +1115,7 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
                 attr = new SimpleAttributeSet();
                 StyleConstants.setItalic(attr, font.isItalic());
                 getStyle("default").addAttributes(attr);
-                
+
                 attr = new SimpleAttributeSet();
                 Object underline = font.getAttributes().get(TextAttribute.UNDERLINE);
                 boolean canUnderline = underline instanceof Integer && (Integer) underline != -1;
@@ -1162,7 +1162,7 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
             //setSize(c.getMaxLineSpan() > -1 ? c.getMaxLineSpan() : view.getPreferredSpan(X_AXIS), view.getPreferredSpan(Y_AXIS));
             setSize(c.getMaxLineSpan() > -1 ? c.getMaxLineSpan() : w, host.getVisibleRect().height);
         }
-        
+
         @Override
         protected void updateLayout(ElementChange ec, DocumentEvent e, Shape a) {
             if ( (a != null)) {
@@ -1182,7 +1182,6 @@ public class JXLabel extends JLabel implements BackgroundPaintable {
                 host.repaint();
             }
         }
-
 
         /**
          * Fetches the attributes to use when rendering. At the root level there are no attributes. If an attribute is

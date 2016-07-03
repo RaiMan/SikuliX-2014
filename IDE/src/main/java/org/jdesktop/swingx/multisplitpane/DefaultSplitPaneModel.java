@@ -39,7 +39,7 @@ public class DefaultSplitPaneModel extends Split {
     public static final String LEFT = "left";
     public static final String TOP = "top";
     public static final String BOTTOM = "bottom";
-    
+
     /** Creates a new instance of DefaultSplitPaneLayout */
     public DefaultSplitPaneModel() {
         Split row = new Split();
@@ -48,5 +48,5 @@ public class DefaultSplitPaneModel extends Split {
         setChildren(new Leaf(LEFT), new Divider(), col);
         col.setChildren(new Leaf(TOP), new Divider(), new Leaf(BOTTOM));
     }
-    
+
 }

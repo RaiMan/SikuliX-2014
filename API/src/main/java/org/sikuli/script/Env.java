@@ -43,7 +43,7 @@ public class Env {
   public static String getSikuliVersion() {
     return RunTime.get().SikuliVersion;
   }
-  
+
   protected static void setSikuliVersion(String version) {
     SikuliVersion = version;
   }

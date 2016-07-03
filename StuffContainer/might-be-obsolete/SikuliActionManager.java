@@ -44,7 +44,6 @@ public class SikuliActionManager {
       notifyListeners(new SikuliAction(SikuliAction.ActionType.RIGHT_CLICK, source, target, screenImage, match));
    }
 
-
    ArrayList<SikuliActionListener> _listeners;
 
    SikuliActionManager(){

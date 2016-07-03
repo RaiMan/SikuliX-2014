@@ -16,16 +16,15 @@ import javax.swing.table.TableColumnModel;
 
 /**
  * Collection of utility methods for J/X/Table.
- * 
+ *
  * @author Jeanette Winzenburg, Berlin
  */
 public class TableUtilities {
-    
-    
+
     /**
      * Returns a boolean indication whether the event represents a
      * dataChanged type.
-     * 
+     *
      * @param e the event to examine.
      * @return true if the event is of type dataChanged, false else.
      */
@@ -39,7 +38,7 @@ public class TableUtilities {
     /**
      * Returns a boolean indication whether the event represents a
      * update type.
-     * 
+     *
      * @param e the event to examine.
      * @return true if the event is a true update, false
      *         otherwise.
@@ -54,7 +53,7 @@ public class TableUtilities {
     /**
      * Returns a boolean indication whether the event represents a
      * insert type.
-     * 
+     *
      * @param e the event to examine
      * @return true if the event is of type insert, false otherwise.
      */
@@ -63,11 +62,10 @@ public class TableUtilities {
         return TableModelEvent.INSERT == e.getType();
     }
 
-
     /**
      * Returns a boolean indication whether the event represents a
      * structureChanged type.
-     * 
+     *
      * @param e the event to examine.
      * @return true if the event is of type structureChanged or null, false
      *         else.
@@ -77,14 +75,13 @@ public class TableUtilities {
     }
 
 
-
     /**
      * Returns the preferred height for the given row. It loops
      * across all visible columns and returns the maximal pref height of
      * the rendering component. Falls back to the table's base rowheight, i
      * f there are no columns or the renderers
      * max is zeor.<p>
-     * 
+     *
      * @param table the table which provides the renderers, must not be null
      * @param row the index of the row in view coordinates
      * @return the preferred row height of
@@ -100,9 +97,9 @@ public class TableUtilities {
         }
         return pref > 0 ? pref : table.getRowHeight();
     }
-    
+
     /**
-     * 
+     *
      * @param table the table which provides the renderers, must not be null
      * @param row the index of the row in view coordinates
      * @throws NullPointerException if table is null.
@@ -114,8 +111,8 @@ public class TableUtilities {
     }
 
     /**
-     * Sets preferred row heights for all visible rows. 
-     * 
+     * Sets preferred row heights for all visible rows.
+     *
      * @param table the table to set row heights to
      * @throws NullPointerException if no table installed.
      */
@@ -125,12 +122,12 @@ public class TableUtilities {
             setPreferredRowHeight(table, row);
         }
     }
-    
+
     /**
      * Returns an array containing the ordinals of the given values of an Enum.<p>
-     * 
+     *
      * Convience for clients which define TableColumns as Enums (Issue #1304-swingx).
-     * 
+     *
      * @param values the enums to map to its ordinals
      * @return an array of ordinals, guaranteed to be not null
      */
@@ -141,15 +138,14 @@ public class TableUtilities {
         }
         return cols;
     }
-    
 
     /**
      * Removes all columns of the given column model. Includes hidden
-     * columns as indicated by the includesHidden flag, the flag has no 
+     * columns as indicated by the includesHidden flag, the flag has no
      * effect if the model is not of type TableColumnModelExt.<p>
-     * 
+     *
      * @param model the column model to remove all columns from.
-     * @param includeHidden indicates whether hidden columns should be 
+     * @param includeHidden indicates whether hidden columns should be
      *   removed as well, has no effect if model is not of type TableColumnModelExt.
      */
     /*

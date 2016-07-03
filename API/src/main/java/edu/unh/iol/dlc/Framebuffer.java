@@ -28,13 +28,13 @@ import org.sikuli.basics.Debug;
  * The framebuffer class is responsible for maintaining the local
  * copy of the remote framebuffer.  The class extends GraphicsDevice
  * so that it can be used with the java2D API.
- * 
+ *
  * @author Mike Johnson
  */
 public class Framebuffer extends GraphicsDevice {
-	
+
 	/*
-     * Below are the fields associated with the 
+     * Below are the fields associated with the
      * Server's PixelFormat and Framebuffer.
      */
 	private FBConfig conf = null;
@@ -42,12 +42,12 @@ public class Framebuffer extends GraphicsDevice {
 	private int[][] rgbs = null;
 	private boolean updated = false;
 	private BufferedImage doubleBuffer;
-	
+
 //General methods*************************************************************/
-	
+
 	/**
 	 * Method that sets the pixel format of the framebuffer.
-	 * 
+	 *
 	 * @param data sets the pixel format of the framebuffer for the connection
 	 * @param name name of the remote desktop
 	 * @return true if the pixel format is valid for what the VNC stack
@@ -55,7 +55,7 @@ public class Framebuffer extends GraphicsDevice {
 	 * 		   false if the pixel format is not valid
 	 */
 	protected boolean setPF(int[] data, String name){
-		
+
 		if(conf != null){
 			int[] array = {getWidth(), getHeight(), data[0],data[1],data[2],
 					data[3],data[4],data[5],data[6],data[7],data[8],data[9]};
@@ -69,44 +69,44 @@ public class Framebuffer extends GraphicsDevice {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Resets the pixel format to a different configuration
-	 * 
+	 *
 	 * @param data sets the pixel format of the framebuffer for the connection
 	 * @return true if the pixel format is valid for what the VNC stack
 	 * 		   	    currently supports
 	 * 		   false if the pixel format is not valid
-	 * 
+	 *
 	 */
 	protected boolean resetPF(int[] data){
 		return setPF(data, conf.getName());
 	}
-	
+
 	/**
 	 * Gets the PixelFormat in the form of a GraphicsConfiguration
 	 * object
-	 * 
+	 *
 	 * @return conf the GraphicsConfiguration
 	 */
 	protected GraphicsConfiguration getPF(){
 		return conf;
 	}
-	
+
 	/**
 	 * Gets the width of the framebuffer
 	 */
 	protected int getWidth(){
 		return conf.getBounds().width;
 	}
-	
+
 	/**
 	 * Gets the height of the framebuffer
 	 */
 	protected int getHeight(){
 		return conf.getBounds().height;
 	}
-	
+
 	/**
 	 * Sets the buffer according to the specified raster
 	 */
@@ -117,7 +117,7 @@ public class Framebuffer extends GraphicsDevice {
 		updated = true;
 		doubleBuffer = buffer;
 	}
-	
+
 	/**
 	 * Gets the buffer
 	 */
@@ -129,13 +129,13 @@ public class Framebuffer extends GraphicsDevice {
 		}
 		return doubleBuffer;
 	}
-	
+
 //Raw Encoding Methods********************************************************/
-	
+
 	/**
-	 * Copies raw pixel array (which is actually a 
+	 * Copies raw pixel array (which is actually a
 	 * rectangle of pixel data) into the buffer.
-	 * 
+	 *
 	 * @param x x location of origin of pixel rectangle
 	 * @param y y location of origin of pixel rectangle
 	 * @param w width of pixel rectangle
@@ -145,7 +145,7 @@ public class Framebuffer extends GraphicsDevice {
 	protected void raw(int x, int y, int w,
 			int h, int[] input){
 		if(rgbs==null){
-			rgbs = new 
+			rgbs = new
 			int[conf.getBounds().width*3][conf.getBounds().height];
 		}
 		int count = 0;
@@ -161,7 +161,7 @@ public class Framebuffer extends GraphicsDevice {
 			}
 		}
 	}
-	
+
 	/**
 	 * Converts the pixel array into a buffered image
 	 */
@@ -189,16 +189,16 @@ public class Framebuffer extends GraphicsDevice {
 			break;
 		case 5:
 			//32bit truecolor
-			int[] rgbSamples = 
+			int[] rgbSamples =
 				new int[conf.getBounds().width*conf.getBounds().height*3];
 			int count = 0;
 			for(int j = 0; j < (conf.getBounds().height); j++){
 				for(int i = 0; i < (conf.getBounds().width*3); i++){
-					rgbSamples[count] = rgbs[i][j]; 
+					rgbSamples[count] = rgbs[i][j];
 					count++;
 				}
 			}
-			WritableRaster raster = 
+			WritableRaster raster =
 				(WritableRaster)conf.createCompatibleRaster();
 			raster.setPixels(0, 0, conf.getBounds().width,
 					conf.getBounds().height, rgbSamples);
@@ -209,9 +209,9 @@ public class Framebuffer extends GraphicsDevice {
 			break;
 		}
 	}
-	
+
 //CopyRect Encoding Methods***************************************************/
-	
+
 	/**
 	 * implements the copyrect encoding
 	 */
@@ -220,8 +220,8 @@ public class Framebuffer extends GraphicsDevice {
     	BufferedImage sub = buffer.getSubimage(srcx, srcy, w, h);
     	buffer.setData(sub.getRaster().createTranslatedChild(x, y));
 	}
-	
-//GraphicsDevice extension****************************************************/	
+
+//GraphicsDevice extension****************************************************/
 
 	/**
 	 * Returns the type of GraphicsDevice for the Framebuffer

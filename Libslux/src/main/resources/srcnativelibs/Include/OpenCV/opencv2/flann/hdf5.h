@@ -26,14 +26,12 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *************************************************************************/
 
-
 #ifndef OPENCV_FLANN_HDF5_H_
 #define OPENCV_FLANN_HDF5_H_
 
 #include <hdf5.h>
 
 #include "matrix.h"
-
 
 namespace cvflann
 {
@@ -68,7 +66,6 @@ hid_t get_hdf5_type<float>() { return H5T_NATIVE_FLOAT; }
 template<>
 hid_t get_hdf5_type<double>() { return H5T_NATIVE_DOUBLE; }
 }
-
 
 #define CHECK_ERROR(x,y) if ((x)<0) throw FLANNException((y));
 
@@ -123,7 +120,6 @@ void save_to_file(const cvflann::Matrix<T>& dataset, const std::string& filename
 
 }
 
-
 template<typename T>
 void load_from_file(cvflann::Matrix<T>& dataset, const std::string& filename, const std::string& name)
 {
@@ -153,7 +149,6 @@ void load_from_file(cvflann::Matrix<T>& dataset, const std::string& filename, co
     H5Dclose(dataset_id);
     H5Fclose(file_id);
 }
-
 
 #ifdef HAVE_MPI
 

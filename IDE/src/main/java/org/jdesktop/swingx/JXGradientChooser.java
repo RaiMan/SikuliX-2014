@@ -73,29 +73,29 @@ import org.jdesktop.swingx.util.PaintUtils;
  *
  * <p><b>Dependency</b>: Because this class relies on LinearGradientPaint and
  * RadialGradientPaint, it requires the optional MultipleGradientPaint.jar</p>
- * 
+ *
  * @author joshy
  */
 @JavaBean
 public class JXGradientChooser extends JXPanel {
     private enum GradientStyle { Linear, Radial }
-    
+
     /**
      * The multi-thumb slider to use for the gradient stops
      */
     private JXMultiThumbSlider<Color> slider;
     private JButton deleteThumbButton;
     private JButton addThumbButton;
-    
+
     private JTextField colorField;
     private JXColorSelectionButton changeColorButton;
     private JSpinner colorLocationSpinner;
     private JSpinner alphaSpinner;
     private JSlider alphaSlider;
-    
+
     private JComboBox styleCombo;
     private GradientPreviewPanel gradientPreview;
-    
+
     private JRadioButton noCycleRadio;
     private JRadioButton reflectedRadio;
     private JRadioButton repeatedRadio;
@@ -165,7 +165,7 @@ public class JXGradientChooser extends JXPanel {
                 styleCombo.setSelectedItem(GradientStyle.Linear);
             }
         }
-        
+
         if(mgrad.getCycleMethod() == MultipleGradientPaint.CycleMethod.REFLECT) {
             this.reflectedRadio.setSelected(true);
             gradientPreview.setReflected(true);
@@ -185,7 +185,7 @@ public class JXGradientChooser extends JXPanel {
     private void recalcGradientFromStops() {
         setGradient(gradientPreview.getGradient());
     }
-    
+
     private void updateFromStop(Thumb<Color> thumb) {
         if(thumb == null) {
             updateFromStop(-1,-1,Color.black);
@@ -193,7 +193,7 @@ public class JXGradientChooser extends JXPanel {
             updateFromStop(1,thumb.getPosition(),thumb.getObject());
         }
     }
-    
+
     private void updateFromStop(int thumb, float position, Color color) {
         log.fine("updating: " + thumb + " " + position + " " + color);
         if(thumb == -1) {
@@ -220,23 +220,22 @@ public class JXGradientChooser extends JXPanel {
         updateDeleteButtons();
         recalcGradientFromStops();
     }
-    
+
     private void updateDeleteButtons() {
         if(slider.getModel().getThumbCount() <= 2) {
             deleteThumbButton.setEnabled(false);
         }
     }
-    
+
     private void updateGradientProperty() {
         firePropertyChange("gradient",null,getGradient());
         gradientPreview.repaint();
     }
-    
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      */
-    
+
     private JPanel topPanel, previewPanel;
     private void initComponents() {
         // declarations for anonymous components
@@ -247,9 +246,9 @@ public class JXGradientChooser extends JXPanel {
         slider = new JXMultiThumbSlider<Color>();
         gradientPreview = new GradientPreviewPanel();
         gradientPreview.setMultiThumbModel(slider.getModel());
-        
+
         java.awt.GridBagConstraints gridBagConstraints;
-        
+
         typeGroup = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
         topPanel = new javax.swing.JPanel();
@@ -279,15 +278,15 @@ public class JXGradientChooser extends JXPanel {
         repeatedRadio = new javax.swing.JRadioButton();
         reversedCheck = new javax.swing.JCheckBox();
         //gradientPreview = new javax.swing.JPanel();
-        
+
         //setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         jPanel1.setLayout(new java.awt.GridBagLayout());
-        
+
         topPanel.setLayout(new java.awt.GridBagLayout());
-        
+
         topPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Gradient"));
         jPanel2.setLayout(new java.awt.GridBagLayout());
-        
+
         jLabel1.setText("Color:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
@@ -297,14 +296,14 @@ public class JXGradientChooser extends JXPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanel2.add(jLabel1, gridBagConstraints);
-        
+
         jLabel5.setText("#");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 1;
         gridBagConstraints.gridy = 0;
         gridBagConstraints.insets = new java.awt.Insets(4, 0, 4, 4);
         jPanel2.add(jLabel5, gridBagConstraints);
-        
+
         colorField.setColumns(6);
         colorField.setEnabled(false);
         colorField.setPreferredSize(null);
@@ -312,45 +311,45 @@ public class JXGradientChooser extends JXPanel {
         gridBagConstraints.gridy = 0;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel2.add(colorField, gridBagConstraints);
-        
+
         jLabel2.setText("Location:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanel2.add(jLabel2, gridBagConstraints);
-        
+
         jLabel6.setText("%");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         jPanel2.add(jLabel6, gridBagConstraints);
-        
+
         colorLocationSpinner.setEnabled(false);
         colorLocationSpinner.setPreferredSize(null);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel2.add(colorLocationSpinner, gridBagConstraints);
-        
+
         jLabel4.setText("Opacity:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 2;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanel2.add(jLabel4, gridBagConstraints);
-        
+
         jLabel7.setText("%");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 2;
         jPanel2.add(jLabel7, gridBagConstraints);
-        
+
         alphaSpinner.setEnabled(false);
         alphaSpinner.setPreferredSize(null);
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         jPanel2.add(alphaSpinner, gridBagConstraints);
-        
+
         changeColorButton.setText("00");
         changeColorButton.setEnabled(false);
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -359,7 +358,7 @@ public class JXGradientChooser extends JXPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(0, 4, 0, 0);
         jPanel2.add(changeColorButton, gridBagConstraints);
-        
+
         alphaSlider.setEnabled(false);
         alphaSlider.setPreferredSize(new java.awt.Dimension(20, 25));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -367,7 +366,7 @@ public class JXGradientChooser extends JXPanel {
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         jPanel2.add(alphaSlider, gridBagConstraints);
-        
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridx = 0;
         gridBagConstraints.gridy = 2;
@@ -378,59 +377,59 @@ public class JXGradientChooser extends JXPanel {
         gridBagConstraints.weighty = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         topPanel.add(jPanel2, gridBagConstraints);
-        
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 0;
         gridBagConstraints.gridwidth = 2;
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         topPanel.add(slider, gridBagConstraints);
-        
+
         jPanel4.setLayout(new java.awt.GridLayout(1, 0, 2, 0));
-        
+
         addThumbButton.setText("Add");
         jPanel4.add(addThumbButton);
-        
+
         deleteThumbButton.setText("Delete");
         jPanel4.add(deleteThumbButton);
-        
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.insets = new java.awt.Insets(5, 5, 5, 5);
         topPanel.add(jPanel4, gridBagConstraints);
-        
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.fill = java.awt.GridBagConstraints.HORIZONTAL;
         gridBagConstraints.weightx = 1.0;
         jPanel1.add(topPanel, gridBagConstraints);
-        
+
         previewPanel.setLayout(new java.awt.GridBagLayout());
-        
+
         previewPanel.setBorder(javax.swing.BorderFactory.createTitledBorder("Preview"));
         jPanel3.setLayout(new java.awt.GridBagLayout());
-        
+
         jLabel8.setText("Style:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanel3.add(jLabel8, gridBagConstraints);
-        
+
         styleCombo.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Linear", "Radial" }));
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 0;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanel3.add(styleCombo, gridBagConstraints);
-        
+
         jLabel9.setText("Type:");
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.anchor = java.awt.GridBagConstraints.EAST;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanel3.add(jLabel9, gridBagConstraints);
-        
+
         typeGroup.add(noCycleRadio);
         noCycleRadio.setSelected(true);
         noCycleRadio.setText("None");
@@ -441,7 +440,7 @@ public class JXGradientChooser extends JXPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanel3.add(noCycleRadio, gridBagConstraints);
-        
+
         typeGroup.add(reflectedRadio);
         reflectedRadio.setText("Reflect");
         reflectedRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -452,7 +451,7 @@ public class JXGradientChooser extends JXPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanel3.add(reflectedRadio, gridBagConstraints);
-        
+
         typeGroup.add(repeatedRadio);
         repeatedRadio.setText("Repeat");
         repeatedRadio.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
@@ -463,7 +462,7 @@ public class JXGradientChooser extends JXPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanel3.add(repeatedRadio, gridBagConstraints);
-        
+
         reversedCheck.setText("Reverse");
         reversedCheck.setBorder(javax.swing.BorderFactory.createEmptyBorder(0, 0, 0, 0));
         reversedCheck.setMargin(new java.awt.Insets(0, 0, 0, 0));
@@ -473,11 +472,11 @@ public class JXGradientChooser extends JXPanel {
         gridBagConstraints.anchor = java.awt.GridBagConstraints.WEST;
         gridBagConstraints.insets = new java.awt.Insets(4, 4, 4, 4);
         jPanel3.add(reversedCheck, gridBagConstraints);
-        
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.anchor = java.awt.GridBagConstraints.NORTHWEST;
         previewPanel.add(jPanel3, gridBagConstraints);
-        
+
         gradientPreview.setBorder(javax.swing.BorderFactory.createEtchedBorder());
         gradientPreview.setPreferredSize(new java.awt.Dimension(130, 130));
         gridBagConstraints = new java.awt.GridBagConstraints();
@@ -485,7 +484,7 @@ public class JXGradientChooser extends JXPanel {
         gridBagConstraints.weightx = 10.0;
         gridBagConstraints.weighty = 10.0;
         previewPanel.add(gradientPreview, gridBagConstraints);
-        
+
         gridBagConstraints = new java.awt.GridBagConstraints();
         gridBagConstraints.gridy = 1;
         gridBagConstraints.fill = java.awt.GridBagConstraints.BOTH;
@@ -493,15 +492,14 @@ public class JXGradientChooser extends JXPanel {
         gridBagConstraints.weightx = 1.0;
         gridBagConstraints.weighty = 1.0;
         jPanel1.add(previewPanel, gridBagConstraints);
-        
+
     }// </editor-fold>
     private void initComponents2() {
         this.initComponents();
         setLayout(new BorderLayout());
         add(topPanel, BorderLayout.NORTH);
         add(previewPanel, BorderLayout.CENTER);
-        
-        
+
         // do event handling stuff
         //create the actions and load them in the action map
         AddThumbAction addThumbAction = new AddThumbAction();
@@ -533,8 +531,7 @@ public class JXGradientChooser extends JXPanel {
         repeatedRadio.addActionListener(repaintListener);
         reversedCheck.addActionListener(repaintListener);
         gradientPreview.picker = this; //wow, nasty
-        
-        
+
         ///To still refactor below::
         SpinnerNumberModel alpha_model = new SpinnerNumberModel(100,0,100,1);
         alphaSpinner.setModel(alpha_model);
@@ -545,15 +542,15 @@ public class JXGradientChooser extends JXPanel {
         slider.setPreferredSize(new Dimension(100,35));
         slider.getModel().setMinimumValue(0f);
         slider.getModel().setMaximumValue(1.0f);
-        
+
         slider.getModel().addThumb(0,Color.black);
         slider.getModel().addThumb(0.5f,Color.red);
         slider.getModel().addThumb(1.0f,Color.white);
-        
+
         slider.setThumbRenderer(new GradientThumbRenderer());
         slider.setTrackRenderer(new GradientTrackRenderer());
         slider.addMultiThumbListener(new StopListener());
-        
+
         // called when the gradient property of the preview pane changes
         gradientPreview.addPropertyChangeListener("gradient", new PropertyChangeListener() {
             @Override
@@ -561,11 +558,11 @@ public class JXGradientChooser extends JXPanel {
                 recalcGradientFromStops();
             }
         });
-        
+
         recalcGradientFromStops();
-        
+
     }
-    
+
     // called whenever the color location spinner is changed
     private final class ChangeLocationListener implements ChangeListener {
         @Override
@@ -578,7 +575,7 @@ public class JXGradientChooser extends JXPanel {
             }
         }
     }
-    
+
     // called when the alpha slider moves
     private final class ChangeAlphaListener implements ChangeListener {
         @Override
@@ -590,31 +587,29 @@ public class JXGradientChooser extends JXPanel {
                 int alpha = changeEvent.getSource() == alphaSpinner ?
                     (Integer)alphaSpinner.getValue()
                     : alphaSlider.getValue();
-                
-                
+
                 // calc new color and set it on thumb
                 Color col = thumb.getObject();
                 col = PaintUtils.setAlpha(col, alpha*255/100);
                 thumb.setObject(col);
-                
+
                 // set the new alpha value on the other alpha control
                 if (changeEvent.getSource() == alphaSpinner) {
                     alphaSlider.setValue(alpha);
                 } else {
                     alphaSpinner.setValue(alpha);
                 }
-                
+
                 recalcGradientFromStops();
             }
         }
     }
-    
-    
+
     private final class AddThumbAction extends AbstractActionExt {
         public AddThumbAction() {
             super("Add");
         }
-        
+
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             float pos = 0.2f;
@@ -632,15 +627,15 @@ public class JXGradientChooser extends JXPanel {
                 break;
             }
              */
-            
+
         }
     }
-    
+
     private final class DeleteThumbAction extends AbstractActionExt {
         public DeleteThumbAction() {
             super("Delete");
         }
-        
+
         @Override
         public void actionPerformed(ActionEvent actionEvent) {
             int index = slider.getSelectedIndex();
@@ -650,13 +645,13 @@ public class JXGradientChooser extends JXPanel {
             }
         }
     }
-    
+
     private class StopListener implements ThumbListener {
 
         public StopListener() {
             super();
         }
-        
+
         @Override
         public void thumbMoved(int thumb, float pos) {
             log.fine("moved: " + thumb + " " + pos);
@@ -665,12 +660,12 @@ public class JXGradientChooser extends JXPanel {
             updateFromStop(thumb,pos,color);
             updateDeleteButtons();
             thumbsMoving = false;
-            
+
         }
-        
+
         @Override
         public void thumbSelected(int thumb) {
-            
+
             if(thumb == -1) {
                 updateFromStop(-1,-1,Color.black);
                 return;
@@ -683,9 +678,9 @@ public class JXGradientChooser extends JXPanel {
             updateDeleteButtons();
             slider.repaint();
             thumbsMoving = false;
-             
+
         }
-        
+
         @Override
         public void mousePressed(MouseEvent e) {
             if(e.getClickCount() > 1) {
@@ -693,7 +688,7 @@ public class JXGradientChooser extends JXPanel {
             }
         }
     }
-    
+
     private final class RepaintOnEventListener implements ActionListener, ItemListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -704,7 +699,7 @@ public class JXGradientChooser extends JXPanel {
             recalcGradientFromStops();
             gradientPreview.repaint();
         }
-        
+
         @Override
         public void itemStateChanged(ItemEvent e) {
             if(styleCombo.getSelectedItem() == GradientStyle.Radial) {
@@ -715,7 +710,7 @@ public class JXGradientChooser extends JXPanel {
             recalcGradientFromStops();
         }
     }
-    
+
     private void selectColorForThumb() {
         int index = slider.getSelectedIndex();
         if (index >= 0) {
@@ -724,7 +719,7 @@ public class JXGradientChooser extends JXPanel {
             updateFromStop(index, slider.getModel().getThumbAt(index).getPosition(), color);
         }
     }
-    
+
     /**
      * This static utility method <b>cannot</b> be called from the
      * ETD, or your application will lock up. Call it from a separate
@@ -743,8 +738,7 @@ public class JXGradientChooser extends JXPanel {
             picker.setGradient(mgrad);
         }
         dialog.add(picker);
-        
-        
+
         JPanel panel = new JPanel();
         JButton cancel = new JButton("Cancel");
         cancel.addActionListener(new ActionListener() {
@@ -761,14 +755,13 @@ public class JXGradientChooser extends JXPanel {
             }
         });
         okay.setDefaultCapable(true);
-        
-        
+
         GridLayout gl = new GridLayout();
         gl.setHgap(2);
         panel.setLayout(gl);
         panel.add(cancel);
         panel.add(okay);
-        
+
         JPanel p2 = new JPanel();
         p2.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
@@ -776,20 +769,20 @@ public class JXGradientChooser extends JXPanel {
         gbc.weightx = 1.0;
         p2.add(panel,gbc);
         dialog.add(p2,"South");
-        
+
         dialog.getRootPane().setDefaultButton(okay);
         dialog.pack();
         dialog.setResizable(false);
         dialog.setVisible(true);
-        
+
         return picker.getGradient();
     }
-    
+
     /**
      * Creates a string representation of a {@code MultipleGradientPaint}. This
      * string is used for debugging purposes. Its contents cannot be guaranteed
      * between releases.
-     * 
+     *
      * @param paint
      *                the {@code paint} to create a string for
      * @return a string representing the supplied {@code paint}
@@ -811,5 +804,3 @@ public class JXGradientChooser extends JXPanel {
     }
 
 }
-
-

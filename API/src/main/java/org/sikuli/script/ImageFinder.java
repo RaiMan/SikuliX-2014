@@ -23,7 +23,7 @@ import org.sikuli.basics.Settings;
  * completely implementing the OpenCV usage on the Java level.
  */
 public class ImageFinder extends Finder {
-  
+
   static RunTime runTime = RunTime.get();
 
   private static String me = "ImageFinder: ";

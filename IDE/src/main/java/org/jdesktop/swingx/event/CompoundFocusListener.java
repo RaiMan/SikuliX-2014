@@ -21,10 +21,10 @@ import org.jdesktop.swingx.util.Contract;
  * PropertyChangeListeners are notified if the focus is transfered into/out of
  * the hierarchy of a given root.
  * <p>
- * 
+ *
  * F.i, client code which wants to get notified if focus enters/exits the hierarchy below
  * panel would install the compound focus listener like:
- * 
+ *
  * <pre>
  * <code>
  *         // add some components inside
@@ -38,24 +38,24 @@ import org.jdesktop.swingx.util.Contract;
  *         // register the compound dispatcher
  *         CompoundFocusListener report = new CompoundFocusListener(panel);
  *         PropertyChangeListener l = new PropertyChangeListener() {
- * 
+ *
  *             public void propertyChange(PropertyChangeEvent evt) {
  *                 // do something useful here
- *                 
+ *
  *             }};
- *         report.addPropertyChangeListener(l);    
- *         
+ *         report.addPropertyChangeListener(l);
+ *
  * </code>
  * </pre>
- * 
+ *
  * PENDING JW: change of current instance of KeyboardFocusManager?
- * 
+ *
  */
 public class CompoundFocusListener extends AbstractBean {
-    
-    /** the root of the component hierarchy. 
-     * PENDING JW: weak reference and auto-release listener? 
-     */ 
+
+    /** the root of the component hierarchy.
+     * PENDING JW: weak reference and auto-release listener?
+     */
     private JComponent root;
     /** PropertyChangeListener registered with the current keyboardFocusManager. */
     private PropertyChangeListener managerListener;
@@ -63,8 +63,8 @@ public class CompoundFocusListener extends AbstractBean {
 
     /**
      * Instantiates a CompoundFocusListener on the component hierarchy below the given
-     * component. 
-     * 
+     * component.
+     *
      * @param root the root of a component hierarchy
      * @throws NullPointerException if the root is null
      */
@@ -75,12 +75,11 @@ public class CompoundFocusListener extends AbstractBean {
         permanentFocusOwnerChanged(manager.getPermanentFocusOwner());
     }
 
-
     /**
      * Return true if the root or any of its descendants is focused. This is a
      * read-only bound property, that is property change event is fired if focus
      * is transfered into/out of root's hierarchy.
-     * 
+     *
      * @return a boolean indicating whether or not any component in the
      *         container hierarchy below root is permanent focus owner.
      */
@@ -90,16 +89,16 @@ public class CompoundFocusListener extends AbstractBean {
 
     /**
      * Releases all listeners and internal references.<p>
-     * 
+     *
      * <b>Note</b>: this instance must not be used after calling this method.
-     *  
+     *
      */
     public void release() {
         removeManagerListener(KeyboardFocusManager.getCurrentKeyboardFocusManager());
         removeAllListeners();
         this.root = null;
     }
-    
+
     /**
      * Removes all property change listeners which are registered with this instance.
      */
@@ -112,28 +111,27 @@ public class CompoundFocusListener extends AbstractBean {
     /**
      * Updates focused property depending on whether or not the given component
      * is below the root's hierarchy. <p>
-     * 
+     *
      * Note: Does nothing if the component is null. This might not be entirely correct,
-     * but property change events from the focus manager come in pairs, with only 
-     * one of the new/old value not-null. 
-     * 
+     * but property change events from the focus manager come in pairs, with only
+     * one of the new/old value not-null.
+     *
      * @param focusOwner the component with is the current focusOwner.
      */
     protected void permanentFocusOwnerChanged(Component focusOwner) {
         if (focusOwner == null) return;
         setFocused(SwingXUtilities.isDescendingFrom(focusOwner, root));
     }
-    
+
     private void setFocused(boolean focused) {
         boolean old = isFocused();
         this.focused = focused;
         firePropertyChange("focused", old, isFocused());
     }
 
-    
     /**
      * Adds all listeners to the given KeyboardFocusManager. <p>
-     * 
+     *
      * @param manager the KeyboardFocusManager to add internal listeners to.
      * @see #removeManagerListener(KeyboardFocusManager)
      */
@@ -143,7 +141,7 @@ public class CompoundFocusListener extends AbstractBean {
 
     /**
      * Removes all listeners this instance has installed from the given KeyboardFocusManager.<p>
-     * 
+     *
      * @param manager the KeyboardFocusManager to remove internal listeners from.
      * @see #addManagerListener(KeyboardFocusManager)
      */
@@ -154,7 +152,7 @@ public class CompoundFocusListener extends AbstractBean {
     /**
      * Lazily creates and returns a property change listener to be registered on the
      * KeyboardFocusManager.
-     * 
+     *
      * @return a property change listener to be registered on the KeyboardFocusManager.
      */
     private PropertyChangeListener getManagerListener() {
@@ -166,11 +164,10 @@ public class CompoundFocusListener extends AbstractBean {
                     if ("permanentFocusOwner".equals(evt.getPropertyName())) {
                         permanentFocusOwnerChanged((Component) evt.getNewValue());
                     }
-                    
+
                 }};
         }
         return managerListener;
     }
-
 
 }

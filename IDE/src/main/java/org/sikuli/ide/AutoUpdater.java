@@ -15,7 +15,6 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
 
-
 public class AutoUpdater {
 
   private String details, bdetails;
@@ -136,7 +135,7 @@ public class AutoUpdater {
       conn = url.openConnection(FileManager.getProxy());
     } else {
       conn = url.openConnection();
-    } 
+    }
     BufferedReader in = new BufferedReader(
             new InputStreamReader(conn.getInputStream()));
     String line;

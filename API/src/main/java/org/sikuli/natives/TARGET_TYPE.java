@@ -20,4 +20,3 @@ public final class TARGET_TYPE {
   public final static int TEXT = IMAGE + 1;
   public final static int BUTTON = TEXT + 1;
 }
-

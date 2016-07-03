@@ -16,9 +16,9 @@ import org.jdesktop.swingx.prompt.BuddySupport;
 
 /**
  * TODO:
- * 
+ *
  * @author Peter Weishapl <petw@gmx.net>
- * 
+ *
  * @param <UI>
  */
 public abstract class TextUIWrapper<UI extends TextUI> {
@@ -39,7 +39,7 @@ public abstract class TextUIWrapper<UI extends TextUI> {
      * Wraps and replaces the current UI of the given <code>textComponent</code>, by calling
      * {@link #wrapUI(JTextComponent)} if necessary.
      * </p>
-     * 
+     *
      * @param textComponent
      * @param stayOnUIChange
      *            if <code>true</code>, a {@link PropertyChangeListener} is registered, which
@@ -55,7 +55,7 @@ public abstract class TextUIWrapper<UI extends TextUI> {
     /**
      * Wraps and replaces the text components current UI by calling {@link #wrapUI(TextUI)}, if the
      * text components current UI is not an instance of the given wrapper class.
-     * 
+     *
      * @param textComponent
      * @return <code>true</code> if the UI has been replaced
      */
@@ -71,7 +71,7 @@ public abstract class TextUIWrapper<UI extends TextUI> {
 
     /**
      * Override to return the appropriate UI wrapper object for the given {@link TextUI}.
-     * 
+     *
      * @param textUI
      * @return the wrapping UI
      */
@@ -79,7 +79,7 @@ public abstract class TextUIWrapper<UI extends TextUI> {
 
     /**
      * Returns the wrapper class.
-     * 
+     *
      * @return the wrapper class
      */
     public Class<UI> getWrapperClass() {
@@ -92,7 +92,7 @@ public abstract class TextUIWrapper<UI extends TextUI> {
      * installed) and then calls {@link JComponent#updateUI()} on the <code>textComponent</code> to
      * set the UI object provided by the current {@link UIDefaults}.
      * </p>
-     * 
+     *
      * @param textComponent
      */
     public final void uninstall(final JTextComponent textComponent) {
@@ -128,7 +128,7 @@ public abstract class TextUIWrapper<UI extends TextUI> {
          * returned, respectively. If the UI is of any other type, a
          * {@link IllegalArgumentException} will be thrown.
          * </p>
-         * 
+         *
          * @param textComponent
          *            wrap this components UI
          * @return a {@link PromptTextUI} which wraps the <code>textComponent</code>s UI.

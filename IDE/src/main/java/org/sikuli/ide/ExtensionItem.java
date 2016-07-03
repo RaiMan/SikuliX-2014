@@ -121,7 +121,6 @@ class ExtensionItem extends JPanel implements ActionListener {
     _controls.setVisible(selected);
     /*
 
-
      Color darkRed = new Color(0.5f,0.0f,0.0f);
 
      Color bg,fg;

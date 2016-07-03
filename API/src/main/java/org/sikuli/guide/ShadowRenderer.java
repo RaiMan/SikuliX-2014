@@ -18,7 +18,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ConvolveOp;
 import java.awt.image.Kernel;
 
-
 public class ShadowRenderer {
 
    Visual source;

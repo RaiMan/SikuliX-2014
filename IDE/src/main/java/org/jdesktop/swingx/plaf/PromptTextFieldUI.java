@@ -16,14 +16,14 @@ import org.jdesktop.swingx.util.OS;
 /**
  * {@link PromptTextUI} implementation for rendering prompts on
  * {@link JTextField}s and uses a {@link JTextField} as a prompt component.
- * 
+ *
  * @author Peter Weishapl <petw@gmx.net>
- * 
+ *
  */
 public class PromptTextFieldUI extends PromptTextUI {
     /**
      * Creates a new {@link PromptTextFieldUI}.
-     * 
+     *
      * @param delegate
      */
     public PromptTextFieldUI(TextUI delegate) {
@@ -94,7 +94,7 @@ public class PromptTextFieldUI extends PromptTextUI {
 
         /**
          * {@inheritDoc} <p>
-         * 
+         *
          * Overridden to not automatically de/register itself from/to the ToolTipManager.
          * As rendering component it is not considered to be active in any way, so the
          * manager must not listen.

@@ -106,4 +106,3 @@ public class VDictProxy<T> {
    public boolean empty(){ return _empty(_instance);  }
    private native boolean _empty(long instance); // test whether it is empty
 }
-

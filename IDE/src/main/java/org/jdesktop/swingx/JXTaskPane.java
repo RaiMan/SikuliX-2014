@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -41,7 +41,7 @@ import org.jdesktop.swingx.plaf.TaskPaneUI;
 /**
  * <code>JXTaskPane</code> is a container for tasks and other
  * arbitrary components.
- * 
+ *
  * <p>
  * Several <code>JXTaskPane</code>s are usually grouped together within a
  * {@link org.jdesktop.swingx.JXTaskPaneContainer}. However it is not mandatory
@@ -49,7 +49,7 @@ import org.jdesktop.swingx.plaf.TaskPaneUI;
  * be added to any other container. See
  * {@link org.jdesktop.swingx.JXTaskPaneContainer} to understand the benefits of
  * using it as the parent container.
- * 
+ *
  * <p>
  * <code>JXTaskPane</code> provides control to expand and
  * collapse the content area in order to show or hide the task list. It can have an
@@ -58,80 +58,80 @@ import org.jdesktop.swingx.plaf.TaskPaneUI;
  * <code>special</code> ({@link #setSpecial(boolean)} is only a hint for
  * the pluggable UI which will usually paint it differently (by example by
  * using another color for the border of the pane).
- * 
- * <p> 
+ *
+ * <p>
  * When the JXTaskPane is expanded or collapsed, it will be
  * animated with a fade effect. The animated can be disabled on a per
  * component basis through {@link #setAnimated(boolean)}.
- * 
+ *
  * To disable the animation for all newly created <code>JXTaskPane</code>,
  * use the UIManager property:
  * <code>UIManager.put("TaskPane.animate", Boolean.FALSE);</code>.
- * 
+ *
  * <p>
  * Example:
  * <pre>
  * <code>
  * JXFrame frame = new JXFrame();
- * 
+ *
  * // a container to put all JXTaskPane together
  * JXTaskPaneContainer taskPaneContainer = new JXTaskPaneContainer();
- * 
+ *
  * // create a first taskPane with common actions
  * JXTaskPane actionPane = new JXTaskPane();
  * actionPane.setTitle("Files and Folders");
  * actionPane.setSpecial(true);
- * 
+ *
  * // actions can be added, a hyperlink will be created
  * Action renameSelectedFile = createRenameFileAction();
  * actionPane.add(renameSelectedFile);
  * actionPane.add(createDeleteFileAction());
- * 
+ *
  * // add this taskPane to the taskPaneContainer
  * taskPaneContainer.add(actionPane);
- * 
+ *
  * // create another taskPane, it will show details of the selected file
  * JXTaskPane details = new JXTaskPane();
  * details.setTitle("Details");
- *  
+ *
  * // add standard components to the details taskPane
  * JLabel searchLabel = new JLabel("Search:");
  * JTextField searchField = new JTextField("");
  * details.add(searchLabel);
  * details.add(searchField);
- * 
+ *
  * taskPaneContainer.add(details);
- * 
- * // put the action list on the left 
+ *
+ * // put the action list on the left
  * frame.add(taskPaneContainer, BorderLayout.EAST);
- * 
+ *
  * // and a file browser in the middle
  * frame.add(fileBrowser, BorderLayout.CENTER);
- * 
+ *
  * frame.pack();
  * frame.setVisible(true);
  * </code>
  * </pre>
- * 
+ *
  * @see org.jdesktop.swingx.JXTaskPaneContainer
  * @see org.jdesktop.swingx.JXCollapsiblePane
  * @author <a href="mailto:fred@L2FProd.com">Frederic Lavigne</a>
  * @author Karl George Schaefer
- * 
+ *
  * @javabean.attribute
  *          name="isContainer"
  *          value="Boolean.TRUE"
  *          rtexpr="true"
- *          
+ *
  * @javabean.attribute
  *          name="containerDelegate"
  *          value="getContentPane"
- *          
+ *
  * @javabean.class
  *          name="JXTaskPane"
  *          shortDescription="JXTaskPane is a container for tasks and other arbitrary components."
  *          stopClass="java.awt.Component"
- * 
+ *
  * @javabean.icons
  *          mono16="JXTaskPane16-mono.gif"
  *          color16="JXTaskPane16.gif"
@@ -144,10 +144,10 @@ public class JXTaskPane extends JPanel implements
   JXCollapsiblePane.CollapsiblePaneContainer, Mnemonicable {
 
   /**
-   * JXTaskPane pluggable UI key <i>swingx/TaskPaneUI</i> 
+   * JXTaskPane pluggable UI key <i>swingx/TaskPaneUI</i>
    */
   public final static String uiClassID = "swingx/TaskPaneUI";
-  
+
   // ensure at least the default ui is registered
   static {
     LookAndFeelAddons.contribute(new TaskPaneAddon());
@@ -185,9 +185,9 @@ public class JXTaskPane extends JPanel implements
 
   private int        mnemonic;
   private int        mnemonicIndex           = -1;
-  
+
   private JXCollapsiblePane collapsePane;
-  
+
   /**
    * Creates a new empty <code>JXTaskPane</code>.
    */
@@ -197,7 +197,7 @@ public class JXTaskPane extends JPanel implements
 
     /**
      * Creates a new task pane with the specified title.
-     * 
+     *
      * @param title
      *            the title to use
      */
@@ -207,7 +207,7 @@ public class JXTaskPane extends JPanel implements
 
     /**
      * Creates a new task pane with the specified icon.
-     * 
+     *
      * @param icon
      *            the icon to use
      */
@@ -217,7 +217,7 @@ public class JXTaskPane extends JPanel implements
 
     /**
      * Creates a new task pane with the specified title and icon.
-     * 
+     *
      * @param title
      *            the title to use
      * @param icon
@@ -228,16 +228,16 @@ public class JXTaskPane extends JPanel implements
       collapsePane.setOpaque(false);
       super.setLayout(new BorderLayout(0, 0));
       super.addImpl(collapsePane, BorderLayout.CENTER, -1);
-      
+
       setTitle(title);
       setIcon(icon);
-      
+
       updateUI();
       setFocusable(true);
 
       // disable animation if specified in UIManager
       setAnimated(!Boolean.FALSE.equals(UIManager.get("TaskPane.animate")));
-      
+
       // listen for animation events and forward them to registered listeners
         collapsePane.addPropertyChangeListener("collapsed", new PropertyChangeListener() {
             @Override
@@ -255,11 +255,11 @@ public class JXTaskPane extends JPanel implements
   public Container getContentPane() {
     return collapsePane.getContentPane();
   }
-  
+
   /**
    * Notification from the <code>UIManager</code> that the L&F has changed.
    * Replaces the current UI object with the latest version from the <code>UIManager</code>.
-   * 
+   *
    * @see javax.swing.JComponent#updateUI
    */
   @Override
@@ -271,13 +271,13 @@ public class JXTaskPane extends JPanel implements
     }
     setUI((TaskPaneUI)LookAndFeelAddons.getUI(this, TaskPaneUI.class));
   }
-  
+
   /**
    * Sets the L&F object that renders this component.
-   * 
+   *
    * @param ui the <code>TaskPaneUI</code> L&F object
    * @see javax.swing.UIDefaults#getUI
-   * 
+   *
    * @beaninfo bound: true hidden: true description: The UI object that
    * implements the taskpane group's LookAndFeel.
    */
@@ -287,7 +287,7 @@ public class JXTaskPane extends JPanel implements
 
   /**
    * Returns the name of the L&F class that renders this component.
-   * 
+   *
    * @return the string {@link #uiClassID}
    * @see javax.swing.JComponent#getUIClassID
    * @see javax.swing.UIDefaults#getUI
@@ -299,7 +299,7 @@ public class JXTaskPane extends JPanel implements
 
   /**
    * Returns the title currently displayed in the border of this pane.
-   * 
+   *
    * @return the title currently displayed in the border of this pane
    */
   public String getTitle() {
@@ -308,7 +308,7 @@ public class JXTaskPane extends JPanel implements
 
   /**
    * Sets the title to be displayed in the border of this pane.
-   * 
+   *
    * @param title the title to be displayed in the border of this pane
    * @javabean.property
    *          bound="true"
@@ -322,7 +322,7 @@ public class JXTaskPane extends JPanel implements
 
   /**
    * Returns the icon currently displayed in the border of this pane.
-   * 
+   *
    * @return the icon currently displayed in the border of this pane
    */
   public Icon getIcon() {
@@ -333,7 +333,7 @@ public class JXTaskPane extends JPanel implements
    * Sets the icon to be displayed in the border of this pane. Some pluggable
    * UIs may impose size constraints for the icon. A size of 16x16 pixels is
    * the recommended icon size.
-   * 
+   *
    * @param icon the icon to be displayed in the border of this pane
    * @javabean.property
    *          bound="true"
@@ -347,7 +347,7 @@ public class JXTaskPane extends JPanel implements
 
   /**
    * Returns true if this pane is "special".
-   * 
+   *
    * @return true if this pane is "special"
    * @see #setSpecial(boolean)
    */
@@ -360,12 +360,12 @@ public class JXTaskPane extends JPanel implements
    * as <code>special</code> is only a hint for the pluggable UI which will
    * usually paint it differently (by example by using another color for the
    * border of the pane).
-   * 
+   *
    * <p>
    * Usually the first JXTaskPane in a JXTaskPaneContainer is marked as special
    * because it contains the default set of actions which can be executed given
    * the current context.
-   * 
+   *
    * @param special
    *          true if this pane is "special", false otherwise
    * @javabean.property bound="true" preferred="true"
@@ -378,12 +378,12 @@ public class JXTaskPane extends JPanel implements
 
   /**
    * Should this group be scrolled to be visible on expand.
-   * 
+   *
    * @param scrollOnExpand true to scroll this group to be
    * visible if this group is expanded.
-   * 
+   *
    * @see #setCollapsed(boolean)
-   * 
+   *
    * @javabean.property
    *          bound="true"
    *          preferred="true"
@@ -394,25 +394,25 @@ public class JXTaskPane extends JPanel implements
       firePropertyChange(SCROLL_ON_EXPAND_CHANGED_KEY,
               oldValue, isScrollOnExpand());
   }
-  
+
   /**
    * Should this group scroll to be visible after
    * this group was expanded.
-   * 
+   *
    * @return true if we should scroll false if nothing
    * should be done.
    */
   public boolean isScrollOnExpand() {
     return scrollOnExpand;
   }
-  
+
     /**
      * Expands or collapses this group.
      * <p>
      * As of SwingX 1.6.3, the property change event only fires when the
-     * state is accurate.  As such, animated task panes fire once the 
+     * state is accurate.  As such, animated task panes fire once the
      * animation is complete.
-     * 
+     *
      * @param collapsed
      *                true to collapse the group, false to expand it
      * @javabean.property
@@ -422,10 +422,10 @@ public class JXTaskPane extends JPanel implements
     public void setCollapsed(boolean collapsed) {
         collapsePane.setCollapsed(collapsed);
     }
-    
+
     /**
      * Returns the collapsed state of this task pane.
-     * 
+     *
      * @return {@code true} if the task pane is collapsed; {@code false}
      *         otherwise
      */
@@ -435,7 +435,7 @@ public class JXTaskPane extends JPanel implements
 
   /**
    * Enables or disables animation during expand/collapse transition.
-   * 
+   *
    * @param animated
    * @javabean.property
    *          bound="true"
@@ -446,11 +446,11 @@ public class JXTaskPane extends JPanel implements
       collapsePane.setAnimated(animated);
       firePropertyChange(ANIMATED_CHANGED_KEY, oldValue, isAnimated());
   }
-  
+
   /**
    * Returns true if this task pane is animated during expand/collapse
    * transition.
-   * 
+   *
    * @return true if this task pane is animated during expand/collapse
    *         transition.
    */
@@ -461,7 +461,7 @@ public class JXTaskPane extends JPanel implements
     /**
      * {@inheritDoc}
      * <p>
-     * If the character defined by the mnemonic is found within the task pane's 
+     * If the character defined by the mnemonic is found within the task pane's
      * text string, the first occurrence of it will be underlined to indicate
      * the mnemonic to the user.
      */
@@ -477,9 +477,9 @@ public class JXTaskPane extends JPanel implements
     public void setMnemonic(int mnemonic) {
         int oldValue = getMnemonic();
         this.mnemonic = mnemonic;
-        
+
         firePropertyChange("mnemonic", oldValue, getMnemonic());
-        
+
         updateDisplayedMnemonicIndex(getTitle(), mnemonic);
         revalidate();
         repaint();
@@ -494,7 +494,7 @@ public class JXTaskPane extends JPanel implements
     private void updateDisplayedMnemonicIndex(String text, int mnemonic) {
         if (text == null || mnemonic == '\0') {
             mnemonicIndex = -1;
-            
+
             return;
         }
 
@@ -544,12 +544,12 @@ public class JXTaskPane extends JPanel implements
             repaint();
         }
     }
-  
+
   /**
    * Adds an action to this <code>JXTaskPane</code>. Returns a
    * component built from the action. The returned component has been
    * added to the <code>JXTaskPane</code>.
-   * 
+   *
    * @param action
    * @return a component built from the action
    */
@@ -566,7 +566,7 @@ public class JXTaskPane extends JPanel implements
 public Container getValidatingContainer() {
     return getParent();
   }
-  
+
   /**
    * Overridden to redirect call to the content pane.
    */
@@ -586,7 +586,7 @@ public Container getValidatingContainer() {
       getContentPane().setLayout(mgr);
     }
   }
-  
+
   /**
    * Overridden to redirect call to the content pane
    */
@@ -602,7 +602,7 @@ public Container getValidatingContainer() {
   public void remove(int index) {
     getContentPane().remove(index);
   }
-  
+
   /**
    * Overridden to redirect call to the content pane.
    */
@@ -610,7 +610,7 @@ public Container getValidatingContainer() {
   public void removeAll() {
     getContentPane().removeAll();
   }
-  
+
   /**
    * @see JComponent#paramString()
    */
@@ -625,7 +625,7 @@ public Container getValidatingContainer() {
       + String.valueOf(isCollapsed())
       + ",special="
       + String.valueOf(isSpecial())
-      + ",scrollOnExpand=" 
+      + ",scrollOnExpand="
       + String.valueOf(isScrollOnExpand())
       + ",ui=" + getUI();
   }

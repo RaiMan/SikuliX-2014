@@ -508,9 +508,7 @@ public class ScriptingSupport {
     return lastReturnCode;
   }
 
-
   private static class RunBox {
-
 
     boolean asTest = false;
     String[] args = new String[0];
@@ -607,5 +605,3 @@ public class ScriptingSupport {
     }
   }
 }
-
-

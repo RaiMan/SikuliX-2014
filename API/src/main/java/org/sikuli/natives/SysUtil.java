@@ -27,13 +27,9 @@ public class SysUtil {
       return pkg + "MacUtil";
     } else if (os.startsWith("windows")) {
       return pkg + "WinUtil";
-    } else if (os.startsWith("linux")) {
-      return pkg + "LinuxUtil";
     } else {
-      System.out.println("[error] fatal: getOSUtilClass: your OS is not supported");
-      System.exit(1);
+      return pkg + "LinuxUtil";
     }
-    return null;
   }
 
   public static OSUtil getOSUtil() {

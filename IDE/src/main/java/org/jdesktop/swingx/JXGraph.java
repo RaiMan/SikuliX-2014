@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -60,9 +60,9 @@ import org.jdesktop.swingx.painter.Painter;
 /**
  * <p><code>JXGraph</code> provides a component which can display one or more
  * plots on top of a graduated background (or grid.)</p>
- * 
+ *
  * <h2>User input</h2>
- * 
+ *
  * <p>To help analyze the plots, this component allows the user to pan the
  * view by left-clicking and dragging the mouse around. Using the mouse wheel,
  * the user is also able to zoom in and out. Clicking the middle button resets
@@ -298,11 +298,11 @@ public class JXGraph extends JXPanel {
     // the main axis is slightly thicker
     private static final float STROKE_AXIS = 1.2f;
     private static final float STROKE_GRID = 1.0f;
-    
+
     // defines by how much the view is shrinked or expanded everytime the
     // user zooms in or out
     private static final float ZOOM_MULTIPLIER = 1.1f;
-    
+
     //listens to changes to plots and repaints the graph
     private PropertyChangeListener plotChangeListener;
 
@@ -310,7 +310,7 @@ public class JXGraph extends JXPanel {
     private Color majorGridColor = Color.GRAY.brighter();
     private Color minorGridColor = new Color(220, 220, 220);
     private Color axisColor = Color.BLACK;
-    
+
     // the list of plots currently known and displayed by the graph
     private List<DrawablePlot> plots;
 
@@ -319,7 +319,7 @@ public class JXGraph extends JXPanel {
     private double maxX;
     private double minY;
     private double maxY;
-    
+
     // the default view is set when the view is manually changed by the client
     // it is used to reset the view in resetView()
     private Rectangle2D defaultView;
@@ -336,16 +336,16 @@ public class JXGraph extends JXPanel {
     private double majorY;
     private double defaultMajorY;
     private int minorCountY;
-    
+
     // enables painting layers
     private boolean textPainted = true;
     private boolean gridPainted = true;
     private boolean axisPainted = true;
     private boolean backPainted = true;
-    
+
     // used by the PanHandler to move the view
     private Point dragStart;
-    
+
     // mainFormatter is used for numbers > 0.01 and < 100
     // secondFormatter uses scientific notation
     private NumberFormat mainFormatter;
@@ -380,18 +380,18 @@ public class JXGraph extends JXPanel {
      *   <li><i>grid</i>: Spacing of 0.2 between major lines; minor lines
      *   count is 4</li>
      * </ul>
-     * 
+     *
      * @param view the rectangle defining the view boundaries
      */
     public JXGraph(Rectangle2D view) {
         this(new Point2D.Double(view.getCenterX(), view.getCenterY()),
             view, 0.2, 4, 0.2, 4);
     }
-    
+
     /**
      * <p>Creates a new graph display with the specified view and grid lines.
      * The origin is set at the center of the view.</p>
-     * 
+     *
      * @param view        the rectangle defining the view boundaries
      * @param majorX      the spacing between two major grid lines on the X axis
      * @param minorCountX the number of minor grid lines between two major
@@ -409,7 +409,7 @@ public class JXGraph extends JXPanel {
         this(new Point2D.Double(view.getCenterX(), view.getCenterY()),
             view, majorX, minorCountX, majorY, minorCountY);
     }
-    
+
     /**
      * <p>Creates a new graph display with the specified view and origin.
      * The following properties are automatically set:</p>
@@ -417,18 +417,18 @@ public class JXGraph extends JXPanel {
      *   <li><i>grid</i>: Spacing of 0.2 between major lines; minor lines
      *   count is 4</li>
      * </ul>
-     * 
+     *
      * @param origin the coordinates of the main axis origin
      * @param view the rectangle defining the view boundaries
      */
     public JXGraph(Point2D origin, Rectangle2D view) {
         this(origin, view, 0.2, 4, 0.2, 4);
     }
-    
+
     /**
      * <p>Creates a new graph display with the specified view, origin and grid
      * lines.</p>
-     * 
+     *
      * @param origin      the coordinates of the main axis origin
      * @param view        the rectangle defining the view boundaries
      * @param majorX      the spacing between two major grid lines on the X axis
@@ -448,11 +448,11 @@ public class JXGraph extends JXPanel {
             view.getMinX(), view.getMaxX(), view.getMinY(), view.getMaxY(),
             majorX, minorCountX, majorY, minorCountY);
     }
-    
+
     /**
      * <p>Creates a new graph display with the specified view, origin and grid
      * lines.</p>
-     * 
+     *
      * @param originX     the coordinate of the major X axis
      * @param originY     the coordinate of the major Y axis
      * @param minX        the minimum coordinate on the X axis for the view
@@ -477,27 +477,27 @@ public class JXGraph extends JXPanel {
         if (minX >= maxX) {
             throw new IllegalArgumentException("minX must be < to maxX");
         }
-        
+
         if (minY >= maxY) {
             throw new IllegalArgumentException("minY must be < to maxY");
         }
-        
+
         if (minorCountX < 0) {
             throw new IllegalArgumentException("minorCountX must be >= 0");
         }
-        
+
         if (minorCountY < 0) {
             throw new IllegalArgumentException("minorCountY must be >= 0");
         }
-        
+
         if (majorX <= 0.0) {
             throw new IllegalArgumentException("majorX must be > 0.0");
         }
-        
+
         if (majorY <= 0.0) {
             throw new IllegalArgumentException("majorY must be > 0.0");
         }
-        
+
         this.originX = originX;
         this.originY = originY;
 
@@ -505,22 +505,22 @@ public class JXGraph extends JXPanel {
         this.maxX = maxX;
         this.minY = minY;
         this.maxY = maxY;
-        
+
         this.defaultView = new Rectangle2D.Double(minX, minY,
             maxX - minX, maxY - minY);
-        
+
         this.setMajorX(this.defaultMajorX = majorX);
         this.setMinorCountX(minorCountX);
         this.setMajorY(this.defaultMajorY = majorY);
         this.setMinorCountY(minorCountY);
-        
+
         this.plots = new LinkedList<DrawablePlot>();
-        
+
         this.mainFormatter = NumberFormat.getInstance();
         this.mainFormatter.setMaximumFractionDigits(2);
-        
+
         this.secondFormatter = new DecimalFormat("0.##E0");
-        
+
         resetHandler = new ResetHandler();
         addMouseListener(resetHandler);
         panHandler = new PanHandler();
@@ -529,10 +529,10 @@ public class JXGraph extends JXPanel {
         addMouseMotionListener(panMotionHandler);
         zoomHandler = new ZoomHandler();
         addMouseWheelListener(zoomHandler);
-        
+
         setBackground(Color.WHITE);
         setForeground(Color.BLACK);
-        
+
         plotChangeListener = new PropertyChangeListener() {
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
@@ -551,7 +551,7 @@ public class JXGraph extends JXPanel {
         }
         return super.isOpaque();
     }
-    
+
     /**
      * {@inheritDoc}
      * @see #setInputEnabled(boolean)
@@ -589,11 +589,11 @@ public class JXGraph extends JXPanel {
                 removeMouseMotionListener(panMotionHandler);
                 removeMouseWheelListener(zoomHandler);
             }
-            
+
             firePropertyChange("inputEnabled", old, isInputEnabled());
         }
     }
-    
+
     /**
      * <p>Defines whether or not user input is accepted and managed by this
      * component. The component is always created with user input enabled.</p>
@@ -604,7 +604,7 @@ public class JXGraph extends JXPanel {
     public boolean isInputEnabled() {
         return inputEnabled;
     }
-    
+
     /**
      * <p>Defines whether or not axis labels are painted by this component.
      * The component is always created with text painting enabled.</p>
@@ -620,7 +620,7 @@ public class JXGraph extends JXPanel {
     /**
      * <p>Enables or disables the painting of axis labels depending on the
      * value of the parameter. Text painting is enabled by default.</p>
-     * 
+     *
      * @param textPainted if true, axis labels are painted
      * @see #isTextPainted()
      * @see #setForeground(Color)
@@ -647,7 +647,7 @@ public class JXGraph extends JXPanel {
     /**
      * <p>Enables or disables the painting of grid lines depending on the
      * value of the parameter. Grid painting is enabled by default.</p>
-     * 
+     *
      * @param gridPainted if true, axis labels are painted
      * @see #isGridPainted()
      * @see #setMajorGridColor(Color)
@@ -675,7 +675,7 @@ public class JXGraph extends JXPanel {
     /**
      * <p>Enables or disables the painting of main axis depending on the
      * value of the parameter. Axis painting is enabled by default.</p>
-     * 
+     *
      * @param axisPainted if true, axis labels are painted
      * @see #isAxisPainted()
      * @see #setAxisColor(Color)
@@ -703,7 +703,7 @@ public class JXGraph extends JXPanel {
     /**
      * <p>Enables or disables the painting of background depending on the
      * value of the parameter. Background painting is enabled by default.</p>
-     * 
+     *
      * @param backPainted if true, axis labels are painted
      * @see #isBackgroundPainted()
      * @see #setBackground(Color)
@@ -713,7 +713,7 @@ public class JXGraph extends JXPanel {
         this.backPainted = backPainted;
         firePropertyChange("backgroundPainted", old, isBackgroundPainted());
     }
-    
+
     /**
      * <p>Gets the major grid lines color of this component.</p>
      *
@@ -739,7 +739,7 @@ public class JXGraph extends JXPanel {
         if (majorGridColor == null) {
             throw new IllegalArgumentException("Color cannot be null.");
         }
-        
+
         Color old = getMajorGridColor();
         this.majorGridColor = majorGridColor;
         firePropertyChange("majorGridColor", old, getMajorGridColor());
@@ -770,7 +770,7 @@ public class JXGraph extends JXPanel {
         if (minorGridColor == null) {
             throw new IllegalArgumentException("Color cannot be null.");
         }
-        
+
         Color old = getMinorGridColor();
         this.minorGridColor = minorGridColor;
         firePropertyChange("minorGridColor", old, getMinorGridColor());
@@ -800,12 +800,12 @@ public class JXGraph extends JXPanel {
         if (axisColor == null) {
             throw new IllegalArgumentException("Color cannot be null.");
         }
-        
+
         Color old = getAxisColor();
         this.axisColor = axisColor;
         firePropertyChange("axisColor", old, getAxisColor());
     }
-    
+
     /**
      * <p>Gets the distance, in graph units, between two major grid lines on
      * the X axis.</p>
@@ -838,14 +838,14 @@ public class JXGraph extends JXPanel {
         if (majorX <= 0.0) {
             throw new IllegalArgumentException("majorX must be > 0.0");
         }
-        
+
         double old = getMajorX();
         this.majorX = majorX;
         this.defaultMajorX = majorX;
         repaint();
         firePropertyChange("majorX", old, getMajorX());
     }
-    
+
     /**
      * <p>Gets the number of minor grid lines between two major grid lines
      * on the X axis.</p>
@@ -878,7 +878,7 @@ public class JXGraph extends JXPanel {
         if (minorCountX < 0) {
             throw new IllegalArgumentException("minorCountX must be >= 0");
         }
-        
+
         int old = getMinorCountX();
         this.minorCountX = minorCountX;
         repaint();
@@ -990,7 +990,7 @@ public class JXGraph extends JXPanel {
         setView(bounds);
         setOrigin(new Point2D.Double(bounds.getCenterX(), bounds.getCenterY()));
     }
-    
+
     /**
      * <p>Sets the view of the graph. The view minimum boundaries are defined by
      * the location of the rectangle passed as parameter. The width and height
@@ -1019,12 +1019,12 @@ public class JXGraph extends JXPanel {
         Rectangle2D old = getView();
         defaultView = new Rectangle2D.Double(bounds.getX(), bounds.getY(),
             bounds.getWidth(), bounds.getHeight());
-                
+
         minX = defaultView.getMinX();
         maxX = defaultView.getMaxX();
         minY = defaultView.getMinY();
         maxY = defaultView.getMaxY();
-        
+
         majorX = defaultMajorX;
         majorY = defaultMajorY;
         firePropertyChange("view", old, getView());
@@ -1049,7 +1049,7 @@ public class JXGraph extends JXPanel {
     public Rectangle2D getView() {
         return new Rectangle2D.Double(minX, minY, maxX - minX, maxY - minY);
     }
-    
+
     /**
      * <p>Resets the view to the default view if it has been changed by the user
      * by panning and zooming. The default view is defined by the view last
@@ -1104,7 +1104,7 @@ public class JXGraph extends JXPanel {
     /**
      * <p>Adds one or more plots to the graph. These plots are associated to
      * a color used to draw them.</p>
-     * 
+     *
      * <p>If plotList is null or empty, nothing happens.</p>
      *
      * <p>This method is not thread safe and should be called only from the
@@ -1120,7 +1120,7 @@ public class JXGraph extends JXPanel {
         if (color == null) {
             throw new IllegalArgumentException("Plots color cannot be null.");
         }
-        
+
         if (plotList == null) {
             return;
         }
@@ -1229,7 +1229,7 @@ public class JXGraph extends JXPanel {
     protected double xPositionToPixel(double position) {
         return (position - minX) * getWidth() / (maxX - minX);
     }
-    
+
     /**
      * <p>Converts a pixel coordinate from the X axis into a graph position, in
      * graph units. For instance, if you defined the origin so it appears at the
@@ -1247,7 +1247,7 @@ public class JXGraph extends JXPanel {
 //        return (pixel - axisV) * (maxX - minX) / (double) getWidth();
         return minX + pixel * (maxX - minX) / getWidth();
     }
-    
+
     /**
      * <p>Converts a pixel coordinate from the Y axis into a graph position, in
      * graph units. For instance, if you defined the origin so it appears at the
@@ -1274,7 +1274,7 @@ public class JXGraph extends JXPanel {
         if (!isVisible()) {
             return;
         }
-        
+
         Graphics2D g2 = (Graphics2D) g;
         setupGraphics(g2);
 
@@ -1283,10 +1283,10 @@ public class JXGraph extends JXPanel {
         drawAxis(g2);
         drawPlots(g2);
         drawLabels(g2);
-        
+
         paintExtra(g2);
     }
-    
+
     /**
      * <p>This painting method is meant to be overridden by subclasses of
      * <code>JXGraph</code>. This method is called after all the painting
@@ -1317,17 +1317,17 @@ public class JXGraph extends JXPanel {
     private void drawPlot(Graphics2D g2, Plot equation) {
         float x = 0.0f;
         float y = (float) yPositionToPixel(equation.compute(xPixelToPosition(0.0)));
-        
+
         GeneralPath path = new GeneralPath();
         path.moveTo(x, y);
-        
+
         float width = getWidth();
         for (x = 0.0f; x < width; x += 1.0f) {
             double position = xPixelToPosition(x);
             y = (float) yPositionToPixel(equation.compute(position));
             path.lineTo(x, y);
         }
-        
+
         g2.draw(path);
     }
 
@@ -1342,7 +1342,7 @@ public class JXGraph extends JXPanel {
 
         g2.setStroke(stroke);
     }
-    
+
     // Draw all labels. First draws labels on the horizontal axis, then labels
     // on the vertical axis. If the axis is set not to be painted, this
     // method draws the origin as a straight cross.
@@ -1367,12 +1367,12 @@ public class JXGraph extends JXPanel {
             g2.drawString(format(originX) + "; " +
                 format(originY), (int) axisV + 5,
                 (int) axisH + metrics.getHeight());
-        
+
             drawHorizontalAxisLabels(g2);
             drawVerticalAxisLabels(g2);
         }
     }
-    
+
     // Draws labels on the vertical axis. First draws labels below the origin,
     // then draw labels on top of the origin.
     private void drawVerticalAxisLabels(Graphics2D g2) {
@@ -1385,25 +1385,25 @@ public class JXGraph extends JXPanel {
                 ((y + majorY / 2.0) > originY)) {
                 continue;
             }
-            
+
             int position = (int) yPositionToPixel(y);
             g2.drawString(format(y), (int) axisV + 5, position);
         }
     }
-    
+
     // Draws the horizontal lines of the grid. Draws both minor and major
     // grid lines.
     private void drawHorizontalGrid(Graphics2D g2) {
         double minorSpacing = majorY / getMinorCountY();
         double axisV = xPositionToPixel(originX);
-        
+
         Stroke gridStroke = new BasicStroke(STROKE_GRID);
         Stroke axisStroke = new BasicStroke(STROKE_AXIS);
-        
+
         Rectangle clip = g2.getClipBounds();
-        
+
         int position;
-        
+
         if (!isAxisPainted()) {
             position = (int) xPositionToPixel(originX);
             if (position >= clip.x && position <= clip.x + clip.width) {
@@ -1420,7 +1420,7 @@ public class JXGraph extends JXPanel {
             for (int i = 0; i < getMinorCountY(); i++) {
                 position = (int) yPositionToPixel(y - i * minorSpacing);
                 if (position >= clip.y && position <= clip.y + clip.height) {
-                    g2.drawLine(clip.x, position, clip.x + clip.width, position);    
+                    g2.drawLine(clip.x, position, clip.x + clip.width, position);
                 }
             }
 
@@ -1443,7 +1443,7 @@ public class JXGraph extends JXPanel {
     private void drawHorizontalAxisLabels(Graphics2D g2) {
         double axisH = yPositionToPixel(originY);
         FontMetrics metrics = g2.getFontMetrics();
-        
+
 //        double startX = Math.floor((minX - originX) / majorX) * majorX;
         double startX = Math.floor(minX / majorX) * majorX;
         for (double x = startX; x < maxX + majorX; x += majorX) {
@@ -1451,24 +1451,24 @@ public class JXGraph extends JXPanel {
                 ((x + majorX / 2.0) > originX)) {
                 continue;
             }
-            
+
             int position = (int) xPositionToPixel(x);
             g2.drawString(format(x), position,
                 (int) axisH + metrics.getHeight());
         }
     }
-    
+
     // Draws the vertical lines of the grid. Draws both minor and major
     // grid lines.
     private void drawVerticalGrid(Graphics2D g2) {
         double minorSpacing = majorX / getMinorCountX();
         double axisH = yPositionToPixel(originY);
-        
+
         Stroke gridStroke = new BasicStroke(STROKE_GRID);
         Stroke axisStroke = new BasicStroke(STROKE_AXIS);
-        
+
         Rectangle clip = g2.getClipBounds();
-        
+
         int position;
         if (!isAxisPainted()) {
             position = (int) yPositionToPixel(originY);
@@ -1477,7 +1477,7 @@ public class JXGraph extends JXPanel {
                 g2.drawLine(clip.x, position, clip.x + clip.width, position);
             }
         }
-        
+
 //        double startX = Math.floor((minX - originX) / majorX) * majorX;
         double startX = Math.floor(minX / majorX) * majorX;
         for (double x = startX; x < maxX + majorX; x += majorX) {
@@ -1489,7 +1489,7 @@ public class JXGraph extends JXPanel {
                     g2.drawLine(position, clip.y, position, clip.y + clip.height);
                 }
             }
-            
+
             position = (int) xPositionToPixel(x);
             if (position >= clip.x && position <= clip.x + clip.width) {
                 g2.setColor(getMajorGridColor());
@@ -1509,12 +1509,12 @@ public class JXGraph extends JXPanel {
         if (!isAxisPainted()) {
             return;
         }
-        
+
         double axisH = yPositionToPixel(originY);
         double axisV = xPositionToPixel(originX);
-        
+
         Rectangle clip = g2.getClipBounds();
-        
+
         g2.setColor(getAxisColor());
         Stroke stroke = g2.getStroke();
         g2.setStroke(new BasicStroke(STROKE_AXIS));
@@ -1570,7 +1570,7 @@ public class JXGraph extends JXPanel {
             }
         }
     }
-    
+
     // Format a number with the appropriate number formatter. Numbers >= 0.01
     // and < 100 are formatted with a regular, 2-digits, numbers formatter.
     // Other numbers use a scientific notation given by a DecimalFormat instance
@@ -1602,7 +1602,7 @@ public class JXGraph extends JXPanel {
      * <code>JXGraph</code>, the <code>JXGraph</code> automatically becomes
      * a new property change listener of the plot. If property change events are
      * fired, the graph will be updated accordingly.</p>
-     * 
+     *
      * <p>More information about plots usage can be found in {@link JXGraph} in
      * the section entitled <i>Plots</i>.</p>
      *
@@ -1615,11 +1615,11 @@ public class JXGraph extends JXPanel {
          */
         protected Plot() {
         }
-        
+
         /**
          * <p>This method must return the result of a mathematical
          * transformation of its sole parameter.</p>
-         * 
+         *
          * @param value a value along the X axis of the graph currently
          *              drawing this plot
          * @return the result of the mathematical transformation of value
@@ -1636,11 +1636,11 @@ public class JXGraph extends JXPanel {
             this.equation = equation;
             this.color = color;
         }
-        
+
         private Plot getEquation() {
             return equation;
         }
-        
+
         private Color getColor() {
             return color;
         }
@@ -1668,7 +1668,7 @@ public class JXGraph extends JXPanel {
             return result;
         }
     }
-    
+
     // Shrinks or expand the view depending on the mouse wheel direction.
     // When the wheel moves down, the view is expanded. Otherwise it is shrunk.
     private class ZoomHandler implements MouseWheelListener {
@@ -1676,10 +1676,10 @@ public class JXGraph extends JXPanel {
         public void mouseWheelMoved(MouseWheelEvent e) {
             double distanceX = maxX - minX;
             double distanceY = maxY - minY;
-            
+
             double cursorX = minX + distanceX / 2.0;
             double cursorY = minY + distanceY / 2.0;
-            
+
             int rotation = e.getWheelRotation();
             if (rotation < 0) {
                 distanceX /= ZOOM_MULTIPLIER;
@@ -1694,16 +1694,16 @@ public class JXGraph extends JXPanel {
                 majorX *= ZOOM_MULTIPLIER;
                 majorY *= ZOOM_MULTIPLIER;
             }
-            
+
             minX = cursorX - distanceX / 2.0;
             maxX = cursorX + distanceX / 2.0;
             minY = cursorY - distanceY / 2.0;
             maxY = cursorY + distanceY / 2.0;
-            
+
             repaint();
         }
     }
-    
+
     // Listens for a click on the middle button of the mouse and resets the view
     private class ResetHandler extends MouseAdapter {
         @Override
@@ -1711,11 +1711,11 @@ public class JXGraph extends JXPanel {
             if (e.getButton() != MouseEvent.BUTTON2) {
                 return;
             }
-            
+
             resetView();
         }
     }
-    
+
     // Starts and ends drag gestures with mouse left button.
     private class PanHandler extends MouseAdapter {
         @Override
@@ -1723,11 +1723,11 @@ public class JXGraph extends JXPanel {
             if (e.getButton() != MouseEvent.BUTTON1) {
                 return;
             }
-            
+
             dragStart = e.getPoint();
             setCursor(Cursor.getPredefinedCursor(Cursor.MOVE_CURSOR));
         }
-        
+
         @Override
         public void mouseReleased(MouseEvent e) {
             if (e.getButton() != MouseEvent.BUTTON1) {
@@ -1754,7 +1754,7 @@ public class JXGraph extends JXPanel {
                        yPixelToPosition(dragStart.getY());
             minY = minY - distance;
             maxY = maxY - distance;
-            
+
             repaint();
             dragStart = dragEnd;
         }

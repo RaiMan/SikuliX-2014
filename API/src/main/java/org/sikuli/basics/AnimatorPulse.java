@@ -48,4 +48,3 @@ public class AnimatorPulse implements Animator {
     return _running;
   }
 }
-

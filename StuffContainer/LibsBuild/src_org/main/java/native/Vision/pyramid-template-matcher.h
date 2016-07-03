@@ -9,7 +9,6 @@
 #include <stdio.h>
 #include <iostream>
 
-
 #include "opencv.hpp"
 #include "find-result.h"
 #include "vision.h"
@@ -23,7 +22,6 @@
 
 using namespace cv;
 using namespace std;
-
 
 struct MatchingData {
    Mat source, target;
@@ -56,7 +54,7 @@ struct MatchingData {
 #endif
 #if USE_RESIZE
       cv::resize(source, out_source, Size(source.cols/factor, source.rows/factor),INTER_NEAREST);
-      cv::resize(target, out_target, Size(target.cols/factor, target.rows/factor),INTER_NEAREST);      
+      cv::resize(target, out_target, Size(target.cols/factor, target.rows/factor),INTER_NEAREST);
 #endif
    }
 

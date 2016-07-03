@@ -59,10 +59,10 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
   private boolean hasFinished = false;
   private boolean hasStarted = false;
   private boolean mouseMoves = false;
-  
+
 //  private JPanel _panel = null;
 //  private Graphics2D _currG2D = null;
-  
+
   public OverlayCapturePrompt(IScreen scr) {
 //    super();
     Debug.log(3, "TRACE: OverlayCapturePrompt: init: S(%d)", scr.getID());
@@ -168,7 +168,7 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
       }
     });
   }
-  
+
   public int getScrID() {
     return srcScreenId;
   }
@@ -214,21 +214,21 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
   public boolean isComplete() {
     return hasFinished;
   }
-  
+
   @Override
   public void addObserver(EventObserver obs) {
     Debug.log(3, "TRACE: OverlayCapturePrompt: addObserver: %s", obs != null);
     captureObserver = obs;
   }
-  
+
   @Override
   public void notifyObserver() {
     Debug.log(3, "TRACE: OverlayCapturePrompt: notifyObserver: %s", captureObserver != null);
     if (null != captureObserver) {
       captureObserver.update(this);
-    }    
+    }
   }
-  
+
   public ScreenImage getSelection() {
     if (canceled) {
       return null;
@@ -242,7 +242,7 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
     ScreenImage ret = new ScreenImage(rectSelection, cropImg);
     return ret;
   }
-  
+
   private BufferedImage cropSelection() {
     int w = rectSelection.width, h = rectSelection.height;
     if (w <= 0 || h <= 0) {

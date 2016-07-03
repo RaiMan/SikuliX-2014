@@ -1,4 +1,3 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
@@ -13,7 +12,6 @@ public class CLAHE extends Algorithm {
 
     protected CLAHE(long addr) { super(addr); }
 
-
     //
     // C++:  void CLAHE::apply(Mat src, Mat& dst)
     //
@@ -25,7 +23,6 @@ public class CLAHE extends Algorithm {
 
         return;
     }
-
 
     //
     // C++:  void CLAHE::setClipLimit(double clipLimit)
@@ -39,7 +36,6 @@ public class CLAHE extends Algorithm {
         return;
     }
 
-
     //
     // C++:  void CLAHE::setTilesGridSize(Size tileGridSize)
     //
@@ -52,12 +48,10 @@ public class CLAHE extends Algorithm {
         return;
     }
 
-
     @Override
     protected void finalize() throws Throwable {
         delete(nativeObj);
     }
-
 
 
     // C++:  void CLAHE::apply(Mat src, Mat& dst)

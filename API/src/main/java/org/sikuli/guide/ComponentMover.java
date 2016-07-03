@@ -6,7 +6,6 @@
 
 package org.sikuli.guide;
 
-
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
@@ -19,12 +18,9 @@ import java.awt.event.MouseEvent;
 import javax.swing.JComponent;
 import javax.swing.SwingUtilities;
 
-
 public class ComponentMover extends MouseAdapter{
 
-
    // private boolean moveWindow;
-
 
 
    private Class destinationClass;
@@ -36,9 +32,7 @@ public class ComponentMover extends MouseAdapter{
    private Component source;
 
 
-
    private boolean changeCursor = true;
-
 
 
    private Point pressed;
@@ -46,17 +40,14 @@ public class ComponentMover extends MouseAdapter{
    private Point location;
 
 
-
    private Cursor originalCursor;
 
    private boolean autoscrolls;
 
 
-
    private Insets dragInsets = new Insets(0, 0, 0, 0);
 
    private Dimension snapSize = new Dimension(1, 1);
-
 
 
    /**
@@ -72,7 +63,6 @@ public class ComponentMover extends MouseAdapter{
    {
 
    }
-
 
 
    /**
@@ -104,7 +94,6 @@ public class ComponentMover extends MouseAdapter{
    }
 
 
-
    /**
 
     *  Constructor to specify a parent component that will be moved when drag
@@ -132,7 +121,6 @@ public class ComponentMover extends MouseAdapter{
    }
 
 
-
    /**
 
     *  Get the change cursor property
@@ -150,7 +138,6 @@ public class ComponentMover extends MouseAdapter{
       return changeCursor;
 
    }
-
 
 
    /**
@@ -174,7 +161,6 @@ public class ComponentMover extends MouseAdapter{
    }
 
 
-
    /**
 
     *  Get the drag insets
@@ -192,7 +178,6 @@ public class ComponentMover extends MouseAdapter{
       return dragInsets;
 
    }
-
 
 
    /**
@@ -220,7 +205,6 @@ public class ComponentMover extends MouseAdapter{
    }
 
 
-
    /**
 
     *  Remove listeners from the specified component
@@ -240,7 +224,6 @@ public class ComponentMover extends MouseAdapter{
          component.removeMouseListener( this );
 
    }
-
 
 
    /**
@@ -264,7 +247,6 @@ public class ComponentMover extends MouseAdapter{
    }
 
 
-
    /**
 
     * Get the snap size
@@ -284,7 +266,6 @@ public class ComponentMover extends MouseAdapter{
    }
 
 
-
    /**
 
     *  Set the snap size. Forces the component to be snapped to
@@ -302,7 +283,6 @@ public class ComponentMover extends MouseAdapter{
       this.snapSize = snapSize;
 
    }
-
 
 
    /**
@@ -336,13 +316,11 @@ public class ComponentMover extends MouseAdapter{
       Rectangle r = new Rectangle(dragInsets.left, dragInsets.top, width, height);
 
 
-
       if (r.contains(e.getPoint()))
 
          setupForDragging(e);
 
    }
-
 
 
    private void setupForDragging(MouseEvent e)
@@ -352,9 +330,7 @@ public class ComponentMover extends MouseAdapter{
       source.addMouseMotionListener( this );
 
 
-
       //  Determine the component that will ultimately be moved
-
 
 
       if (destinationComponent != null)
@@ -382,16 +358,13 @@ public class ComponentMover extends MouseAdapter{
       }
 
 
-
       pressed = e.getLocationOnScreen();
 
-      
       if (destination instanceof Visual){
          location = ((Visual) destination).getActualLocation();
       }else{
-         location = destination.getLocation();         
+         location = destination.getLocation();
       }
-
 
 
       if (changeCursor)
@@ -405,11 +378,9 @@ public class ComponentMover extends MouseAdapter{
       }
 
 
-
       //  Making sure autoscrolls is false will allow for smoother dragging of
 
       //  individual components
-
 
 
       if (destination instanceof JComponent)
@@ -425,7 +396,6 @@ public class ComponentMover extends MouseAdapter{
       }
 
    }
-
 
 
    /**
@@ -448,14 +418,12 @@ public class ComponentMover extends MouseAdapter{
 
       int dragY = getDragDistance(dragged.y, pressed.y, snapSize.height);
 
-      
       if (destination instanceof Visual)
          ((Visual) destination).setActualLocation(location.x + dragX, location.y + dragY);
       else
          destination.setLocation(location.x + dragX, location.y + dragY);
 
    }
-
 
 
    /*
@@ -479,11 +447,9 @@ public class ComponentMover extends MouseAdapter{
       drag = (drag / snapSize) * snapSize;
 
 
-
       return drag;
 
    }
-
 
 
    /**
@@ -501,11 +467,9 @@ public class ComponentMover extends MouseAdapter{
       source.removeMouseMotionListener( this );
 
 
-
       if (changeCursor)
 
          source.setCursor( originalCursor );
-
 
 
       if (destination instanceof JComponent)
@@ -515,9 +479,7 @@ public class ComponentMover extends MouseAdapter{
          ((JComponent)destination).setAutoscrolls( autoscrolls );
 
       }
-      
+
    }
 
 }
-
-

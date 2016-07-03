@@ -8,7 +8,6 @@ public class DeviceInfo {
     protected final long nativeObj;
     protected DeviceInfo(long addr) { nativeObj = addr; }
 
-
     //
     // C++:   DeviceInfo::DeviceInfo()
     //
@@ -20,7 +19,6 @@ public class DeviceInfo {
 
         return;
     }
-
 
     //
     // C++:   DeviceInfo::DeviceInfo(int device_id)
@@ -34,7 +32,6 @@ public class DeviceInfo {
         return;
     }
 
-
     //
     // C++:  int DeviceInfo::deviceID()
     //
@@ -46,7 +43,6 @@ public class DeviceInfo {
 
         return retVal;
     }
-
 
     //
     // C++:  size_t DeviceInfo::freeMemory()
@@ -60,7 +56,6 @@ public class DeviceInfo {
         return retVal;
     }
 
-
     //
     // C++:  bool DeviceInfo::isCompatible()
     //
@@ -72,7 +67,6 @@ public class DeviceInfo {
 
         return retVal;
     }
-
 
     //
     // C++:  int DeviceInfo::majorVersion()
@@ -86,7 +80,6 @@ public class DeviceInfo {
         return retVal;
     }
 
-
     //
     // C++:  int DeviceInfo::minorVersion()
     //
@@ -98,7 +91,6 @@ public class DeviceInfo {
 
         return retVal;
     }
-
 
     //
     // C++:  int DeviceInfo::multiProcessorCount()
@@ -112,7 +104,6 @@ public class DeviceInfo {
         return retVal;
     }
 
-
     //
     // C++:  string DeviceInfo::name()
     //
@@ -124,7 +115,6 @@ public class DeviceInfo {
 
         return retVal;
     }
-
 
     //
     // C++:  void DeviceInfo::queryMemory(size_t& totalMemory, size_t& freeMemory)
@@ -139,7 +129,6 @@ public class DeviceInfo {
         freeMemory = (long)freeMemory_out[0];
     }
 
-
     //
     // C++:  size_t DeviceInfo::sharedMemPerBlock()
     //
@@ -151,7 +140,6 @@ public class DeviceInfo {
 
         return retVal;
     }
-
 
     //
     // C++:  bool DeviceInfo::supports(int feature_set)
@@ -165,7 +153,6 @@ public class DeviceInfo {
         return retVal;
     }
 
-
     //
     // C++:  size_t DeviceInfo::totalMemory()
     //
@@ -178,12 +165,10 @@ public class DeviceInfo {
         return retVal;
     }
 
-
     @Override
     protected void finalize() throws Throwable {
         delete(nativeObj);
     }
-
 
 
     // C++:   DeviceInfo::DeviceInfo()

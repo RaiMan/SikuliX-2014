@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -39,7 +39,7 @@ import javax.swing.table.TableModel;
 
 /**
  * A controller to adjust JTable rowHeight based on sizing requirements of its renderers.
- * 
+ *
  * @author Jeanette Winzenburg, Berlin
  */
 public class TableRowHeightController {
@@ -58,7 +58,7 @@ public class TableRowHeightController {
     /**
      * Instantiates a TableRowHeightController and installs itself to the given table.
      * The row heights of all visible rows are automatically adjusted on model changes.
-     * 
+     *
      * @param table the table to control.
      */
     public TableRowHeightController(JTable table) {
@@ -67,7 +67,7 @@ public class TableRowHeightController {
 
     /**
      * Installs this controller on the given table. Releases control from previously
-     * installed table, if any. 
+     * installed table, if any.
      * @param table the table to install upon.
      */
     public void install(JTable table) {
@@ -81,7 +81,7 @@ public class TableRowHeightController {
 
     /**
      * Release this controller from its table. Does nothing if no table installed.
-     * 
+     *
      */
     public void release() {
         if (table == null)
@@ -93,7 +93,7 @@ public class TableRowHeightController {
     /**
      * Sets the row heights of the rows in the range of first- to lastRow, inclusive.
      * The coordinates are model indices.
-     * 
+     *
      * @param firstRow the first row in model coordinates
      * @param lastRow the last row in model coordinates
      */
@@ -115,7 +115,7 @@ public class TableRowHeightController {
         if (table.getRowCount() == 0) return;
         updatePreferredRowHeights(0, table.getModel().getRowCount() - 1);
     }
-    
+
     /**
      * @param oldValue
      */
@@ -127,13 +127,12 @@ public class TableRowHeightController {
         updatePreferredRowHeights();
     }
 
-
     /**
      * @return
      */
     protected PropertyChangeListener createTablePropertyListener() {
         PropertyChangeListener l = new PropertyChangeListener() {
-            
+
             @Override
             public void propertyChange(PropertyChangeEvent evt) {
                 invokedPropertyChanged(evt);
@@ -149,7 +148,7 @@ public class TableRowHeightController {
                         if ("model".equals(evt.getPropertyName())) {
                             updateModel((TableModel) evt.getOldValue());
                         }
-                        
+
                     }
                 });
             }
@@ -174,14 +173,14 @@ public class TableRowHeightController {
                     updatePreferredRowHeights();
                 } else  if (isUpdate(e) || isInsert(e)) {
                     updatePreferredRowHeights(e.getFirstRow(), e.getLastRow());
-                } 
+                }
                 // do nothing on delete
             }
         };
         return l;
     }
     /**
-     * 
+     *
      */
     private void uninstallListeners() {
         table.removePropertyChangeListener(getPropertyChangeListener());

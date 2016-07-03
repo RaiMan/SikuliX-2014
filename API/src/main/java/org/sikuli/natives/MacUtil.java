@@ -18,7 +18,7 @@ public class MacUtil implements OSUtil {
   private static boolean _askedToEnableAX = false;
   private String usedFeature;
   private static RunTime runTime = null;
-  
+
 	@Override
   public void checkFeatureAvailability() {
     runTime = RunTime.get();

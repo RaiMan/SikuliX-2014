@@ -48,7 +48,6 @@
   #include <limits.h>
 #endif // SKIP_INCLUDES
 
-
 #ifdef __cplusplus
 
 /////// exchange-add operation for atomic operations on reference counters ///////
@@ -111,7 +110,6 @@ using std::exp;
 using std::log;
 using std::pow;
 using std::sqrt;
-
 
 /////////////// saturate_cast (used in image & signal processing) ///////////////////
 
@@ -202,7 +200,6 @@ inline double fast_abs(double v) { return std::abs(v); }
 
 //////////////////////////////// Matx /////////////////////////////////
 
-
 template<typename _Tp, int m, int n> inline Matx<_Tp, m, n>::Matx()
 {
     for(int i = 0; i < channels; i++) val[i] = _Tp(0);
@@ -291,7 +288,6 @@ template<typename _Tp, int m, int n> inline Matx<_Tp, m, n>::Matx(_Tp v0, _Tp v1
     for(int i = 10; i < channels; i++) val[i] = _Tp(0);
 }
 
-
 template<typename _Tp, int m, int n>
 inline Matx<_Tp,m,n>::Matx(_Tp v0, _Tp v1, _Tp v2, _Tp v3,
                             _Tp v4, _Tp v5, _Tp v6, _Tp v7,
@@ -356,14 +352,12 @@ template<typename _Tp, int m, int n> inline _Tp Matx<_Tp, m, n>::dot(const Matx<
     return s;
 }
 
-
 template<typename _Tp, int m, int n> inline double Matx<_Tp, m, n>::ddot(const Matx<_Tp, m, n>& M) const
 {
     double s = 0;
     for( int i = 0; i < m*n; i++ ) s += (double)val[i]*M.val[i];
     return s;
 }
-
 
 
 template<typename _Tp, int m, int n> inline
@@ -401,14 +395,12 @@ inline Matx<_Tp, m, n>::operator Matx<T2, m, n>() const
     return M;
 }
 
-
 template<typename _Tp, int m, int n> template<int m1, int n1> inline
 Matx<_Tp, m1, n1> Matx<_Tp, m, n>::reshape() const
 {
     CV_DbgAssert(m1*n1 == m*n);
     return (const Matx<_Tp, m1, n1>&)*this;
 }
-
 
 template<typename _Tp, int m, int n>
 template<int m1, int n1> inline
@@ -422,14 +414,12 @@ Matx<_Tp, m1, n1> Matx<_Tp, m, n>::get_minor(int i, int j) const
     return s;
 }
 
-
 template<typename _Tp, int m, int n> inline
 Matx<_Tp, 1, n> Matx<_Tp, m, n>::row(int i) const
 {
     CV_DbgAssert((unsigned)i < (unsigned)m);
     return Matx<_Tp, 1, n>(&val[i*n]);
 }
-
 
 template<typename _Tp, int m, int n> inline
 Matx<_Tp, m, 1> Matx<_Tp, m, n>::col(int j) const
@@ -441,7 +431,6 @@ Matx<_Tp, m, 1> Matx<_Tp, m, n>::col(int j) const
     return v;
 }
 
-
 template<typename _Tp, int m, int n> inline
 typename Matx<_Tp, m, n>::diag_type Matx<_Tp, m, n>::diag() const
 {
@@ -451,14 +440,12 @@ typename Matx<_Tp, m, n>::diag_type Matx<_Tp, m, n>::diag() const
     return d;
 }
 
-
 template<typename _Tp, int m, int n> inline
 const _Tp& Matx<_Tp, m, n>::operator ()(int i, int j) const
 {
     CV_DbgAssert( (unsigned)i < (unsigned)m && (unsigned)j < (unsigned)n );
     return this->val[i*n + j];
 }
-
 
 template<typename _Tp, int m, int n> inline
 _Tp& Matx<_Tp, m, n>::operator ()(int i, int j)
@@ -467,7 +454,6 @@ _Tp& Matx<_Tp, m, n>::operator ()(int i, int j)
     return val[i*n + j];
 }
 
-
 template<typename _Tp, int m, int n> inline
 const _Tp& Matx<_Tp, m, n>::operator ()(int i) const
 {
@@ -475,14 +461,12 @@ const _Tp& Matx<_Tp, m, n>::operator ()(int i) const
     return val[i];
 }
 
-
 template<typename _Tp, int m, int n> inline
 _Tp& Matx<_Tp, m, n>::operator ()(int i)
 {
     CV_DbgAssert( (m == 1 || n == 1) && (unsigned)i < (unsigned)(m+n-1) );
     return val[i];
 }
-
 
 template<typename _Tp1, typename _Tp2, int m, int n> static inline
 Matx<_Tp1, m, n>& operator += (Matx<_Tp1, m, n>& a, const Matx<_Tp2, m, n>& b)
@@ -492,7 +476,6 @@ Matx<_Tp1, m, n>& operator += (Matx<_Tp1, m, n>& a, const Matx<_Tp2, m, n>& b)
     return a;
 }
 
-
 template<typename _Tp1, typename _Tp2, int m, int n> static inline
 Matx<_Tp1, m, n>& operator -= (Matx<_Tp1, m, n>& a, const Matx<_Tp2, m, n>& b)
 {
@@ -501,14 +484,12 @@ Matx<_Tp1, m, n>& operator -= (Matx<_Tp1, m, n>& a, const Matx<_Tp2, m, n>& b)
     return a;
 }
 
-
 template<typename _Tp, int m, int n> inline
 Matx<_Tp,m,n>::Matx(const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b, Matx_AddOp)
 {
     for( int i = 0; i < m*n; i++ )
         val[i] = saturate_cast<_Tp>(a.val[i] + b.val[i]);
 }
-
 
 template<typename _Tp, int m, int n> inline
 Matx<_Tp,m,n>::Matx(const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b, Matx_SubOp)
@@ -517,7 +498,6 @@ Matx<_Tp,m,n>::Matx(const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b, Matx_Sub
         val[i] = saturate_cast<_Tp>(a.val[i] - b.val[i]);
 }
 
-
 template<typename _Tp, int m, int n> template<typename _T2> inline
 Matx<_Tp,m,n>::Matx(const Matx<_Tp, m, n>& a, _T2 alpha, Matx_ScaleOp)
 {
@@ -525,14 +505,12 @@ Matx<_Tp,m,n>::Matx(const Matx<_Tp, m, n>& a, _T2 alpha, Matx_ScaleOp)
         val[i] = saturate_cast<_Tp>(a.val[i] * alpha);
 }
 
-
 template<typename _Tp, int m, int n> inline
 Matx<_Tp,m,n>::Matx(const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b, Matx_MulOp)
 {
     for( int i = 0; i < m*n; i++ )
         val[i] = saturate_cast<_Tp>(a.val[i] * b.val[i]);
 }
-
 
 template<typename _Tp, int m, int n> template<int l> inline
 Matx<_Tp,m,n>::Matx(const Matx<_Tp, m, l>& a, const Matx<_Tp, l, n>& b, Matx_MatMulOp)
@@ -547,7 +525,6 @@ Matx<_Tp,m,n>::Matx(const Matx<_Tp, m, l>& a, const Matx<_Tp, l, n>& b, Matx_Mat
         }
 }
 
-
 template<typename _Tp, int m, int n> inline
 Matx<_Tp,m,n>::Matx(const Matx<_Tp, n, m>& a, Matx_TOp)
 {
@@ -556,20 +533,17 @@ Matx<_Tp,m,n>::Matx(const Matx<_Tp, n, m>& a, Matx_TOp)
             val[i*n + j] = a(j, i);
 }
 
-
 template<typename _Tp, int m, int n> static inline
 Matx<_Tp, m, n> operator + (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
 {
     return Matx<_Tp, m, n>(a, b, Matx_AddOp());
 }
 
-
 template<typename _Tp, int m, int n> static inline
 Matx<_Tp, m, n> operator - (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
 {
     return Matx<_Tp, m, n>(a, b, Matx_SubOp());
 }
-
 
 template<typename _Tp, int m, int n> static inline
 Matx<_Tp, m, n>& operator *= (Matx<_Tp, m, n>& a, int alpha)
@@ -637,13 +611,11 @@ Matx<_Tp, m, n> operator - (const Matx<_Tp, m, n>& a)
     return Matx<_Tp, m, n>(a, -1, Matx_ScaleOp());
 }
 
-
 template<typename _Tp, int m, int n, int l> static inline
 Matx<_Tp, m, n> operator * (const Matx<_Tp, m, l>& a, const Matx<_Tp, l, n>& b)
 {
     return Matx<_Tp, m, n>(a, b, Matx_MatMulOp());
 }
-
 
 template<typename _Tp, int m, int n> static inline
 Vec<_Tp, m> operator * (const Matx<_Tp, m, n>& a, const Vec<_Tp, n>& b)
@@ -652,14 +624,12 @@ Vec<_Tp, m> operator * (const Matx<_Tp, m, n>& a, const Vec<_Tp, n>& b)
     return reinterpret_cast<const Vec<_Tp, m>&>(c);
 }
 
-
 template<typename _Tp> static inline
 Point_<_Tp> operator * (const Matx<_Tp, 2, 2>& a, const Point_<_Tp>& b)
 {
     Matx<_Tp, 2, 1> tmp = a*Vec<_Tp,2>(b.x, b.y);
     return Point_<_Tp>(tmp.val[0], tmp.val[1]);
 }
-
 
 template<typename _Tp> static inline
 Point3_<_Tp> operator * (const Matx<_Tp, 3, 3>& a, const Point3_<_Tp>& b)
@@ -668,7 +638,6 @@ Point3_<_Tp> operator * (const Matx<_Tp, 3, 3>& a, const Point3_<_Tp>& b)
     return Point3_<_Tp>(tmp.val[0], tmp.val[1], tmp.val[2]);
 }
 
-
 template<typename _Tp> static inline
 Point3_<_Tp> operator * (const Matx<_Tp, 3, 3>& a, const Point_<_Tp>& b)
 {
@@ -676,13 +645,11 @@ Point3_<_Tp> operator * (const Matx<_Tp, 3, 3>& a, const Point_<_Tp>& b)
     return Point3_<_Tp>(tmp.val[0], tmp.val[1], tmp.val[2]);
 }
 
-
 template<typename _Tp> static inline
 Matx<_Tp, 4, 1> operator * (const Matx<_Tp, 4, 4>& a, const Point3_<_Tp>& b)
 {
     return a*Matx<_Tp, 4, 1>(b.x, b.y, b.z, 1);
 }
-
 
 template<typename _Tp> static inline
 Scalar operator * (const Matx<_Tp, 4, 4>& a, const Scalar& b)
@@ -691,7 +658,6 @@ Scalar operator * (const Matx<_Tp, 4, 4>& a, const Scalar& b)
     return static_cast<const Scalar&>(c);
 }
 
-
 static inline
 Scalar operator * (const Matx<double, 4, 4>& a, const Scalar& b)
 {
@@ -699,19 +665,16 @@ Scalar operator * (const Matx<double, 4, 4>& a, const Scalar& b)
     return static_cast<const Scalar&>(c);
 }
 
-
 template<typename _Tp, int m, int n> inline
 Matx<_Tp, m, n> Matx<_Tp, m, n>::mul(const Matx<_Tp, m, n>& a) const
 {
     return Matx<_Tp, m, n>(*this, a, Matx_MulOp());
 }
 
-
 CV_EXPORTS int LU(float* A, size_t astep, int m, float* b, size_t bstep, int n);
 CV_EXPORTS int LU(double* A, size_t astep, int m, double* b, size_t bstep, int n);
 CV_EXPORTS bool Cholesky(float* A, size_t astep, int m, float* b, size_t bstep, int n);
 CV_EXPORTS bool Cholesky(double* A, size_t astep, int m, double* b, size_t bstep, int n);
-
 
 template<typename _Tp, int m> struct Matx_DetOp
 {
@@ -727,7 +690,6 @@ template<typename _Tp, int m> struct Matx_DetOp
     }
 };
 
-
 template<typename _Tp> struct Matx_DetOp<_Tp, 1>
 {
     double operator ()(const Matx<_Tp, 1, 1>& a) const
@@ -736,7 +698,6 @@ template<typename _Tp> struct Matx_DetOp<_Tp, 1>
     }
 };
 
-
 template<typename _Tp> struct Matx_DetOp<_Tp, 2>
 {
     double operator ()(const Matx<_Tp, 2, 2>& a) const
@@ -744,7 +705,6 @@ template<typename _Tp> struct Matx_DetOp<_Tp, 2>
         return a(0,0)*a(1,1) - a(0,1)*a(1,0);
     }
 };
-
 
 template<typename _Tp> struct Matx_DetOp<_Tp, 3>
 {
@@ -762,7 +722,6 @@ double determinant(const Matx<_Tp, m, m>& a)
     return Matx_DetOp<_Tp, m>()(a);
 }
 
-
 template<typename _Tp, int m, int n> static inline
 double trace(const Matx<_Tp, m, n>& a)
 {
@@ -772,13 +731,11 @@ double trace(const Matx<_Tp, m, n>& a)
     return s;
 }
 
-
 template<typename _Tp, int m, int n> inline
 Matx<_Tp, n, m> Matx<_Tp, m, n>::t() const
 {
     return Matx<_Tp, n, m>(*this, Matx_TOp());
 }
-
 
 template<typename _Tp, int m> struct Matx_FastInvOp
 {
@@ -797,7 +754,6 @@ template<typename _Tp, int m> struct Matx_FastInvOp
     }
 };
 
-
 template<typename _Tp> struct Matx_FastInvOp<_Tp, 2>
 {
     bool operator()(const Matx<_Tp, 2, 2>& a, Matx<_Tp, 2, 2>& b, int) const
@@ -813,7 +769,6 @@ template<typename _Tp> struct Matx_FastInvOp<_Tp, 2>
         return true;
     }
 };
-
 
 template<typename _Tp> struct Matx_FastInvOp<_Tp, 3>
 {
@@ -838,7 +793,6 @@ template<typename _Tp> struct Matx_FastInvOp<_Tp, 3>
     }
 };
 
-
 template<typename _Tp, int m, int n> inline
 Matx<_Tp, n, m> Matx<_Tp, m, n>::inv(int method) const
 {
@@ -854,7 +808,6 @@ Matx<_Tp, n, m> Matx<_Tp, m, n>::inv(int method) const
     return ok ? b : Matx<_Tp, n, m>::zeros();
 }
 
-
 template<typename _Tp, int m, int n> struct Matx_FastSolveOp
 {
     bool operator()(const Matx<_Tp, m, m>& a, const Matx<_Tp, m, n>& b,
@@ -868,7 +821,6 @@ template<typename _Tp, int m, int n> struct Matx_FastSolveOp
         return LU(temp.val, m*sizeof(_Tp), m, x.val, n*sizeof(_Tp), n) != 0;
     }
 };
-
 
 template<typename _Tp> struct Matx_FastSolveOp<_Tp, 2, 1>
 {
@@ -884,7 +836,6 @@ template<typename _Tp> struct Matx_FastSolveOp<_Tp, 2, 1>
         return true;
     }
 };
-
 
 template<typename _Tp> struct Matx_FastSolveOp<_Tp, 3, 1>
 {
@@ -909,7 +860,6 @@ template<typename _Tp> struct Matx_FastSolveOp<_Tp, 3, 1>
         return true;
     }
 };
-
 
 template<typename _Tp, int m, int n> template<int l> inline
 Matx<_Tp, n, l> Matx<_Tp, m, n>::solve(const Matx<_Tp, m, l>& rhs, int method) const
@@ -954,7 +904,6 @@ _AccTp normL2Sqr(const _Tp* a, int n)
     return s;
 }
 
-
 template<typename _Tp, typename _AccTp> static inline
 _AccTp normL1(const _Tp* a, int n)
 {
@@ -972,7 +921,6 @@ _AccTp normL1(const _Tp* a, int n)
     return s;
 }
 
-
 template<typename _Tp, typename _AccTp> static inline
 _AccTp normInf(const _Tp* a, int n)
 {
@@ -981,7 +929,6 @@ _AccTp normInf(const _Tp* a, int n)
         s = std::max(s, (_AccTp)fast_abs(a[i]));
     return s;
 }
-
 
 template<typename _Tp, typename _AccTp> static inline
 _AccTp normL2Sqr(const _Tp* a, const _Tp* b, int n)
@@ -1021,7 +968,6 @@ template<> inline float normL2Sqr(const float* a, const float* b, int n)
     }
     return s;
 }
-
 
 template<typename _Tp, typename _AccTp> static inline
 _AccTp normL1(const _Tp* a, const _Tp* b, int n)
@@ -1073,13 +1019,11 @@ _AccTp normInf(const _Tp* a, const _Tp* b, int n)
     return s;
 }
 
-
 template<typename _Tp, int m, int n> static inline
 double norm(const Matx<_Tp, m, n>& M)
 {
     return std::sqrt(normL2Sqr<_Tp, double>(M.val, m*n));
 }
-
 
 template<typename _Tp, int m, int n> static inline
 double norm(const Matx<_Tp, m, n>& M, int normType)
@@ -1088,7 +1032,6 @@ double norm(const Matx<_Tp, m, n>& M, int normType)
         normType == NORM_L1 ? (double)normL1<_Tp, typename DataType<_Tp>::work_type>(M.val, m*n) :
         std::sqrt((double)normL2Sqr<_Tp, typename DataType<_Tp>::work_type>(M.val, m*n));
 }
-
 
 template<typename _Tp, int m, int n> static inline
 bool operator == (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
@@ -1103,7 +1046,6 @@ bool operator != (const Matx<_Tp, m, n>& a, const Matx<_Tp, m, n>& b)
 {
     return !(a == b);
 }
-
 
 template<typename _Tp, typename _T2, int m, int n> static inline
 MatxCommaInitializer<_Tp, m, n> operator << (const Matx<_Tp, m, n>& mtx, _T2 val)
@@ -1186,7 +1128,6 @@ template<typename _Tp, int cn> inline Vec<_Tp, cn>::Vec(_Tp v0, _Tp v1, _Tp v2, 
 template<typename _Tp, int cn> inline Vec<_Tp, cn>::Vec(const _Tp* values)
     : Matx<_Tp, cn, 1>(values)
 {}
-
 
 template<typename _Tp, int cn> inline Vec<_Tp, cn>::Vec(const Vec<_Tp, cn>& m)
     : Matx<_Tp, cn, 1>(m.val)
@@ -1895,7 +1836,6 @@ template<typename _Tp> static inline bool operator != (const Size_<_Tp>& a, cons
 
 //////////////////////////////// Rect ////////////////////////////////
 
-
 template<typename _Tp> inline Rect_<_Tp>::Rect_() : x(0), y(0), width(0), height(0) {}
 template<typename _Tp> inline Rect_<_Tp>::Rect_(_Tp _x, _Tp _y, _Tp _width, _Tp _height) : x(_x), y(_y), width(_width), height(_height) {}
 template<typename _Tp> inline Rect_<_Tp>::Rect_(const Rect_<_Tp>& r) : x(r.x), y(r.y), width(r.width), height(r.height) {}
@@ -2124,7 +2064,6 @@ template<typename _Tp> static inline Scalar_<_Tp> operator - (const Scalar_<_Tp>
                       saturate_cast<_Tp>(-a.val[2]), saturate_cast<_Tp>(-a.val[3]));
 }
 
-
 template<typename _Tp> static inline Scalar_<_Tp>
 operator * (const Scalar_<_Tp>& a, const Scalar_<_Tp>& b)
 {
@@ -2257,7 +2196,6 @@ static inline Range operator - (const Range& r1, int delta)
 
 inline Range::operator CvSlice() const
 { return *this != Range::all() ? cvSlice(start, end) : CV_WHOLE_SEQ; }
-
 
 
 //////////////////////////////// Vector ////////////////////////////////
@@ -2460,7 +2398,6 @@ protected:
     Hdr hdr;
 };
 
-
 template<typename _Tp> inline typename DataType<_Tp>::work_type
 dot(const Vector<_Tp>& v1, const Vector<_Tp>& v2)
 {
@@ -2579,7 +2516,6 @@ template<typename _Tp, size_t fixed_size> inline AutoBuffer<_Tp, fixed_size>::op
 
 template<typename _Tp, size_t fixed_size> inline AutoBuffer<_Tp, fixed_size>::operator const _Tp* () const
 { return ptr; }
-
 
 /////////////////////////////////// Ptr ////////////////////////////////////////
 
@@ -3444,7 +3380,6 @@ public:
     const _Tp* arr;
 };
 
-
 // This function splits the input sequence or set into one or more equivalence classes and
 // returns the vector of labels - 0-based class indexes for each element.
 // predicate(a,b) returns true if the two sequence elements certainly belong to the same class.
@@ -3540,7 +3475,6 @@ partition( const vector<_Tp>& _vec, vector<int>& labels,
 
     return nclasses;
 }
-
 
 //////////////////////////////////////////////////////////////////////////////
 
@@ -3764,7 +3698,6 @@ template<typename _Tp> inline bool operator != (const SeqIterator<_Tp>& a,
     return !(a == b);
 }
 
-
 template<typename _ClsName> struct RTTIImpl
 {
 public:
@@ -3817,7 +3750,6 @@ public:
     }
 };
 
-
 class CV_EXPORTS Formatter
 {
 public:
@@ -3828,7 +3760,6 @@ public:
     static const Formatter* get(const char* fmt="");
     static const Formatter* setDefault(const Formatter* fmt);
 };
-
 
 struct CV_EXPORTS Formatted
 {
@@ -3885,7 +3816,6 @@ static inline std::ostream& operator << (std::ostream& out, const Formatted& fmt
     return out;
 }
 
-
 template<typename _Tp> static inline std::ostream& operator << (std::ostream& out,
                                                                 const vector<Point_<_Tp> >& vec)
 {
@@ -3893,14 +3823,12 @@ template<typename _Tp> static inline std::ostream& operator << (std::ostream& ou
     return out;
 }
 
-
 template<typename _Tp> static inline std::ostream& operator << (std::ostream& out,
                                                                 const vector<Point3_<_Tp> >& vec)
 {
     Formatter::get()->write(out, Mat(vec));
     return out;
 }
-
 
 /** Writes a Matx to an output stream.
  */
@@ -3965,7 +3893,6 @@ template<typename _Tp> inline std::ostream& operator<<(std::ostream& out, const 
     out << "[" << rect.width << " x " << rect.height << " from (" << rect.x << ", " << rect.y << ")]";
     return out;
 }
-
 
 template<typename _Tp> inline Ptr<_Tp> Algorithm::create(const string& name)
 {

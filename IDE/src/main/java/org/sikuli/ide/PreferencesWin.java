@@ -225,7 +225,6 @@ public class PreferencesWin extends JFrame {
       }
       _tabPane.addTab(SikuliIDEI18N._I("prefTabScreenCapturing"), paneCapture);
 
-
       //======== _paneTextEditing ========
       {
 
@@ -309,7 +308,6 @@ public class PreferencesWin extends JFrame {
         _paneTextEditingLayout.linkSize(new Component[]{_cmbFontName, _lblFont}, GroupLayout.VERTICAL);
       }
       _tabPane.addTab(SikuliIDEI18N._I("PreferencesWin.paneTextEditing.tab.title"), _paneTextEditing);
-
 
       //======== paneGeneral ========
       {

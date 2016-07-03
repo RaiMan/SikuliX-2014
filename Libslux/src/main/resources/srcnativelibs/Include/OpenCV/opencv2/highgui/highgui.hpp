@@ -112,7 +112,6 @@ typedef void (*MouseCallback)(int event, int x, int y, int flags, void* userdata
 //! assigns callback for mouse events
 CV_EXPORTS void setMouseCallback(const string& winname, MouseCallback onMouse, void* userdata = 0);
 
-
 typedef void (CV_CDECL *TrackbarCallback)(int pos, void* userdata);
 
 CV_EXPORTS int createTrackbar(const string& trackbarname, const string& winname,
@@ -225,7 +224,6 @@ public:
 protected:
     Ptr<CvCapture> cap;
 };
-
 
 class CV_EXPORTS_W VideoWriter
 {

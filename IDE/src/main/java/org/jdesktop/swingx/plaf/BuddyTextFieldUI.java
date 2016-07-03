@@ -13,9 +13,9 @@ import javax.swing.plaf.TextUI;
  * <p>
  * TODO: queries the text components layout manager for the preferred size.
  * </p>
- * 
+ *
  * @author Peter Weishapl <petw@gmx.net>
- * 
+ *
  */
 public class BuddyTextFieldUI extends PromptTextFieldUI {
 	protected BuddyLayoutAndBorder layoutAndBorder;
@@ -49,7 +49,7 @@ public class BuddyTextFieldUI extends PromptTextFieldUI {
 	/**
 	 * Creates a new {@link BuddyTextFieldUI} which delegates most work to
 	 * another {@link TextUI}.
-	 * 
+	 *
 	 * @param delegate
 	 */
 	public BuddyTextFieldUI(TextUI delegate) {
@@ -75,7 +75,7 @@ public class BuddyTextFieldUI extends PromptTextFieldUI {
 
 	/**
 	 * TODO: comment
-	 * 
+	 *
 	 * @see javax.swing.plaf.ComponentUI#getPreferredSize(javax.swing.JComponent)
 	 */
 	@Override

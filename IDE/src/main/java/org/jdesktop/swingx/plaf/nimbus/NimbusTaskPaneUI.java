@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -38,7 +38,7 @@ import org.jdesktop.swingx.plaf.basic.BasicTaskPaneUI;
 
 /**
  * Nimbus implementation of the <code>JXTaskPane</code> UI. <br>
- * 
+ *
  * @author <a href="mailto:Radu.Dumitrescu@pss.ro">Radu Dumitrescu</a>
  */
 public class NimbusTaskPaneUI extends BasicTaskPaneUI {
@@ -46,12 +46,12 @@ public class NimbusTaskPaneUI extends BasicTaskPaneUI {
   public static ComponentUI createUI(JComponent c) {
     return new NimbusTaskPaneUI();
   }
-  
+
   @Override
 protected Border createPaneBorder() {
     return new NimbusPaneBorder();
   }
-  
+
   /**
    * Overriden to paint the background of the component but keeping the rounded
    * corners.
@@ -71,7 +71,7 @@ getRoundHeight());
         /**
          * The border of the task pane group paints the "text", the "icon", the
          * "expanded" status and the "special" type.
-         * 
+         *
          */
         class NimbusPaneBorder extends PaneBorder {
 
@@ -170,4 +170,3 @@ getRoundHeight());
         }
 
 }
-

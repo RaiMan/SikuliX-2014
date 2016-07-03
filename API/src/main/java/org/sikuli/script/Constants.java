@@ -15,4 +15,3 @@ public class Constants {
 	 */
 	public static double FOREVER = Double.POSITIVE_INFINITY;
 }
-

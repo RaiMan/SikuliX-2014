@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -38,29 +38,29 @@ import javax.swing.plaf.synth.SynthStyle;
 
 /**
  * Utility class as stand-in for package private synth utility methods.
- * 
+ *
  * @author Jeanette Winzenburg
  */
 public class SynthUtils {
 
 //----------------------- context-related
-    
+
     /**
      * Used to avoid null painter checks everywhere.
      */
     private static SynthPainter NULL_PAINTER = new SynthPainter() {};
-    
+
     /**
-     * Returns a SynthContext with the specified values. 
+     * Returns a SynthContext with the specified values.
      *
      * @param component JComponent
      * @param region Identifies the portion of the JComponent
      * @param style Style associated with the component
      * @param state State of the component as defined in SynthConstants.
      * @return a SynthContext with the specified values.
-     * 
+     *
      * @throws NullPointerException if component, region of style is null.
-     * 
+     *
      */
     public static SynthContext getContext(JComponent c, Region region, SynthStyle style, int state) {
         return new SynthContext(c, region, style, state);
@@ -77,8 +77,8 @@ public class SynthUtils {
     }
     /**
      * Returns a context with the given component state and all other fields same as input context.
-     * 
-     * @param context the context, must not be null 
+     *
+     * @param context the context, must not be null
      * @param state the component state.
      * @return a context with the given component state and other fields as inpu context.
      */
@@ -86,11 +86,11 @@ public class SynthUtils {
         if (context.getComponentState() == state) return context;
         return getContext(context.getComponent(), context.getRegion(), context.getStyle(), state);
     }
-    
+
     /**
-     * Returns a SynthPainter from the context's style. Fall-back to default if 
+     * Returns a SynthPainter from the context's style. Fall-back to default if
      * none available.
-     * 
+     *
      * @param context SynthContext containing the style, must not be null.
      * @return a SynthPainter from the context's style, or a default if null.
      */
@@ -98,9 +98,9 @@ public class SynthUtils {
         SynthPainter painter = context.getStyle().getPainter(context);
         return painter != null ? painter : NULL_PAINTER;
     }
-    
+
 //------------------- style-related
-    
+
     /**
      * Returns true if the Style should be updated in response to the
      * specified PropertyChangeEvent. This forwards to
@@ -146,9 +146,9 @@ public class SynthUtils {
         }
         return false;
     }
-    
+
 //--------------- component related
-    
+
     public static int getComponentState(JComponent c) {
         if (c.isEnabled()) {
             if (c.isFocusOwner()) {
@@ -164,18 +164,18 @@ public class SynthUtils {
     /**
      * A convenience method that handles painting of the background. All SynthUI
      * implementations should override update and invoke this method.
-     * 
+     *
      * @param context must not be null
      * @param g must not be null
      */
     public static void update(SynthContext context, Graphics g) {
         update(context, g, null);
     }
-    
+
     /**
      * A convenience method that handles painting of the background. All SynthUI
      * implementations should override update and invoke this method.
-     * 
+     *
      * @param context must not be null
      * @param g must not be null
      * @param the bounds to fill, may be null to indicate the complete size
@@ -207,4 +207,3 @@ public class SynthUtils {
     }
 
 }
-

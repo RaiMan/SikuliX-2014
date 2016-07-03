@@ -118,7 +118,6 @@ inline std::ostream& operator <<(std::ostream& out, const LshStats& stats)
     return out;
 }
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 /** Lsh hash table. As its key is a sub-feature, and as usually

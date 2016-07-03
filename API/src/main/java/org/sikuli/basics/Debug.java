@@ -68,7 +68,7 @@ public class Debug {
 	private static boolean isJython;
 	private static boolean isJRuby;
   private static Object scriptRunner = null;
-  
+
   private static boolean searchHighlight = false;
 
 	private static PrintStream redirectedOut = null, redirectedErr = null;
@@ -98,7 +98,7 @@ public class Debug {
       logx(DEBUG_LEVEL, "Debug.init: from sikuli.Debug: on: %d", DEBUG_LEVEL);
     }
   }
-  
+
   public static void highlightOn() {
     searchHighlight = true;
     Settings.Highlight = true;
@@ -108,7 +108,7 @@ public class Debug {
     searchHighlight = false;
     Settings.Highlight = false;
   }
-  
+
   public static boolean shouldHighlight() {
     return searchHighlight;
   }
@@ -699,7 +699,7 @@ public class Debug {
     }
     return sout;
   }
-  
+
   public static String logp(String msg, Object... args) {
     String out = String.format(msg, args);
     System.out.println(out);

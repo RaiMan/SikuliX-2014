@@ -30,8 +30,8 @@ import org.jdesktop.swingx.util.Contract;
 
 /**
  * A searchable targetting the visible rows of a JXTree.
- * 
- * 
+ *
+ *
  */
 public class TreeSearchable extends AbstractSearchable {
 
@@ -39,7 +39,7 @@ public class TreeSearchable extends AbstractSearchable {
 
     /**
      * Instantiates a Searchable for the given JTree.
-     * 
+     *
      * @param tree the JTree to search, must not be null.
      */
     public TreeSearchable(JXTree tree) {
@@ -72,7 +72,7 @@ public class TreeSearchable extends AbstractSearchable {
     /**
      * Matches the cell content at row/col against the given Pattern. Returns an
      * appropriate SearchResult if matching or null if no matching
-     * 
+     *
      * @param pattern
      * @param row a valid row index in view coordinates a valid column index in
      *        view coordinates
@@ -127,7 +127,7 @@ public class TreeSearchable extends AbstractSearchable {
 
     /**
      * use and move the match highlighter. PRE: markByHighlighter
-     * 
+     *
      */
     protected void moveMatchByHighlighter() {
         AbstractHighlighter searchHL = getConfiguredMatchHighlighter();

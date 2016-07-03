@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -41,7 +41,7 @@ import java.util.Date;
  * deletion of files, and the movement of files. This simple implementation does
  * not intend to tackle such problems, but this implementation may be extended
  * to handle such details.
- * 
+ *
  * @author Ramesh Gupta
  * @author Karl Schaefer
  */
@@ -58,7 +58,7 @@ public class FileSystemModel extends AbstractTreeTableModel {
 
     /**
      * Creates a file system model using the specified {@code root}.
-     * 
+     *
      * @param root
      *            the root for this model; this may be different than the root
      *            directory for a file system.
@@ -69,20 +69,20 @@ public class FileSystemModel extends AbstractTreeTableModel {
 
     private boolean isValidFileNode(Object file) {
         boolean result = false;
-        
+
         if (file instanceof File) {
             File f = (File) file;
-            
+
             while (!result && f != null) {
                 result = f.equals(root);
-                
+
                 f = f.getParentFile();
             }
         }
-        
+
         return result;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -91,14 +91,14 @@ public class FileSystemModel extends AbstractTreeTableModel {
         if (!isValidFileNode(parent)) {
             throw new IllegalArgumentException("parent is not a file governed by this model");
         }
-        
+
         File parentFile = (File) parent;
         String[] children = parentFile.list();
-        
+
         if (children != null) {
             return new File(parentFile, children[index]);
         }
-        
+
         return null;
     }
 
@@ -109,7 +109,7 @@ public class FileSystemModel extends AbstractTreeTableModel {
     public int getChildCount(Object parent) {
         if (parent instanceof File) {
             String[] children = ((File) parent).list();
-            
+
             if (children != null) {
                 return children.length;
             }
@@ -185,16 +185,16 @@ public class FileSystemModel extends AbstractTreeTableModel {
         if (parent instanceof File && child instanceof File) {
             File parentFile = (File) parent;
             File[] files = parentFile.listFiles();
-            
+
             Arrays.sort(files);
-            
+
             for (int i = 0, len = files.length; i < len; i++) {
                 if (files[i].equals(child)) {
                     return i;
                 }
             }
         }
-        
+
         return -1;
     }
 
@@ -209,13 +209,13 @@ public class FileSystemModel extends AbstractTreeTableModel {
     /**
      * Sets the root for this tree table model. This method will notify
      * listeners that a change has taken place.
-     * 
+     *
      * @param root
      *            the new root node to set
      */
     public void setRoot(File root) {
         this.root = root;
-        
+
         modelSupport.fireNewRoot();
     }
 
@@ -228,7 +228,7 @@ public class FileSystemModel extends AbstractTreeTableModel {
             //do not use isFile(); some system files return false
             return ((File) node).list() == null;
         }
-        
+
         return true;
     }
 }

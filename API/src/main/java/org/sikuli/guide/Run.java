@@ -25,7 +25,6 @@ public class Run {
 	static Screen scr;
   static Visual sgc;
 
-  
 public static void main(String[] args) {
   Run sgr = new Run();
   sgr.scr = new Screen();
@@ -34,7 +33,7 @@ public static void main(String[] args) {
   sgr.testButton();
   sgr.tearDown();
 }
-  
+
 	private void setUp() {
 		guide = new Guide();
 	}

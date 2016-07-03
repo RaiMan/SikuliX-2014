@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -27,20 +27,20 @@ import javax.swing.tree.DefaultTreeCellRenderer;
 import org.jdesktop.swingx.SwingXUtilities;
 
 /**
- * Quick fix for #1061-swingx (which actually is a core issue): 
+ * Quick fix for #1061-swingx (which actually is a core issue):
  * tree icons lost on toggle laf. Updates colors as well -
  * but beware: this is incomplete as some of super's properties are private!
- * 
- * Will not do more because in the longer run (as soon as we've fixed the editor issues) 
+ *
+ * Will not do more because in the longer run (as soon as we've fixed the editor issues)
  * the JXTree's default renderer will be changed to SwingX DefaultTreeRenderer.
- * 
+ *
  * @author Jeanette Winzenburg
  */
 public class DefaultXTreeCellRenderer extends DefaultTreeCellRenderer {
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to update icons and colors.
      */
     @Override
@@ -51,7 +51,7 @@ public class DefaultXTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 
     /**
-     * 
+     *
      */
     protected void updateColors() {
         if (SwingXUtilities.isUIInstallable(getTextSelectionColor())) {
@@ -78,7 +78,7 @@ public class DefaultXTreeCellRenderer extends DefaultTreeCellRenderer {
     }
 
     /**
-     * 
+     *
      */
     protected void updateIcons() {
         if (SwingXUtilities.isUIInstallable(getLeafIcon())) {
@@ -92,7 +92,6 @@ public class DefaultXTreeCellRenderer extends DefaultTreeCellRenderer {
         }
 
     }
-    
-    
+
 
 }

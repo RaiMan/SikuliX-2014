@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -30,12 +30,12 @@ import javax.swing.JComponent;
  * respecting the state of the passed-in <code>CellContext</code>. It's
  * basically re-usable across all types of renderees (JTable, JList, JTree).
  * <p>
- * 
+ *
  * Guarantees to completely configure the default visual properties (listed
  * below) of a given component. As a consequence, client code (f.i. in
  * <code>Highlighter</code>s) can safely change them without long-lasting
  * visual artefacts.
- * 
+ *
  * <ul>
  * <li> foreground and background, depending on selected and focused state
  * <li> border
@@ -47,25 +47,24 @@ import javax.swing.JComponent;
  * <li> minimum-, maximum-, preferredSize
  * <li> name
  * </ul>
- * 
+ *
  * Client code will rarely need to be aware of this class. It's the single
  * place to change on introduction of new properties considered as belonging
  * to the "default visuals" of rendering components. <p>
- * 
+ *
  * PENDING: allow mutators for overruling the <code>CellContext</code>s
  * defaults? Would prefer not to, as in the context of SwingX visual config on
  * the renderer level is discouraged (the way to go are <code>Highlighter</code>s.<p>
- * 
+ *
  * PENDING: not yet quite decided whether the toolTipText property belongs
  * into the visual default config. Doing so gives client code the choice to
  * set it either in a Highlighter or a custom ComponentProvider.
- * 
+ *
  * @author Jeanette Winzenburg
- * 
+ *
  * @see CellContext
  */
 public class DefaultVisuals<T extends JComponent> implements Serializable {
-
 
     private Color unselectedForeground;
 
@@ -75,7 +74,7 @@ public class DefaultVisuals<T extends JComponent> implements Serializable {
      * Sets the renderer's unselected-foreground color to the specified color.
      * If <code>not null</code> this color will overrule the default color of
      * the CellContext.
-     * 
+     *
      * @param c set the foreground color to this value
      */
     public void setForeground(Color c) {
@@ -86,22 +85,21 @@ public class DefaultVisuals<T extends JComponent> implements Serializable {
      * Sets the renderer's unselected-background color to the specified color.
      * If <code>not null</code> this color will overrule the default color of
      * the CellContext.
-     * 
+     *
      * @param c set the background color to this value
      */
     public void setBackground(Color c) {
         unselectedBackground = c;
     }
 
-    
-    //---------------- subclass configuration    
+    //---------------- subclass configuration
     /**
-     * Configures all default visual state of the rendering component from the 
+     * Configures all default visual state of the rendering component from the
      * given cell context.
-     * 
+     *
      * @param renderingComponent the component to configure, must not be null
      * @param context the cell context to configure from, must not be null
-     * @throws NullPointerException if either renderingComponent or cellContext 
+     * @throws NullPointerException if either renderingComponent or cellContext
      *   is null
      */
     public void configureVisuals(T renderingComponent, CellContext context) {
@@ -113,7 +111,7 @@ public class DefaultVisuals<T extends JComponent> implements Serializable {
 
     /**
      * Configures the default Painter if applicable. Here: set's to null.
-     * 
+     *
      * @param renderingComponent the component to configure, must not be null
      * @param context the cell context to configure from, must not be null
      */
@@ -121,24 +119,24 @@ public class DefaultVisuals<T extends JComponent> implements Serializable {
         if (renderingComponent instanceof PainterAware) {
             ((PainterAware) renderingComponent).setPainter(null);
         }
-        
+
     }
 
     /**
      * Configure "divers" visual state of the rendering component from the given
      * cell context.
      * <p>
-     * 
+     *
      * Here: synch <code>Font</code>, <code>ComponentOrientation</code> and
      * <code>enabled</code> to context's component. Resets toolTipText to null.
      * Calls configureSizes to reset xxSize if appropriate. Resets the component's
      * name property.
      * <p>
-     * 
-     * PENDING: not fully defined - "divers" means everything that's not 
+     *
+     * PENDING: not fully defined - "divers" means everything that's not
      * <code>Color</code>s
      * nor <code>Border</code> nor <code>Painter</code>.
-     *      
+     *
      * @param renderingComponent the component to configure, must not be null
      * @param context the cell context to configure from, must not be null
      */
@@ -163,9 +161,9 @@ public class DefaultVisuals<T extends JComponent> implements Serializable {
 
     /**
      * Configures min-, max, preferredSize properties of the renderingComponent.
-     * 
+     *
      * Here: set all to null.
-     * 
+     *
      * @param renderingComponent the component to configure, must not be null
      * @param context the cell context to configure from, must not be null
      */
@@ -177,7 +175,7 @@ public class DefaultVisuals<T extends JComponent> implements Serializable {
 
     /**
      * Configures colors of rendering component from the given cell context.
-     * 
+     *
      * @param renderingComponent the component to configure, must not be null
      * @param context the cell context to configure from, must not be null
      */
@@ -195,10 +193,10 @@ public class DefaultVisuals<T extends JComponent> implements Serializable {
     }
     /**
      * Configures focus-related colors form given cell context.<p>
-     * 
+     *
      * PENDING: move to context as well? - it's the only comp
      * with focus specifics? Problem is the parameter type...
-     * 
+     *
      * @param renderingComponent the component to configure, must not be null
      * @param context the cell context to configure from, must not be null
      */
@@ -215,10 +213,9 @@ public class DefaultVisuals<T extends JComponent> implements Serializable {
         }
     }
 
-
     /**
      * Configures the rendering component's border from the given cell context.<p>
-     * 
+     *
      * @param renderingComponent the component to configure, must not be null
      * @param context the cell context to configure from, must not be null
      */
@@ -227,13 +224,13 @@ public class DefaultVisuals<T extends JComponent> implements Serializable {
     }
 
     /**
-     * Returns the unselected foreground to use for the rendering 
+     * Returns the unselected foreground to use for the rendering
      * component. <p>
-     * 
+     *
      * Here: returns this renderer's unselected foreground is not null,
      * returns the foreground from the given context. In other words:
      * the renderer's foreground takes precedence if set.
-     * 
+     *
      * @param context the cell context.
      * @return the unselected foreground.
      */
@@ -244,13 +241,13 @@ public class DefaultVisuals<T extends JComponent> implements Serializable {
     }
 
     /**
-     * Returns the unselected background to use for the rendering 
+     * Returns the unselected background to use for the rendering
      * component. <p>
-     * 
+     *
      * Here: returns this renderer's unselected background is not null,
      * returns the background from the given context. In other words:
      * the renderer's background takes precedence if set.
-     * 
+     *
      * @param context the cell context.
      * @return the unselected background.
      */
@@ -260,6 +257,5 @@ public class DefaultVisuals<T extends JComponent> implements Serializable {
         return context.getBackground();
     }
 
-    
 
 }

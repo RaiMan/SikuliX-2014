@@ -26,7 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *************************************************************************/
 
-
 #ifndef OPENCV_FLANN_ALL_INDICES_H_
 #define OPENCV_FLANN_ALL_INDICES_H_
 
@@ -41,7 +40,6 @@
 #include "hierarchical_clustering_index.h"
 #include "lsh_index.h"
 #include "autotuned_index.h"
-
 
 namespace cvflann
 {

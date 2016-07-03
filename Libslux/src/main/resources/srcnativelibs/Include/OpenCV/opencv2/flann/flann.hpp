@@ -56,7 +56,6 @@ namespace cvflann
     FLANN_DEPRECATED CV_EXPORTS void set_distance_type(flann_distance_t distance_type, int order);
 }
 
-
 namespace cv
 {
 namespace flann
@@ -70,7 +69,6 @@ template <> struct CvType<short> { static int type() { return CV_16S; } };
 template <> struct CvType<int> { static int type() { return CV_32S; } };
 template <> struct CvType<float> { static int type() { return CV_32F; } };
 template <> struct CvType<double> { static int type() { return CV_64F; } };
-
 
 // bring the flann parameters into this namespace
 using ::cvflann::get_param;
@@ -89,7 +87,6 @@ using ::cvflann::HistIntersectionDistance;
 using ::cvflann::HellingerDistance;
 using ::cvflann::ChiSquareDistance;
 using ::cvflann::KL_Divergence;
-
 
 
 template <typename Distance>
@@ -126,7 +123,6 @@ private:
         ::cvflann::Index<Distance>* nnIndex;
 };
 
-
 #define FLANN_DISTANCE_CHECK \
     if ( ::cvflann::flann_distance_type() != cvflann::FLANN_DIST_L2) { \
         printf("[WARNING] You are using cv::flann::Index (or cv::flann::GenericIndex) and have also changed "\
@@ -134,7 +130,6 @@ private:
         "(cv::flann::Index always uses L2). You should create the index templated on the distance, "\
         "for example for L1 distance use: GenericIndex< L1<float> > \n"); \
     }
-
 
 template <typename Distance>
 GenericIndex<Distance>::GenericIndex(const Mat& dataset, const ::cvflann::IndexParams& params, Distance distance)
@@ -167,7 +162,6 @@ void GenericIndex<Distance>::knnSearch(const vector<ElementType>& query, vector<
 
     nnIndex->knnSearch(m_query,m_indices,m_dists,knn,searchParams);
 }
-
 
 template <typename Distance>
 void GenericIndex<Distance>::knnSearch(const Mat& queries, Mat& indices, Mat& dists, int knn, const ::cvflann::SearchParams& searchParams)
@@ -330,7 +324,6 @@ void Index_<T>::knnSearch(const vector<ElementType>& query, vector<int>& indices
     if (nnIndex_L2) nnIndex_L2->knnSearch(m_query,m_indices,m_dists,knn,searchParams);
 }
 
-
 template <typename T>
 void Index_<T>::knnSearch(const Mat& queries, Mat& indices, Mat& dists, int knn, const ::cvflann::SearchParams& searchParams)
 {
@@ -380,7 +373,6 @@ int Index_<T>::radiusSearch(const Mat& query, Mat& indices, Mat& dists, Distance
     if (nnIndex_L2) return nnIndex_L2->radiusSearch(m_query,m_indices,m_dists,radius,searchParams);
 }
 
-
 template <typename Distance>
 int hierarchicalClustering(const Mat& features, Mat& centers, const ::cvflann::KMeansIndexParams& params,
                            Distance d = Distance())
@@ -398,7 +390,6 @@ int hierarchicalClustering(const Mat& features, Mat& centers, const ::cvflann::K
 
     return ::cvflann::hierarchicalClustering<Distance>(m_features, m_centers, params, d);
 }
-
 
 template <typename ELEM_TYPE, typename DIST_TYPE>
 FLANN_DEPRECATED int hierarchicalClustering(const Mat& features, Mat& centers, const ::cvflann::KMeansIndexParams& params)

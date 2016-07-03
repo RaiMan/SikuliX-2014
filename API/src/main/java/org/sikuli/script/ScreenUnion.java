@@ -30,7 +30,7 @@ public class ScreenUnion extends Screen {
     w = _bounds.width;
     h = _bounds.height;
   }
-  
+
   public Region getRegion() {
     return Region.virtual(_bounds);
   }

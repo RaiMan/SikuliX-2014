@@ -33,7 +33,7 @@ public class ListCellContext extends CellContext {
      * Sets state of the cell's context. Note that the component might be null
      * to indicate a cell without a concrete context. All accessors must cope
      * with.
-     * 
+     *
      * @param component the component the cell resides on, might be null
      * @param value the content value of the cell
      * @param row the cell's row index in view coordinates
@@ -51,7 +51,7 @@ public class ListCellContext extends CellContext {
     }
 
     /**
-     * 
+     *
      */
     private boolean checkDropOnState() {
         if ((getComponent() == null)) {
@@ -66,7 +66,6 @@ public class ListCellContext extends CellContext {
         return false;
     }
 
-    
     @Override
     public JList getComponent() {
         return (JList) super.getComponent();
@@ -105,7 +104,6 @@ public class ListCellContext extends CellContext {
     protected String getUIPrefix() {
         return "List.";
     }
-    
-    
-    
+
+
 }

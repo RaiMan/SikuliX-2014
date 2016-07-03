@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -33,7 +33,7 @@ import org.jdesktop.swingx.search.Searchable;
 
 /**
  * A simple low-intrusion default widget for incremental search.
- * 
+ *
  * Actions registered (in addition to super):
  * <ul>
  * <li> {@link JXDialog#CLOSE_ACTION_COMMAND} - an action bound to this
@@ -41,26 +41,26 @@ import org.jdesktop.swingx.search.Searchable;
  * Subclassing clients can override the method, all clients can register a
  * custom action.
  * </ul>
- * 
+ *
  * Key bindings:
  * <ul>
  * <li> ESCAPE - calls action registered for
  * {@link JXDialog#CLOSE_ACTION_COMMAND}
  * </ul>
- * 
+ *
  * This implementation uses textfield coloring as not-found visualization.
- * 
+ *
  * <p>
  * PENDING: the coloring needs to be read from the UIManager instead of
  * hardcoding.
- * 
+ *
  * <p>
  * PENDING: the state transition of found/non-found coloring needs clean-up -
  * there are spurious problems when re-using the same instance (as SearchFactory
  * does).
- * 
+ *
  * @author Jeanette Winzenburg
- * 
+ *
  */
 @JavaBean
 public class JXFindBar extends JXFindPanel {
@@ -131,12 +131,12 @@ public class JXFindBar extends JXFindPanel {
     // --------------------------- action call back
     /**
      * Action callback method for bound action JXDialog.CLOSE_ACTION_COMMAND.
-     * 
+     *
      * Here: does nothing. Subclasses can override to define custom "closing"
      * behaviour. Alternatively, any client can register a custom action with
      * the actionMap.
-     * 
-     * 
+     *
+     *
      */
     public void cancel() {
     }

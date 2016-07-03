@@ -48,7 +48,6 @@
 namespace cv {
 namespace detail {
 
-
 // Simple blender which puts one image over another
 class CV_EXPORTS Blender
 {
@@ -67,7 +66,6 @@ protected:
     Mat dst_, dst_mask_;
     Rect dst_roi_;
 };
-
 
 class CV_EXPORTS FeatherBlender : public Blender
 {
@@ -94,7 +92,6 @@ private:
 
 inline FeatherBlender::FeatherBlender(float _sharpness) { setSharpness(_sharpness); }
 
-
 class CV_EXPORTS MultiBandBlender : public Blender
 {
 public:
@@ -115,7 +112,6 @@ private:
     bool can_use_gpu_;
     int weight_type_; //CV_32F or CV_16S
 };
-
 
 //////////////////////////////////////////////////////////////////////////////
 // Auxiliary functions

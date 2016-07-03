@@ -1,6 +1,6 @@
 /*
  * $Id: DatePickerCellEditor.java 3927 2011-02-22 16:34:11Z kleopatra $
- * 
+ *
  * Copyright 2006 Sun Microsystems, Inc., 4150 Network Circle,
  * Santa Clara, California 95054, U.S.A. All rights reserved.
  *
@@ -45,9 +45,9 @@ import org.jdesktop.swingx.treetable.AbstractMutableTreeTableNode;
 
 /**
  * A CellEditor using a JXDatePicker as editor component.<p>
- * 
+ *
  * NOTE: this class will be moved!
- * 
+ *
  * @author Richard Osbald
  * @author Jeanette Winzenburg
  */
@@ -71,7 +71,7 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
 
     /**
      * Instantiates a editor with the default dateFormat.
-     * 
+     *
      * PENDING: always override default from DatePicker?
      *
      */
@@ -82,20 +82,20 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
     /**
      * Instantiates an editor with the given dateFormat. If
      * null, the datePickers default is used.
-     * 
+     *
      * @param dateFormat
      */
     public DatePickerCellEditor(DateFormat dateFormat) {
-        // JW: the copy is used to synchronize .. can 
+        // JW: the copy is used to synchronize .. can
         // we use something else?
-        this.dateFormat = dateFormat != null ? dateFormat : 
+        this.dateFormat = dateFormat != null ? dateFormat :
             DateFormat.getDateInstance();
         datePicker = new JXDatePicker();
         // default border crushes the editor/combo
         datePicker.getEditor().setBorder(
-                BorderFactory.createEmptyBorder(0, 1, 0, 1)); 
+                BorderFactory.createEmptyBorder(0, 1, 0, 1));
         // should be fixed by j2se 6.0
-        datePicker.setFont(UIManager.getDefaults().getFont("TextField.font")); 
+        datePicker.setFont(UIManager.getDefaults().getFont("TextField.font"));
         if (dateFormat != null) {
             datePicker.setFormats(dateFormat);
         }
@@ -103,11 +103,11 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
     }
 
 //-------------------- CellEditor
-    
+
     /**
-     * Returns the pickers date. 
-     * 
-     * Note: the date is only meaningful after a stopEditing and 
+     * Returns the pickers date.
+     *
+     * Note: the date is only meaningful after a stopEditing and
      *   before the next call to getTableCellEditorComponent.
      */
     @Override
@@ -126,11 +126,11 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Overridden to commit pending edits. If commit successful, returns super,
      * else returns false.
-     * 
-     * 
+     *
+     *
      */
     @Override
     public boolean stopCellEditing() {
@@ -145,7 +145,7 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
 
     /**
      * Specifies the number of clicks needed to start editing.
-     * 
+     *
      * @param count an int specifying the number of clicks needed to start
      *        editing
      * @see #getClickCountToStart
@@ -163,9 +163,8 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
         return clickCountToStart;
     }
 
+//------------------------ TableCellEditor
 
-//------------------------ TableCellEditor   
-    
     @Override
     public Component getTableCellEditorComponent(JTable table, Object value,
             boolean isSelected, int row, int column) {
@@ -184,7 +183,7 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
     }
 
     //-------------------------  TreeCellEditor
-    
+
     @Override
     public Component getTreeCellEditorComponent(JTree tree, Object value, boolean isSelected, boolean expanded, boolean leaf, int row) {
         // PENDING JW: can remove the ignore flags here?
@@ -201,23 +200,23 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
         return datePicker;
     }
 
-//-------------------- helpers    
-    
+//-------------------- helpers
+
     /**
      * Returns the given value as Date.
-     * 
-     * PENDING: abstract into something pluggable (like StringValue 
+     *
+     * PENDING: abstract into something pluggable (like StringValue
      *   in ComponentProvider?)
-     *   
+     *
      * @param value the value to map as Date
      * @return the value as Date or null, if not successful.
-     * 
+     *
      */
     protected Date getValueAsDate(Object value) {
         if (isEmpty(value)) return null;
         if (value instanceof Date) {
             return (Date) value;
-        } 
+        }
         if (value instanceof Long) {
             return new Date((Long) value);
         }
@@ -253,11 +252,11 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
                 && ((String) value).length() == 0;
     }
 
-//--------------- picker specifics    
+//--------------- picker specifics
     /**
      * Commits any pending edits and returns a boolean indicating whether the
      * commit was successful.
-     * 
+     *
      * @return true if the edit was valid, false otherwise.
      */
     protected boolean commitChange() {
@@ -270,9 +269,9 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
     }
 
     /**
-     * 
+     *
      * @return the DatePicker's formats.
-     * 
+     *
      * @see org.jdesktop.swingx.JXDatePicker#getFormats().
      */
     public DateFormat[] getFormats() {
@@ -280,18 +279,18 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
     }
 
     /**
-     * 
+     *
      * @param formats the formats to use in the datepicker.
-     * 
+     *
      * @see org.jdesktop.swingx.JXDatePicker#setFormats(DateFormat...)
-     * 
+     *
      */
     public void setFormats(DateFormat... formats) {
         datePicker.setFormats(formats);
     }
     /**
      * Returns the ActionListener to add to the datePicker.
-     * 
+     *
      * @return the action listener to listen for datePicker's
      *    action events.
      */
@@ -314,10 +313,10 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
                 // commit in stopCellEditing
                 if (ignoreAction)
                     return;
-                // still need to invoke .. hmm 
+                // still need to invoke .. hmm
                 // no ... with the table cooperating the
                 // invoke is contra-productive!
-                terminateEdit(e);                         
+                terminateEdit(e);
             }
 
             /**
@@ -334,6 +333,5 @@ public class DatePickerCellEditor extends AbstractCellEditor implements
         };
         return l;
     }
-
 
 }

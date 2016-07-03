@@ -1,9 +1,7 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
 package org.opencv.imgproc;
-
 
 
 // C++: class Moments
@@ -11,7 +9,6 @@ public class Moments {
 
     protected final long nativeObj;
     protected Moments(long addr) { nativeObj = addr; }
-
 
     //
     // C++:   Moments::Moments()
@@ -25,7 +22,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::m00
     //
@@ -37,7 +33,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::m00
@@ -51,7 +46,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::m10
     //
@@ -63,7 +57,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::m10
@@ -77,7 +70,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::m01
     //
@@ -89,7 +81,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::m01
@@ -103,7 +94,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::m20
     //
@@ -115,7 +105,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::m20
@@ -129,7 +118,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::m11
     //
@@ -141,7 +129,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::m11
@@ -155,7 +142,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::m02
     //
@@ -167,7 +153,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::m02
@@ -181,7 +166,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::m30
     //
@@ -193,7 +177,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::m30
@@ -207,7 +190,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::m21
     //
@@ -219,7 +201,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::m21
@@ -233,7 +214,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::m12
     //
@@ -245,7 +225,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::m12
@@ -259,7 +238,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::m03
     //
@@ -271,7 +249,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::m03
@@ -285,7 +262,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::mu20
     //
@@ -297,7 +273,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::mu20
@@ -311,7 +286,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::mu11
     //
@@ -323,7 +297,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::mu11
@@ -337,7 +310,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::mu02
     //
@@ -349,7 +321,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::mu02
@@ -363,7 +334,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::mu30
     //
@@ -375,7 +345,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::mu30
@@ -389,7 +358,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::mu21
     //
@@ -401,7 +369,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::mu21
@@ -415,7 +382,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::mu12
     //
@@ -427,7 +393,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::mu12
@@ -441,7 +406,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::mu03
     //
@@ -453,7 +417,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::mu03
@@ -467,7 +430,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::nu20
     //
@@ -479,7 +441,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::nu20
@@ -493,7 +454,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::nu11
     //
@@ -505,7 +465,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::nu11
@@ -519,7 +478,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::nu02
     //
@@ -531,7 +489,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::nu02
@@ -545,7 +502,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::nu30
     //
@@ -557,7 +513,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::nu30
@@ -571,7 +526,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::nu21
     //
@@ -583,7 +537,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::nu21
@@ -597,7 +550,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::nu12
     //
@@ -609,7 +561,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::nu12
@@ -623,7 +574,6 @@ public class Moments {
         return;
     }
 
-
     //
     // C++: double Moments::nu03
     //
@@ -635,7 +585,6 @@ public class Moments {
 
         return retVal;
     }
-
 
     //
     // C++: void Moments::nu03
@@ -649,12 +598,10 @@ public class Moments {
         return;
     }
 
-
     @Override
     protected void finalize() throws Throwable {
         delete(nativeObj);
     }
-
 
 
     // C++:   Moments::Moments()

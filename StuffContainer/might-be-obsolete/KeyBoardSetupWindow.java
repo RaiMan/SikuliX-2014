@@ -13,7 +13,7 @@ import javax.swing.JFrame;
  * @author rhocke
  */
 public class KeyBoardSetupWindow extends javax.swing.JPanel {
-  
+
   private String[] result = null;
 
   /**

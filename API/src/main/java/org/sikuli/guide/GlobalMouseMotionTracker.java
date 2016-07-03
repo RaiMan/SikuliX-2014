@@ -20,7 +20,6 @@ import org.sikuli.script.Location;
 
 public class GlobalMouseMotionTracker implements ActionListener {
 
-
    final static int IDLE_COUNT_THRESHOLD = 200;
 
    // this keeps track of how many times the cursor stays stationary
@@ -64,7 +63,6 @@ public class GlobalMouseMotionTracker implements ActionListener {
       Location newLocation = Env.getMouseLocation();
       //Debug.info("Mouse loction: " + newLocation);
 
-
       if (lastLocation != null){
 
          if (lastLocation.x != newLocation.x ||
@@ -75,7 +73,6 @@ public class GlobalMouseMotionTracker implements ActionListener {
             }
 
             idle_count = 0;
-
 
 
          }else{
@@ -89,7 +86,6 @@ public class GlobalMouseMotionTracker implements ActionListener {
             }
             idle_count = 0;
          }
-
 
       }
 

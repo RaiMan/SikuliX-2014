@@ -67,7 +67,6 @@ enum
 CV_EXPORTS_W void inpaint( InputArray src, InputArray inpaintMask,
                            OutputArray dst, double inpaintRadius, int flags );
 
-
 CV_EXPORTS_W void fastNlMeansDenoising( InputArray src, OutputArray dst, float h = 3,
                                         int templateWindowSize = 7, int searchWindowSize = 21);
 

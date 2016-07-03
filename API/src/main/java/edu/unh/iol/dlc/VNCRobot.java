@@ -32,13 +32,12 @@ import org.sikuli.script.Location;
 import org.sikuli.script.ScreenImage;
 import org.sikuli.basics.*;
 
-
 /**
  * VNCRobot is an implementation of the IRobot interface
  * that controls the VNC stack through a connection controller.
  */
 public class VNCRobot implements IRobot {
-	
+
 	private ConnectionController con;
 	private int index;
 	private boolean shiftFlag = false;
@@ -61,17 +60,17 @@ public class VNCRobot implements IRobot {
 	}
 
 //IRobot implementation*******************************************************/
-	
+
 	//last positions of mouse cursor
     private int last_x = -1;
     private int last_y = -1;
     private int autodelay = 0;
     private boolean waitForIdle = false;
     final static int MAX_DELAY = 60000;
-	
+
 	/**
      * Presses a key
-     * 
+     *
      * @param keycode the key
      */
     @Override
@@ -97,7 +96,7 @@ public class VNCRobot implements IRobot {
 
     /**
      * Releases a key
-     * 
+     *
      * @param keycode the key
      */
     @Override
@@ -123,7 +122,7 @@ public class VNCRobot implements IRobot {
 
     /**
      * Moves the mouse to the specified x and y position.
-     * 
+     *
      * @param x X coordinate
      * @param y Y coordinate
      */
@@ -142,7 +141,7 @@ public class VNCRobot implements IRobot {
 
     /**
      * Presses a mouse button at the current location
-     * 
+     *
      * @param buttons can be InputEvent.BUTTON1_MASK
 	 *						InputEvent.BUTTON2_MASK
 	 *						InputEvent.BUTTON3_MASK
@@ -168,7 +167,7 @@ public class VNCRobot implements IRobot {
 
 	/**
      * Releases mouse buttons at last_x and last_y positions
-     * 
+     *
      */
 	@Override
 	public int mouseUp(int buttons) {
@@ -179,10 +178,10 @@ public class VNCRobot implements IRobot {
         	Debug.log(-1, "Cannot generate mouse event: "+e);
         }
         tidyUp();
-        
+
         return 0;
 	}
-  
+
   @Override
   public void mouseReset() {
     //TODO implement mouse reset
@@ -224,7 +223,7 @@ public class VNCRobot implements IRobot {
 
 	/**
 	 * Creates a screen capture of the remote screen.
-	 * 
+	 *
 	 * @param sr - region to capture
 	 * @return ScreenImage of the remote screen
 	 */
@@ -240,16 +239,16 @@ public class VNCRobot implements IRobot {
 	/**
 	 * Returns a BufferedImage of the specified rectangle on the
 	 * remote desktop
-	 * 
+	 *
 	 * @param rect
 	 * @return
 	 */
 	public BufferedImage capture(Rectangle rect){
 		return con.getF(index).getBuffer().getSubimage(
-				rect.x, rect.y, 
+				rect.x, rect.y,
 				rect.width, rect.height);
 	}
-	
+
 	/**
 	 * Waits until all events are processed.
 	 */
@@ -295,7 +294,7 @@ public class VNCRobot implements IRobot {
 		}
 		autodelay = ms;
 	}
-	
+
 	/**
 	 * drags and drops the mouse
 	 */
@@ -309,10 +308,10 @@ public class VNCRobot implements IRobot {
 	    mouseUp(buttons);
 	    waitForIdle();
 	}
-	
+
 	/**
 	 * Types the specified keyCodes based on a certain KeyMode
-	 * 
+	 *
 	 * @param mode     KeyMode.PRESS_ONLY
 	 * 				   KeyMode.RELEASE_ONLY
 	 * 				   KeyMode.PRESS_RELEASE
@@ -336,7 +335,7 @@ public class VNCRobot implements IRobot {
 	            keyUp(keyCodes[i]);
 	      }
 	   }
-	
+
 	@Override
 	   public void typeChar(char character, KeyMode mode) {
 	      switch (character) {
@@ -512,7 +511,7 @@ public class VNCRobot implements IRobot {
 			mouseMove(dest.x, dest.y);
 	         return;
 		}
-		
+
 		AnimatorTimeBased aniX = new AnimatorTimeBased(
 	                        new AnimatorOutQuarticEase((float)src.x, (float)dest.x, ms));
 		AnimatorTimeBased aniY = new AnimatorTimeBased(
@@ -524,13 +523,13 @@ public class VNCRobot implements IRobot {
 			delay(50);
 		}
 	}
-	
+
 	//Other functions//////////////////////////////////////////////////////////
-	
+
 	/**
      * Helper function that converts from KeyEvent.VK_(key) to
      * X11 Keysyms for use in RFB Protocol Messages.
-     * 
+     *
      */
     private int getKeysym(int keycode){
         int key;
@@ -546,7 +545,7 @@ public class VNCRobot implements IRobot {
             case (KeyEvent.VK_7): key=0x0026; break; //ampersand
             case (KeyEvent.VK_8): key=0x002a; break; //asterisk
             case (KeyEvent.VK_9): key=0x0028; break; //left paren
-            case (KeyEvent.VK_BACK_SPACE): key=0xff08; break; 
+            case (KeyEvent.VK_BACK_SPACE): key=0xff08; break;
             case (KeyEvent.VK_TAB): key=0xfd05; break; //back tab
             case (KeyEvent.VK_ENTER): key=0xff0d; break;
             case (KeyEvent.VK_INSERT): key=0xfd1d; break; //printscreen
@@ -753,7 +752,7 @@ public class VNCRobot implements IRobot {
         Debug.log(3, "Key-"+Integer.toHexString(key));
         return key;
     }
-    
+
     /**
      * Executes after Robot performs action
      */
@@ -765,65 +764,65 @@ public class VNCRobot implements IRobot {
     }
 
 //NEW SIKULI METHODS
-    
+
 	@Override
 	public void keyDown(String keys) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyUp(String keys) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void keyUp() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void pressModifiers(int modifiers) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void releaseModifiers(int modifiers) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void typeKey(int key) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void typeStarts() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void typeEnds() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void clickStarts() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void clickEnds() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override

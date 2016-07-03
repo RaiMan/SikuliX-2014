@@ -283,7 +283,6 @@ namespace cv
             //! pefroms blocking upload data to oclMat.
             void upload(const cv::Mat &m);
 
-
             //! downloads data from device to host memory. Blocking calls.
             operator Mat() const;
             void download(cv::Mat &m) const;
@@ -611,7 +610,6 @@ namespace cv
         CV_EXPORTS oclMat operator & (const oclMat &, const oclMat &);
         CV_EXPORTS oclMat operator ^ (const oclMat &, const oclMat &);
 
-
         //! Mathematics operators
         CV_EXPORTS oclMatExpr operator + (const oclMat &src1, const oclMat &src2);
         CV_EXPORTS oclMatExpr operator - (const oclMat &src1, const oclMat &src2);
@@ -796,19 +794,16 @@ namespace cv
 
                                int borderType = BORDER_CONSTANT, const Scalar &borderValue = morphologyDefaultBorderValue());
 
-
         //! dilates the image (applies the local maximum operator)
         // supports data type: CV_8UC1, CV_8UC4, CV_32FC1 and CV_32FC4
         CV_EXPORTS void dilate( const oclMat &src, oclMat &dst, const Mat &kernel, Point anchor = Point(-1, -1), int iterations = 1,
 
                                 int borderType = BORDER_CONSTANT, const Scalar &borderValue = morphologyDefaultBorderValue());
 
-
         //! applies an advanced morphological operation to the image
         CV_EXPORTS void morphologyEx( const oclMat &src, oclMat &dst, int op, const Mat &kernel, Point anchor = Point(-1, -1), int iterations = 1,
 
                                       int borderType = BORDER_CONSTANT, const Scalar &borderValue = morphologyDefaultBorderValue());
-
 
         ////////////////////////////// Image processing //////////////////////////////
         //! Does mean shift filtering on GPU.
@@ -883,7 +878,6 @@ namespace cv
         CV_EXPORTS double kmeans(const oclMat &src, int K, oclMat &bestLabels,
                                      TermCriteria criteria, int attemps, int flags, oclMat &centers);
 
-
         ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////CascadeClassifier//////////////////////////////////////////////////////////////////
         ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -939,7 +933,6 @@ namespace cv
             oclMat gimg1, gsum, gsqsum, gsqsum_t;
             void * buffers;
         };
-
 
         /////////////////////////////// Pyramid /////////////////////////////////////
         CV_EXPORTS void pyrDown(const oclMat &src, oclMat &dst);
@@ -1094,7 +1087,6 @@ namespace cv
             Size effect_size;
         };
 
-
         ////////////////////////feature2d_ocl/////////////////
         /****************************************************************************************\
         *                                      Distance                                          *
@@ -1205,7 +1197,6 @@ namespace cv
 
             // Make gpu collection of trains and masks in suitable format for matchCollection function
             void makeGpuCollection(oclMat &trainCollection, oclMat &maskCollection, const std::vector<oclMat> &masks = std::vector<oclMat>());
-
 
             // Find one best match from train collection for each query descriptor
             void matchCollection(const oclMat &query, const oclMat &trainCollection,

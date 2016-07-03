@@ -14,7 +14,6 @@
 using namespace cv;
 using namespace std;
 
-
 #ifdef DEBUG_FINDER
 #define dout std::cerr
 #else
@@ -31,7 +30,6 @@ BaseFinder::BaseFinder(const char* source_image_filename) {
   source = imread(source_image_filename, 1);
   roi = Rect(0, 0, source.cols, source.rows);
 }
-
 
 // somwhow after changing it to false works!!
 
@@ -117,17 +115,17 @@ TemplateFinder::find_all(IplImage* target, double min_similarity) {
 } // </editor-fold>
 
 void
-TemplateFinder::find_all(Mat target, double min_similarity){   
+TemplateFinder::find_all(Mat target, double min_similarity){
    this->min_similarity = min_similarity;
-   
-   BaseFinder::find();  
-   
-   if (roiSource.cols < target.cols || roiSource.rows < target.rows){	   
+
+   BaseFinder::find();
+
+   if (roiSource.cols < target.cols || roiSource.rows < target.rows){
 	   current_match.score = -1;
 	   return;
    }
-   
-   float factor = 2.0;      
+
+   float factor = 2.0;
    int levels=-1;
    int w = target.rows;
    int h = target.cols;
@@ -136,13 +134,13 @@ TemplateFinder::find_all(Mat target, double min_similarity){
       h = h / factor;
       levels++;
    }
-   
+
    MatchingData data(roiSource, target);
-   
+
    if (min_similarity < 0.99){
       data.useGray(true);
       create_matcher(data, levels, factor);
-      add_matches_to_buffer(5);     
+      add_matches_to_buffer(5);
       if (top_score_in_buffer() >= max(min_similarity,REMATCH_THRESHOLD))
          return;
    }
@@ -151,7 +149,6 @@ TemplateFinder::find_all(Mat target, double min_similarity){
    create_matcher(data, 0, 1);
    add_matches_to_buffer(5);
 }
-
 
 float
 TemplateFinder::top_score_in_buffer(){
@@ -168,37 +165,37 @@ TemplateFinder::create_matcher(const MatchingData& data, int level, float ratio)
    matcher = new PyramidTemplateMatcher(data, level, ratio);
 }
 
-void 
-TemplateFinder::add_matches_to_buffer(int num_matches_to_add){ 
+void
+TemplateFinder::add_matches_to_buffer(int num_matches_to_add){
    buffered_matches.clear();
    for (int i=0;i<num_matches_to_add;++i){
       FindResult next_match = matcher->next();
       buffered_matches.push_back(next_match);
    }
    sort(buffered_matches,sort_by_score);
-} 
+}
 
 void
 TemplateFinder::find(Mat target, double min_similarity){
-   this->min_similarity = min_similarity;   
-   BaseFinder::find();  
-   
-   if (roiSource.cols < target.cols || roiSource.rows < target.rows){	   
+   this->min_similarity = min_similarity;
+   BaseFinder::find();
+
+   if (roiSource.cols < target.cols || roiSource.rows < target.rows){
       current_match.score = -1;
       return;
    }
-   
+
    float ratio;
-   ratio = min(target.rows / PyramidMinTargetDimension, 
+   ratio = min(target.rows / PyramidMinTargetDimension,
                target.cols / PyramidMinTargetDimension);
    if(ratio < 1.f)
       ratio = 1.f;
-   
+
    MatchingData data(roiSource, target);
 
    if (min_similarity < 0.99)
       data.useGray(true);
-   
+
    const int N_RESIZE_RATIO = 4;
    const float resize_ratio[N_RESIZE_RATIO] = {1.f, 0.75f, 0.5f, 0.25f};
    for(int i=0;i<N_RESIZE_RATIO;i++){
@@ -209,10 +206,10 @@ TemplateFinder::find(Mat target, double min_similarity){
          add_matches_to_buffer(5);
          if (top_score_in_buffer() >= max(min_similarity,REMATCH_THRESHOLD)){
             return;
-         }  
+         }
       }
    }
-   
+
    if(data.useGray()){
       dout << "matching (original resolution: gray) ... " << endl;
       create_matcher(data, 0, 1);
@@ -227,20 +224,20 @@ TemplateFinder::find(Mat target, double min_similarity){
 }
 
 bool
-TemplateFinder::hasNext(){  
+TemplateFinder::hasNext(){
    return top_score_in_buffer() >= (min_similarity-0.0000001);
 }
 
 FindResult
 TemplateFinder::next(){
-   
+
    if (!hasNext())
       return FindResult(0,0,0,0,-1);
-   
+
    FindResult top_match = buffered_matches.front();
    top_match.x += roi.x;
    top_match.y += roi.y;
-   
+
    FindResult next_match = matcher->next();
    buffered_matches[0] = next_match;
    sort(buffered_matches,sort_by_score);
@@ -257,7 +254,7 @@ TemplateFinder::next(){
 //
 //FaceFinder::FaceFinder(const char* screen_image_name)
 //: BaseFinder(screen_image_name){
-//   
+//
 //   //  cascade = 0;
 //   storage = 0;
 //   if (!cascade){
@@ -278,15 +275,15 @@ TemplateFinder::next(){
 //      cvReleaseMemStorage(&storage);
 //}
 //
-//void 
+//void
 //FaceFinder::find(){
-//   
+//
 //   BaseFinder::find();
-//   
+//
 //   storage = cvCreateMemStorage(0);
 //   //faces = cvHaarDetectObjects(roi_img, cascade, storage, 1.1, 2, CV_HAAR_DO_CANNY_PRUNING, cvSize(40,40));
-//   face_i = 0;  
-//   
+//   face_i = 0;
+//
 //   // [DEBUG] reset the debug image to the content of the input image
 //}
 //
@@ -298,23 +295,23 @@ TemplateFinder::next(){
 //
 //FindResult
 //FaceFinder::next(){
-//   
-//   
-//   
-//   CvRect* r = (CvRect*)cvGetSeqElem(faces ,face_i);  
+//
+//
+//
+//   CvRect* r = (CvRect*)cvGetSeqElem(faces ,face_i);
 //   face_i++;
-//   
+//
 //   FindResult match;
 //   match.x = r->x + roi.x;
 //   match.y = r->y + roi.y;
 //   match.w = r->width;
 //   match.h = r->height;
-//   
-//   
+//
+//
 //   return match;
 //}
 //
-//=====================================================================================// 
+//=====================================================================================//
 </editor-fold>
 
 // <editor-fold defaultstate="collapsed" desc="change">
@@ -374,7 +371,6 @@ ChangeFinder::find(Mat new_screen_image) {
   Mat diff1;
   absdiff(gray1, gray2, diff1);
 
-
   Size size = diff1.size();
   int ch = diff1.channels();
   typedef unsigned char T;
@@ -394,7 +390,6 @@ ChangeFinder::find(Mat new_screen_image) {
     return;
   }
 
-
   threshold(diff1, diff1, PIXEL_DIFF_THRESHOLD, 255, CV_THRESH_BINARY);
   dilate(diff1, diff1, Mat());
 
@@ -402,10 +397,10 @@ ChangeFinder::find(Mat new_screen_image) {
   Mat se = getStructuringElement(MORPH_ELLIPSE, Size(5, 5));
   morphologyEx(diff1, diff1, MORPH_CLOSE, se);
 
-  /*   
+  /*
      namedWindow("matches", CV_WINDOW_AUTOSIZE);
       imshow("matches", diff1);
-     waitKey();   
+     waitKey();
    */
 
   vector< vector<Point> > contours;
@@ -475,8 +470,7 @@ TextFinder::train(Mat& trainingImage) {
   //	train_by_image(trainingImage);
 }
 
-
-// Code copied from 
+// Code copied from
 // http://oopweb.com/CPP/Documents/CPPHOWTO/Volume/C++Programming-HOWTO-7.html
 
 static void Tokenize(const string& str,
@@ -582,7 +576,6 @@ Finder::~Finder() {
 void
 Finder::find(IplImage* target, double min_similarity) {
   dout << "[Finder::find]" << endl;
-
 
   if (abs(min_similarity - 100) < 0.00001) {
     dout << "training.." << endl;

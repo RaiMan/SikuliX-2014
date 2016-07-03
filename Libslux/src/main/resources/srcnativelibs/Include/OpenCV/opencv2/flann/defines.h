@@ -26,7 +26,6 @@
  * THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  *************************************************************************/
 
-
 #ifndef OPENCV_FLANN_DEFINES_H_
 #define OPENCV_FLANN_DEFINES_H_
 
@@ -49,7 +48,6 @@
  #define FLANN_EXPORT
 #endif
 
-
 #ifdef FLANN_DEPRECATED
 #undef FLANN_DEPRECATED
 #endif
@@ -62,7 +60,6 @@
 #define FLANN_DEPRECATED
 #endif
 
-
 #undef FLANN_PLATFORM_32_BIT
 #undef FLANN_PLATFORM_64_BIT
 #if defined __amd64__ || defined __x86_64__ || defined _WIN64 || defined _M_X64
@@ -70,7 +67,6 @@
 #else
 #define FLANN_PLATFORM_32_BIT
 #endif
-
 
 #undef FLANN_ARRAY_LEN
 #define FLANN_ARRAY_LEN(a) (sizeof(a)/sizeof(a[0]))
@@ -99,7 +95,6 @@ enum flann_algorithm_t
     SAVED = 254,
     AUTOTUNED = 255
 };
-
 
 
 enum flann_centers_init_t

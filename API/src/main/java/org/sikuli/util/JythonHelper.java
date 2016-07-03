@@ -688,7 +688,7 @@ public class JythonHelper implements JLangHelperInterface {
     String fpBundle = ImagePath.getPath(0);
     if (fpBundle != null) {
       addSysPath(fpBundle);
-    }    
+    }
   }
 
   public void addSysPath(String fpFolder) {

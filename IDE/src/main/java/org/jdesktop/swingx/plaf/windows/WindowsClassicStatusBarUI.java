@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -44,7 +44,7 @@ public class WindowsClassicStatusBarUI extends BasicStatusBarUI {
     /** Creates a new instance of BasicStatusBarUI */
     public WindowsClassicStatusBarUI() {
     }
-    
+
     /**
      * Returns an instance of the UI delegate for the specified component.
      * Each subclass must provide its own static <code>createUI</code>
@@ -58,14 +58,14 @@ public class WindowsClassicStatusBarUI extends BasicStatusBarUI {
     public static ComponentUI createUI(JComponent c) {
         return new WindowsClassicStatusBarUI();
     }
-    
-    @Override protected void paintBackground(Graphics2D g, JXStatusBar bar) {        
+
+    @Override protected void paintBackground(Graphics2D g, JXStatusBar bar) {
         g.setColor(bar.getBackground());
         g.fillRect(0, 0, bar.getWidth(), bar.getHeight());
-        
+
         //paint an inset border around each component. This suggests that
         //there is an extra border around the status bar...!
-        Border b = BorderFactory.createBevelBorder(BevelBorder.LOWERED, 
+        Border b = BorderFactory.createBevelBorder(BevelBorder.LOWERED,
                 Color.WHITE, bar.getBackground(), bar.getBackground(), Color.GRAY);
         Insets insets = new Insets(0, 0, 0, 0);
         for (Component c : bar.getComponents()) {
@@ -77,7 +77,7 @@ public class WindowsClassicStatusBarUI extends BasicStatusBarUI {
             b.paintBorder(c, g, x, y, w, h);
         }
     }
-    
+
     @Override protected void paintSeparator(Graphics2D g, JXStatusBar bar, int x, int y, int w, int h) {
         //paint nothing, since paintBackground handles this
     }

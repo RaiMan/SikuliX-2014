@@ -114,5 +114,4 @@ namespace cv { namespace gpu
 }}
 
 
-
 #endif // __OPENCV_GPU_COMMON_HPP__

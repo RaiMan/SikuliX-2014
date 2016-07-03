@@ -184,7 +184,6 @@ public:
      */
     void setup(std::string retinaParameterFile="", const bool applyDefaultSetupOnFailure=true);
 
-
     /**
      * try to open an XML retina parameters file to adjust current retina instance setup
      * => if the xml file does not exist, then default setup is applied
@@ -219,7 +218,6 @@ public:
      * @rparam fs : the filename of the xml file that will be open and writen with formatted parameters information
      */
     virtual void write( std::string fs ) const;
-
 
     /**
      * write xml/yml formated parameters information
@@ -347,7 +345,6 @@ protected:
 
     //! private method called by constructors, gathers their parameters and use them in a unified way
     void _init(const Size inputSize, const bool colorMode, RETINA_COLORSAMPLINGMETHOD colorSamplingMethod=RETINA_COLOR_BAYER, const bool useRetinaLogSampling=false, const double reductionFactor=1.0, const double samplingStrenght=10.0);
-
 
 };
 

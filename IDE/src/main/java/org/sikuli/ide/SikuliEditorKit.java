@@ -35,13 +35,12 @@ public class SikuliEditorKit extends StyledEditorKit {
 		new NextVisualPositionAction(selectionUpAction, true, SwingConstants.NORTH),
 		new NextVisualPositionAction(selectionDownAction, true, SwingConstants.SOUTH),};
 
-
 	public SikuliEditorKit() {
     pane = SikuliIDE.getInstance().getCurrentCodePane();
 		_viewFactory = new EditorViewFactory();
     ((EditorViewFactory) _viewFactory).setContentType(pane.getSikuliContentType());
 	}
-  
+
 	public static class InsertTabAction extends TextAction {
 
 		private IIndentationLogic indentationLogic;

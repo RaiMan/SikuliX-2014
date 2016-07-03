@@ -36,7 +36,6 @@
 
 #include "defines.h"
 
-
 namespace cvflann
 {
 

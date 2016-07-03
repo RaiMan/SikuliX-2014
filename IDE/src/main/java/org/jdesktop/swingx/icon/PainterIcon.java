@@ -36,23 +36,22 @@ public class PainterIcon implements Icon {
     public PainterIcon(Dimension size) {
         this.size = size;
     }
-    
+
     @Override
     public int getIconHeight() {
         return size.height;
     }
-    
+
     @Override
     public int getIconWidth() {
         return size.width;
     }
-    
-    
+
     @Override
     public void paintIcon(Component c, Graphics g, int x, int y) {
         if (getPainter() != null && g instanceof Graphics2D) {
             g = g.create();
-            
+
             try {
                 g.translate(x, y);
                 getPainter().paint((Graphics2D) g, c, size.width, size.height);

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -28,7 +28,7 @@ import javax.swing.table.TableModel;
 
 /**
  * A SortController to use for a JXTable.<p>
- * 
+ *
  * @author Jeanette Winzenburg
  */
 public class TableSortController<M extends TableModel> extends DefaultSortController<M>  {
@@ -36,11 +36,11 @@ public class TableSortController<M extends TableModel> extends DefaultSortContro
      * Underlying model.
      */
     private M tableModel;
-    
+
     public TableSortController() {
         this(null);
     }
-    
+
     /**
      * @param model
      */
@@ -63,9 +63,8 @@ public class TableSortController<M extends TableModel> extends DefaultSortContro
         setModelWrapper(new TableRowSorterModelWrapper());
     }
 
-    
     /**
-     * Returns the <code>Comparator</code> for the specified 
+     * Returns the <code>Comparator</code> for the specified
      * column.  If a <code>Comparator</code> has not been specified using
      * the <code>setComparator</code> method a <code>Comparator</code>
      * will be returned based on the column class
@@ -76,7 +75,7 @@ public class TableSortController<M extends TableModel> extends DefaultSortContro
      * <code>Comparator</code> is returned that invokes the
      * <code>compareTo</code> method.  Otherwise
      * <code>Collator.getInstance</code> is returned.<p>
-     * 
+     *
      * PENDING JW: think about implications to string value lookup!
      *
      * @throws IndexOutOfBoundsException {@inheritDoc}
@@ -100,11 +99,11 @@ public class TableSortController<M extends TableModel> extends DefaultSortContro
     /**
      * {@inheritDoc}<p>
      * Note: must implement same logic as the overridden comparator
-     * lookup, otherwise will throw ClassCastException because 
+     * lookup, otherwise will throw ClassCastException because
      * here the comparator is never null. <p>
-     * 
+     *
      * PENDING JW: think about implications to string value lookup!
-     * 
+     *
      * @throws IndexOutOfBoundsException {@inheritDoc}
      */
     @Override
@@ -122,7 +121,6 @@ public class TableSortController<M extends TableModel> extends DefaultSortContro
         }
         return true;
     }
-
 
     /**
      * Implementation of DefaultRowSorter.ModelWrapper that delegates to a
@@ -160,6 +158,5 @@ public class TableSortController<M extends TableModel> extends DefaultSortContro
             return index;
         }
     }
-
 
 }

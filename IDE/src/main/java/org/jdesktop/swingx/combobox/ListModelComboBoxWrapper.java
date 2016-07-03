@@ -7,13 +7,13 @@ import javax.swing.event.ListDataListener;
 
 public class ListModelComboBoxWrapper extends AbstractListModel implements ComboBoxModel {
     private ListModel delegate;
-    
+
     private Object selectedItem;
-    
+
     public ListModelComboBoxWrapper(ListModel delegate) {
         this.delegate = delegate;
     }
-    
+
     @Override
     public int getSize() {
         return delegate.getSize();
@@ -41,7 +41,7 @@ public class ListModelComboBoxWrapper extends AbstractListModel implements Combo
         if ((selectedItem != null && !selectedItem.equals(anItem))
                 || selectedItem == null && anItem != null) {
             selectedItem = anItem;
-            
+
             fireContentsChanged(this, -1, -1);
         }
     }

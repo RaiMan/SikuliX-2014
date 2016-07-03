@@ -108,7 +108,6 @@ public:
     virtual void process(IplImage *inputBGRImage, IplImage *outputHueMask);
 };
 
-
 /****************************************************************************************\
  *                                  Fuzzy MeanShift Tracker                               *
  \****************************************************************************************/
@@ -252,7 +251,6 @@ public:
     void track(IplImage *maskImage, IplImage *depthMap, int resizeMethod, bool resetSearch, int minKernelMass = MinKernelMass);
 };
 
-
 namespace cv
 {
 
@@ -284,7 +282,6 @@ namespace cv
 
         virtual void buildNext(size_t node_ind);
     };
-
 
     class CV_EXPORTS Mesh3D
     {
@@ -432,7 +429,6 @@ namespace cv
             DEFAULT_NUM_DISTANCE_BUCKETS = 7 };
     };
 
-
     typedef bool (*BundleAdjustCallback)(int iteration, double norm_error, void* user_data);
 
     class CV_EXPORTS LevMarqSparse {
@@ -564,7 +560,6 @@ namespace cv
                                   int padY = 3, int scales = 5, double minScale = 0.6, double maxScale = 1.6,
                                   double orientationWeight = 0.5, double truncate = 20);
 
-
     class CV_EXPORTS_W StereoVar
     {
     public:
@@ -624,7 +619,6 @@ namespace cv
      * 4) convert the colors back to RGB
      */
     CV_EXPORTS void generateColors( std::vector<Scalar>& colors, size_t count, size_t factor=100 );
-
 
     /*
      *  Estimate the rigid body motion from frame0 to frame1. The method is based on the paper

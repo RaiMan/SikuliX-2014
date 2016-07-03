@@ -47,8 +47,8 @@ import org.jdesktop.swingx.JXColorSelectionButton;
 import org.jdesktop.swingx.util.PaintUtils;
 
 /**
- * <p>EyeDropperColorChooserPanel is a pluggable panel for the 
- * {@link JColorChooser} which allows the user to grab any 
+ * <p>EyeDropperColorChooserPanel is a pluggable panel for the
+ * {@link JColorChooser} which allows the user to grab any
  * color from the screen using a magnifying glass.</p>
  *
  * <p>Example usage:</p>
@@ -87,7 +87,7 @@ public class EyeDropperColorChooserPanel extends AbstractColorChooserPanel {
             }
         });
     }
-    
+
     /**
      * Creates new EyeDropperColorChooserPanel
      */
@@ -118,7 +118,7 @@ public class EyeDropperColorChooserPanel extends AbstractColorChooserPanel {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-        
+
         magPanel.addPropertyChangeListener(new PropertyChangeListener() {
             public void propertyChange(PropertyChangeEvent evt) {
                 Color color = new Color(((MagnifyingPanel)magPanel).activeColor);
@@ -128,7 +128,7 @@ public class EyeDropperColorChooserPanel extends AbstractColorChooserPanel {
             }
         });
     }
-    
+
     private class MagnifyingPanel extends JPanel {
         private Point2D point;
         private int activeColor;
@@ -154,8 +154,7 @@ public class EyeDropperColorChooserPanel extends AbstractColorChooserPanel {
             g.drawRect(getWidth()/2 - 5, getHeight()/2 -5, 10,10);
         }
     }
-    
-    
+
     /** This method is called from within the constructor to
      * initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is
@@ -251,8 +250,7 @@ public class EyeDropperColorChooserPanel extends AbstractColorChooserPanel {
         add(jLabel2, gridBagConstraints);
 
     }// </editor-fold>//GEN-END:initComponents
-    
-    
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton activeColor;
     private javax.swing.JButton eyeDropper;
@@ -261,21 +259,21 @@ public class EyeDropperColorChooserPanel extends AbstractColorChooserPanel {
     private javax.swing.JPanel magPanel;
     private javax.swing.JTextField rgbColor;
     // End of variables declaration//GEN-END:variables
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void updateChooser() {
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     protected void buildChooser() {
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -283,7 +281,7 @@ public class EyeDropperColorChooserPanel extends AbstractColorChooserPanel {
     public String getDisplayName() {
         return "Grab from Screen";
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -291,7 +289,7 @@ public class EyeDropperColorChooserPanel extends AbstractColorChooserPanel {
     public Icon getSmallDisplayIcon() {
         return new ImageIcon();
     }
-    
+
     /**
      * {@inheritDoc}
      */

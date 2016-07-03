@@ -27,11 +27,10 @@ import java.awt.Rectangle;
 import javax.swing.JList;
 import javax.swing.ListCellRenderer;
 
-
 /**
  * listens to rollover properties. Repaints effected component regions.
  * Updates link cursor.
- * 
+ *
  * @author Jeanette Winzenburg
  */
 public class ListRolloverController<T extends JList> extends RolloverController<T> {
@@ -92,7 +91,7 @@ public class ListRolloverController<T extends JList> extends RolloverController<
         protected RolloverRenderer getRolloverRenderer(Point location,
                 boolean prepare) {
             ListCellRenderer renderer = component.getCellRenderer();
-            RolloverRenderer rollover = renderer instanceof RolloverRenderer 
+            RolloverRenderer rollover = renderer instanceof RolloverRenderer
                 ? (RolloverRenderer) renderer : null;
             if ((rollover != null) && !rollover.isEnabled()) {
                 rollover = null;

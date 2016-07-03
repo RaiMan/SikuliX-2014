@@ -86,7 +86,7 @@ class TESS_API PageIterator {
   // ============= Moving around within the page ============.
 
   /**
-   * Moves the iterator to point to the start of the page to begin an 
+   * Moves the iterator to point to the start of the page to begin an
    * iteration.
    */
   virtual void Begin();

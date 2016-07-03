@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -37,21 +37,21 @@ import org.jdesktop.swingx.util.Contract;
 /**
  * ListSortUI provides support for managing the synchronization between
  * RowSorter, SelectionModel and ListModel if a JXList is sortable.<p>
- * 
+ *
  * This implementation is an adaption of JTable.SortManager fit to the
- * needs of a ListUI. In contrast to JTable tradition, the ui delegate has 
+ * needs of a ListUI. In contrast to JTable tradition, the ui delegate has
  * full control about listening to model/selection changes and updating
  * the list accordingly. So the role of this class is that of a helper to the ListUI
- * (vs. as a helper of the JTable). 
+ * (vs. as a helper of the JTable).
  * <p>
  * It's up to the ListUI to
  * listen to model/selection and propagate the notification to this class if
  * a sorter is installed, but still do the usual updates (layout, repaint) itself.
- * On the other hand, listening to the sorter and updating list state accordingly 
+ * On the other hand, listening to the sorter and updating list state accordingly
  * is completely done by this.
- * 
+ *
  */
-public final class ListSortUI { 
+public final class ListSortUI {
     private RowSorter<? extends ListModel> sorter;
     private JXList list;
 
@@ -71,7 +71,7 @@ public final class ListSortUI {
 
     /**
      * Intanstiates a SortUI on the list which has the given RowSorter.
-     * 
+     *
      * @param list the list to control, must not be null
      * @param sorter the rowSorter of the list, must not be null
      * @throws NullPointerException if either the list or the sorter is null
@@ -88,7 +88,7 @@ public final class ListSortUI {
     }
 
     /**
-     * Disposes any resources used by this SortManager. 
+     * Disposes any resources used by this SortManager.
      * Note: this instance must not be used after dispose!
      */
     public void dispose() {
@@ -100,7 +100,7 @@ public final class ListSortUI {
     }
 
 //----------------------methods called by listeners
-    
+
     /**
      * Called after notification from ListModel.
      * @param e the change event from the listModel.
@@ -119,7 +119,7 @@ public final class ListSortUI {
 
     /**
      * Called after notification from selectionModel.
-     * 
+     *
      * Invoked when the selection, on the view, has changed.
      */
     public void viewSelectionChanged(ListSelectionEvent e) {
@@ -130,7 +130,7 @@ public final class ListSortUI {
 
     /**
      * Called after notification from RowSorter.
-     * 
+     *
      * @param e RowSorter event of type SORTED.
      */
     protected void sortedChanged(RowSorterEvent e) {
@@ -138,11 +138,11 @@ public final class ListSortUI {
         if (!ignoreSortChange) {
             prepareForChange(e);
             processChange(null);
-            // PENDING Jw: this is fix of 1161-swingx - not updated after setting 
+            // PENDING Jw: this is fix of 1161-swingx - not updated after setting
             // rowFilter
-            // potentially costly? but how to distinguish a mere sort from a 
+            // potentially costly? but how to distinguish a mere sort from a
             // filterchanged? (only the latter requires a revalidate)
-            // first fix had only revalidate/repaint but was not 
+            // first fix had only revalidate/repaint but was not
             // good enough, see #1261-swingx - no items visible
             // after setting rowFilter
             // need to invalidate the cell size cache which might be needed
@@ -152,12 +152,11 @@ public final class ListSortUI {
         }
     }
 
-
 //--------------------- prepare change, that is cache selection if needed
     /**
-     * Invoked when the RowSorter has changed. 
+     * Invoked when the RowSorter has changed.
      * Updates the internal cache of the selection based on the change.
-     * 
+     *
      * @param sortEvent the notification
      * @throws NullPointerException if the given event is null.
      */
@@ -195,10 +194,10 @@ public final class ListSortUI {
         }
     }
     /**
-     * Invoked when the list model has changed. This is invoked prior to 
+     * Invoked when the list model has changed. This is invoked prior to
      * notifying the sorter of the change.
      * Updates the internal cache of the selection based on the change.
-     * 
+     *
      * @param change the notification
      * @throws NullPointerException if the given event is null.
      */
@@ -240,7 +239,7 @@ public final class ListSortUI {
                     getViewSelectionModel().getLeadSelectionIndex());
     }
 
-//----------------------- process change, that is restore selection if needed    
+//----------------------- process change, that is restore selection if needed
     /**
      * Inovked when either the table has changed or the sorter has changed
      * and after the sorter has been notified. If necessary this will
@@ -291,7 +290,7 @@ public final class ListSortUI {
         }
         syncingSelection = false;
     }
-    
+
     /**
      * Restores the selection after a model event/sort order changes.
      * All coordinates are in terms of the model.
@@ -324,7 +323,7 @@ public final class ListSortUI {
         selectionModel.setValueIsAdjusting(false);
     }
 
-//------------------- row index conversion methods    
+//------------------- row index conversion methods
     /**
      * Converts a model index to view index.  This is called when the
      * sorter or model changes and sorting is enabled.
@@ -366,11 +365,10 @@ public final class ListSortUI {
         return sorter.convertRowIndexToView(modelIndex);
     }
 
-
     private int convertRowIndexToModel(RowSorterEvent e, int viewIndex) {
         // JW: the event is null if the selection is cached in prepareChange
-        // after model notification. Then the conversion from the 
-        // sorter is still valid as the prepare is called before 
+        // after model notification. Then the conversion from the
+        // sorter is still valid as the prepare is called before
         // notifying the sorter.
         if (e != null) {
             if (e.getPreviousRowCount() == 0) {
@@ -397,8 +395,8 @@ public final class ListSortUI {
         }
         return selection;
     }
-    
-//------------------ 
+
+//------------------
     /**
      * Notifies the sorter of a change in the underlying model.
      */
@@ -429,7 +427,6 @@ public final class ListSortUI {
         }
     }
 
-
     private ListSelectionModel getViewSelectionModel() {
         return list.getSelectionModel();
     }
@@ -441,12 +438,12 @@ public final class ListSortUI {
         modelSelection = null;
     }
 
-//------------------- implementing listeners    
+//------------------- implementing listeners
 
     /**
      * Creates and returns a RowSorterListener. This implementation
      * calls sortedChanged if the event is of type SORTED.
-     * 
+     *
      * @return rowSorterListener to install on sorter.
      */
     protected RowSorterListener createRowSorterListener() {
@@ -458,7 +455,7 @@ public final class ListSortUI {
                     sortedChanged(e);
                 }
             }
-            
+
         };
         return l;
     }
@@ -466,12 +463,12 @@ public final class ListSortUI {
      * ModelChange is used when sorting to restore state, it corresponds
      * to data from a TableModelEvent.  The values are precalculated as
      * they are used extensively.<p>
-     * 
+     *
      * PENDING JW: this is not yet fully adapted to ListDataEvent.
      */
      final static class ModelChange {
-         // JW: if we received a dataChanged, there _is no_ notion 
-         // of end/start/length of change 
+         // JW: if we received a dataChanged, there _is no_ notion
+         // of end/start/length of change
         // Starting index of the change, in terms of the model, -1 if dataChanged
         int startModelIndex;
 
@@ -480,13 +477,12 @@ public final class ListSortUI {
 
         // Length of the change (end - start + 1), - 1 if dataChanged
         int length;
-        
+
         // Type of change
         int type;
 
         // Number of rows in the model
         int modelRowCount;
-
 
         // True if the event indicates all the contents have changed
         boolean allRowsChanged;
@@ -500,7 +496,5 @@ public final class ListSortUI {
             length = allRowsChanged ? -1 : endModelIndex - startModelIndex + 1;
         }
     }
-     
 
 }
-

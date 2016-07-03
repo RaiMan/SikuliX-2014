@@ -1,4 +1,3 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
@@ -60,10 +59,8 @@ public class DescriptorExtractor {
     protected final long nativeObj;
     protected DescriptorExtractor(long addr) { nativeObj = addr; }
 
-
     private static final int
             OPPONENTEXTRACTOR = 1000;
-
 
     public static final int
             SIFT = 1,
@@ -78,7 +75,6 @@ public class DescriptorExtractor {
             OPPONENT_BRIEF = OPPONENTEXTRACTOR + BRIEF,
             OPPONENT_BRISK = OPPONENTEXTRACTOR + BRISK,
             OPPONENT_FREAK = OPPONENTEXTRACTOR + FREAK;
-
 
     //
     // C++:  void javaDescriptorExtractor::compute(Mat image, vector_KeyPoint& keypoints, Mat descriptors)
@@ -107,7 +103,6 @@ public class DescriptorExtractor {
 
         return;
     }
-
 
     //
     // C++:  void javaDescriptorExtractor::compute(vector_Mat images, vector_vector_KeyPoint& keypoints, vector_Mat& descriptors)
@@ -140,7 +135,6 @@ public class DescriptorExtractor {
         Converters.Mat_to_vector_Mat(descriptors_mat, descriptors);
         return;
     }
-
 
     //
     // C++: static javaDescriptorExtractor* javaDescriptorExtractor::create(int extractorType)
@@ -176,7 +170,6 @@ public class DescriptorExtractor {
         return retVal;
     }
 
-
     //
     // C++:  int javaDescriptorExtractor::descriptorSize()
     //
@@ -188,7 +181,6 @@ public class DescriptorExtractor {
 
         return retVal;
     }
-
 
     //
     // C++:  int javaDescriptorExtractor::descriptorType()
@@ -202,7 +194,6 @@ public class DescriptorExtractor {
         return retVal;
     }
 
-
     //
     // C++:  bool javaDescriptorExtractor::empty()
     //
@@ -214,7 +205,6 @@ public class DescriptorExtractor {
 
         return retVal;
     }
-
 
     //
     // C++:  void javaDescriptorExtractor::read(string fileName)
@@ -228,7 +218,6 @@ public class DescriptorExtractor {
         return;
     }
 
-
     //
     // C++:  void javaDescriptorExtractor::write(string fileName)
     //
@@ -241,12 +230,10 @@ public class DescriptorExtractor {
         return;
     }
 
-
     @Override
     protected void finalize() throws Throwable {
         delete(nativeObj);
     }
-
 
 
     // C++:  void javaDescriptorExtractor::compute(Mat image, vector_KeyPoint& keypoints, Mat descriptors)

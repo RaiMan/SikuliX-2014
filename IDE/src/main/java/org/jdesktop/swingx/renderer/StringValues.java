@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -30,10 +30,9 @@ import javax.swing.plaf.UIResource;
 
 import org.jdesktop.swingx.util.Contract;
 
-
 /**
  * A collection of common {@code StringValue} implementations.
- * 
+ *
  * @author Karl George Schaefer
  * @author Jeanette Winzenburg
  */
@@ -48,7 +47,7 @@ public final class StringValues {
             return "";
         }
     };
-    
+
     /**
      * A {@code StringValue} that presents a {@link Object#toString() toString}
      * value for the given object. If the value passed is {@code null}, this has
@@ -92,22 +91,21 @@ public final class StringValues {
         public String getString(Object value) {
             if (value instanceof File) {
                 FileSystemView fsv = FileSystemView.getFileSystemView();
-                
+
                 return fsv.getSystemTypeDescription((File) value);
             }
-            
+
             return StringValues.TO_STRING.getString(value);
         }
     };
 
-    
     /** keep track of default locale. */
     private static Locale defaultLocale;
-    
+
     /**
      * Returns a boolean to indicate if the default Locale has changed.
-     * Updates internal state to keep track of the default Locale. 
-     * 
+     * Updates internal state to keep track of the default Locale.
+     *
      * @return true if the default Locale has changed.
      */
     private static boolean localeChanged() {
@@ -124,7 +122,7 @@ public final class StringValues {
      */
     @SuppressWarnings("serial")
     public final static FormatStringValue DATE_TO_STRING = new FormatStringValue() {
-        
+
         /**
          * {@inheritDoc}
          */
@@ -135,16 +133,16 @@ public final class StringValues {
             }
             return super.getString(value);
         }
-        
+
     };
-    
+
     /**
      * Default converter for <code>Number</code> types. Uses the default format
      * as returned from <code>NumberFormat</code>.
      */
     @SuppressWarnings("serial")
     public final static FormatStringValue NUMBER_TO_STRING = new FormatStringValue() {
-        
+
         /**
          * {@inheritDoc}
          */
@@ -155,17 +153,16 @@ public final class StringValues {
             }
             return super.getString(value);
         }
-        
+
     };
-    
-    
+
 
     public static final StringValue TO_STRING_UI = new StringValueUIResource(StringValues.TO_STRING);
     public static final StringValue EMPTY_UI = new StringValueUIResource(StringValues.EMPTY);
-    
+
     /**
      * StringValue wrapper of type UIResource to tag LAF installed converters.
-     * 
+     *
      * @author Jeanette Winzenburg, Berlin
      */
     public static class StringValueUIResource implements StringValue, UIResource {
@@ -181,9 +178,9 @@ public final class StringValues {
         public String getString(Object value) {
             return delegate.getString(value);
         }
-        
+
     }
-    
+
     private StringValues() {
         // does nothing
     }

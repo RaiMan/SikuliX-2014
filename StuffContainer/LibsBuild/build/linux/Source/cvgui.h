@@ -45,7 +45,6 @@ public:
       step_i = 0;
    }
 
-
    static void setEnabled(bool enabled_){
       //enabled = enabled_;
    }
@@ -99,7 +98,6 @@ public:
    int score;
 };
 
-
 class LineBlob : public Blob{
 
 public:
@@ -118,16 +116,13 @@ protected:
 
 };
 
-
 class ParagraphBlob : public LineBlob {
 
 public:
    void add(LineBlob& lineblob);
 
-
    vector<LineBlob>::const_iterator begin() const { return lineblobs.begin();};
    vector<LineBlob>::const_iterator end() const { return lineblobs.end();};
-
 
    vector<LineBlob> lineblobs;
 };
@@ -157,7 +152,6 @@ public:
 
    static void drawLineBlobs(Mat& image, vector<LineBlob>& lineblobs, Scalar color);
    static void drawParagraphBlobs(Mat& image, vector<ParagraphBlob> blobs, Scalar color);
-
 
    static void drawOCRWord(Mat& image, OCRWord ocrword);
    static void drawOCRLine(Mat& image, OCRLine ocrline);
@@ -189,7 +183,6 @@ public:
 
    static Mat findBoxesByVoting(const Mat& screen, int box_width, int box_height, vector<Blob>& output_blobs);
 
-
 private:
 
    static void computeUnitBlobs(const Mat& input, Mat& output);
@@ -207,18 +200,14 @@ private:
    static void extractBlobs(const Mat& src, vector<Blob>& blobs);
 
 
-
    static void extractSmallRects(const Mat& src, vector<Rect>& rects);
-
 
    static bool hasMoreThanNUniqueColors(const Mat& src, int n);
    static bool areHorizontallyAligned(const vector<Rect>& rects);
 
-
    // voting
    static void voteCenter_Horizontal(const Mat& binary, Mat& dest, int min_length, int tolerance, int distance);
    static void voteCenter_Vertical(const Mat& binary, Mat& dest, int min_length, int tolerance, int distance);
-
 
 
    // linking
@@ -229,7 +218,6 @@ private:
    static void run_ocr_on_lineblobs(vector<LineBlob>& ocr_input_lineblobs,
                                     Mat& input_image,
                                     vector<OCRLine>& ocrlines);
-
 
    static void calculateColor(vector<Blob>& blobs,
                                const Mat& color_image,

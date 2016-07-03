@@ -285,11 +285,9 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
     return _primaryScreen;
   }
 
-
   public static VNCScreen getPrimaryScreen() {
     return screens[_primaryScreen];
   }
-
 
   public static VNCScreen getScreen(int id) {
     return screens[getValidID(id)];
@@ -330,7 +328,6 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
   public IScreen getScreen() {
     return this;
   }
-
 
   @Override
   protected Region setScreen(IScreen s) {

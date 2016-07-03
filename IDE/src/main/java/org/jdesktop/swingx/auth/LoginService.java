@@ -38,7 +38,7 @@ import org.jdesktop.beans.AbstractBean;
  * determine the user roles. It is not defined as abstract to simplify the task
  * of implementing a login service for those who do not require this
  * functionality.
- * 
+ *
  * @author Bino George
  * @author Shai Almog
  * @author Karl Schaefer
@@ -71,14 +71,14 @@ public abstract class LoginService extends AbstractBean {
      * authenticate a user with a given password. Clients should implement the
      * authentication in a manner that the authentication can be cancelled at
      * any time.
-     * 
+     *
      * @param name
      *            username
      * @param password
      *            password
      * @param server
      *            server (optional)
-     * 
+     *
      * @return <code>true</code> on authentication success
      * @throws Exception
      */
@@ -89,7 +89,7 @@ public abstract class LoginService extends AbstractBean {
      * Called immediately after a successful authentication. This method should
      * return an array of user roles or null if role based permissions are not
      * used.
-     * 
+     *
      * @return per default <code>null</code>
      */
     public String[] getUserRoles() {
@@ -111,7 +111,7 @@ public abstract class LoginService extends AbstractBean {
     /**
      * This method starts the authentication process and is either synchronous
      * or asynchronous based on the synchronous property
-     * 
+     *
      * @param user
      *            user
      * @param password
@@ -185,7 +185,7 @@ public abstract class LoginService extends AbstractBean {
 
     /**
      * Get the synchronous property
-     * 
+     *
      * @return the synchronous property
      */
     public boolean getSynchronous() {
@@ -194,7 +194,7 @@ public abstract class LoginService extends AbstractBean {
 
     /**
      * Sets the synchronous property
-     * 
+     *
      * @param synchronous
      *            synchronous property
      */
@@ -206,7 +206,7 @@ public abstract class LoginService extends AbstractBean {
 
     /**
      * Adds a <strong>LoginListener</strong> to the list of listeners
-     * 
+     *
      * @param listener
      *            listener
      */
@@ -217,7 +217,7 @@ public abstract class LoginService extends AbstractBean {
 
     /**
      * Removes a <strong>LoginListener</strong> from the list of listeners
-     * 
+     *
      * @param listener
      *            listener
      */

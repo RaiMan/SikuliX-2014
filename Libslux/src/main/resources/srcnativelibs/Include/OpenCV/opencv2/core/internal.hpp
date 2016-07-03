@@ -136,7 +136,6 @@ CV_INLINE IppiSize ippiSize(int width, int height)
 #  endif
 #endif
 
-
 #if (defined WIN32 || defined _WIN32) && defined(_M_ARM)
 # include <Intrin.h>
 # include "arm_neon.h"

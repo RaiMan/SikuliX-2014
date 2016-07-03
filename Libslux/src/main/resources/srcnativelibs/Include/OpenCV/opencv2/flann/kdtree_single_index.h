@@ -59,7 +59,6 @@ struct KDTreeSingleIndexParams : public IndexParams
     }
 };
 
-
 /**
  * Randomized kd-tree index
  *
@@ -72,7 +71,6 @@ class KDTreeSingleIndex : public NNIndex<Distance>
 public:
     typedef typename Distance::ElementType ElementType;
     typedef typename Distance::ResultType DistanceType;
-
 
     /**
      * KDTree constructor
@@ -137,7 +135,6 @@ public:
         return FLANN_INDEX_KDTREE_SINGLE;
     }
 
-
     void saveIndex(FILE* stream)
     {
         save_value(stream, size_);
@@ -151,7 +148,6 @@ public:
         }
         save_tree(stream, root_node_);
     }
-
 
     void loadIndex(FILE* stream)
     {
@@ -168,7 +164,6 @@ public:
             data_ = dataset_;
         }
         load_tree(stream, root_node_);
-
 
         index_params_["algorithm"] = getType();
         index_params_["leaf_max_size"] = leaf_max_size_;
@@ -199,7 +194,6 @@ public:
     {
         return (int)(pool_.usedMemory+pool_.wastedMemory+dataset_.rows*sizeof(int));  // pool memory and vind array memory
     }
-
 
     /**
      * \brief Perform k-nearest neighbor search
@@ -249,7 +243,6 @@ public:
 
 private:
 
-
     /*--------------------- Internal Data Structures --------------------------*/
     struct Node
     {
@@ -271,7 +264,6 @@ private:
         Node* child1, * child2;
     };
     typedef Node* NodePtr;
-
 
     struct Interval
     {
@@ -297,7 +289,6 @@ private:
         }
     }
 
-
     void load_tree(FILE* stream, NodePtr& tree)
     {
         tree = pool_.allocate<Node>();
@@ -309,7 +300,6 @@ private:
             load_tree(stream, tree->child2);
         }
     }
-
 
     void computeBoundingBox(BoundingBox& bbox)
     {
@@ -325,7 +315,6 @@ private:
             }
         }
     }
-
 
     /**
      * Create a tree node that subdivides the list of vecs from vind[first]
@@ -441,7 +430,6 @@ private:
         else index = count/2;
     }
 
-
     void middleSplit_(int* ind, int count, int& index, int& cutfeat, DistanceType& cutval, const BoundingBox& bbox)
     {
         const float EPS=0.00001f;
@@ -482,7 +470,6 @@ private:
         else if (lim2<count/2) index = lim2;
         else index = count/2;
     }
-
 
     /**
      *  Subdivide the list of points by a plane perpendicular on axe corresponding
@@ -598,7 +585,6 @@ private:
 
     int leaf_max_size_;
     bool reorder_;
-
 
     /**
      *  Array of indices to vectors in the dataset.

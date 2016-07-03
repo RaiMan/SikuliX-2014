@@ -11,7 +11,6 @@ import java.awt.event.ActionListener;
 import javax.swing.Timer;
 
 
-
 public class TimeoutTransition implements Transition, ActionListener {
 
    Timer timer;
@@ -32,5 +31,3 @@ public class TimeoutTransition implements Transition, ActionListener {
    }
 
 }
-
-

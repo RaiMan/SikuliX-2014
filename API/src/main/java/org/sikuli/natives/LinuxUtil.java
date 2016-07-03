@@ -7,6 +7,7 @@ package org.sikuli.natives;
 
 import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
+import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.PumpStreamHandler;
 import org.sikuli.basics.Debug;
 import org.sikuli.script.App;
@@ -32,6 +33,7 @@ public class LinuxUtil implements OSUtil {
                 CommandLine.parse("xdotool version")
         );
         for (CommandLine cmd : commands) {
+            String executable = cmd.toStrings()[0];
             try {
                 DefaultExecutor executor = new DefaultExecutor();
                 // other return values throw exception
@@ -39,8 +41,11 @@ public class LinuxUtil implements OSUtil {
                 //suppress system output
                 executor.setStreamHandler(new PumpStreamHandler(null));
                 executor.execute(cmd);
+            } catch (ExecuteException e) {
+                // it ran, but exited with non-zero status -- accept
+                Debug.info("App: command %s ran, but failed: `%s'. Hoping for the best",
+                  executable, e.toString());
             } catch (Exception e) {
-                String executable = cmd.toStrings()[0];
                 if (executable.equals("wmctrl")) {
                     wmctrlAvail = false;
                 }

@@ -1,4 +1,3 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
@@ -80,7 +79,6 @@ public class VideoCapture {
     protected final long nativeObj;
     protected VideoCapture(long addr) { nativeObj = addr; }
 
-
     //
     // C++:   VideoCapture::VideoCapture()
     //
@@ -102,7 +100,6 @@ public class VideoCapture {
 
         return;
     }
-
 
     //
     // C++:   VideoCapture::VideoCapture(string filename)
@@ -130,7 +127,6 @@ public class VideoCapture {
         return;
     }
 
-
     //
     // C++:   VideoCapture::VideoCapture(int device)
     //
@@ -155,7 +151,6 @@ public class VideoCapture {
 
         return;
     }
-
 
     //
     // C++:  double VideoCapture::get(int propId)
@@ -207,7 +202,6 @@ public class VideoCapture {
         return retVal;
     }
 
-
     //
     // C++:  bool VideoCapture::grab()
     //
@@ -242,7 +236,6 @@ public class VideoCapture {
         return retVal;
     }
 
-
     //
     // C++:  bool VideoCapture::isOpened()
     //
@@ -262,7 +255,6 @@ public class VideoCapture {
 
         return retVal;
     }
-
 
     //
     // C++:  bool VideoCapture::open(string filename)
@@ -288,7 +280,6 @@ public class VideoCapture {
         return retVal;
     }
 
-
     //
     // C++:  bool VideoCapture::open(int device)
     //
@@ -310,7 +301,6 @@ public class VideoCapture {
 
         return retVal;
     }
-
 
     //
     // C++:  bool VideoCapture::read(Mat& image)
@@ -343,7 +333,6 @@ public class VideoCapture {
         return retVal;
     }
 
-
     //
     // C++:  void VideoCapture::release()
     //
@@ -366,7 +355,6 @@ public class VideoCapture {
 
         return;
     }
-
 
     //
     // C++:  bool VideoCapture::retrieve(Mat& image, int channel = 0)
@@ -423,7 +411,6 @@ public class VideoCapture {
         return retVal;
     }
 
-
     //
     // C++:  bool VideoCapture::set(int propId, double value)
     //
@@ -472,7 +459,6 @@ public class VideoCapture {
         return retVal;
     }
 
-
     public java.util.List<org.opencv.core.Size> getSupportedPreviewSizes()
     {
         String[] sizes_str = getSupportedPreviewSizes_0(nativeObj).split(",");
@@ -486,12 +472,10 @@ public class VideoCapture {
         return sizes;
     }
 
-
     @Override
     protected void finalize() throws Throwable {
         delete(nativeObj);
     }
-
 
 
     // C++:   VideoCapture::VideoCapture()

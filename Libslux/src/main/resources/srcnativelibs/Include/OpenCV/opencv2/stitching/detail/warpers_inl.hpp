@@ -58,7 +58,6 @@ Point2f RotationWarperBase<P>::warpPoint(const Point2f &pt, const Mat &K, const 
     return uv;
 }
 
-
 template <class P>
 Rect RotationWarperBase<P>::buildMaps(Size src_size, const Mat &K, const Mat &R, Mat &xmap, Mat &ymap)
 {
@@ -84,7 +83,6 @@ Rect RotationWarperBase<P>::buildMaps(Size src_size, const Mat &K, const Mat &R,
     return Rect(dst_tl, dst_br);
 }
 
-
 template <class P>
 Point RotationWarperBase<P>::warp(const Mat &src, const Mat &K, const Mat &R, int interp_mode, int border_mode,
                                   Mat &dst)
@@ -97,7 +95,6 @@ Point RotationWarperBase<P>::warp(const Mat &src, const Mat &K, const Mat &R, in
 
     return dst_roi.tl();
 }
-
 
 template <class P>
 void RotationWarperBase<P>::warpBackward(const Mat &src, const Mat &K, const Mat &R, int interp_mode, int border_mode,
@@ -127,7 +124,6 @@ void RotationWarperBase<P>::warpBackward(const Mat &src, const Mat &K, const Mat
     remap(src, dst, xmap, ymap, interp_mode, border_mode);
 }
 
-
 template <class P>
 Rect RotationWarperBase<P>::warpRoi(Size src_size, const Mat &K, const Mat &R)
 {
@@ -138,7 +134,6 @@ Rect RotationWarperBase<P>::warpRoi(Size src_size, const Mat &K, const Mat &R)
 
     return Rect(dst_tl, Point(dst_br.x + 1, dst_br.y + 1));
 }
-
 
 template <class P>
 void RotationWarperBase<P>::detectResultRoi(Size src_size, Point &dst_tl, Point &dst_br)
@@ -164,7 +159,6 @@ void RotationWarperBase<P>::detectResultRoi(Size src_size, Point &dst_tl, Point 
     dst_br.x = static_cast<int>(br_uf);
     dst_br.y = static_cast<int>(br_vf);
 }
-
 
 template <class P>
 void RotationWarperBase<P>::detectResultRoiByBorder(Size src_size, Point &dst_tl, Point &dst_br)
@@ -202,7 +196,6 @@ void RotationWarperBase<P>::detectResultRoiByBorder(Size src_size, Point &dst_tl
     dst_br.y = static_cast<int>(br_vf);
 }
 
-
 inline
 void PlaneProjector::mapForward(float x, float y, float &u, float &v)
 {
@@ -216,7 +209,6 @@ void PlaneProjector::mapForward(float x, float y, float &u, float &v)
     u = scale * x_;
     v = scale * y_;
 }
-
 
 inline
 void PlaneProjector::mapBackward(float u, float v, float &x, float &y)
@@ -233,7 +225,6 @@ void PlaneProjector::mapBackward(float u, float v, float &x, float &y)
     y /= z;
 }
 
-
 inline
 void SphericalProjector::mapForward(float x, float y, float &u, float &v)
 {
@@ -245,7 +236,6 @@ void SphericalProjector::mapForward(float x, float y, float &u, float &v)
     float w = y_ / sqrtf(x_ * x_ + y_ * y_ + z_ * z_);
     v = scale * (static_cast<float>(CV_PI) - acosf(w == w ? w : 0));
 }
-
 
 inline
 void SphericalProjector::mapBackward(float u, float v, float &x, float &y)
@@ -267,7 +257,6 @@ void SphericalProjector::mapBackward(float u, float v, float &x, float &y)
     else x = y = -1;
 }
 
-
 inline
 void CylindricalProjector::mapForward(float x, float y, float &u, float &v)
 {
@@ -278,7 +267,6 @@ void CylindricalProjector::mapForward(float x, float y, float &u, float &v)
     u = scale * atan2f(x_, z_);
     v = scale * y_ / sqrtf(x_ * x_ + z_ * z_);
 }
-
 
 inline
 void CylindricalProjector::mapBackward(float u, float v, float &x, float &y)
@@ -644,7 +632,6 @@ void SphericalPortraitProjector::mapForward(float x, float y, float &u0, float &
     v0 = v;//u;
 }
 
-
 inline
 void SphericalPortraitProjector::mapBackward(float u0, float v0, float &x, float &y)
 {
@@ -689,7 +676,6 @@ void CylindricalPortraitProjector::mapForward(float x, float y, float &u0, float
     u0 = -u;//v;
     v0 = v;//u;
 }
-
 
 inline
 void CylindricalPortraitProjector::mapBackward(float u0, float v0, float &x, float &y)
@@ -738,7 +724,6 @@ void PlanePortraitProjector::mapForward(float x, float y, float &u0, float &v0)
     v0 = v;
 }
 
-
 inline
 void PlanePortraitProjector::mapBackward(float u0, float v0, float &x, float &y)
 {
@@ -757,7 +742,6 @@ void PlanePortraitProjector::mapBackward(float u0, float v0, float &x, float &y)
     x /= z;
     y /= z;
 }
-
 
 } // namespace detail
 } // namespace cv

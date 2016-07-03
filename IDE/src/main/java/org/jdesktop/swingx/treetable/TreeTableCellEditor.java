@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -77,13 +77,13 @@ import org.jdesktop.swingx.JXTable.GenericEditor;
  */
 public class TreeTableCellEditor extends GenericEditor {
     //DefaultCellEditor {
-// JW: changed to extends GenericEditor to fix #1365-swingx - 
+// JW: changed to extends GenericEditor to fix #1365-swingx -
 //    borders different in hierarchical column vs. table column
-//    
+//
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger
             .getLogger(TreeTableCellEditor.class.getName());
-    
+
     public TreeTableCellEditor(JTree tree) {
         super(new TreeTableTextField());
         if (tree == null) {
@@ -110,7 +110,6 @@ public class TreeTableCellEditor extends GenericEditor {
         initEditorOffset(table, row, column, isSelected);
         return component;
     }
-
 
     /**
      * @param row
@@ -139,7 +138,7 @@ public class TreeTableCellEditor extends GenericEditor {
      */
     @Override
     public boolean isCellEditable(EventObject e) {
-        // JW: quick fix for #592-swingx - 
+        // JW: quick fix for #592-swingx -
         // editing not started on keyEvent in hierarchical column (1.6)
         if (e instanceof MouseEvent) {
           return (((MouseEvent) e).getClickCount() >= clickCountToStart);
@@ -163,7 +162,7 @@ public class TreeTableCellEditor extends GenericEditor {
             updateIconWidth(editorComponent);
             setComponentOrientation(table.getComponentOrientation());
         }
-        
+
         /**
          * @param treeComponent
          */
@@ -174,22 +173,22 @@ public class TreeTableCellEditor extends GenericEditor {
             if (icon != null) {
                 iconWidth = icon.getIconWidth() + ((JLabel) treeComponent).getIconTextGap();
             }
-            
+
         }
 
         private int column;
         private int row;
         private JTable table;
         private JTree tree;
-        
+
         /**
          * {@inheritDoc} <p>
-         * 
-         * Overridden to place the textfield in the node content boundaries, 
+         *
+         * Overridden to place the textfield in the node content boundaries,
          * leaving the icon to the renderer. <p>
-         * 
+         *
          * PENDING JW: insets?
-         * 
+         *
          */
         @SuppressWarnings("deprecation")
         @Override
@@ -199,7 +198,7 @@ public class TreeTableCellEditor extends GenericEditor {
             //Border border = this.getBorder(); // get this text field's border
             //Insets insets = border == null ? null : border.getBorderInsets(this);
             //int newOffset = offset - (insets == null ? 0 : insets.left);
-            
+
             Rectangle cellRect = table.getCellRect(0, column, false);
             Rectangle nodeRect = tree.getRowBounds(row);
             nodeRect.width -= iconWidth;
@@ -217,7 +216,7 @@ public class TreeTableCellEditor extends GenericEditor {
                 super.reshape(cellRect.x + nodeRect.x, y, width, height);
             }
         }
-        
+
     }
 
     private final JTree tree; // immutable

@@ -1,4 +1,3 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
@@ -35,7 +34,6 @@ public class Core {
             CV_32F = 5,
             CV_64F = 6,
             CV_USRTYPE1 = 7;
-
 
     public static final int
             SVD_MODIFY_A = 1,
@@ -116,7 +114,6 @@ public class Core {
             FONT_HERSHEY_SCRIPT_COMPLEX = 7,
             FONT_ITALIC = 16;
 
-
     //
     // C++:  void LUT(Mat src, Mat lut, Mat& dst, int interpolation = 0)
     //
@@ -188,7 +185,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  double Mahalanobis(Mat v1, Mat v2, Mat icovar)
     //
@@ -219,7 +215,6 @@ public class Core {
         return retVal;
     }
 
-
     //
     // C++:  void PCABackProject(Mat data, Mat mean, Mat eigenvectors, Mat& result)
     //
@@ -231,7 +226,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void PCACompute(Mat data, Mat& mean, Mat& eigenvectors, int maxComponents = 0)
@@ -253,7 +247,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void PCAComputeVar(Mat data, Mat& mean, Mat& eigenvectors, double retainedVariance)
     //
@@ -265,7 +258,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void PCAProject(Mat data, Mat mean, Mat eigenvectors, Mat& result)
@@ -279,7 +271,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void SVBackSubst(Mat w, Mat u, Mat vt, Mat rhs, Mat& dst)
     //
@@ -291,7 +282,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void SVDecomp(Mat src, Mat& w, Mat& u, Mat& vt, int flags = 0)
@@ -312,7 +302,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void absdiff(Mat src1, Mat src2, Mat& dst)
@@ -367,7 +356,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void absdiff(Mat src1, Scalar src2, Mat& dst)
     //
@@ -420,7 +408,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void add(Mat src1, Mat src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
@@ -647,7 +634,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void add(Mat src1, Scalar src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
     //
@@ -873,7 +859,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void addWeighted(Mat src1, double alpha, Mat src2, double beta, double gamma, Mat& dst, int dtype = -1)
     //
@@ -969,7 +954,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void batchDistance(Mat src1, Mat src2, Mat& dist, int dtype, Mat& nidx, int normType = NORM_L2, int K = 0, Mat mask = Mat(), int update = 0, bool crosscheck = false)
     //
@@ -997,7 +981,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void bitwise_and(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
@@ -1095,7 +1078,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void bitwise_not(Mat src, Mat& dst, Mat mask = Mat())
     //
@@ -1149,7 +1131,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void bitwise_or(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
@@ -1246,7 +1227,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void bitwise_xor(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
@@ -1345,7 +1325,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void calcCovarMatrix(Mat samples, Mat& covar, Mat& mean, int flags, int ctype = CV_64F)
@@ -1494,7 +1473,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void cartToPolar(Mat x, Mat y, Mat& magnitude, Mat& angle, bool angleInDegrees = false)
     //
@@ -1569,7 +1547,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  bool checkRange(Mat a, bool quiet = true,  _hidden_ * pos = 0, double minVal = -DBL_MAX, double maxVal = DBL_MAX)
     //
@@ -1625,7 +1602,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  void circle(Mat& img, Point center, int radius, Scalar color, int thickness = 1, int lineType = 8, int shift = 0)
@@ -1701,7 +1677,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  bool clipLine(Rect imgRect, Point& pt1, Point& pt2)
     //
@@ -1729,7 +1704,6 @@ public class Core {
         if(pt2!=null){ pt2.x = pt2_out[0]; pt2.y = pt2_out[1]; }
         return retVal;
     }
-
 
     //
     // C++:  void compare(Mat src1, Mat src2, Mat& dst, int cmpop)
@@ -1805,7 +1779,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void compare(Mat src1, Scalar src2, Mat& dst, int cmpop)
     //
@@ -1880,7 +1853,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void completeSymm(Mat& mtx, bool lowerToUpper = false)
     //
@@ -1934,7 +1906,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void convertScaleAbs(Mat src, Mat& dst, double alpha = 1, double beta = 0)
@@ -2026,7 +1997,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  int countNonZero(Mat src)
     //
@@ -2055,7 +2025,6 @@ public class Core {
         return retVal;
     }
 
-
     //
     // C++:  float cubeRoot(float val)
     //
@@ -2078,7 +2047,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  void dct(Mat src, Mat& dst, int flags = 0)
@@ -2262,7 +2230,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  double determinant(Mat mtx)
     //
@@ -2294,7 +2261,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  void dft(Mat src, Mat& dst, int flags = 0, int nonzeroRows = 0)
@@ -2788,7 +2754,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void divide(Mat src1, Mat src2, Mat& dst, double scale = 1, int dtype = -1)
     //
@@ -2904,7 +2869,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void divide(double scale, Mat src2, Mat& dst, int dtype = -1)
     //
@@ -2982,7 +2946,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void divide(Mat src1, Scalar src2, Mat& dst, double scale = 1, int dtype = -1)
@@ -3099,7 +3062,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  bool eigen(Mat src, bool computeEigenvectors, Mat& eigenvalues, Mat& eigenvectors)
     //
@@ -3138,7 +3100,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  void ellipse(Mat& img, Point center, Size axes, double angle, double startAngle, double endAngle, Scalar color, int thickness = 1, int lineType = 8, int shift = 0)
@@ -3247,7 +3208,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void ellipse(Mat& img, RotatedRect box, Scalar color, int thickness = 1, int lineType = 8)
     //
@@ -3347,7 +3307,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void ellipse2Poly(Point center, Size axes, int angle, int arcStart, int arcEnd, int delta, vector_Point& pts)
     //
@@ -3378,7 +3337,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void exp(Mat src, Mat& dst)
@@ -3417,7 +3375,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void extractChannel(Mat src, Mat& dst, int coi)
     //
@@ -3429,7 +3386,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  float fastAtan2(float y, float x)
@@ -3454,7 +3410,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  void fillConvexPoly(Mat& img, vector_Point points, Scalar color, int lineType = 8, int shift = 0)
@@ -3510,7 +3465,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void fillPoly(Mat& img, vector_vector_Point pts, Scalar color, int lineType = 8, int shift = 0, Point offset = Point())
     //
@@ -3564,7 +3518,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void findNonZero(Mat src, Mat& idx)
     //
@@ -3576,7 +3529,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void flip(Mat src, Mat& dst, int flipCode)
@@ -3628,7 +3580,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void gemm(Mat src1, Mat src2, double alpha, Mat src3, double gamma, Mat& dst, int flags = 0)
@@ -3720,7 +3671,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  string getBuildInformation()
     //
@@ -3741,7 +3691,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  int64 getCPUTickCount()
@@ -3773,7 +3722,6 @@ public class Core {
         return retVal;
     }
 
-
     //
     // C++:  int getNumberOfCPUs()
     //
@@ -3790,7 +3738,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  int getOptimalDFTSize(int vecsize)
@@ -3837,7 +3784,6 @@ public class Core {
         return retVal;
     }
 
-
     //
     // C++:  int64 getTickCount()
     //
@@ -3860,7 +3806,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  double getTickFrequency()
@@ -3890,7 +3835,6 @@ public class Core {
         return retVal;
     }
 
-
     //
     // C++:  void hconcat(vector_Mat src, Mat& dst)
     //
@@ -3902,7 +3846,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void idct(Mat src, Mat& dst, int flags = 0)
@@ -3954,7 +3897,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void idft(Mat src, Mat& dst, int flags = 0, int nonzeroRows = 0)
@@ -4026,7 +3968,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void inRange(Mat src, Scalar lowerb, Scalar upperb, Mat& dst)
     //
@@ -4076,7 +4017,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void insertChannel(Mat src, Mat& dst, int coi)
     //
@@ -4088,7 +4028,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  double invert(Mat src, Mat& dst, int flags = DECOMP_LU)
@@ -4178,7 +4117,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  double kmeans(Mat data, int K, Mat& bestLabels, TermCriteria criteria, int attempts, int flags, Mat& centers = Mat())
@@ -4306,7 +4244,6 @@ public class Core {
         return retVal;
     }
 
-
     //
     // C++:  void line(Mat& img, Point pt1, Point pt2, Scalar color, int thickness = 1, int lineType = 8, int shift = 0)
     //
@@ -4398,7 +4335,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void log(Mat src, Mat& dst)
     //
@@ -4437,7 +4373,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void magnitude(Mat x, Mat y, Mat& magnitude)
     //
@@ -4469,7 +4404,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void max(Mat src1, Mat src2, Mat& dst)
@@ -4512,7 +4446,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void max(Mat src1, Scalar src2, Mat& dst)
     //
@@ -4553,7 +4486,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  Scalar mean(Mat src, Mat mask = Mat())
@@ -4615,7 +4547,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  void meanStdDev(Mat src, vector_double& mean, vector_double& stddev, Mat mask = Mat())
@@ -4702,7 +4633,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void merge(vector_Mat mv, Mat& dst)
     //
@@ -4736,7 +4666,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void min(Mat src1, Mat src2, Mat& dst)
@@ -4779,7 +4708,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void min(Mat src1, Scalar src2, Mat& dst)
     //
@@ -4820,7 +4748,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void mixChannels(vector_Mat src, vector_Mat dst, vector_int fromTo)
@@ -4896,7 +4823,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void mulSpectrums(Mat a, Mat b, Mat& c, int flags, bool conjB = false)
     //
@@ -4964,7 +4890,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void mulTransposed(Mat src, Mat& dst, bool aTa, Mat delta = Mat(), double scale = 1, int dtype = -1)
@@ -5100,7 +5025,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void multiply(Mat src1, Mat src2, Mat& dst, double scale = 1, int dtype = -1)
     //
@@ -5231,7 +5155,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void multiply(Mat src1, Scalar src2, Mat& dst, double scale = 1, int dtype = -1)
     //
@@ -5361,7 +5284,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  double norm(Mat src1, int normType = NORM_L2, Mat mask = Mat())
@@ -5508,7 +5430,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  double norm(Mat src1, Mat src2, int normType = NORM_L2, Mat mask = Mat())
@@ -5661,7 +5582,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  void normalize(Mat src, Mat& dst, double alpha = 1, double beta = 0, int norm_type = NORM_L2, int dtype = -1, Mat mask = Mat())
@@ -5845,7 +5765,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void patchNaNs(Mat& a, double val = 0)
     //
@@ -5865,7 +5784,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void perspectiveTransform(Mat src, Mat& dst, Mat m)
@@ -5914,7 +5832,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void phase(Mat x, Mat y, Mat& angle, bool angleInDegrees = false)
@@ -5977,7 +5894,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void polarToCart(Mat magnitude, Mat angle, Mat& x, Mat& y, bool angleInDegrees = false)
@@ -6065,7 +5981,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void polylines(Mat& img, vector_vector_Point pts, bool isClosed, Scalar color, int thickness = 1, int lineType = 8, int shift = 0)
     //
@@ -6143,7 +6058,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void pow(Mat src, double power, Mat& dst)
     //
@@ -6192,7 +6106,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void putText(Mat img, string text, Point org, int fontFace, double fontScale, Scalar color, int thickness = 1, int lineType = 8, bool bottomLeftOrigin = false)
@@ -6296,7 +6209,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void randShuffle_(Mat& dst, double iterFactor = 1.)
     //
@@ -6316,7 +6228,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void randn(Mat& dst, double mean, double stddev)
@@ -6347,7 +6258,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void randu(Mat& dst, double low, double high)
@@ -6382,7 +6292,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void rectangle(Mat& img, Point pt1, Point pt2, Scalar color, int thickness = 1, int lineType = 8, int shift = 0)
@@ -6461,7 +6370,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void reduce(Mat src, Mat& dst, int dim, int rtype, int dtype = -1)
@@ -6550,7 +6458,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void repeat(Mat src, int ny, int nx, Mat& dst)
     //
@@ -6583,7 +6490,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void scaleAdd(Mat src1, double alpha, Mat src2, Mat& dst)
@@ -6626,7 +6532,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void setErrorVerbosity(bool verbose)
     //
@@ -6638,7 +6543,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void setIdentity(Mat& mtx, Scalar s = Scalar(1))
@@ -6704,7 +6608,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  bool solve(Mat src1, Mat src2, Mat& dst, int flags = DECOMP_LU)
@@ -6796,7 +6699,6 @@ public class Core {
         return retVal;
     }
 
-
     //
     // C++:  int solveCubic(Mat coeffs, Mat& roots)
     //
@@ -6832,7 +6734,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  double solvePoly(Mat coeffs, Mat& roots, int maxIters = 300)
@@ -6883,7 +6784,6 @@ public class Core {
         return retVal;
     }
 
-
     //
     // C++:  void sort(Mat src, Mat& dst, int flags)
     //
@@ -6920,7 +6820,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void sortIdx(Mat src, Mat& dst, int flags)
@@ -6972,7 +6871,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void split(Mat m, vector_Mat& mv)
     //
@@ -7006,7 +6904,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void sqrt(Mat src, Mat& dst)
     //
@@ -7033,7 +6930,6 @@ public class Core {
 
         return;
     }
-
 
     //
     // C++:  void subtract(Mat src1, Mat src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
@@ -7281,7 +7177,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void subtract(Mat src1, Scalar src2, Mat& dst, Mat mask = Mat(), int dtype = -1)
     //
@@ -7528,7 +7423,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  Scalar sum(Mat src)
     //
@@ -7557,7 +7451,6 @@ public class Core {
         return retVal;
     }
 
-
     //
     // C++:  Scalar trace(Mat mtx)
     //
@@ -7581,7 +7474,6 @@ public class Core {
 
         return retVal;
     }
-
 
     //
     // C++:  void transform(Mat src, Mat& dst, Mat m)
@@ -7634,7 +7526,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void transpose(Mat src, Mat& dst)
     //
@@ -7662,7 +7553,6 @@ public class Core {
         return;
     }
 
-
     //
     // C++:  void vconcat(vector_Mat src, Mat& dst)
     //
@@ -7674,7 +7564,6 @@ public class Core {
 
         return;
     }
-
 
     // manual port
     public static class MinMaxLocResult {
@@ -7761,7 +7650,6 @@ public class Core {
         return minMaxLoc(src, null);
     }
 
-
     // C++: Size getTextSize(const string& text, int fontFace, double fontScale, int thickness, int* baseLine);
 /**
  * <p>Calculates the width and height of a text string.</p>
@@ -7834,7 +7722,6 @@ public class Core {
         Size retVal = new Size(n_getTextSize(text, fontFace, fontScale, thickness, baseLine));
         return retVal;
     }
-
 
 
     // C++:  void LUT(Mat src, Mat lut, Mat& dst, int interpolation = 0)

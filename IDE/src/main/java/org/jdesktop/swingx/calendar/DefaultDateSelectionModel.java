@@ -31,7 +31,7 @@ import org.jdesktop.swingx.event.DateSelectionEvent.EventType;
 import org.jdesktop.swingx.util.Contract;
 
 /**
- * 
+ *
  * @author Joshua Outwater
  */
 public class DefaultDateSelectionModel extends AbstractDateSelectionModel {
@@ -40,7 +40,7 @@ public class DefaultDateSelectionModel extends AbstractDateSelectionModel {
     private SortedSet<Date> unselectableDates;
 
     /**
-     * 
+     *
      */
     public DefaultDateSelectionModel() {
         this(null);
@@ -48,7 +48,7 @@ public class DefaultDateSelectionModel extends AbstractDateSelectionModel {
 
     /**
      * <p>
-     * 
+     *
      * The selection mode defaults to SINGLE_SELECTION.
      */
     public DefaultDateSelectionModel(Locale locale) {
@@ -74,8 +74,7 @@ public class DefaultDateSelectionModel extends AbstractDateSelectionModel {
         clearSelection();
     }
 
-    
-//------------------- selection ops    
+//------------------- selection ops
     /**
      * {@inheritDoc}
      */
@@ -128,14 +127,14 @@ public class DefaultDateSelectionModel extends AbstractDateSelectionModel {
     /**
      * Checks and returns if the single date interval bounded by startDate and endDate
      * is selected. This is useful only for SingleInterval mode.
-     * 
+     *
      * @param startDate the start of the interval
      * @param endDate the end of the interval, must be >= startDate
      * @return true the interval is selected, false otherwise.
      */
     private boolean isIntervalSelected(Date startDate, Date endDate) {
         if (isSelectionEmpty()) return false;
-        return selectedDates.first().equals(startDate) 
+        return selectedDates.first().equals(startDate)
            && selectedDates.last().equals(endDate);
     }
 
@@ -227,7 +226,6 @@ public class DefaultDateSelectionModel extends AbstractDateSelectionModel {
         return selectedDates.isEmpty();
     }
 
-
     /**
      * {@inheritDoc}
      */
@@ -258,7 +256,6 @@ public class DefaultDateSelectionModel extends AbstractDateSelectionModel {
                 unselectableDates != null && unselectableDates.contains(date);
     }
 
-
     private boolean addSelectionImpl(final Date startDate, final Date endDate) {
         boolean hasAdded = false;
         calendar.setTime(startDate);
@@ -274,5 +271,4 @@ public class DefaultDateSelectionModel extends AbstractDateSelectionModel {
         return hasAdded;
     }
 
-    
 }

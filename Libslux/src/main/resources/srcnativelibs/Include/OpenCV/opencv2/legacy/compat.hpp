@@ -217,7 +217,6 @@ CV_EXPORTS void cvConvexHull( CvPoint* points, int num_points,
                              CvRect* bound_rect,
                              int orientation, int* hull, int* hullsize );
 
-
 CV_EXPORTS void cvMinAreaRect( CvPoint* points, int n,
                               int left, int bottom,
                               int right, int top,
@@ -267,9 +266,7 @@ CV_EXPORTS  void  cvProject3D( CvPoint3D32f* points3D, int count,
 #define cvGetHistValue_nD( hist, idx ) \
     ((float*)cvPtrND( (hist)->bins, (idx), 0))
 
-
 #define CV_IS_SET_ELEM_EXISTS CV_IS_SET_ELEM
-
 
 CV_EXPORTS  int  cvHoughLines( CvArr* image, double rho,
                               double theta, int threshold,
@@ -279,7 +276,6 @@ CV_EXPORTS  int  cvHoughLinesP( CvArr* image, double rho,
                                double theta, int threshold,
                                int lineLength, int lineGap,
                                int* lines, int linesNumber );
-
 
 CV_EXPORTS  int  cvHoughLinesSDiv( CvArr* image, double rho, int srn,
                                   double theta, int stn, int threshold,
@@ -301,7 +297,6 @@ CV_EXPORTS void  cvStartScanGraph( CvGraph* graph, CvGraphScanner* scanner,
                                   int mask CV_DEFAULT(CV_GRAPH_ALL_ITEMS));
 
 CV_EXPORTS  void  cvEndScanGraph( CvGraphScanner* scanner );
-
 
 /* old drawing functions */
 CV_EXPORTS void  cvLineAA( CvArr* img, CvPoint pt1, CvPoint pt2,
@@ -363,7 +358,6 @@ typedef struct _CvPixelPosition32f
     int     step_arr[3];
 } CvPixelPosition32f;
 
-
 /* Initialize one of the CvPixelPosition structures.   */
 /*  pos    - initialized structure                     */
 /*  origin - pointer to the left-top corner of the ROI */
@@ -382,7 +376,6 @@ typedef struct _CvPixelPosition32f
     (pos).step_arr[2] = (pos).step,                                          \
     (pos).x = (_x),                                                          \
     (pos).currline = (origin) + (pos).step*(_y) )
-
 
 /* Move to specified point ( absolute shift ) */
 /*  pos    - position structure               */
@@ -429,7 +422,6 @@ typedef struct _CvPixelPosition32f
 
 /* right down */
 #define CV_MOVE_RD( pos, cs ) ( CV_MOVE_RIGHT(pos, cs), CV_MOVE_DOWN(pos, cs))
-
 
 
 /* Move by one pixel relatively to current position with wrapping when the position     */
@@ -504,7 +496,6 @@ enum
                                                                                     \
     (pos).currline + (pos).x*(cs) )
 
-
 typedef float*   CvVect32f;
 typedef float*   CvMatr32f;
 typedef double*  CvVect64d;
@@ -530,7 +521,6 @@ CV_EXPORTS void  cvUnDistort( const CvArr* src, CvArr* dst,
 CV_EXPORTS void  cvFindFundamentalMatrix( int* points1, int* points2,
     int numpoints, int method, float* matrix );
 
-
 CV_EXPORTS int cvFindChessBoardCornerGuesses( const void* arr, void* thresharr,
                                CvMemStorage* storage,
                                CvSize pattern_size, CvPoint2D32f * corners,
@@ -542,12 +532,10 @@ CV_EXPORTS void cvCalibrateCamera( int image_count, int* _point_counts,
     float* _distortion_coeffs, float* _camera_matrix, float* _translation_vectors,
     float* _rotation_matrices, int flags );
 
-
 CV_EXPORTS void cvCalibrateCamera_64d( int image_count, int* _point_counts,
     CvSize image_size, CvPoint2D64f* _image_points, CvPoint3D64f* _object_points,
     double* _distortion_coeffs, double* _camera_matrix, double* _translation_vectors,
     double* _rotation_matrices, int flags );
-
 
 /* Find 3d position of object given intrinsic camera parameters,
    3d model of the object and projection of the object into view plane */
@@ -586,12 +574,10 @@ CV_EXPORTS void  cvProjectPoints( int point_count, CvPoint3D64f* _object_points,
     double* _deriv_points_principal_point,
     double* _deriv_points_distortion_coeffs );
 
-
 /* Simpler version of the previous function */
 CV_EXPORTS void  cvProjectPointsSimple( int point_count, CvPoint3D64f* _object_points,
     double* _rotation_matrix, double*  _translation_vector,
     double* _camera_matrix, double* _distortion, CvPoint2D64f* _image_points );
-
 
 #define cvMake2DPoints cvConvertPointsHomogeneous
 #define cvMake3DPoints cvConvertPointsHomogeneous
@@ -599,7 +585,6 @@ CV_EXPORTS void  cvProjectPointsSimple( int point_count, CvPoint3D64f* _object_p
 #define cvWarpPerspectiveQMatrix cvGetPerspectiveTransform
 
 #define cvConvertPointsHomogenious cvConvertPointsHomogeneous
-
 
 //////////////////////////////////// feature extractors: obsolete API //////////////////////////////////
 
@@ -686,7 +671,6 @@ CVAPI(CvMSERParams) cvMSERParams( int delta CV_DEFAULT(5), int min_area CV_DEFAU
 
 // Extracts the contours of Maximally Stable Extremal Regions
 CVAPI(void) cvExtractMSER( CvArr* _img, CvArr* _mask, CvSeq** contours, CvMemStorage* storage, CvMSERParams params );
-
 
 typedef struct CvStarKeypoint
 {

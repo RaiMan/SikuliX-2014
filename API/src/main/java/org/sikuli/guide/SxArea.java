@@ -5,7 +5,7 @@
  */
 
 /**
- * 
+ *
  */
 package org.sikuli.guide;
 
@@ -24,15 +24,15 @@ import org.sikuli.script.Screen;
 
 import com.sun.crypto.provider.RSACipher;
 
-public class SxArea extends Visual 
+public class SxArea extends Visual
 implements ComponentListener{
 
    ArrayList<Region> regions = new ArrayList<Region>();
 
    ArrayList<Visual> landmarks = new ArrayList<Visual>();
 
-   public SxArea(){         
-      super();      
+   public SxArea(){
+      super();
       // default to transparent so it can be faded in when it becomes visible later
       setOpacity(0);
    }
@@ -42,14 +42,14 @@ implements ComponentListener{
 
    int relationship = BOUNDING;
    public void setRelationship(int relationship){
-      this.relationship = relationship;      
+      this.relationship = relationship;
    }
 
    int mode = 0;
-   public static int VERTICAL = 1;   
+   public static int VERTICAL = 1;
    public static int HORIZONTAL = 2;
    public void setMode(int mode){
-      this.mode = mode;      
+      this.mode = mode;
    }
 
    // update the bounds to the union of all the rectangles
@@ -65,13 +65,12 @@ implements ComponentListener{
             continue;
          }else {
 
-
             if (relationship == BOUNDING){
                rect.add(comp.getBounds());
-            }else if (relationship == INTERSECTION){            
+            }else if (relationship == INTERSECTION){
                rect = rect.intersection(comp.getBounds());
             }
-            
+
          }
       }
 
@@ -79,28 +78,27 @@ implements ComponentListener{
          setVisible(false);
       }else{
          setVisible(true);
-         
+
 //         for (Visual sklComp : getFollowers())
          // hack to get the locations of the followers to update
-         
+
          if (mode == 0){
             setActualLocation(rect.x,rect.y);
             setActualSize(rect.getSize());
          } else if (mode == VERTICAL){
             setActualLocation(rect.x,0);
-            setActualSize(rect.width, s.h);            
+            setActualSize(rect.width, s.h);
          } else if (mode == HORIZONTAL){
             setActualLocation(0, rect.y);
-            setActualSize(s.w, rect.height);            
+            setActualSize(s.w, rect.height);
          }
       }
-      
+
       updateVisibility();
    }
 
-
    public void addLandmark(Visual comp){
-      landmarks.add(comp);    
+      landmarks.add(comp);
       updateBounds();
       comp.addComponentListener(this);
    }
@@ -111,7 +109,7 @@ implements ComponentListener{
 
          setActualBounds(region.getRect());
 
-      }else{         
+      }else{
 
          Rectangle bounds = getBounds();
          bounds.add(region.getRect());
@@ -142,12 +140,12 @@ implements ComponentListener{
       for (Visual landmark : landmarks){
          allHidden = allHidden && !landmark.isVisible();
       }
-      
+
       if (allHidden){
          //Debug.info("SxArea is hidden");
       }
       setVisible(!allHidden);
-      
+
       // if area is visible, do fadein
       if (isVisible()){
          addFadeinAnimation();
@@ -159,7 +157,6 @@ implements ComponentListener{
    public void componentHidden(ComponentEvent e) {
       updateVisibility();
    }
-
 
    @Override
    public void componentMoved(ComponentEvent e) {
@@ -174,10 +171,9 @@ implements ComponentListener{
    public void componentResized(ComponentEvent e) {
    }
 
-
    @Override
    public void componentShown(ComponentEvent e) {
       setVisible(true);
-   } 
+   }
 
 }

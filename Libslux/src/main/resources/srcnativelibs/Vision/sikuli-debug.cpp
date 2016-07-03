@@ -5,7 +5,6 @@
  */
 #include "sikuli-debug.h"
 
-
 int sikuli::OCR_DEBUG_LEVEL = 0;
 int sikuli::FINDER_DEBUG_LEVEL = 0;
 sikuli::onullstream null_out;

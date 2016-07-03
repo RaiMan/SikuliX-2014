@@ -218,7 +218,6 @@ private:
                           char **pdf_object, long int *pdf_object_size);
 };
 
-
 /**
  * Renders tesseract output into a plain UTF-8 text string
  */

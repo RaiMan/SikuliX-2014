@@ -34,12 +34,12 @@ import org.sikuli.basics.Debug;
 /**
  * The FBConfig class stores configuration information about the
  * framebuffer
- * 
+ *
  * @author Mike Johnson
  *
  */
 public class FBConfig extends GraphicsConfiguration {
-	
+
 	private int width = 0;
 	private int height = 0;
 	private int bitsPerPixel = 0;
@@ -60,7 +60,7 @@ public class FBConfig extends GraphicsConfiguration {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param config the configuration information
 	 * @param name the remote desktop name
 	 */
@@ -79,13 +79,13 @@ public class FBConfig extends GraphicsConfiguration {
 		blueShift = config[11];
 		desktopName = name;
 		bounds = new Rectangle(0,0,width,height);
-		
+
 		Debug.log(3, "VNC Server found: %s (%dx%d)", desktopName, width, height);
 		for(int i : config){
 			Debug.log(4, ""+i);
 		}
 		Debug.log(4, "Name: "+desktopName);
-		
+
 		switch(bitsPerPixel){
 			case 8:
 				if(trueColorFlag!=0){
@@ -127,10 +127,10 @@ public class FBConfig extends GraphicsConfiguration {
 				break;
 		}
 	}
-	
+
 	/**
 	 * Creates a compatible raster basted on this configuration
-	 * 
+	 *
 	 * @return raster
 	 */
 	public Raster createCompatibleRaster(){
@@ -156,10 +156,10 @@ public class FBConfig extends GraphicsConfiguration {
 				return null;
 		}
 	}
-	
+
 	/**
 	 * Gets the id number of the configuration
-	 * 
+	 *
 	 * @return num 0 colormap 8 bit
 	 * 			   1 colormap 16 bit
 	 * 			   2 colormap 32 bit
@@ -170,17 +170,16 @@ public class FBConfig extends GraphicsConfiguration {
 	public int getIdNum(){
 		return idnum;
 	}
-	
+
 	/**
 	 * Gets the name of the remote desktop
-	 * 
+	 *
 	 * @return name
 	 */
 	public String getName(){
 		return desktopName;
 	}
-	
-	
+
 	@Override
 	public GraphicsDevice getDevice() {
 		// TODO Auto-generated method stub

@@ -20,7 +20,6 @@
  */
 package org.jdesktop.swingx.event;
 
-
 import java.util.EventListener;
 
 /**
