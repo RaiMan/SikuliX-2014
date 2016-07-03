@@ -413,8 +413,8 @@ def input(msg="", default="", title="Sikuli Input", hidden=False):
 # @param lines the maximum number of lines visible in the text field (default 9)
 # @param width the maximum number of characters visible in one line (default 20)
 # @return The user's input including the line breaks.
-def inputText(msg="", title="Sikuli Text", lines=0, width=0):
-  return Sikulix.inputText(msg, title, width, lines)
+def inputText(msg="", title="", lines=0, width=0, text=""):
+  return Sikulix.inputText(msg, title, width, lines, text)
 
 ##
 # Shows a dialog requesting to select an entry from the drop down list

@@ -750,41 +750,62 @@ public class Sikulix {
     return ret.getAbsolutePath();
   }
 
-  /**
-   * Shows a dialog request to enter text in a multiline text field <br>
-   * Though not all text might be visible, everything entered is delivered with the returned text <br>
-   * The main purpose for this feature is to allow pasting text from somewhere preserving line breaks <br>
-   *
-   * @param msg the message to display.
-   * @param title the title for the dialog (default: Sikuli input request)
-   * @param lines the maximum number of lines visible in the text field (default 9)
-   * @param width the maximum number of characters visible in one line (default 20)
-   * @return The user's input including the line breaks.
-   */
-  public static String inputText(String msg, String title, int lines, int width) {
-    return inputText(msg, title, lines, width, "");
+  public static String inputText(String msg) {
+    return inputText(msg, "", 0, 0, "");
   }
 
+  public static String inputText(String msg, int lines, int width) {
+    return inputText(msg, "", lines, width, "");
+  }
+
+  public static String inputText(String msg, int lines, int width, String text) {
+    return inputText(msg, "", lines, width, text);
+  }
+
+  public static String inputText(String msg, String text) {
+    return inputText(msg, "", 0, 0, text);
+  }
+
+  /**
+   * Shows a dialog request to enter text in a multiline text field <br>
+   * it has line wrapping on word bounds and a vertical scrollbar if needed
+   *
+   * @param msg the message to display below the textfield
+   * @param title the title for the dialog (default: SikuliX input request)
+   * @param lines the maximum number of lines visible in the text field (default 15)
+   * @param width the maximum number of characters visible in one line (default 30)
+   * @param text a preset text to show
+   * @return The user's input including the line breaks.
+   */
   public static String inputText(String msg, String title, int lines, int width, String text) {
     width = Math.max(20, width);
     lines = Math.max(9, lines);
     if ("".equals(title)) {
-      title = "Sikuli input request";
+      title = "SikuliX input request";
     }
     JTextArea ta = new JTextArea("");
-    int w = width * ta.getFontMetrics(ta.getFont()).charWidth('m');
+    String fontname = "Dialog";
+    if (Settings.InputFontMono) {
+      fontname = "Monospaced";
+    }
+    ta.setFont(new Font(fontname, Font.PLAIN, Math.max(14, Settings.InputFontSize)));
+    int w = (width + 1) * ta.getFontMetrics(ta.getFont()).charWidth('m');
     int h = (int) (lines * ta.getFontMetrics(ta.getFont()).getHeight());
-    ta.setPreferredSize(new Dimension(w, h));
-    ta.setMaximumSize(new Dimension(w, 2 * h));
     ta.setText(text);
-    JScrollPane sp = new JScrollPane(ta);
-    sp.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_NEVER);
+    ta.setLineWrap(true);
+    ta.setWrapStyleWord(true);
+
+    JScrollPane sp = new JScrollPane();
+    sp.setViewportView(ta);
+    sp.setPreferredSize(new Dimension(w, h));
+
     JTextArea tm = new JTextArea(msg);
     tm.setColumns(width);
     tm.setLineWrap(true);
     tm.setWrapStyleWord(true);
     tm.setEditable(false);
     tm.setBackground(new JLabel().getBackground());
+
     JPanel pnl = new JPanel();
     pnl.setLayout(new BoxLayout(pnl, BoxLayout.Y_AXIS));
     pnl.add(sp);
@@ -799,7 +820,7 @@ public class Sikulix {
     if (0 == ret) {
       return ta.getText();
     } else {
-      return "";
+      return null;
     }
   }
 

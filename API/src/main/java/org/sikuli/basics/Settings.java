@@ -26,6 +26,9 @@ public class Settings {
     public static boolean noPupUps = false;
     public static boolean FindProfiling = false;
 
+    public static boolean InputFontMono = false;
+    public static int InputFontSize = 14;
+
     private static void log(int level, String message, Object... args) {
         Debug.logx(level, me + message, args);
     }
