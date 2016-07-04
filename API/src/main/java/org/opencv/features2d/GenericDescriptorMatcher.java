@@ -1,4 +1,3 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
@@ -127,11 +126,9 @@ public class GenericDescriptorMatcher {
     protected final long nativeObj;
     protected GenericDescriptorMatcher(long addr) { nativeObj = addr; }
 
-
     public static final int
             ONEWAY = 1,
             FERN = 2;
-
 
     //
     // C++:  void javaGenericDescriptorMatcher::add(vector_Mat images, vector_vector_KeyPoint keypoints)
@@ -156,7 +153,6 @@ public class GenericDescriptorMatcher {
 
         return;
     }
-
 
     //
     // C++:  void javaGenericDescriptorMatcher::classify(Mat queryImage, vector_KeyPoint& queryKeypoints, Mat trainImage, vector_KeyPoint trainKeypoints)
@@ -195,7 +191,6 @@ public class GenericDescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaGenericDescriptorMatcher::classify(Mat queryImage, vector_KeyPoint& queryKeypoints)
     //
@@ -230,7 +225,6 @@ public class GenericDescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaGenericDescriptorMatcher::clear()
     //
@@ -247,7 +241,6 @@ public class GenericDescriptorMatcher {
 
         return;
     }
-
 
     //
     // C++:  javaGenericDescriptorMatcher* javaGenericDescriptorMatcher::jclone(bool emptyTrainData = false)
@@ -269,7 +262,6 @@ public class GenericDescriptorMatcher {
         return retVal;
     }
 
-
     //
     // C++: static javaGenericDescriptorMatcher* javaGenericDescriptorMatcher::create(int matcherType)
     //
@@ -282,7 +274,6 @@ public class GenericDescriptorMatcher {
         return retVal;
     }
 
-
     //
     // C++:  bool javaGenericDescriptorMatcher::empty()
     //
@@ -294,7 +285,6 @@ public class GenericDescriptorMatcher {
 
         return retVal;
     }
-
 
     //
     // C++:  vector_Mat javaGenericDescriptorMatcher::getTrainImages()
@@ -313,7 +303,6 @@ public class GenericDescriptorMatcher {
         return retVal;
     }
 
-
     //
     // C++:  vector_vector_KeyPoint javaGenericDescriptorMatcher::getTrainKeypoints()
     //
@@ -330,7 +319,6 @@ public class GenericDescriptorMatcher {
         Converters.Mat_to_vector_vector_KeyPoint(retValMat, retVal);
         return retVal;
     }
-
 
     //
     // C++:  bool javaGenericDescriptorMatcher::isMaskSupported()
@@ -349,7 +337,6 @@ public class GenericDescriptorMatcher {
 
         return retVal;
     }
-
 
     //
     // C++:  void javaGenericDescriptorMatcher::knnMatch(Mat queryImage, vector_KeyPoint queryKeypoints, Mat trainImage, vector_KeyPoint trainKeypoints, vector_vector_DMatch& matches, int k, Mat mask = Mat(), bool compactResult = false)
@@ -409,7 +396,6 @@ public class GenericDescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaGenericDescriptorMatcher::knnMatch(Mat queryImage, vector_KeyPoint queryKeypoints, vector_vector_DMatch& matches, int k, vector_Mat masks = vector<Mat>(), bool compactResult = false)
     //
@@ -462,7 +448,6 @@ public class GenericDescriptorMatcher {
         Converters.Mat_to_vector_vector_DMatch(matches_mat, matches);
         return;
     }
-
 
     //
     // C++:  void javaGenericDescriptorMatcher::match(Mat queryImage, vector_KeyPoint queryKeypoints, Mat trainImage, vector_KeyPoint trainKeypoints, vector_DMatch& matches, Mat mask = Mat())
@@ -540,7 +525,6 @@ public class GenericDescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaGenericDescriptorMatcher::match(Mat queryImage, vector_KeyPoint queryKeypoints, vector_DMatch& matches, vector_Mat masks = vector<Mat>())
     //
@@ -609,7 +593,6 @@ public class GenericDescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaGenericDescriptorMatcher::radiusMatch(Mat queryImage, vector_KeyPoint queryKeypoints, Mat trainImage, vector_KeyPoint trainKeypoints, vector_vector_DMatch& matches, float maxDistance, Mat mask = Mat(), bool compactResult = false)
     //
@@ -668,7 +651,6 @@ public class GenericDescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaGenericDescriptorMatcher::radiusMatch(Mat queryImage, vector_KeyPoint queryKeypoints, vector_vector_DMatch& matches, float maxDistance, vector_Mat masks = vector<Mat>(), bool compactResult = false)
     //
@@ -722,7 +704,6 @@ public class GenericDescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaGenericDescriptorMatcher::read(string fileName)
     //
@@ -741,7 +722,6 @@ public class GenericDescriptorMatcher {
 
         return;
     }
-
 
     //
     // C++:  void javaGenericDescriptorMatcher::train()
@@ -763,7 +743,6 @@ public class GenericDescriptorMatcher {
         return;
     }
 
-
     //
     // C++:  void javaGenericDescriptorMatcher::write(string fileName)
     //
@@ -783,12 +762,10 @@ public class GenericDescriptorMatcher {
         return;
     }
 
-
     @Override
     protected void finalize() throws Throwable {
         delete(nativeObj);
     }
-
 
 
     // C++:  void javaGenericDescriptorMatcher::add(vector_Mat images, vector_vector_KeyPoint keypoints)

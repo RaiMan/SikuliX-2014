@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -94,8 +94,8 @@ public class JXTitledSeparator extends JXPanel {
      * title if alignment is centered or left justified
      */
     private JSeparator rightSeparator;
-    
-    /** 
+
+    /**
      * Creates a new instance of <code>JXTitledSeparator</code>. The default title is simply
      * an empty string. Default justification is <code>LEADING</code>, and the default
      * horizontal text position is <code>TRAILING</code> (title follows icon)
@@ -103,8 +103,8 @@ public class JXTitledSeparator extends JXPanel {
     public JXTitledSeparator() {
         this("Untitled");
     }
-    
-    /** 
+
+    /**
      * Creates a new instance of <code>JXTitledSeparator</code> with the specified
      * title. Default horizontal alignment is <code>LEADING</code>, and the default
      * horizontal text position is <code>TRAILING</code> (title follows icon)
@@ -112,8 +112,8 @@ public class JXTitledSeparator extends JXPanel {
     public JXTitledSeparator(String title) {
         this(title, SwingConstants.LEADING, null);
     }
-    
-    /** 
+
+    /**
      * Creates a new instance of <code>JXTitledSeparator</code> with the specified
      * title and horizontal alignment. The default
      * horizontal text position is <code>TRAILING</code> (title follows icon)
@@ -121,15 +121,15 @@ public class JXTitledSeparator extends JXPanel {
     public JXTitledSeparator(String title, int horizontalAlignment) {
         this(title, horizontalAlignment, null);
     }
-    
-    /** 
+
+    /**
      * Creates a new instance of <code>JXTitledSeparator</code> with the specified
      * title, icon, and horizontal alignment. The default
      * horizontal text position is <code>TRAILING</code> (title follows icon)
      */
     public JXTitledSeparator(String title, int horizontalAlignment, Icon icon) {
         setLayout(new GridBagLayout());
-        
+
         label = new JLabel(title) {
             @Override
             public void updateUI(){
@@ -141,22 +141,22 @@ public class JXTitledSeparator extends JXPanel {
         label.setHorizontalAlignment(horizontalAlignment);
         leftSeparator = new JSeparator();
         rightSeparator = new JSeparator();
-        
+
         layoutSeparator();
-        
+
         updateTitle();
         setOpaque(false);
     }
-    
+
     /**
-     * Implementation detail. Handles updates of title color and font on LAF change. For more 
+     * Implementation detail. Handles updates of title color and font on LAF change. For more
      * details see swingx#451.
      */
     //TODO remove this method in favor of UI delegate -- kgs
     protected void updateTitle()
     {
       if (label == null) return;
-      
+
       Color c = label.getForeground();
       if (c == null || c instanceof ColorUIResource)
         setForeground(UIManager.getColor("TitledBorder.titleColor"));
@@ -169,17 +169,17 @@ public class JXTitledSeparator extends JXPanel {
     /**
      * Implementation detail. lays out this component, showing/hiding components
      * as necessary. Actually changes the containment (removes and adds components).
-     * <code>JXTitledSeparator</code> is treated as a single component rather than 
+     * <code>JXTitledSeparator</code> is treated as a single component rather than
      * a container.
      */
     private void layoutSeparator() {
         removeAll();
-        
+
         //SwingX #304 fix alignment issues
         //this is really a hacky fix, but a fix nonetheless
         //we need a better layout approach for this class
         int alignment = getHorizontalAlignment();
-        
+
         if (!getComponentOrientation().isLeftToRight()) {
             switch (alignment) {
             case SwingConstants.LEFT:
@@ -198,7 +198,7 @@ public class JXTitledSeparator extends JXPanel {
                 break;
             }
         }
-        
+
         switch (alignment) {
             case SwingConstants.LEFT:
             case SwingConstants.LEADING:
@@ -223,7 +223,7 @@ public class JXTitledSeparator extends JXPanel {
                 add(rightSeparator, new GridBagConstraints(4, 0, 1, 1, 0.5, 0.0, GridBagConstraints.LINE_START, GridBagConstraints.HORIZONTAL, new Insets(0,0,0,0), 0, 0));
         }
     }
-    
+
     /**
      * Sets the title for the separator. This may be simple html, or plain
      * text.
@@ -235,18 +235,18 @@ public class JXTitledSeparator extends JXPanel {
         label.setText(title);
         firePropertyChange("title", old, getTitle());
     }
-    
+
     /**
      * Gets the title.
-     * 
-     * @return the title being used for this <code>JXTitledSeparator</code>. 
-     *         This will be the raw title text, and so may include html tags etc 
+     *
+     * @return the title being used for this <code>JXTitledSeparator</code>.
+     *         This will be the raw title text, and so may include html tags etc
      *         if they were so specified in #setTitle.
      */
     public String getTitle() {
         return label.getText();
     }
-    
+
     /**
      * <p>Sets the alignment of the title along the X axis. If leading, then
      * the title will lead the separator (in left-to-right languages,
@@ -254,7 +254,7 @@ public class JXTitledSeparator extends JXPanel {
      * then a separator will be to the left, followed by the title (centered),
      * followed by a separator to the right. Trailing will have the title
      * on the right with a separator to its left, in left-to-right languages.</p>
-     * 
+     *
      * <p>LEFT and RIGHT always position the text left or right of the separator,
      * respectively, regardless of the language orientation.</p>
      *
@@ -279,14 +279,14 @@ public class JXTitledSeparator extends JXPanel {
         }
         firePropertyChange("horizontalAlignment", old, getHorizontalAlignment());
     }
-    
+
     /**
      * Returns the alignment of the title contents along the X axis.
      *
-     * @return   The value of the horizontalAlignment property, one of the 
+     * @return   The value of the horizontalAlignment property, one of the
      *           following constants defined in <code>SwingConstants</code>:
      *           <code>LEFT</code>,
-     *           <code>CENTER</code>, 
+     *           <code>CENTER</code>,
      *           <code>RIGHT</code>,
      *           <code>LEADING</code> or
      *           <code>TRAILING</code>.
@@ -317,7 +317,7 @@ public class JXTitledSeparator extends JXPanel {
         label.setHorizontalTextPosition(position);
         firePropertyChange("horizontalTextPosition", old, getHorizontalTextPosition());
     }
-    
+
     /**
      * Returns the horizontal position of the title's text,
      * relative to the icon.
@@ -325,7 +325,7 @@ public class JXTitledSeparator extends JXPanel {
      * @return   One of the following constants
      *           defined in <code>SwingConstants</code>:
      *           <code>LEFT</code>,
-     *           <code>CENTER</code>, 
+     *           <code>CENTER</code>,
      *           <code>RIGHT</code>,
      *           <code>LEADING</code> or
      *           <code>TRAILING</code>.
@@ -335,7 +335,7 @@ public class JXTitledSeparator extends JXPanel {
     public int getHorizontalTextPosition() {
         return label.getHorizontalTextPosition();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -359,7 +359,7 @@ public class JXTitledSeparator extends JXPanel {
      * the value of icon is null, nothing is displayed.
      * <p>
      * The default value of this property is null.
-     * 
+     *
      * @see #setHorizontalTextPosition
      * @see #getIcon
      */
@@ -368,9 +368,9 @@ public class JXTitledSeparator extends JXPanel {
         label.setIcon(icon);
         firePropertyChange("icon", old, getIcon());
     }
-    
+
     /**
-     * Returns the graphic image (glyph, icon) that the 
+     * Returns the graphic image (glyph, icon) that the
      * <code>JXTitledSeparator</code> displays.
      *
      * @return an Icon
@@ -390,7 +390,7 @@ public class JXTitledSeparator extends JXPanel {
         }
         super.setForeground(foreground);
     }
-    
+
     /**
      * {@inheritDoc}
      */

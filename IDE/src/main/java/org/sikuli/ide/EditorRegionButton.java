@@ -42,7 +42,7 @@ class EditorRegionButton extends JButton implements ActionListener, EventObserve
     ide.setVisible(false);
     Screen.doPrompt(SikuliIDE._I("msgCapturePrompt"), this);
   }
-  
+
   @Override
   public void update(EventSubject es) {
     OverlayCapturePrompt ocp = (OverlayCapturePrompt) es;

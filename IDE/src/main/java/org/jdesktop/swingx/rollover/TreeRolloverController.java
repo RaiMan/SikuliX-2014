@@ -28,20 +28,19 @@ import javax.swing.JTree;
 import javax.swing.tree.TreeCellRenderer;
 import javax.swing.tree.TreePath;
 
-
 /**
-     * listens to rollover properties. 
+     * listens to rollover properties.
      * Repaints effected component regions.
      * Updates link cursor.
-     * 
+     *
      * @author Jeanette Winzenburg
      */
     public class TreeRolloverController<T extends JTree>  extends RolloverController<T> {
-    
+
         private Cursor oldCursor;
-        
+
 //    -------------------------------------JTree rollover
-        
+
         @Override
         protected void rollover(Point oldLocation, Point newLocation) {
             // JW: conditional repaint not working?
@@ -65,7 +64,6 @@ import javax.swing.tree.TreePath;
             setRolloverCursor(newLocation);
         }
 
-
         private void setRolloverCursor(Point location) {
             if (hasRollover(location)) {
                 if (oldCursor == null) {
@@ -82,11 +80,10 @@ import javax.swing.tree.TreePath;
 
         }
 
-
         @Override
         protected RolloverRenderer getRolloverRenderer(Point location, boolean prepare) {
             TreeCellRenderer renderer = component.getCellRenderer();
-            RolloverRenderer rollover = renderer instanceof RolloverRenderer 
+            RolloverRenderer rollover = renderer instanceof RolloverRenderer
                 ? (RolloverRenderer) renderer : null;
             if ((rollover != null) && !rollover.isEnabled()) {
                 rollover = null;
@@ -94,13 +91,12 @@ import javax.swing.tree.TreePath;
             if ((rollover != null) && prepare) {
                 TreePath path = component.getPathForRow(location.y);
                 Object element = path != null ? path.getLastPathComponent() : null;
-                renderer.getTreeCellRendererComponent(component, element, false, 
-                        false, false, 
+                renderer.getTreeCellRendererComponent(component, element, false,
+                        false, false,
                         location.y, false);
             }
             return rollover;
         }
-
 
         @Override
         protected Point getFocusedCell() {

@@ -71,13 +71,11 @@ const cv::Size szSmall128 = cv::Size(128, 128);
 #define SZ_ALL  ::testing::Values(::perf::szQVGA, ::perf::szVGA, ::perf::szSVGA, ::perf::szXGA, ::perf::szSXGA, ::perf::sznHD, ::perf::szqHD, ::perf::sz720p, ::perf::sz1080p)
 #define SZ_TYPICAL  ::testing::Values(::perf::szVGA, ::perf::szqHD, ::perf::sz720p, ::perf::szODD)
 
-
 #define TYPICAL_MAT_SIZES ::perf::szVGA, ::perf::sz720p, ::perf::sz1080p, ::perf::szODD
 #define TYPICAL_MAT_TYPES CV_8UC1, CV_8UC4, CV_32FC1
 #define TYPICAL_MATS testing::Combine( testing::Values( TYPICAL_MAT_SIZES ), testing::Values( TYPICAL_MAT_TYPES ) )
 #define TYPICAL_MATS_C1 testing::Combine( testing::Values( TYPICAL_MAT_SIZES ), testing::Values( CV_8UC1, CV_32FC1 ) )
 #define TYPICAL_MATS_C4 testing::Combine( testing::Values( TYPICAL_MAT_SIZES ), testing::Values( CV_8UC4 ) )
-
 
 /*****************************************************************************************\
 *                MatType - printable wrapper over integer 'type' of Mat                   *
@@ -251,7 +249,6 @@ typedef struct CV_EXPORTS performance_metrics
     void clear();
 } performance_metrics;
 
-
 /*****************************************************************************************\
 *                           Strategy for performance measuring                            *
 \*****************************************************************************************/
@@ -260,7 +257,6 @@ enum PERF_STRATEGY
     PERF_STRATEGY_BASE = 0,
     PERF_STRATEGY_SIMPLE = 1,
 };
-
 
 /*****************************************************************************************\
 *                           Base fixture for performance tests                            *
@@ -390,7 +386,6 @@ namespace cv
 CV_EXPORTS void PrintTo(const Size& sz, ::std::ostream* os);
 
 } //namespace cv
-
 
 /*****************************************************************************************\
 *                        Macro definitions for performance tests                          *

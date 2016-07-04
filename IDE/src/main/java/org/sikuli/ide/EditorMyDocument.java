@@ -18,4 +18,3 @@ class EditorMyDocument extends DefaultStyledDocument {
          Debug.log(5, "insertString: " + str);
       }
 }
-

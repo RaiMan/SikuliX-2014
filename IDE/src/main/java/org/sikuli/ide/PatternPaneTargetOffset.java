@@ -20,7 +20,7 @@ import org.sikuli.script.Region;
 import org.sikuli.script.Screen;
 import org.sikuli.script.ScreenImage;
 
-class PatternPaneTargetOffset extends JPanel implements 
+class PatternPaneTargetOffset extends JPanel implements
         MouseListener, MouseWheelListener, ChangeListener {
 
   final static String me = "PatternPaneTargetOffset: ";
@@ -190,7 +190,7 @@ class PatternPaneTargetOffset extends JPanel implements
 		}
 		int subX = _viewX < 0 ? 0 : _viewX;
     int subY = _viewY < 0 ? 0 : _viewY;
-		int subW = _viewW - (subX - _viewX); 
+		int subW = _viewW - (subX - _viewX);
     int subH = _viewH - (subY - _viewY);
 		BufferedImage img = _simg.getImage();
 		if (subX + subW >= img.getWidth()) {

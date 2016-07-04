@@ -1,4 +1,3 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
@@ -150,7 +149,6 @@ public class Highgui {
             IMWRITE_PNG_STRATEGY_FIXED = 4,
             IMWRITE_PXM_BINARY = 32;
 
-
     //
     // C++:  Mat imdecode(Mat buf, int flags)
     //
@@ -179,7 +177,6 @@ public class Highgui {
 
         return retVal;
     }
-
 
     //
     // C++:  bool imencode(string ext, Mat img, vector_uchar& buf, vector_int params = vector<int>())
@@ -234,7 +231,6 @@ public class Highgui {
 
         return retVal;
     }
-
 
     //
     // C++:  Mat imread(string filename, int flags = 1)
@@ -360,7 +356,6 @@ public class Highgui {
 
         return retVal;
     }
-
 
     //
     // C++:  bool imwrite(string filename, Mat img, vector_int params = vector<int>())

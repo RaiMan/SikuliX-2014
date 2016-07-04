@@ -814,7 +814,6 @@ class UNICHARSET {
     return unichars[unichar_id].properties.enabled;
   }
 
-
   int null_sid() const { return null_sid_; }
   int common_sid() const { return common_sid_; }
   int latin_sid() const { return latin_sid_; }

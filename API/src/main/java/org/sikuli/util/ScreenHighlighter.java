@@ -122,7 +122,6 @@ public class ScreenHighlighter extends OverlayTransparentWindow implements Mouse
     addMouseListener(this);
   }
 
-
   public void setWaitAfter(boolean state) {
     noWaitAfter = state;
   }

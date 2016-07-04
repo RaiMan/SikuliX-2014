@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -43,16 +43,14 @@ import org.jdesktop.swingx.hyperlink.AbstractHyperlinkAction;
 import org.jdesktop.swingx.renderer.StringValue;
 import org.jdesktop.swingx.renderer.StringValues;
 
-
 /**
- * Custom implementation of a CalendarHeaderHandler in preparation of a vista-style 
+ * Custom implementation of a CalendarHeaderHandler in preparation of a vista-style
  * calendar. Does nothing yet.
- * 
+ *
  * @author Jeanette Winzenburg
  */
 public class BasicCalendarHeaderHandler extends CalendarHeaderHandler {
-    
-    
+
     @Override
     public void install(JXMonthView monthView) {
         super.install(monthView);
@@ -62,8 +60,7 @@ public class BasicCalendarHeaderHandler extends CalendarHeaderHandler {
 
     }
 
-    
-    
+
     @Override
     protected void installNavigationActions() {
         // TODO Auto-generated method stub
@@ -74,13 +71,11 @@ public class BasicCalendarHeaderHandler extends CalendarHeaderHandler {
     }
 
 
-
     @Override
     public void uninstall(JXMonthView monthView) {
         getHeaderComponent().setActions(null, null, null);
         super.uninstall(monthView);
     }
-
 
     @Override
     public BasicCalendarHeader getHeaderComponent() {
@@ -95,12 +90,12 @@ public class BasicCalendarHeaderHandler extends CalendarHeaderHandler {
 
     /**
      * Quick fix for Issue #1046-swingx: header text not updated if zoomable.
-     * 
+     *
      */
     protected static class ZoomOutAction extends AbstractHyperlinkAction<JXMonthView> {
 
         private PropertyChangeListener linkListener;
-        // Formatters/state used by Providers. 
+        // Formatters/state used by Providers.
         /** Localized month strings used in title. */
         private String[] monthNames;
         private StringValue tsv ;
@@ -108,28 +103,27 @@ public class BasicCalendarHeaderHandler extends CalendarHeaderHandler {
         public ZoomOutAction() {
             super();
             tsv = new StringValue() {
-                
+
                 @Override
                 public String getString(Object value) {
                     if (value instanceof Calendar) {
                         String month = monthNames[((Calendar) value)
                                                   .get(Calendar.MONTH)];
                         return month + " "
-                        + ((Calendar) value).get(Calendar.YEAR); 
+                        + ((Calendar) value).get(Calendar.YEAR);
                     }
                     return StringValues.TO_STRING.getString(value);
                 }
-                
+
             };
         }
-        
+
         @Override
         public void actionPerformed(ActionEvent e) {
             // TODO Auto-generated method stub
-            
+
         }
 
-        
         /**
          * installs a propertyChangeListener on the target and
          * updates the visual properties from the target.
@@ -144,7 +138,7 @@ public class BasicCalendarHeaderHandler extends CalendarHeaderHandler {
         }
 
         /**
-         * 
+         *
          */
         private void updateLocale() {
             Locale current = getTarget() != null ? getTarget().getLocale() : Locale.getDefault();
@@ -153,11 +147,11 @@ public class BasicCalendarHeaderHandler extends CalendarHeaderHandler {
 
         /**
          * removes the propertyChangeListener. <p>
-         * 
+         *
          * Implementation NOTE: this does not clean-up internal state! There is
          * no need to because updateFromTarget handles both null and not-null
          * targets. Hmm...
-         * 
+         *
          */
         @Override
         protected void uninstallTarget() {
@@ -185,19 +179,17 @@ public class BasicCalendarHeaderHandler extends CalendarHeaderHandler {
                         updateFromTarget();
                     }
                 }
-                
+
             };
             }
             return linkListener;
         }
 
-        
     }
 
-    
     /**
      * Active header for a JXMonthView in zoomable mode.<p>
-     * 
+     *
      *  PENDING JW: very much work-in-progress.
      */
     static class BasicCalendarHeader extends JXPanel {
@@ -221,7 +213,7 @@ public class BasicCalendarHeaderHandler extends CalendarHeaderHandler {
 
         /**
          * Sets the actions for backward, forward and zoom out navigation.
-         * 
+         *
          * @param prev
          * @param next
          * @param zoomOut
@@ -231,11 +223,10 @@ public class BasicCalendarHeaderHandler extends CalendarHeaderHandler {
             nextButton.setAction(next);
             zoomOutLink.setAction(zoomOut);
         }
-        
-        
+
         /**
          * {@inheritDoc} <p>
-         * 
+         *
          * Overridden to set the font of the zoom hyperlink.
          */
         @Override
@@ -265,4 +256,3 @@ public class BasicCalendarHeaderHandler extends CalendarHeaderHandler {
     }
 
 }
-    

@@ -92,7 +92,6 @@ class False
 {
 };
 
-
 /**
  * Squared Euclidean distance functor.
  *
@@ -126,7 +125,6 @@ struct L2_Simple
         return (a-b)*(a-b);
     }
 };
-
 
 
 /**
@@ -193,7 +191,6 @@ struct L2
     }
 };
 
-
 /*
  * Manhattan distance functor, optimized version
  */
@@ -251,7 +248,6 @@ struct L1
         return abs(a-b);
     }
 };
-
 
 
 template<class T>
@@ -315,7 +311,6 @@ struct MinkowskiDistance
         return pow(static_cast<ResultType>(abs(a-b)),order);
     }
 };
-
 
 
 template<class T>
@@ -452,7 +447,6 @@ struct Hamming
     typedef False is_kdtree_distance;
     typedef False is_vector_space_distance;
 
-
     typedef T ElementType;
     typedef int ResultType;
 
@@ -562,7 +556,6 @@ struct Hamming2
 };
 
 
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 template<class T>
@@ -619,7 +612,6 @@ struct HistIntersectionDistance
 };
 
 
-
 template<class T>
 struct HellingerDistance
 {
@@ -666,7 +658,6 @@ struct HellingerDistance
         return sqrt(static_cast<ResultType>(a)) - sqrt(static_cast<ResultType>(b));
     }
 };
-
 
 template<class T>
 struct ChiSquareDistance
@@ -721,7 +712,6 @@ struct ChiSquareDistance
     }
 };
 
-
 template<class T>
 struct KL_Divergence
 {
@@ -771,7 +761,6 @@ struct KL_Divergence
         return result;
     }
 };
-
 
 
 /*

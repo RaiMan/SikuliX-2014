@@ -81,7 +81,7 @@ public class WindowsHotkeyManager extends HotkeyManager {
     _idCallbackMap.clear();
     itype.cleanUp();
   }
-  
+
   private int translateMod(int mod) {
     int newMod = 0;
     if (1 == (mod & 1)) {

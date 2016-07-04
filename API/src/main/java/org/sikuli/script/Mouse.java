@@ -153,7 +153,7 @@ public class Mouse {
   public static void setMouseMovedHighlight(boolean state) {
     get().device.MouseMovedHighlight = state;
 }
-  
+
   /**
    * check if mouse was moved since last mouse action
    *
@@ -236,7 +236,7 @@ public class Mouse {
         mouse.afterWait = args[1];
         if (args.length > 2) {
           mouse.innerWait = args[2];
-        } 
+        }
       }
     }
   }
@@ -424,7 +424,7 @@ public class Mouse {
   protected static void wheel(int direction, int steps, Region region) {
     wheel(direction,steps,region, WHEEL_STEP_DELAY);
   }
-    
+
   protected static void wheel(int direction, int steps, Region region, int stepDelay) {
     if (get().device.isSuspended()) {
       return;

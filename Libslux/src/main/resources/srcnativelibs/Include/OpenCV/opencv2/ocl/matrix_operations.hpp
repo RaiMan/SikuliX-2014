@@ -166,7 +166,6 @@ namespace cv
             //dataend += step * (rows - 1) + minstep;
         }
 
-
         inline oclMat::oclMat(const oclMat &m, const Range &rRange, const Range &cRange)
         {
             flags = m.flags;
@@ -481,7 +480,6 @@ namespace cv
         {
             ensureSizeIsEnough(size.height, size.width, type, m);
         }
-
 
     } /* end of namespace ocl */
 

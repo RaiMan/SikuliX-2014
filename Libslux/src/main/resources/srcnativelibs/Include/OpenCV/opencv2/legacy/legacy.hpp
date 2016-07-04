@@ -184,13 +184,11 @@ CVAPI(CvImgObsInfo*)  cvCreateObsInfo( CvSize numObs, int obsSize );
 /* Releases storage for observation vectors */
 CVAPI(void)  cvReleaseObsInfo( CvImgObsInfo** obs_info );
 
-
 /* The function takes an image on input and and returns the sequnce of observations
    to be used with an embedded HMM; Each observation is top-left block of DCT
    coefficient matrix */
 CVAPI(void)  cvImgToObs_DCT( const CvArr* arr, float* obs, CvSize dctSize,
                              CvSize obsSize, CvSize delta );
-
 
 /* Uniformly segments all observation vectors extracted from image */
 CVAPI(void)  cvUniformImgSegm( CvImgObsInfo* obs_info, CvEHMM* ehmm );
@@ -216,7 +214,6 @@ CVAPI(void)  cvEstimateObsProb( CvImgObsInfo* obs_info,
 
 /* Runs Viterbi algorithm for embedded HMM */
 CVAPI(float)  cvEViterbi( CvImgObsInfo* obs_info, CvEHMM* hmm );
-
 
 /* Function clusters observation vectors from several images
    given observations segmentation.
@@ -283,7 +280,6 @@ typedef enum CvGraphWeightType
     CV_WEIGHTED_ALL
 } CvGraphWeightType;
 
-
 /* Calculates histogram of a contour */
 CVAPI(void)  cvCalcPGH( const CvSeq* contour, CvHistogram* hist );
 
@@ -298,7 +294,6 @@ CVAPI(CvSeq*) cvFindDominantPoints( CvSeq* contour, CvMemStorage* storage,
                                    double parameter4 CV_DEFAULT(0));
 
 /*****************************************************************************************/
-
 
 /*******************************Stereo correspondence*************************************/
 
@@ -341,7 +336,6 @@ CVAPI(void) cvEndFindCliques( CvCliqueFinder* finder );
 
 CVAPI(void) cvBronKerbosch( CvGraph* graph );*/
 
-
 /*F///////////////////////////////////////////////////////////////////////////////////////
 //
 //    Name:    cvSubgraphWeight
@@ -377,7 +371,6 @@ CVAPI(void) cvBronKerbosch( CvGraph* graph );*/
                                   CvGraphWeightType weight_type CV_DEFAULT(CV_NOT_WEIGHTED),
                                   CvVect32f weight_vtx CV_DEFAULT(0),
                                   CvMatr32f weight_edge CV_DEFAULT(0) );*/
-
 
 /*F///////////////////////////////////////////////////////////////////////////////////////
 //
@@ -435,7 +428,6 @@ CVAPI(void) cvBronKerbosch( CvGraph* graph );*/
                                  int num_generations CV_DEFAULT(3),
                                  int quality CV_DEFAULT(2) );*/
 
-
 #define CV_UNDEF_SC_PARAM         12345 //default value of parameters
 
 #define CV_IDP_BIRCHFIELD_PARAM1  25
@@ -444,9 +436,7 @@ CVAPI(void) cvBronKerbosch( CvGraph* graph );*/
 #define CV_IDP_BIRCHFIELD_PARAM4  15
 #define CV_IDP_BIRCHFIELD_PARAM5  25
 
-
 #define  CV_DISPARITY_BIRCHFIELD  0
-
 
 /*F///////////////////////////////////////////////////////////////////////////
 //
@@ -481,7 +471,6 @@ cvFindStereoCorrespondence(
 /************ Epiline functions *******************/
 
 
-
 typedef struct CvStereoLineCoeff
 {
     double Xcoef;
@@ -499,7 +488,6 @@ typedef struct CvStereoLineCoeff
     double ZcoefB;
     double ZcoefAB;
 }CvStereoLineCoeff;
-
 
 typedef struct CvCamera
 {
@@ -529,7 +517,6 @@ typedef struct CvStereoCamera
     float rotMatrix[9];
     float transVector[3];
 } CvStereoCamera;
-
 
 typedef struct CvContourOrientation
 {
@@ -585,7 +572,6 @@ CVAPI(int) icvStereoCalibration( int numImages,
                             CvPoint3D32f* objectPoints,
                             CvStereoCamera* stereoparams
                            );
-
 
 CVAPI(int) icvComputeRestStereoParams(CvStereoCamera *stereoparams);
 
@@ -741,7 +727,6 @@ CVAPI(void) cvDeInterlace( const CvArr* frame, CvArr* fieldEven, CvArr* fieldOdd
                                     CvVect32f     bestTransVect
                                     );*/
 
-
 /****************************************************************************************\
 *                                     Contour Tree                                       *
 \****************************************************************************************/
@@ -785,7 +770,6 @@ CvSeq* cvCalcContoursCorrespondence( const CvSeq* contour1,
 CvSeq* cvMorphContours( const CvSeq* contour1, const CvSeq* contour2,
                         CvSeq* corr, double alpha,
                         CvMemStorage* storage );
-
 
 /****************************************************************************************\
 *                                   Active Contours                                      *
@@ -853,7 +837,6 @@ CVAPI(IplImage*) cvCreateGLCMImage( CvGLCM* GLCM, int step );
 *                                  Face eyes&mouth tracking                              *
 \****************************************************************************************/
 
-
 typedef struct CvFaceTracker CvFaceTracker;
 
 #define CV_NUM_FACE_ELEMENTS    3
@@ -871,7 +854,6 @@ CVAPI(int) cvTrackFace( CvFaceTracker* pFaceTracker, IplImage* imgGray,
                               CvPoint* ptRotate, double* dbAngleRotate);
 CVAPI(void) cvReleaseFaceTracker(CvFaceTracker** ppFaceTracker);
 
-
 typedef struct CvFace
 {
     CvRect MouthRect;
@@ -881,7 +863,6 @@ typedef struct CvFace
 
 CvSeq * cvFindFace(IplImage * Image,CvMemStorage* storage);
 CvSeq * cvPostBoostingFindFace(IplImage * Image,CvMemStorage* storage);
-
 
 /****************************************************************************************\
 *                                         3D Tracker                                     *
@@ -950,7 +931,6 @@ CVAPI(int)  cv3dTrackerLocateObjects(int num_cameras, int num_objects,
  visible by more than one camera. The id field of any unused slots in tracked objects is
  set to -1.
 ****************************************************************************************/
-
 
 /****************************************************************************************\
 *                           Skeletons and Linear-Contour Models                          *
@@ -1056,14 +1036,12 @@ typedef struct CvLCMNode
     CvContour* contour;
 } CvLCMNode;
 
-
 /* Computes hybrid model from Voronoi Diagram */
 CVAPI(CvGraph*) cvLinearContorModelFromVoronoiDiagram(CvVoronoiDiagram2D* VoronoiDiagram,
                                                          float maxWidth);
 
 /* Releases hybrid model storage */
 CVAPI(int) cvReleaseLinearContorModelStorage(CvGraph** Graph);
-
 
 /* two stereo-related functions */
 
@@ -1154,7 +1132,6 @@ CVAPI(void)  cvPostWarpImage( int       line_count,
 
 /* Deletes Moire (missed pixels that appear due to discretization) */
 CVAPI(void)  cvDeleteMoire( IplImage*  img );
-
 
 typedef struct CvConDensation
 {
@@ -1506,7 +1483,6 @@ protected:
     int* refcount;
 };
 
-
 class CV_EXPORTS CvMatrix
 {
 public:
@@ -1762,7 +1738,6 @@ struct CV_EXPORTS_W_MAP CvEMParams
     CV_PROP_RW CvTermCriteria term_crit;
 };
 
-
 class CV_EXPORTS_W CvEM : public CvStatModel
 {
 public:
@@ -1868,7 +1843,6 @@ public:
     double thetaMin, thetaMax;
     double phiMin, phiMax;
 };
-
 
 class CV_EXPORTS LDetector
 {
@@ -1995,7 +1969,6 @@ protected:
     vector<float> posteriors;
 };
 
-
 /****************************************************************************************\
  *                                 Calonder Classifier                                    *
  \****************************************************************************************/
@@ -2091,7 +2064,6 @@ private:
     void compressLeaves(size_t reduced_num_dim);
     void estimateQuantPercForPosteriors(float perc[2]);
 };
-
 
 inline uchar* getData(IplImage* image)
 {
@@ -2363,7 +2335,6 @@ protected:
     int m_pca_dim_low; // the number of pca components to use for comparison
 };
 
-
 // OneWayDescriptorBase: encapsulates functionality for training/loading a set of one way descriptors
 // and finding the nearest closest descriptor to an input feature
 class CV_EXPORTS OneWayDescriptorBase
@@ -2386,10 +2357,8 @@ public:
                          float _scale_min = 0.7f, float _scale_max=1.5f, float _scale_step=1.2f, int pyr_levels = 1,
                          int pca_dim_high = 100, int pca_dim_low = 100);
 
-
     virtual ~OneWayDescriptorBase();
     void clear ();
-
 
     // Allocate: allocates memory for a given number of descriptors
     void Allocate(int train_feature_count);
@@ -2572,14 +2541,12 @@ public:
                            const string &train_path = string (), const string &images_list = string (),
                            float _scale_min = 0.7f, float _scale_max=1.5f, float _scale_step=1.2f, int pyr_levels = 1);
 
-
     virtual ~OneWayDescriptorObject();
 
     // Allocate: allocates memory for a given number of features
     // - train_feature_count: the total number of features
     // - object_feature_count: the number of features extracted from the object
     void Allocate(int train_feature_count, int object_feature_count);
-
 
     void SetLabeledFeatures(const vector<KeyPoint>& features) {m_train_features = features;};
     vector<KeyPoint>& GetLabeledFeatures() {return m_train_features;};
@@ -2596,7 +2563,6 @@ public:
     // - desc_idx: descriptor index
     int GetDescriptorPart(int desc_idx) const;
 
-
     void InitializeObjectDescriptors(IplImage* train_image, const vector<KeyPoint>& features,
                                      const char* feature_label, int desc_start_idx = 0, float scale = 1.0f,
                                      int is_background = 0);
@@ -2610,7 +2576,6 @@ protected:
     int m_object_feature_count; // the number of the positive features
 
 };
-
 
 /*
  *  OneWayDescriptorMatcher
@@ -2751,7 +2716,6 @@ protected:
     int prevTrainCount;
 };
 
-
 /*
  * CalonderDescriptorExtractor
  */
@@ -2817,7 +2781,6 @@ bool CalonderDescriptorExtractor<T>::empty() const
     return classifier_.trees_.empty();
 }
 
-
 ////////////////////// Brute Force Matcher //////////////////////////
 
 template<class Distance>
@@ -2827,7 +2790,6 @@ public:
     BruteForceMatcher( Distance d = Distance() ) : BFMatcher(Distance::normType, false) {(void)d;}
     virtual ~BruteForceMatcher() {}
 };
-
 
 /****************************************************************************************\
 *                                Planar Object Detection                                 *
@@ -2943,7 +2905,6 @@ CV_INLINE  CvSubdiv2D* cvCreateSubdivDelaunay2D( CvRect rect, CvMemStorage* stor
     return subdiv;
 }
 
-
 /* Inserts new point to the Delaunay triangulation */
 CVAPI(CvSubdiv2DPoint*)  cvSubdivDelaunay2DInsert( CvSubdiv2D* subdiv, CvPoint2D32f pt);
 
@@ -2958,14 +2919,11 @@ CVAPI(CvSubdiv2DPointLocation)  cvSubdiv2DLocate(
 /* Calculates Voronoi tesselation (i.e. coordinates of Voronoi points) */
 CVAPI(void)  cvCalcSubdivVoronoi2D( CvSubdiv2D* subdiv );
 
-
 /* Removes all Voronoi points from the tesselation */
 CVAPI(void)  cvClearSubdivVoronoi2D( CvSubdiv2D* subdiv );
 
-
 /* Finds the nearest to the given point vertex in subdivision. */
 CVAPI(CvSubdiv2DPoint*) cvFindNearestPoint2D( CvSubdiv2D* subdiv, CvPoint2D32f pt );
-
 
 /************ Basic quad-edge navigation and operations ************/
 
@@ -2973,7 +2931,6 @@ CV_INLINE  CvSubdiv2DEdge  cvSubdiv2DNextEdge( CvSubdiv2DEdge edge )
 {
     return  CV_SUBDIV2D_NEXT_EDGE(edge);
 }
-
 
 CV_INLINE  CvSubdiv2DEdge  cvSubdiv2DRotateEdge( CvSubdiv2DEdge edge, int rotate )
 {
@@ -2992,13 +2949,11 @@ CV_INLINE  CvSubdiv2DEdge  cvSubdiv2DGetEdge( CvSubdiv2DEdge edge, CvNextEdgeTyp
     return  (edge & ~3) + ((edge + ((int)type >> 4)) & 3);
 }
 
-
 CV_INLINE  CvSubdiv2DPoint*  cvSubdiv2DEdgeOrg( CvSubdiv2DEdge edge )
 {
     CvQuadEdge2D* e = (CvQuadEdge2D*)(edge & ~3);
     return (CvSubdiv2DPoint*)e->pt[edge & 3];
 }
-
 
 CV_INLINE  CvSubdiv2DPoint*  cvSubdiv2DEdgeDst( CvSubdiv2DEdge edge )
 {
@@ -3034,7 +2989,6 @@ CV_INLINE  double  cvTriangleArea( CvPoint2D32f a, CvPoint2D32f b, CvPoint2D32f 
     return ((double)b.x - a.x) * ((double)c.y - a.y) - ((double)b.y - a.y) * ((double)c.x - a.x);
 }
 
-
 /* Constructs kd-tree from set of feature descriptors */
 CVAPI(struct CvFeatureTree*) cvCreateKDTree(CvMat* desc);
 
@@ -3057,7 +3011,6 @@ CVAPI(void) cvFindFeatures(struct CvFeatureTree* tr, const CvMat* query_points,
 CVAPI(int) cvFindFeaturesBoxed(struct CvFeatureTree* tr,
                                CvMat* bounds_min, CvMat* bounds_max,
                                CvMat* out_indices);
-
 
 /* Construct a Locality Sensitive Hash (LSH) table, for indexing d-dimensional vectors of
  given type. Vectors will be hashed L times with k-dimensional p-stable (p=2) functions. */
@@ -3134,7 +3087,6 @@ CVAPI(void)  cvCalcOpticalFlowHS( const CvArr* prev, const CvArr* curr,
                                  int use_previous, CvArr* velx, CvArr* vely,
                                  double lambda, CvTermCriteria criteria );
 
-
 /****************************************************************************************\
 *                           Background/foreground segmentation                           *
 \****************************************************************************************/
@@ -3167,7 +3119,6 @@ CVAPI(void)  cvCalcOpticalFlowHS( const CvArr* prev, const CvArr* curr,
  *       C Stauffer and W Grimson  August 2000
  *       IEEE Transactions on Pattern Analysis and Machine Intelligence 22(8):747-757
  */
-
 
 #define CV_BG_MODEL_FGD		0
 #define CV_BG_MODEL_MOG		1			/* "Mixture of Gaussians".	*/
@@ -3308,7 +3259,6 @@ typedef struct CvBGPixelStat
     uchar                 is_trained_dyn_model;
 } CvBGPixelStat;
 
-
 typedef struct CvFGDStatModel
 {
     CV_BG_STAT_MODEL_FIELDS();
@@ -3345,7 +3295,6 @@ CVAPI(CvBGStatModel*) cvCreateFGDStatModel( IplImage* first_frame,
 #define CV_BGFG_MOG_SIGMA_INIT               30
 #define CV_BGFG_MOG_MINAREA                  15.f
 
-
 #define CV_BGFG_MOG_NCOLORS                  3
 
 typedef struct CvGaussBGStatModelParams
@@ -3369,7 +3318,6 @@ typedef struct CvGaussBGPoint
     CvGaussBGValues* g_values;
 } CvGaussBGPoint;
 
-
 typedef struct CvGaussBGModel
 {
     CV_BG_STAT_MODEL_FIELDS();
@@ -3379,11 +3327,9 @@ typedef struct CvGaussBGModel
     void*                      mog;
 } CvGaussBGModel;
 
-
 /* Creates Gaussian mixture background model */
 CVAPI(CvBGStatModel*) cvCreateGaussianBGModel( IplImage* first_frame,
                                               CvGaussBGStatModelParams* parameters CV_DEFAULT(NULL));
-
 
 typedef struct CvBGCodeBookElem
 {

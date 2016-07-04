@@ -8,24 +8,22 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package org.jdesktop.swingx.renderer;
 
-
 import java.awt.Component;
 
 import javax.swing.JTable;
 import javax.swing.table.TableCellRenderer;
-
 
 /**
  * Adapter to glue SwingX renderer support to core api. It has convenience
@@ -33,9 +31,9 @@ import javax.swing.table.TableCellRenderer;
  * StringValue and horizontal alignment. Typically, client code does not
  * interact with this class except at instantiation time.
  * <p>
- * 
+ *
  * <code>JXTable</code> uses instances of this as per-class default renderers.
- * 
+ *
  * <pre><code>
  * setDefaultRenderer(Object.class, new DefaultTableRenderer());
  * setDefaultRenderer(Number.class, new DefaultTableRenderer(
@@ -51,29 +49,28 @@ import javax.swing.table.TableCellRenderer;
  * setDefaultRenderer(Boolean.class,
  *         new DefaultTableRenderer(new CheckBoxProvider()));
  * </code></pre>
- * 
- * 
- * 
+ *
+ *
+ *
  * @author Jeanette Winzenburg
- * 
+ *
  * @see ComponentProvider
  * @see LabelProvider
  * @see StringValue
  * @see IconValue
  * @see MappedValue
  * @see CellContext
- * 
+ *
  */
 public class DefaultTableRenderer extends AbstractRenderer
         implements TableCellRenderer {
 
     private TableCellContext cellContext;
-    
-    
+
     /**
      * Instantiates a default table renderer with the default component
-     * provider. 
-     * 
+     * provider.
+     *
      * @see #DefaultTableRenderer(ComponentProvider)
      */
     public DefaultTableRenderer() {
@@ -84,7 +81,7 @@ public class DefaultTableRenderer extends AbstractRenderer
      * Instantiates a default table renderer with the given component provider.
      * If the controller is null, creates and uses a default. The default
      * provider is of type <code>LabelProvider</code>.
-     * 
+     *
      * @param componentProvider the provider of the configured component to
      *        use for cell rendering
      */
@@ -95,12 +92,12 @@ public class DefaultTableRenderer extends AbstractRenderer
 
     /**
      * Instantiates a default table renderer with a default component
-     * provider using the given converter. 
-     * 
+     * provider using the given converter.
+     *
      * @param converter the converter to use for mapping the
      *   content value to a String representation.
-     *   
-     * @see #DefaultTableRenderer(ComponentProvider)  
+     *
+     * @see #DefaultTableRenderer(ComponentProvider)
      */
     public DefaultTableRenderer(StringValue converter) {
         this(new LabelProvider(converter));
@@ -108,13 +105,13 @@ public class DefaultTableRenderer extends AbstractRenderer
 
     /**
      * Instantiates a default table renderer with a default component
-     * provider using the given converter and horizontal 
-     * alignment. 
-     * 
+     * provider using the given converter and horizontal
+     * alignment.
+     *
      * @param converter the converter to use for mapping the
      *   content value to a String representation.
-     *   
-     * @see #DefaultTableRenderer(ComponentProvider)  
+     *
+     * @see #DefaultTableRenderer(ComponentProvider)
      */
     public DefaultTableRenderer(StringValue converter, int alignment) {
         this(new LabelProvider(converter, alignment));
@@ -123,7 +120,7 @@ public class DefaultTableRenderer extends AbstractRenderer
     /**
      * Intantiates a default table renderer with default component provider
      * using both converters.
-     * 
+     *
      * @param stringValue the converter to use for the string representation
      * @param iconValue the converter to use for the icon representation
      */
@@ -134,7 +131,7 @@ public class DefaultTableRenderer extends AbstractRenderer
     /**
      * Intantiates a default table renderer with default component provider
      * using both converters and the given alignment.
-     * 
+     *
      * @param stringValue the converter to use for the string representation
      * @param iconValue the converter to use for the icon representation
      * @param alignment the rendering component's horizontal alignment
@@ -146,13 +143,13 @@ public class DefaultTableRenderer extends AbstractRenderer
 
     // -------------- implements javax.swing.table.TableCellRenderer
     /**
-     * 
+     *
      * Returns a configured component, appropriate to render the given
-     * list cell. <p> 
-     * 
+     * list cell. <p>
+     *
      * Note: The component's name is set to "Table.cellRenderer" for the sake
      * of Synth-based LAFs.
-     * 
+     *
      * @param table the <code>JTable</code>
      * @param value the value to assign to the cell at
      *        <code>[row, column]</code>
@@ -175,13 +172,10 @@ public class DefaultTableRenderer extends AbstractRenderer
 
     /**
      * {@inheritDoc}
-     */ 
+     */
     @Override
     protected ComponentProvider<?> createDefaultComponentProvider() {
         return new LabelProvider();
     }
 
-
 }
-
-

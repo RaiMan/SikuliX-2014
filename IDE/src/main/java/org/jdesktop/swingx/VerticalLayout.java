@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -30,14 +30,14 @@ import org.jdesktop.swingx.util.Separator;
 
 /**
  * Organizes components in a vertical layout.
- * 
+ *
  * @author fred
  * @author Karl Schaefer
  */
 @JavaBean
 public class VerticalLayout extends AbstractLayoutManager {
     private static final long serialVersionUID = 5342270033773736441L;
-    
+
     private int gap;
 
     /**
@@ -49,7 +49,7 @@ public class VerticalLayout extends AbstractLayoutManager {
 
     /**
      * Creates a layout with the specified gap between components.
-     * 
+     *
      * @param gap
      *            the gap between components
      */
@@ -60,7 +60,7 @@ public class VerticalLayout extends AbstractLayoutManager {
 
     /**
      * The current gap to place between components.
-     * 
+     *
      * @return the current gap
      */
     public int getGap() {
@@ -69,7 +69,7 @@ public class VerticalLayout extends AbstractLayoutManager {
 
     /**
      * The new gap to place between components.
-     * 
+     *
      * @param gap
      *            the new gap
      */
@@ -77,7 +77,7 @@ public class VerticalLayout extends AbstractLayoutManager {
     public void setGap(int gap) {
         this.gap = gap;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -85,21 +85,21 @@ public class VerticalLayout extends AbstractLayoutManager {
     public Dimension preferredLayoutSize(Container parent) {
         Dimension pref = new Dimension(0, 0);
         Separator<Integer> sep = new Separator<Integer>(0, gap);
-        
+
         for (int i = 0, c = parent.getComponentCount(); i < c; i++) {
             Component m = parent.getComponent(i);
-            
+
             if (m.isVisible()) {
                 Dimension componentPreferredSize = parent.getComponent(i).getPreferredSize();
                 pref.height += componentPreferredSize.height + sep.get();
                 pref.width = Math.max(pref.width, componentPreferredSize.width);
             }
         }
-        
+
         Insets insets = parent.getInsets();
         pref.width += insets.left + insets.right;
         pref.height += insets.top + insets.bottom;
-        
+
         return pref;
     }
 

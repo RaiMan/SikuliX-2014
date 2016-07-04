@@ -147,7 +147,6 @@ public:
     static void retainBest( vector<KeyPoint>& keypoints, int npoints );
 };
 
-
 /************************************ Base Classes ************************************/
 
 /*
@@ -191,7 +190,6 @@ protected:
      */
     static void removeInvalidPoints( const Mat& mask, vector<KeyPoint>& keypoints );
 };
-
 
 /*
  * Abstract base class for computing descriptors for image keypoints.
@@ -240,7 +238,6 @@ protected:
     static void removeBorderKeypoints( vector<KeyPoint>& keypoints,
                                       Size imageSize, int borderSize );
 };
-
 
 
 /*
@@ -359,7 +356,6 @@ protected:
     // general
     static const float basicSize_;
 };
-
 
 /*!
  ORB implementation.
@@ -494,7 +490,6 @@ protected:
     OrientationPair orientationPairs[NB_ORIENPAIRS];
 };
 
-
 /*!
  Maximal Stable Extremal Regions class.
 
@@ -590,7 +585,6 @@ protected:
     bool nonmaxSuppression;
 };
 
-
 class CV_EXPORTS_W GFTTDetector : public FeatureDetector
 {
 public:
@@ -662,7 +656,6 @@ protected:
   Params params;
   AlgorithmInfo* info() const;
 };
-
 
 class CV_EXPORTS DenseFeatureDetector : public FeatureDetector
 {
@@ -831,7 +824,6 @@ protected:
     int init_thresh_, min_thresh_, max_thresh_;
 };
 
-
 /** An adjuster for StarFeatureDetector, this one adjusts the responseThreshold for now
  * TODO find a faster way to converge the parameters for Star - use CvStarDetectorParams
  */
@@ -871,7 +863,6 @@ protected:
 
 CV_EXPORTS Mat windowedMatchingMask( const vector<KeyPoint>& keypoints1, const vector<KeyPoint>& keypoints2,
                                      float maxDeltaX, float maxDeltaY );
-
 
 
 /*
@@ -932,7 +923,6 @@ protected:
     int bytes_;
     PixelTestFn test_fn_;
 };
-
 
 /****************************************************************************************\
 *                                      Distance                                          *
@@ -1219,7 +1209,6 @@ protected:
     bool crossCheck;
 };
 
-
 /*
  * Flann based matcher
  */
@@ -1420,7 +1409,6 @@ protected:
     KeyPointCollection trainPointCollection;
 };
 
-
 /****************************************************************************************\
 *                                VectorDescriptorMatcher                                 *
 \****************************************************************************************/
@@ -1520,7 +1508,6 @@ CV_EXPORTS void evaluateGenericDescriptorMatcher( const Mat& img1, const Mat& im
                                                   vector<vector<DMatch> >* matches1to2, vector<vector<uchar> >* correctMatches1to2Mask,
                                                   vector<Point2f>& recallPrecisionCurve,
                                                   const Ptr<GenericDescriptorMatcher>& dmatch=Ptr<GenericDescriptorMatcher>() );
-
 
 /****************************************************************************************\
 *                                     Bag of visual words                                *

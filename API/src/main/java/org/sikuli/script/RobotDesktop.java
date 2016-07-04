@@ -38,7 +38,7 @@ public class RobotDesktop extends Robot implements IRobot {
   private static RunTime runTime = RunTime.get();
   private long start;
   private static boolean alwaysNewRobot = false;
-  
+
   private void logRobot(int delay, String msg) {
     start = new Date().getTime();
     int theDelay = getAutoDelay();
@@ -55,11 +55,11 @@ public class RobotDesktop extends Robot implements IRobot {
       setAutoWaitForIdle(false);
     }
   }
-  
+
   private void doMouseMove(int x, int y) {
     mouseMove(x, y);
   }
-  
+
   private void doMouseDown(int buttons) {
     if (Settings.RobotFake && runTime.needsRobotFake()) {
       Screen.getFakeRegion().silentHighlight(true);
@@ -102,7 +102,7 @@ public class RobotDesktop extends Robot implements IRobot {
     }
     logRobot("KeyPress: extended delay: %d", stdMaxElapsed);
   }
-  
+
   private void doKeyRelease(int keyCode) {
     logRobot(stdAutoDelay, "KeyRelease: WaitForIdle: %s - Delay: %d");
     setAutoDelay(stdAutoDelay);
@@ -113,11 +113,11 @@ public class RobotDesktop extends Robot implements IRobot {
     }
     logRobot("KeyRelease: extended delay: %d", stdMaxElapsed);
   }
-  
+
   private Robot getRobot() {
     return null;
   }
-  
+
   @Override
   public boolean isRemote() {
     return false;
@@ -205,7 +205,7 @@ public class RobotDesktop extends Robot implements IRobot {
     }
     return heldButtons;
   }
-  
+
   @Override
   public void mouseReset() {
     if (heldButtons != 0) {
@@ -214,7 +214,7 @@ public class RobotDesktop extends Robot implements IRobot {
       heldButtons = 0;
     }
   }
-  
+
   @Override
   public void clickStarts() {
   }

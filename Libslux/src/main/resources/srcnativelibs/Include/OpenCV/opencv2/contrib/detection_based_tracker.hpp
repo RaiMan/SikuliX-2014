@@ -34,7 +34,6 @@ class DetectionBasedTracker
         bool setParameters(const Parameters& params);
         const Parameters& getParameters();
 
-
         typedef std::pair<cv::Rect, int> Object;
         virtual void getObjects(std::vector<cv::Rect>& result) const;
         virtual void getObjects(std::vector<Object>& result) const;
@@ -43,7 +42,6 @@ class DetectionBasedTracker
         class SeparateDetectionWork;
         cv::Ptr<SeparateDetectionWork> separateDetectionWork;
         friend void* workcycleObjectDetectorFunction(void* p);
-
 
         struct InnerParameters
         {
@@ -91,7 +89,6 @@ class DetectionBasedTracker
         std::vector<float> weightsSizesSmoothing;
 
         cv::CascadeClassifier cascadeForTracking;
-
 
         void updateTrackedObjects(const std::vector<cv::Rect>& detectedObjects);
         cv::Rect calcTrackedObjectPositionToShow(int i) const;

@@ -26,7 +26,7 @@ public class Match extends Region implements Comparable<Match> {
   private long lastFindTime = -1;
   private int index = -1;
   private boolean onScreen = true;
-  
+
   public void setOnScreen(boolean state) {
     onScreen = state;
   }

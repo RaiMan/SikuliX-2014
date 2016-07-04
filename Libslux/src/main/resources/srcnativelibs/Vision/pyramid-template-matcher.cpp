@@ -7,7 +7,6 @@
 #include "pyramid-template-matcher.h"
 #include "vision.h"
 
-
 #ifdef DEBUG
 #define dout std::cerr
 #else
@@ -17,16 +16,14 @@
 #define MIN_PIXELS_TO_USE_GPU 90000
 #define WORTH_GPU(mat) ( ((mat).rows * (mat).cols) > MIN_PIXELS_TO_USE_GPU)
 
-
 void PyramidTemplateMatcher::init() {
    _use_gpu = false;
    _hasMatchedResult = false;
 }
 
-
 PyramidTemplateMatcher::PyramidTemplateMatcher(const MatchingData& data_, int levels, float _factor)
 : factor(_factor),  lowerPyramid(NULL)
-{ 
+{
    data = data_;
 
    if (data.getSource().rows < data.getTarget().rows || data.getSource().cols < data.getTarget().cols)
@@ -35,9 +32,9 @@ PyramidTemplateMatcher::PyramidTemplateMatcher(const MatchingData& data_, int le
    init();
 #ifdef ENABLE_GPU
    if(sikuli::Vision::getParameter("GPU") && WORTH_GPU(data.getSource())){
-      if(gpu::getCudaEnabledDeviceCount()>0) 
+      if(gpu::getCudaEnabledDeviceCount()>0)
          _use_gpu = true;
-      //cout << data.getSource().rows << "x" << data.getSource().cols << endl; 
+      //cout << data.getSource().rows << "x" << data.getSource().cols << endl;
    }
 #endif
    if (levels > 0)
@@ -45,12 +42,10 @@ PyramidTemplateMatcher::PyramidTemplateMatcher(const MatchingData& data_, int le
 }
 
 
-
 PyramidTemplateMatcher::~PyramidTemplateMatcher(){
    if (lowerPyramid != NULL)
-      delete lowerPyramid;   
+      delete lowerPyramid;
 };
-
 
 PyramidTemplateMatcher* PyramidTemplateMatcher::createSmallMatcher(int level){
       return new PyramidTemplateMatcher(data.createSmallData(factor), level, factor);
@@ -84,10 +79,10 @@ double PyramidTemplateMatcher::findBest(const MatchingData& data, Rect* roi, Mat
             Mat inv_source, inv_target;
             bitwise_not(source, inv_source);
             bitwise_not(data.getOrigTarget(), inv_target);
-            matchTemplate(inv_source, inv_target, out_result, CV_TM_SQDIFF_NORMED);   
-         } 
+            matchTemplate(inv_source, inv_target, out_result, CV_TM_SQDIFF_NORMED);
+         }
          else{
-            matchTemplate(source, data.getOrigTarget(), out_result, CV_TM_SQDIFF_NORMED);   
+            matchTemplate(source, data.getOrigTarget(), out_result, CV_TM_SQDIFF_NORMED);
          }
          result = Mat::ones(out_result.size(), CV_32F) - result;
       }
@@ -151,7 +146,7 @@ FindResult PyramidTemplateMatcher::next(){
    int xmargin = target.cols/3;
    int ymargin = target.rows/3;
    eraseResult(detectionLoc.x, detectionLoc.y, xmargin, ymargin);
-   
+
    return FindResult(detectionLoc.x,detectionLoc.y,target.cols,target.rows,detectionScore);
 }
 
@@ -161,7 +156,6 @@ FindResult PyramidTemplateMatcher::nextFromLowerPyramid(){
    int x = match.x*factor;
    int y = match.y*factor;
 
-   
    // compute the parameter to define the neighborhood rectangle
    int x0 = max(x-(int)factor,0);
    int y0 = max(y-(int)factor,0);

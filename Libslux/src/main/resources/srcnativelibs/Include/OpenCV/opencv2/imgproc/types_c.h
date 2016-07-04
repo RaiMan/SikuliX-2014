@@ -327,7 +327,6 @@ enum
     CV_COLORCVT_MAX  = 135
 };
 
-
 /* Sub-pixel interpolation methods */
 enum
 {
@@ -439,7 +438,6 @@ CvChainPtReader;
      (deltas)[4] = -(nch),  (deltas)[5] =  (step) - (nch),  \
      (deltas)[6] =  (step), (deltas)[7] =  (step) + (nch))
 
-
 /****************************************************************************************\
 *                              Planar subdivisions                                       *
 \****************************************************************************************/
@@ -485,7 +483,6 @@ typedef struct CvSubdiv2D
 }
 CvSubdiv2D;
 
-
 typedef enum CvSubdiv2DPointLocation
 {
     CV_PTLOC_ERROR = -2,
@@ -512,7 +509,6 @@ CvNextEdgeType;
 /* get the next edge with the same origin point (counterwise) */
 #define  CV_SUBDIV2D_NEXT_EDGE( edge )  (((CvQuadEdge2D*)((edge) & ~3))->next[(edge)&3])
 
-
 /* Contour approximation algorithms */
 enum
 {
@@ -534,7 +530,6 @@ enum
     CV_COUNTER_CLOCKWISE =2
 };
 
-
 /* Convexity defect */
 typedef struct CvConvexityDefect
 {
@@ -543,7 +538,6 @@ typedef struct CvConvexityDefect
     CvPoint* depth_point; /* the farthest from the convex hull point within the defect */
     float depth; /* distance between the farthest point and the convex hull */
 } CvConvexityDefect;
-
 
 /* Histogram comparison methods */
 enum
@@ -583,7 +577,6 @@ enum
     CV_DIST_HUBER   =7    /* distance = |x|<c ? x^2/2 : c(|x|-c/2), c=1.345 */
 };
 
-
 /* Threshold types */
 enum
 {
@@ -611,7 +604,6 @@ enum
     CV_FLOODFILL_MASK_ONLY   =(1 << 17)
 };
 
-
 /* Canny edge detector flags */
 enum
 {
@@ -626,7 +618,6 @@ enum
     CV_HOUGH_MULTI_SCALE =2,
     CV_HOUGH_GRADIENT =3
 };
-
 
 /* Fast search data structures  */
 struct CvFeatureTree;

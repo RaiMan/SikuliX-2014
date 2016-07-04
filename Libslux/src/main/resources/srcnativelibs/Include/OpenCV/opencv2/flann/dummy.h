@@ -1,4 +1,3 @@
-
 #ifndef OPENCV_FLANN_DUMMY_H_
 #define OPENCV_FLANN_DUMMY_H_
 
@@ -11,6 +10,5 @@ __declspec(dllexport)
 void dummyfunc();
 
 }
-
 
 #endif  /* OPENCV_FLANN_DUMMY_H_ */

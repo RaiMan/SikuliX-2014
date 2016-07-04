@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -46,9 +46,9 @@ import org.jdesktop.beans.JavaBean;
 
 /**
  * Extends the JRootPane by supporting specific placements for a toolbar and a
- * status bar. If a status bar exists, then toolbars, menus will be registered 
+ * status bar. If a status bar exists, then toolbars, menus will be registered
  * with the status bar.
- * 
+ *
  * @see JXStatusBar
  * @author Mark Davidson
  */
@@ -57,7 +57,7 @@ public class JXRootPane extends JRootPane {
     /**
      * An extended {@code RootLayout} offering support for managing the status
      * bar.
-     * 
+     *
      * @author Karl George Schaefer
      * @author Jeanette Winzenberg
      */
@@ -68,7 +68,7 @@ public class JXRootPane extends JRootPane {
         /**
          * The layout manager backing this manager. The delegate is used to
          * calculate the size when the UI handles the window decorations.
-         * 
+         *
          * @param delegate
          *            the backing manager
          */
@@ -170,7 +170,7 @@ public class JXRootPane extends JRootPane {
 
         }
     }
-    
+
     /**
      * The current status bar for this root pane.
      */
@@ -178,7 +178,7 @@ public class JXRootPane extends JRootPane {
 
     private JToolBar toolBar;
 
-    /** 
+    /**
      * The button that gets activated when the pane has the focus and
      * a UI-specific action like pressing the <b>ESC</b> key occurs.
      */
@@ -228,7 +228,7 @@ public class JXRootPane extends JRootPane {
                     for (Component c : getComponents()) {
                         unregisterStatusBar(c);
                     }
-                    
+
                     super.removeAll();
                 }
             }
@@ -250,7 +250,6 @@ public class JXRootPane extends JRootPane {
         return c;
     }
 
-    
     /**
      * {@inheritDoc}
      */
@@ -278,11 +277,11 @@ public class JXRootPane extends JRootPane {
     @Override
     protected LayoutManager createRootLayout() {
         return new XRootLayout();
-    } 
+    }
 
     /**
      * PENDING: move to UI
-     * 
+     *
      */
     private void installKeyboardActions() {
         Action escAction = new AbstractAction() {
@@ -293,22 +292,22 @@ public class JXRootPane extends JRootPane {
                     cancelButton.doClick(20);
                 }
             }
-            
+
             /**
-             * Overridden to hack around #566-swing: 
+             * Overridden to hack around #566-swing:
              * JXRootPane eats escape keystrokes from datepicker popup.
              * Disable action if there is no cancel button.<p>
-             * 
-             * That's basically what RootPaneUI does - only not in 
+             *
+             * That's basically what RootPaneUI does - only not in
              * the parameterless isEnabled, but in the one that passes
-             * in the sender (available in UIAction only). We can't test 
+             * in the sender (available in UIAction only). We can't test
              * nor compare against core behaviour, UIAction has
              * sun package scope. <p>
-             * 
+             *
              * Cont'd (Issue #1358-swingx: popup menus not closed)
              * The extended hack is inspired by Rob Camick's
              * <a href="http://tips4java.wordpress.com/2010/10/17/escape-key-and-dialog/"> Blog </a>
-             * and consists in checking if the the rootpane has a popup's actionMap "inserted". 
+             * and consists in checking if the the rootpane has a popup's actionMap "inserted".
              * NOTE: this does not work if the popup or any of its children is focusOwner.
              */
             @Override
@@ -326,7 +325,7 @@ public class JXRootPane extends JRootPane {
         KeyStroke key = KeyStroke.getKeyStroke(KeyEvent.VK_ESCAPE, 0);
         im.put(key, "esc-action");
     }
-    
+
     private void registerStatusBar(Component comp) {
         if (statusBar == null || comp == null) {
             return;
@@ -355,7 +354,7 @@ public class JXRootPane extends JRootPane {
      * Set the status bar for this root pane. Any components held by this root
      * pane will be registered. If this is replacing an existing status bar then
      * the existing component will be unregistered from the old status bar.
-     * 
+     *
      * @param statusBar
      *            the status bar to use
      */
@@ -382,7 +381,7 @@ public class JXRootPane extends JRootPane {
 
     /**
      * Gets the currently installed status bar.
-     * 
+     *
      * @return the current status bar
      */
     public JXStatusBar getStatusBar() {
@@ -395,7 +394,7 @@ public class JXRootPane extends JRootPane {
      * bar. If an implementation needs to handle more than one tool bar, a
      * subclass will need to override the singleton logic used here or manually
      * add toolbars with {@code getContentPane().add}.
-     * 
+     *
      * @param toolBar
      *            the toolbar to register
      */
@@ -406,32 +405,31 @@ public class JXRootPane extends JRootPane {
         if (oldToolBar != null) {
             getContentPane().remove(oldToolBar);
         }
-        
+
         getContentPane().add(BorderLayout.NORTH, this.toolBar);
-        
+
         //ensure the new toolbar is correctly sized and displayed
         getContentPane().validate();
-        
+
         firePropertyChange("toolBar", oldToolBar, getToolBar());
     }
 
     /**
      * The currently installed tool bar.
-     * 
+     *
      * @return the current tool bar
      */
     public JToolBar getToolBar() {
         return toolBar;
     }
 
-
     /**
      * Sets the <code>cancelButton</code> property,
      * which determines the current default cancel button for this <code>JRootPane</code>.
-     * The cancel button is the button which will be activated 
-     * when a UI-defined activation event (typically the <b>ESC</b> key) 
-     * occurs in the root pane regardless of whether or not the button 
-     * has keyboard focus (unless there is another component within 
+     * The cancel button is the button which will be activated
+     * when a UI-defined activation event (typically the <b>ESC</b> key)
+     * occurs in the root pane regardless of whether or not the button
+     * has keyboard focus (unless there is another component within
      * the root pane which consumes the activation event,
      * such as a <code>JTextPane</code>).
      * For default activation to work, the button must be an enabled
@@ -440,12 +438,12 @@ public class JXRootPane extends JRootPane {
      * property to <code>null</code>.
      *
      * @param cancelButton the <code>JButton</code> which is to be the cancel button
-     * @see #getCancelButton() 
+     * @see #getCancelButton()
      *
      * @beaninfo
      *  description: The button activated by default for cancel actions in this root pane
      */
-    public void setCancelButton(JButton cancelButton) { 
+    public void setCancelButton(JButton cancelButton) {
         JButton old = this.cancelButton;
 
         if (old != cancelButton) {
@@ -456,18 +454,18 @@ public class JXRootPane extends JRootPane {
             }
             if (cancelButton != null) {
                 cancelButton.repaint();
-            } 
+            }
         }
 
-        firePropertyChange("cancelButton", old, cancelButton);        
+        firePropertyChange("cancelButton", old, cancelButton);
     }
 
     /**
-     * Returns the value of the <code>cancelButton</code> property. 
+     * Returns the value of the <code>cancelButton</code> property.
      * @return the <code>JButton</code> which is currently the default cancel button
      * @see #setCancelButton
      */
-    public JButton getCancelButton() { 
+    public JButton getCancelButton() {
         return cancelButton;
     }
 

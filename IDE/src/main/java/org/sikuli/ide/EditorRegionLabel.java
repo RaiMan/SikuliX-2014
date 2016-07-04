@@ -64,7 +64,7 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
     addMouseListener(this);
     setText(pyText.replaceAll("Region", "").replaceAll("\\(", "").replaceAll("\\)", ""));
   }
-  
+
   public boolean isRegionLabel() {
     return true;
   }
@@ -113,7 +113,7 @@ public class EditorRegionLabel extends JLabel implements MouseListener, EventObs
     RunTime.pause(0.5f);
     Screen.doPrompt(SikuliIDE._I("msgCapturePrompt"), this);
   }
-  
+
   @Override
   public void update(EventSubject es) {
     OverlayCapturePrompt ocp = (OverlayCapturePrompt) es;

@@ -1793,7 +1793,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
 
     public void openQuickStart(ActionEvent ae) {
-      FileManager.openURL("http://www.sikulix.com/quickstart.html");
+      FileManager.openURL("http://sikulix.com/quickstart/");
     }
 
     public void openDoc(ActionEvent ae) {
@@ -2467,8 +2467,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       private File path = null;
       private String tabtitle = "";
       private String parent;
-      
-      public SubRun(IScriptRunner[] srunners, File scriptFile, File path, 
+
+      public SubRun(IScriptRunner[] srunners, File scriptFile, File path,
               String parent, String tabtitle) {
         this.srunners = srunners;
         this.scriptFile = scriptFile;
@@ -2488,7 +2488,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         hasFinished(true);
         afterRun();
       }
-      
+
       public int getRet() {
         return ret;
       }
@@ -2520,16 +2520,16 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         _runningThread = null;
       }
     }
-    
+
     protected void addScriptCode(IScriptRunner srunner) {
       srunner.execBefore(null);
       srunner.execBefore(new String[]{"Settings.setShowActions(Settings.FALSE)"});
     }
-    
+
     public boolean isRunning() {
       return _runningThread != null;
     }
-    
+
     public boolean stopRunScript() {
       if (_runningThread != null) {
         _runningThread.interrupt();

@@ -39,8 +39,8 @@ public class DateSelectionEvent extends EventObject {
         SELECTABLE_RANGE_CHANGED,
         UNSELECTED_DATES_CHANGED,
         LOWER_BOUND_CHANGED,
-        UPPER_BOUND_CHANGED, 
-        ADJUSTING_STARTED, ADJUSTING_STOPPED, 
+        UPPER_BOUND_CHANGED,
+        ADJUSTING_STARTED, ADJUSTING_STOPPED,
         CALENDAR_CHANGED,
     }
 
@@ -63,10 +63,10 @@ public class DateSelectionEvent extends EventObject {
 
     /**
      * Returns the selection of the source dateSelectionModel.<p>
-     * 
+     *
      * PENDING JW: that's the "live" selection, that is the source is re-queried on every call
      * to this method. Bug or feature?
-     * 
+     *
      * @return the selection of the source.
      */
     public SortedSet<Date> getSelection() {
@@ -75,7 +75,7 @@ public class DateSelectionEvent extends EventObject {
 
     /**
      * Returns the type of this event.
-     * 
+     *
      * @return the type of event.
      */
     public final EventType getEventType() {
@@ -84,7 +84,7 @@ public class DateSelectionEvent extends EventObject {
 
     /**
      * Returns a boolean indicating whether the event source is in adjusting state.
-     * 
+     *
      * @return true if the event is fired while the model is in adjusting state.
      */
     public boolean isAdjusting() {
@@ -95,6 +95,5 @@ public class DateSelectionEvent extends EventObject {
     public String toString() {
         return "[" + String.valueOf(getSource()) + " type: " + getEventType() + " isAdjusting: " + isAdjusting();
     }
-    
-    
+
 }

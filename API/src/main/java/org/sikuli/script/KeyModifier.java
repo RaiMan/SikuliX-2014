@@ -33,4 +33,3 @@ public class KeyModifier {
    @Deprecated
    public static final int KEY_WIN = InputEvent.META_MASK;
 }
-

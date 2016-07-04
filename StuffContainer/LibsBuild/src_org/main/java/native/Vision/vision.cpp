@@ -11,7 +11,6 @@
 //#include "imgdb.h" not used currently
 #include <sys/stat.h>
 
-
 using namespace sikuli;
 
 std::map<std::string, float> Vision::_params;
@@ -126,7 +125,6 @@ FindInput::isFindingAll(){
    return bFindingAll;
 }
 
-
 void
 FindInput::setLimit(int limit_){
    limit = limit_;
@@ -151,7 +149,6 @@ std::string
 FindInput::getTargetText(){
    return target_text;
 }
-
 
 void
 Vision::initOCR(const char* ocrDataPath) {
@@ -185,7 +182,6 @@ find_text(FindInput& input){
          results.push_back(f.next());
    }
 
-
 /*
    Mat result_image = source * 0.5;
    for (vector<FindResult>::iterator it = results.begin();
@@ -201,7 +197,6 @@ find_text(FindInput& input){
    VisualLogger::setEnabled(enable_visual_log);
    sualLogger::log("FindText-Result", result_image);
  */
-
 
    return results;
 }
@@ -240,13 +235,11 @@ find_button(FindInput& input){
    vector<Blob> blobs;
    cvgui::findBoxes(screen, blobs);
 
-
    VisualLogger::setEnabled(false);
 
    for (vector<Blob>::iterator it = blobs.begin();
         it != blobs.end(); ++it){
       Blob& blob = *it;
-
 
       if (blob.width < 10)
          continue;
@@ -260,7 +253,6 @@ find_button(FindInput& input){
 
       if (result.text.empty())
          continue;
-
 
       string target_text = input.getTargetText();
       if (!target_text.empty()){
@@ -284,7 +276,6 @@ find_button(FindInput& input){
 
    }
 
-
    Mat result_image = screen * 0.5;
    for (vector<FindResult>::iterator it = results.begin();
         it != results.end(); ++it){
@@ -294,7 +285,6 @@ find_button(FindInput& input){
       Point pt(r.x,r.y);
       putText(result_image, r.text, pt,
               FONT_HERSHEY_SIMPLEX, 0.3, Color::RED);
-
 
 
    }
@@ -403,7 +393,6 @@ Vision::query(const char* index_filename, cv::Mat image){
    db.read(in);
    in.close();
 
-
    string ret = "";
 
    vector<ImageRecord> results = db.find(image);
@@ -421,7 +410,6 @@ Vision::query(const char* index_filename, cv::Mat image){
    return ret;
 }
 */
-
 
 OCRText
 Vision::recognize_as_ocrtext(Mat image){
@@ -442,7 +430,6 @@ Vision::findBlobs(const cv::Mat& image, bool textOnly){
    vector<Blob> out_img_blobs;
 
    cvgui::segmentScreenshot(image, out_text_blobs, out_img_blobs);
-
 
    for (vector<Blob>::iterator i = out_text_blobs.begin();
         i != out_text_blobs.end(); ++i){

@@ -18,4 +18,3 @@ public final class DebugCategories {
   public final static int OCR = 0;
   public final static int FINDER = OCR + 1;
 }
-

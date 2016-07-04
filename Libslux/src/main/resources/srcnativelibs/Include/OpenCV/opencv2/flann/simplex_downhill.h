@@ -56,7 +56,6 @@ void addValue(int pos, float val, float* vals, T* point, T* points, int n)
     }
 }
 
-
 /**
     Simplex downhill optimization function.
     Preconditions: points is a 2D mattrix of size (n+1) x n

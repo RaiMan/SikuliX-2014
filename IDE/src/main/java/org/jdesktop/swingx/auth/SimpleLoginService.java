@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -31,14 +31,14 @@ import java.util.Map;
  *
  * <em>This Implementation is NOT secure. DO NOT USE this in a real application</em>
  * To make this implementation more secure, the passwords should be passed in and
- * stored as the result of a one way hash algorithm. That way an attacker cannot 
+ * stored as the result of a one way hash algorithm. That way an attacker cannot
  * simply read the password in memory to crack into the system.
  *
  * @author rbair
  */
 public final class SimpleLoginService extends LoginService {
     private Map<String,char[]> passwordMap;
-    
+
     /**
      * Creates a new SimpleLoginService based on the given password map.
      */

@@ -61,7 +61,6 @@ struct BranchStruct
     }
 };
 
-
 template <typename DistanceType>
 class ResultSet
 {
@@ -113,7 +112,6 @@ public:
     {
         return count == capacity;
     }
-
 
     void addPoint(DistanceType dist, int index)
     {
@@ -181,7 +179,6 @@ public:
         return count == capacity;
     }
 
-
     void addPoint(DistanceType dist, int index)
     {
         if (dist >= worst_distance_) return;
@@ -220,7 +217,6 @@ public:
         return worst_distance_;
     }
 };
-
 
 /**
  * A result-set class used when performing a radius based search.
@@ -472,7 +468,6 @@ public:
     {
         dist_indices_.clear();
     }
-
 
     /** Check the status of the set
      * @return alwys false

@@ -21,4 +21,3 @@ public class AnimatorQuarticEase extends AnimatorTimeValueFunction {
     return (float) (_beginVal + (_endVal - _beginVal) * t1 * t1 * t1 * t1);
   }
 }
-

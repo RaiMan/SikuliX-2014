@@ -178,4 +178,3 @@ class Extension implements Serializable {
 		version = version_;
 	}
 }
-

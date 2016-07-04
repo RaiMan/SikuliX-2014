@@ -5,7 +5,6 @@
  */
 package org.sikuli.basics;
 
-
 public class HotkeyEvent {
    public int keyCode;
    public int modifiers;
@@ -19,4 +18,3 @@ public class HotkeyEvent {
       modifiers = mod_;
    }
 }
-

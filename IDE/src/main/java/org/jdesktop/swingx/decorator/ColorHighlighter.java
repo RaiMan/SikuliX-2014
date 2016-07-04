@@ -8,18 +8,17 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  */
 package org.jdesktop.swingx.decorator;
-
 
 import static org.jdesktop.swingx.util.PaintUtils.blend;
 
@@ -30,15 +29,15 @@ import java.awt.Component;
  * A Highlighter to modify component colors.
  * <p>
  * As of SwingX 1.6.1, {@code ColorHighlighter} now blends non-opaque colors.
- * This will have little effect on previous users, who were likely to be 
- * using fully-opaque colors. If you are, however, supplying a non-opaque color 
+ * This will have little effect on previous users, who were likely to be
+ * using fully-opaque colors. If you are, however, supplying a non-opaque color
  * and need it to be considered opaque, use {@link org.jdesktop.swingx.util.PaintUtils#removeAlpha(Color)}.
- * 
+ *
  * @author Jeanette Winzenburg
  * @author Karl Schaefer
  */
 public class ColorHighlighter extends AbstractHighlighter {
-    
+
     private Color background;
     private Color foreground;
     private Color selectedBackground;
@@ -55,7 +54,7 @@ public class ColorHighlighter extends AbstractHighlighter {
     /**
      * Instantiates a ColorHighlighter with null colors and uses the
      * specified HighlightPredicate.
-     * 
+     *
      * @param predicate the HighlightPredicate to use.
      */
     public ColorHighlighter(HighlightPredicate predicate) {
@@ -76,18 +75,18 @@ public class ColorHighlighter extends AbstractHighlighter {
 
     /**
      * Constructs a <code>ColorHighlighter</code> with the specified
-     * unselected colors and HighlightPredicate. 
+     * unselected colors and HighlightPredicate.
      * Initializes selected colors to null.
-     * 
+     *
      * @param predicate the HighlightPredicate to use.
      * @param cellBackground background color for unselected cell state
      * @param cellForeground foreground color for unselected cell state
      */
-    public ColorHighlighter(HighlightPredicate predicate, Color cellBackground, 
+    public ColorHighlighter(HighlightPredicate predicate, Color cellBackground,
             Color cellForeground) {
         this(predicate, cellBackground, cellForeground, null, null);
     }
-    
+
     /**
      * Constructs a <code>ColorHighlighter</code> with the specified
      * background and foreground colors for unselected and selected cells.
@@ -98,16 +97,15 @@ public class ColorHighlighter extends AbstractHighlighter {
      * @param selectedBackground background color for selected cell state
      * @param selectedForeground foreground color for selected cell state
     */
-    public ColorHighlighter(Color cellBackground, Color cellForeground, 
+    public ColorHighlighter(Color cellBackground, Color cellForeground,
             Color selectedBackground, Color selectedForeground) {
         this(null, cellBackground, cellForeground, selectedBackground, selectedForeground);
     }
 
-
     /**
      * Constructs a <code>ColorHighlighter</code> with the specified colors
      * and HighlightPredicate.
-     * 
+     *
      * @param predicate the HighlightPredicate to use.
      * @param cellBackground background color for unselected cell state
      * @param cellForeground foreground color for unselected cell state
@@ -124,7 +122,6 @@ public class ColorHighlighter extends AbstractHighlighter {
         this.selectedForeground = selectedForeground;
     }
 
-    
 
     /**
      * {@inheritDoc}
@@ -135,14 +132,13 @@ public class ColorHighlighter extends AbstractHighlighter {
         applyForeground(renderer, adapter);
         return renderer;
     }
-   
-    
+
     /**
     * Applies a suitable background for the renderer component within the
     * specified adapter. <p>
-    * 
+    *
     * This implementation applies its background or selectedBackground color
-    * (depending on the adapter's selected state) if != null. 
+    * (depending on the adapter's selected state) if != null.
     * Otherwise it does nothing.
     *
     * @param renderer the cell renderer component that is to be decorated
@@ -153,13 +149,13 @@ public class ColorHighlighter extends AbstractHighlighter {
 
         renderer.setBackground(blend(renderer.getBackground(), color));
     }
-    
+
     /**
     * Applies a suitable foreground for the renderer component within the
     * specified adapter. <p>
-    * 
+    *
     * This implementation applies its foreground or selectedfForeground color
-    * (depending on the adapter's selected state) if != null. 
+    * (depending on the adapter's selected state) if != null.
     * Otherwise it does nothing.
     *
     * @param renderer the cell renderer component that is to be decorated
@@ -171,9 +167,8 @@ public class ColorHighlighter extends AbstractHighlighter {
         renderer.setForeground(blend(renderer.getForeground(), color));
     }
 
-
 //---------------------- state
-    
+
     /**
      * Returns the background color of this <code>ColorHighlighter</code>.
      *
@@ -185,9 +180,9 @@ public class ColorHighlighter extends AbstractHighlighter {
     }
 
     /**
-     * Sets the background color of this <code>ColorHighlighter</code> and 
+     * Sets the background color of this <code>ColorHighlighter</code> and
      * notifies registered ChangeListeners.
-     *  
+     *
      * @param color the background color of this <code>Highlighter</code>,
      *          or null, to clear any existing background color
      */

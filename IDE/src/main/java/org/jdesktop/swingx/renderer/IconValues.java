@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -27,23 +27,23 @@ import javax.swing.filechooser.FileSystemView;
 
 /**
  * A collection of common {@code IconValue} implementations.
- * 
+ *
  * @author Karl George Schaefer
  * @author Jeanette Winzenburg
  */
 public final class IconValues {
     /**
      * Always NULL_ICON. This is useful to indicate that we really want
-     * no icon instead of f.i. a default provided by the CellContext. 
+     * no icon instead of f.i. a default provided by the CellContext.
      */
     @SuppressWarnings("serial")
     public static final IconValue NONE = new IconValue() {
-    
+
         @Override
         public Icon getIcon(Object value) {
             return IconValue.NULL_ICON;
         }
-        
+
     };
 
     /**
@@ -51,7 +51,7 @@ public final class IconValues {
      */
     @SuppressWarnings("serial")
     public static final IconValue ICON = new IconValue() {
-    
+
         @Override
         public Icon getIcon(Object value) {
             if (value instanceof Icon) {
@@ -60,7 +60,7 @@ public final class IconValues {
             return null;
         }
     };
-    
+
     /**
      * An {@code IconValue} that presents the current L&F icon for a given file.
      * If the value passed to {@code FILE_ICON} is not a {@link File}, this has
@@ -79,7 +79,7 @@ public final class IconValues {
             return IconValues.NONE.getIcon(value);
         }
     };
-    
+
     private IconValues() {
         // does nothing
     }

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -28,28 +28,28 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 /**
- * Presentation Model for Find/Filter Widgets. 
+ * Presentation Model for Find/Filter Widgets.
  * <p>
- * 
- * Compiles and holds a Pattern from rawText. There are different 
+ *
+ * Compiles and holds a Pattern from rawText. There are different
  * predefined strategies to control the compilation:
- * 
+ *
  * <ul>
  * <li> TODO: list and explain
- * </ul> 
- * 
+ * </ul>
+ *
  * Holds state for controlling the match process
- * for both find and filter (TODO - explain). 
+ * for both find and filter (TODO - explain).
  * Relevant in all
- * 
+ *
  * <ul>
- * <li> caseSensitive - 
+ * <li> caseSensitive -
  * <li> empty - true if there's no searchString
  * <li> incremental - a hint to clients to react immediately
  *      to pattern changes.
- * 
+ *
  * </ul>
- * 
+ *
  * Relevant in find contexts:
  * <ul>
  * <li> backwards - search direction if used in a find context
@@ -59,9 +59,9 @@ import java.util.regex.Pattern;
  *      Here the property correlates to !isIncremental() - to simplify batch vs.
  *      incremental search ui.
  * </ul>
- * 
- * 
- * JW: Work-in-progress - Anchors will be factored into AnchoredSearchMode 
+ *
+ *
+ * JW: Work-in-progress - Anchors will be factored into AnchoredSearchMode
  * <b>Anchors</b> By default, the scope of the pattern relative to strings
  * being tested are unanchored, ie, the pattern will match any part of the
  * tested string. Traditionally, special characters ('^' and '$') are used to
@@ -79,7 +79,7 @@ import java.util.regex.Pattern;
  * in both cases) correspond to the common database 'LIKE' operation, where the
  * pattern is considered to be a match if any part of the tested string matches
  * the pattern.
- * 
+ *
  * @author Jeanette Winzenburg
  * @author David Hall
  */
@@ -92,7 +92,7 @@ public class PatternModel {
     public static final String SEARCH_PREFIX = "Search.";
 
     /*
-     * TODO: use Enum for strategy. 
+     * TODO: use Enum for strategy.
      */
     public static final String REGEX_UNCHANGED = "regex";
 
@@ -121,7 +121,6 @@ public class PatternModel {
 
     public static final String MATCH_INCREMENTAL_ACTION_COMMAND = "matchIncremental";
 
-
     private String rawText;
 
     private boolean backwards;
@@ -142,9 +141,8 @@ public class PatternModel {
 
     private boolean incremental;
 
-
 //---------------------- misc. properties not directly related to Pattern.
-    
+
     public int getFoundIndex() {
         return foundIndex;
     }
@@ -154,9 +152,9 @@ public class PatternModel {
         updateFoundIndex(foundIndex);
         firePropertyChange("foundIndex", old, getFoundIndex());
     }
-    
+
     /**
-     * 
+     *
      * @param newFoundIndex
      */
     protected void updateFoundIndex(int newFoundIndex) {
@@ -169,7 +167,7 @@ public class PatternModel {
         } else {
             foundIndex = newFoundIndex;
         }
-        
+
     }
 
     public boolean isAutoAdjustFoundIndex() {
@@ -190,7 +188,7 @@ public class PatternModel {
     public boolean isWrapping() {
         return wrapping;
     }
-    
+
     public void setWrapping(boolean wrapping) {
         boolean old = isWrapping();
         this.wrapping = wrapping;
@@ -202,11 +200,10 @@ public class PatternModel {
         this.incremental = incremental;
         firePropertyChange("incremental", old, isIncremental());
     }
-    
+
     public boolean isIncremental() {
         return incremental;
     }
-
 
     public boolean isCaseSensitive() {
         return caseSensitive;
@@ -243,7 +240,7 @@ public class PatternModel {
     /**
      * returns a regEx for compilation into a pattern. Here: either a "contains"
      * (== partial find) or null if the input was empty.
-     * 
+     *
      * @param searchString
      * @return null if the input was empty, or a regex according to the internal
      *         rules
@@ -255,7 +252,7 @@ public class PatternModel {
     }
 
     /**
-     * 
+     *
      * @param s
      * @return
      */
@@ -317,9 +314,9 @@ public class PatternModel {
     }
 
     /**
-     * Responsible for converting a "raw text" into a valid 
+     * Responsible for converting a "raw text" into a valid
      * regular expression in the context of a set of rules.
-     * 
+     *
      */
     public static class RegexCreator {
         protected String matchRule;
@@ -335,7 +332,7 @@ public class PatternModel {
         public boolean isAutoDetect() {
             return false;
         }
-        
+
         public String createRegEx(String searchString) {
             if (MATCH_RULE_CONTAINS.equals(getMatchRule())) {
                 return createContainedRegEx(searchString);
@@ -371,7 +368,7 @@ public class PatternModel {
         public void setMatchRule(String category) {
             this.matchRule = category;
         }
-        
+
         protected String getDefaultMatchRule() {
             return MATCH_RULE_CONTAINS;
         }
@@ -398,21 +395,20 @@ public class PatternModel {
         }
     }
 
- 
     /**
      * Support for anchored input.
-     * 
+     *
      * PENDING: NOT TESTED - simply moved!
      * Need to define requirements...
-     * 
+     *
      */
     public static class AnchoredSearchMode extends RegexCreator {
-        
+
         @Override
         public boolean isAutoDetect() {
             return true;
         }
-        
+
         @Override
         public String createRegEx(String searchExp) {
           if (isAutoDetect()) {
@@ -420,18 +416,18 @@ public class PatternModel {
               if (!hasStartAnchor(searchExp)) {
                   if (isStartAnchored()) {
                       buf.append("^");
-                  } 
+                  }
               }
-      
+
               //PENDING: doesn't escape contained regex metacharacters...
               buf.append(searchExp);
-      
+
               if (!hasEndAnchor(searchExp)) {
                   if (isEndAnchored()) {
                       buf.append("$");
-                  } 
+                  }
               }
-      
+
               return buf.toString();
           }
           return super.createRegEx(searchExp);
@@ -463,7 +459,6 @@ public class PatternModel {
             // anchored
             return len % 2 != 0;
         }
-
 
       /**
       * returns true if the pattern must match from the beginning of the string,
@@ -512,7 +507,7 @@ public class PatternModel {
 //     public boolean isStartEndAnchored() {
 //         return isEndAnchored() && isStartAnchored();
 //     }
-//     
+//
 //     /**
 //      * sets the default interpretation of the pattern for strings it will later
 //      * be given. Setting this value to true will force the pattern to match the
@@ -530,11 +525,11 @@ public class PatternModel {
     /**
      * Set the strategy to use for compiling a pattern from
      * rawtext.
-     * 
-     * NOTE: This is imcomplete (in fact it wasn't implemented at 
+     *
+     * NOTE: This is imcomplete (in fact it wasn't implemented at
      * all) - only recognizes REGEX_ANCHORED, every other value
      * results in REGEX_MATCH_RULES.
-     * 
+     *
      * @param mode the String key of the match strategy to use.
      */
     public void setRegexCreatorKey(String mode) {
@@ -543,17 +538,17 @@ public class PatternModel {
         regexCreatorKey = mode;
         createRegexCreator(getRegexCreatorKey());
         firePropertyChange("regexCreatorKey", old, getRegexCreatorKey());
-        
+
     }
 
     /**
      * Creates and sets the strategy to use for compiling a pattern from
      * rawtext.
-     * 
-     * NOTE: This is imcomplete (in fact it wasn't implemented at 
+     *
+     * NOTE: This is imcomplete (in fact it wasn't implemented at
      * all) - only recognizes REGEX_ANCHORED, every other value
      * results in REGEX_MATCH_RULES.
-     * 
+     *
      * @param mode the String key of the match strategy to use.
      */
     protected void createRegexCreator(String mode) {
@@ -562,7 +557,7 @@ public class PatternModel {
         } else {
             setRegexCreator(new RegexCreator());
         }
-        
+
     }
 
     public String getRegexCreatorKey() {
@@ -586,7 +581,7 @@ public class PatternModel {
     /**
      * This is a quick-fix to allow custom strategies for compiling
      * rawtext to patterns.
-     * 
+     *
      * @param regexCreator the strategy to use for compiling text
      *   into pattern.
      */
@@ -616,5 +611,5 @@ public class PatternModel {
 
 
 
-    
+
 }

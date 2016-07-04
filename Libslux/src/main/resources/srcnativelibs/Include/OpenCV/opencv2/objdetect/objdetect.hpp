@@ -135,7 +135,6 @@ CVAPI(void) cvReleaseHaarClassifierCascade( CvHaarClassifierCascade** cascade );
 //                     CvSize min_size CV_DEFAULT(cvSize(0,0)), CvSize max_size CV_DEFAULT(cvSize(0,0)),
 //                     bool outputRejectLevels = false );
 
-
 CVAPI(CvSeq*) cvHaarDetectObjects( const CvArr* image,
                      CvHaarClassifierCascade* cascade, CvMemStorage* storage,
                      double scale_factor CV_DEFAULT(1.1),
@@ -150,7 +149,6 @@ CVAPI(void) cvSetImagesForHaarClassifierCascade( CvHaarClassifierCascade* cascad
 /* runs the cascade on the specified window */
 CVAPI(int) cvRunHaarClassifierCascade( const CvHaarClassifierCascade* cascade,
                                        CvPoint pt, int start_stage CV_DEFAULT(0));
-
 
 /****************************************************************************************\
 *                         Latent SVM Object Detection functions                          *
@@ -220,7 +218,6 @@ typedef struct CvObjectDetection
 } CvObjectDetection;
 
 //////////////// Object Detection using Latent SVM //////////////
-
 
 /*
 // load trained detector from a file
@@ -352,7 +349,6 @@ CV_EXPORTS void groupRectangles(vector<Rect>& rectList, vector<int>& rejectLevel
 CV_EXPORTS void groupRectangles_meanshift(vector<Rect>& rectList, vector<double>& foundWeights, vector<double>& foundScales,
                                           double detectThreshold = 0.0, Size winDetSize = Size(64, 128));
 
-
 class CV_EXPORTS FeatureEvaluator
 {
 public:
@@ -408,7 +404,6 @@ public:
                                    Size minSize=Size(),
                                    Size maxSize=Size(),
                                    bool outputRejectLevels=false );
-
 
     bool isOldFormatCascade() const;
     virtual Size getOriginalWindowSize() const;
@@ -504,7 +499,6 @@ public:
 protected:
     Ptr<MaskGenerator> maskGenerator;
 };
-
 
 //////////////// HOG (Histogram-of-Oriented-Gradients) Descriptor and Object Detector //////////////
 
@@ -612,7 +606,6 @@ public:
     CV_PROP vector<float> svmDetector;
     CV_PROP int nlevels;
 
-
    // evaluate specified ROI and return confidence value for each location
    void detectROI(const cv::Mat& img, const vector<cv::Point> &locations,
                                    CV_OUT std::vector<cv::Point>& foundLocations, CV_OUT std::vector<double>& confidences,
@@ -630,7 +623,6 @@ public:
    void readALTModel(std::string modelfile);
    void groupRectangles(vector<cv::Rect>& rectList, vector<double>& weights, int groupThreshold, double eps) const;
 };
-
 
 CV_EXPORTS_W void findDataMatrix(InputArray image,
                                  CV_OUT vector<string>& codes,

@@ -3,7 +3,6 @@ package org.opencv.core;
 import java.util.Arrays;
 import java.util.List;
 
-
 public class MatOfRect extends Mat {
     // 32SC4
     private static final int _depth = CvType.CV_32S;
@@ -56,7 +55,6 @@ public class MatOfRect extends Mat {
         }
         put(0, 0, buff); //TODO: check ret val!
     }
-
 
     public Rect[] toArray() {
         int num = (int) total();

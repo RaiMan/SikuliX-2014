@@ -31,4 +31,3 @@ public class LoadingSpinner {
       return _curFrame;
    }
 }
-

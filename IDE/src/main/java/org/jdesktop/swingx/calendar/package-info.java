@@ -23,4 +23,3 @@
  * {@code JXMonthView} components.
  */
 package org.jdesktop.swingx.calendar;
-

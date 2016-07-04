@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -30,14 +30,13 @@ import javax.swing.text.NumberFormatter;
 
 /**
  * Experiment to work around Issue #1183-swingx: NumberEditorExt throws exception
- * on getCellValue. Remaining issue: no visual error feedback if the expected 
+ * on getCellValue. Remaining issue: no visual error feedback if the expected
  * number type exceeds its range.
- * 
+ *
  * @author Jeanette Winzenburg
  */
 public class StrictNumberFormatter extends NumberFormatter {
 
-    
     private BigDecimal maxAsBig;
     private BigDecimal minAsBig;
 
@@ -50,7 +49,7 @@ public class StrictNumberFormatter extends NumberFormatter {
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to automatically set the minimum/maximum to the boundaries of
      * the Number type if it corresponds to a raw type, or null if not.
      */
@@ -60,9 +59,8 @@ public class StrictNumberFormatter extends NumberFormatter {
         updateMinMax();
     }
 
-
     /**
-     * 
+     *
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private void updateMinMax() {
@@ -82,11 +80,11 @@ public class StrictNumberFormatter extends NumberFormatter {
             min = Byte.MIN_VALUE;
         } else if (getValueClass() == Float.class) {
             // Issue #1528-swingx: float doesn't take negative/zero numbers
-            // was: crude error - Float.MIN_VALUE is the smallest _positive_ 
+            // was: crude error - Float.MIN_VALUE is the smallest _positive_
             max = Float.MAX_VALUE;
             min = - Float.MAX_VALUE;
         } else if (getValueClass() == Double.class) {
-            // don*t understand what's happening here, naive compare with bigDecimal 
+            // don*t understand what's happening here, naive compare with bigDecimal
             // fails - so don't do anything for now
             // JW: revisit!
         }
@@ -94,14 +92,13 @@ public class StrictNumberFormatter extends NumberFormatter {
         setMinimum(min);
     }
 
-
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void setMaximum(Comparable max) {
         super.setMaximum(max);
         this.maxAsBig = max != null ? new BigDecimal(max.toString()) : null;
     }
-    
+
     @SuppressWarnings({ "unchecked", "rawtypes" })
     @Override
     public void setMinimum(Comparable minimum) {
@@ -109,7 +106,6 @@ public class StrictNumberFormatter extends NumberFormatter {
         this.minAsBig = minimum != null ? new BigDecimal(minimum.toString()) : null;
     }
 
-    
     /**
      * Returns the <code>Object</code> representation of the
      * <code>String</code> <code>text</code>, may be null.
@@ -174,7 +170,6 @@ public class StrictNumberFormatter extends NumberFormatter {
         return f.parseObject(text);
     }
 
-    
     /**
      * Returns true if <code>value</code> is between the min/max.
      *
@@ -213,15 +208,13 @@ public class StrictNumberFormatter extends NumberFormatter {
         }
         return true;
     }
-   
 
     private Comparable<BigDecimal> getMinimumAsBig() {
         return minAsBig;
     }
-    
+
     private Comparable<BigDecimal> getMaximumAsBig() {
         return maxAsBig;
     }
-    
 
 }

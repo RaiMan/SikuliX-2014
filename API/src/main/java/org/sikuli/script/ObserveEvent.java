@@ -64,7 +64,7 @@ public class ObserveEvent {
       setPattern(v1);
     }
 	}
-  
+
   /**
    * get the observe event type
    * @return a string containing either APPEAR, VANISH, CHANGE or GENERIC
@@ -72,7 +72,7 @@ public class ObserveEvent {
   public String getType() {
     return type.toString();
   }
-  
+
   /**
    * check the observe event type
    * @return true if it is APPEAR, false otherwise
@@ -220,19 +220,19 @@ public class ObserveEvent {
   public Image getImage() {
     return image;
   }
-  
+
   public void setImage(Object img) {
     image = (Image) img;
   }
-  
+
   public void setResponse(FindFailedResponse resp) {
     response = resp;
   }
-  
+
   public FindFailedResponse getResponse() {
     return response;
   }
-  
+
   public long getTime() {
     return time;
   }

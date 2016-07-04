@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -31,7 +31,7 @@ import javax.swing.ComboBoxModel;
  * A {@code ComboBoxModel} for {@code List}s.
  *
  * @param <E> the type of elements maintained by the list backing this model
- * 
+ *
  * @author jm158417
  * @author Karl George Schaefer
  */
@@ -40,7 +40,7 @@ public class ListComboBoxModel<E> extends AbstractListModel implements ComboBoxM
      * A key used to notify the model that the backing {@code List} has changed.
      */
     public static final String UPDATE = "update";
-    
+
     /**
      * A reference to the list backing this model.
      * <p>
@@ -48,15 +48,15 @@ public class ListComboBoxModel<E> extends AbstractListModel implements ComboBoxM
      * the list without synchronizing the model may have drastic effects.
      */
     protected final List<E> data;
-    
+
     /**
      * The currently selected item.
      */
     protected E selected;
-    
+
     /**
      * Creates a {@code ListComboBoxModel} backed by the supplied {@code list}.
-     * 
+     *
      * @param list
      *                the list backing this model
      * @throws NullPointerException
@@ -64,16 +64,16 @@ public class ListComboBoxModel<E> extends AbstractListModel implements ComboBoxM
      */
     public ListComboBoxModel(List<E> list) {
         this.data = list;
-        
+
         if(list.size() > 0) {
             selected = list.get(0);
         }
     }
-    
+
     /**
      * Set the selected item. The implementation of this method should notify
      * all registered {@code ListDataListener}s that the contents have changed.
-     * 
+     *
      * @param item
      *                the list object to select or {@code null} to clear the
      *                selection
@@ -89,7 +89,7 @@ public class ListComboBoxModel<E> extends AbstractListModel implements ComboBoxM
             fireContentsChanged(this, -1, -1);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -97,7 +97,7 @@ public class ListComboBoxModel<E> extends AbstractListModel implements ComboBoxM
     public E getSelectedItem() {
         return this.selected;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -105,7 +105,7 @@ public class ListComboBoxModel<E> extends AbstractListModel implements ComboBoxM
     public E getElementAt(int index) {
         return data.get(index);
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -113,7 +113,7 @@ public class ListComboBoxModel<E> extends AbstractListModel implements ComboBoxM
     public int getSize() {
         return data.size();
     }
-    
+
     /**
      * {@inheritDoc}
      */

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -36,16 +36,16 @@ import org.jdesktop.swingx.plaf.UIDependent;
 
 /**
  * Subclassed to hack around core bug with RtoL editing (#4980473).
- * 
+ *
  * The price to pay is currently is to guarantee a minimum size of the
  * editing field (is only one char wide if the node value is null).
- * 
- * PENDING: any possibility to position the editorContainer? 
- * BasicTreeUI adds it to the tree and positions at the node location. 
- * That's not a problem in LToR, only
- * in RToL 
  *
- * 
+ * PENDING: any possibility to position the editorContainer?
+ * BasicTreeUI adds it to the tree and positions at the node location.
+ * That's not a problem in LToR, only
+ * in RToL
+ *
+ *
  * @author Jeanette Winzenburg
  */
 public class DefaultXTreeCellEditor extends DefaultTreeCellEditor implements UIDependent {
@@ -62,11 +62,11 @@ public class DefaultXTreeCellEditor extends DefaultTreeCellEditor implements UID
     public void setRenderer(DefaultTreeCellRenderer renderer) {
         this.renderer = renderer;
     }
-    
+
     public DefaultTreeCellRenderer getRenderer() {
         return renderer;
     }
-    
+
     public class XEditorContainer extends EditorContainer {
 
         @Override
@@ -74,18 +74,18 @@ public class DefaultXTreeCellEditor extends DefaultTreeCellEditor implements UID
             if (isRightToLeft()) {
                 if(editingComponent != null) {
                     Dimension         pSize = editingComponent.getPreferredSize();
-    
+
                     pSize.width += offset + 5;
-    
+
                     Dimension         rSize = (renderer != null) ?
                                               renderer.getPreferredSize() : null;
-    
+
                     if(rSize != null)
                         pSize.height = Math.max(pSize.height, rSize.height);
                     if(editingIcon != null)
                         pSize.height = Math.max(pSize.height,
                                                 editingIcon.getIconHeight());
-    
+
                     // trying to enforce a minimum size leads to field being painted over the icon
                     // Make sure width is at least 100.
     //                pSize.width = Math.max(pSize.width, 100);
@@ -94,7 +94,7 @@ public class DefaultXTreeCellEditor extends DefaultTreeCellEditor implements UID
                 return new Dimension(0, 0);
             }
             return super.getPreferredSize();
-            
+
         }
 
         @Override
@@ -113,7 +113,6 @@ public class DefaultXTreeCellEditor extends DefaultTreeCellEditor implements UID
             }
         }
 
-
         @Override
         public void paint(Graphics g) {
             if (isRightToLeft()) {
@@ -131,14 +130,13 @@ public class DefaultXTreeCellEditor extends DefaultTreeCellEditor implements UID
                 editingIcon = null;
                 super.paint(g);
                 editingIcon = rememberIcon;
-                
+
             } else {
                 super.paint(g);
             }
         }
-        
-    }
 
+    }
 
     @Override
     protected Container createContainer() {
@@ -155,7 +153,7 @@ public class DefaultXTreeCellEditor extends DefaultTreeCellEditor implements UID
         if (tree != null) {
             editingContainer.applyComponentOrientation(tree.getComponentOrientation());
         }
-        
+
     }
 
     /**
@@ -178,7 +176,7 @@ public class DefaultXTreeCellEditor extends DefaultTreeCellEditor implements UID
         } else if (realEditor instanceof UIDependent) {
             ((UIDependent) realEditor).updateUI();
         }
-        
+
     }
 
 }

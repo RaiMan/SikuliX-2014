@@ -151,7 +151,6 @@ public class Settings {
     public static boolean proxyChecked = false;
     public static Proxy proxy = null;
 
-
     /**
      * INTERNAL USE: to trigger the initialization
      */
@@ -159,7 +158,7 @@ public class Settings {
 // TODO check existence of an extension repository
 //TODO Windows:
 //Mrz 23, 2015 12:25:43 PM java.util.prefs.WindowsPreferences <init>
-//WARNING: Could not open/create prefs root node Software\JavaSoft\Prefs 
+//WARNING: Could not open/create prefs root node Software\JavaSoft\Prefs
 //at root 0x80000002. Windows RegCreateKeyEx(...) returned error code 5.
 //    prefs = PreferencesUser.getInstance();
 //    proxyName = prefs.get("ProxyName", null);
@@ -264,7 +263,6 @@ public class Settings {
 
         getOS();
     }
-
 
     @Deprecated
     public static String getInstallBase() {
@@ -456,13 +454,13 @@ public class Settings {
     }
 
     public static int getOS() {
-        int osRet = ISNOTSUPPORTED;
+        int osRet;
         String os = System.getProperty("os.name").toLowerCase();
         if (os.startsWith("mac")) {
             osRet = ISMAC;
         } else if (os.startsWith("windows")) {
             osRet = ISWINDOWS;
-        } else if (os.startsWith("linux")) {
+        } else {
             osRet = ISLINUX;
         }
         return osRet;
@@ -500,7 +498,6 @@ public class Settings {
     public static String getOSVersion() {
         return System.getProperty("os.version");
     }
-
 
     public static String getTimestamp() {
         return (new Date()).getTime() + "";

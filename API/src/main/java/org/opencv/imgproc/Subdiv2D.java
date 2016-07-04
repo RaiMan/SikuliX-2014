@@ -1,4 +1,3 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
@@ -20,7 +19,6 @@ public class Subdiv2D {
     protected final long nativeObj;
     protected Subdiv2D(long addr) { nativeObj = addr; }
 
-
     public static final int
             PTLOC_ERROR = -2,
             PTLOC_OUTSIDE_RECT = -1,
@@ -36,7 +34,6 @@ public class Subdiv2D {
             PREV_AROUND_LEFT = 0x20,
             PREV_AROUND_RIGHT = 0x02;
 
-
     //
     // C++:   Subdiv2D::Subdiv2D()
     //
@@ -49,7 +46,6 @@ public class Subdiv2D {
         return;
     }
 
-
     //
     // C++:   Subdiv2D::Subdiv2D(Rect rect)
     //
@@ -61,7 +57,6 @@ public class Subdiv2D {
 
         return;
     }
-
 
     //
     // C++:  int Subdiv2D::edgeDst(int edge, Point2f* dstpt = 0)
@@ -83,7 +78,6 @@ public class Subdiv2D {
         return retVal;
     }
 
-
     //
     // C++:  int Subdiv2D::edgeOrg(int edge, Point2f* orgpt = 0)
     //
@@ -103,7 +97,6 @@ public class Subdiv2D {
 
         return retVal;
     }
-
 
     //
     // C++:  int Subdiv2D::findNearest(Point2f pt, Point2f* nearestPt = 0)
@@ -125,7 +118,6 @@ public class Subdiv2D {
         return retVal;
     }
 
-
     //
     // C++:  int Subdiv2D::getEdge(int edge, int nextEdgeType)
     //
@@ -137,7 +129,6 @@ public class Subdiv2D {
 
         return retVal;
     }
-
 
     //
     // C++:  void Subdiv2D::getEdgeList(vector_Vec4f& edgeList)
@@ -151,7 +142,6 @@ public class Subdiv2D {
         return;
     }
 
-
     //
     // C++:  void Subdiv2D::getTriangleList(vector_Vec6f& triangleList)
     //
@@ -163,7 +153,6 @@ public class Subdiv2D {
 
         return;
     }
-
 
     //
     // C++:  Point2f Subdiv2D::getVertex(int vertex, int* firstEdge = 0)
@@ -185,7 +174,6 @@ public class Subdiv2D {
         return retVal;
     }
 
-
     //
     // C++:  void Subdiv2D::getVoronoiFacetList(vector_int idx, vector_vector_Point2f& facetList, vector_Point2f& facetCenters)
     //
@@ -200,7 +188,6 @@ public class Subdiv2D {
         return;
     }
 
-
     //
     // C++:  void Subdiv2D::initDelaunay(Rect rect)
     //
@@ -212,7 +199,6 @@ public class Subdiv2D {
 
         return;
     }
-
 
     //
     // C++:  int Subdiv2D::insert(Point2f pt)
@@ -226,7 +212,6 @@ public class Subdiv2D {
         return retVal;
     }
 
-
     //
     // C++:  void Subdiv2D::insert(vector_Point2f ptvec)
     //
@@ -238,7 +223,6 @@ public class Subdiv2D {
 
         return;
     }
-
 
     //
     // C++:  int Subdiv2D::locate(Point2f pt, int& edge, int& vertex)
@@ -254,7 +238,6 @@ public class Subdiv2D {
         return retVal;
     }
 
-
     //
     // C++:  int Subdiv2D::nextEdge(int edge)
     //
@@ -266,7 +249,6 @@ public class Subdiv2D {
 
         return retVal;
     }
-
 
     //
     // C++:  int Subdiv2D::rotateEdge(int edge, int rotate)
@@ -280,7 +262,6 @@ public class Subdiv2D {
         return retVal;
     }
 
-
     //
     // C++:  int Subdiv2D::symEdge(int edge)
     //
@@ -293,12 +274,10 @@ public class Subdiv2D {
         return retVal;
     }
 
-
     @Override
     protected void finalize() throws Throwable {
         delete(nativeObj);
     }
-
 
 
     // C++:   Subdiv2D::Subdiv2D()

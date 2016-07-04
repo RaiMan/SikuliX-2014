@@ -32,7 +32,7 @@ import javax.swing.table.TableCellRenderer;
 /**
  * listens to rollover properties. Repaints effected component regions. Updates
  * link cursor.
- * 
+ *
  * @author Jeanette Winzenburg
  */
 public class TableRolloverController<T extends JTable> extends
@@ -64,7 +64,7 @@ public class TableRolloverController<T extends JTable> extends
                 paintNewColumn = false;
             }
         }
-        
+
         List<Rectangle> rectangles = getPaintRectangles(null, oldLocation, paintOldRow, paintOldColumn);
         rectangles = getPaintRectangles(rectangles, newLocation, paintNewRow, paintNewColumn);
         if (rectangles != null) {
@@ -103,7 +103,7 @@ public class TableRolloverController<T extends JTable> extends
 
     /**
      * @param cellLocation the cell location to check, may be null
-     * @return a boolean indicating whether the given cellLocation has a column 
+     * @return a boolean indicating whether the given cellLocation has a column
      *    to paint
      */
     private boolean hasColumn(Point cellLocation) {
@@ -112,7 +112,7 @@ public class TableRolloverController<T extends JTable> extends
 
     /**
      * @param cellLocation the cell location to check, may be null
-     * @return a boolean indicating whether the given cellLocation has a row 
+     * @return a boolean indicating whether the given cellLocation has a row
      *    to paint
      */
     private boolean hasRow(Point cellLocation) {

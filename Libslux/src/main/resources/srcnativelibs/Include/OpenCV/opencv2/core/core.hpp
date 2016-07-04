@@ -135,7 +135,6 @@ enum { GEMM_1_T=1, GEMM_2_T=2, GEMM_3_T=4 };
 enum { DFT_INVERSE=1, DFT_SCALE=2, DFT_ROWS=4, DFT_COMPLEX_OUTPUT=16, DFT_REAL_OUTPUT=32,
     DCT_INVERSE = DFT_INVERSE, DCT_ROWS=DFT_ROWS };
 
-
 /*!
  The standard OpenCV exception class.
  Instances of the class are thrown by various functions and methods in the case of critical errors.
@@ -168,7 +167,6 @@ public:
     string file; ///< source file name where the error has occured
     int line; ///< line number in the source file where the error has occured
 };
-
 
 //! Signals an error and raises the exception.
 
@@ -208,7 +206,6 @@ typedef int (CV_CDECL *ErrorCallback)( int status, const char* func_name,
 */
 CV_EXPORTS ErrorCallback redirectError( ErrorCallback errCallback,
                                         void* userdata=0, void** prevUserdata=0);
-
 
 #if defined __GNUC__
 #define CV_Func __func__
@@ -424,7 +421,6 @@ template<> class DataDepth<float> { public: enum { value = CV_32F, fmt=(int)'f' 
 template<> class DataDepth<double> { public: enum { value = CV_64F, fmt=(int)'d' }; };
 template<typename _Tp> class DataDepth<_Tp*> { public: enum { value = CV_USRTYPE1, fmt=(int)'r' }; };
 
-
 ////////////////////////////// Small Matrix ///////////////////////////
 
 /*!
@@ -544,7 +540,6 @@ public:
     _Tp val[m*n]; //< matrix elements
 };
 
-
 typedef Matx<float, 1, 2> Matx12f;
 typedef Matx<double, 1, 2> Matx12d;
 typedef Matx<float, 1, 3> Matx13f;
@@ -582,7 +577,6 @@ typedef Matx<float, 4, 4> Matx44f;
 typedef Matx<double, 4, 4> Matx44d;
 typedef Matx<float, 6, 6> Matx66f;
 typedef Matx<double, 6, 6> Matx66d;
-
 
 /*!
   A short numerical vector.
@@ -652,7 +646,6 @@ public:
     template<typename _T2> Vec(const Matx<_Tp, cn, 1>& a, _T2 alpha, Matx_ScaleOp);
 };
 
-
 /* \typedef
 
    Shorter aliases for the most popular specializations of Vec<T,n>
@@ -685,7 +678,6 @@ typedef Vec<double, 3> Vec3d;
 typedef Vec<double, 4> Vec4d;
 typedef Vec<double, 6> Vec6d;
 
-
 //////////////////////////////// Complex //////////////////////////////
 
 /*!
@@ -714,13 +706,11 @@ public:
     _Tp re, im; //< the real and the imaginary parts
 };
 
-
 /*!
   \typedef
 */
 typedef Complex<float> Complexf;
 typedef Complex<double> Complexd;
-
 
 //////////////////////////////// Point_ ////////////////////////////////
 
@@ -883,7 +873,6 @@ public:
     _Tp x, y, width, height; //< the top-left corner, as well as width and height of the rectangle
 };
 
-
 /*!
   \typedef
 
@@ -900,7 +889,6 @@ typedef Size_<float> Size2f;
 typedef Point3_<int> Point3i;
 typedef Point3_<float> Point3f;
 typedef Point3_<double> Point3d;
-
 
 /*!
   The rotated 2D rectangle.
@@ -1302,7 +1290,6 @@ public:
     _Atomic_word* refcount; //< the associated reference counter
 };
 
-
 //////////////////////// Input/Output Array Arguments /////////////////////////////////
 
 /*!
@@ -1377,7 +1364,6 @@ public:
     Size sz;
 };
 
-
 enum
 {
     DEPTH_MASK_8U = 1 << CV_8U,
@@ -1391,7 +1377,6 @@ enum
     DEPTH_MASK_ALL_BUT_8S = DEPTH_MASK_ALL & ~DEPTH_MASK_8S,
     DEPTH_MASK_FLT = DEPTH_MASK_32F + DEPTH_MASK_64F
 };
-
 
 /*!
  Proxy datatype for passing Mat's and vector<>'s as input parameters
@@ -1578,7 +1563,6 @@ public:
        Backward conversion from cv::Mat to CvMat or IplImage is provided via cast operators
        cv::Mat::operator CvMat() an cv::Mat::operator IplImage().
        The operators do not copy the data.
-
 
        \code
        IplImage* img = cvLoadImage("greatwave.jpg", 1);
@@ -2009,7 +1993,6 @@ protected:
     void initEmpty();
 };
 
-
 /*!
    Random Number Generator
 
@@ -2110,7 +2093,6 @@ public:
     int maxCount; // the maximum number of iterations/elements
     double epsilon; // the desired accuracy
 };
-
 
 typedef void (*BinaryFunc)(const uchar* src1, size_t step1,
                            const uchar* src2, size_t step2,
@@ -2477,7 +2459,6 @@ CV_EXPORTS_W void PCAProject(InputArray data, InputArray mean,
 
 CV_EXPORTS_W void PCABackProject(InputArray data, InputArray mean,
                                  InputArray eigenvectors, OutputArray result);
-
 
 /*!
     Singular Value Decomposition class
@@ -3029,7 +3010,6 @@ public:
     Point pos() const;
 };
 
-
 /*!
  Matrix read-write iterator
 
@@ -3104,7 +3084,6 @@ public:
 protected:
     MatIterator_<_Tp> it;
 };
-
 
 template<typename _Tp, int m, int n> class MatxCommaInitializer
 {
@@ -3278,7 +3257,6 @@ typedef void (*ConvertScaleData)(const void* from, void* to, int cn, double alph
 CV_EXPORTS ConvertData getConvertElem(int fromType, int toType);
 //! returns the function for converting pixels from one data type to another with the optional scaling
 CV_EXPORTS ConvertScaleData getConvertScaleElem(int fromType, int toType);
-
 
 /////////////////////////// multi-dimensional sparse matrix //////////////////////////
 
@@ -3790,7 +3768,6 @@ public:
     SparseMatConstIterator_<_Tp> end() const;
 };
 
-
 /*!
  Template Read-Only Sparse Matrix Iterator Class.
 
@@ -4200,7 +4177,6 @@ public:
     const CvFileNode* node;
 };
 
-
 /*!
  File Node Iterator
 
@@ -4338,7 +4314,6 @@ public:
     CvSeq* seq;
 };
 
-
 /*!
  STL-style Sequence Iterator inherited from the CvSeqReader structure
 */
@@ -4375,7 +4350,6 @@ public:
     // (to distinguish between 0 and seq->total)
     int index;
 };
-
 
 class CV_EXPORTS Algorithm;
 class CV_EXPORTS AlgorithmInfo;
@@ -4445,7 +4419,6 @@ public:
     CV_WRAP int paramType(const string& name) const;
     CV_WRAP void getParams(CV_OUT vector<string>& names) const;
 
-
     virtual void write(FileStorage& fs) const;
     virtual void read(const FileNode& fn);
 
@@ -4459,7 +4432,6 @@ public:
 
     virtual AlgorithmInfo* info() const /* TODO: make it = 0;*/ { return 0; }
 };
-
 
 class CV_EXPORTS AlgorithmInfo
 {
@@ -4555,7 +4527,6 @@ protected:
     void set(Algorithm* algo, const char* name, int argType,
               const void* value, bool force=false) const;
 };
-
 
 struct CV_EXPORTS Param
 {
@@ -4776,7 +4747,6 @@ float CommandLineParser::analyzeValue<float>(const std::string& str, bool space_
 
 template<> CV_EXPORTS
 double CommandLineParser::analyzeValue<double>(const std::string& str, bool space_delete);
-
 
 /////////////////////////////// Parallel Primitives //////////////////////////////////
 

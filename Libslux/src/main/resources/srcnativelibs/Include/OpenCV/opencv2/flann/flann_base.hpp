@@ -69,7 +69,6 @@ struct SavedIndexParams : public IndexParams
     }
 };
 
-
 template<typename Distance>
 NNIndex<Distance>* load_saved_index(const Matrix<typename Distance::ElementType>& dataset, const std::string& filename, Distance distance)
 {
@@ -95,7 +94,6 @@ NNIndex<Distance>* load_saved_index(const Matrix<typename Distance::ElementType>
 
     return nnIndex;
 }
-
 
 template<typename Distance>
 class Index : public NNIndex<Distance>
@@ -194,7 +192,6 @@ public:
     {
         return nnIndex_->usedMemory();
     }
-
 
     /**
      * \returns The index parameters

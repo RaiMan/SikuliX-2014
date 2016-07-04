@@ -25,7 +25,6 @@ struct TessCallbackUtils_ {
   static void FailIsRepeatable(const char* name);
 };
 
-
 class TessClosure {
  public:
   virtual ~TessClosure() { }
@@ -269,7 +268,6 @@ inline typename _TessFunctionResultCallback_0_0<false,R>::base*
 NewPermanentTessCallback(R (*function)()) {
   return new _TessFunctionResultCallback_0_0<false,R>(function);
 }
-
 
 
 // Specified by TR1 [4.7.2] Reference modifications.
@@ -1675,7 +1673,6 @@ class TessResultCallback1 {
   virtual ~TessResultCallback1() { }
   virtual R Run(A1) = 0;
 };
-
 
 template <class A1,class A2>
 class TessCallback2 {
@@ -5471,7 +5468,6 @@ class _TessMemberResultCallback_2_3 : public TessResultCallback3<R,A1,A2,A3> {
     : object_(object),
       member_(member),      p1_(p1),      p2_(p2) { }
 
-
   virtual R Run(A1 a1,A2 a2,A3 a3) {
     if (!del) {
       R result = (object_->*member_)(p1_,p2_,a1,a2,a3);
@@ -9254,7 +9250,6 @@ class _ConstTessMemberResultCallback_5_5 : public TessResultCallback5<R,A1,A2,A3
   inline _ConstTessMemberResultCallback_5_5(const T* object, MemberSignature member, P1 p1, P2 p2, P3 p3, P4 p4, P5 p5)
     : object_(object),
       member_(member),      p1_(p1),      p2_(p2),      p3_(p3),      p4_(p4),      p5_(p5) { }
-
 
   virtual R Run(A1 a1,A2 a2,A3 a3,A4 a4,A5 a5) {
     if (!del) {

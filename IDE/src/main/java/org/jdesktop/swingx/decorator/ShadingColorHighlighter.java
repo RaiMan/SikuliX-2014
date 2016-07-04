@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -26,24 +26,24 @@ import java.awt.Component;
 /**
  * Experimental replacement of HierarchicalColumnHighligher.
  * Darkens the component's background.
- * 
+ *
  * @author Jeanette Winzenburg
  */
 public class ShadingColorHighlighter extends ColorHighlighter {
 
     /**
-     * Instantiates a Highlighter with null colors using the default 
+     * Instantiates a Highlighter with null colors using the default
      * HighlightPredicate.
-     * 
+     *
      */
     public ShadingColorHighlighter() {
         this(null);
     }
 
     /**
-     * Instantiates a Highlighter with null colors using the specified 
+     * Instantiates a Highlighter with null colors using the specified
      * HighlightPredicate.
-     * 
+     *
      * @param predicate the HighlightPredicate to use.
      */
     public ShadingColorHighlighter(HighlightPredicate predicate) {
@@ -53,7 +53,7 @@ public class ShadingColorHighlighter extends ColorHighlighter {
     /**
      * Applies a suitable background for the renderer component within the
      * specified adapter. <p>
-     * 
+     *
      * This implementation applies its a darkened background to an unselected
      * adapter. Does nothing for selected cells.
      *

@@ -438,7 +438,7 @@ public class Visual extends JComponent
     this.offsety = offsety;
     offsetLocation(offsetx, offsety);
   }
-  
+
   // TODO: fix this
   float zoomLevel = 1.0f;
   public void setZoomLevel(float zoomLevel) {
@@ -473,7 +473,6 @@ public class Visual extends JComponent
         Debug.info("Updaing by offset:" + sklComp.autolayout);
         Debug.info("Updaing child:" + sklComp);
 
-
         if (sklComp.autolayout instanceof AutoLayoutByMovement) {
           ((AutoLayoutByMovement) sklComp.autolayout).x = bounds.x;
           ((AutoLayoutByMovement) sklComp.autolayout).y = bounds.y;
@@ -487,7 +486,6 @@ public class Visual extends JComponent
         }
       }
     }
-
 
   }
   // this allows the component to be dragged to another location on the screen
@@ -755,7 +753,7 @@ public class Visual extends JComponent
     }
   }
   //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="layout">
   public Visual left() {
     left(0);
@@ -791,7 +789,7 @@ public class Visual extends JComponent
     }
     return this;
   }
-  
+
   public Visual below() {
     return below(0);
   }
@@ -804,7 +802,7 @@ public class Visual extends JComponent
     return this;
   }
 //</editor-fold>
-  
+
   //<editor-fold defaultstate="collapsed" desc="AutoLayout">
   AutoLayout autolayout = null;
 

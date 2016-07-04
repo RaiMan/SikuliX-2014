@@ -74,7 +74,7 @@ public class ErrorInfo {
      *  reports.
      */
     private Map<String,String> state;
-    
+
     /**
      * Creates a new ErrorInfo based on the provided data.
      *
@@ -122,7 +122,7 @@ public class ErrorInfo {
         this.errorException = errorException;
         this.errorLevel = errorLevel == null ? Level.SEVERE : errorLevel;
         this.state = new HashMap<String,String>();
-        
+
         //first add all the System properties
         try {
             //NOTE: This is not thread safe because System.getProperties() does not appear
@@ -140,11 +140,11 @@ public class ErrorInfo {
         } catch (SecurityException e) {
             //probably running in a sandbox, don't worry about this
         }
-        
+
         //add the automatically supported properties
         this.state.put("System.currentTimeMillis", "" + System.currentTimeMillis());
         this.state.put("isOnEDT", "" + SwingUtilities.isEventDispatchThread());
-        
+
         //now add all the data in the param "state". Thus, if somebody specified a key in the
         //state map, it overrides whatever was in the System map
         if (state != null) {
@@ -153,7 +153,7 @@ public class ErrorInfo {
             }
         }
     }
-    
+
     /**
      * Gets the string to use for a dialog title or other quick reference. Used
      * as a quick reference for the incident. For example, it might be used as the
@@ -164,7 +164,7 @@ public class ErrorInfo {
     public String getTitle() {
         return title;
     }
-    
+
     /**
      * <p>Gets the basic error message. This message should be clear and user oriented.
      * This String may have HTML formatting, but any such formatting should be used
@@ -188,7 +188,7 @@ public class ErrorInfo {
     public String getBasicErrorMessage() {
         return basicErrorMessage;
     }
-    
+
     /**
      * <p>Gets the detailed error message. Unlike {@link #getBasicErrorMessage},
      * this method may return a more technical message to the user. However, it
@@ -202,7 +202,7 @@ public class ErrorInfo {
     public String getDetailedErrorMessage() {
         return detailedErrorMessage;
     }
-    
+
     /**
      * Gets the category name. This value indicates where in the application
      * this incident occurred. It is recommended that this be the same value as
@@ -213,7 +213,7 @@ public class ErrorInfo {
     public String getCategory() {
         return category;
     }
-    
+
     /**
      * Gets the actual exception that generated the error. If this returns a
      * non null value, then {@link #getBasicErrorMessage} may return a null value.
@@ -226,7 +226,7 @@ public class ErrorInfo {
     public Throwable getErrorException() {
         return errorException;
     }
-    
+
     /**
      * Gets the severity of the error. The default level is <code>Level.SEVERE</code>,
      * but any {@link Level} may be specified when constructing an
@@ -237,7 +237,7 @@ public class ErrorInfo {
     public Level getErrorLevel() {
         return errorLevel;
     }
-    
+
     /**
      * <p>Gets a copy of the application state at the time that the incident occured.
      * This map will never be null. If running with appropriate permissions the

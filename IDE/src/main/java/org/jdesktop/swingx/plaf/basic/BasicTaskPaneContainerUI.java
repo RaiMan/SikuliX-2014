@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -34,19 +34,19 @@ import org.jdesktop.swingx.plaf.TaskPaneContainerUI;
 
 /**
  * Base implementation of the <code>JXTaskPaneContainer</code> UI.
- * 
+ *
  * @author <a href="mailto:fred@L2FProd.com">Frederic Lavigne</a>
  * @author Karl Schaefer
  */
 public class BasicTaskPaneContainerUI extends TaskPaneContainerUI {
     /**
      * A {@code UIResource} implementation of {@code VerticalLayout}.
-     * 
+     *
      * @author Karl George Schaefer
      */
     protected class VerticalLayoutUIResource extends VerticalLayout implements UIResource {
         /**
-         * The default layout. 
+         * The default layout.
          */
         public VerticalLayoutUIResource() {
             super();
@@ -54,7 +54,7 @@ public class BasicTaskPaneContainerUI extends TaskPaneContainerUI {
 
         /**
          * Defines a layout with the specified gap.
-         * 
+         *
          * @param gap
          *            the gap between components
          */
@@ -62,12 +62,12 @@ public class BasicTaskPaneContainerUI extends TaskPaneContainerUI {
             super(gap);
         }
     }
-    
+
   /**
    * Returns a new instance of BasicTaskPaneContainerUI.
    * BasicTaskPaneContainerUI delegates are allocated one per
    * JXTaskPaneContainer.
-   * 
+   *
    * @return A new TaskPaneContainerUI implementation for the Basic look and
    *         feel.
    */
@@ -88,9 +88,9 @@ public void installUI(JComponent c) {
     super.installUI(c);
     taskPane = (JXTaskPaneContainer)c;
     installDefaults();
-    
+
     LayoutManager manager = taskPane.getLayout();
-    
+
     if (manager == null || manager instanceof UIResource) {
         taskPane.setLayout(createDefaultLayout());
     }
@@ -108,7 +108,7 @@ public void installUI(JComponent c) {
                 "TaskPaneContainer.backgroundPainter");
         LookAndFeel.installProperty(taskPane, "opaque", Boolean.TRUE);
     }
-    
+
     /**
      * Constructs a layout manager to be used by the Look and Feel.
      * @return the layout manager for the current Look and Feel
@@ -116,14 +116,14 @@ public void installUI(JComponent c) {
     protected LayoutManager createDefaultLayout() {
         return new VerticalLayoutUIResource(14);
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void uninstallUI(JComponent c) {
         uninstallDefaults();
-        
+
         super.uninstallUI(c);
     }
 

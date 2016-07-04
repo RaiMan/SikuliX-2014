@@ -21,7 +21,7 @@ struct FindResult {
       score = _score;
       text = "";
    }
-   
+
    std::string text;
 };
 

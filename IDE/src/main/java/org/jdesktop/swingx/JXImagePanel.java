@@ -55,24 +55,24 @@ import javax.swing.SwingUtilities;
  * <p>
  * Images to be displayed can be set based on URL, Image, etc. This is
  * accomplished by passing in an image loader.
- * 
+ *
  * <pre>
  * public class URLImageLoader extends Callable&lt;Image&gt; {
  *     private URL url;
- * 
+ *
  *     public URLImageLoader(URL url) {
  *         url.getClass(); //null check
  *         this.url = url;
  *     }
- * 
+ *
  *     public Image call() throws Exception {
  *         return ImageIO.read(url);
  *     }
  * }
- * 
+ *
  * imagePanel.setImageLoader(new URLImageLoader(url));
  * </pre>
- * 
+ *
  * </p>
  * <p>
  * This component also supports allowing the user to set the image. If the
@@ -88,7 +88,7 @@ import javax.swing.SwingUtilities;
  * TODO other than the image loading this component can be replicated by a
  * JXPanel with the appropriate Painter. What's the point?
  * </p>
- * 
+ *
  * @author rbair
  * @deprecated (pre-1.6.2) use a JXPanel with an ImagePainter; see Issue 988
  */
@@ -152,7 +152,7 @@ class JXImagePanel extends JXPanel {
     /**
      * Sets the image to use for the background of this panel. This image is
      * painted whether the panel is opaque or translucent.
-     * 
+     *
      * @param image if null, clears the image. Otherwise, this will set the
      *        image to be painted. If the preferred size has not been explicitly
      *        set, then the image dimensions will alter the preferred size of
@@ -173,7 +173,7 @@ class JXImagePanel extends JXPanel {
      */
     public Image getImage() {
         Image image = img.get();
-        
+
         //TODO perhaps we should have a default image loader?
         if (image == null && imageLoader != null) {
             try {
@@ -217,7 +217,7 @@ class JXImagePanel extends JXPanel {
 
     /**
      * Sets what style to use when painting the image
-     * 
+     *
      * @param s
      */
     public void setStyle(Style s) {
@@ -264,7 +264,7 @@ class JXImagePanel extends JXPanel {
 
     /**
      * Overridden to paint the image on the panel
-     * 
+     *
      * @param g
      */
     @Override
@@ -282,7 +282,7 @@ class JXImagePanel extends JXPanel {
                 @Override
                 protected void done() {
                     super.done();
-                    
+
                     SwingUtilities.invokeLater(new Runnable() {
                         @Override
                         public void run() {

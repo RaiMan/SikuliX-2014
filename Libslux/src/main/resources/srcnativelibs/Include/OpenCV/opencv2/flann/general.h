@@ -48,5 +48,4 @@ public:
 
 }
 
-
 #endif  /* OPENCV_FLANN_GENERAL_H_ */

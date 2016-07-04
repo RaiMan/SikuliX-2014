@@ -38,18 +38,18 @@ import org.jdesktop.swingx.plaf.MultiThumbSliderUI;
  * @author Joshua Marinacci
  */
 public class BasicMultiThumbSliderUI extends MultiThumbSliderUI {
-    
+
     protected JXMultiThumbSlider<?> slider;
-    
+
     public static ComponentUI createUI(JComponent c) {
         return new BasicMultiThumbSliderUI();
     }
-    
+
     @Override
     public void installUI(JComponent c) {
         slider = (JXMultiThumbSlider<?>)c;
         slider.setThumbRenderer(new BasicThumbRenderer());
-        slider.setTrackRenderer(new BasicTrackRenderer());        
+        slider.setTrackRenderer(new BasicTrackRenderer());
     }
     @Override
     public void uninstallUI(JComponent c) {

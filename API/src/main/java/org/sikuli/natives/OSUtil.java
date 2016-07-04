@@ -23,11 +23,11 @@ public interface OSUtil {
   public App.AppEntry getApp(int pid, String name);
 
   public Map<Integer, String[]> getApps(String name);
-  
+
   public int isRunning(App.AppEntry app);
 
 	public int open(String appName);
-  
+
   public int open(App.AppEntry app);
 
   // Windows: returns PID, 0 if fails

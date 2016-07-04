@@ -13,23 +13,23 @@
 package org.sikuli.scriptrunner;
 
 public class RemoteRunner {
-  
+
   private boolean valid = false;
-  
+
   public RemoteRunner(String adr, String p) {
     init(adr, p);
   }
-  
+
   private void init(String adr, String p) {
-    
+
   }
-  
+
   public boolean isValid() {
     return valid;
   }
-  
+
   public int runRemote(String[] args) {
     return 0;
   }
-    
+
 }

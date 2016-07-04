@@ -25,58 +25,58 @@ import org.sikuli.basics.Debug;
 /**
  * The VNC thread object handles connecting to the server and keeping the
  * framebuffer up to date by polling the server for changes.
- * 
+ *
  * @author Mike Johnson
  */
 public class VNCThread extends Thread{
-	
+
 	//keep the connection open or not
 	private boolean listen = true;
-	
+
 	//interval to poll VNC server for changes (milliseconds)
-	private int pollInterval = 50; 
-	
+	private int pollInterval = 50;
+
 	//protocol message object
 	private VNCClient client;
 	//local copy of remote framebuffer
 	private Framebuffer screen;
-	
+
 	//flag of whether the connection is configured correctly based on what
 	//the VNC stack currectly supports
 	private boolean pixel_flag = false;
-	
+
 	private boolean connected = false;
-	
+
 	public VNCThread(Socket s){
 		client = new VNCClient(s);
 		screen = new Framebuffer();
 	}
-	
+
     /**
      * terminates the thread
      */
 	public void terminate(){
     	listen = false;
     }
-	
+
     public VNCClient getClient(){
     	return client;
     }
-    
+
     public Framebuffer getScreen(){
     	return screen;
     }
-    
+
     /**
      * Changes the interval at which the VNC Client
      * polls the server for updates.
-     * 
+     *
      * @param milliseconds
      */
     public void changePollInterval(int milliseconds){
     	pollInterval = milliseconds;
     }
-    
+
     /**
      * This method connects the client to the server and invokes the necessary
      * methods so that the user does not need to worry about the underlying VNC
@@ -89,7 +89,7 @@ public class VNCThread extends Thread{
      *                      2 VNC Authentication
      */
     public void openConnection(int connectOthers, int securityType){
-    	
+
     	try{
     		client.protocolHandshake();
     		client.securityMethod(client.securityInit(securityType));
@@ -106,7 +106,7 @@ public class VNCThread extends Thread{
     		Debug.log(3, ""+ie);
     	}
     }
-    
+
     /**
      * The SetPixelFormat method sets the format of the raw pixel data sent
      * across the network by the VNC Server.
@@ -116,14 +116,14 @@ public class VNCThread extends Thread{
      * @param bef The BigEndianFlag (0 is little endian)
      * @throws IOException Thrown if there is a socket error.
      */
-    public void setPixelFormat(String format, int bits, int bef) 
+    public void setPixelFormat(String format, int bits, int bef)
     		throws IOException{
-    	
+
         if(format.equals("Truecolor")){
-        	
+
         	Debug.log(3, "Format: "+format);
         	Debug.log(3, "Bits: "+bits);
-        	
+
             switch(bits){
                 case 8:
                 	int[] a = {8,8,bef,1,7,7,3,5,2,0};
@@ -186,25 +186,25 @@ public class VNCThread extends Thread{
             pixel_flag = true;
         }
     }
-	
+
     @Override
     public void run(){
-    	
+
     	//if not connected sleep until it is
     	while(!connected){
     		try {
 				Thread.sleep(100);
-			} 
+			}
     		catch (InterruptedException e) {
     			Debug.log(3, "Error: Thread Interrupted");
 			}
     	}
-    	
+
         try{
         	client.framebufferUpdateRequest( //non-incremental update request
                     pixel_flag,0, (short)0, (short)0,
                     (short)screen.getWidth(), (short)screen.getHeight());
-        	
+
             while (listen){
             	if(client.available()){
             		int message = client.readByte();
@@ -229,7 +229,7 @@ public class VNCThread extends Thread{
                     }
             	}
               	Thread.sleep(pollInterval);
-              	
+
                 client.framebufferUpdateRequest( //incremental update request
                         pixel_flag,1, (short)0, (short)0,
                         (short)screen.getWidth(), (short)screen.getHeight());
@@ -243,20 +243,20 @@ public class VNCThread extends Thread{
         	Debug.log(3, "Error: Thread Interrupted");
 		}
     }
-    
+
     /**
      * Listens to the framebuffer update messages from the server
-     * 
+     *
      * @throws IOException
      * @throws InterruptedException
      */
-    private void listenRemoteFramebufferUpdate() 
+    private void listenRemoteFramebufferUpdate()
     		throws IOException, InterruptedException{
-    	
+
     	int numRect,x,y,w,h,encType;
-    	
+
         numRect = client.readShort();
-        
+
         for(int i = 0; i < numRect; i++){
         	x = client.readShort();
             y = client.readShort();
@@ -281,14 +281,14 @@ public class VNCThread extends Thread{
         }
         screen.convertToBufferedImage();
     }
-    
+
 /*Unimplemented Methods------------------------------------------------------*/
-    
+
     /*
     private void listenBell(){
         Debug.log(3, "Ring");
     }
-    
+
     private void listenSetColorMap()throws IOException{
         dataIn.readUnsignedByte();
         int first=dataIn.readUnsignedShort();
@@ -301,7 +301,7 @@ public class VNCThread extends Thread{
             int b = dataIn.readUnsignedShort();
         }
     }
-    
+
     private String listenServerCutText() throws IOException{
         dataIn.readUnsignedByte();
         dataIn.readUnsignedByte(); //padding

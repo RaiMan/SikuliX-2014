@@ -92,7 +92,7 @@ public class FileManager {
 			return -1;
 		}
 	}
-	
+
 	public static int isUrlUseabel(URL aURL) {
     HttpURLConnection conn = null;
 		try {
@@ -399,7 +399,7 @@ public class FileManager {
     }
     return fTempDir;
   }
-  
+
   public static int getRandomInt() {
     int rand = 1 + new Random().nextInt();
     return (rand < 0 ? rand * -1 : rand);
@@ -503,7 +503,7 @@ public class FileManager {
       }
     }
   }
-  
+
   public static File createTempFile(String suffix) {
     return createTempFile(suffix, null);
   }
@@ -548,7 +548,7 @@ public class FileManager {
     }
     return null;
   }
-  
+
   public static String saveTimedImage(BufferedImage img) {
     return saveTimedImage(img, ImagePath.getBundlePath(), null);
   }
@@ -556,7 +556,7 @@ public class FileManager {
   public static String saveTimedImage(BufferedImage img, String path) {
     return saveTimedImage(img, path, null);
   }
-  
+
   public static String saveTimedImage(BufferedImage img, String path, String name) {
     RunTime.pause(0.01f);
     File fImage = new File(path, String.format("%s-%d.png", name, new Date().getTime()));
@@ -621,14 +621,14 @@ public class FileManager {
         dest.close();
       }
     } catch (Exception ex) {
-      log(-1, "unzip: not possible: source:\n%s\ntarget:\n%s\n(%s)%s", 
+      log(-1, "unzip: not possible: source:\n%s\ntarget:\n%s\n(%s)%s",
           fpZip, fpTarget, entry.getName(), ex);
       return false;
     } finally {
-      try {      
+      try {
         inpZip.close();
       } catch (IOException ex) {
-        log(-1, "unzip: closing source:\n%s\n%s", fpZip, ex);    
+        log(-1, "unzip: closing source:\n%s\n%s", fpZip, ex);
       }
     }
     return true;
@@ -1202,7 +1202,7 @@ public class FileManager {
       return "";
     }
   }
-  
+
   private static String doRreadFileToString(File fPath) throws IOException {
     StringBuilder result = new StringBuilder();
     BufferedReader reader = null;

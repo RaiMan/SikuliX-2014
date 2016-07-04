@@ -378,17 +378,17 @@ public class LinuxSupport {
 //    return shouldBuildVisionNow;
     return true;
   }
-  
+
   private static boolean checklibs(File lib) {
     String cmdRet;
     String[] retLines;
     boolean checkSuccess = true;
-    
+
     if (!libSearched) {
       checkSuccess = checkNeeded();
       libSearched = true;
     }
-    
+
     log(lvl, "checking\n%s", lib);
     // readelf -d lib
     // 0x0000000000000001 (NEEDED)             Shared library: [libtesseract.so.3]
@@ -407,14 +407,14 @@ public class LinuxSupport {
       }
       log(lvl, libsNeeded);
     }
-    
+
     if (!runLdd(lib)) {
       checkSuccess = false;
     }
-    
+
 //    return false; // for testing
     return checkSuccess;
   }
 //</editor-fold>
-  
+
 }

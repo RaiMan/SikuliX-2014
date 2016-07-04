@@ -167,7 +167,6 @@ public:
      */
     virtual IndexParams getParameters() const = 0;
 
-
     /**
      * \brief Method that searches for nearest-neighbours
      */

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -38,22 +38,21 @@ import org.jdesktop.swingx.util.Contract;
  *
  * @author Ramesh Gupta
  * @author Jeanette Winzenburg
- * 
+ *
  */
-public class CompoundHighlighter extends AbstractHighlighter 
+public class CompoundHighlighter extends AbstractHighlighter
     implements UIDependent {
     public static final Highlighter[] EMPTY_HIGHLIGHTERS = new Highlighter[0];
 
     protected List<Highlighter> highlighters;
-    
+
     /** the listener for changes in contained Highlighters. */
     private ChangeListener highlighterChangeListener;
 
-    
     /**
-     * Instantiates a CompoundHighlighter containing the given 
-     * <code>Highlighter</code>s. 
-     * 
+     * Instantiates a CompoundHighlighter containing the given
+     * <code>Highlighter</code>s.
+     *
      * @param inList zero or more not-null Highlighters to manage by this
      *   CompoundHighlighter.
      * @throws NullPointerException if array is null or array contains null values.
@@ -63,9 +62,9 @@ public class CompoundHighlighter extends AbstractHighlighter
     }
 
     /**
-     * Instantiates a CompoundHighlighter with the given predicate containing the given 
-     * <code>Highlighter</code>s. 
-     * 
+     * Instantiates a CompoundHighlighter with the given predicate containing the given
+     * <code>Highlighter</code>s.
+     *
      * @param predicate the highlightPredicate to use
      * @param inList zero or more not-null Highlighters to manage by this
      *   CompoundHighlighter.
@@ -78,9 +77,9 @@ public class CompoundHighlighter extends AbstractHighlighter
     }
 
     /**
-     * Sets the given 
-     * <code>Highlighter</code>s. 
-     * 
+     * Sets the given
+     * <code>Highlighter</code>s.
+     *
      * @param inList zero or more not-null Highlighters to manage by this
      *   CompoundHighlighter.
      * @throws NullPointerException if array is null or array contains null values.
@@ -120,7 +119,7 @@ public class CompoundHighlighter extends AbstractHighlighter
      * Adds a highlighter to the pipeline.
      *
      * PENDING: Duplicate inserts?
-     * 
+     *
      * @param highlighter highlighter to add
      * @param prepend prepend the highlighter if true; false will append
      * @throws NullPointerException if highlighter is null.
@@ -144,7 +143,7 @@ public class CompoundHighlighter extends AbstractHighlighter
     /**
      * Removes a highlighter from the pipeline.
      *
-     *  
+     *
      * @param hl highlighter to remove
      */
     public void removeHighlighter(Highlighter hl) {
@@ -159,7 +158,7 @@ public class CompoundHighlighter extends AbstractHighlighter
 
     /**
      * Returns an array of contained Highlighters.
-     * 
+     *
      * @return the contained Highlighters, might be empty but never null.
      */
     public Highlighter[] getHighlighters() {
@@ -171,7 +170,7 @@ public class CompoundHighlighter extends AbstractHighlighter
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Implemented to call updateUI on contained Highlighters.
      */
     @Override
@@ -179,12 +178,12 @@ public class CompoundHighlighter extends AbstractHighlighter
         for (Highlighter highlighter : highlighters) {
             updateUI(highlighter);
         }
-    }   
+    }
 
     /**
      * Returns the <code>ChangeListner</code> to contained
      * <code>Highlighter</code>s. The listener is lazily created.
-     *  
+     *
      * @return the listener for contained highlighters, guaranteed
      *   to be not null.
      */
@@ -197,11 +196,11 @@ public class CompoundHighlighter extends AbstractHighlighter
 
     /**
      * Creates and returns the ChangeListener registered to
-     * contained <code>Highlighter</code>s. Here: fires a 
-     * stateChanged on each notification. 
-     * 
+     * contained <code>Highlighter</code>s. Here: fires a
+     * stateChanged on each notification.
+     *
      * @return the listener for contained Highlighters.
-     * 
+     *
      */
     protected ChangeListener createHighlighterChangeListener() {
         return highlighterChangeListener = new ChangeListener() {
@@ -210,23 +209,22 @@ public class CompoundHighlighter extends AbstractHighlighter
             public void stateChanged(ChangeEvent e) {
                 fireStateChanged();
             }
-            
+
         };
     }
 
    /**
     *  Updates the ui-dependent state of the given Highlighter.
-    *  
+    *
      * @param hl the highlighter to update.
      */
     private void updateUI(Highlighter hl) {
         if (hl instanceof UIDependent) {
             ((UIDependent) hl).updateUI();
-        } 
+        }
     }
 
-
-//------------------- implement Highlighter    
+//------------------- implement Highlighter
 
     /**
      * {@inheritDoc}
@@ -238,7 +236,6 @@ public class CompoundHighlighter extends AbstractHighlighter
         }
         return stamp;
     }
-    
-    
+
 
 }

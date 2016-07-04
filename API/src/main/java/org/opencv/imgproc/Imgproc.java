@@ -1,4 +1,3 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
@@ -57,7 +56,6 @@ public class Imgproc {
             CV_THRESH_TOZERO_INV = 4,
             CV_THRESH_MASK = 7,
             CV_THRESH_OTSU = 8;
-
 
     public static final int
             CV_BLUR_NO_SCALE = 0,
@@ -373,7 +371,6 @@ public class Imgproc {
             CHAIN_APPROX_TC89_L1 = CV_CHAIN_APPROX_TC89_L1,
             CHAIN_APPROX_TC89_KCOS = CV_CHAIN_APPROX_TC89_KCOS;
 
-
     //
     // C++:  void Canny(Mat image, Mat& edges, double threshold1, double threshold2, int apertureSize = 3, bool L2gradient = false)
     //
@@ -449,7 +446,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void GaussianBlur(Mat src, Mat& dst, Size ksize, double sigmaX, double sigmaY = 0, int borderType = BORDER_DEFAULT)
@@ -566,7 +562,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void HoughCircles(Mat image, Mat& circles, int method, double dp, double minDist, double param1 = 100, double param2 = 100, int minRadius = 0, int maxRadius = 0)
@@ -783,7 +778,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void HoughLines(Mat image, Mat& lines, double rho, double theta, int threshold, double srn = 0, double stn = 0)
     //
@@ -867,7 +861,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void HoughLinesP(Mat image, Mat& lines, double rho, double theta, int threshold, double minLineLength = 0, double maxLineGap = 0)
@@ -1115,7 +1108,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void HuMoments(Moments m, Mat& hu)
     //
@@ -1161,7 +1153,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void Laplacian(Mat src, Mat& dst, int ddepth, int ksize = 1, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
@@ -1292,7 +1283,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  double PSNR(Mat src1, Mat src2)
     //
@@ -1304,7 +1294,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void Scharr(Mat src, Mat& dst, int ddepth, int dx, int dy, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
@@ -1415,7 +1404,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void Sobel(Mat src, Mat& dst, int ddepth, int dx, int dy, int ksize = 3, double scale = 1, double delta = 0, int borderType = BORDER_DEFAULT)
@@ -1691,7 +1679,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void accumulate(Mat src, Mat& dst, Mat mask = Mat())
     //
@@ -1761,7 +1748,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void accumulateProduct(Mat src1, Mat src2, Mat& dst, Mat mask = Mat())
     //
@@ -1829,7 +1815,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void accumulateSquare(Mat src, Mat& dst, Mat mask = Mat())
     //
@@ -1890,7 +1875,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void accumulateWeighted(Mat src, Mat& dst, double alpha, Mat mask = Mat())
@@ -1962,7 +1946,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void adaptiveBilateralFilter(Mat src, Mat& dst, Size ksize, double sigmaSpace, double maxSigmaColor = 20.0, Point anchor = Point(-1, -1), int borderType = BORDER_DEFAULT)
@@ -2076,7 +2059,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void adaptiveThreshold(Mat src, Mat& dst, double maxValue, int adaptiveMethod, int thresholdType, int blockSize, double C)
     //
@@ -2140,7 +2122,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void approxPolyDP(vector_Point2f curve, vector_Point2f& approxCurve, double epsilon, bool closed)
     //
@@ -2181,7 +2162,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  double arcLength(vector_Point2f curve, bool closed)
     //
@@ -2204,7 +2184,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void bilateralFilter(Mat src, Mat& dst, int d, double sigmaColor, double sigmaSpace, int borderType = BORDER_DEFAULT)
@@ -2300,7 +2279,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void blur(Mat src, Mat& dst, Size ksize, Point anchor = Point(-1,-1), int borderType = BORDER_DEFAULT)
@@ -2414,7 +2392,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  int borderInterpolate(int p, int len, int borderType)
     //
@@ -2460,7 +2437,6 @@ public class Imgproc {
         return retVal;
     }
 
-
     //
     // C++:  Rect boundingRect(vector_Point points)
     //
@@ -2483,7 +2459,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void boxFilter(Mat src, Mat& dst, int ddepth, Size ksize, Point anchor = Point(-1,-1), bool normalize = true, int borderType = BORDER_DEFAULT)
@@ -2616,7 +2591,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void calcBackProject(vector_Mat images, vector_int channels, Mat hist, Mat& dst, vector_float ranges, double scale)
     //
@@ -2674,7 +2648,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void calcHist(vector_Mat images, vector_int channels, Mat mask, Mat& hist, vector_int histSize, vector_float ranges, bool accumulate = false)
@@ -2980,7 +2953,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  double compareHist(Mat H1, Mat H2, int method)
     //
@@ -3052,7 +3024,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  double contourArea(Mat contour, bool oriented = false)
@@ -3163,7 +3134,6 @@ public class Imgproc {
         return retVal;
     }
 
-
     //
     // C++:  void convertMaps(Mat map1, Mat map2, Mat& dstmap1, Mat& dstmap2, int dstmap1type, bool nninterpolation = false)
     //
@@ -3254,7 +3224,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void convexHull(vector_Point points, vector_int& hull, bool clockwise = false,  _hidden_  returnPoints = true)
     //
@@ -3331,7 +3300,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void convexityDefects(vector_Point contour, vector_int convexhull, vector_Vec4i& convexityDefects)
     //
@@ -3386,7 +3354,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void copyMakeBorder(Mat src, Mat& dst, int top, int bottom, int left, int right, int borderType, Scalar value = Scalar())
@@ -3529,7 +3496,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void cornerEigenValsAndVecs(Mat src, Mat& dst, int blockSize, int ksize, int borderType = BORDER_DEFAULT)
     //
@@ -3639,7 +3605,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void cornerHarris(Mat src, Mat& dst, int blockSize, int ksize, double k, int borderType = BORDER_DEFAULT)
     //
@@ -3704,7 +3669,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void cornerMinEigenVal(Mat src, Mat& dst, int blockSize, int ksize = 3, int borderType = BORDER_DEFAULT)
@@ -3782,7 +3746,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void cornerSubPix(Mat image, vector_Point2f& corners, Size winSize, Size zeroZone, TermCriteria criteria)
     //
@@ -3842,13 +3805,11 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  Ptr_CLAHE createCLAHE(double clipLimit = 40.0, Size tileGridSize = Size(8, 8))
     //
 
     // Return type 'Ptr_CLAHE' is not supported, skipping the function
-
 
     //
     // C++:  void createHanningWindow(Mat& dst, Size winSize, int type)
@@ -3883,7 +3844,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void cvtColor(Mat src, Mat& dst, int code, int dstCn = 0)
@@ -4592,7 +4552,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void dilate(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
     //
@@ -4718,7 +4677,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void distanceTransform(Mat src, Mat& dst, int distanceType, int maskSize)
     //
@@ -4811,7 +4769,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void distanceTransform(Mat src, Mat& dst, Mat& labels, int distanceType, int maskSize, int labelType = DIST_LABEL_CCOMP)
@@ -5005,7 +4962,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void drawContours(Mat& image, vector_vector_Point contours, int contourIdx, Scalar color, int thickness = 1, int lineType = 8, Mat hierarchy = Mat(), int maxLevel = INT_MAX, Point offset = Point())
@@ -5309,7 +5265,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void equalizeHist(Mat src, Mat& dst)
     //
@@ -5348,7 +5303,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void erode(Mat src, Mat& dst, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
@@ -5474,7 +5428,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void filter2D(Mat src, Mat& dst, int ddepth, Mat kernel, Point anchor = Point(-1,-1), double delta = 0, int borderType = BORDER_DEFAULT)
@@ -5666,7 +5619,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void findContours(Mat& image, vector_vector_Point& contours, Mat& hierarchy, int mode, int method, Point offset = Point())
     //
@@ -5852,7 +5804,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  RotatedRect fitEllipse(vector_Point2f points)
     //
@@ -5889,7 +5840,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void fitLine(Mat points, Mat& line, int distType, double param, double reps, double aeps)
@@ -5974,7 +5924,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  int floodFill(Mat& image, Mat& mask, Point seedPoint, Scalar newVal, Rect* rect = 0, Scalar loDiff = Scalar(), Scalar upDiff = Scalar(), int flags = 4)
@@ -6198,7 +6147,6 @@ public class Imgproc {
         return retVal;
     }
 
-
     //
     // C++:  Mat getAffineTransform(vector_Point2f src, vector_Point2f dst)
     //
@@ -6234,7 +6182,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  Mat getDefaultNewCameraMatrix(Mat cameraMatrix, Size imgsize = Size(), bool centerPrincipalPoint = false)
@@ -6316,7 +6263,6 @@ public class Imgproc {
         return retVal;
     }
 
-
     //
     // C++:  void getDerivKernels(Mat& kx, Mat& ky, int dx, int dy, int ksize, bool normalize = false, int ktype = CV_32F)
     //
@@ -6384,7 +6330,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  Mat getGaborKernel(Size ksize, double sigma, double theta, double lambd, double gamma, double psi = CV_PI*0.5, int ktype = CV_64F)
     //
@@ -6404,7 +6349,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  Mat getGaussianKernel(int ksize, double sigma, int ktype = CV_64F)
@@ -6484,7 +6428,6 @@ public class Imgproc {
         return retVal;
     }
 
-
     //
     // C++:  Mat getPerspectiveTransform(Mat src, Mat dst)
     //
@@ -6521,7 +6464,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void getRectSubPix(Mat image, Size patchSize, Point2f center, Mat& patch, int patchType = -1)
@@ -6595,7 +6537,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  Mat getRotationMatrix2D(Point2f center, double angle, double scale)
     //
@@ -6634,7 +6575,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  Mat getStructuringElement(int shape, Size ksize, Point anchor = Point(-1,-1))
@@ -6732,7 +6672,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void goodFeaturesToTrack(Mat image, vector_Point& corners, int maxCorners, double qualityLevel, double minDistance, Mat mask = Mat(), int blockSize = 3, bool useHarrisDetector = false, double k = 0.04)
@@ -6848,7 +6787,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void grabCut(Mat img, Mat& mask, Rect rect, Mat& bgdModel, Mat& fgdModel, int iterCount, int mode = GC_EVAL)
     //
@@ -6956,7 +6894,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void initUndistortRectifyMap(Mat cameraMatrix, Mat distCoeffs, Mat R, Mat newCameraMatrix, Size size, int m1type, Mat& map1, Mat& map2)
     //
@@ -7045,7 +6982,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  float initWideAngleProjMap(Mat cameraMatrix, Mat distCoeffs, Size imageSize, int destImageWidth, int m1type, Mat& map1, Mat& map2, int projType = PROJ_SPHERICAL_EQRECT, double alpha = 0)
     //
@@ -7065,7 +7001,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void integral(Mat src, Mat& sum, int sdepth = -1)
@@ -7166,7 +7101,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void integral(Mat src, Mat& sum, Mat& sqsum, int sdepth = -1)
@@ -7271,7 +7205,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void integral(Mat src, Mat& sum, Mat& sqsum, Mat& tilted, int sdepth = -1)
@@ -7381,7 +7314,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  float intersectConvexConvex(Mat _p1, Mat _p2, Mat& _p12, bool handleNested = true)
     //
@@ -7401,7 +7333,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void invertAffineTransform(Mat M, Mat& iM)
@@ -7432,7 +7363,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  bool isContourConvex(vector_Point contour)
     //
@@ -7460,7 +7390,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  double matchShapes(Mat contour1, Mat contour2, int method, double parameter)
@@ -7515,7 +7444,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void matchTemplate(Mat image, Mat templ, Mat& result, int method)
@@ -7610,7 +7538,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void medianBlur(Mat src, Mat& dst, int ksize)
     //
@@ -7644,7 +7571,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  RotatedRect minAreaRect(vector_Point2f points)
     //
@@ -7675,7 +7601,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void minEnclosingCircle(vector_Point2f points, Point2f& center, float& radius)
@@ -7708,7 +7633,6 @@ public class Imgproc {
         if(radius!=null) radius[0] = (float)radius_out[0];
         return;
     }
-
 
     //
     // C++:  Moments moments(Mat array, bool binaryImage = false)
@@ -7889,7 +7813,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void morphologyEx(Mat src, Mat& dst, int op, Mat kernel, Point anchor = Point(-1,-1), int iterations = 1, int borderType = BORDER_CONSTANT, Scalar borderValue = morphologyDefaultBorderValue())
@@ -8089,7 +8012,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  Point2d phaseCorrelate(Mat src1, Mat src2, Mat window = Mat())
     //
@@ -8234,7 +8156,6 @@ public class Imgproc {
         return retVal;
     }
 
-
     //
     // C++:  Point2d phaseCorrelateRes(Mat src1, Mat src2, Mat window, double* response = 0)
     //
@@ -8254,7 +8175,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  double pointPolygonTest(vector_Point2f contour, Point2f pt, bool measureDist)
@@ -8288,7 +8208,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void preCornerDetect(Mat src, Mat& dst, int ksize, int borderType = BORDER_DEFAULT)
@@ -8382,7 +8301,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void pyrDown(Mat src, Mat& dst, Size dstsize = Size(), int borderType = BORDER_DEFAULT)
@@ -8484,7 +8402,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void pyrMeanShiftFiltering(Mat src, Mat& dst, double sp, double sr, int maxLevel = 1, TermCriteria termcrit = TermCriteria( TermCriteria::MAX_ITER+TermCriteria::EPS,5,1))
@@ -8612,7 +8529,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void pyrUp(Mat src, Mat& dst, Size dstsize = Size(), int borderType = BORDER_DEFAULT)
     //
@@ -8717,7 +8633,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void remap(Mat src, Mat& dst, Mat map1, Mat map2, int interpolation, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
     //
@@ -8817,7 +8732,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void resize(Mat src, Mat& dst, Size dsize, double fx = 0, double fy = 0, int interpolation = INTER_LINEAR)
@@ -8947,7 +8861,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void sepFilter2D(Mat src, Mat& dst, int ddepth, Mat kernelX, Mat kernelY, Point anchor = Point(-1,-1), double delta = 0, int borderType = BORDER_DEFAULT)
@@ -9096,7 +9009,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  double threshold(Mat src, Mat& dst, double thresh, double maxval, int type)
     //
@@ -9168,7 +9080,6 @@ public class Imgproc {
 
         return retVal;
     }
-
 
     //
     // C++:  void undistort(Mat src, Mat& dst, Mat cameraMatrix, Mat distCoeffs, Mat newCameraMatrix = Mat())
@@ -9268,7 +9179,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void undistortPoints(vector_Point2f src, vector_Point2f& dst, Mat cameraMatrix, Mat distCoeffs, Mat R = Mat(), Mat P = Mat())
@@ -9420,7 +9330,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void warpAffine(Mat src, Mat& dst, Mat M, Size dsize, int flags = INTER_LINEAR, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
     //
@@ -9548,7 +9457,6 @@ public class Imgproc {
         return;
     }
 
-
     //
     // C++:  void warpPerspective(Mat src, Mat& dst, Mat M, Size dsize, int flags = INTER_LINEAR, int borderMode = BORDER_CONSTANT, Scalar borderValue = Scalar())
     //
@@ -9667,7 +9575,6 @@ public class Imgproc {
 
         return;
     }
-
 
     //
     // C++:  void watershed(Mat image, Mat& markers)

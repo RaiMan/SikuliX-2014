@@ -29,7 +29,7 @@ public class CommandArgs {
   private static boolean isIDE(String callerType) {
     return ("IDE".equals(callerType));
   }
-  
+
   public static boolean isIDE() {
     return ("IDE".equals(_callerType));
   }
@@ -59,7 +59,7 @@ public class CommandArgs {
   public CommandLine getCommandLine(String[] args) {
     CommandLineParser parser = new PosixParser();
     CommandLine cmd = null;
-    
+
     boolean isUserArg = false;
     for (int i=0; i < args.length; i++) {
       if (!isUserArg && args[i].startsWith("--")) {
@@ -79,7 +79,7 @@ public class CommandArgs {
     }
     return cmd;
   }
-  
+
   public String[] getUserArgs() {
     return userArgs.toArray(new String[0]);
   }
@@ -94,7 +94,7 @@ public class CommandArgs {
   @SuppressWarnings("static-access")
   private void init() {
     _options = new Options();
-    _options.addOption(CommandArgsEnum.HELP.shortname(), 
+    _options.addOption(CommandArgsEnum.HELP.shortname(),
             CommandArgsEnum.HELP.longname(), false, CommandArgsEnum.HELP.description());
 
     _options.addOption(
@@ -118,10 +118,10 @@ public class CommandArgs {
             .withDescription(CommandArgsEnum.USERLOGFILE.description())
             .create(CommandArgsEnum.USERLOGFILE.shortname().charAt(0)));
 
-    _options.addOption(CommandArgsEnum.CONSOLE.shortname(), 
+    _options.addOption(CommandArgsEnum.CONSOLE.shortname(),
             CommandArgsEnum.CONSOLE.longname(), false, CommandArgsEnum.CONSOLE.description());
 
-    _options.addOption(CommandArgsEnum.SPLASH.shortname(), 
+    _options.addOption(CommandArgsEnum.SPLASH.shortname(),
             CommandArgsEnum.SPLASH.longname(), false, CommandArgsEnum.SPLASH.description());
 
     _options.addOption(
@@ -178,7 +178,7 @@ public class CommandArgs {
       + "----------------------------------------------------------------",
       true);
   }
-  
+
   public static String[] scanArgs(String[] args) {
 //TODO detect leading and/or trailing blanks
     argsOrg = System.getenv("SIKULI_COMMAND");

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -30,17 +30,16 @@ import javax.swing.text.NumberFormatter;
 
 /**
  * Experiment to work around Issue #1183-swingx: NumberEditorExt throws exception
- * on getCellValue. Remaining issue: no visual error feedback if the expected 
+ * on getCellValue. Remaining issue: no visual error feedback if the expected
  * number type exceeds its range.
- * 
+ *
  * @author Jeanette Winzenburg
- * 
+ *
  * @deprecated (pre-1.6.2) moved to text package
  */
 @Deprecated
 class StrictNumberFormatter extends NumberFormatter {
 
-    
     private BigDecimal maxAsBig;
     private BigDecimal minAsBig;
 
@@ -53,7 +52,7 @@ class StrictNumberFormatter extends NumberFormatter {
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to automatically set the minimum/maximum to the boundaries of
      * the Number type if it corresponds to a raw type, or null if not.
      */
@@ -63,9 +62,8 @@ class StrictNumberFormatter extends NumberFormatter {
         updateMinMax();
     }
 
-
     /**
-     * 
+     *
      */
     @SuppressWarnings("unchecked")
     private void updateMinMax() {
@@ -87,7 +85,7 @@ class StrictNumberFormatter extends NumberFormatter {
             max = Float.MAX_VALUE;
             min = Float.MIN_VALUE;
         } else if (getValueClass() == Double.class) {
-            // don*t understand what's happening here, naive compare with bigDecimal 
+            // don*t understand what's happening here, naive compare with bigDecimal
             // fails - so don't do anything for now
             // JW: revisit!
         }
@@ -95,14 +93,13 @@ class StrictNumberFormatter extends NumberFormatter {
         setMinimum(min);
     }
 
-
     @SuppressWarnings("unchecked")
     @Override
     public void setMaximum(Comparable max) {
         super.setMaximum(max);
         this.maxAsBig = max != null ? new BigDecimal(max.toString()) : null;
     }
-    
+
     @SuppressWarnings("unchecked")
     @Override
     public void setMinimum(Comparable minimum) {
@@ -110,7 +107,6 @@ class StrictNumberFormatter extends NumberFormatter {
         this.minAsBig = minimum != null ? new BigDecimal(minimum.toString()) : null;
     }
 
-    
     /**
      * Returns the <code>Object</code> representation of the
      * <code>String</code> <code>text</code>, may be null.
@@ -175,7 +171,6 @@ class StrictNumberFormatter extends NumberFormatter {
         return f.parseObject(text);
     }
 
-    
     /**
      * Returns true if <code>value</code> is between the min/max.
      *
@@ -214,15 +209,13 @@ class StrictNumberFormatter extends NumberFormatter {
         }
         return true;
     }
-   
 
     private Comparable<BigDecimal> getMinimumAsBig() {
         return minAsBig;
     }
-    
+
     private Comparable<BigDecimal> getMaximumAsBig() {
         return maxAsBig;
     }
-    
 
 }

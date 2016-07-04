@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -78,7 +78,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
     @SuppressWarnings("unused")
     private static final Logger LOG = Logger.getLogger(BasicHyperlinkUI.class
             .getName());
-    
+
     public static ComponentUI createUI(JComponent c) {
         return new BasicHyperlinkUI();
     }
@@ -107,7 +107,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
 
         @Override
         public void propertyChange(PropertyChangeEvent evt) {
-            // this method is called from the edt. only other place where ulv is used is in 
+            // this method is called from the edt. only other place where ulv is used is in
             // painting which also happens on edt so it should be safe even without synchronization
             // sole purpose of this call is to reinitialize view on every property change
             ulv = null;
@@ -118,20 +118,20 @@ public class BasicHyperlinkUI extends BasicButtonUI {
         super.installDefaults(b);
 
         JXHyperlink link = (JXHyperlink) b;
-        
+
         LookAndFeel.installProperty(b, "opaque", false);
-        
+
         if (SwingXUtilities.isUIInstallable(link.getUnclickedColor())) {
             link.setUnclickedColor(UIManager.getColor("Hyperlink.linkColor"));
         }
-        
+
         if (SwingXUtilities.isUIInstallable(link.getClickedColor())) {
             link.setClickedColor(UIManager.getColor("Hyperlink.visitedColor"));
         }
-        
+
         b.setBorderPainted(false);
         b.setRolloverEnabled(true);
-        
+
         if (SwingXUtilities.isUIInstallable(b.getBorder())) {
             b.setBorder(new BorderUIResource(BorderFactory.createEmptyBorder(0, 1, 0, 0)));
         }
@@ -235,7 +235,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
      * @param text String to render
      * @param v the View to use.
      */
-    protected void paintHTMLText(Graphics g, AbstractButton b, 
+    protected void paintHTMLText(Graphics g, AbstractButton b,
             Rectangle textRect, String text, View v) {
         textRect.x += getTextShiftOffset();
         textRect.y += getTextShiftOffset();
@@ -267,7 +267,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
         if (!b.getModel().isEnabled()) {
             textRect.x += 1;
         }
-            
+
         super.paintText(g, b, textRect, text);
         if (b.getModel().isRollover()) {
             paintUnderline(g, b, textRect, text);
@@ -300,10 +300,10 @@ public class BasicHyperlinkUI extends BasicButtonUI {
         g.setColor(getFocusColor());
         // paint the focus rect around the union of text rect and icon rect
         // PENDING JW: duplicated to handle insets
-        Rectangle iconTextRect = getIconTextRect(b); 
+        Rectangle iconTextRect = getIconTextRect(b);
         // PENDING JW: better factor handling of insets - the bare union doesn't respect insets
 //        Rectangle iconTextRect = textRect.union(iconRect);
-        BasicGraphicsUtils.drawDashedRect(g, iconTextRect.x, iconTextRect.y, 
+        BasicGraphicsUtils.drawDashedRect(g, iconTextRect.x, iconTextRect.y,
                 iconTextRect.width, iconTextRect.height);
         // pre-#167-swingx: active area too large
 //        int width = b.getWidth();
@@ -317,7 +317,6 @@ public class BasicHyperlinkUI extends BasicButtonUI {
          setTextShiftOffset();
     }
 
-    
     @Override
     protected BasicButtonListener createButtonListener(AbstractButton b) {
         return new BasicHyperlinkListener(b);
@@ -325,7 +324,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Overridden to return true if the position is inside the union of the
      * text and icon rectangle, false otherwise.
      */
@@ -347,10 +346,10 @@ public class BasicHyperlinkUI extends BasicButtonUI {
 
     /**
      * C&p'ed from BasicGraphicsUtils (getPreferredButtonSize).
-     * 
+     *
      * @param b the button to analyse.
      * @return the union of the text and icon rectangle of the AbstractButton
-     *   or null if the button has children (??) 
+     *   or null if the button has children (??)
      */
     protected Rectangle getIconTextRect(AbstractButton b) {
         if (b.getComponentCount() > 0) {
@@ -390,8 +389,8 @@ public class BasicHyperlinkUI extends BasicButtonUI {
     }
 
     /**
-     * A BasicButtonListener specialized to the needs of a Hyperlink. 
-     * 
+     * A BasicButtonListener specialized to the needs of a Hyperlink.
+     *
      * @author Jeanette Winzenburg
      */
     public static class BasicHyperlinkListener extends BasicButtonListener {
@@ -403,19 +402,18 @@ public class BasicHyperlinkUI extends BasicButtonUI {
             super(b);
         }
 
-        
         @Override
         public void stateChanged(ChangeEvent e) {
             AbstractButton button = (AbstractButton) e.getSource();
             if (button.isRolloverEnabled()) {
-                button.setCursor(button.getModel().isRollover() ? 
+                button.setCursor(button.getModel().isRollover() ?
                         // PENDING JW: support customizable cursor
                         Cursor.getPredefinedCursor(Cursor.HAND_CURSOR) : null);
             }
             super.stateChanged(e);
         }
     }
-    
+
     static class ULHtml extends BasicHTML {
         /**
          * Create an html renderer for the given component and
@@ -452,17 +450,17 @@ public class BasicHyperlinkUI extends BasicButtonUI {
          * The source of the html renderers
          */
         private static BasicEditorKit basicHTMLFactory;
-    
+
         /**
          * Creates the Views that visually represent the model.
          */
         private static ViewFactory basicHTMLViewFactory;
-    
+
         /**
          * Overrides to the default stylesheet.  Should consider
          * just creating a completely fresh stylesheet.
          */
-        private static final String styleChanges = 
+        private static final String styleChanges =
             "p { margin-top: 0; margin-bottom: 0; margin-left: 0; margin-right: 0; text-decoration: underline }" +
             "body { margin-top: 0; margin-bottom: 0; margin-left: 0; margin-right: 0; text-decoration: underline }"+
             "font {text-decoration: underline}";
@@ -470,7 +468,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
         static class BasicEditorKit extends HTMLEditorKit {
             /** Shared base style for all documents created by us use. */
             private static StyleSheet defaultStyles;
-    
+
             /**
              * Overriden to return our own slimmed down style sheet.
              */
@@ -482,7 +480,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
                 try {
                     defaultStyles.loadRules(r, null);
                 } catch (Throwable e) {
-                    // don't want to die in static initialization... 
+                    // don't want to die in static initialization...
                     // just display things wrong.
                 }
                 r.close();
@@ -516,7 +514,6 @@ public class BasicHyperlinkUI extends BasicButtonUI {
             }
         }
 
-
         /**
          * BasicHTMLViewFactory extends HTMLFactory to force images to be loaded
          * synchronously.
@@ -532,7 +529,6 @@ public class BasicHyperlinkUI extends BasicButtonUI {
                 return view;
             }
         }
-
 
         /**
          * The subclass of HTMLDocument that is used as the model. getForeground
@@ -593,7 +589,6 @@ public class BasicHyperlinkUI extends BasicButtonUI {
                 getStyleSheet().addRule(displayPropertiesToCSS(font,fg));
         }
     }
-
 
     /**
      * Root text view that acts as an HTML renderer.
@@ -675,7 +670,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
          * This can be called on a different thread from the
          * event dispatching thread and is basically unsafe to
          * propagate into the component.  To make this safe,
-         * the operation is transferred over to the event dispatching 
+         * the operation is transferred over to the event dispatching
          * thread for completion.  It is a design goal that all view
          * methods be safe to call without concern for concurrency,
          * and this behavior helps make that true.
@@ -683,7 +678,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
          * @param child the child view
          * @param width true if the width preference has changed
          * @param height true if the height preference has changed
-         */ 
+         */
         @Override
         public void preferenceChanged(View child, boolean width, boolean height) {
             host.revalidate();
@@ -714,7 +709,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
             view.setSize(alloc.width, alloc.height);
             view.paint(g, allocation);
         }
-        
+
         /**
          * Sets the view parent.
          *
@@ -725,7 +720,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
             throw new Error("Can't set parent on root view");
         }
 
-        /** 
+        /**
          * Returns the number of views in this view.  Since
          * this view simply wraps the root of the view hierarchy
          * it has exactly one child.
@@ -738,7 +733,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
             return 1;
         }
 
-        /** 
+        /**
          * Gets the n-th view in this container.
          *
          * @param n the number of the view to get
@@ -768,12 +763,12 @@ public class BasicHyperlinkUI extends BasicButtonUI {
          *
          * @param p0 the position to convert >= 0
          * @param b0 the bias toward the previous character or the
-         *  next character represented by p0, in case the 
-         *  position is a boundary of two views. 
+         *  next character represented by p0, in case the
+         *  position is a boundary of two views.
          * @param p1 the position to convert >= 0
          * @param b1 the bias toward the previous character or the
-         *  next character represented by p1, in case the 
-         *  position is a boundary of two views. 
+         *  next character represented by p1, in case the
+         *  position is a boundary of two views.
          * @param a the allocated region to render into
          * @return the bounding box of the given position is returned
          * @exception BadLocationException  if the given position does
@@ -782,7 +777,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
          * @see View#viewToModel
          */
         @Override
-        public Shape modelToView(int p0, Position.Bias b0, int p1, 
+        public Shape modelToView(int p0, Position.Bias b0, int p1,
                      Position.Bias b1, Shape a) throws BadLocationException {
             return view.modelToView(p0, b0, p1, b1, a);
         }
@@ -811,7 +806,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
         public Document getDocument() {
             return view.getDocument();
         }
-        
+
         /**
          * Returns the starting offset into the model for this view.
          *
@@ -856,7 +851,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
 
         /**
          * Fetches the container hosting the view.  This is useful for
-         * things like scheduling a repaint, finding out the host 
+         * things like scheduling a repaint, finding out the host
          * components font, etc.  The default implementation
          * of this is to forward the query to the parent view.
          *
@@ -866,7 +861,7 @@ public class BasicHyperlinkUI extends BasicButtonUI {
         public Container getContainer() {
             return host;
         }
-            
+
         /**
          * Fetches the factory to be used for building the
          * various view fragments that make up the view that

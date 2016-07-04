@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -29,25 +29,25 @@ import java.util.Enumeration;
  * <p>
  * Note this does not extend {@code MutableTreeNode} to minimize the contract
  * breakage, cf. {@link TreeTableNode#getIndex(javax.swing.tree.TreeNode)}.
- * 
+ *
  * @see javax.swing.tree.MutableTreeNode
- * 
+ *
  * @author Karl Schaefer
  */
 public interface MutableTreeTableNode extends TreeTableNode {
     /**
      * Returns an enumeration this node's children.
-     * 
+     *
      * @return an enumeration of {@code TreeTableNode}s
      */
     @Override
     Enumeration<? extends MutableTreeTableNode> children();
-    
+
     /**
      * Adds the {@code child} to this node at the specified {@code index}. This
      * method calls {@code setParent} on {@code child} with {@code this} as the
      * parameter.
-     * 
+     *
      * @param child
      *            the node to add as a child
      * @param index
@@ -61,7 +61,7 @@ public interface MutableTreeTableNode extends TreeTableNode {
      * Removes the child node at the specified {@code index} from this node.
      * This method calls {@code setParent} on {@code child} with a {@code null}
      * parameter.
-     * 
+     *
      * @param index
      *            the index of the child
      * @throws IndexOutOfBoundsException
@@ -73,7 +73,7 @@ public interface MutableTreeTableNode extends TreeTableNode {
      * Removes the specified child {@code node} from this node.
      * This method calls {@code setParent} on {@code child} with a {@code null}
      * parameter.
-     * 
+     *
      * @param node
      *            the index of the child
      */
@@ -82,7 +82,7 @@ public interface MutableTreeTableNode extends TreeTableNode {
     /**
      * Removes this node from it's parent. Most implementations will use
      * {@code getParent().remove(this)}.
-     * 
+     *
      * @throws NullPointerException
      *             if {@code getParent()} returns {@code null}
      */
@@ -91,7 +91,7 @@ public interface MutableTreeTableNode extends TreeTableNode {
     /**
      * Sets the parent of this node to {@code newParent}. This methods remove
      * the node from its old parent.
-     * 
+     *
      * @param newParent
      *            the new parent for this node
      */

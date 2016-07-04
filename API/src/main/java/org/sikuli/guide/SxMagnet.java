@@ -12,7 +12,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-
 import org.sikuli.guide.SxAnchor.AnchorListener;
 import org.sikuli.guide.Visual.Layout;
 import org.sikuli.basics.Debug;
@@ -112,7 +111,6 @@ public class SxMagnet
 
       clickable.clickPoint = a.getCenter();
 
-
       Link link = new Link();
       link.image = img;
       link.anchor = a;
@@ -128,7 +126,6 @@ public class SxMagnet
 
       img.addResizeAnimation(currentSize, targetSize);
 
-
       Point currentLocation = new Point(a.getActualLocation());
 
       targetLocation.x -= targetSize.width / 2;
@@ -139,7 +136,6 @@ public class SxMagnet
       img.startAnimation();
 
       guide.repaint();
-
 
     } catch (Exception e) {
       e.printStackTrace();
@@ -158,14 +154,12 @@ public class SxMagnet
     int y = mouseLocation.y;
     int radius = 50;
 
-
     Region r = new Region(mouseLocation.x - radius, mouseLocation.y - radius, radius * 2, radius * 2);
     SxCircle c = new SxCircle(r);
     guide.addToFront(c);
 
     selection = new SxCircle();
     guide.addToFront(selection);
-
 
     // sort targets along x-axis
     Collections.sort(targets, new Comparator<SxAnchor>() {
@@ -174,7 +168,6 @@ public class SxMagnet
         return b.getX() - a.getX();
       }
     });
-
 
     for (SxAnchor target : targets) {
 
@@ -198,7 +191,6 @@ public class SxMagnet
     SxFlag f = new SxFlag("Flag");
     f.setLocationRelativeToComponent(a, Layout.LEFT);
     guide.addToFront(f);
-
 
     a.addListener(new AnchorListener() {
       @Override
@@ -262,7 +254,6 @@ public class SxMagnet
         }
       }
     }
-
 
   }
 

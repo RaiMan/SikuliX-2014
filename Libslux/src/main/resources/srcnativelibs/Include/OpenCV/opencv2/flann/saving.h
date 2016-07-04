@@ -62,7 +62,6 @@ struct Datatype<float> { static flann_datatype_t type() { return FLANN_FLOAT32; 
 template<>
 struct Datatype<double> { static flann_datatype_t type() { return FLANN_FLOAT64; } };
 
-
 /**
  * Structure representing the index header.
  */
@@ -98,7 +97,6 @@ void save_header(FILE* stream, const NNIndex<Distance>& index)
     std::fwrite(&header, sizeof(header),1,stream);
 }
 
-
 /**
  *
  * @param stream - Stream to load from
@@ -120,7 +118,6 @@ inline IndexHeader load_header(FILE* stream)
     return header;
 
 }
-
 
 template<typename T>
 void save_value(FILE* stream, const T& value, size_t count = 1)
@@ -165,7 +162,6 @@ void load_value(FILE* stream, cvflann::Matrix<T>& value)
         throw FLANNException("Cannot read from file");
     }
 }
-
 
 template<typename T>
 void load_value(FILE* stream, std::vector<T>& value)

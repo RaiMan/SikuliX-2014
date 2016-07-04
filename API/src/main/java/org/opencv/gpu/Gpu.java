@@ -17,7 +17,6 @@ public class Gpu {
             WARP_SHUFFLE_FUNCTIONS = FEATURE_SET_COMPUTE_30,
             DYNAMIC_PARALLELISM = FEATURE_SET_COMPUTE_35;
 
-
     //
     // C++:  bool deviceSupports(int feature_set)
     //
@@ -27,7 +26,6 @@ public class Gpu {
         boolean retVal = deviceSupports_0(feature_set);
         return retVal;
     }
-
 
     //
     // C++:  int getCudaEnabledDeviceCount()
@@ -39,7 +37,6 @@ public class Gpu {
         return retVal;
     }
 
-
     //
     // C++:  int getDevice()
     //
@@ -49,7 +46,6 @@ public class Gpu {
         int retVal = getDevice_0();
         return retVal;
     }
-
 
     //
     // C++:  void printCudaDeviceInfo(int device)
@@ -61,7 +57,6 @@ public class Gpu {
         return;
     }
 
-
     //
     // C++:  void printShortCudaDeviceInfo(int device)
     //
@@ -72,7 +67,6 @@ public class Gpu {
         return;
     }
 
-
     //
     // C++:  void resetDevice()
     //
@@ -82,7 +76,6 @@ public class Gpu {
         resetDevice_0();
         return;
     }
-
 
     //
     // C++:  void setDevice(int device)

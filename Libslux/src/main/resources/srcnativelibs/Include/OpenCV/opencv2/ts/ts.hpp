@@ -1,12 +1,12 @@
 #ifndef __OPENCV_GTESTCV_HPP__
 #define __OPENCV_GTESTCV_HPP__
 
-#include "cvconfig.h"                                                                                                                                                                    
-#ifndef GTEST_CREATE_SHARED_LIBRARY                                                                                                                                                      
-#ifdef BUILD_SHARED_LIBS                                                                                                                                                                 
-#define GTEST_LINKED_AS_SHARED_LIBRARY 1                                                                                                                                                 
-#endif                                                                                                                                                                                   
-#endif                                                                                                                                                                                   
+#include "cvconfig.h"
+#ifndef GTEST_CREATE_SHARED_LIBRARY
+#ifdef BUILD_SHARED_LIBS
+#define GTEST_LINKED_AS_SHARED_LIBRARY 1
+#endif
+#endif
 
 #include <stdarg.h> // for va_list
 
@@ -66,7 +66,6 @@ inline  double randReal( RNG& rng )
 {
     return (double)rng;
 }
-
 
 CV_EXPORTS const char* getTypeName( int type );
 CV_EXPORTS int typeByName( const char* type_name );
@@ -185,7 +184,6 @@ public:
 };
 
 
-
 class BaseTest;
 class TS;
 
@@ -243,7 +241,6 @@ protected:
     TS* ts;
 };
 
-
 /*****************************************************************************************\
 *                               Information about a failed test                           *
 \*****************************************************************************************/
@@ -286,7 +283,6 @@ struct CV_EXPORTS TSParams
     // extensivity of the tests, scale factor for test_case_count
     double test_case_count_scale;
 };
-
 
 class CV_EXPORTS TS
 {
@@ -427,7 +423,6 @@ protected:
     std::string output_buf[MAX_IDX];
 };
 
-
 /*****************************************************************************************\
 *            Subclass of BaseTest for testing functions that process dense arrays           *
 \*****************************************************************************************/
@@ -467,7 +462,6 @@ protected:
     vector<vector<Mat> > test_mat;
     float buf[4];
 };
-
 
 class CV_EXPORTS BadArgTest : public BaseTest
 {

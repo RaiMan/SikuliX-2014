@@ -31,12 +31,12 @@ import org.jdesktop.swingx.renderer.FormatStringValue;
 /**
  * Custom CalendarHeaderHandler which supports year-wise navigation.
  * <p>
- * 
+ *
  * The custom component used as header component of this implementation contains
  * month-navigation buttons, a label with localized month text and a spinner for
  * .. well ... spinning the years. There is minimal configuration control via
  * the UIManager:
- * 
+ *
  * <ul>
  * <li>control the position of the nextMonth button: the default is at the
  * trailing edge of the header. Option is to insert it directly after the month
@@ -46,20 +46,20 @@ import org.jdesktop.swingx.renderer.FormatStringValue;
  * false. To enable set a Boolean.TRUE as value for key
  * <code>FOCUSABLE_SPINNER_TEXT</code>.
  * </ul>
- * 
+ *
  * <b>Note</b>: this header is <b>not</b> used by default. To make it the
  * per-application default register it with the UIManager, like
- * 
+ *
  * <pre><code>
- * UIManager.put(CalendarHeaderHandler.uiControllerID, 
+ * UIManager.put(CalendarHeaderHandler.uiControllerID,
  *      "org.jdesktop.swingx.plaf.basic.SpinningCalendarHeaderHandler");
  * </code>
  * </pre>
- * 
+ *
  * PENDING JW: implement and bind actions for keyboard navigation. These are
  * potentially different from navigation by mouse: need to move the selection
  * along with the scrolling?
- * 
+ *
  */
 public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
 
@@ -93,7 +93,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Overridden to configure header specifics component after calling super.
      */
     @Override
@@ -112,7 +112,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Overridden to cleanup the specifics before calling super.
      */
     @Override
@@ -125,7 +125,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Convenience override to the type created.
      */
     @Override
@@ -136,7 +136,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
     /**
      * {@inheritDoc}
      * <p>
-     * 
+     *
      * Implemented to create and configure the custom header component.
      */
     @Override
@@ -205,7 +205,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
      * lazyly created if not yet done. This implementation listens to changes of
      * firstDisplayedDay and locale property and updates internal state
      * accordingly.
-     * 
+     *
      * @return the property change listener for the monthView, never null.
      */
     private PropertyChangeListener getPropertyChangeListener() {
@@ -231,7 +231,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
 
     /**
      * Returns the current year of the monthView. Callback for spinner model.
-     * 
+     *
      * return the current year of the monthView.
      */
     private int getYear() {
@@ -242,9 +242,9 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
     /**
      * Returns the previous year of the monthView. Callback for spinner model.
      * <p>
-     * 
+     *
      * PENDING JW: check against lower bound.
-     * 
+     *
      * return the previous year of the monthView.
      */
     private int getPreviousYear() {
@@ -256,9 +256,9 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
     /**
      * Returns the next year of the monthView. Callback for spinner model.
      * <p>
-     * 
+     *
      * PENDING JW: check against upper bound.
-     * 
+     *
      * return the next year of the monthView.
      */
     private int getNextYear() {
@@ -270,7 +270,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
     /**
      * Sets the current year of the monthView to the given value. Callback for
      * spinner model.
-     * 
+     *
      * @param value the new value of the year.
      * @return a boolean indicating if a change actually happened.
      */
@@ -328,7 +328,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
 
     /**
      * The custom header component controlled and configured by this handler.
-     * 
+     *
      */
     protected static class SpinningCalendarHeader extends JXPanel {
         private AbstractButton prevButton;
@@ -347,7 +347,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
 
         /**
          * Installs the actions and models to be used by this component.
-         * 
+         *
          * @param prev the action to use for the previous button
          * @param next the action to use for the next button
          * @param model the spinner model to use for the spinner.
@@ -361,9 +361,9 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
 
         /**
          * Sets the focusable property of the spinner's editor's text field.
-         * 
+         *
          * The default value is false.
-         * 
+         *
          * @param focusable the focusable property of the spinner's editor.
          */
         public void setSpinnerFocusable(boolean focusable) {
@@ -373,7 +373,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
 
         /**
          * The default value is false.
-         * 
+         *
          * @param surroundMonth
          */
         public void setArrowsSurroundMonth(boolean surroundMonth) {
@@ -386,7 +386,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
 
         /**
          * Sets the text to use for the month label.
-         * 
+         *
          * @param text the text to use for the month label.
          */
         public void setMonthText(String text) {
@@ -396,7 +396,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
         /**
          * {@inheritDoc}
          * <p>
-         * 
+         *
          * Overridden to set the font of its child components.
          */
         @Override
@@ -414,7 +414,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
         /**
          * {@inheritDoc}
          * <p>
-         * 
+         *
          * Overridden to set the background of its child compenents.
          */
         @Override
@@ -448,7 +448,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
         }
 
         /**
-         * 
+         *
          */
         private void addComponents() {
             if (surroundMonth) {
@@ -469,7 +469,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
         }
 
         /**
-         * 
+         *
          */
         private void createComponents() {
             prevButton = createNavigationButton();
@@ -496,7 +496,7 @@ public class SpinningCalendarHeaderHandler extends CalendarHeaderHandler {
 
         /**
          * Creates and returns the JSpinner used for year navigation.
-         * 
+         *
          * @return
          */
         private JSpinner createSpinner() {

@@ -38,7 +38,7 @@ public class MonthViewAddon extends AbstractComponentAddon {
     @Override
     protected void addBasicDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
         super.addBasicDefaults(addon, defaults);
-        
+
         defaults.add(JXMonthView.uiClassID, "org.jdesktop.swingx.plaf.basic.BasicMonthViewUI");
         defaults.add("JXMonthView.background", new ColorUIResource(Color.WHITE));
         defaults.add("JXMonthView.monthStringBackground", new ColorUIResource(138, 173, 209));

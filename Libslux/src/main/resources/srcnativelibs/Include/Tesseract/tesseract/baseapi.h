@@ -820,7 +820,6 @@ class TESS_API TessBaseAPI {
   };
   /* @} */
 
-
  protected:
   Tesseract*        tesseract_;       ///< The underlying data object.
   Tesseract*        osd_tesseract_;   ///< For orientation & script detection.

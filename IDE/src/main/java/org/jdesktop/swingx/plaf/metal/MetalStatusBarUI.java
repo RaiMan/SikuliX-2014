@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -38,11 +38,11 @@ import org.jdesktop.swingx.plaf.basic.BasicStatusBarUI;
  * @author rbair
  */
 public class MetalStatusBarUI extends BasicStatusBarUI {
-    
+
     /** Creates a new instance of BasicStatusBarUI */
     public MetalStatusBarUI() {
     }
-    
+
     /**
      * Returns an instance of the UI delegate for the specified component.
      * Each subclass must provide its own static <code>createUI</code>
@@ -56,12 +56,12 @@ public class MetalStatusBarUI extends BasicStatusBarUI {
     public static ComponentUI createUI(JComponent c) {
         return new MetalStatusBarUI();
     }
-    
+
     @Override
     protected void paintBackground(Graphics2D g, JXStatusBar bar) {
         int w = bar.getWidth(); //TODO deal with insets
         int h = bar.getHeight(); //TODO deal with insets
-        
+
         //This list is comprised of floats and Colors, which together
         //constitute the gradient.
         List<?> gradient = (List<?>) UIManager.get("MenuBar.gradient");

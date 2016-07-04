@@ -15,11 +15,11 @@ import org.jdesktop.swingx.prompt.PromptSupport.FocusBehavior;
 
 /**
  * {@link JTextField}, with integrated support for prompts and buddies.
- * 
+ *
  * @see PromptSupport
  * @see BuddySupport
  * @author Peter Weishapl <petw@gmx.net>
- * 
+ *
  */
 @JavaBean
 public class JXTextField extends JTextField {

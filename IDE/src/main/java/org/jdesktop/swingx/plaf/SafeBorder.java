@@ -34,7 +34,7 @@ public class SafeBorder extends AbstractBorder implements UIResource {
         return delegate.getBaseline(c, width, height);
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -42,7 +42,7 @@ public class SafeBorder extends AbstractBorder implements UIResource {
         return delegate.getBaselineResizeBehavior(c);
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -60,7 +60,7 @@ public class SafeBorder extends AbstractBorder implements UIResource {
         return insets != null ? insets : new Insets(0, 0, 0, 0);
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -69,7 +69,7 @@ public class SafeBorder extends AbstractBorder implements UIResource {
         return safeInsets(result);
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -78,7 +78,7 @@ public class SafeBorder extends AbstractBorder implements UIResource {
         return delegate.getInteriorRectangle(c, x, y, width, height);
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -86,7 +86,7 @@ public class SafeBorder extends AbstractBorder implements UIResource {
         return delegate.isBorderOpaque();
     }
 
-    /** 
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -94,6 +94,5 @@ public class SafeBorder extends AbstractBorder implements UIResource {
             int height) {
         delegate.paintBorder(c, g, x, y, width, height);
     }
-   
-    
+
 }

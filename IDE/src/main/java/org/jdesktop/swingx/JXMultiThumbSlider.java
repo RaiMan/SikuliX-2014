@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -50,10 +50,10 @@ import org.jdesktop.swingx.plaf.MultiThumbSliderUI;
  * <p>The thumbs each represent a value between the minimum and maximum values
  * of the slider.  Thumbs can pass each other when being dragged.  Thumbs have
  * no default visual representation. To customize the look of the thumbs and the
- * track behind the thumbs you must provide a ThumbRenderer and a TrackRenderer 
- * implementation. To listen for changes to the thumbs you must provide an 
+ * track behind the thumbs you must provide a ThumbRenderer and a TrackRenderer
+ * implementation. To listen for changes to the thumbs you must provide an
  * implementation of ThumbDataListener.
- * 
+ *
  * TODOs:
  * add min/maxvalue convenience methods to jxmultithumbslider
  * add plafs for windows, mac, and basic (if necessary)
@@ -65,44 +65,44 @@ import org.jdesktop.swingx.plaf.MultiThumbSliderUI;
 @JavaBean
 public class JXMultiThumbSlider<E> extends JComponent {
     public static final String uiClassID = "MultiThumbSliderUI";
-    
+
     private ThumbDataListener tdl;
-    
+
     private List<ThumbComp> thumbs;
-    
+
     private ThumbRenderer thumbRenderer;
-    
+
     private TrackRenderer trackRenderer;
-    
+
     private MultiThumbModel<E> model;
-    
+
     private List<ThumbListener> listeners = new ArrayList<ThumbListener>();
-    
+
     private ThumbComp selected;
-    
+
     static {
         LookAndFeelAddons.contribute(new MultiThumbSliderAddon());
     }
-    
+
     /** Creates a new instance of JMultiThumbSlider */
     public JXMultiThumbSlider() {
         thumbs = new ArrayList<ThumbComp>();
         setLayout(null);
-        
+
         tdl = new ThumbHandler();
-        
+
         setModel(new DefaultMultiThumbModel<E>());
         MultiThumbMouseListener mia = new MultiThumbMouseListener();
         addMouseListener(mia);
         addMouseMotionListener(mia);
-        
+
         Dimension dim = new Dimension(60,16);
         setPreferredSize(dim);
         setSize(dim);
         setMinimumSize(new Dimension(30,16));
         updateUI();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -110,21 +110,21 @@ public class JXMultiThumbSlider<E> extends JComponent {
     public String getUIClassID() {
         return uiClassID;
     }
-    
+
     public MultiThumbSliderUI getUI() {
         return (MultiThumbSliderUI)ui;
     }
-    
+
     public void setUI(MultiThumbSliderUI ui) {
         super.setUI(ui);
     }
-    
+
     @Override
     public void updateUI() {
         setUI((MultiThumbSliderUI)LookAndFeelAddons.getUI(this, MultiThumbSliderUI.class));
         invalidate();
     }
-    
+
     @Override
     protected void paintComponent(Graphics g) {
         if(isVisible()) {
@@ -142,20 +142,20 @@ public class JXMultiThumbSlider<E> extends JComponent {
     private void paintRange(Graphics2D g) {
         g.setColor(Color.blue);
         g.fillRect(0,0,getWidth(),getHeight());
-    }    
-    
+    }
+
     private float getThumbValue(int thumbIndex) {
         return getModel().getThumbAt(thumbIndex).getPosition();
     }
-    
+
     private float getThumbValue(ThumbComp thumb) {
         return getThumbValue(thumbs.indexOf(thumb));
     }
-    
+
     private int getThumbIndex(ThumbComp thumb) {
         return thumbs.indexOf(thumb);
     }
-    
+
     private void clipThumbPosition(ThumbComp thumb) {
         if(getThumbValue(thumb) < getModel().getMinimumValue()) {
             getModel().getThumbAt(getThumbIndex(thumb)).setPosition(
@@ -166,7 +166,7 @@ public class JXMultiThumbSlider<E> extends JComponent {
             getModel().getMaximumValue());
         }
     }
-        
+
     public ThumbRenderer getThumbRenderer() {
         return thumbRenderer;
     }
@@ -182,31 +182,31 @@ public class JXMultiThumbSlider<E> extends JComponent {
     public void setTrackRenderer(TrackRenderer trackRenderer) {
         this.trackRenderer = trackRenderer;
     }
-    
+
     public float getMinimumValue() {
         return getModel().getMinimumValue();
     }
-    
+
     public void setMinimumValue(float minimumValue) {
         getModel().setMinimumValue(minimumValue);
     }
-    
+
     public float getMaximumValue() {
         return getModel().getMaximumValue();
     }
-    
+
     public void setMaximumValue(float maximumValue) {
         getModel().setMaximumValue(maximumValue);
     }
 
-    private void setThumbPositionByX(ThumbComp selected) {    
+    private void setThumbPositionByX(ThumbComp selected) {
         float range = getModel().getMaximumValue()-getModel().getMinimumValue();
         int x = selected.getX();
         // adjust to the center of the thumb
         x += selected.getWidth()/2;
         // adjust for the leading space on the slider
         x -= selected.getWidth()/2;
-        
+
         int w = getWidth();
         // adjust for the leading and trailing space on the slider
         w -= selected.getWidth();
@@ -217,21 +217,21 @@ public class JXMultiThumbSlider<E> extends JComponent {
         //getModel().setPositionAt(thumb_index,value);
         clipThumbPosition(selected);
     }
-    
+
     private void setThumbXByPosition(ThumbComp thumb, float pos) {
         float lp = getWidth()-thumb.getWidth();
         float lu = getModel().getMaximumValue()-getModel().getMinimumValue();
         float tp = (pos*lp)/lu;
         thumb.setLocation((int)tp-thumb.getWidth()/2 + thumb.getWidth()/2, thumb.getY());
     }
-    
+
     private void recalc() {
         for(ThumbComp th : thumbs) {
             setThumbXByPosition(th,getModel().getThumbAt(getThumbIndex(th)).getPosition());
             //getPositionAt(getThumbIndex(th)));
         }
     }
-    
+
     @Override
     public void setBounds(int x, int y, int w, int h) {
         super.setBounds(x,y,w,h);
@@ -241,11 +241,11 @@ public class JXMultiThumbSlider<E> extends JComponent {
     public JComponent getSelectedThumb() {
         return selected;
     }
-    
+
     public int getSelectedIndex() {
         return getThumbIndex(selected);
     }
-        
+
     public MultiThumbModel<E> getModel() {
         return model;
     }
@@ -255,9 +255,9 @@ public class JXMultiThumbSlider<E> extends JComponent {
             this.model.removeThumbDataListener(tdl);
         }
         this.model = model;
-        this.model.addThumbDataListener(tdl);        
+        this.model.addThumbDataListener(tdl);
     }
-    
+
     public void addMultiThumbListener(ThumbListener listener) {
         listeners.add(listener);
     }
@@ -292,7 +292,7 @@ public class JXMultiThumbSlider<E> extends JComponent {
                 selected.setSelected(false);
             }
         }
-            
+
         @Override
         public void mouseDragged(MouseEvent evt) {
             if(selected != null) {
@@ -315,7 +315,6 @@ public class JXMultiThumbSlider<E> extends JComponent {
             }
         }
 
-        
         private ThumbComp findHandle(MouseEvent evt) {
             for(ThumbComp hand : thumbs) {
                 Point p2 = new Point();
@@ -328,11 +327,11 @@ public class JXMultiThumbSlider<E> extends JComponent {
             return null;
         }
     }
-    
+
     private static class ThumbComp extends JComponent {
-        
+
         private JXMultiThumbSlider<?> slider;
-        
+
         public ThumbComp(JXMultiThumbSlider<?> slider) {
             this.slider = slider;
             Dimension dim = new Dimension(10,10);//slider.getHeight());
@@ -346,7 +345,7 @@ public class JXMultiThumbSlider<E> extends JComponent {
             setMaximumSize(dim);
             setBackground(Color.white);
         }
-        
+
         @Override
         public void paintComponent(Graphics g) {
             if(slider.getThumbRenderer() != null) {
@@ -367,7 +366,7 @@ public class JXMultiThumbSlider<E> extends JComponent {
             return slider.getThumbRenderer().
                     getThumbRendererComponent(slider,slider.getThumbIndex(this),isSelected());
         }
-        
+
         private boolean selected;
 
         public boolean isSelected() {

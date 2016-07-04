@@ -36,10 +36,10 @@ import java.util.EventListener;
  * @author Joshua Marinacci joshua.marinacci@sun.com
  */
 public interface ErrorListener extends EventListener {
-    
+
     /**
      * Tells listeners that an error has occured within the watched component.
-     * @param event 
+     * @param event
      */
     public void errorOccured(ErrorEvent event);
 }

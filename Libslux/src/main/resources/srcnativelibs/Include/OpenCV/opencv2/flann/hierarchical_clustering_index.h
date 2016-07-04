@@ -48,7 +48,6 @@
 #include "random.h"
 #include "saving.h"
 
-
 namespace cvflann
 {
 
@@ -70,7 +69,6 @@ struct HierarchicalClusteringIndexParams : public IndexParams
     }
 };
 
-
 /**
  * Hierarchical index
  *
@@ -86,14 +84,12 @@ public:
 
 private:
 
-
     typedef void (HierarchicalClusteringIndex::* centersAlgFunction)(int, int*, int, int*, int&);
 
     /**
      * The function used for choosing the cluster centers.
      */
     centersAlgFunction chooseCenters;
-
 
 
     /**
@@ -135,7 +131,6 @@ private:
 
         centers_length = index;
     }
-
 
     /**
      * Chooses the initial centers in the k-means using Gonzales' algorithm
@@ -184,7 +179,6 @@ private:
         centers_length = index;
     }
 
-
     /**
      * Chooses the initial centers in the k-means using the algorithm
      * proposed in the KMeans++ paper:
@@ -214,7 +208,6 @@ private:
             closestDistSq[i] = distance(dataset[dsindices[i]], dataset[dsindices[index]], dataset.cols);
             currentPot += closestDistSq[i];
         }
-
 
         const int numLocalTries = 1;
 
@@ -257,9 +250,7 @@ private:
         delete[] closestDistSq;
     }
 
-
 public:
-
 
     /**
      * Index constructor
@@ -326,7 +317,6 @@ public:
         }
     }
 
-
     /**
      * Release the inner elements of indices[]
      */
@@ -341,7 +331,6 @@ public:
             }
         }
     }
-
 
     /**
      *  Returns size of index.
@@ -358,7 +347,6 @@ public:
     {
         return veclen_;
     }
-
 
     /**
      * Computes the inde memory usage
@@ -390,12 +378,10 @@ public:
         }
     }
 
-
     flann_algorithm_t getType() const
     {
         return FLANN_INDEX_HIERARCHICAL;
     }
-
 
     void saveIndex(FILE* stream)
     {
@@ -410,7 +396,6 @@ public:
         }
 
     }
-
 
     void loadIndex(FILE* stream)
     {
@@ -444,7 +429,6 @@ public:
         params["centers_init"] = centers_init_;
         params["leaf_size"] = leaf_size_;
     }
-
 
     /**
      * Find set of nearest neighbors to vec. Their indices are stored inside
@@ -485,7 +469,6 @@ public:
         return params;
     }
 
-
 private:
 
     /**
@@ -517,12 +500,10 @@ private:
     typedef Node* NodePtr;
 
 
-
     /**
      * Alias definition for a nicer syntax.
      */
     typedef BranchStruct<NodePtr, DistanceType> BranchSt;
-
 
 
     void save_tree(FILE* stream, NodePtr node, int num)
@@ -538,7 +519,6 @@ private:
             }
         }
     }
-
 
     void load_tree(FILE* stream, NodePtr& node, int num)
     {
@@ -614,7 +594,6 @@ private:
             return;
         }
 
-
         //	assign points to clusters
         DistanceType cost;
         computeLabels(dsindices, indices_length, &centers[0], centers_length, &labels[0], cost);
@@ -640,7 +619,6 @@ private:
     }
 
 
-
     /**
      * Performs one descent in the hierarchical k-means tree. The branches not
      * visited are stored in a priority queue.
@@ -652,7 +630,6 @@ private:
      *      checks = how many points in the dataset have been checked so far
      *      maxChecks = maximum dataset points to checks
      */
-
 
     void findNN(NodePtr node, ResultSet<DistanceType>& result, const ElementType* vec, int& checks, int maxChecks,
                 Heap<BranchSt>* heap, std::vector<bool>& checked)
@@ -693,7 +670,6 @@ private:
 
 private:
 
-
     /**
      * The dataset used by this index
      */
@@ -703,7 +679,6 @@ private:
      * Parameters used by this index
      */
     IndexParams params;
-
 
     /**
      * Number of features in the dataset.
@@ -724,7 +699,6 @@ private:
      *  Array of indices to vectors in the dataset.
      */
     int** indices;
-
 
     /**
      * The distance
@@ -750,7 +724,6 @@ private:
     int trees_;
     flann_centers_init_t centers_init_;
     int leaf_size_;
-
 
 };
 

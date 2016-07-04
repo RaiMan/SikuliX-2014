@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -25,16 +25,16 @@ import java.util.Date;
 
 /**
  * Utility methods for Date manipulation. <p>
- * 
+ *
  * This utility class is replaced by CalendarUtils because day related manipulation
  * are meaningfull relative to a Calendar only. Always doing so against the default
  * calendar instance isn't enough.
- * 
+ *
  * PENDING JW: move the missing ops. Volunteers, please! Once done, this will be deprecated.
- * 
+ *
  * @author Scott Violet
  * @version  $Revision: 3100 $
- * 
+ *
  */
 public class DateUtils {
     private static Calendar CALENDAR = Calendar.getInstance();
@@ -56,7 +56,6 @@ public class DateUtils {
             return calendar.getTime();
         }
     }
-
 
     /**
      * Returns a new Date with the hours, milliseconds, seconds and minutes
@@ -114,7 +113,6 @@ public class DateUtils {
         }
     }
 
-
     /**
      * Returns the day after <code>date</code>.
      *
@@ -131,7 +129,7 @@ public class DateUtils {
      *
      * @param time Base time
      * @param amount Amount of increment.
-     * 
+     *
      * @return the <var>time</var> + <var>amount</var> days
      */
     public static long addDays(long time, int amount) {
@@ -162,7 +160,6 @@ public class DateUtils {
     public static long nextWeek(long date) {
         return addDays(date, 7);
     }
-
 
     /**
      * Returns the number of days difference between <code>t1</code> and
@@ -212,7 +209,7 @@ public class DateUtils {
      * @param date date to check in millis
      * @return <code>true</code> if <var>date</var> corresponds to the first
      *         day of a year
-     * @see Date#getTime() 
+     * @see Date#getTime()
      */
     public static boolean isFirstOfYear(long date) {
         boolean ret = false;
@@ -234,7 +231,7 @@ public class DateUtils {
      * @param date date to check in millis
      * @return <code>true</code> if <var>date</var> corresponds to the first
      *         day of a month
-     * @see Date#getTime() 
+     * @see Date#getTime()
      */
     public static boolean isFirstOfMonth(long date) {
         boolean ret = false;
@@ -247,9 +244,8 @@ public class DateUtils {
             int yesterdayMonth = calendar.get(Calendar.MONTH);
             ret =  (currentMonth != yesterdayMonth);
         }
-        return ret;     
+        return ret;
     }
-
 
     /**
      * Returns the day before <code>date</code>.
@@ -271,7 +267,6 @@ public class DateUtils {
         return addDays(date, -7);
     }
 
-
     /**
      * Returns the first day before <code>date</code> that has the
      * day of week matching <code>startOfWeek</code>.  For example, if you
@@ -282,7 +277,7 @@ public class DateUtils {
      * @param startOfWeek Calendar constant correspoding to start of week.
      * @return start of week, return value will have 0 hours, 0 minutes,
      *         0 seconds and 0 ms.
-     * 
+     *
      */
     public static long getPreviousDay(long date, int startOfWeek) {
         return getDay(date, startOfWeek, -1);
@@ -298,7 +293,7 @@ public class DateUtils {
      * @param startOfWeek Calendar constant correspoding to start of week.
      * @return start of week, return value will have 0 hours, 0 minutes,
      *         0 seconds and 0 ms.
-     * 
+     *
      */
     public static long getNextDay(long date, int startOfWeek) {
         return getDay(date, startOfWeek, 1);
@@ -320,7 +315,7 @@ public class DateUtils {
 
     /**
      * Returns the previous month.
-     * 
+     *
      * @param date Base date
      * @return previous month
      */
@@ -330,7 +325,7 @@ public class DateUtils {
 
     /**
      * Returns the next month.
-     * 
+     *
      * @param date Base date
      * @return next month
      */

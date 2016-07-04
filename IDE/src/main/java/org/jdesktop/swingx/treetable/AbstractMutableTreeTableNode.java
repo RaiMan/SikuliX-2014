@@ -30,7 +30,7 @@ import javax.swing.tree.TreeNode;
 /**
  * {@code AbstractMutableTreeTableNode} provides an implementation of most of
  * the {@code MutableTreeTableNode} features.
- * 
+ *
  * @author Karl Schaefer
  */
 public abstract class AbstractMutableTreeTableNode implements
@@ -68,13 +68,13 @@ public abstract class AbstractMutableTreeTableNode implements
      * Creates the list used to manage the children of this node.
      * <p>
      * This method is called by the constructor.
-     * 
+     *
      * @return a list; this list is guaranteed to be non-{@code null}
      */
     protected List<MutableTreeTableNode> createChildrenList() {
         return new ArrayList<MutableTreeTableNode>();
     }
-    
+
     public void add(MutableTreeTableNode child) {
         insert(child, getChildCount());
     }
@@ -92,7 +92,7 @@ public abstract class AbstractMutableTreeTableNode implements
             children.remove(child);
             index--;
         }
-        
+
         children.add(index, child);
 
         if (child.getParent() != this) {
@@ -148,7 +148,7 @@ public abstract class AbstractMutableTreeTableNode implements
 
     /**
      * Returns this node's user object.
-     * 
+     *
      * @return the Object stored at this node by the user
      * @see #setUserObject
      * @see #toString
@@ -212,7 +212,7 @@ public abstract class AbstractMutableTreeTableNode implements
      * removed.
      * <p>
      * Note: By default, a node allows children.
-     * 
+     *
      * @param allowsChildren
      *            {@code true} if this node is allowed to have children
      */
@@ -242,7 +242,7 @@ public abstract class AbstractMutableTreeTableNode implements
 
     /**
      * Determines whether the specified column is editable.
-     * 
+     *
      * @param column
      *            the column to query
      * @return always returns {@code false}
@@ -254,7 +254,7 @@ public abstract class AbstractMutableTreeTableNode implements
 
     /**
      * Sets the value for the given {@code column}.
-     * 
+     *
      * @impl does nothing. It is provided for convenience.
      * @param aValue
      *            the value to set
@@ -269,7 +269,7 @@ public abstract class AbstractMutableTreeTableNode implements
     /**
      * Returns the result of sending <code>toString()</code> to this node's
      * user object, or null if this node has no user object.
-     * 
+     *
      * @see #getUserObject
      */
     @Override

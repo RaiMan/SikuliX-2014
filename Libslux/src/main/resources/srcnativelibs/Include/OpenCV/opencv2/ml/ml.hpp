@@ -224,7 +224,6 @@ protected:
     CvMat*  c;
 };
 
-
 /****************************************************************************************\
 *                          K-Nearest Neighbour Classifier                                *
 \****************************************************************************************/
@@ -307,7 +306,6 @@ struct CV_EXPORTS_W_MAP CvSVMParams
     CV_PROP_RW CvTermCriteria term_crit; // termination criteria
 };
 
-
 struct CV_EXPORTS CvSVMKernel
 {
     typedef void (CvSVMKernel::*Calc)( int vec_count, int vec_size, const float** vecs,
@@ -337,14 +335,12 @@ struct CV_EXPORTS CvSVMKernel
                                const float* another, float* results );
 };
 
-
 struct CvSVMKernelRow
 {
     CvSVMKernelRow* prev;
     CvSVMKernelRow* next;
     float* data;
 };
-
 
 struct CvSVMSolutionInfo
 {
@@ -438,7 +434,6 @@ public:
     virtual float* get_row_svr( int i, float* row, float* dst, bool existed );
 };
 
-
 struct CvSVMDecisionFunc
 {
     double rho;
@@ -446,7 +441,6 @@ struct CvSVMDecisionFunc
     double* alpha;
     int* sv_index;
 };
-
 
 // SVM model
 class CV_EXPORTS_W CvSVM : public CvStatModel
@@ -657,7 +651,6 @@ struct CvPair16u32s
     int* i;
 };
 
-
 #define CV_DTREE_CAT_DIR(idx,subset) \
     (2*((subset[(idx)>>5]&(1 << ((idx) & 31)))==0)-1)
 
@@ -713,7 +706,6 @@ struct CvDTreeNode
     void set_num_valid(int vi, int n) { if( num_valid ) num_valid[vi] = n; }
 };
 
-
 struct CV_EXPORTS_W_MAP CvDTreeParams
 {
     CV_PROP_RW int   max_categories;
@@ -733,7 +725,6 @@ struct CV_EXPORTS_W_MAP CvDTreeParams
                    bool use_1se_rule, bool truncate_pruned_tree,
                    const float* priors );
 };
-
 
 struct CV_EXPORTS CvDTreeTrainData
 {
@@ -945,7 +936,6 @@ public:
     int pruned_tree_idx;
 };
 
-
 /****************************************************************************************\
 *                                   Random Trees Classifier                              *
 \****************************************************************************************/
@@ -983,7 +973,6 @@ protected:
     CvRTrees* forest;
 };
 
-
 struct CV_EXPORTS_W_MAP CvRTParams : public CvDTreeParams
 {
     //Parameters for the forest
@@ -998,7 +987,6 @@ struct CV_EXPORTS_W_MAP CvRTParams : public CvDTreeParams
                 int nactive_vars, int max_num_of_trees_in_the_forest,
                 float forest_accuracy, int termcrit_type );
 };
-
 
 class CV_EXPORTS_W CvRTrees : public CvStatModel
 {
@@ -1120,7 +1108,6 @@ protected:
     virtual bool grow_forest( const CvTermCriteria term_crit );
 };
 
-
 /****************************************************************************************\
 *                                   Boosted tree classifier                              *
 \****************************************************************************************/
@@ -1136,7 +1123,6 @@ struct CV_EXPORTS_W_MAP CvBoostParams : public CvDTreeParams
     CvBoostParams( int boost_type, int weak_count, double weight_trim_rate,
                    int max_depth, bool use_surrogates, const float* priors );
 };
-
 
 class CvBoost;
 
@@ -1185,7 +1171,6 @@ protected:
 
     CvBoost* ensemble;
 };
-
 
 class CV_EXPORTS_W CvBoost : public CvStatModel
 {
@@ -1282,7 +1267,6 @@ protected:
     bool have_subsample;
 };
 
-
 /****************************************************************************************\
 *                                   Gradient Boosted Trees                               *
 \****************************************************************************************/
@@ -1302,7 +1286,6 @@ protected:
 //                       int(total_samples_count * subsample_portion).
 // shrinkage           - regularization parameter.
 //                       Each tree prediction is multiplied on shrinkage value.
-
 
 struct CV_EXPORTS_W_MAP CvGBTreesParams : public CvDTreeParams
 {
@@ -1363,7 +1346,6 @@ struct CV_EXPORTS_W_MAP CvGBTreesParams : public CvDTreeParams
 //                    f_0 is the base value.
 
 
-
 class CV_EXPORTS_W CvGBTrees : public CvStatModel
 {
 public:
@@ -1393,7 +1375,6 @@ public:
     */
     enum {SQUARED_LOSS=0, ABSOLUTE_LOSS, HUBER_LOSS=3, DEVIANCE_LOSS};
 
-
     /*
     // Default constructor. Creates a model only (without training).
     // Should be followed by one form of the train(...) function.
@@ -1406,7 +1387,6 @@ public:
     // RESULT
     */
     CV_WRAP CvGBTrees();
-
 
     /*
     // Full form constructor. Creates a gradient boosting model and does the
@@ -1451,12 +1431,10 @@ public:
              const CvMat* missingDataMask=0,
              CvGBTreesParams params=CvGBTreesParams() );
 
-
     /*
     // Destructor.
     */
     virtual ~CvGBTrees();
-
 
     /*
     // Gradient tree boosting model training
@@ -1504,7 +1482,6 @@ public:
              CvGBTreesParams params=CvGBTreesParams(),
              bool update=false );
 
-
     /*
     // Gradient tree boosting model training
     //
@@ -1524,7 +1501,6 @@ public:
     virtual bool train( CvMLData* data,
              CvGBTreesParams params=CvGBTreesParams(),
              bool update=false );
-
 
     /*
     // Response value prediction
@@ -1639,7 +1615,6 @@ public:
     */
     virtual void write( CvFileStorage* fs, const char* name ) const;
 
-
     /*
     //
     // Read parameters of the gtb model and data. Read learned model.
@@ -1654,7 +1629,6 @@ public:
     // RESULT
     */
     virtual void read( CvFileStorage* fs, CvFileNode* node );
-
 
     // new-style C++ interface
     CV_WRAP CvGBTrees( const cv::Mat& trainData, int tflag,
@@ -1693,7 +1667,6 @@ protected:
     */
     virtual void find_gradient( const int k = 0);
 
-
     /*
     //
     // Change values in tree leaves according to the used loss function.
@@ -1711,7 +1684,6 @@ protected:
     // RESULT
     */
     virtual void change_values(CvDTree* tree, const int k = 0);
-
 
     /*
     //
@@ -1731,7 +1703,6 @@ protected:
     */
     virtual float find_optimal_value( const CvMat* _Idx );
 
-
     /*
     //
     // Randomly split the whole training set in two parts according
@@ -1747,7 +1718,6 @@ protected:
     // RESULT
     */
     virtual void do_subsample();
-
 
     /*
     //
@@ -1765,7 +1735,6 @@ protected:
     */
     void leaves_get( CvDTreeNode** leaves, int& count, CvDTreeNode* node );
 
-
     /*
     //
     // Get leaves of the tree.
@@ -1782,7 +1751,6 @@ protected:
     */
     CvDTreeNode** GetLeaves( const CvDTree* dtree, int& len );
 
-
     /*
     //
     // Is it a regression or a classification.
@@ -1798,7 +1766,6 @@ protected:
     */
     virtual bool problem_type() const;
 
-
     /*
     //
     // Write parameters of the gtb model.
@@ -1812,7 +1779,6 @@ protected:
     // RESULT
     */
     virtual void write_params( CvFileStorage* fs ) const;
-
 
     /*
     //
@@ -1834,7 +1800,6 @@ protected:
     virtual void read_params( CvFileStorage* fs, CvFileNode* fnode );
     int get_len(const CvMat* mat) const;
 
-
     CvDTreeTrainData* data;
     CvGBTreesParams params;
 
@@ -1855,7 +1820,6 @@ protected:
     float base_value;
 
 };
-
 
 
 /****************************************************************************************\
@@ -1882,7 +1846,6 @@ struct CV_EXPORTS_W_MAP CvANN_MLP_TrainParams
     // rprop parameters
     CV_PROP_RW double rp_dw0, rp_dw_plus, rp_dw_minus, rp_dw_min, rp_dw_max;
 };
-
 
 class CV_EXPORTS_W CvANN_MLP : public CvStatModel
 {
@@ -2105,7 +2068,6 @@ protected:
 
     cv::RNG* rng;
 };
-
 
 namespace cv
 {

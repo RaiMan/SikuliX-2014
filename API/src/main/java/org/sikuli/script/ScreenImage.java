@@ -47,7 +47,7 @@ public class ScreenImage {
 		w = (int) roi.getWidth();
 		h = (int) roi.getHeight();
 	}
-  
+
   public ScreenImage getSub(Rectangle sub) {
     if (!_roi.contains(sub)) {
       return this;
@@ -78,7 +78,7 @@ public class ScreenImage {
     }
     return _filename;
   }
-  
+
 	/**
 	 * stores the image as PNG file in the standard temp folder
 	 * with a created filename (sikuliximage-timestamp.png)
@@ -89,7 +89,7 @@ public class ScreenImage {
   public String save() {
     return FileManager.saveTimedImage(_img, RunTime.get().fpBaseTempPath, "sikuliximage");
   }
-  
+
 	/**
 	 * stores the image as PNG file in the given path
 	 * with a created filename (sikuliximage-timestamp.png)
@@ -167,7 +167,7 @@ public class ScreenImage {
     Image.reload(fImage.getAbsolutePath());
     return fImage.getAbsolutePath();
   }
-  
+
 	// store image to given path if not yet stored
 	private void createFile(File tmp) throws IOException {
 		String filename = tmp.getAbsolutePath();
@@ -206,5 +206,5 @@ public class ScreenImage {
   		ImageIO.write(_img, "png", new File(fPath, "LastScreenImage.png"));
     } catch (Exception ex) {}
   }
- 
+
 }

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -43,29 +43,29 @@ import org.jdesktop.swingx.action.AbstractActionExt;
  * naming!) JXMonthView. Then custom implementations can be tailored to exactly
  * fit their needs.
  * <p>
- * 
+ *
  * To install a custom implementation, register the class name of the custom
  * header handler with the key <code>CalendarHeaderHandler.uiControllerID</code>
  * , example:
- * 
+ *
  * <pre>
  * <code>
  *  UIManager.put(CalendarHeaderHandler.uiControllerID, &quot;com.foo.bar.MagicHeaderHandler&quot;)
  * </code>
  * </pre>
- * 
+ *
  * Basic navigation action should (will) be defined by the ui delegate itself (PENDING
  * JW: still incomplete in BasicMonthViewUI). This handler can modify/enhance
  * them as appropriate for its context.
  * <p>
- * 
+ *
  * PENDING JW: those icons ... who's responsible? Shouldn't we use any of the
  * default arrows as defined in the laf anyway (are there any?)
  * <p>
- * 
+ *
  * <b>Note</b>: this is work-in-progress, be prepared to change if subclassing
  * for custom requirements!
- * 
+ *
  * @author Jeanette Winzenburg
  */
 public abstract class CalendarHeaderHandler {
@@ -88,7 +88,7 @@ public abstract class CalendarHeaderHandler {
 
     /**
      * Installs this handler to the given month view.
-     * 
+     *
      * @param monthView the target month view to install to.
      */
     public void install(JXMonthView monthView) {
@@ -107,7 +107,7 @@ public abstract class CalendarHeaderHandler {
 
     /**
      * Uninstalls this handler from the given target month view.
-     * 
+     *
      * @param monthView the target month view to install from.
      */
     public void uninstall(JXMonthView monthView) {
@@ -119,7 +119,7 @@ public abstract class CalendarHeaderHandler {
     /**
      * Returns a component to be used as header in a zoomable month view,
      * guaranteed to be not null.
-     * 
+     *
      * @return a component to be used as header in a zoomable JXMonthView
      */
     public JComponent getHeaderComponent() {
@@ -149,7 +149,7 @@ public abstract class CalendarHeaderHandler {
 
     /**
      * Returns the propertyChangelistener for the monthView. Lazily created.
-     * 
+     *
      * @return the propertyChangeListener for the monthView.
      */
     private PropertyChangeListener getMonthViewPropertyChangeListener() {
@@ -194,7 +194,7 @@ public abstract class CalendarHeaderHandler {
     /**
      * Synchronizes internal state which depends on the month view's
      * componentOrientation.
-     * 
+     *
      * This implementation updates the month navigation icons and the header
      * component's orientation.
      */
@@ -230,7 +230,7 @@ public abstract class CalendarHeaderHandler {
 
     /**
      * Creates and returns the component used as header in a zoomable monthView.
-     * 
+     *
      * @return the component used as header in a zoomable monthView, guaranteed
      *         to be not null.
      */
@@ -239,7 +239,7 @@ public abstract class CalendarHeaderHandler {
     /**
      * Installs and configures navigational actions.
      * <p>
-     * 
+     *
      * This implementation creates and installs wrappers around the
      * scrollToPrevious/-NextMonth actions installed by the ui and configures
      * them with the appropriate next/previous icons.
@@ -257,7 +257,7 @@ public abstract class CalendarHeaderHandler {
      * Creates an life action wrapper around the action registered with
      * actionKey, sets its SMALL_ICON property to the given icon and installs
      * itself with the newActionKey.
-     * 
+     *
      * @param actionKey the key of the action to wrap around
      * @param newActionKey the key of the wrapper action
      * @param icon the icon to use in the wrapper action
@@ -280,7 +280,7 @@ public abstract class CalendarHeaderHandler {
 
     /**
      * Returns a Font based on the param which is not of type UIResource.
-     * 
+     *
      * @param font the base font
      * @return a font not of type UIResource, may be null.
      */
@@ -293,7 +293,7 @@ public abstract class CalendarHeaderHandler {
 
     /**
      * Returns a Color based on the param which is not of type UIResource.
-     * 
+     *
      * @param color the base color
      * @return a color not of type UIResource, may be null.
      */

@@ -217,7 +217,12 @@ public class RunTime {
           runTime.linuxDistro = result.replaceAll("\n", " ").trim();
         }
       } else {
-        runTime.terminate(-1, "running on not supported System: %s (%s)", os, runTime.osVersion);
+        // Presume Unix -- pretend to be Linux
+        runTime.runningOn = theSystem.LUX;
+        runTime.sysName = os;
+        runTime.osName = runTime.osNameSysProp;
+        runTime.runningLinux = true;
+        runTime.linuxDistro = runTime.osNameSysProp;
       }
       runTime.fpJarLibs += runTime.sysName + "/libs" + runTime.javaArch;
       runTime.fpSysLibs = runTime.fpJarLibs.substring(1);
@@ -1312,7 +1317,6 @@ public class RunTime {
       }
     }
   }
-
 
   /**
    * CONVENIENCE: look into the option file if any (if no option file is found, the option is taken as not existing)

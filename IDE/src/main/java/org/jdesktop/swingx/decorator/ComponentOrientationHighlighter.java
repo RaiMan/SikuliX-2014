@@ -9,15 +9,15 @@ import java.awt.ComponentOrientation;
 
 /**
  * A Highlighter which applies the ComponentOrientation to the component.
- * 
+ *
  * @author Jeanette Winzenburg, Berlin
  */
 public class ComponentOrientationHighlighter extends AbstractHighlighter {
-    
+
     private ComponentOrientation co;
 
     /**
-     * Instantiates a ComponentOrientationHighlighter with <code>ComponentOrientation.LEFT_TO_RIGHT</code>. 
+     * Instantiates a ComponentOrientationHighlighter with <code>ComponentOrientation.LEFT_TO_RIGHT</code>.
      * The Highlighter is applied always.
      */
     public ComponentOrientationHighlighter() {
@@ -25,9 +25,9 @@ public class ComponentOrientationHighlighter extends AbstractHighlighter {
     }
 
     /**
-     * Instantiates a ComponentOrientationHighlighter with the given HighlightPredicate 
+     * Instantiates a ComponentOrientationHighlighter with the given HighlightPredicate
      * and <code>ComponentOrientation.LEFT_TO_RIGHT</code>.
-     * 
+     *
      * @param predicate the HighlightPredicate to use, may be null to default to ALWAYS.
      */
     public ComponentOrientationHighlighter(HighlightPredicate predicate) {
@@ -35,9 +35,9 @@ public class ComponentOrientationHighlighter extends AbstractHighlighter {
     }
 
     /**
-     * Instantiates a ComponentOrientationHighlighter with the given ComponentOrientation. 
+     * Instantiates a ComponentOrientationHighlighter with the given ComponentOrientation.
      * The Highlighter is applied always.
-     * 
+     *
      * @param co the ComponentOrientation to apply
      */
     public ComponentOrientationHighlighter(ComponentOrientation co) {
@@ -46,7 +46,7 @@ public class ComponentOrientationHighlighter extends AbstractHighlighter {
 
     /**
      * Instantiates a ComponentOrientationHighlighter with the given ComponentOrientation and HighlightPredicate.
-     * 
+     *
      * @param predicate the HighlightPredicate to use, may be null to default to ALWAYS.
      * @param co the ComponentOrientation to apply, may be null
      */
@@ -55,19 +55,19 @@ public class ComponentOrientationHighlighter extends AbstractHighlighter {
         super(predicate);
         setComponentOrientation(co);
     }
-    
+
     /**
      * Returns the ComponentOrientation to apply.
-     * 
+     *
      * @return the ComponentOrientation to apply, guaranteed to be not null.
      */
     public ComponentOrientation getComponentOrientation() {
         return co;
     }
-    
+
     /**
      * Sets the ComponentOrientation to apply.
-     * 
+     *
      * @param co the co to set, may be null to denote fallback to LEFT_TO_RIGHT
      */
     public void setComponentOrientation(ComponentOrientation co) {
@@ -81,7 +81,7 @@ public class ComponentOrientationHighlighter extends AbstractHighlighter {
 
     /**
      * @inherited <p>
-     * Implementated to decorate the given component with the ComponentOrientation. 
+     * Implementated to decorate the given component with the ComponentOrientation.
      */
     @Override
     protected Component doHighlight(Component component,
@@ -89,6 +89,5 @@ public class ComponentOrientationHighlighter extends AbstractHighlighter {
         component.applyComponentOrientation(getComponentOrientation());
         return component;
     }
-    
 
 }

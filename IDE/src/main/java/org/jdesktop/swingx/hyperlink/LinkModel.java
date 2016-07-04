@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -29,9 +29,9 @@ import java.util.logging.Logger;
 
 /**
  * An bean which represents an URL link.
- * 
+ *
  * Text, URL and visited are bound properties. Compares by Text.
- * 
+ *
  * @author Mark Davidson
  * @author Jeanette Winzenburg
  */
@@ -59,7 +59,7 @@ public class LinkModel implements Comparable {
     private static URL defaultURL;
 
     /**
-     * 
+     *
      * @param text
      * @param target
      * @param url
@@ -73,7 +73,7 @@ public class LinkModel implements Comparable {
     public LinkModel() {
         this(" ", null, null);
     }
-    
+
     public LinkModel(String text) {
         this(text, null, null);
     }
@@ -115,7 +115,7 @@ public class LinkModel implements Comparable {
             url = new URL(howToURLString);
         } catch (MalformedURLException e) {
             url = getDefaultURL();
-            LOG.warning("the given urlString is malformed: " + howToURLString + 
+            LOG.warning("the given urlString is malformed: " + howToURLString +
                     "\n falling back to default url: " + url);
         }
         setURL(url);
@@ -135,7 +135,7 @@ public class LinkModel implements Comparable {
 
     /**
      * Set the url and resets the visited flag.
-     * 
+     *
      * Think: keep list of visited urls here?
      */
     public void setURL(URL url) {
@@ -158,7 +158,7 @@ public class LinkModel implements Comparable {
      * Create a URL from a template string that has place holders and an array
      * of strings which will be substituted into the place holders. The place
      * holders are represented as
-     * 
+     *
      * @{N} where N = { 1..n }
      *      <p>
      *      For example, if the template contains a string like:
@@ -194,7 +194,7 @@ public class LinkModel implements Comparable {
 
     /**
      * Return the target for the URL.
-     * 
+     *
      * @return value of the target. If null then "_blank" will be returned.
      */
     public String getTarget() {

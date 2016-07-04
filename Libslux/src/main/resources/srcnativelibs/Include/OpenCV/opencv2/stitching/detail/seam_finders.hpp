@@ -58,13 +58,11 @@ public:
                       std::vector<Mat> &masks) = 0;
 };
 
-
 class CV_EXPORTS NoSeamFinder : public SeamFinder
 {
 public:
     void find(const std::vector<Mat>&, const std::vector<Point>&, std::vector<Mat>&) {}
 };
-
 
 class CV_EXPORTS PairwiseSeamFinder : public SeamFinder
 {
@@ -82,7 +80,6 @@ protected:
     std::vector<Mat> masks_;
 };
 
-
 class CV_EXPORTS VoronoiSeamFinder : public PairwiseSeamFinder
 {
 public:
@@ -91,7 +88,6 @@ public:
 private:
     void findInPair(size_t first, size_t second, Rect roi);
 };
-
 
 class CV_EXPORTS DpSeamFinder : public SeamFinder
 {
@@ -201,13 +197,11 @@ private:
     std::set<std::pair<int, int> > edges_;
 };
 
-
 class CV_EXPORTS GraphCutSeamFinderBase
 {
 public:
     enum { COST_COLOR, COST_COLOR_GRAD };
 };
-
 
 class CV_EXPORTS GraphCutSeamFinder : public GraphCutSeamFinderBase, public SeamFinder
 {
@@ -225,7 +219,6 @@ private:
     class Impl;
     Ptr<PairwiseSeamFinder> impl_;
 };
-
 
 #if defined(HAVE_OPENCV_GPU) && !defined(ANDROID)
 class CV_EXPORTS GraphCutSeamFinderGpu : public GraphCutSeamFinderBase, public PairwiseSeamFinder

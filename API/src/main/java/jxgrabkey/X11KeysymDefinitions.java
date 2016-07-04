@@ -230,7 +230,6 @@ public final class X11KeysymDefinitions {
     //Misc ********************************************************************
     public static final int VOID_SYMBOL = 0xffffff;
 
-
     /* TTY Functions, cleverly chosen to map to ascii, for convenience of
     * programming, but could have been arbitrary (at the cost of lookup
     * tables in client code).
@@ -247,7 +246,6 @@ public final class X11KeysymDefinitions {
     public static final int ESCAPE = 0xff1b;
     public static final int DELETE = 0xffff; /* delete, rubout */
 
-
     /* International & multi-key character composition. */
 
     public static final int MULTI_KEY = 0xff20; /* multi-key character compose */
@@ -255,7 +253,6 @@ public final class X11KeysymDefinitions {
     public static final int SINGLE_CANDIDATE = 0xff3c;
     public static final int MULTIPLE_CANDIDATE = 0xff3d;
     public static final int PREVIOUS_CANDIDATE = 0xff3e;
-
 
 
     /* Japanese keyboard support. 0xff31 thru 0xff3f are under XK_KOREAN. */
@@ -281,7 +278,6 @@ public final class X11KeysymDefinitions {
     public static final int ZEN_KOHO = 0xff3d; /* multiple/all candidate(s) */
     public static final int MAE_KOHO = 0xff3e; /* previous candidate */
 
-
     /** Cursor control & motion. */
 
     public static final int HOME = 0xff50;
@@ -295,7 +291,6 @@ public final class X11KeysymDefinitions {
     public static final int PAGE_DOWN = 0xff56;
     public static final int END = 0xff57; /* eol */
     public static final int BEGIN = 0xff58; /* bol */
-
 
     /* Misc Functions. */
 
@@ -313,7 +308,6 @@ public final class X11KeysymDefinitions {
     public static final int MODE_SWITCH = 0xff7e; /* character set switch */
     public static final int SCRIPT_SWITCH = 0xff7e; /* alias for mode_switch */
     public static final int NUM_LOCK = 0xff7f;
-
 
     /* Keypad Functions, keypad numbers cleverly chosen to map to ascii. */
 
@@ -355,7 +349,6 @@ public final class X11KeysymDefinitions {
     public static final int KP_7 = 0xffb7;
     public static final int KP_8 = 0xffb8;
     public static final int KP_9 = 0xffb9;
-
 
 
     /* Auxilliary Functions; note the duplicate definitions for left and
@@ -425,7 +418,6 @@ public final class X11KeysymDefinitions {
     public static final int R14 = 0xffdf;
     public static final int F35 = 0xffe0;
     public static final int R15 = 0xffe0;
-
 
     /* Modifiers. */
 
@@ -562,7 +554,6 @@ public final class X11KeysymDefinitions {
 
     public static final int MODE_LOCK = 0x1008ff01; /* mode switch lock */
 
-
     /* "Internet" keyboards. */
 
     public static final int STANDBY = 0x1008ff10;
@@ -578,7 +569,6 @@ public final class X11KeysymDefinitions {
     public static final int START = 0x1008ff1a;
     public static final int SEARCH = 0x1008ff1b;
     public static final int AUDIO_RECORD = 0x1008ff1c;
-
 
     /* PDA's (e.g. Palm, PocketPC or elsewhere). */
 
@@ -598,11 +588,9 @@ public final class X11KeysymDefinitions {
     public static final int POWER_OFF = 0x1008ff1a;
     public static final int WAKE_UP = 0x1008ff1b;
 
-
     /* Note, 0x1008ff02 - 0x1008ff0f are free and should be used for misc new
     * keysyms that don't fit into any of the groups below.
     */
-
 
     /* Misc. */
 

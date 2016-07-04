@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -60,54 +60,54 @@ import org.jdesktop.swingx.table.ColumnControlPopup.ActionGroupable;
 
 /**
  * A component to allow interactive customization of <code>JXTable</code>'s
- * columns. 
- * It's main purpose is to allow toggling of table columns' visibility. 
+ * columns.
+ * It's main purpose is to allow toggling of table columns' visibility.
  * Additionally, arbitrary configuration actions can be exposed.
  * <p>
- * 
+ *
  * This component is installed in the <code>JXTable</code>'s
  * trailing corner, if enabled:
- * 
+ *
  * <pre><code>
  * table.setColumnControlVisible(true);
  * </code></pre>
- * 
+ *
  * From the perspective of a <code>JXTable</code>, the component's behaviour is
  * opaque. Typically, the button's action is to popup a component for user
  * interaction. <p>
- * 
+ *
  * This class is responsible for handling/providing/updating the lists of
- * actions and to keep each Action's state in synch with Table-/Column state. 
+ * actions and to keep each Action's state in synch with Table-/Column state.
  * The visible behaviour of the popup is delegated to a
  * <code>ColumnControlPopup</code>. <p>
- * 
- * Default support for adding table (configuration or other) <code>Action</code>s is 
- * informal, driven by convention: 
+ *
+ * Default support for adding table (configuration or other) <code>Action</code>s is
+ * informal, driven by convention:
  * <ul>
  * <li> the JXTable's actionMap is scanned for candidate actions, the default marker
- *   is a key of type String which starts with {@link ColumnControlButton.COLUMN_CONTROL_MARKER} 
+ *   is a key of type String which starts with {@link ColumnControlButton.COLUMN_CONTROL_MARKER}
  * <li> the actions are sorted by that key and then handed over to the ColumnControlPopup
  *   for binding and addition of appropriate menu items
- * <li> the addition as such is control by additionalActionsVisible property, its 
- *   default value is true  
- * </ul> 
- * 
- * 
- * 
+ * <li> the addition as such is control by additionalActionsVisible property, its
+ *   default value is true
+ * </ul>
+ *
+ *
+ *
  * @see TableColumnExt
  * @see TableColumnModelExt
  * @see JXTable#setColumnControl
- * 
+ *
  */
 public class ColumnControlButton extends JButton {
-    
+
     // JW: really want to extend? for builders?
     /** Marker to auto-recognize actions which should be added to the popup. */
     public static final String COLUMN_CONTROL_MARKER = "column.";
-    
+
     /** the key for looking up the control's icon in the UIManager. Typically, it's LAF dependent. */
     public static final String COLUMN_CONTROL_BUTTON_ICON_KEY = "ColumnControlButton.actionIcon";
-    
+
     /** the key for looking up the control's margin in the UIManager. Typically, it's LAF dependent. */
     public static final String COLUMN_CONTROL_BUTTON_MARGIN_KEY = "ColumnControlButton.margin";
 
@@ -129,11 +129,10 @@ public class ColumnControlButton extends JButton {
 
     private boolean additionalActionsVisible;
 
-    
     /**
      * Creates a column control button for the table. Uses the default
      * icon as provided by the addon.
-     * 
+     *
      * @param table  the <code>JXTable</code> controlled by this component
      */
     public ColumnControlButton(JXTable table) {
@@ -156,7 +155,6 @@ public class ColumnControlButton extends JButton {
         installTable(table);
     }
 
-    
     @Override
     public void updateUI() {
         super.updateUI();
@@ -174,10 +172,10 @@ public class ColumnControlButton extends JButton {
     protected void updateButtonUI() {
         if ((getMargin() == null) || (getMargin() instanceof UIResource)) {
             Insets insets = UIManager.getInsets(COLUMN_CONTROL_BUTTON_MARGIN_KEY);
-            setMargin(insets); 
+            setMargin(insets);
         }
     }
-    
+
     /**
      * Updates the action properties provided by the LAF.
      * Here: overwrites the action's small_icon with the icon from the ui if the current
@@ -192,12 +190,12 @@ public class ColumnControlButton extends JButton {
         }
     }
 
-    /** 
+    /**
      * Toggles the popup component's visibility. This method is
      * called by this control's default action. <p>
-     * 
+     *
      * Here: delegates to getControlPopup().
-     */ 
+     */
     public void togglePopup() {
         getColumnControlPopup().toggleVisibility(this);
     }
@@ -205,21 +203,20 @@ public class ColumnControlButton extends JButton {
     /**
      * Returns the actionsVisible property which controls whether or not
      * additional table Actions should be included into the popup.
-     * 
+     *
      * @return a boolean indicating whether or not additional table Actions
      *    are visible
      */
     public boolean getAdditionalActionsVisible() {
         return additionalActionsVisible;
     }
-    
-    
+
     /**
      * Sets the additonalActionsVisible property. It controls whether or
      * not additional table actions should be included into the popup. <p>
-     * 
+     *
      * The default value is <code>true</code>.
-     * 
+     *
      * @param additionalActionsVisible the additionalActionsVisible to set
      */
     public void setAdditionalActionsVisible(boolean additionalActionsVisible) {
@@ -231,11 +228,11 @@ public class ColumnControlButton extends JButton {
     }
 
     /**
-     * Sets the grouper to use for grouping the additional actions. Maybe null to 
+     * Sets the grouper to use for grouping the additional actions. Maybe null to
      * have no additional grouping. Has no effect
-     * if the ColumnControlPopup doesn't implement Groupable. The default 
+     * if the ColumnControlPopup doesn't implement Groupable. The default
      * ColumnControlPopup supports Groupable, but is instantiated without a Grouper.
-     * 
+     *
      * @param grouper
      */
     public void setActionGrouper(ActionGrouper grouper) {
@@ -243,21 +240,20 @@ public class ColumnControlButton extends JButton {
         ((ActionGroupable) getColumnControlPopup()).setActionGrouper(grouper);
         populatePopup();
     }
-    
+
     @Override
     public void applyComponentOrientation(ComponentOrientation o) {
         super.applyComponentOrientation(o);
         getColumnControlPopup().applyComponentOrientation(o);
     }
 
-   
 //-------------------------- Action in synch with column properties
     /**
      * A specialized <code>Action</code> which takes care of keeping in synch with
      * TableColumn state.
-     * 
+     *
      * NOTE: client must call releaseColumn if this action is no longer needed!
-     * 
+     *
      */
     public class ColumnVisibilityAction extends AbstractActionExt {
 
@@ -273,7 +269,7 @@ public class ColumnControlButton extends JButton {
 
         /**
          * Creates a action synched to the table column.
-         * 
+         *
          * @param column the <code>TableColumn</code> to keep synched to.
          */
         public ColumnVisibilityAction(TableColumn column) {
@@ -283,7 +279,7 @@ public class ColumnControlButton extends JButton {
         }
 
         /**
-         * Releases all references to the synched <code>TableColumn</code>. 
+         * Releases all references to the synched <code>TableColumn</code>.
          * Client code must call this method if the
          * action is no longer needed. After calling this action must not be
          * used any longer.
@@ -292,25 +288,25 @@ public class ColumnControlButton extends JButton {
             column.removePropertyChangeListener(columnListener);
             column = null;
         }
-        
+
         /**
          * Returns true if the action is enabled. Returns
          * true only if the action is enabled and the table
          * column can be controlled.
-         * 
+         *
          * @return true if the action is enabled, false otherwise
          * @see #canControlColumn()
          */
         @Override
         public boolean isEnabled() {
-            return super.isEnabled() && canControlColumn(); 
+            return super.isEnabled() && canControlColumn();
         }
-        
+
         /**
          * Returns flag to indicate if column's visibility can
-         * be controlled. Minimal requirement is that column is of type 
-         * <code>TableColumnExt</code>. 
-         * 
+         * be controlled. Minimal requirement is that column is of type
+         * <code>TableColumnExt</code>.
+         *
          * @return boolean to indicate if columns's visibility can be controlled.
          */
         protected boolean canControlColumn() {
@@ -327,7 +323,7 @@ public class ColumnControlButton extends JButton {
                         // column visibility programatically fails if
                         // the current column is the second last visible
                         // guarding against 0 leads to hiding all columns
-                        // by deselecting the menu item. 
+                        // by deselecting the menu item.
                         && (table.getColumnCount() <= 1)
                         // JW Fixed #212: basically implemented Rob's idea to distinguish
                         // event sources instead of unconditionally reselect
@@ -341,7 +337,6 @@ public class ColumnControlButton extends JButton {
             }
         }
 
-        
         @Override
         public synchronized void setSelected(boolean newValue) {
             super.setSelected(newValue);
@@ -359,11 +354,11 @@ public class ColumnControlButton extends JButton {
         public void actionPerformed(ActionEvent e) {
 
         }
-        
+
         /**
          * Synchs selected property to visible. This
          * is called on change of tablecolumn's <code>visible</code> property.
-         * 
+         *
          * @param visible column visible state to synch to.
          */
         private void updateFromColumnVisible(boolean visible) {
@@ -376,15 +371,14 @@ public class ColumnControlButton extends JButton {
             fromColumn = false;
         }
 
-
         protected void updateFromColumnHideable(boolean hideable) {
             setEnabled(hideable);
         }
 
         /**
-         * Synchs name property to value. This is called on change of 
+         * Synchs name property to value. This is called on change of
          * tableColumn's <code>headerValue</code> property.
-         * 
+         *
          * @param value
          */
         private void updateFromColumnHeader(Object value) {
@@ -409,7 +403,7 @@ public class ColumnControlButton extends JButton {
             if (column.getIdentifier() != null) {
                 setActionCommand(column.getIdentifier().toString());
             }
-            boolean visible = (column instanceof TableColumnExt) ? 
+            boolean visible = (column instanceof TableColumnExt) ?
                     ((TableColumnExt) column).isVisible() : true;
             updateFromColumnVisible(visible);
         }
@@ -417,9 +411,9 @@ public class ColumnControlButton extends JButton {
         /**
          * Returns the listener to column's property changes. The listener
          * is created lazily if necessary.
-         * 
-         * @return the <code>PropertyChangeListener</code> listening to 
-         *   <code>TableColumn</code>'s property changes, guaranteed to be 
+         *
+         * @return the <code>PropertyChangeListener</code> listening to
+         *   <code>TableColumn</code>'s property changes, guaranteed to be
          *   not <code>null</code>.
          */
         protected PropertyChangeListener getColumnListener() {
@@ -436,7 +430,7 @@ public class ColumnControlButton extends JButton {
          * Implementation note: this listener reacts to column's
          * <code>visible</code> and <code>headerValue</code> properties and
          * calls the respective <code>updateFromXX</code> methodes.
-         * 
+         *
          * @return the <code>PropertyChangeListener</code> to use with the
          *         column
          */
@@ -459,12 +453,12 @@ public class ColumnControlButton extends JButton {
     // ---------------------- the popup
 
     /**
-     * A default implementation of ColumnControlPopup. 
-     * It uses a JPopupMenu with 
-     * MenuItems corresponding to the Actions as 
+     * A default implementation of ColumnControlPopup.
+     * It uses a JPopupMenu with
+     * MenuItems corresponding to the Actions as
      * provided by the ColumnControlButton.
-     * 
-     * 
+     *
+     *
      */
     public class DefaultColumnControlPopup implements ColumnControlPopup, ActionGroupable {
         private JPopupMenu popupMenu;
@@ -473,25 +467,25 @@ public class ColumnControlButton extends JButton {
         public DefaultColumnControlPopup() {
             this(null);
         }
-        
+
         //------------------ public methods to control visibility status
-        
+
         public DefaultColumnControlPopup(ActionGrouper grouper) {
             this.grouper = grouper;
         }
 
-        /** 
+        /**
          * @inheritDoc
-         * 
+         *
          */
         @Override
         public void updateUI() {
             SwingUtilities.updateComponentTreeUI(getPopupMenu());
         }
 
-        /** 
+        /**
          * @inheritDoc
-         * 
+         *
          */
         @Override
         public void toggleVisibility(JComponent owner) {
@@ -506,15 +500,15 @@ public class ColumnControlButton extends JButton {
                 popupMenu.show(owner,
                         // JW: trying to allow popup without CCB showing
                         // weird behaviour
-//                        owner.isShowing()? owner : null, 
+//                        owner.isShowing()? owner : null,
                         xPos, buttonSize.height);
             }
 
         }
 
-        /** 
+        /**
          * @inheritDoc
-         * 
+         *
          */
         @Override
         public void applyComponentOrientation(ComponentOrientation o) {
@@ -523,20 +517,19 @@ public class ColumnControlButton extends JButton {
         }
 
         //-------------------- public methods to manipulate popup contents.
-        
-        /** 
+
+        /**
          * @inheritDoc
-         * 
+         *
          */
         @Override
         public void removeAll() {
             getPopupMenu().removeAll();
         }
 
-
-        /** 
+        /**
          * @inheritDoc
-         * 
+         *
          */
         @Override
         public void addVisibilityActionItems(
@@ -545,22 +538,21 @@ public class ColumnControlButton extends JButton {
 
         }
 
-
-        /** 
+        /**
          * @inheritDoc
-         * 
+         *
          */
         @Override
         public void addAdditionalActionItems(List<? extends Action> actions) {
             if (actions.size() == 0)
                 return;
-            // JW: this is a reference to the enclosing class 
+            // JW: this is a reference to the enclosing class
             // prevents to make this implementation static
             // Hmmm...any way around?
             if (canControl()) {
                 addSeparator();
             }
-            
+
             if (getGrouper() == null) {
                 addItems(actions);
                 return;
@@ -570,23 +562,23 @@ public class ColumnControlButton extends JButton {
                 addItems(group);
                 if (group != groups.get(groups.size()- 1))
                     addSeparator();
-                
+
             }
-            
+
         }
-        
+
         //--------------------------- internal helpers to manipulate popups content
-        
+
         /**
-         * Here: creates and adds a menuItem to the popup for every 
-         * Action in the list. Does nothing if 
+         * Here: creates and adds a menuItem to the popup for every
+         * Action in the list. Does nothing if
          * if the list is empty.
-         * 
+         *
          * PRE: actions != null.
-         * 
+         *
          * @param actions a list containing the actions to add to the popup.
          *        Must not be null.
-         * 
+         *
          */
         protected void addItems(List<? extends Action> actions) {
             ActionContainerFactory factory = new ActionContainerFactory(null);
@@ -594,7 +586,7 @@ public class ColumnControlButton extends JButton {
                 addItem(factory.createMenuItem(action));
             }
         }
-        
+
         /**
          * adds a separator to the popup.
          *
@@ -604,7 +596,7 @@ public class ColumnControlButton extends JButton {
         }
 
         /**
-         * 
+         *
          * @param item the menuItem to add to the popup.
          */
         protected void addItem(JMenuItem item) {
@@ -612,7 +604,7 @@ public class ColumnControlButton extends JButton {
         }
 
         /**
-         * 
+         *
          * @return the popup to add menuitems. Guaranteed to be != null.
          */
         protected JPopupMenu getPopupMenu() {
@@ -623,24 +615,24 @@ public class ColumnControlButton extends JButton {
         }
 
         // --------------- implement Groupable
-        
+
         @Override
         public void setActionGrouper(ActionGrouper grouper) {
             this.grouper = grouper;
         }
-        
+
         protected ActionGrouper getGrouper() {
             return grouper;
         }
 
     }
     /**
-     * Returns to popup component for user interaction. Lazily 
+     * Returns to popup component for user interaction. Lazily
      * creates the component if necessary.
-     * 
+     *
      * @return the ColumnControlPopup for showing the items, guaranteed
      *   to be not <code>null</code>.
-     * @see #createColumnControlPopup()  
+     * @see #createColumnControlPopup()
      */
     protected ColumnControlPopup getColumnControlPopup() {
         if (popup == null) {
@@ -652,22 +644,21 @@ public class ColumnControlButton extends JButton {
     /**
      * Factory method to return a <code>ColumnControlPopup</code>.
      * Subclasses can override to hook custom implementations.
-     * 
+     *
      * @return the <code>ColumnControlPopup</code> used.
      */
     protected ColumnControlPopup createColumnControlPopup() {
         return new DefaultColumnControlPopup();
     }
 
-
 //-------------------------- updates from table propertyChangelistnere
-    
+
     /**
      * Adjusts internal state after table's column model property has changed.
      * Handles cleanup of listeners to the old/new columnModel (Note, that
      * it listens to the column model only if it can control column visibility).
      * Updates content of popup.
-     * 
+     *
      * @param oldModel the old <code>TableColumnModel</code> we had been listening to.
      */
     protected void updateFromColumnModelChange(TableColumnModel oldModel) {
@@ -679,30 +670,30 @@ public class ColumnControlButton extends JButton {
             table.getColumnModel().addColumnModelListener(getColumnModelListener());
         }
     }
-    
+
     /**
      * Synchs this button's enabled with table's enabled.
      *
      */
     protected void updateFromTableEnabledChanged() {
         getAction().setEnabled(table.isEnabled());
-        
+
     }
     /**
      * Method to check if we can control column visibility POST: if true we can
      * be sure to have an extended TableColumnModel
-     * 
+     *
      * @return boolean to indicate if controlling the visibility state is
-     *   possible. 
+     *   possible.
      */
     protected boolean canControl() {
         return table.getColumnModel() instanceof TableColumnModelExt;
     }
- 
+
 //  ------------------------ updating the popup
     /**
      * Populates the popup from scratch.
-     * 
+     *
      * If applicable, creates and adds column visibility actions. Always adds
      * additional actions.
      */
@@ -716,20 +707,19 @@ public class ColumnControlButton extends JButton {
     }
 
     /**
-     * 
+     *
      * removes all components from the popup, making sure to release all
      * columnVisibility actions.
-     * 
+     *
      */
     protected void clearAll() {
         clearColumnVisibilityActions();
         getColumnControlPopup().removeAll();
     }
 
-
     /**
      * Releases actions and clears list of actions.
-     * 
+     *
      */
     protected void clearColumnVisibilityActions() {
         if (columnVisibilityActions == null)
@@ -740,14 +730,13 @@ public class ColumnControlButton extends JButton {
         columnVisibilityActions.clear();
     }
 
-   
     /**
      * Adds visibility actions into the popup view.
-     * 
+     *
      * Here: delegates the list of actions to the DefaultColumnControlPopup.
      * <p>
      * PRE: columnVisibilityActions populated before calling this.
-     * 
+     *
      */
     protected void addVisibilityActionItems() {
         getColumnControlPopup().addVisibilityActionItems(
@@ -757,11 +746,11 @@ public class ColumnControlButton extends JButton {
     /**
      * Adds additional actions to the popup, if additionalActionsVisible is true,
      * does nothing otherwise.<p>
-     * 
-     * Here: delegates the list of actions as returned by #getAdditionalActions() 
-     *   to the DefaultColumnControlPopup. 
+     *
+     * Here: delegates the list of actions as returned by #getAdditionalActions()
+     *   to the DefaultColumnControlPopup.
      * Does nothing if #getColumnActions() is empty.
-     * 
+     *
      */
     protected void addAdditionalActionItems() {
         if (!getAdditionalActionsVisible()) return;
@@ -769,18 +758,17 @@ public class ColumnControlButton extends JButton {
                 Collections.unmodifiableList(getAdditionalActions()));
     }
 
-
     /**
      * Creates and adds a ColumnVisiblityAction for every column that should be
      * togglable via the column control. <p>
-     * 
-     * Here: all table columns contained in the <code>TableColumnModel</code> - 
+     *
+     * Here: all table columns contained in the <code>TableColumnModel</code> -
      * visible and invisible columns - to <code>createColumnVisibilityAction</code> and
      * adds all not <code>null</code> return values.
-     * 
+     *
      * <p>
      * PRE: canControl()
-     * 
+     *
      * @see #createColumnVisibilityAction
      */
     protected void createVisibilityActions() {
@@ -795,12 +783,12 @@ public class ColumnControlButton extends JButton {
     }
 
     /**
-     * Creates and returns a <code>ColumnVisibilityAction</code> for the given 
+     * Creates and returns a <code>ColumnVisibilityAction</code> for the given
      * <code>TableColumn</code>. The return value might be null, f.i. if the
      * column should not be allowed to be toggled.
-     * 
+     *
      * @param column the <code>TableColumn</code> to use for the action
-     * @return a ColumnVisibilityAction to use for the given column, 
+     * @return a ColumnVisibilityAction to use for the given column,
      *    may be <code>null</code>.
      */
     protected ColumnVisibilityAction createColumnVisibilityAction(TableColumn column) {
@@ -809,7 +797,7 @@ public class ColumnControlButton extends JButton {
 
     /**
      * Lazyly creates and returns the List of visibility actions.
-     * 
+     *
      * @return the list of visibility actions, guaranteed to be != null.
      */
     protected List<ColumnVisibilityAction> getColumnVisibilityActions() {
@@ -819,12 +807,11 @@ public class ColumnControlButton extends JButton {
         return columnVisibilityActions;
     }
 
-
     /**
      * creates and returns a list of additional Actions to add to the popup.
      * Here: the actions are looked up in the table's actionMap according
      * to the keys as returned from #getColumnControlActionKeys();
-     * 
+     *
      * @return a list containing all additional actions to include into the popup.
      */
     protected List<Action> getAdditionalActions() {
@@ -837,12 +824,12 @@ public class ColumnControlButton extends JButton {
     }
 
     /**
-     * Looks up and returns action keys to access actions in the 
+     * Looks up and returns action keys to access actions in the
      * table's actionMap which should be included into the popup.
-     * 
-     * Here: all keys with isColumnControlActionKey(key). The list 
+     *
+     * Here: all keys with isColumnControlActionKey(key). The list
      * is sorted by those keys.
-     * 
+     *
      * @return the action keys of table's actionMap entries whose
      *   action should be included into the popup.
      */
@@ -857,24 +844,23 @@ public class ColumnControlButton extends JButton {
         }
         // JW: this will blow for non-String keys!
         // so this method is less decoupled from the
-        // decision method isControl than expected. 
+        // decision method isControl than expected.
         Collections.sort(columnKeys);
         return columnKeys;
     }
 
     /**
      * Here: true if a String key starts with #COLUMN_CONTROL_MARKER.
-     * 
+     *
      * @param actionKey a key in the table's actionMap.
      * @return a boolean to indicate whether the given actionKey maps to
      *    an action which should be included into the popup.
-     *    
+     *
      */
     protected boolean isColumnControlActionKey(Object actionKey) {
-        return (actionKey instanceof String) && 
+        return (actionKey instanceof String) &&
             ((String) actionKey).startsWith(COLUMN_CONTROL_MARKER);
     }
-
 
     //--------------------------- init
 
@@ -884,7 +870,6 @@ public class ColumnControlButton extends JButton {
         updateFromColumnModelChange(null);
         updateFromTableEnabledChanged();
     }
-
 
     /**
      * Initialize the column control button's gui
@@ -900,16 +885,15 @@ public class ColumnControlButton extends JButton {
         additionalActionsVisible = true;
     }
 
-
-    /** 
+    /**
      * Creates and returns the default action for this button.
-     * @param icon 
-     * 
+     * @param icon
+     *
      * @param icon the Icon to use in the action.
      * @return the default action.
      */
     private Action createControlAction(Icon icon) {
-        
+
         Action control = new AbstractAction() {
 
             @Override
@@ -921,13 +905,13 @@ public class ColumnControlButton extends JButton {
         control.putValue(Action.SMALL_ICON, icon);
         return control;
     }
-    
+
     // -------------------------------- listeners
 
     /**
-     * Returns the listener to table's property changes. The listener is 
-     * lazily created if necessary. 
-     * @return the <code>PropertyChangeListener</code> for use with the 
+     * Returns the listener to table's property changes. The listener is
+     * lazily created if necessary.
+     * @return the <code>PropertyChangeListener</code> for use with the
      *  table, guaranteed to be not <code>null</code>.
      */
     protected PropertyChangeListener getTablePropertyChangeListener() {
@@ -941,9 +925,9 @@ public class ColumnControlButton extends JButton {
      * Creates the listener to table's property changes. Subclasses are free
      * to roll their own. <p>
      * Implementation note: this listener reacts to table's <code>enabled</code> and
-     * <code>columnModel</code> properties and calls the respective 
+     * <code>columnModel</code> properties and calls the respective
      * <code>updateFromXX</code> methodes.
-     * 
+     *
      * @return the <code>PropertyChangeListener</code> for use with the table.
      */
     protected PropertyChangeListener createTablePropertyChangeListener() {
@@ -961,9 +945,9 @@ public class ColumnControlButton extends JButton {
     }
 
     /**
-     * Returns the listener to table's column model. The listener is 
-     * lazily created if necessary. 
-     * @return the <code>TableColumnModelListener</code> for use with the 
+     * Returns the listener to table's column model. The listener is
+     * lazily created if necessary.
+     * @return the <code>TableColumnModelListener</code> for use with the
      *  table's column model, guaranteed to be not <code>null</code>.
      */
     protected TableColumnModelListener getColumnModelListener() {
@@ -972,14 +956,14 @@ public class ColumnControlButton extends JButton {
         }
         return columnModelListener;
     }
-    
+
     /**
      * Creates the listener to columnModel. Subclasses are free to roll their
      * own.
      * <p>
      * Implementation note: this listener reacts to "real" columnRemoved/-Added by
      * populating the popups content from scratch.
-     * 
+     *
      * @return the <code>TableColumnModelListener</code> for use with the
      *         table's columnModel.
      */
@@ -1004,10 +988,10 @@ public class ColumnControlButton extends JButton {
 
             /**
              * Check if the add/remove event is triggered by a move to/from the
-             * invisible columns. 
-             * 
+             * invisible columns.
+             *
              * PRE: the event must be received in columnAdded/Removed.
-             * 
+             *
              * @param e the received event
              * @param added if true the event is assumed to be received via
              *        columnAdded, otherwise via columnRemoved.
@@ -1047,6 +1031,5 @@ public class ColumnControlButton extends JButton {
             }
         };
     }
-
 
 } // end class ColumnControlButton

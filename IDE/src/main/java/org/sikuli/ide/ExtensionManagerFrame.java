@@ -40,7 +40,6 @@ public class ExtensionManagerFrame extends JFrame {
   private int selected_idx = 0;
   ArrayList<ExtensionItem> _extensions;
 
-
   static public ExtensionManagerFrame getInstance() {
     if (_instance == null) {
 //TODO reactivate extension manager
@@ -102,7 +101,6 @@ public class ExtensionManagerFrame extends JFrame {
         dispose();
       }
     });
-
 
     closeBtn.setFocusable(false);
     bottomBar.add(closeBtn, BorderLayout.LINE_END);

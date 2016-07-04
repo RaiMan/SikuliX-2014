@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -32,28 +32,28 @@ import javax.swing.event.ChangeListener;
  * type used for rendering the cell. The view cell state is factored into a
  * <code>ComponentAdapter</code>.
  * <p>
- * 
+ *
  * For example, in data visualization components that support multiple columns
  * with potentially different types of data, a <code>ColorHighlighter</code>
  * imparts the same background color consistently across <em>all</em> columns
  * of the rendered component regardless of the actual cell renderer registered
  * for any specific column.
  * <p>
- * 
+ *
  * The highlightable properties are basically defined by the renderer in use:
  * only attributes the renderer guarantees to reset on every call are safe to
  * alter. For SwingX renderering support these are listed in
  * <code>ComponentProvider</code>.
- * 
- * 
+ *
+ *
  * Implementations supporting mutable internal state which effects the
  * decoration must notify its listeners about the change. Typically, the
  * rendered component installs a listener to its <code>Highlighter</code>s
  * and triggeres a repaint on notification.
- * 
+ *
  * @see ComponentAdapter
  * @see org.jdesktop.swingx.renderer.ComponentProvider
- * 
+ *
  * @author Ramesh Gupta
  * @author Jeanette Winzenburg
  */
@@ -70,8 +70,8 @@ public interface Highlighter {
     Component highlight(Component renderer, ComponentAdapter adapter);
 
     /**
-     * Adds a <code>ChangeListener</code> which are 
-     * notified after changes of any attribute. 
+     * Adds a <code>ChangeListener</code> which are
+     * notified after changes of any attribute.
      *
      * @param l the ChangeListener to add
      * @see #removeChangeListener
@@ -90,7 +90,7 @@ public interface Highlighter {
      * Returns an array of all the change listeners
      * registered on this <code>LegacyHighlighter</code>.
      *
-     * @return all of this model's <code>ChangeListener</code>s 
+     * @return all of this model's <code>ChangeListener</code>s
      *         or an empty
      *         array if no change listeners are currently registered
      *

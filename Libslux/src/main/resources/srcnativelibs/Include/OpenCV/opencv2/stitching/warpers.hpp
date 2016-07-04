@@ -54,20 +54,17 @@ public:
     virtual Ptr<detail::RotationWarper> create(float scale) const = 0;
 };
 
-
 class PlaneWarper : public WarperCreator
 {
 public:
     Ptr<detail::RotationWarper> create(float scale) const { return new detail::PlaneWarper(scale); }
 };
 
-
 class CylindricalWarper: public WarperCreator
 {
 public:
     Ptr<detail::RotationWarper> create(float scale) const { return new detail::CylindricalWarper(scale); }
 };
-
 
 class SphericalWarper: public WarperCreator
 {
@@ -144,7 +141,6 @@ public:
 };
 
 
-
 #if defined(HAVE_OPENCV_GPU) && !defined(ANDROID)
 class PlaneWarperGpu: public WarperCreator
 {
@@ -152,13 +148,11 @@ public:
     Ptr<detail::RotationWarper> create(float scale) const { return new detail::PlaneWarperGpu(scale); }
 };
 
-
 class CylindricalWarperGpu: public WarperCreator
 {
 public:
     Ptr<detail::RotationWarper> create(float scale) const { return new detail::CylindricalWarperGpu(scale); }
 };
-
 
 class SphericalWarperGpu: public WarperCreator
 {

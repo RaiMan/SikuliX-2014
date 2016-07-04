@@ -25,7 +25,7 @@ public class Observing {
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, me + message, args);
   }
-  
+
   private Observing() {
   }
 
@@ -41,13 +41,13 @@ public class Observing {
   public static void setStopOnFirstEvent() {
     shouldStopOnFirstEvent = true;
   }
-  
+
   protected static boolean getStopOnFirstEvent() {
     boolean val = shouldStopOnFirstEvent;
     shouldStopOnFirstEvent = false;
     return val;
   }
-  
+
   protected static void addRunningObserver(Region r) {
     if (shouldStopOnFirstEvent) {
       shouldStopOnFirstEvent = false;
@@ -61,7 +61,7 @@ public class Observing {
     runningObservers.remove(r);
     log(lvl, "remove observer: now running %d observer(s)", runningObservers.size());
   }
-  
+
   protected static synchronized String add(Region reg, ObserverCallBack obs, ObserveEvent.Type type, Object target) {
     String name;
     long now = new Date().getTime();
@@ -74,7 +74,7 @@ public class Observing {
     reg.getObserver().addObserver(target, (ObserverCallBack) obs, name, type);
     return name;
   }
-  
+
   /**
    * set the observer with the given name inactive (not checked while observing)
    * @param name
@@ -212,18 +212,18 @@ public class Observing {
    */
   public static ObserveEvent[] getEvents() {
     List<ObserveEvent> evts = new ArrayList<ObserveEvent>();
-    ObserveEvent evt; 
-    synchronized (events) {      
+    ObserveEvent evt;
+    synchronized (events) {
       for (String name : events.keySet()) {
         evt = events.get(name);
         if (evt == null) {
           evts.add(evt);
         }
       }
-    } 
+    }
     return evts.toArray(new ObserveEvent[0]);
   }
-  
+
   /**
    * retrieves and removes the requested event
    * @param name of event
@@ -232,7 +232,7 @@ public class Observing {
   public static ObserveEvent getEvent(String name) {
     return events.remove(name);
   }
-  
+
   /**
    * the event list is purged
    */

@@ -12,7 +12,7 @@ import org.jdesktop.swingx.util.OS;
 
 /**
  * TODO: comment
- * 
+ *
  * @author Peter Weishapl <petw@gmx.net>
  */
 public class NativeSearchFieldSupport {
@@ -91,7 +91,7 @@ public class NativeSearchFieldSupport {
 	public static ActionListener getFindAction(JTextField txt) {
 		return (ActionListener) txt.getClientProperty(FIND_ACTION_PROPERTY);
 	}
-	
+
 	public static void setCancelAction(JTextField txt, ActionListener cancelAction) {
 		txt.putClientProperty(CANCEL_ACTION_PROPERTY, cancelAction);
 	}

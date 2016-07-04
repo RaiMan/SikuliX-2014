@@ -83,7 +83,6 @@ public:
     }
 };
 
-
 class UntypedMatrix
 {
 public:
@@ -101,14 +100,12 @@ public:
     {
     }
 
-
     template<typename T>
     Matrix<T> as()
     {
         return Matrix<T>((T*)data, rows, cols);
     }
 };
-
 
 
 }

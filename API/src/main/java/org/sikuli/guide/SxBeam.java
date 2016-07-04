@@ -83,7 +83,6 @@ public class SxBeam extends OverlayTransparentWindow
     g2d.fill(ellipse);
     //g2d.drawRect(rect.x,rect.y,rect.width,rect.height);
 
-
     // compute tangent points
     g2d.translate(rect.x + rect.width / 2, rect.y + rect.height / 2);
 
@@ -122,7 +121,6 @@ public class SxBeam extends OverlayTransparentWindow
 
     g2d.fill(flagShape);
 
-
     g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.CLEAR, 1.0f));
 
     //Rectangle smaller = new Rectangle(rect);
@@ -142,7 +140,6 @@ public class SxBeam extends OverlayTransparentWindow
     // corners of the target rectangle
     int cxs[] = {r.x, r.x, r.x + r.width, r.x + r.width};
     int cys[] = {r.y, r.y + r.height, r.y + r.height, r.height};
-
 
     ArrayList<Point> corners = new ArrayList<Point>();
     corners.add(new Point(r.x, r.y));
@@ -167,7 +164,6 @@ public class SxBeam extends OverlayTransparentWindow
       xs = new int[3];
       ys = new int[3];
 
-
       xs[0] = (int) p.x;
       xs[1] = (int) corners.get(0).x;
       xs[2] = (int) corners.get(1).x;
@@ -176,12 +172,10 @@ public class SxBeam extends OverlayTransparentWindow
       ys[1] = (int) corners.get(0).y;
       ys[2] = (int) corners.get(1).y;
 
-
     } else {
 
       xs = new int[4];
       ys = new int[4];
-
 
       xs[0] = (int) p.x;
       xs[1] = (int) corners.get(2).x;
@@ -202,11 +196,9 @@ public class SxBeam extends OverlayTransparentWindow
     //g2d.drawPolygon(pointing_triangle);
     //g2d.drawRect(x,y,w,h);
 
-
     g2d.setColor(Color.red);
     g2d.fillPolygon(shape);
     g2d.drawRect(rect.x, rect.y, rect.width, rect.height);
-
 
 
   }
@@ -233,7 +225,6 @@ public class SxBeam extends OverlayTransparentWindow
     mouseTracker = GlobalMouseMotionTracker.getInstance();
     mouseTracker.addListener(this);
     mouseTracker.start();
-
 
     setBounds(guide.getRegion().getRect());
     setVisible(true);

@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -48,7 +48,7 @@ import org.jdesktop.swingx.plaf.TitledPanelUI;
  * <li>JXTitledPanel.rightDecorationInsets</li>
  * <li>JXTitledPanel.leftDecorationInsets</li>
  * </ul>
- * 
+ *
  * @author Richard Bair
  * @author Nicola Ken Barozzi
  * @author Jeanette Winzenburg
@@ -94,7 +94,7 @@ public class JXTitledPanel extends JXPanel {
      * Content section
      */
     private Container contentPanel;
-    
+
     /**
      * The Painter to use for painting the title section of the JXTitledPanel
      */
@@ -110,7 +110,7 @@ public class JXTitledPanel extends JXPanel {
     /**
      * Create a new JTitledPanel with the given title as the title for the
      * panel.
-     * 
+     *
      * @param title
      */
     public JXTitledPanel(String title) {
@@ -120,7 +120,7 @@ public class JXTitledPanel extends JXPanel {
     /**
      * Create a new JTitledPanel with the given String as the title, and the
      * given Container as the content panel.
-     * 
+     *
      * @param title
      * @param content
      */
@@ -131,7 +131,7 @@ public class JXTitledPanel extends JXPanel {
 
     /**
      * Returns the look and feel (L&F) object that renders this component.
-     * 
+     *
      * @return the TitledPanelUI object that renders this component
      */
     @Override
@@ -141,7 +141,7 @@ public class JXTitledPanel extends JXPanel {
 
     /**
      * Sets the look and feel (L&F) object that renders this component.
-     * 
+     *
      * @param ui
      *            the TitledPanelUI L&F object
      * @see javax.swing.UIDefaults#getUI
@@ -156,11 +156,11 @@ public class JXTitledPanel extends JXPanel {
     /**
      * Returns a string that specifies the name of the L&F class that renders
      * this component.
-     * 
+     *
      * @return "TitledPanelUI"
      * @see JComponent#getUIClassID
      * @see javax.swing.UIDefaults#getUI
-     * @beaninfo expert: true 
+     * @beaninfo expert: true
      *      description: A string that specifies the name of the L&F class.
      */
     @Override
@@ -172,7 +172,7 @@ public class JXTitledPanel extends JXPanel {
      * Notification from the <code>UIManager</code> that the L&F has changed.
      * Replaces the current UI object with the latest version from the
      * <code>UIManager</code>.
-     * 
+     *
      * @see javax.swing.JComponent#updateUI
      */
     @Override
@@ -183,7 +183,7 @@ public class JXTitledPanel extends JXPanel {
 
     /**
      * Gets the title for this titled panel.
-     * 
+     *
      * @return the currently displayed title
      */
     public String getTitle() {
@@ -192,7 +192,7 @@ public class JXTitledPanel extends JXPanel {
 
     /**
      * Sets the title for this title panel.
-     * 
+     *
      * @param title
      *            the title to display
      */
@@ -228,7 +228,7 @@ public class JXTitledPanel extends JXPanel {
 
     /**
      * Adds the given JComponent as a decoration on the right of the title
-     * 
+     *
      * @param decoration
      */
     public void setRightDecoration(JComponent decoration) {
@@ -236,14 +236,14 @@ public class JXTitledPanel extends JXPanel {
         getUI().setRightDecoration(decoration);
         firePropertyChange("rightDecoration", old, getRightDecoration());
     }
-    
+
     public JComponent getRightDecoration() {
         return getUI().getRightDecoration();
     }
 
     /**
      * Adds the given JComponent as a decoration on the left of the title
-     * 
+     *
      * @param decoration
      */
     public void setLeftDecoration(JComponent decoration) {
@@ -251,11 +251,11 @@ public class JXTitledPanel extends JXPanel {
         getUI().setLeftDecoration(decoration);
         firePropertyChange("leftDecoration", old, getLeftDecoration());
     }
-    
+
     public JComponent getLeftDecoration() {
         return getUI().getLeftDecoration();
     }
-    
+
     public Font getTitleFont() {
         return titleFont;
     }
@@ -278,7 +278,7 @@ public class JXTitledPanel extends JXPanel {
         this.titlePainter = p;
         firePropertyChange("titlePainter", old, getTitlePainter());
     }
-    
+
     /**
      * @return the Painter to use for painting the background of the title section
      */
@@ -295,7 +295,7 @@ public class JXTitledPanel extends JXPanel {
         this.titleForeground = titleForeground;
         firePropertyChange("titleForeground", old, getTitleForeground());
     }
-    
+
     private static Container createDefaultContainer() {
         //TODO: All this default container creation stuff should be in the UI
         //delegate. Not enough time at the moment for me to do this right.

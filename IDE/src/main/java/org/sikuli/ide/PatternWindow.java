@@ -74,22 +74,22 @@ public class PatternWindow extends JFrame {
       pLoc.translate(pOff, pOff);
     }
     setPreferredSize(pDim);
-    
+
     tabPane = new JTabbedPane();
 		msgApplied = new JLabel[tabMax];
-    
+
 		tabSequence = 0;
 		JLabel aMsg = msgApplied[tabSequence] = new JLabel();
     setMessageApplied(tabSequence, false);
 		paneNaming = new PatternPaneNaming(_imgBtn, aMsg);
 		tabPane.addTab(_I("tabNaming"), paneNaming);
-    
+
 		tabSequence++;
 		msgApplied[tabSequence] = new JLabel();
     setMessageApplied(tabSequence, false);
 		panePreview = createPreviewPanel();
 		tabPane.addTab(_I("tabMatchingPreview"), panePreview);
-    
+
 		tabSequence++;
 		msgApplied[tabSequence] = new JLabel();
     setMessageApplied(tabSequence, false);
@@ -194,7 +194,6 @@ public class PatternWindow extends JFrame {
 		c.add(lrMargins);
 		c.add(Box.createVerticalStrut(10));
 	}
-
 
 	public void setMessageApplied(int i, boolean flag) {
 		if (flag) {

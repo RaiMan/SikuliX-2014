@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -41,10 +41,10 @@ import org.jdesktop.swingx.plaf.basic.core.BasicXListUI;
 
 /**
  * TODO add type doc
- * 
+ *
  * @author Jeanette Winzenburg
  */
-public class SynthXListUI extends BasicXListUI 
+public class SynthXListUI extends BasicXListUI
     // PENDING JW: SynthUI is sun package (here: used by c&p'ed SynthBorder) - replace?
     // maybe not: SynthLookUp looks up styles from delegates of type SynthUI only
     implements SynthConstants,  SynthUI  /*, PropertyChangeListener */{
@@ -77,7 +77,6 @@ public class SynthXListUI extends BasicXListUI
         paint(g, c);
     }
 
-
     /**
      * {@inheritDoc} <p>
      * Overridden to update style if appropriate.
@@ -93,7 +92,7 @@ public class SynthXListUI extends BasicXListUI
                 }
                 super.propertyChange(e);
             }
-            
+
         };
         return l;
     }
@@ -127,7 +126,7 @@ public class SynthXListUI extends BasicXListUI
         style = getStyle();
         // special case border
         installSynthBorder();
-        // install defaults 
+        // install defaults
         style.installDefaults(getContext(ENABLED));
         // install selected properties
         SynthContext selectedContext = getContext(SELECTED);
@@ -136,7 +135,7 @@ public class SynthXListUI extends BasicXListUI
             list.setSelectionBackground(style.getColor(
                     selectedContext, ColorType.TEXT_BACKGROUND));
         }
-        
+
         Color sfg = list.getSelectionForeground();
         if (sfg == null || sfg instanceof UIResource) {
             list.setSelectionForeground(style.getColor(
@@ -157,13 +156,13 @@ public class SynthXListUI extends BasicXListUI
                 "List.rendererUseListColors", true);
         useUIBorder = style.getBoolean(selectedContext,
                 "List.rendererUseUIBorder", true);
-        
+
     }
 
     /**
      * Installs a SynthBorder from the current style, if ui-installable.
-     * 
-     * @param context the context 
+     *
+     * @param context the context
      */
     protected void installSynthBorder() {
         if (SwingXUtilities.isUIInstallable(list.getBorder())) {
@@ -182,7 +181,6 @@ public class SynthXListUI extends BasicXListUI
         style = null;
     }
 
-    
     /**
      * Paints border with the context's style's painter.
      * Implemented for SynthUI interface.
@@ -195,13 +193,13 @@ public class SynthXListUI extends BasicXListUI
 
     /**
      * {@inheritDoc} <p>
-     * 
+     *
      * Returns a context for the component's current state.
      * Implemented for SynthUI interface. <p>
-     * 
+     *
      * PENDING JW: not entirely sure if allowed ... but need to replace SynthUI anyway?.
-     * 
-     * @throws IllegalArgumentException if the component is not controlled by this 
+     *
+     * @throws IllegalArgumentException if the component is not controlled by this
      *    delegate
      */
     @Override
@@ -217,7 +215,7 @@ public class SynthXListUI extends BasicXListUI
     private SynthContext getContext() {
         return getContext(getComponentState());
     }
-    
+
     /**
      * Returns the current component state for the controlled list.
      * @return
@@ -228,18 +226,17 @@ public class SynthXListUI extends BasicXListUI
 
     /**
      * Returns a Context with the given component state.
-     * 
+     *
      * @param state
      * @return
      */
     private SynthContext getContext(int state) {
         return SynthUtils.getContext(list, getRegion(), style, state);
     }
-    
+
     private Region getRegion() {
         return XRegion.getXRegion(list, true);
     }
-
 
     /**
      * Returns the style for this component from the style factory.
@@ -248,7 +245,6 @@ public class SynthXListUI extends BasicXListUI
     private SynthStyle getStyle() {
         return SynthLookAndFeel.getStyleFactory().getStyle(list, getRegion());
     }
-
 
 //    private class SynthListCellRenderer extends DefaultListCellRenderer.UIResource {
 //        public String getName() {
@@ -271,7 +267,7 @@ public class SynthXListUI extends BasicXListUI
 //            else {
 //                SynthLookAndFeel.resetSelectedUI();
 //            }
-//            
+//
 //            super.getListCellRendererComponent(list, value, index,
 //                                               isSelected, cellHasFocus);
 //            return this;
@@ -282,6 +278,5 @@ public class SynthXListUI extends BasicXListUI
 //            SynthLookAndFeel.resetSelectedUI();
 //        }
 //    }
-
 
 }

@@ -74,12 +74,12 @@ import org.jdesktop.swingx.util.Contract;
  * JComboBox. The dates can be typed into a text field or selected from a
  * JXMonthView which opens in a JXPopupMenu on user's request.
  * <p>
- * 
+ *
  * The date selection is controlled by the JXMonthView's DateSelectionModel.
  * This allows the use of all its functionality in the JXDatePicker as well.
  * F.i. restrict the selection to a date in the current or next week:
  * <p>
- * 
+ *
  * <pre><code>
  * Appointment appointment = new Appointment(director,
  *         &quot;Be sure to have polished shoes!&quot;);
@@ -93,11 +93,11 @@ import org.jdesktop.swingx.util.Contract;
  * calendar.add(Calendar.WEEK_OF_YEAR);
  * picker.getMonthView().setUpperBound(calendar.getTime());
  * </code></pre>
- * 
+ *
  * Similar to a JXMonthView, the JXDatePicker fires an ActionEvent when the user
  * actively commits or cancels a selection. Interested client code can add a
  * ActionListener to be notified by the user action.
- * 
+ *
  * <pre><code>
  * JXDatePicker picker = new JXDatePicker(new Date());
  * ActionListener l = new ActionListener() {
@@ -109,11 +109,11 @@ import org.jdesktop.swingx.util.Contract;
  * };
  * picker.addActionListener(l);
  * </code></pre>
- * 
- * Note that  ActionListener will <b>not</b> be notified if the user 
+ *
+ * Note that  ActionListener will <b>not</b> be notified if the user
  * edits the date text without hitting the Enter key afterwards. To detect both kinds of
  * date change, interested client code can add a PropertyChangeListener.
- * 
+ *
  * <pre><code>
  * JXDatePicker picker = new JXDatePicker(new Date());
  * PropertyChangeListener listener = new PropertyChangeListener() {
@@ -126,44 +126,44 @@ import org.jdesktop.swingx.util.Contract;
  * picker.addPropertyChangeListener(listener);
  * </code></pre>
 
- * 
+ *
  * <p>
  * The DateFormats used in the JXDatePicker's are initialized to the default
  * formats of the DatePickerFormatter, as defined by the picker's resourceBundle
  * DatePicker.properties. Application code can overwrite the picker's default
- * 
+ *
  * <pre><code>
  * picker.setDateFormats(myCustomFormat, myAlternativeCustomFormat);
  * </code></pre>
- * 
+ *
  * PENDING JW: explain what the alternatives are for (after understanding it
  * myself ;-)
  * <p>
- * 
+ *
  * The selected Date is a bound property of the JXDatePicker. This allows easy
  * binding to a property of a custom bean when using a binding framework.
  * <p>
- * 
+ *
  * Keybindings (as installed by the UI-Delegate)
  * <ul>
  * <li> ENTER commits the edited or selected value
  * <li> ESCAPE reverts the edited or selected value
  * <li> alt-DOWN opens the monthView popup
- * <li> shift-F5 if monthView is visible, navigates the monthView to today 
+ * <li> shift-F5 if monthView is visible, navigates the monthView to today
  *    (no effect otherwise)
- * <li> F5 commits today 
+ * <li> F5 commits today
  * </ul>
- * 
- * PENDNG JW: support per-OS keybindings to be installed, currently they are 
- * hardcoded in our (single) BasicDatePickerUI. 
- * 
+ *
+ * PENDNG JW: support per-OS keybindings to be installed, currently they are
+ * hardcoded in our (single) BasicDatePickerUI.
+ *
  * @author Joshua Outwater
  * @author Jeanette Winzenburg
- * 
+ *
  * @see JXMonthView
  * @see org.jdesktop.swingx.calendar.DateSelectionModel
  * @see DatePickerFormatter
- * 
+ *
  */
 @JavaBean
 public class JXDatePicker extends JComponent {
@@ -207,7 +207,7 @@ public class JXDatePicker extends JComponent {
     private JPanel _linkPanel;
     private MessageFormat _linkFormat;
     private Date linkDate;
-    
+
     private JXMonthView _monthView;
     private boolean editable = true;
     // PENDING JW: remove - duplication, we have access to super's listenerlist
@@ -218,9 +218,8 @@ public class JXDatePicker extends JComponent {
 
     private PropertyChangeListener monthViewListener;
 
-
     /**
-     * Intantiates a date picker with no selection and the default 
+     * Intantiates a date picker with no selection and the default
      * <code>DatePickerFormatter</code>.
      * <p/>
      * The date picker is configured with the default time zone and locale
@@ -232,11 +231,10 @@ public class JXDatePicker extends JComponent {
         this(null, null);
     }
 
-    
 
     /**
      * Intantiates a date picker using the specified time as the initial
-     * selection and the default 
+     * selection and the default
      * <code>DatePickerFormatter</code>.
      * <p/>
      * The date picker is configured with the default time zone and locale
@@ -248,12 +246,12 @@ public class JXDatePicker extends JComponent {
     public JXDatePicker(Date selected) {
         this(selected, null);
     }
-    
+
     /**
-     * Intantiates a date picker with no selection and the default 
+     * Intantiates a date picker with no selection and the default
      * <code>DatePickerFormatter</code>.
      * <p/>
-     * The date picker is configured with the default time zone and specified 
+     * The date picker is configured with the default time zone and specified
      * locale
      *
      * @param locale    initial Locale
@@ -266,7 +264,7 @@ public class JXDatePicker extends JComponent {
 
     /**
      * Intantiates a date picker using the specified time as the initial
-     * selection and the default 
+     * selection and the default
      * <code>DatePickerFormatter</code>.
      * <p/>
      * The date picker is configured with the default time zone and specified locale
@@ -275,7 +273,7 @@ public class JXDatePicker extends JComponent {
      * @param locale initial Locale
      * @see #setTimeZone
      * @see #getTimeZone
-     * 
+     *
      */
     public JXDatePicker(Date selection, Locale locale) {
         init();
@@ -289,25 +287,25 @@ public class JXDatePicker extends JComponent {
 
     /**
      * Sets the date property. <p>
-     * 
+     *
      * Does nothing if the ui vetos the new date - as might happen if
-     * the code tries to set a date which is unselectable in the 
+     * the code tries to set a date which is unselectable in the
      * monthView's context. The actual value of the new Date is controlled
      * by the JXMonthView's DateSelectionModel. The default implementation
-     * normalizes the date to the start of the day in the model's calendar's 
+     * normalizes the date to the start of the day in the model's calendar's
      * coordinates, that is all time fields are zeroed. To keep the time fields,
      * configure the monthView with a SingleDaySelectionModel.
      * <p>
-     * 
-     * At all "stable" (= not editing in date input field nor 
-     * in the monthView) times the date is the same in the 
+     *
+     * At all "stable" (= not editing in date input field nor
+     * in the monthView) times the date is the same in the
      * JXMonthView, this JXDatePicker and the editor. If a new Date
      * is set, this invariant is enforced by the DatePickerUI.
      * <p>
-     * 
-     * This is a bound property. 
-     * 
-     *  
+     *
+     * This is a bound property.
+     *
+     *
      * @param date the new date to set.
      * @see #getDate()
      * @see org.jdesktop.swingx.calendar.DateSelectionModel
@@ -315,11 +313,11 @@ public class JXDatePicker extends JComponent {
      */
     public void setDate(Date date) {
         /*
-         * JW: 
+         * JW:
          * this is a poor woman's constraint property.
-         * Introduces explicit coupling to the ui. 
+         * Introduces explicit coupling to the ui.
          * Which is unusual at this place in code.
-         * 
+         *
          * If needed the date can be made a formal
          * constraint property and let the ui add a
          * VetoablePropertyListener.
@@ -334,7 +332,6 @@ public class JXDatePicker extends JComponent {
         firePropertyChange("date", old, getDate());
     }
 
- 
 
     /**
      * Returns the currently selected date.
@@ -342,11 +339,11 @@ public class JXDatePicker extends JComponent {
      * @return Date
      */
     public Date getDate() {
-        return date; 
+        return date;
     }
-    
+
     /**
-     * 
+     *
      */
     private void init() {
         listenerMap = new EventListenerMap();
@@ -367,7 +364,7 @@ public class JXDatePicker extends JComponent {
     /**
      * Lazily creates and returns the PropertyChangeListener which listens
      * for model's calendar properties.
-     * 
+     *
      * @return a PropertyChangeListener for monthView's property change notification.
      */
     private PropertyChangeListener getMonthViewListener() {
@@ -379,9 +376,9 @@ public class JXDatePicker extends JComponent {
                     if ("timeZone".equals(evt.getPropertyName())) {
                         updateTimeZone((TimeZone) evt.getOldValue(), (TimeZone) evt.getNewValue());
                     }
-                    
+
                 }
-                
+
             };
         }
         return monthViewListener;
@@ -389,12 +386,12 @@ public class JXDatePicker extends JComponent {
 
     /**
      * Callback from monthView timezone changes. <p>
-     * 
-     * NOTE: as timeZone is a bound property of this class we need to 
-     * guarantee the propertyChangeNotification. As this class doesn't 
-     * own this property it must listen to the owner (monthView) and 
+     *
+     * NOTE: as timeZone is a bound property of this class we need to
+     * guarantee the propertyChangeNotification. As this class doesn't
+     * own this property it must listen to the owner (monthView) and
      * re-fire the change.
-     * 
+     *
      * @param oldValue the old timezone.
      * @param newValue the new timezone.
      */
@@ -446,12 +443,12 @@ public class JXDatePicker extends JComponent {
      * Replaces the currently installed formatter and factory used by the
      * editor. These string formats are defined by the
      * <code>java.text.SimpleDateFormat</code> class. <p>
-     * 
+     *
      * Note: The given formats are internally synched to the picker's current
-     *    TimeZone. 
-     * 
-     * @param formats zero or more not null string formats to use. Note that a 
-     *    null array is allowed and resets the formatter to use the 
+     *    TimeZone.
+     *
+     * @param formats zero or more not null string formats to use. Note that a
+     *    null array is allowed and resets the formatter to use the
      *    localized default formats.
      * @throws NullPointerException any array element is null.
      * @see java.text.SimpleDateFormat
@@ -475,10 +472,10 @@ public class JXDatePicker extends JComponent {
      * editor.<p>
      *
      * Note: The given formats are internally synched to the picker's current
-     *    TimeZone. 
-     * 
-     * @param formats zero or more not null formats to use. Note that a 
-     *    null array is allowed and resets the formatter to use the 
+     *    TimeZone.
+     *
+     * @param formats zero or more not null formats to use. Note that a
+     *    null array is allowed and resets the formatter to use the
      *    localized default formats.
      * @throws NullPointerException any of its elements is null.
      */
@@ -486,7 +483,7 @@ public class JXDatePicker extends JComponent {
         if (formats != null) {
             Contract.asNotNull(formats, "the array of formats " + "must not contain null elements");
         }
-        
+
         DateFormat[] old = getFormats();
         _dateField.setFormatterFactory(new DefaultFormatterFactory(
                 new DatePickerFormatter(formats, getLocale())));
@@ -531,7 +528,7 @@ public class JXDatePicker extends JComponent {
      *
      * @param monthView month view comopnent.
      * @throws NullPointerException if view component is null
-     * 
+     *
      * @see #setTimeZone
      * @see #getTimeZone
      */
@@ -559,12 +556,12 @@ public class JXDatePicker extends JComponent {
     /**
      * Sets the time zone with the given time zone value.    This is a convenience
      * method which returns the time zone of the JXMonthView being used.<p>
-     * 
-     * PENDING JW: currently this property is the only property of the monthView 
+     *
+     * PENDING JW: currently this property is the only property of the monthView
      * which is exposed in this api. Not sure why it is here at all.
      * It's asymetric (to the other properties) and as such should be either removed
-     * or the others which might be relevant to a datePicker exposed as well (probably 
-     * hiding the monthView itself as an implementation detail of the ui delegate). 
+     * or the others which might be relevant to a datePicker exposed as well (probably
+     * hiding the monthView itself as an implementation detail of the ui delegate).
      *
      * @param tz The <code>TimeZone</code>.
      */
@@ -572,13 +569,12 @@ public class JXDatePicker extends JComponent {
         _monthView.setTimeZone(tz);
     }
 
-
     /**
      * Returns the date shown in the LinkPanel.
      * <p>
-     * PENDING JW: the property should be named linkDate - but that's held by the 
+     * PENDING JW: the property should be named linkDate - but that's held by the
      * deprecated long returning method. Maybe revisit if we actually remove the other.
-     * 
+     *
      * @return the date shown in the LinkPanel.
      */
     public Date getLinkDay() {
@@ -591,9 +587,9 @@ public class JXDatePicker extends JComponent {
      * is displayed the popup will focus on the month the linkDate is in.  Calling
      * this method will replace the currently installed linkPanel and install
      * a new one with the requested date and format.
-     * 
-     * 
-     * @param linkDay     the Date to set on the LinkPanel 
+     *
+     *
+     * @param linkDay     the Date to set on the LinkPanel
      * @param linkFormatString String used to format the link
      * @see java.text.MessageFormat
      */
@@ -601,13 +597,13 @@ public class JXDatePicker extends JComponent {
         setLinkFormat(new MessageFormat(linkFormatString));
         setLinkDay(linkDay);
     }
-    
+
     /**
-     * Sets the date shown in the TodayPanel. 
-     * 
+     * Sets the date shown in the TodayPanel.
+     *
      * PENDING JW ... quick api hack for testing. Don't recreate the panel if
-     * it had been used 
-     * 
+     * it had been used
+     *
      * @param linkDay the date used in the TodayPanel
      */
     public void setLinkDay(Date linkDay) {
@@ -620,7 +616,6 @@ public class JXDatePicker extends JComponent {
         }
         setLinkPanel(new TodayPanel());
     }
-    
 
     /**
      * @param _linkFormat the _linkFormat to set
@@ -638,13 +633,13 @@ public class JXDatePicker extends JComponent {
 
     /**
      * Update text on the link panel.
-     * 
+     *
      */
     private void updateLinkFormat() {
         // PENDING JW: move to ui
         String linkFormat = UIManagerExt.getString(
                 "JXDatePicker.linkFormat", getLocale());
-        
+
         if (linkFormat != null) {
             setLinkFormat(new MessageFormat(linkFormat));
         } else {
@@ -665,7 +660,7 @@ public class JXDatePicker extends JComponent {
     /**
      * Set the panel that will be used at the bottom of the popup.
      * PENDING JW: why insist on JPanel? JComponent would be enough?
-     *  
+     *
      * @param linkPanel The new panel to install in the popup
      */
     public void setLinkPanel(JPanel linkPanel) {
@@ -679,7 +674,7 @@ public class JXDatePicker extends JComponent {
      * <p>
      * Clients should NOT use this method. It is provided to temporarily support
      * the PLAF code.
-     * 
+     *
      * @return the formatted text field
      */
 //    @Deprecated
@@ -688,17 +683,17 @@ public class JXDatePicker extends JComponent {
     }
 
     /**
-     * Sets the editor. The editor's editable and enabled properties are 
+     * Sets the editor. The editor's editable and enabled properties are
      * set the corresponding properties of the JXDatePicker.<p>
-     * 
+     *
      * The default is created and set by the UI delegate.
      * <p>
      * Clients should NOT use this method. It is provided to temporarily support
-     * the PLAF code. 
-     * 
+     * the PLAF code.
+     *
      * @param editor the formatted input.
      * @throws NullPointerException if editor is null.
-     * 
+     *
      * @see #getEditor()
      */
 //    @Deprecated
@@ -726,7 +721,7 @@ public class JXDatePicker extends JComponent {
 
     /**
      * Commits the editor's changes and notifies ActionListeners.
-     * 
+     *
      * Forces the current value to be taken from the AbstractFormatter and
      * set as the current value. This has no effect if there is no current
      * AbstractFormatter installed.
@@ -741,12 +736,12 @@ public class JXDatePicker extends JComponent {
         } catch (ParseException e) {
             // re-throw
             throw e;
-        } 
+        }
     }
 
     /**
      * Cancels the editor's changes and notifies ActionListeners.
-     * 
+     *
      */
     public void cancelEdit() {
         // hmmm... no direct api?
@@ -756,9 +751,9 @@ public class JXDatePicker extends JComponent {
 
     /**
      * Sets the editable property. If false, ...?
-     * 
+     *
      * The default value is true.
-     * 
+     *
      * @param value
      * @see #isEditable()
      */
@@ -772,8 +767,8 @@ public class JXDatePicker extends JComponent {
     }
 
     /**
-     * Returns the editable property. 
-     * 
+     * Returns the editable property.
+     *
      * @return {@code true} if the picker is editable; {@code false} otherwise
      */
     public boolean isEditable() {
@@ -856,7 +851,6 @@ public class JXDatePicker extends JComponent {
         return ((DatePickerUI) ui).getBaseline(width, height);
     }
 
-
     /**
      * Adds an ActionListener.
      * <p/>
@@ -893,7 +887,6 @@ public class JXDatePicker extends JComponent {
         return result;
     }
 
-
     /**
      * Fires an ActionEvent with the given actionCommand
      * to all listeners.
@@ -911,39 +904,39 @@ public class JXDatePicker extends JComponent {
             listener.actionPerformed(e);
         }
     }
- 
+
     /**
      * Adds a PopupMenuListener.<p>
-     * 
-     * PENDING JW: the canceled method is never called due to internal 
-     * interference in BasicDatePickerUI. Probably need to re-visit that. 
-     * 
+     *
+     * PENDING JW: the canceled method is never called due to internal
+     * interference in BasicDatePickerUI. Probably need to re-visit that.
+     *
      * @param l the PopupMenuListener to add.
      */
     public void addPopupMenuListener(PopupMenuListener l) {
         listenerMap.add(PopupMenuListener.class, l);
     }
-    
+
     /**
      * Removes a PopupMenuListener.
-     * 
+     *
      * @param l the PopupMenuListener to remove.
      */
     public void removePopupMenuListener(PopupMenuListener l) {
         listenerMap.remove(PopupMenuListener.class, l);
     }
-    
+
     /**
-     * Returns an array containing all PopupMenuListeners which are 
+     * Returns an array containing all PopupMenuListeners which are
      * registered to this picker.
-     * 
+     *
      * @return an array containing all PopupMenuListeners which are
      * registered to this picker, guaranteed to be never null.
      */
     public PopupMenuListener[] getPopupMenuListeners() {
         return getListeners(PopupMenuListener.class);
     }
-    
+
     /**
      * Pes: added setLocale method to refresh link text on locale changes
      */
@@ -974,7 +967,7 @@ public class JXDatePicker extends JComponent {
                     if (e.getClickCount() != 2) return;
                     todayAction.select = true;
                 }
-                
+
             };
             return adapter;
         }
@@ -998,7 +991,7 @@ public class JXDatePicker extends JComponent {
             updateLinkFormat();
             todayLink.setText(getLinkFormat().format(new Object[]{getLinkDay()}));
         }
-        
+
         private final class TodayAction extends AbstractAction {
             boolean select;
             TodayAction() {
@@ -1017,14 +1010,12 @@ public class JXDatePicker extends JComponent {
                  * PatrykRy: Commit today date only when commit action is enabled.
                  * Home navigate is always enabled.
                  */
-                if (delegate !=  null && delegate.isEnabled()) {  
+                if (delegate !=  null && delegate.isEnabled()) {
                     delegate.actionPerformed(null);
                 }
-                
+
             }
         }
     }
 
-
-}    
- 
+}

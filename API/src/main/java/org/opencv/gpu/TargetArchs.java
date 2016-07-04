@@ -6,7 +6,6 @@ public class TargetArchs {
     protected final long nativeObj;
     protected TargetArchs(long addr) { nativeObj = addr; }
 
-
     //
     // C++: static bool TargetArchs::builtWith(int feature_set)
     //
@@ -16,7 +15,6 @@ public class TargetArchs {
         boolean retVal = builtWith_0(feature_set);
         return retVal;
     }
-
 
     //
     // C++: static bool TargetArchs::has(int major, int minor)
@@ -28,7 +26,6 @@ public class TargetArchs {
         return retVal;
     }
 
-
     //
     // C++: static bool TargetArchs::hasBin(int major, int minor)
     //
@@ -38,7 +35,6 @@ public class TargetArchs {
         boolean retVal = hasBin_0(major, minor);
         return retVal;
     }
-
 
     //
     // C++: static bool TargetArchs::hasEqualOrGreater(int major, int minor)
@@ -50,7 +46,6 @@ public class TargetArchs {
         return retVal;
     }
 
-
     //
     // C++: static bool TargetArchs::hasEqualOrGreaterBin(int major, int minor)
     //
@@ -60,7 +55,6 @@ public class TargetArchs {
         boolean retVal = hasEqualOrGreaterBin_0(major, minor);
         return retVal;
     }
-
 
     //
     // C++: static bool TargetArchs::hasEqualOrGreaterPtx(int major, int minor)
@@ -72,7 +66,6 @@ public class TargetArchs {
         return retVal;
     }
 
-
     //
     // C++: static bool TargetArchs::hasEqualOrLessPtx(int major, int minor)
     //
@@ -82,7 +75,6 @@ public class TargetArchs {
         boolean retVal = hasEqualOrLessPtx_0(major, minor);
         return retVal;
     }
-
 
     //
     // C++: static bool TargetArchs::hasPtx(int major, int minor)
@@ -94,12 +86,10 @@ public class TargetArchs {
         return retVal;
     }
 
-
     @Override
     protected void finalize() throws Throwable {
         delete(nativeObj);
     }
-
 
 
     // C++: static bool TargetArchs::builtWith(int feature_set)

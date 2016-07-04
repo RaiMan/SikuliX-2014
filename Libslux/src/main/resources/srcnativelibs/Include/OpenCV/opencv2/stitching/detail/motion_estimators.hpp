@@ -65,7 +65,6 @@ protected:
                           std::vector<CameraParams> &cameras) = 0;
 };
 
-
 class CV_EXPORTS HomographyBasedEstimator : public Estimator
 {
 public:
@@ -78,7 +77,6 @@ private:
 
     bool is_focals_estimated_;
 };
-
 
 class CV_EXPORTS BundleAdjusterBase : public Estimator
 {
@@ -141,7 +139,6 @@ protected:
     std::vector<std::pair<int,int> > edges_;
 };
 
-
 // Minimizes reprojection error.
 // It can estimate focal length, aspect ratio, principal point.
 // You can affect only on them via the refinement mask.
@@ -159,7 +156,6 @@ private:
     Mat err1_, err2_;
 };
 
-
 // Minimizes sun of ray-to-ray distances.
 // It can estimate focal length. It ignores the refinement mask for now.
 class CV_EXPORTS BundleAdjusterRay : public BundleAdjusterBase
@@ -176,7 +172,6 @@ private:
     Mat err1_, err2_;
 };
 
-
 enum WaveCorrectKind
 {
     WAVE_CORRECT_HORIZ,
@@ -184,7 +179,6 @@ enum WaveCorrectKind
 };
 
 void CV_EXPORTS waveCorrect(std::vector<Mat> &rmats, WaveCorrectKind kind);
-
 
 //////////////////////////////////////////////////////////////////////////////
 // Auxiliary functions

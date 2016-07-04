@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -28,18 +28,18 @@ import org.jdesktop.swingx.rollover.RolloverRenderer;
 
 /**
  * Convenience common ancestor for SwingX renderers. Concrete subclasses
- * should 
- * 
+ * should
+ *
  *  <ul>
- *  <li> provide a bunch of convenience constructors as appropriate for the type of 
+ *  <li> provide a bunch of convenience constructors as appropriate for the type of
  *      collection component
- *  <li> create a reasonable default ComponentProvider if none is given  
+ *  <li> create a reasonable default ComponentProvider if none is given
  *  <li> implement the getXXCellRenderer by delegating to the ComponentProvider
  *  </ul>
- * 
+ *
  * @author Jeanette Winzenburg
  */
-public abstract class AbstractRenderer 
+public abstract class AbstractRenderer
     implements  RolloverRenderer, StringValue, Serializable, UIDependent {
 
     protected ComponentProvider<?> componentController;
@@ -50,10 +50,10 @@ public abstract class AbstractRenderer
         }
         this.componentController = provider;
     }
-    
+
     /**
      * Returns the ComponentProvider used by this renderer.
-     * 
+     *
      * @return the ComponentProvider used by this renderer
      */
     public ComponentProvider<?> getComponentProvider() {
@@ -62,13 +62,13 @@ public abstract class AbstractRenderer
 
     /**
      * The default ComponentProvider to use if no special.
-     * 
+     *
      * @return the default <code>ComponentProvider</code>
      */
     protected abstract ComponentProvider<?> createDefaultComponentProvider();
-    
-// --------------- implement StringValue    
-    
+
+// --------------- implement StringValue
+
     /**
      * {@inheritDoc}
      */
@@ -77,8 +77,8 @@ public abstract class AbstractRenderer
         return componentController.getString(value);
     }
 
- // ------------ implement RolloverRenderer   
-    
+ // ------------ implement RolloverRenderer
+
     /**
      * {@inheritDoc}
      */
@@ -106,13 +106,13 @@ public abstract class AbstractRenderer
         componentController.updateUI();
     }
 
-//-------------------- legacy: configure arbitrary visuals    
+//-------------------- legacy: configure arbitrary visuals
     /**
      * @param background
      */
     public void setBackground(Color background) {
         componentController.getDefaultVisuals().setBackground(background);
-    
+
     }
 
     /**
@@ -121,6 +121,5 @@ public abstract class AbstractRenderer
     public void setForeground(Color foreground) {
         componentController.getDefaultVisuals().setForeground(foreground);
     }
-
 
 }

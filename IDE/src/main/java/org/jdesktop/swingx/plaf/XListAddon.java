@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -30,7 +30,7 @@ import org.jdesktop.swingx.JXList;
 /**
  * Addon for <code>JXList</code>.
  * <p>
- * 
+ *
  * Install a custom ui to support sorting/filtering in JXList.
  */
 public class XListAddon extends AbstractComponentAddon {
@@ -55,7 +55,6 @@ public class XListAddon extends AbstractComponentAddon {
         defaults.add(JXList.uiClassID,
                 "org.jdesktop.swingx.plaf.synth.SynthXListUI");
     }
-    
 
     private void replaceListTableBorders(LookAndFeelAddons addon,
             DefaultsList defaults) {
@@ -63,7 +62,6 @@ public class XListAddon extends AbstractComponentAddon {
         replaceBorder(defaults, "List.", "focusSelectedCellHighlightBorder");
         replaceBorder(defaults, "List.", "noFocusBorder");
     }
-
 
 
     /**
@@ -82,19 +80,17 @@ public class XListAddon extends AbstractComponentAddon {
             UIManager.getLookAndFeelDefaults().put(key, border);
             // adding to defaults is not
 //            defaults.add(key, border);
-            
+
         }
     }
 
 
-
     /**
-     * 
+     *
      * @return true if the LF is GTK.
      */
     private boolean isGTK() {
         return "GTK".equals(UIManager.getLookAndFeel().getID());
     }
-
 
 }

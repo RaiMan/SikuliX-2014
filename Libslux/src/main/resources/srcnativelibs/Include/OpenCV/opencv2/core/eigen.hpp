@@ -224,7 +224,6 @@ void cv2eigen( const Matx<_Tp, _rows, 1>& src,
     }
 }
 
-
 template<typename _Tp>
 void cv2eigen( const Mat& src,
                Eigen::Matrix<_Tp, 1, Eigen::Dynamic>& dst )
@@ -271,7 +270,6 @@ void cv2eigen( const Matx<_Tp, 1, _cols>& src,
         CV_DbgAssert(_dst.data == (uchar*)dst.data());
     }
 }
-
 
 }
 

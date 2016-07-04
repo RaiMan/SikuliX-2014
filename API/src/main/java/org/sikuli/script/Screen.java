@@ -50,7 +50,7 @@ public class Screen extends Region implements IScreen {
   private ScreenImage lastScreenImage = null;
   private static boolean isActiveCapturePrompt = false;
   private static EventObserver captureObserver = null;
-  
+
   private static synchronized boolean setActiveCapturePrompt() {
     if (isActiveCapturePrompt) {
       return false;
@@ -65,7 +65,7 @@ public class Screen extends Region implements IScreen {
     isActiveCapturePrompt = false;
     captureObserver = null;
   }
-  
+
   //<editor-fold defaultstate="collapsed" desc="Initialization">
 
   static {
@@ -152,14 +152,14 @@ public class Screen extends Region implements IScreen {
     }
     return globalRobot;
   }
-  
+
   protected static Region getFakeRegion() {
     if (fakeRegion == null) {
       fakeRegion = new Region(0,0,5,5);
     }
     return fakeRegion;
   }
-  
+
   /**
    * create a Screen (ScreenUnion) object as a united region of all available monitors
    * @return ScreenUnion
@@ -181,7 +181,7 @@ public class Screen extends Region implements IScreen {
     curID = id;
     this.monitor = monitor;
   }
-  
+
   public static Screen as(int id) {
     if (id < 0 || id >= runTime.nMonitors) {
       Debug.error("Screen(%d) not in valid range 0 to %d - using primary %d",
@@ -550,7 +550,7 @@ public class Screen extends Region implements IScreen {
     lastCaptureTime = new Date().getTime();
     ScreenImage simg = robot.captureScreen(rect);
     if (Settings.FindProfiling) {
-      Debug.logp("[FindProfiling] Screen.capture [%d x %d]: %d msec", 
+      Debug.logp("[FindProfiling] Screen.capture [%d x %d]: %d msec",
               rect.width, rect.height, new Date().getTime() - lastCaptureTime);
     }
     lastScreenImage = simg;
@@ -559,7 +559,7 @@ public class Screen extends Region implements IScreen {
     }
     return simg;
   }
-  
+
   /**
    * create a ScreenImage with given region on this screen
    *
@@ -575,7 +575,7 @@ public class Screen extends Region implements IScreen {
     captureObserver = obs;
     Screen.getPrimaryScreen().userCapture(message);
   }
-  
+
   public static void closePrompt() {
     for (int is = 0; is < Screen.getNumberScreens(); is++) {
       if (!Screen.getScreen(is).hasPrompt()) {
@@ -584,10 +584,10 @@ public class Screen extends Region implements IScreen {
       Screen.getScreen(is).prompt.close();
     }
   }
-  
+
   public static void closePrompt(Screen scr) {
     for (int is = 0; is < Screen.getNumberScreens(); is++) {
-      if (Screen.getScreen(is).getID() == scr.getID() || 
+      if (Screen.getScreen(is).getID() == scr.getID() ||
           !Screen.getScreen(is).hasPrompt()) {
         continue;
       }
@@ -595,7 +595,7 @@ public class Screen extends Region implements IScreen {
       Screen.getScreen(is).prompt = null;
     }
   }
-  
+
   public static void resetPrompt(OverlayCapturePrompt ocp) {
     int scrID = ocp.getScrID();
     if (scrID > -1) {
@@ -607,7 +607,7 @@ public class Screen extends Region implements IScreen {
   public boolean hasPrompt() {
     return prompt != null;
   }
-  
+
   /**
    * interactive capture with predefined message: lets the user capture a screen image using the
    * mouse to draw the rectangle
@@ -678,11 +678,11 @@ public class Screen extends Region implements IScreen {
     resetActiveCapturePrompt();
     return simg;
   }
-  
+
   public String saveCapture(String name) {
     return saveCapture(name, null);
   }
-  
+
   public String saveCapture(String name, Region reg) {
     ScreenImage simg;
     if (reg == null) {

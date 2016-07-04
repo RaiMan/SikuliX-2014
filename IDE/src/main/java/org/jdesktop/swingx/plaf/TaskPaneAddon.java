@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -54,9 +54,9 @@ public class TaskPaneAddon extends AbstractComponentAddon {
     Font taskPaneFont = UIManagerExt.getSafeFont("Label.font", new Font(
                 "Dialog", Font.PLAIN, 12));
     taskPaneFont = taskPaneFont.deriveFont(Font.BOLD);
-    
+
     Color menuBackground = new ColorUIResource(SystemColor.menu);
-    
+
     defaults.add(JXTaskPane.uiClassID, "org.jdesktop.swingx.plaf.basic.BasicTaskPaneUI");
     defaults.add("TaskPane.font", new FontUIResource(taskPaneFont));
     defaults.add("TaskPane.background", UIManagerExt.getSafeColor("List.background",
@@ -76,17 +76,17 @@ public class TaskPaneAddon extends AbstractComponentAddon {
   protected void addLinuxDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
     addMetalDefaults(addon, defaults);
   }
- 
+
   @Override
   protected void addMetalDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
     super.addMetalDefaults(addon, defaults);
-    
+
     if (MetalLookAndFeel.getCurrentTheme() instanceof OceanTheme) {
         defaults.add(JXTaskPane.uiClassID, "org.jdesktop.swingx.plaf.misc.GlossyTaskPaneUI");
     } else {
         defaults.add(JXTaskPane.uiClassID, "org.jdesktop.swingx.plaf.metal.MetalTaskPaneUI");
     }
-    
+
     //TODO use safe methods
     defaults.add("TaskPane.foreground", UIManager.getColor("activeCaptionText"));
     defaults.add("TaskPane.background", MetalLookAndFeel.getControl());
@@ -103,13 +103,13 @@ public class TaskPaneAddon extends AbstractComponentAddon {
   @Override
   protected void addWindowsDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
     super.addWindowsDefaults(addon, defaults);
-    
+
     if (addon instanceof WindowsLookAndFeelAddons) {
       defaults.add(JXTaskPane.uiClassID, "org.jdesktop.swingx.plaf.windows.WindowsTaskPaneUI");
 
       String xpStyle = OS.getWindowsVisualStyle();
       if (WindowsLookAndFeelAddons.HOMESTEAD_VISUAL_STYLE
-        .equalsIgnoreCase(xpStyle)) {        
+        .equalsIgnoreCase(xpStyle)) {
         defaults.add("TaskPane.foreground", new ColorUIResource(86, 102, 45));
         defaults.add("TaskPane.background", new ColorUIResource(246, 246, 236));
         defaults.add("TaskPane.specialTitleBackground", new ColorUIResource(224, 231, 184));
@@ -135,7 +135,7 @@ public class TaskPaneAddon extends AbstractComponentAddon {
       } else if (OS.isWindowsVista()) {
           //do not need to use safe method since the properties can never return null
          final Toolkit toolkit = Toolkit.getDefaultToolkit();
-         
+
          defaults.add("TaskPane.foreground", new ColorUIResource(Color.WHITE));
          defaults.add("TaskPane.background",
                  new ColorUIResource((Color)toolkit.getDesktopProperty("win.3d.backgroundColor")));
@@ -158,7 +158,7 @@ public class TaskPaneAddon extends AbstractComponentAddon {
          defaults.add("TaskPane.borderColor", new ColorUIResource(Color.WHITE));
        }
     }
-    
+
     if (addon instanceof WindowsClassicLookAndFeelAddons) {
       defaults.add(JXTaskPane.uiClassID, "org.jdesktop.swingx.plaf.windows.WindowsClassicTaskPaneUI");
       defaults.add("TaskPane.foreground", new ColorUIResource(Color.BLACK));
@@ -171,11 +171,11 @@ public class TaskPaneAddon extends AbstractComponentAddon {
       defaults.add("TaskPane.borderColor", new ColorUIResource(212, 208, 200));
     }
   }
-  
+
   @Override
   protected void addMacDefaults(LookAndFeelAddons addon, DefaultsList defaults) {
     super.addMacDefaults(addon, defaults);
-    
+
     defaults.add(JXTaskPane.uiClassID, "org.jdesktop.swingx.plaf.misc.GlossyTaskPaneUI");
     defaults.add("TaskPane.background", new ColorUIResource(245, 245, 245));
     defaults.add("TaskPane.titleForeground", new ColorUIResource(Color.BLACK));
@@ -187,7 +187,7 @@ public class TaskPaneAddon extends AbstractComponentAddon {
     defaults.add("TaskPane.titleOver", new ColorUIResource(125, 125, 97));
     defaults.add("TaskPane.specialTitleOver", new ColorUIResource(125, 125, 97));
   }
-  
+
     @Override
     protected void addNimbusDefaults(LookAndFeelAddons addon,
             DefaultsList defaults) {
@@ -233,6 +233,5 @@ public class TaskPaneAddon extends AbstractComponentAddon {
                 138));
 
     }
-
 
 }

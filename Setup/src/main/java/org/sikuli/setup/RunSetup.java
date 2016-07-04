@@ -126,7 +126,7 @@ public class RunSetup {
 
   static Map <String, String> downloadsLookfor = new HashMap<String, String>();
   static Map <String, File> downloadsFound = new HashMap<String, File>();
-  
+
   private static File fSetupStuff = null;
   private static boolean hasAPI = true;
   private static String[] jarsList = new String[]{
@@ -140,7 +140,6 @@ public class RunSetup {
       null, // libmac
       null // liblux
     };
-
 
   //<editor-fold defaultstate="collapsed" desc="new logging concept">
   private static void logp(String message, Object... args) {
@@ -223,7 +222,7 @@ public class RunSetup {
     }
 
     options.addAll(Arrays.asList(args));
-    
+
     //<editor-fold defaultstate="collapsed" desc="options return version">
     if (args.length > 0 && "stamp".equals(args[0])) {
       System.out.println(runTime.SikuliProjectVersion + "-" + runTime.sxBuildStamp);
@@ -387,7 +386,7 @@ public class RunSetup {
     }
     fDownloadsObsolete = new File(fWorkDir, "Downloads");
     workDir = fWorkDir.getAbsolutePath();
-    
+
     fSetupStuff = new File(fWorkDir, "SetupStuff");
     FileManager.resetFolder(fSetupStuff);
 
@@ -416,7 +415,7 @@ public class RunSetup {
     }
 
     checkDownloads();
-    
+
     logToFile = true;
     if (logToFile) {
       logfile = (new File(fWorkDir, localLogfile)).getAbsolutePath();
@@ -986,7 +985,7 @@ public class RunSetup {
 
     splash = showSplash("Now creating jars, application and commandfiles", "please wait - may take some seconds ...");
 
-    File fAPI = new File(workDir, localAPI); 
+    File fAPI = new File(workDir, localAPI);
     jarsList[1] = fAPI.getAbsolutePath();
     hasAPI = fAPI.exists();
 
@@ -1197,7 +1196,7 @@ public class RunSetup {
 
     log(lvl,
             "... SikuliX Setup seems to have ended successfully ;-)");
-    
+
     finalCleanup();
 
     System.exit(RunTime.testing ? 1 : 0);
@@ -1213,7 +1212,7 @@ public class RunSetup {
     }
     return ret;
   }
-  
+
   private static void finalCleanup() {
     if (hasAPI) jarsList[1] = null;
     for (int i = (getAPI ? 2 : 1); i < jarsList.length; i++) {
@@ -1268,7 +1267,7 @@ public class RunSetup {
     downloadsLookfor.put("tess", "tesseract");
     downloadsFound.put("tess", null);
 
-    String doubleFiles = "";     
+    String doubleFiles = "";
     for (File aFolder : new File[] {
       fWorkDir, fDownloadsObsolete, fDownloadsGenericApp, fDownloadsGeneric}) {
       File[] filesContained = aFolder.listFiles(new FilenameFilter() {
@@ -1319,7 +1318,7 @@ public class RunSetup {
       terminate("double downloaded files");
     }
   }
-  
+
   private static boolean createSetupFolder(File fTargetDir) {
 		String projectDir = runTime.fSxProject.getAbsolutePath();
 		boolean success = true;
@@ -1358,7 +1357,7 @@ public class RunSetup {
 			success &= FileManager.xcopy(fSetup, new File(fTargetDir, localSetup));
       if (success) {
         for (String sFile : fTargetDir.list()) {
-          if (sFile.contains("sikulixsetup") && 
+          if (sFile.contains("sikulixsetup") &&
                   sFile.contains("-project") &&
                   !sFile.contains(localSetup)) {
             FileManager.deleteFileOrFolder(new File(fTargetDir, sFile));
@@ -1384,7 +1383,7 @@ public class RunSetup {
 			String jrubyAddons = "sikulixjrubyaddons-" + runTime.SikuliProjectVersion + "-plain.jar";
 			File fJRubyAddOns = new File(projectDir, "JRubyAddOns/target/" + jrubyAddons);
 //        success &= FileManager.xcopy(fJRubyAddOns, new File(fDownloadsGeneric, downloadJRubyAddOns));
-      
+
 		}
 		return success;
 	}

@@ -63,7 +63,6 @@ public:
     virtual void apply(int index, Point corner, Mat &image, const Mat &mask) = 0;
 };
 
-
 class CV_EXPORTS NoExposureCompensator : public ExposureCompensator
 {
 public:
@@ -71,7 +70,6 @@ public:
               const std::vector<std::pair<Mat,uchar> > &/*masks*/) {};
     void apply(int /*index*/, Point /*corner*/, Mat &/*image*/, const Mat &/*mask*/) {};
 };
-
 
 class CV_EXPORTS GainCompensator : public ExposureCompensator
 {
@@ -84,7 +82,6 @@ public:
 private:
     Mat_<double> gains_;
 };
-
 
 class CV_EXPORTS BlocksGainCompensator : public ExposureCompensator
 {

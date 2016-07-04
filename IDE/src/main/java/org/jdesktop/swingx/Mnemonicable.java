@@ -3,7 +3,7 @@ package org.jdesktop.swingx;
 /**
  * An interface that describes an object that is capable of being accessed/used via a mnemonic
  * keystroke.
- * 
+ *
  * @author Karl George Schaefer
  */
 // TODO this describes the mnemonic feature but not what is used,
@@ -11,7 +11,7 @@ package org.jdesktop.swingx;
 interface Mnemonicable {
     /**
      * Returns the keyboard mnemonic for this component.
-     * 
+     *
      * @return the keyboard mnemonic
      */
     int getMnemonic();
@@ -26,17 +26,17 @@ interface Mnemonicable {
      * <code>java.awt.event.KeyEvent</code>. Mnemonics are case-insensitive,
      * therefore a key event with the corresponding keycode would cause the
      * button to be activated whether or not the Shift modifier was pressed.
-     * 
+     *
      * @param mnemonic
      *            the key code which represents the mnemonic
      * @see java.awt.event.KeyEvent
      * @see #setDisplayedMnemonicIndex
-     * 
+     *
      * @beaninfo bound: true attribute: visualUpdate true description: the
      *           keyboard character mnemonic
      */
     void setMnemonic(int mnemonic);
-    
+
     /**
      * Returns the character, as an index, that the look and feel should
      * provide decoration for as representing the mnemonic character.

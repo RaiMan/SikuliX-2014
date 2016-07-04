@@ -1,4 +1,3 @@
-
 //
 // This file is auto-generated. Please don't modify it!
 //
@@ -19,7 +18,6 @@ public class Features2d {
             DRAW_OVER_OUTIMG = 1,
             NOT_DRAW_SINGLE_POINTS = 2,
             DRAW_RICH_KEYPOINTS = 4;
-
 
     //
     // C++:  void drawKeypoints(Mat image, vector_KeyPoint keypoints, Mat outImage, Scalar color = Scalar::all(-1), int flags = 0)
@@ -66,7 +64,6 @@ public class Features2d {
 
         return;
     }
-
 
     //
     // C++:  void drawMatches(Mat img1, vector_KeyPoint keypoints1, Mat img2, vector_KeyPoint keypoints2, vector_DMatch matches1to2, Mat outImg, Scalar matchColor = Scalar::all(-1), Scalar singlePointColor = Scalar::all(-1), vector_char matchesMask = vector<char>(), int flags = 0)
@@ -223,7 +220,6 @@ public class Features2d {
 
         return;
     }
-
 
     //
     // C++:  void drawMatches(Mat img1, vector_KeyPoint keypoints1, Mat img2, vector_KeyPoint keypoints2, vector_vector_DMatch matches1to2, Mat outImg, Scalar matchColor = Scalar::all(-1), Scalar singlePointColor = Scalar::all(-1), vector_vector_char matchesMask = vector<vector<char> >(), int flags = 0)

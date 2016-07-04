@@ -31,7 +31,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
   private boolean captureCancelled = false;
   private EditorPatternLabel _lbl = null;
   private String givenName = "";
-  
+
   public static boolean debugTrace = false;
 
   public ButtonCapture() {
@@ -95,7 +95,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
     RunTime.pause(((float) delay)/1000);
     Screen.doPrompt("Select an image", this);
   }
-  
+
   @Override
   public void update(EventSubject es) {
     Debug.log(4, "TRACE: ButtonCapture: update");
@@ -144,7 +144,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
       Debug.on(3);
     }
   }
-  
+
   public void captureCompleted(String imgFullPath) {
     Element src = getSrcElement();
     if (imgFullPath != null) {

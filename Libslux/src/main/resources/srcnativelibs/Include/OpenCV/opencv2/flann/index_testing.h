@@ -41,7 +41,6 @@
 #include "logger.h"
 #include "timer.h"
 
-
 namespace cvflann
 {
 
@@ -58,7 +57,6 @@ inline int countCorrectMatches(int* neighbors, int* groundTruth, int n)
     }
     return count;
 }
-
 
 template <typename Distance>
 typename Distance::ResultType computeDistanceRaport(const Matrix<typename Distance::ElementType>& inputData, typename Distance::ElementType* target,
@@ -131,7 +129,6 @@ float search_with_ground_truth(NNIndex<Distance>& index, const Matrix<typename D
 
     return precicion;
 }
-
 
 template <typename Distance>
 float test_index_checks(NNIndex<Distance>& index, const Matrix<typename Distance::ElementType>& inputData,
@@ -221,7 +218,6 @@ float test_index_precision(NNIndex<Distance>& index, const Matrix<typename Dista
     checks = cx;
     return time;
 }
-
 
 template <typename Distance>
 void test_index_precisions(NNIndex<Distance>& index, const Matrix<typename Distance::ElementType>& inputData,

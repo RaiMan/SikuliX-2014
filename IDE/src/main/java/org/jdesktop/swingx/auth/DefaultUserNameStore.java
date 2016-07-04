@@ -8,12 +8,12 @@
  * modify it under the terms of the GNU Lesser General Public
  * License as published by the Free Software Foundation; either
  * version 2.1 of the License, or (at your option) any later version.
- * 
+ *
  * This library is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * Lesser General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU Lesser General Public
  * License along with this library; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
@@ -51,14 +51,14 @@ public class DefaultUserNameStore extends UserNameStore {
      * in an array.
      */
     private String[] userNames;
-    
+
     /**
      * Creates a new instance of DefaultUserNameStore
      */
     public DefaultUserNameStore() {
         userNames = new String[0];
     }
-    
+
     /**
      * Loads the user names from Preferences
      */
@@ -74,7 +74,7 @@ public class DefaultUserNameStore extends UserNameStore {
             setUserNames(names);
         }
     }
-    
+
     /**
      * Saves the user names to Preferences
      */
@@ -88,7 +88,7 @@ public class DefaultUserNameStore extends UserNameStore {
             }
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -96,10 +96,10 @@ public class DefaultUserNameStore extends UserNameStore {
     public String[] getUserNames() {
         String[] copy = new String[userNames.length];
         System.arraycopy(userNames, 0, copy, 0, userNames.length);
-        
+
         return copy;
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -110,7 +110,7 @@ public class DefaultUserNameStore extends UserNameStore {
         this.userNames = userNames;
         firePropertyChange("userNames", old, getUserNames());
     }
-    
+
     /**
      * Add a username to the store.
      * @param name
@@ -126,7 +126,7 @@ public class DefaultUserNameStore extends UserNameStore {
             setUserNames(newNames);
         }
     }
-    
+
     /**
      * Removes a username from the list.
      *
@@ -145,7 +145,7 @@ public class DefaultUserNameStore extends UserNameStore {
             setUserNames(newNames);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -158,14 +158,14 @@ public class DefaultUserNameStore extends UserNameStore {
         }
         return false;
     }
-    
+
     /**
      * @return Returns Preferences node in which the user names will be stored
      */
     public Preferences getPreferences() {
         return prefs;
     }
-    
+
     /**
      * @param prefs the Preferences node to store the user names in. If null,
      * or undefined, then they are stored in /org/jdesktop/swingx/auth/DefaultUserNameStore.

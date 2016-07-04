@@ -34,7 +34,6 @@
 #include "dist.h"
 #include "matrix.h"
 
-
 namespace cvflann
 {
 
@@ -78,7 +77,6 @@ void find_nearest(const Matrix<typename Distance::ElementType>& dataset, typenam
     }
 }
 
-
 template <typename Distance>
 void compute_ground_truth(const Matrix<typename Distance::ElementType>& dataset, const Matrix<typename Distance::ElementType>& testset, Matrix<int>& matches,
                           int skip=0, Distance d = Distance())
@@ -87,7 +85,6 @@ void compute_ground_truth(const Matrix<typename Distance::ElementType>& dataset,
         find_nearest<Distance>(dataset, testset[i], matches[i], (int)matches.cols, skip, d);
     }
 }
-
 
 }
 

@@ -74,7 +74,6 @@ public:
     void setScale(float) {}
 };
 
-
 struct CV_EXPORTS ProjectorBase
 {
     void setCameraParams(const Mat &K = Mat::eye(3, 3, CV_32F),
@@ -88,7 +87,6 @@ struct CV_EXPORTS ProjectorBase
     float k_rinv[9];
     float t[3];
 };
-
 
 template <class P>
 class CV_EXPORTS RotationWarperBase : public RotationWarper
@@ -121,13 +119,11 @@ protected:
     P projector_;
 };
 
-
 struct CV_EXPORTS PlaneProjector : ProjectorBase
 {
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
-
 
 class CV_EXPORTS PlaneWarper : public RotationWarperBase<PlaneProjector>
 {
@@ -149,13 +145,11 @@ protected:
     void detectResultRoi(Size src_size, Point &dst_tl, Point &dst_br);
 };
 
-
 struct CV_EXPORTS SphericalProjector : ProjectorBase
 {
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
-
 
 // Projects image onto unit sphere with origin at (0, 0, 0).
 // Poles are located at (0, -1, 0) and (0, 1, 0) points.
@@ -168,13 +162,11 @@ protected:
     void detectResultRoi(Size src_size, Point &dst_tl, Point &dst_br);
 };
 
-
 struct CV_EXPORTS CylindricalProjector : ProjectorBase
 {
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
-
 
 // Projects image onto x * x + z * z = 1 cylinder
 class CV_EXPORTS CylindricalWarper : public RotationWarperBase<CylindricalProjector>
@@ -189,13 +181,11 @@ protected:
     }
 };
 
-
 struct CV_EXPORTS FisheyeProjector : ProjectorBase
 {
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
-
 
 class CV_EXPORTS FisheyeWarper : public RotationWarperBase<FisheyeProjector>
 {
@@ -203,20 +193,17 @@ public:
     FisheyeWarper(float scale) { projector_.scale = scale; }
 };
 
-
 struct CV_EXPORTS StereographicProjector : ProjectorBase
 {
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
 
-
 class CV_EXPORTS StereographicWarper : public RotationWarperBase<StereographicProjector>
 {
 public:
     StereographicWarper(float scale) { projector_.scale = scale; }
 };
-
 
 struct CV_EXPORTS CompressedRectilinearProjector : ProjectorBase
 {
@@ -225,7 +212,6 @@ struct CV_EXPORTS CompressedRectilinearProjector : ProjectorBase
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
-
 
 class CV_EXPORTS CompressedRectilinearWarper : public RotationWarperBase<CompressedRectilinearProjector>
 {
@@ -238,7 +224,6 @@ public:
     }
 };
 
-
 struct CV_EXPORTS CompressedRectilinearPortraitProjector : ProjectorBase
 {
     float a, b;
@@ -246,7 +231,6 @@ struct CV_EXPORTS CompressedRectilinearPortraitProjector : ProjectorBase
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
-
 
 class CV_EXPORTS CompressedRectilinearPortraitWarper : public RotationWarperBase<CompressedRectilinearPortraitProjector>
 {
@@ -259,7 +243,6 @@ public:
    }
 };
 
-
 struct CV_EXPORTS PaniniProjector : ProjectorBase
 {
     float a, b;
@@ -267,7 +250,6 @@ struct CV_EXPORTS PaniniProjector : ProjectorBase
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
-
 
 class CV_EXPORTS PaniniWarper : public RotationWarperBase<PaniniProjector>
 {
@@ -280,7 +262,6 @@ public:
    }
 };
 
-
 struct CV_EXPORTS PaniniPortraitProjector : ProjectorBase
 {
     float a, b;
@@ -288,7 +269,6 @@ struct CV_EXPORTS PaniniPortraitProjector : ProjectorBase
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
-
 
 class CV_EXPORTS PaniniPortraitWarper : public RotationWarperBase<PaniniPortraitProjector>
 {
@@ -302,13 +282,11 @@ public:
 
 };
 
-
 struct CV_EXPORTS MercatorProjector : ProjectorBase
 {
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
-
 
 class CV_EXPORTS MercatorWarper : public RotationWarperBase<MercatorProjector>
 {
@@ -316,20 +294,17 @@ public:
     MercatorWarper(float scale) { projector_.scale = scale; }
 };
 
-
 struct CV_EXPORTS TransverseMercatorProjector : ProjectorBase
 {
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
 
-
 class CV_EXPORTS TransverseMercatorWarper : public RotationWarperBase<TransverseMercatorProjector>
 {
 public:
     TransverseMercatorWarper(float scale) { projector_.scale = scale; }
 };
-
 
 #if defined(HAVE_OPENCV_GPU) && !defined(ANDROID)
 class CV_EXPORTS PlaneWarperGpu : public PlaneWarper
@@ -385,7 +360,6 @@ private:
     gpu::GpuMat d_xmap_, d_ymap_, d_src_, d_dst_;
 };
 
-
 class CV_EXPORTS SphericalWarperGpu : public SphericalWarper
 {
 public:
@@ -416,7 +390,6 @@ public:
 private:
     gpu::GpuMat d_xmap_, d_ymap_, d_src_, d_dst_;
 };
-
 
 class CV_EXPORTS CylindricalWarperGpu : public CylindricalWarper
 {
@@ -450,13 +423,11 @@ private:
 };
 #endif
 
-
 struct SphericalPortraitProjector : ProjectorBase
 {
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
-
 
 // Projects image onto unit sphere with origin at (0, 0, 0).
 // Poles are located NOT at (0, -1, 0) and (0, 1, 0) points, BUT at (1, 0, 0) and (-1, 0, 0) points.
@@ -475,7 +446,6 @@ struct CylindricalPortraitProjector : ProjectorBase
     void mapBackward(float u, float v, float &x, float &y);
 };
 
-
 class CV_EXPORTS CylindricalPortraitWarper : public RotationWarperBase<CylindricalPortraitProjector>
 {
 public:
@@ -493,7 +463,6 @@ struct PlanePortraitProjector : ProjectorBase
     void mapForward(float x, float y, float &u, float &v);
     void mapBackward(float u, float v, float &x, float &y);
 };
-
 
 class CV_EXPORTS PlanePortraitWarper : public RotationWarperBase<PlanePortraitProjector>
 {
