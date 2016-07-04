@@ -11,13 +11,8 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.*;
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.*;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
 import java.util.prefs.PreferenceChangeEvent;
 import java.util.prefs.PreferenceChangeListener;
 import java.util.regex.Matcher;
@@ -447,8 +442,13 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
   private void cleanBundle() {
     log(3, "cleanBundle");
-    FileManager.deleteNotUsedImages(getBundlePath(), parseforImages().keySet());
-    log(3, "cleanBundle finished");
+    Set<String> foundImages = parseforImages().keySet();
+    if (foundImages.size() == 1 && foundImages.contains("uncomplete_comment_error")) {
+      log(-1, "cleanBundle aborted (uncomplete_comment_error)");
+    } else {
+      FileManager.deleteNotUsedImages(getBundlePath(), foundImages);
+      log(3, "cleanBundle finished");
+    }
   }
 
   private Map<String, List<Integer>> parseforImages() {
@@ -471,8 +471,19 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     String innerText;
     String[] possibleImage = new String[]{""};
     String[] stringType = new String[]{""};
+    int lines = 1;
     for (Token t : tokens) {
       current = t.getValue();
+      if (current.endsWith("\n")) {
+        if (inString) {
+          Sikulix.popError(String.format("Delete images on save:\n" +
+                  "possible uncomplete comment in line %d\nNo images were deleted!", lines));
+          images.clear();
+          images.put("uncomplete_comment_error", null);
+          break;
+        }
+        lines++;
+      }
       if (t.getType() == TokenType.Comment) {
         //log(3, "parseforImagesWalk::Comment");
         innerText = t.getValue().substring(1);
@@ -563,7 +574,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     }
     if (new File(zipPath).exists()) {
       if (!Sikulix.popAsk(String.format("Overwrite existing file?\n%s", zipPath),
-                          "Exporting packed SikuliX Script")) {
+              "Exporting packed SikuliX Script")) {
         return null;
       }
     }
@@ -610,8 +621,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     } catch (Exception ex) {
       String msg = "";
       msg = ex.getMessage() + "";
-    }
-    finally {
+    } finally {
       zos.close();
     }
   }
@@ -787,7 +797,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   @Override
   public void caretUpdate(CaretEvent evt) {
     /* seems not to be used
-		 * if (_can_update_caret_last_x) {
+     * if (_can_update_caret_last_x) {
 		 * _caret_last_x = -1;
 		 * } else {
 		 * _can_update_caret_last_x = true;
