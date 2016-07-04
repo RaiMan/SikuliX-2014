@@ -772,8 +772,8 @@ public class Sikulix {
    *
    * @param msg the message to display below the textfield
    * @param title the title for the dialog (default: SikuliX input request)
-   * @param lines the maximum number of lines visible in the text field (default 15)
-   * @param width the maximum number of characters visible in one line (default 30)
+   * @param lines the maximum number of lines visible in the text field (default 9)
+   * @param width the maximum number of characters visible in one line (default 20 letters m)
    * @param text a preset text to show
    * @return The user's input including the line breaks.
    */
@@ -785,12 +785,14 @@ public class Sikulix {
     }
     JTextArea ta = new JTextArea("");
     String fontname = "Dialog";
+    int pluswidth = 1;
     if (Settings.InputFontMono) {
       fontname = "Monospaced";
+      pluswidth = 3;
     }
     ta.setFont(new Font(fontname, Font.PLAIN, Math.max(14, Settings.InputFontSize)));
-    int w = (width + 1) * ta.getFontMetrics(ta.getFont()).charWidth('m');
-    int h = (int) (lines * ta.getFontMetrics(ta.getFont()).getHeight());
+    int w = (width + pluswidth) * ta.getFontMetrics(ta.getFont()).charWidth('m');
+    int h = (lines + 1) * ta.getFontMetrics(ta.getFont()).getHeight();
     ta.setText(text);
     ta.setLineWrap(true);
     ta.setWrapStyleWord(true);
@@ -799,8 +801,10 @@ public class Sikulix {
     sp.setViewportView(ta);
     sp.setPreferredSize(new Dimension(w, h));
 
-    JTextArea tm = new JTextArea(msg);
+    JTextArea tm = new JTextArea("");
+    tm.setFont(new Font(fontname, Font.PLAIN, Math.max(14, Settings.InputFontSize)));
     tm.setColumns(width);
+    tm.setText(msg);
     tm.setLineWrap(true);
     tm.setWrapStyleWord(true);
     tm.setEditable(false);
