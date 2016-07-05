@@ -477,7 +477,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
       if (current.endsWith("\n")) {
         if (inString) {
           Sikulix.popError(String.format("Delete images on save:\n" +
-                  "possible uncomplete comment in line %d\nNo images were deleted!", lines));
+                  "possible uncomplete string in line %d\nNo images will be deleted!", lines));
           images.clear();
           images.put("uncomplete_comment_error", null);
           break;
