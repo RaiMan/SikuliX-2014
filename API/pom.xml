@@ -26,6 +26,13 @@
   <artifactId>sikulixapi</artifactId>
   <version>1.1.1</version>
 
+  <repositories>
+    <repository>
+      <id>jitpack.io</id>
+      <url>https://jitpack.io</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>commons-cli</groupId>
@@ -56,6 +63,11 @@
       <groupId>com.nativelibs4java</groupId>
       <artifactId>bridj</artifactId>
       <version>0.7.0</version>
+    </dependency>
+    <dependency>
+      <groupId>com.github.vidstige</groupId>
+      <artifactId>jadb</artifactId>
+      <version>-v1.0-g94ebf38-23</version>
     </dependency>
   </dependencies>
 

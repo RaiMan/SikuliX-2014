@@ -3147,7 +3147,7 @@ public class Region {
 //    }
 //    return null;
 //  }
-  private <PSIMRL> Location getLocationFromTarget(PSIMRL target) throws FindFailed {
+  protected <PSIMRL> Location getLocationFromTarget(PSIMRL target) throws FindFailed {
     if (target instanceof Pattern || target instanceof String || target instanceof Image) {
       Match m = find(target);
       if (m != null) {

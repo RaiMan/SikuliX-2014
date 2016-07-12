@@ -6,6 +6,7 @@
 package org.sikuli.script;
 
 import edu.unh.iol.dlc.VNCScreen;
+import org.sikuli.android.ADBScreen;
 import org.sikuli.basics.*;
 import org.sikuli.util.JythonHelper;
 import org.sikuli.util.ScreenHighlighter;
@@ -24,6 +25,7 @@ import java.security.CodeSource;
 public class Sikulix {
 
   private static int lvl = 3;
+
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "Sikulix: " + message, args);
   }
@@ -49,7 +51,7 @@ public class Sikulix {
   static {
     String jarName = "";
 
-    CodeSource codeSrc =  Sikulix.class.getProtectionDomain().getCodeSource();
+    CodeSource codeSrc = Sikulix.class.getProtectionDomain().getCodeSource();
     if (codeSrc != null && codeSrc.getLocation() != null) {
       jarName = codeSrc.getLocation().getPath();
     }
@@ -132,18 +134,18 @@ public class Sikulix {
       runSomeJS = FileManager.readFileToString(lastSession);
     }
     runSomeJS = inputText("enter some JavaScript (know what you do - may silently die ;-)"
-            + "\nexample: run(\"git*\") will run the JavaScript showcase from GitHub"
-            + "\nWhat you enter now will be shown the next time.",
+                    + "\nexample: run(\"git*\") will run the JavaScript showcase from GitHub"
+                    + "\nWhat you enter now will be shown the next time.",
             "API::JavaScriptRunner " + version, 10, 60, runSomeJS);
-    if (runSomeJS.isEmpty()) {
+    if (runSomeJS == null || runSomeJS.isEmpty()) {
       popup("Nothing to do!", version);
     } else {
       while (!runSomeJS.isEmpty()) {
         FileManager.writeStringToFile(runSomeJS, lastSession);
         Runner.runjs(null, null, runSomeJS, null);
         runSomeJS = inputText("Edit the JavaScript and/or press OK to run it (again)\n"
-                + "Press Cancel to terminate",
-            "API::JavaScriptRunner " + version, 10, 60, runSomeJS);
+                        + "Press Cancel to terminate",
+                "API::JavaScriptRunner " + version, 10, 60, runSomeJS);
       }
     }
     System.exit(0);
@@ -155,8 +157,9 @@ public class Sikulix {
    * JRuby: not yet supported<br>
    * JavaScript: not yet supported<br>
    * if no scripting active (API usage), jar is added to classpath if available
+   *
    * @param fpJar absolute path to a jar (relative: searched according to Extension concept,
-   * but first on sys.path)
+   *              but first on sys.path)
    * @return the absolute path to the jar or null, if not available
    */
   public static String load(String fpJar) {
@@ -170,8 +173,9 @@ public class Sikulix {
    * JavaScript: only added to classpath<br>
    * if no scripting is active (API usage), jar is added to classpath if available<br>
    * additionally: fpJar/fpJarImagePath is added to ImagePath (not checked)
-   * @param fpJar absolute path to a jar (relative: searched according to Extension concept,
-   * but first on sys.path)
+   *
+   * @param fpJar          absolute path to a jar (relative: searched according to Extension concept,
+   *                       but first on sys.path)
    * @param fpJarImagePath path relative to jar root inside jar
    * @return the absolute path to the jar or null, if not available
    */
@@ -201,9 +205,10 @@ public class Sikulix {
    * build a jar on the fly at runtime from a folder.<br>
    * special for Jython: if the folder contains a __init__.py on first level,
    * the folder will be copied to the jar root (hence preserving module folders)
-   * @param targetJar absolute path to the created jar (parent folder must exist, jar is overwritten)
+   *
+   * @param targetJar    absolute path to the created jar (parent folder must exist, jar is overwritten)
    * @param sourceFolder absolute path to a folder, the contained folder structure
-   * will be copied to the jar root level
+   *                     will be copied to the jar root level
    * @return
    */
   public static boolean buildJarFromFolder(String targetJar, String sourceFolder) {
@@ -226,7 +231,7 @@ public class Sikulix {
       }
     }
     return FileManager.buildJar(targetJar, new String[]{null},
-            new String[] {sourceFolder}, new String[] {prefix}, null);
+            new String[]{sourceFolder}, new String[]{prefix}, null);
   }
 
   /**
@@ -238,6 +243,7 @@ public class Sikulix {
    * so make sure your code compiles error free. Currently there is no support for running such a jar,
    * it can only be used with load()/import, but you might provide a simple script that does load()/import
    * and then runs something based on available functions in the jar code.
+   *
    * @param fpSource absolute path to a folder/folder-tree containing the stuff to be copied/compiled
    * @param fpTarget the folder that will contain the copied/compiled stuff (folder is first deleted)
    * @return false if anything goes wrong, true means should have worked
@@ -450,7 +456,8 @@ public class Sikulix {
     HotkeyManager.reset();
     try {
       new RobotDesktop().keyUp();
-    } catch (AWTException e) {}
+    } catch (AWTException e) {
+    }
     Mouse.reset();
   }
 
@@ -692,7 +699,7 @@ public class Sikulix {
     JFrame anchor = new JFrame();
     anchor.setAlwaysOnTop(true);
     anchor.setUndecorated(true);
-    anchor.setSize(1,1);
+    anchor.setSize(1, 1);
     anchor.setLocation(x, y);
     anchor.setVisible(true);
     return anchor;
@@ -770,11 +777,11 @@ public class Sikulix {
    * Shows a dialog request to enter text in a multiline text field <br>
    * it has line wrapping on word bounds and a vertical scrollbar if needed
    *
-   * @param msg the message to display below the textfield
+   * @param msg   the message to display below the textfield
    * @param title the title for the dialog (default: SikuliX input request)
    * @param lines the maximum number of lines visible in the text field (default 9)
    * @param width the maximum number of characters visible in one line (default 20 letters m)
-   * @param text a preset text to show
+   * @param text  a preset text to show
    * @return The user's input including the line breaks.
    */
   public static String inputText(String msg, String title, int lines, int width, String text) {
@@ -852,7 +859,7 @@ public class Sikulix {
    * information between IDE sessions<br>
    * this allows, to easily make some valuable information persistent
    *
-   * @param key name of the item
+   * @param key   name of the item
    * @param value item content
    */
   public static void prefStore(String key, String value) {
@@ -874,7 +881,7 @@ public class Sikulix {
    * retrieve the value of a previously stored a key-value-pair from Javas persistent preferences storage that is used
    * by SikuliX to save settings and information between IDE sessions<br>
    *
-   * @param key name of the item
+   * @param key   name of the item
    * @param value the item content or the given value if not stored yet (default)
    * @return the item content or the given default
    */
@@ -907,10 +914,10 @@ public class Sikulix {
    * convenience for a VNCScreen connection (use theVNCScreen.stop() to stop the connection)
    * active screens are auto-stopped at cleanup
    *
-   * @param theIP the server IP
-   * @param thePort the port number
+   * @param theIP    the server IP
+   * @param thePort  the port number
    * @param cTimeout seconds to wait for a valid connection
-   * @param timeout value in milli-seconds during normal operation
+   * @param timeout  value in milli-seconds during normal operation
    * @return a VNCScreen object
    */
   public static VNCScreen vncStart(String theIP, int thePort, int cTimeout, int timeout) {

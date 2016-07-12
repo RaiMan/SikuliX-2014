@@ -269,7 +269,9 @@ public class Mouse {
       profiler.lap("after move");
     }
     r.clickStarts();
-    r.pressModifiers(modifiers);
+    if (modifiers > 0) {
+      r.pressModifiers(modifiers);
+    }
     int pause = Settings.ClickDelay > 1 ? 1 : (int) (Settings.ClickDelay * 1000);
     Settings.ClickDelay = 0.0;
     profiler.lap("before Down");
@@ -289,7 +291,9 @@ public class Mouse {
       r.mouseUp(buttons);
     }
     profiler.lap("after click");
-    r.releaseModifiers(modifiers);
+    if (modifiers > 0) {
+      r.releaseModifiers(modifiers);
+    }
     r.clickEnds();
     r.waitForIdle();
     profiler.lap("before let");
