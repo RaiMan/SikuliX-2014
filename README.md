@@ -59,11 +59,9 @@ This Maven multi-module setup contains everything ...
 **Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) (work in progress)**
 
 **Tools I use for developement:** <br />
-IDE with Maven support: [NetBeans 7.4/8.0](https://netbeans.org) (using Java 7 and 8)<br />
-GitHub support: NetBeans<br />
+IDE with Maven and GitHub support: [IntelliJ IDEA CE](https://www.jetbrains.com/idea/) (using Java 7 and 8)<br />
 Doc Service: [Read the Docs](https://readthedocs.org)<br />
-Main WebSite Service: [Weebly](http://www.weebly.com)<br />
-Private complementing Websites: [Host Europe](https://www.hosteurope.de)
+WebSite Services: [Host Europe](https://www.hosteurope.de)
 
 The structure of this repo
 ------------------------
