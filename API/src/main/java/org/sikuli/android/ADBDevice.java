@@ -170,6 +170,14 @@ public class ADBDevice {
     log(-1, "wakeUp: timeout: %d seconds", seconds);
   }
 
+  public void inputKeyEvent(int key) {
+    try {
+      device.executeShell("input", "keyevent", Integer.toString(key));
+    } catch (Exception e) {
+      log(-1, "inputKeyEvent: %d did not work: %s", e.getMessage());
+    }
+  }
+
   public void tap(int x, int y) {
     try {
       device.executeShell("input tap", Integer.toString(x), Integer.toString(y));

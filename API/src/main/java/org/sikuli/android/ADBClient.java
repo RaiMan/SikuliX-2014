@@ -19,6 +19,7 @@ public class ADBClient {
   private static JadbConnection jadb = null;
   private static boolean shouldStopServer = false;
   private static JadbDevice device = null;
+  public static boolean isAdbAvailable = true;
 
   private static void init() {
     getConnection(true);
@@ -31,7 +32,13 @@ public class ADBClient {
           shouldStopServer = true;
         }
       } catch (Exception e) {
-        Debug.error("ADBClient: ADBServer problem: %s", e.getMessage());
+        //Cannot run program "adb": error=2, No such file or directory
+        if (e.getMessage().startsWith("Cannot run program")) {
+          isAdbAvailable = false;
+          Debug.error("ADBClient: package adb not available. need to be installed");
+        } else {
+          Debug.error("ADBClient: ADBServer problem: %s", e.getMessage());
+        }
       }
     }
     if (jadb != null) {

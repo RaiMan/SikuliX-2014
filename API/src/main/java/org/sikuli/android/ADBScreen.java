@@ -25,7 +25,6 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
 
   private static boolean isFake = false;
   protected IRobot robot = null;
-  protected ADBClient client = null;
   private static int logLvl = 3;
   private ScreenImage lastScreenImage = null;
   private Rectangle bounds;
@@ -37,6 +36,8 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
 
   public boolean needsUnLock = true;
   public int waitAfterAction = 1;
+
+  public static int MENU = 82;
 
   //---------------------------Inits
   private ADBDevice device = null;
@@ -67,8 +68,12 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
     if (null == device) {
       return "ADBScreen: No Android device attached";
     } else {
-      return String.format("ADBScreen: Android device: %s (%d x %d)", device.getDeviceSerial(), bounds.width, bounds.height);
+      return String.format("ADBScreen: Android device: %s", getDeviceDescription());
     }
+  }
+
+  public String getDeviceDescription() {
+    return String.format("%s (%d x %d)", device.getDeviceSerial(), bounds.width, bounds.height);
   }
 
   public void wakeUp(int seconds) {
@@ -77,10 +82,10 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
     }
     if (!device.isDisplayOn()) {
       device.wakeUp(seconds);
-    }
-    if (needsUnLock) {
-      swipeUp();
-      RunTime.pause(waitAfterAction);
+      if (needsUnLock) {
+        swipeUp();
+        RunTime.pause(waitAfterAction);
+      }
     }
   }
 
@@ -93,6 +98,10 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
       device.tap(loc.x, loc.y);
       RunTime.pause(waitAfterAction);
     }
+  }
+
+  public void tapButton(int button) {
+    device.inputKeyEvent(button);
   }
 
   public <PFRML> void swipe(PFRML from, PFRML to) throws FindFailed {

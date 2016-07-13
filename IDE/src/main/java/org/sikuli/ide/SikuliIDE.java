@@ -79,6 +79,8 @@ import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXSearchField;
 import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
+import org.sikuli.android.ADBClient;
+import org.sikuli.android.ADBScreen;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.HotkeyEvent;
@@ -1696,13 +1698,19 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     _toolMenu.add(createMenuItem(_I("menuToolExtensions"),
             null,
             new ToolAction(ToolAction.EXTENSIONS)));
+
+    _toolMenu.add(createMenuItem(_I("menuToolAndroid"),
+            null,
+            new ToolAction(ToolAction.ANDROID)));
+
   }
 
   class ToolAction extends MenuAction {
 
     static final String EXTENSIONS = "extensions";
+    static final String ANDROID = "android";
 
-    public ToolAction() {
+    ToolAction() {
       super();
     }
 
@@ -1713,9 +1721,14 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     public void extensions(ActionEvent ae) {
       showExtensionsFrame();
     }
+
+    public void android(ActionEvent ae) {
+      androidSupport();
+    }
+
   }
 
-  public void showExtensionsFrame() {
+  private void showExtensionsFrame() {
 //    String warn = "You might proceed, if you\n"
 //            + "- have some programming skills\n"
 //            + "- read the docs about extensions\n"
@@ -1737,6 +1750,41 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     ExtensionManagerFrame extmg = ExtensionManagerFrame.getInstance();
     if (extmg != null) {
       extmg.setVisible(true);
+    }
+  }
+
+  private void androidSupport() {
+    ADBScreen aScr = new ADBScreen();
+    String title = "Android Support - !!EXPERIMENTAL!!";
+    if (aScr.isValid()) {
+      String warn = "Device found: " + aScr.getDeviceDescription() + "\n\n" +
+              "click Check: a short test is run with the device\n" +
+              "click Default: device as default screen for capture\n" +
+              "click Cancel: nothing is done\n" +
+              "\nBE PREPARED: Feature is experimental - no guarantee ;-)";
+      String[] options = new String[3];
+      options[WARNING_DO_NOTHING] = "Check";
+      options[WARNING_ACCEPTED] = "Default";
+      options[WARNING_CANCEL] = "Cancel";
+      int ret = JOptionPane.showOptionDialog(this, warn, title, 0, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
+      if (ret == WARNING_CANCEL || ret == JOptionPane.CLOSED_OPTION) {
+        return;
+      }
+      if (ret == WARNING_DO_NOTHING) {
+        //TODO run a test
+        title = "Android Support - Testing device";
+        Sikulix.popup("Take care\n\nthat device is on and unlocked\n\nbefore clicking ok");
+        aScr.wakeUp(2);
+        aScr.wait(1f);
+        aScr.tapButton(ADBScreen.MENU);
+      };
+      if (ret == WARNING_ACCEPTED) {
+        //TODO set as default screen
+      };
+    } else if (!ADBClient.isAdbAvailable) {
+      Sikulix.popError("Package adb seems not to be available.\nIt must be installed for Android support.", title);
+    } else {
+      Sikulix.popError("No android device attached", title);
     }
   }
   //</editor-fold>
