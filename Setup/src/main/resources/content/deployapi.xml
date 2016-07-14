@@ -116,6 +116,11 @@
 			<version>0.7.0</version>
 		</dependency>
 		<dependency>
+			<groupId>com.github.vidstige</groupId>
+			<artifactId>jadb</artifactId>
+			<version>-v1.0-g94ebf38-23</version>
+		</dependency>
+		<dependency>
 			<groupId>com.sikulix</groupId>
 			<artifactId>${sikulix.libs}</artifactId>
 			<version>${project.version}</version>
