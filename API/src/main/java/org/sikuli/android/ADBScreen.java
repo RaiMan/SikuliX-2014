@@ -183,31 +183,37 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
 
   @Override
   public ScreenImage capture() {
-    return capture(bounds);
+    return capture(x, y, w, h);
   }
 
   @Override
   public ScreenImage capture(int x, int y, int w, int h) {
-    Rectangle rect = newRegion(new Location(x, y), w, h).getRect();
-    return capture(rect);
-  }
-
-  @Override
-  public ScreenImage capture(Region reg) {
-    return capture(reg.getRect());
-  }
-
-  @Override
-  public ScreenImage capture(Rectangle rect) {
     ScreenImage simg = null;
     if (robot != null) {
-      log(logLvl, "ADBScreen.capture: (%d,%d) %dx%d", rect.x, rect.y, rect.width, rect.height);
-      simg = device.captureScreen(rect);
+      log(logLvl, "ADBScreen.capture: (%d,%d) %dx%d", x, y, w, h);
+      simg = device.captureScreen(new Rectangle(x, y, w, h));
     } else {
       log(-1, "capture: no ADBRobot available");
     }
     lastScreenImage = simg;
     return simg;
+  }
+
+  @Override
+  public ScreenImage capture(Region reg) {
+    return capture(reg.x, reg.y, reg.w, reg.h);
+  }
+
+//  @Override
+  public ScreenImage capture(Rectangle rect) {
+    return capture(rect.x, rect.y, rect.width, rect.height);
+  }
+  public byte[] rawcapture(Rectangle rect) {
+    ScreenImage sImg = null;
+    Debug timer = Debug.startTimer();
+    byte[] imageBytes = device.captureDeviceScreenRaw(rect.x, rect.y, rect.width, rect.height);
+    long duration = timer.end();
+    return imageBytes;
   }
 
   public void showTarget(Location loc) {

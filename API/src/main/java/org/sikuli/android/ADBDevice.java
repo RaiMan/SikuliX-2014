@@ -105,8 +105,13 @@ public class ADBDevice {
 
   public byte[] captureDeviceScreenRaw(int x, int y, int _w, int _h) {
     byte[] imagePrefix = new byte[12];
-    byte[] imageRow = new byte[(int) (w * 4)];
     byte[] image = new byte[0];
+    if (x + _w > w) {
+      _w = w - x;
+    }
+    if (y + _h > h) {
+      _h = h - y;
+    }
     Debug timer = Debug.startTimer();
     try {
       InputStream stdout = device.executeShell("screencap");
@@ -115,14 +120,15 @@ public class ADBDevice {
         log(-1, "captureDeviceScreenRaw: image type not RGBA");
         return image;
       }
+      int imgW = byte2int(imagePrefix, 0, 4);
+      int imgH = byte2int(imagePrefix, 4, 4);
+      byte[] imageRow = new byte[imgW * 4];
       image = new byte[_w * _h * 4];
-      long skipped = y;
-      stdout.skip(skipped * 4);
-      long rowPre = x;
-      imageRow = new byte[(int) (_w * 4)];
+      stdout.skip(y * imgW * 4);
       for (int count = 0; count < _h; count++) {
-        long rs = stdout.skip(rowPre * 4);
-        long r = stdout.read(image, count * _w * 4, _w * 4);
+        stdout.skip(x * 4);
+        stdout.read(image, count * _w * 4, _w * 4);
+        stdout.skip((imgW - x -_w) * 4);
       }
       long duration = timer.end();
       log(lvl, "raw-capture:[%d,%d %dx%d] %d", x, y, _w, _h, duration);
@@ -130,6 +136,17 @@ public class ADBDevice {
       log(-1, "raw-capture: [%d,%d %dx%d] %s", x, y, _w, _h, e);
     }
     return image;
+  }
+
+  private int byte2int(byte[] bytes, int start, int len) {
+    int val = 0;
+    int fact = 1;
+    for (int i=start; i < start + len; i++) {
+      int b = bytes[i] & 0xff;
+      val += b * fact;
+      fact *= 256;
+    }
+    return val;
   }
 
   public Boolean isDisplayOn() {
