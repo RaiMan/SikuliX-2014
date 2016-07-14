@@ -21,7 +21,11 @@ public class ADBTest {
     Debug.logx(level, "ADBDevice: " + message, args);
   }
 
-  public static void main(String[] args) {
+  public static void main(String[] args) throws FindFailed {
+
+    basicTest();
+
+    Debug.info("**************** running test raw capture");
     ADBScreen adbs = new ADBScreen();
     Debug.on(3);
     log(lvl, "%s", adbs);
@@ -43,6 +47,7 @@ public class ADBTest {
   }
 
   private static void basicTest() throws FindFailed {
+    Debug.info("**************** running basic test");
     ADBScreen adbs = new ADBScreen();
     Debug.on(3);
     log(lvl, "%s", adbs);
