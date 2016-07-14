@@ -41,10 +41,10 @@ public class ADBClient {
         }
       }
     }
+    String serial = null;
+    String state = null;
     if (jadb != null) {
       List<JadbDevice> devices = null;
-      String serial = null;
-      String state = null;
       try {
         devices = jadb.getDevices();
       } catch (Exception e) {
@@ -59,14 +59,14 @@ public class ADBClient {
           } catch (Exception e) {
             state = "N/A";
           }
-        } else {
-          device = null;
-          Debug.error("ADBClient: init: no devices attached");
         }
+      } else {
+        device = null;
+        Debug.error("ADBClient: init: no devices attached");
       }
-      if (device != null) {
-        Debug.info("ADBClient: init: attached device: serial(%s) state(%s)", serial, state);
-      }
+    }
+    if (device != null) {
+      Debug.info("ADBClient: init: attached device: serial(%s) state(%s)", serial, state);
     }
   }
 

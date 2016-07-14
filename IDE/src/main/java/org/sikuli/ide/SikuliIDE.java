@@ -6,6 +6,7 @@
 package org.sikuli.ide;
 
 import com.explodingpixels.macwidgets.MacUtils;
+
 import java.awt.AWTEvent;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -74,6 +75,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.DefaultEditorKit;
 import javax.swing.undo.CannotRedoException;
 import javax.swing.undo.CannotUndoException;
+
 import org.apache.commons.cli.CommandLine;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXSearchField;
@@ -91,15 +93,7 @@ import org.sikuli.basics.Settings;
 import org.sikuli.idesupport.IDESplash;
 import org.sikuli.idesupport.IDESupport;
 import org.sikuli.idesupport.IIDESupport;
-import org.sikuli.script.Image;
-import org.sikuli.script.ImagePath;
-import org.sikuli.script.Key;
-import org.sikuli.script.Region;
-import org.sikuli.script.RunServer;
-import org.sikuli.script.RunTime;
-import org.sikuli.script.Runner;
-import org.sikuli.script.Screen;
-import org.sikuli.script.ScreenImage;
+import org.sikuli.script.*;
 import org.sikuli.script.Sikulix;
 import org.sikuli.scriptrunner.IScriptRunner;
 import org.sikuli.scriptrunner.ScriptingSupport;
@@ -1746,21 +1740,28 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     }
     if (ret == WARNING_ACCEPTED) {
       //TODO set prefs to be quiet on extensions warning
-    };
+    }
+    ;
     ExtensionManagerFrame extmg = ExtensionManagerFrame.getInstance();
     if (extmg != null) {
       extmg.setVisible(true);
     }
   }
 
+  private static IScreen defaultScreen = null;
+
+  public static IScreen getDefaultScreen() {
+    return defaultScreen;
+  }
+
   private void androidSupport() {
-    ADBScreen aScr = new ADBScreen();
+    final ADBScreen aScr = new ADBScreen();
     String title = "Android Support - !!EXPERIMENTAL!!";
     if (aScr.isValid()) {
       String warn = "Device found: " + aScr.getDeviceDescription() + "\n\n" +
               "click Check: a short test is run with the device\n" +
-              "click Default: device as default screen for capture\n" +
-              "click Cancel: nothing is done\n" +
+              "click Default: set device as default screen for capture\n" +
+              "click Cancel: nothing is done (default screen is reset)\n" +
               "\nBE PREPARED: Feature is experimental - no guarantee ;-)";
       String[] options = new String[3];
       options[WARNING_DO_NOTHING] = "Check";
@@ -1768,24 +1769,56 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       options[WARNING_CANCEL] = "Cancel";
       int ret = JOptionPane.showOptionDialog(this, warn, title, 0, JOptionPane.WARNING_MESSAGE, null, options, options[2]);
       if (ret == WARNING_CANCEL || ret == JOptionPane.CLOSED_OPTION) {
+        defaultScreen = null;
         return;
       }
       if (ret == WARNING_DO_NOTHING) {
-        //TODO run a test
-        title = "Android Support - Testing device";
-        Sikulix.popup("Take care\n\nthat device is on and unlocked\n\nbefore clicking ok");
-        aScr.wakeUp(2);
-        aScr.wait(1f);
-        aScr.tapButton(ADBScreen.MENU);
-      };
-      if (ret == WARNING_ACCEPTED) {
-        //TODO set as default screen
-      };
+        SikuliIDE.hideIDE();
+        Thread test = new Thread() {
+          @Override
+          public void run() {
+            androidSupportTest(aScr);
+          }
+        };
+        test.start();
+      } else if (ret == WARNING_ACCEPTED) {
+        defaultScreen = aScr;
+      }
     } else if (!ADBClient.isAdbAvailable) {
       Sikulix.popError("Package adb seems not to be available.\nIt must be installed for Android support.", title);
     } else {
       Sikulix.popError("No android device attached", title);
     }
+  }
+
+  private void androidSupportTest(ADBScreen aScr) {
+    String title = "Android Support - Testing device";
+    Sikulix.popup("Take care\n\nthat device is on and unlocked\n\nbefore clicking ok", title);
+    aScr.wakeUp(2);
+    aScr.key(aScr.HOME);
+    if (Sikulix.popAsk("Now the device should show the HOME screen.\n" +
+            "\nclick YES to proceed watching the test on the device" +
+            "\nclick NO to end the test now", title)) {
+      aScr.swipeLeft();
+      aScr.swipeRight();
+      aScr.wait(1f);
+      if (Sikulix.popAsk("You should have seen a swipe left and a swipe right.\n" +
+              "\nclick YES to capture an icon from homescreen and then tap it" +
+              "\nclick NO to end the test now", title)) {
+        ScreenImage sIMg = aScr.userCapture("AndroidTest");
+        sIMg.save(RunTime.get().fSikulixStore.getAbsolutePath(), "android");
+        try {
+          aScr.tap(new Image(sIMg));
+          Sikulix.popup("The image was found on the device's current screen" +
+                  "\nand should have been tapped.\n" +
+                  "\nIf you think it worked, you can now try\n" +
+                  "to capture needed images from the device", title);
+        } catch (FindFailed findFailed) {
+          Sikulix.popError("Sorry, the image you captured was\nnot found on the device's current screen", title);
+        }
+      }
+    }
+    SikuliIDE.showIDE();
   }
   //</editor-fold>
 
@@ -1978,59 +2011,59 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   //<editor-fold defaultstate="collapsed" desc="Init LeftBar Commands">
   private String[] getCommandCategories() {
     String[] CommandCategories = {
-      _I("cmdListFind"),
-      _I("cmdListMouse"),
-      _I("cmdListKeyboard"),
-      _I("cmdListObserver")
+            _I("cmdListFind"),
+            _I("cmdListMouse"),
+            _I("cmdListKeyboard"),
+            _I("cmdListObserver")
     };
     return CommandCategories;
   }
 
   private String[][] getCommandsOnToolbar() {
     String[][] CommandsOnToolbar = {
-      {"find"}, {"PATTERN"},
-      {_I("cmdFind")},
-      {"findAll"}, {"PATTERN"},
-      {_I("cmdFindAll")},
-      {"wait"}, {"PATTERN", "[timeout]"},
-      {_I("cmdWait")},
-      {"waitVanish"}, {"PATTERN", "[timeout]"},
-      {_I("cmdWaitVanish")},
-      {"exists"}, {"PATTERN", "[timeout]"},
-      {_I("cmdExists")},
-      {"----"}, {}, {},
-      {"click"}, {"PATTERN", "[modifiers]"},
-      {_I("cmdClick")},
-      {"doubleClick"}, {"PATTERN", "[modifiers]"},
-      {_I("cmdDoubleClick")},
-      {"rightClick"}, {"PATTERN", "[modifiers]"},
-      {_I("cmdRightClick")},
-      {"hover"}, {"PATTERN"},
-      {_I("cmdHover")},
-      {"dragDrop"}, {"PATTERN", "PATTERN", "[modifiers]"},
-      {_I("cmdDragDrop")},
+            {"find"}, {"PATTERN"},
+            {_I("cmdFind")},
+            {"findAll"}, {"PATTERN"},
+            {_I("cmdFindAll")},
+            {"wait"}, {"PATTERN", "[timeout]"},
+            {_I("cmdWait")},
+            {"waitVanish"}, {"PATTERN", "[timeout]"},
+            {_I("cmdWaitVanish")},
+            {"exists"}, {"PATTERN", "[timeout]"},
+            {_I("cmdExists")},
+            {"----"}, {}, {},
+            {"click"}, {"PATTERN", "[modifiers]"},
+            {_I("cmdClick")},
+            {"doubleClick"}, {"PATTERN", "[modifiers]"},
+            {_I("cmdDoubleClick")},
+            {"rightClick"}, {"PATTERN", "[modifiers]"},
+            {_I("cmdRightClick")},
+            {"hover"}, {"PATTERN"},
+            {_I("cmdHover")},
+            {"dragDrop"}, {"PATTERN", "PATTERN", "[modifiers]"},
+            {_I("cmdDragDrop")},
       /* RaiMan not used
        * {"drag"}, {"PATTERN"},
        * {"dropAt"}, {"PATTERN", "[delay]"},
        * RaiMan not used */
-      {"----"}, {}, {},
-      {"type"}, {"_text", "[modifiers]"},
-      {_I("cmdType")},
-      {"type"}, {"PATTERN", "_text", "[modifiers]"},
-      {_I("cmdType2")},
-      {"paste"}, {"_text", "[modifiers]"},
-      {_I("cmdPaste")},
-      {"paste"}, {"PATTERN", "_text", "[modifiers]"},
-      {_I("cmdPaste2")},
-      {"----"}, {}, {},
-      {"onAppear"}, {"PATTERN", "_hnd"},
-      {_I("cmdOnAppear")},
-      {"onVanish"}, {"PATTERN", "_hnd"},
-      {_I("cmdOnVanish")},
-      {"onChange"}, {"_hnd"},
-      {_I("cmdOnChange")},
-      {"observe"}, {"[time]", "[background]"},
-      {_I("cmdObserve")},};
+            {"----"}, {}, {},
+            {"type"}, {"_text", "[modifiers]"},
+            {_I("cmdType")},
+            {"type"}, {"PATTERN", "_text", "[modifiers]"},
+            {_I("cmdType2")},
+            {"paste"}, {"_text", "[modifiers]"},
+            {_I("cmdPaste")},
+            {"paste"}, {"PATTERN", "_text", "[modifiers]"},
+            {_I("cmdPaste2")},
+            {"----"}, {}, {},
+            {"onAppear"}, {"PATTERN", "_hnd"},
+            {_I("cmdOnAppear")},
+            {"onVanish"}, {"PATTERN", "_hnd"},
+            {_I("cmdOnVanish")},
+            {"onChange"}, {"_hnd"},
+            {_I("cmdOnChange")},
+            {"observe"}, {"[time]", "[background]"},
+            {_I("cmdObserve")},};
     return CommandsOnToolbar;
   }
 
@@ -2040,7 +2073,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     PreferencesUser pref = PreferencesUser.getInstance();
     JCheckBox chkAutoCapture
             = new JCheckBox(_I("cmdListAutoCapture"),
-                    pref.getAutoCaptureForCmdButtons());
+            pref.getAutoCaptureForCmdButtons());
     chkAutoCapture.addChangeListener(new ChangeListener() {
       @Override
       public void stateChanged(javax.swing.event.ChangeEvent e) {
@@ -2517,7 +2550,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       private String parent;
 
       public SubRun(IScriptRunner[] srunners, File scriptFile, File path,
-              String parent, String tabtitle) {
+                    String parent, String tabtitle) {
         this.srunners = srunners;
         this.scriptFile = scriptFile;
         this.path = path;

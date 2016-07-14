@@ -5,6 +5,7 @@
  */
 package org.sikuli.ide;
 
+import org.sikuli.android.ADBScreen;
 import org.sikuli.basics.PreferencesUser;
 import java.awt.*;
 import java.awt.event.*;
@@ -14,14 +15,14 @@ import javax.swing.*;
 import javax.swing.text.*;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
+import org.sikuli.script.*;
+import org.sikuli.script.Sikulix;
 import org.sikuli.util.OverlayCapturePrompt;
-import org.sikuli.script.ScreenImage;
 import org.sikuli.basics.Settings;
-import org.sikuli.script.Key;
-import org.sikuli.script.RunTime;
-import org.sikuli.script.Screen;
 import org.sikuli.util.EventObserver;
 import org.sikuli.util.EventSubject;
+
+import static org.sikuli.script.Sikulix.popup;
 
 class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable, EventObserver {
 
@@ -81,6 +82,9 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
     capture(delay);
   }
 
+  IScreen defaultScreen = null;
+  ScreenImage sImgNonLocal = null;
+
   public void capture(final int delay) {
     String line = "";
     SikuliIDE ide = SikuliIDE.getInstance();
@@ -93,15 +97,36 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
     }
     Debug.log(4, "TRACE: ButtonCapture: doPrompt");
     RunTime.pause(((float) delay)/1000);
-    Screen.doPrompt("Select an image", this);
+    defaultScreen = SikuliIDE.getDefaultScreen();
+    if (defaultScreen == null) {
+      Screen.doPrompt("Select an image", this);
+    } else {
+      Sikulix.popup("Android capture");
+      Thread adbCapture = new Thread() {
+        @Override
+        public void run() {
+          ADBScreen aScr = (ADBScreen) defaultScreen;
+          aScr.wakeUp(2);
+          sImgNonLocal = aScr.userCapture("");
+          ButtonCapture.this.update((EventSubject) null);
+        }
+      };
+      adbCapture.start();
+    }
   }
 
   @Override
   public void update(EventSubject es) {
     Debug.log(4, "TRACE: ButtonCapture: update");
-    OverlayCapturePrompt ocp = (OverlayCapturePrompt) es;
-    ScreenImage simg = ocp.getSelection();
-    Screen.closePrompt();
+    ScreenImage simg = null;
+    OverlayCapturePrompt ocp = null;
+    if (null == es) {
+      simg = sImgNonLocal;
+    } else {
+      ocp = (OverlayCapturePrompt) es;
+      simg = ocp.getSelection();
+      Screen.closePrompt();
+    }
     String filename = null;
     String fullpath = null;
     EditorPane pane = SikuliIDE.getInstance().getCurrentCodePane();
@@ -138,7 +163,9 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
     }
     Settings.OverwriteImages = saveOverwrite;
     captureCompleted(fullpath);
-    Screen.resetPrompt(ocp);
+    if (ocp != null) {
+      Screen.resetPrompt(ocp);
+    }
     SikuliIDE.showAgain();
     if (debugTrace) {
       Debug.on(3);

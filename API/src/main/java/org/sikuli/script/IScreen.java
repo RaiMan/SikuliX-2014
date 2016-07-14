@@ -34,6 +34,8 @@ public interface IScreen {
 
 	public int getID();
 
+	public String getIDString();
+
 	public ScreenImage getLastScreenImageFromScreen();
 
   public String getLastScreenImageFile(String path, String name) throws IOException;

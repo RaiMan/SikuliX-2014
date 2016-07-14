@@ -126,7 +126,7 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
         } else {
           if (isLocalScreen) {
             destScreenLocation = new Location(destx + scrOCP.getX(), desty + scrOCP.getY());
-          Debug.log(3, "CapturePrompt: finished at (%d,%d) as %s on %d", destx, desty,
+            Debug.log(3, "CapturePrompt: finished at (%d,%d) as %s on %d", destx, desty,
               destScreenLocation.toStringShort(), srcScreenId);
           }
         }

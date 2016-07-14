@@ -25,15 +25,23 @@ import java.util.regex.Pattern;
 public class ADBDevice {
 
   private static int lvl = 3;
+
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, "ADBDevice: " + message, args);
   }
 
   private JadbDevice device = null;
+  private int w = 0;
+  private int h = 0;
   private ADBRobot robot = null;
   private ADBScreen screen = null;
 
   private static ADBDevice adbDevice = null;
+
+  public static int KEY_HOME = 3;
+  public static int KEY_BACK = 4;
+  public static int KEY_MENU = 82;
+
 
   private ADBDevice() {
   }
@@ -62,10 +70,10 @@ public class ADBDevice {
   }
 
   public Rectangle getBounds() {
-//    BufferedImage bimg = captureDeviceScreen();
-//    return new Rectangle(0, 0, bimg.getWidth(), bimg.getHeight());
     Dimension dim = getDisplayDimension();
-    return new Rectangle(0, 0, (int) dim.getWidth(), (int) dim.getHeight());
+    w = (int) dim.getWidth();
+    h = (int) dim.getHeight();
+    return new Rectangle(0, 0, w, h);
   }
 
   public ScreenImage captureScreen(Rectangle screenRect) {
@@ -85,6 +93,43 @@ public class ADBDevice {
       log(-1, "capture: %s", e);
     }
     return bImg;
+  }
+
+  public byte[] captureDeviceScreenRaw() {
+    return captureDeviceScreenRaw(0, 0, w, h);
+  }
+
+  public byte[] captureDeviceScreenRaw(int y, int _h) {
+    return captureDeviceScreenRaw(0, y, w, _h);
+  }
+
+  public byte[] captureDeviceScreenRaw(int x, int y, int _w, int _h) {
+    byte[] imagePrefix = new byte[12];
+    byte[] imageRow = new byte[(int) (w * 4)];
+    byte[] image = new byte[0];
+    Debug timer = Debug.startTimer();
+    try {
+      InputStream stdout = device.executeShell("screencap");
+      stdout.read(imagePrefix);
+      if (imagePrefix[8] != 0x01) {
+        log(-1, "captureDeviceScreenRaw: image type not RGBA");
+        return image;
+      }
+      image = new byte[_w * _h * 4];
+      long skipped = y;
+      stdout.skip(skipped * 4);
+      long rowPre = x;
+      imageRow = new byte[(int) (_w * 4)];
+      for (int count = 0; count < _h; count++) {
+        long rs = stdout.skip(rowPre * 4);
+        long r = stdout.read(image, count * _w * 4, _w * 4);
+      }
+      long duration = timer.end();
+      log(lvl, "raw-capture:[%d,%d %dx%d] %d", x, y, _w, _h, duration);
+    } catch (IOException | JadbException e) {
+      log(-1, "raw-capture: [%d,%d %dx%d] %s", x, y, _w, _h, e);
+    }
+    return image;
   }
 
   public Boolean isDisplayOn() {

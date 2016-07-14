@@ -451,14 +451,16 @@ def use(scr=None, remote=False, fromWith = False):
     remoteScreen.close()
     remoteScreen = None
   if not scr:
-    SCREEN = JScreen()
+    newScreen = JScreen()
   else:
-    SCREEN = scr
-  Debug.log(3, "Jython: requested to use as default region: " + SCREEN.toStringShort())
-  globals()['SIKULISAVED'] = _exposeAllMethods(SCREEN, globals().get('SIKULISAVED'), theGlobals, None)
-  theGlobals['SCREEN'] = SCREEN
-  if remote:
-    remoteScreen = SCREEN
+    newScreen = scr
+  if (newScreen.isValid()):
+    SCREEN = newScreen
+    Debug.log(3, "Jython: requested to use as default region: " + SCREEN.toStringShort())
+    globals()['SIKULISAVED'] = _exposeAllMethods(SCREEN, globals().get('SIKULISAVED'), theGlobals, None)
+    theGlobals['SCREEN'] = SCREEN
+    if remote:
+      remoteScreen = SCREEN
   return SCREEN
 
 ##

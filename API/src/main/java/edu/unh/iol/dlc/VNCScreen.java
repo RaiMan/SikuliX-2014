@@ -343,6 +343,10 @@ public class VNCScreen extends Region implements EventObserver, IScreen {
     return _curID;
   }
 
+  public String getIDString() {
+    return String.format("VNC_%d", getID());
+  }
+
   @Override
   public int getIdFromPoint(int x, int y) {
     return _curID;

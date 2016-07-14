@@ -37,7 +37,9 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
   public boolean needsUnLock = true;
   public int waitAfterAction = 1;
 
-  public static int MENU = 82;
+  public static int MENU = ADBDevice.KEY_MENU;
+  public static int HOME = ADBDevice.KEY_HOME;
+  public static int BACK = ADBDevice.KEY_BACK;
 
   //---------------------------Inits
   private ADBDevice device = null;
@@ -53,6 +55,8 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
       bounds = device.getBounds();
       w = bounds.width;
       h = bounds.height;
+    } else {
+      throw new UnsupportedOperationException("ADBScreen: No devices attached");
     }
   }
 
@@ -100,8 +104,8 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
     }
   }
 
-  public void tapButton(int button) {
-    device.inputKeyEvent(button);
+  public void key(int key) {
+    device.inputKeyEvent(key);
   }
 
   public <PFRML> void swipe(PFRML from, PFRML to) throws FindFailed {
@@ -222,10 +226,16 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
     return 0;
   }
 
+  public String getIDString() {
+    return "Android";
+  }
+
   @Override
   public ScreenImage getLastScreenImageFromScreen() {
     return lastScreenImage;
   }
+
+  private EventObserver captureObserver = null;
 
   @Override
   public ScreenImage userCapture(final String msg) {

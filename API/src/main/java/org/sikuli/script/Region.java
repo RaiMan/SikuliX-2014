@@ -161,12 +161,21 @@ public class Region {
             throwException ? "Y" : "N", autoWaitTimeout);
   }
 
+  public String getIDString() {
+    return "NonLocal";
+  }
+
   /**
    *
    * @return a compact description
    */
   public String toStringShort() {
-    return String.format("R[%d,%d %dx%d]@S(%s)", x, y, w, h, (getScreen() == null ? "?" : getScreen().getID()));
+    if (isOtherScreen()) {
+      return String.format("%s, %dx%d", getScreen().getIDString(), w, h);
+    } else {
+      return String.format("R[%d,%d %dx%d]@S(%s)", x, y, w, h,
+              (getScreen() == null ? "?" : getScreen().getID()));
+    }
   }
 
   public String toJSON() {
