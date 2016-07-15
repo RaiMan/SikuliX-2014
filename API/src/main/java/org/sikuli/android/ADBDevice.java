@@ -6,6 +6,9 @@
 
 package org.sikuli.android;
 
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.imgproc.Imgproc;
 import org.sikuli.basics.Debug;
 import org.sikuli.script.RunTime;
 import org.sikuli.script.ScreenImage;
@@ -15,10 +18,10 @@ import se.vidstige.jadb.JadbException;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -31,8 +34,8 @@ public class ADBDevice {
   }
 
   private JadbDevice device = null;
-  private int w = 0;
-  private int h = 0;
+  private int devW = -1;
+  private int devH = -1;
   private ADBRobot robot = null;
   private ADBScreen screen = null;
 
@@ -70,72 +73,90 @@ public class ADBDevice {
   }
 
   public Rectangle getBounds() {
-    Dimension dim = getDisplayDimension();
-    w = (int) dim.getWidth();
-    h = (int) dim.getHeight();
-    return new Rectangle(0, 0, w, h);
-  }
-
-  public ScreenImage captureScreen(Rectangle screenRect) {
-    BufferedImage bimg = captureDeviceScreen();
-    BufferedImage subBimg = bimg.getSubimage(screenRect.x, screenRect.y, screenRect.width, screenRect.height);
-    return new ScreenImage(screenRect, subBimg);
-  }
-
-  private BufferedImage captureDeviceScreen() {
-    BufferedImage bImg = null;
-    Debug timer = Debug.startTimer();
-    try {
-      InputStream stdout = device.executeShell("screencap", "-p");
-      bImg = ImageIO.read(stdout);
-      log(lvl, "capture: %d", timer.end());
-    } catch (IOException | JadbException e) {
-      log(-1, "capture: %s", e);
+    if (devW < 0) {
+      Dimension dim = getDisplayDimension();
+      devW = (int) dim.getWidth();
+      devH = (int) dim.getHeight();
     }
-    return bImg;
+    return new Rectangle(0, 0, devW, devH);
   }
 
-  public byte[] captureDeviceScreenRaw() {
-    return captureDeviceScreenRaw(0, 0, w, h);
+  public ScreenImage captureScreen() {
+    BufferedImage bimg = captureDeviceScreen();
+    return new ScreenImage(getBounds(), bimg);
   }
 
-  public byte[] captureDeviceScreenRaw(int y, int _h) {
-    return captureDeviceScreenRaw(0, y, w, _h);
+  public ScreenImage captureScreen(Rectangle rect) {
+    BufferedImage bimg = captureDeviceScreen(rect.x, rect.y, rect.width, rect.height);
+    return new ScreenImage(rect, bimg);
   }
 
-  public byte[] captureDeviceScreenRaw(int x, int y, int _w, int _h) {
+  public BufferedImage captureDeviceScreen() {
+    return captureDeviceScreen(0, 0, devW, devH);
+  }
+
+  public BufferedImage captureDeviceScreen(int y, int _h) {
+    return captureDeviceScreen(0, y, devW, _h);
+  }
+
+  public BufferedImage captureDeviceScreen(int x, int y, int w, int h) {
+    Mat matImage = captureDeviceScreenMat(x, y, w, h);
+    BufferedImage bImage = null;
+    if (matImage != null) {
+      bImage = new BufferedImage(matImage.width(), matImage.height(), BufferedImage.TYPE_3BYTE_BGR);
+      byte[] bImageData = ((DataBufferByte) bImage.getRaster().getDataBuffer()).getData();
+      matImage.get(0, 0, bImageData);
+    }
+    return bImage;
+  }
+
+  public Mat captureDeviceScreenMat(int x, int y, int w, int h) {
     byte[] imagePrefix = new byte[12];
     byte[] image = new byte[0];
-    if (x + _w > w) {
-      _w = w - x;
+    int actW = w;
+    if (x + w > devW) {
+      actW = devW - x;
     }
-    if (y + _h > h) {
-      _h = h - y;
+    int actH = h;
+    if (y + h > devH) {
+      actH = devH - y;
     }
     Debug timer = Debug.startTimer();
     try {
       InputStream stdout = device.executeShell("screencap");
       stdout.read(imagePrefix);
       if (imagePrefix[8] != 0x01) {
-        log(-1, "captureDeviceScreenRaw: image type not RGBA");
-        return image;
+        log(-1, "captureDeviceScreenMat: image type not RGBA");
+        return null;
       }
-      int imgW = byte2int(imagePrefix, 0, 4);
-      int imgH = byte2int(imagePrefix, 4, 4);
-      byte[] imageRow = new byte[imgW * 4];
-      image = new byte[_w * _h * 4];
-      stdout.skip(y * imgW * 4);
-      for (int count = 0; count < _h; count++) {
-        stdout.skip(x * 4);
-        stdout.read(image, count * _w * 4, _w * 4);
-        stdout.skip((imgW - x -_w) * 4);
+      if (byte2int(imagePrefix, 0, 4) != devW || byte2int(imagePrefix, 4, 4) != devH) {
+        log(-1, "captureDeviceScreenMat: width or height differ from device values");
+        return null;
+      }
+      image = new byte[actW * actH * 4];
+      int lenRow = devW * 4;
+      byte[] row = new byte[lenRow];
+      for (int count = 0; count < y; count++) {
+        stdout.read(row);
+      }
+      for (int count = 0; count < actH; count++) {
+        if (x > 0) {
+          stdout.read(row);
+          System.arraycopy(row, x * 4, image, count * actW * 4, actW * 4);
+        } else {
+          stdout.read(image, count * actW * 4, actW * 4);
+        }
       }
       long duration = timer.end();
-      log(lvl, "raw-capture:[%d,%d %dx%d] %d", x, y, _w, _h, duration);
+      log(lvl, "captureDeviceScreenMat:[%d,%d %dx%d] %d", x, y, actW, actH, duration);
     } catch (IOException | JadbException e) {
-      log(-1, "raw-capture: [%d,%d %dx%d] %s", x, y, _w, _h, e);
+      log(-1, "captureDeviceScreenMat: [%d,%d %dx%d] %s", x, y, actW, actH, e);
     }
-    return image;
+    Mat matOrg = new Mat(actH, actW, CvType.CV_8UC4);
+    matOrg.put(0, 0, image);
+    Mat matImage = new Mat();
+    Imgproc.cvtColor(matOrg, matImage, Imgproc.COLOR_RGBA2BGR, 3);
+    return matImage;
   }
 
   private int byte2int(byte[] bytes, int start, int len) {

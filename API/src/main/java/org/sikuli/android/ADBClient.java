@@ -26,7 +26,7 @@ public class ADBClient {
     if (jadb == null) {
       try {
         new AdbServerLauncher().launch();
-        Debug.info("ADBClient: ADBServer started");
+        Debug.log(3, "ADBClient: ADBServer started");
         getConnection(false);
         if (jadb != null) {
           shouldStopServer = true;
@@ -66,7 +66,7 @@ public class ADBClient {
       }
     }
     if (device != null) {
-      Debug.info("ADBClient: init: attached device: serial(%s) state(%s)", serial, state);
+      Debug.log(3, "ADBClient: init: attached device: serial(%s) state(%s)", serial, state);
     }
   }
 
@@ -75,7 +75,7 @@ public class ADBClient {
       try {
         jadb = new JadbConnection();
         jadb.getHostVersion();
-        Debug.info("ADBClient: ADBServer connection established");
+        Debug.log(3, "ADBClient: ADBServer connection established");
       } catch (Exception e) {
         if (!quiet) {
           Debug.error("ADBClient: ADBServer connection not possible: %s", e.getMessage());

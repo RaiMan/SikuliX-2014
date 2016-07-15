@@ -18,6 +18,10 @@ import java.util.ArrayList;
  */
 public class ADBScreen extends Region implements EventObserver, IScreen {
 
+  static {
+    RunTime.loadLibrary("VisionProxy");
+  }
+
   private static String me = "ADBScreen: ";
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, me + message, args);
@@ -204,16 +208,9 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
     return capture(reg.x, reg.y, reg.w, reg.h);
   }
 
-//  @Override
+  @Override
   public ScreenImage capture(Rectangle rect) {
     return capture(rect.x, rect.y, rect.width, rect.height);
-  }
-  public byte[] rawcapture(Rectangle rect) {
-    ScreenImage sImg = null;
-    Debug timer = Debug.startTimer();
-    byte[] imageBytes = device.captureDeviceScreenRaw(rect.x, rect.y, rect.width, rect.height);
-    long duration = timer.end();
-    return imageBytes;
   }
 
   public void showTarget(Location loc) {

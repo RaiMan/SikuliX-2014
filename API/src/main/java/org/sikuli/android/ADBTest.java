@@ -6,11 +6,18 @@
 
 package org.sikuli.android;
 
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.highgui.Highgui;
+import org.opencv.imgproc.Imgproc;
 import org.sikuli.basics.Debug;
 import org.sikuli.script.*;
 import org.sikuli.script.Image;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
+import java.io.File;
 
 /**
  * Created by RaiMan on 12.07.16.
@@ -29,9 +36,11 @@ public class ADBTest {
     System.out.println(String.format(message, args));
   }
 
+  private static RunTime rt = null;
+
   public static void main(String[] args) throws FindFailed {
 
-    boolean runTests = false;
+    boolean runTests = true;
 
     ADBScreen aScr = startTest();
 
@@ -39,7 +48,6 @@ public class ADBTest {
       if (runTests) {
 
         basicTest(aScr);
-        captureRawTest(aScr);
 
         System.exit(0);
       }
@@ -49,16 +57,20 @@ public class ADBTest {
 
     // ********* playground
     Rectangle rect = null;
-    byte[] image = null;
-    for (int i = 0; i < 1920; i += 100) {
-      rect = new Rectangle(0, i, 1200, 100);
-      image = aScr.rawcapture(rect);
-    }
+    ScreenImage image = null;
+    int x = 248;
+    int y = 188;
+    int h = 128;
+    int w = 128;
+    rect = new Rectangle(x, y, w, h);
+    image = aScr.capture(rect);
+    logp("%s", image);
   }
 
   private static ADBScreen startTest() {
-    ADBScreen adbs = new ADBScreen();
     Debug.on(3);
+    rt = RunTime.get();
+    ADBScreen adbs = new ADBScreen();
     log(lvl, "%s", adbs);
     if (adbs.isValid()) {
       adbs.wakeUp(2);
@@ -71,23 +83,12 @@ public class ADBTest {
 
 
   private static void basicTest(ADBScreen adbs) throws FindFailed {
-    Debug.info("**************** running basic test");
-      adbs.swipeLeft();
-      adbs.swipeRight();
-      adbs.wait(1f);
-      ScreenImage sIMg = adbs.userCapture("Android");
-      sIMg.save(RunTime.get().fSikulixStore.getAbsolutePath(), "android");
-      adbs.tap(new Image(sIMg));
-  }
-
-  private static void captureRawTest(ADBScreen adbs) {
-    Debug.info("**************** running test raw capture");
-    byte[] image = null;
-    image = adbs.getDevice().captureDeviceScreenRaw();
-    image = adbs.getDevice().captureDeviceScreenRaw(0, 250);
-    image = adbs.getDevice().captureDeviceScreenRaw((int) (adbs.h / 2 - 125), 250);
-    image = adbs.getDevice().captureDeviceScreenRaw(adbs.h - 250 - 1, 250);
-    image = adbs.getDevice().captureDeviceScreenRaw(500, 1000, 250, 250);
-    image = adbs.getDevice().captureDeviceScreenRaw(adbs.getCenter().x, adbs.getCenter().y, 1, 1);
+    log(lvl, "**************** running basic test");
+    adbs.swipeLeft();
+    adbs.swipeRight();
+    adbs.wait(1f);
+    ScreenImage sIMg = adbs.userCapture("Android");
+    sIMg.save(RunTime.get().fSikulixStore.getAbsolutePath(), "android");
+    adbs.tap(new Image(sIMg));
   }
 }
