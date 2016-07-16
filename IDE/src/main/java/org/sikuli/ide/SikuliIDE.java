@@ -1783,6 +1783,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         test.start();
       } else if (ret == WARNING_ACCEPTED) {
         defaultScreen = aScr;
+        return;
       }
     } else if (!ADBClient.isAdbAvailable) {
       Sikulix.popError("Package adb seems not to be available.\nIt must be installed for Android support.", title);
@@ -1812,7 +1813,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
           Sikulix.popup("The image was found on the device's current screen" +
                   "\nand should have been tapped.\n" +
                   "\nIf you think it worked, you can now try\n" +
-                  "to capture needed images from the device", title);
+                  "to capture needed images from the device.\n" +
+                  "\nYou have to come back here and click Default!", title);
         } catch (FindFailed findFailed) {
           Sikulix.popError("Sorry, the image you captured was\nnot found on the device's current screen", title);
         }

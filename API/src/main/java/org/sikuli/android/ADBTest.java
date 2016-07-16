@@ -49,6 +49,8 @@ public class ADBTest {
 
         basicTest(aScr);
 
+        ADBScreen.stop();
+
         System.exit(0);
       }
     } else {
@@ -56,15 +58,6 @@ public class ADBTest {
     }
 
     // ********* playground
-    Rectangle rect = null;
-    ScreenImage image = null;
-    int x = 248;
-    int y = 188;
-    int h = 128;
-    int w = 128;
-    rect = new Rectangle(x, y, w, h);
-    image = aScr.capture(rect);
-    logp("%s", image);
   }
 
   private static ADBScreen startTest() {

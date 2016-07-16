@@ -151,8 +151,9 @@ public class ADBDevice {
       for (int count = 0; count < y; count++) {
         stdout.read(row);
       }
+      boolean shortRow = x + actW < devW;
       for (int count = 0; count < actH; count++) {
-        if (x > 0) {
+        if (shortRow) {
           stdout.read(row);
           System.arraycopy(row, x * 4, image, count * actW * 4, actW * 4);
         } else {

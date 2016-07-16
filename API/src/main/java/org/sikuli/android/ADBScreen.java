@@ -62,10 +62,8 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
   }
 
   public static void stop() {
-    if (screen != null) {
       ADBDevice.reset();
       screen = null;
-    }
   }
 
   public ADBScreen() {
