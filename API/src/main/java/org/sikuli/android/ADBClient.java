@@ -5,7 +5,6 @@ import org.sikuli.basics.Debug;
 import se.vidstige.jadb.AdbServerLauncher;
 import se.vidstige.jadb.JadbConnection;
 import se.vidstige.jadb.JadbDevice;
-import se.vidstige.jadb.JadbException;
 
 import java.io.IOException;
 import java.util.List;
@@ -30,6 +29,7 @@ public class ADBClient {
         getConnection(false);
         if (jadb != null) {
           shouldStopServer = true;
+
         }
       } catch (Exception e) {
         //Cannot run program "adb": error=2, No such file or directory
@@ -67,6 +67,21 @@ public class ADBClient {
     }
     if (device != null) {
       Debug.log(3, "ADBClient: init: attached device: serial(%s) state(%s)", serial, state);
+    }
+  }
+
+  public static void reset() {
+    device = null;
+    jadb = null;
+    Process p = null;
+    if (!shouldStopServer) {
+      return;
+    }
+    try {
+      p = Runtime.getRuntime().exec(new String[] {"adb", "kill-server"});
+      p.waitFor();
+    } catch (Exception e) {
+      Debug.error("ADBClient: reset: kill-server did not work");
     }
   }
 

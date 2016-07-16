@@ -47,6 +47,26 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
 
   //---------------------------Inits
   private ADBDevice device = null;
+  private static ADBScreen screen = null;
+
+  public static ADBScreen start() {
+    if (screen == null) {
+      try {
+        screen = new ADBScreen();
+      } catch (Exception e) {
+        log(-1, "start: No devices attached");
+        screen = null;
+      }
+    }
+    return screen;
+  }
+
+  public static void stop() {
+    if (screen != null) {
+      ADBDevice.reset();
+      screen = null;
+    }
+  }
 
   public ADBScreen() {
     super();
@@ -193,7 +213,7 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
   @Override
   public ScreenImage capture(int x, int y, int w, int h) {
     ScreenImage simg = null;
-    if (robot != null) {
+    if (device != null) {
       log(logLvl, "ADBScreen.capture: (%d,%d) %dx%d", x, y, w, h);
       simg = device.captureScreen(new Rectangle(x, y, w, h));
     } else {

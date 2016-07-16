@@ -10,6 +10,7 @@ import org.opencv.core.CvType;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
 import org.sikuli.basics.Debug;
+import org.sikuli.basics.FileManager;
 import org.sikuli.script.RunTime;
 import org.sikuli.script.ScreenImage;
 import se.vidstige.jadb.JadbDevice;
@@ -19,6 +20,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -58,6 +60,16 @@ public class ADBDevice {
       }
     }
     return adbDevice;
+  }
+
+  public static void reset() {
+    adbDevice = null;
+    ADBClient.reset();
+  }
+
+  public String toString() {
+    return String.format("Android device: serial: %s display: %dx%d",
+            getDeviceSerial(), getBounds().width, getBounds().height);
   }
 
   public ADBRobot getRobot(ADBScreen screen) {
@@ -188,6 +200,7 @@ public class ADBDevice {
 
   private Dimension getDisplayDimension() {
     String dump = dumpsys("display");
+    String token = "mDefaultViewport= ... deviceWidth=1200, deviceHeight=1920}";
     Dimension dim = null;
     Pattern displayDimension = Pattern.compile("mDefaultViewport=.*?deviceWidth=(\\d*).*?deviceHeight=(\\d*)");
     Matcher match = displayDimension.matcher(dump);
@@ -196,7 +209,6 @@ public class ADBDevice {
       int h = Integer.parseInt(match.group(2));
       dim = new Dimension(w, h);
     } else {
-      String token = "mDefaultViewport= ... deviceWidth=1200, deviceHeight=1920}";
       log(-1, "getDisplayDimension: dumpsys display: token not found: %s", token);
     }
     return dim;
@@ -209,13 +221,36 @@ public class ADBDevice {
       if (component == null || component.isEmpty()) {
         component = "power";
       }
-      stdout = device.executeShell("dumpsys", component);
+      if (component.toLowerCase().contains("all")) {
+        stdout = device.executeShell("dumpsys");
+      } else {
+        stdout = device.executeShell("dumpsys", component);
+      }
       out = inputStreamToString(stdout, "UTF-8");
-      //log(lvl, "dumpsys: %s\n%s", component, out);
     } catch (IOException | JadbException e) {
       log(-1, "dumpsys: %s: %s", component, e);
     }
     return out;
+  }
+
+  public String printDump(String component) {
+    String dump = dumpsys(component);
+    if (!dump.isEmpty()) {
+      System.out.println("***** Android device dump: " + component);
+      System.out.println(dump);
+    }
+    return dump;
+  }
+
+  public String printDump() {
+    String dump = dumpsys("all");
+    if (!dump.isEmpty()) {
+      File out = new File(RunTime.get().fSikulixStore, "android_dump_" + getDeviceSerial() + ".txt");
+      System.out.println("***** Android device dump all services");
+      System.out.println("written to file: " + out.getAbsolutePath());
+      FileManager.writeStringToFile(dump, out);
+    }
+    return dump;
   }
 
   private static final int BUFFER_SIZE = 4 * 1024;
