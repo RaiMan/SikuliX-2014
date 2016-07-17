@@ -83,6 +83,7 @@ import org.jdesktop.swingx.JXTaskPane;
 import org.jdesktop.swingx.JXTaskPaneContainer;
 import org.sikuli.android.ADBClient;
 import org.sikuli.android.ADBScreen;
+import org.sikuli.android.ADBTest;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.HotkeyEvent;
@@ -1793,33 +1794,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   private void androidSupportTest(ADBScreen aScr) {
-    String title = "Android Support - Testing device";
-    Sikulix.popup("Take care\n\nthat device is on and unlocked\n\nbefore clicking ok", title);
-    aScr.wakeUp(2);
-    aScr.key(aScr.HOME);
-    if (Sikulix.popAsk("Now the device should show the HOME screen.\n" +
-            "\nclick YES to proceed watching the test on the device" +
-            "\nclick NO to end the test now", title)) {
-      aScr.swipeLeft();
-      aScr.swipeRight();
-      aScr.wait(1f);
-      if (Sikulix.popAsk("You should have seen a swipe left and a swipe right.\n" +
-              "\nclick YES to capture an icon from homescreen and then tap it" +
-              "\nclick NO to end the test now", title)) {
-        ScreenImage sIMg = aScr.userCapture("AndroidTest");
-        sIMg.save(RunTime.get().fSikulixStore.getAbsolutePath(), "android");
-        try {
-          aScr.tap(new Image(sIMg));
-          Sikulix.popup("The image was found on the device's current screen" +
-                  "\nand should have been tapped.\n" +
-                  "\nIf you think it worked, you can now try\n" +
-                  "to capture needed images from the device.\n" +
-                  "\nYou have to come back here and click Default!", title);
-        } catch (FindFailed findFailed) {
-          Sikulix.popError("Sorry, the image you captured was\nnot found on the device's current screen", title);
-        }
-      }
-    }
+    ADBTest.ideTest(aScr);
     SikuliIDE.showIDE();
   }
   //</editor-fold>
