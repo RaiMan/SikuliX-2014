@@ -1,10 +1,7 @@
 package org.sikuli.android;
 
 import org.sikuli.basics.Debug;
-import org.sikuli.script.IRobot;
-import org.sikuli.script.IScreen;
-import org.sikuli.script.Location;
-import org.sikuli.script.ScreenImage;
+import org.sikuli.script.*;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -84,17 +81,24 @@ public class ADBRobot implements IRobot {
 
   @Override
   public void pressModifiers(int modifiers) {
-    notSupported("pressModifiers");
+    if (modifiers != 0) {
+      notSupported("pressModifiers");
+    }
   }
 
   @Override
   public void releaseModifiers(int modifiers) {
-    notSupported("releaseModifiers");
+    if (modifiers != 0) {
+      notSupported("releaseModifiers");
+    }
   }
 
   @Override
   public void typeChar(char character, KeyMode mode) {
-    notSupported("typeChar");
+    if (device == null) {
+      return;
+    }
+    device.typeChar(character);
   }
 
   @Override
@@ -104,13 +108,22 @@ public class ADBRobot implements IRobot {
 
   @Override
   public void typeStarts() {
-    notSupported("typeStarts");
+    if (device == null) {
+      return;
+    }
+    while (!device.typeStarts()) {
+      RunTime.pause(1);
+    }
   }
 
   @Override
   public void typeEnds() {
-    notSupported("typeEnds");
+    if (device == null) {
+      return;
+    }
+    device.typeEnds();
   }
+
   //</editor-fold>
 
   @Override
@@ -149,6 +162,9 @@ public class ADBRobot implements IRobot {
 
   @Override
   public void clickEnds() {
+    if (device == null) {
+      return;
+    }
     if (mouseDown) {
       mouseDown = false;
       if (mouse_X1 == mouse_X2 && mouse_Y1 == mouse_Y2) {
@@ -178,6 +194,9 @@ public class ADBRobot implements IRobot {
 
   @Override
   public ScreenImage captureScreen(Rectangle screenRect) {
+    if (device == null) {
+      return null;
+    }
     return device.captureScreen(screenRect);
   }
 

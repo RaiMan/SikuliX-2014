@@ -16,7 +16,6 @@ import org.sikuli.script.ScreenImage;
 import se.vidstige.jadb.JadbDevice;
 import se.vidstige.jadb.JadbException;
 
-import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
@@ -24,6 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -41,6 +44,11 @@ public class ADBDevice {
   private ADBRobot robot = null;
   private ADBScreen screen = null;
 
+  private List<String> deviceProps = new ArrayList<>();
+  private int deviceVersion = -1;
+  private String sDeviceVersion = "???";
+
+
   private static ADBDevice adbDevice = null;
 
   public static int KEY_HOME = 3;
@@ -51,12 +59,40 @@ public class ADBDevice {
   private ADBDevice() {
   }
 
-  public static ADBDevice get() {
+  public static ADBDevice init() {
     if (adbDevice == null) {
       adbDevice = new ADBDevice();
       adbDevice.device = ADBClient.getDevice();
       if (adbDevice.device == null) {
         adbDevice = null;
+      } else {
+        adbDevice.deviceProps = Arrays.asList(adbDevice.exec("getprop").split("\n"));
+        //[ro.build.version.release]: [6.0.1]
+        //[ro.product.brand]: [google]
+        //[ro.product.manufacturer]: [asus]
+        //[ro.product.model]: [Nexus 7]
+        //[ro.product.name]: [razor]
+        //[ro.serialno]: [094da986]
+        Pattern pProp = Pattern.compile("\\[(.*?)\\]:.*?\\[(.*)\\]");
+        Matcher mProp = null;
+        String val = "";
+        String key = "";
+        for (String prop : adbDevice.deviceProps) {
+          if (!prop.startsWith("[ro.")) continue;
+          mProp = pProp.matcher(prop);
+          if (mProp.find()) {
+            key = mProp.group(1);
+            if (key.contains("build.version.release")) {
+              val = mProp.group(2);
+              try {
+                adbDevice.deviceVersion = Integer.parseInt(val.split("\\.")[0]);
+                adbDevice.sDeviceVersion = val;
+              } catch (Exception e) {
+              }
+            }
+          }
+        }
+        log(lvl, "init: %s", adbDevice.toString());
       }
     }
     return adbDevice;
@@ -68,8 +104,8 @@ public class ADBDevice {
   }
 
   public String toString() {
-    return String.format("Android device: serial: %s display: %dx%d",
-            getDeviceSerial(), getBounds().width, getBounds().height);
+    return String.format("attached device: serial(%s) display(%dx%d) version(%s)",
+            getDeviceSerial(), getBounds().width, getBounds().height, sDeviceVersion);
   }
 
   public ADBRobot getRobot(ADBScreen screen) {
@@ -175,28 +211,12 @@ public class ADBDevice {
   private int byte2int(byte[] bytes, int start, int len) {
     int val = 0;
     int fact = 1;
-    for (int i=start; i < start + len; i++) {
+    for (int i = start; i < start + len; i++) {
       int b = bytes[i] & 0xff;
       val += b * fact;
       fact *= 256;
     }
     return val;
-  }
-
-  public Boolean isDisplayOn() {
-    String dump = dumpsys("power");
-    Pattern displayOn = Pattern.compile("Display Power: state=(..)");
-    Matcher match = displayOn.matcher(dump);
-    if (match.find()) {
-      if (match.group(1).contains("ON")) {
-        return true;
-      }
-      return false;
-    } else {
-      String token = "Display Power: state=OFF";
-      log(-1, "isDisplayOn: dumpsys power: token not found: %s", token);
-    }
-    return null;
   }
 
   private Dimension getDisplayDimension() {
@@ -213,6 +233,18 @@ public class ADBDevice {
       log(-1, "getDisplayDimension: dumpsys display: token not found: %s", token);
     }
     return dim;
+  }
+
+  public String exec(String command, String... args) {
+    InputStream stdout = null;
+    String out = "";
+    try {
+      stdout = device.executeShell(command, args);
+      out = inputStreamToString(stdout, "UTF-8");
+    } catch (IOException | JadbException e) {
+      log(-1, "exec: %s: %s", command, e);
+    }
+    return out;
   }
 
   public String dumpsys(String component) {
@@ -275,6 +307,10 @@ public class ADBDevice {
   public void wakeUp(int seconds) {
     int times = seconds * 4;
     try {
+      if (null == isDisplayOn()) {
+        log(-1, "wakeUp: not possible - see log");
+        return;
+      }
       device.executeShell("input", "keyevent", "26");
       while (0 < times--) {
         if (isDisplayOn()) {
@@ -287,6 +323,29 @@ public class ADBDevice {
       log(-1, "wakeUp: did not work: %s", e);
     }
     log(-1, "wakeUp: timeout: %d seconds", seconds);
+  }
+
+  public Boolean isDisplayOn() {
+    // deviceidle | grep mScreenOn=true|false
+    // v < 5: power | grep mScreenOn=true|false
+    // v > 4: power | grep Display Power: state=ON|OFF
+    String dump = dumpsys("power");
+    Pattern displayOn = Pattern.compile("mScreenOn=(..)");
+    String isOn = "tr";
+    if (deviceVersion > 4) {
+      displayOn = Pattern.compile("Display Power: state=(..)");
+      isOn = "ON";
+    }
+    Matcher match = displayOn.matcher(dump);
+    if (match.find()) {
+      if (match.group(1).contains(isOn)) {
+        return true;
+      }
+      return false;
+    } else {
+      log(-1, "isDisplayOn: (Android version %d) dumpsys power: pattern not found: %s", deviceVersion, displayOn);
+    }
+    return null;
   }
 
   public void inputKeyEvent(int key) {
@@ -311,6 +370,42 @@ public class ADBDevice {
               Integer.toString(x2), Integer.toString(y2));
     } catch (IOException | JadbException e) {
       log(-1, "swipe: %s", e);
+    }
+  }
+
+  private String textBuffer = "";
+  private boolean typing = false;
+
+  public synchronized boolean typeStarts() {
+    if (!typing) {
+      textBuffer = "";
+      typing = true;
+      return true;
+    }
+    return false;
+  }
+
+  public synchronized void typeEnds() {
+    if (typing) {
+      input(textBuffer);
+      typing = false;
+    }
+  }
+
+  public void typeChar(char character) {
+    if (typing) {
+      textBuffer += character;
+    }
+  }
+
+  public static float inputDelay = 0.05f;
+
+  public void input(String text) {
+    try {
+      device.executeShell("input text", text);
+      RunTime.pause(text.length() * inputDelay);
+    } catch (Exception e) {
+      log(-1, "input: %s", e);
     }
   }
 }

@@ -38,7 +38,7 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
   private String promptMsg = "Select a region on the screen";
   private static int waitForScreenshot = 300;
 
-  public boolean needsUnLock = true;
+  public boolean needsUnLock = false;
   public int waitAfterAction = 1;
 
   public static int MENU = ADBDevice.KEY_MENU;
@@ -68,9 +68,9 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
 
   public ADBScreen() {
     super();
-    setOtherScreen();
+    setOtherScreen(this);
 
-    device = ADBDevice.get();
+    device = ADBDevice.init();
     if (device != null) {
       robot = device.getRobot(this);
       robot.setAutoDelay(10);
@@ -106,13 +106,23 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
     if (null == device) {
       return;
     }
+    if (null == device.isDisplayOn()) {
+      log(-1, "wakeUp: not possible - see log");
+      return;
+    }
     if (!device.isDisplayOn()) {
       device.wakeUp(seconds);
       if (needsUnLock) {
         swipeUp();
-        RunTime.pause(waitAfterAction);
       }
     }
+  }
+
+  public String exec(String command, String... args) {
+    if (device == null) {
+      return null;
+    }
+    return device.exec(command, args);
   }
 
   public <PFRML> void tap(PFRML target) throws FindFailed {

@@ -42,7 +42,6 @@ public class ADBClient {
       }
     }
     String serial = null;
-    String state = null;
     if (jadb != null) {
       List<JadbDevice> devices = null;
       try {
@@ -52,21 +51,13 @@ public class ADBClient {
       if (devices != null && devices.size() > 0) {
         device = devices.get(0);
         serial = device.getSerial();
-        state = null;
-        if (serial != null) {
-          try {
-            state = device.getState();
-          } catch (Exception e) {
-            state = "N/A";
-          }
-        }
       } else {
         device = null;
         Debug.error("ADBClient: init: no devices attached");
       }
     }
     if (device != null) {
-      Debug.log(3, "ADBClient: init: attached device: serial(%s) state(%s)", serial, state);
+      Debug.log(3, "ADBClient: init: attached device: serial(%s)", serial);
     }
   }
 
