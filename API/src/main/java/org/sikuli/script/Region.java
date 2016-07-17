@@ -342,6 +342,11 @@ public class Region {
     otherScreen = true;
   }
 
+  public void setOtherScreen(IScreen aScreen) {
+    scr = aScreen;
+    setOtherScreen();
+  }
+
   /**
    * Checks if the Screen contains the Region.
    *
