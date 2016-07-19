@@ -16,9 +16,11 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
+import org.sikuli.android.ADBDevice;
+import org.sikuli.android.ADBScreen;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
-import org.sikuli.util.JythonHelper;
 import org.sikuli.util.ScreenHighlighter;
 
 /**
@@ -4422,6 +4424,93 @@ public class Region {
     return 0;
   }
   //</editor-fold>
+
+  //<editor-fold desc="Mobile actions (Android)">
+  private ADBDevice adbDevice = null;
+  private ADBScreen adbScreen = null;
+
+  private boolean isAndroid() {
+    if (isOtherScreen()) {
+      IScreen scr = getScreen();
+      if (scr instanceof ADBScreen) {
+        adbScreen = (ADBScreen) scr;
+        adbDevice = adbScreen.getDevice();
+        return true;
+      }
+    }
+    return false;
+  }
+
+  public <PFRML> void tap(PFRML target) throws FindFailed {
+    if (isAndroid() && adbDevice != null) {
+      Location loc = getLocationFromTarget(target);
+      if (loc != null) {
+        adbDevice.tap(loc.x, loc.y);
+        RunTime.pause(adbScreen.waitAfterAction);
+      }
+    }
+  }
+
+  public void input(String text) {
+    if (isAndroid() && adbDevice != null) {
+      adbDevice.input(text);
+    }
+  }
+
+  public void key(int key) {
+    if (isAndroid() && adbDevice != null) {
+      adbDevice.inputKeyEvent(key);
+    }
+  }
+
+  public <PFRML> void swipe(PFRML from, PFRML to) throws FindFailed {
+    if (isAndroid() && adbDevice != null) {
+      Location locFrom = getLocationFromTarget(from);
+      Location locTo = getLocationFromTarget(to);
+      if (locFrom != null && locTo != null) {
+        adbDevice.swipe(locFrom.x, locFrom.y, locTo.x, locTo.y);
+        RunTime.pause(adbScreen.waitAfterAction);
+      }
+    }
+  }
+
+  public void swipeUp() {
+    int midX = (int) (w/2);
+    int swipeStep = (int) (h/5);
+    try {
+      swipe(new Location(midX, h - swipeStep), new Location(midX, swipeStep));
+    } catch (FindFailed findFailed) {
+    }
+  }
+
+  public void swipeDown() {
+    int midX = (int) (w/2);
+    int swipeStep = (int) (h/5);
+    try {
+      swipe(new Location(midX, swipeStep), new Location(midX, h - swipeStep));
+    } catch (FindFailed findFailed) {
+    }
+  }
+
+  public void swipeLeft() {
+    int midY = (int) (h/2);
+    int swipeStep = (int) (w/5);
+    try {
+      swipe(new Location(w - swipeStep, midY), new Location(swipeStep, midY));
+    } catch (FindFailed findFailed) {
+    }
+  }
+
+  public void swipeRight() {
+    int midY = (int) (h/2);
+    int swipeStep = (int) (w/5);
+    try {
+      swipe(new Location(swipeStep, midY), new Location(w - swipeStep, midY));
+    } catch (FindFailed findFailed) {
+    }
+  }
+  //</editor-fold>
+
 
   //<editor-fold defaultstate="collapsed" desc="OCR - read text from Screen">
   /**

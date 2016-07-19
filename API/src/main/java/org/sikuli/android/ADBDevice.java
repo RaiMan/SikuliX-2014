@@ -54,7 +54,7 @@ public class ADBDevice {
   public static int KEY_HOME = 3;
   public static int KEY_BACK = 4;
   public static int KEY_MENU = 82;
-
+  public static int KEY_POWER = 26;
 
   private ADBDevice() {
   }

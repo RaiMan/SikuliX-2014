@@ -41,11 +41,7 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
   public boolean needsUnLock = false;
   public int waitAfterAction = 1;
 
-  public static int MENU = ADBDevice.KEY_MENU;
-  public static int HOME = ADBDevice.KEY_HOME;
-  public static int BACK = ADBDevice.KEY_BACK;
-
-  //---------------------------Inits
+//---------------------------Inits
   private ADBDevice device = null;
   private static ADBScreen screen = null;
 
@@ -121,73 +117,6 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
       return null;
     }
     return device.exec(command, args);
-  }
-
-  public <PFRML> void tap(PFRML target) throws FindFailed {
-    if (device == null) {
-      return;
-    }
-    Location loc = getLocationFromTarget(target);
-    if(loc != null) {
-      device.tap(loc.x, loc.y);
-      RunTime.pause(waitAfterAction);
-    }
-  }
-
-  public void key(int key) {
-    device.inputKeyEvent(key);
-  }
-
-  public <PFRML> void swipe(PFRML from, PFRML to) throws FindFailed {
-    if (device == null) {
-      return;
-    }
-    Location locFrom = getLocationFromTarget(from);
-    Location locTo = getLocationFromTarget(from);
-    if(locFrom != null && locTo != null) {
-      device.swipe(locFrom.x, locFrom.y, locTo.x, locTo.y);
-      RunTime.pause(waitAfterAction);
-    }
-  }
-
-  public void swipeUp() {
-    if (device == null) {
-      return;
-    }
-    int midX = (int) (w/2);
-    int swipeStep = (int) (h/5);
-    device.swipe(midX, h - swipeStep, midX, swipeStep);
-    RunTime.pause(waitAfterAction);
-  }
-
-  public void swipeDown() {
-    if (device == null) {
-      return;
-    }
-    int midX = (int) (w/2);
-    int swipeStep = (int) (h/5);
-    device.swipe(midX, swipeStep, midX, h - swipeStep);
-    RunTime.pause(waitAfterAction);
-  }
-
-  public void swipeLeft() {
-    if (device == null) {
-      return;
-    }
-    int midY = (int) (h/2);
-    int swipeStep = (int) (w/5);
-    device.swipe(w - swipeStep, midY, swipeStep, midY);
-    RunTime.pause(waitAfterAction);
-  }
-
-  public void swipeRight() {
-    if (device == null) {
-      return;
-    }
-    int midY = (int) (h/2);
-    int swipeStep = (int) (w/5);
-    device.swipe(swipeStep, midY, w - swipeStep, midY);
-    RunTime.pause(waitAfterAction);
   }
 
   //-----------------------------Overrides
@@ -315,5 +244,13 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
 
   public Region newRegion(Location loc, int width, int height) {
     return new Region(loc.x, loc.y, width, height, this);
+  }
+
+  public Region newRegion(int _x, int _y, int width, int height) {
+    return new Region(_x, _y, width, height, this);
+  }
+
+  public Location newLocation(int _x, int _y) {
+    return new Location(_x, _y).setOtherScreen(this);
   }
 }

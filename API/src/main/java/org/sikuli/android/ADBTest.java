@@ -68,7 +68,7 @@ public class ADBTest {
       adbs.wakeUp(2);
       adbs.wait(1f);
       if (runTests) {
-        adbs.key(adbs.HOME);
+        adbs.key(ADBDevice.KEY_HOME);
         adbs.wait(1f);
       }
     }
@@ -96,7 +96,7 @@ public class ADBTest {
     String title = "Android Support - Testing device";
     Sikulix.popup("Take care\n\nthat device is on and unlocked\n\nbefore clicking ok", title);
     aScr.wakeUp(2);
-    aScr.key(aScr.HOME);
+    aScr.key(ADBDevice.KEY_HOME);
     if (Sikulix.popAsk("Now the device should show the HOME screen.\n" +
             "\nclick YES to proceed watching the test on the device" +
             "\nclick NO to end the test now", title)) {
