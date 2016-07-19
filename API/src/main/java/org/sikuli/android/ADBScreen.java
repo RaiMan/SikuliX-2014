@@ -77,8 +77,6 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
       bounds = device.getBounds();
       w = bounds.width;
       h = bounds.height;
-    } else {
-      throw new UnsupportedOperationException("ADBScreen: No devices attached");
     }
   }
 
