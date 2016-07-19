@@ -58,8 +58,8 @@
     <sikulixvsub>1</sikulixvsub>
     <sikulixbeta>0</sikulixbeta>
     <!--   this decides, where setup downloads from   -->
-    <!--<sikulixdev>release</sikulixdev>-->
-    <sikulixdev>development</sikulixdev>
+    <sikulixdev>release</sikulixdev>
+    <!--<sikulixdev>development</sikulixdev>-->
     <sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
     <sikuli.minorversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.minorversion>
     <sikulixjythonversion>2.7.0</sikulixjythonversion>
