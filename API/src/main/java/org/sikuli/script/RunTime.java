@@ -717,21 +717,23 @@ public class RunTime {
       libsExport(typ);
     } else {
       fSikulixDownloadsBuild = new File(fSikulixAppPath, "SikulixDownloads_" + sxBuildStamp);
-      if (!fSikulixDownloadsBuild.exists()) {
-        String[] fpList = fSikulixAppPath.list(new FilenameFilter() {
-          @Override
-          public boolean accept(File dir, String name) {
-            if (name.contains("SikulixDownloads_")) {
-              return true;
+      String[] fpList = fSikulixAppPath.list(new FilenameFilter() {
+        @Override
+        public boolean accept(File dir, String name) {
+          if (name.contains("SikulixDownloads_")) {
+            if (name.contains(sxBuildStamp)) {
+              return false;
             }
-            return false;
+            return true;
           }
-        });
-        if (fpList.length > 0) {
-          log(lvl, "renaming versioned downloads folder in AppPath (%s)", fSikulixDownloadsBuild.getName());
-          for (String entry : fpList) {
-            new File(fSikulixAppPath, entry).renameTo(fSikulixDownloadsBuild);
-          }
+          return false;
+        }
+      });
+      if (fpList.length > 0) {
+        log(lvl, "deleting versioned downloads folder in AppPath (%s)", fSikulixDownloadsBuild.getName());
+        for (String entry : fpList) {
+          //new File(fSikulixAppPath, entry).renameTo(fSikulixDownloadsBuild);
+          FileManager.deleteFileOrFolder(new File(fSikulixAppPath, entry));
         }
       }
     }
@@ -1763,7 +1765,8 @@ public class RunTime {
     if (hasOpt(props, pName)) {
       try {
         retVal = Double.parseDouble(props.getProperty(pName));
-      } catch (Exception ex) {}
+      } catch (Exception ex) {
+      }
     }
     return retVal;
   }
@@ -1773,7 +1776,8 @@ public class RunTime {
     if (hasOpt(props, pName)) {
       try {
         retVal = Double.parseDouble(props.getProperty(pName));
-      } catch (Exception ex) {}
+      } catch (Exception ex) {
+      }
     }
     props.setProperty(pName, ((Double) pVal).toString());
     return retVal;
