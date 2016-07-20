@@ -38,6 +38,7 @@ public class RobotDesktop extends Robot implements IRobot {
   private static RunTime runTime = RunTime.get();
   private long start;
   private static boolean alwaysNewRobot = false;
+  private static boolean isMouseInitialized = false;
 
   private void logRobot(int delay, String msg) {
     start = new Date().getTime();
@@ -174,12 +175,17 @@ public class RobotDesktop extends Robot implements IRobot {
     } else {
       pc = mp.getLocation();
       if (pc.x != p.x || pc.y != p.y) {
-        Debug.error("RobotDesktop: checkMousePosition: should be %s\nbut after move is %s"
-								+ "\nPossible cause in case you did not touch the mouse while script was running:\n"
-                + " Mouse actions are blocked generally or by the frontmost application."
-								+ (Settings.isWindows() ? "\nYou might try to run the SikuliX stuff as admin." : ""),
-                p, new Location(pc));
+        if (isMouseInitialized) {
+          Debug.error("RobotDesktop: checkMousePosition: should be %s\nbut after move is %s"
+                          + "\nPossible cause in case you did not touch the mouse while script was running:\n"
+                          + " Mouse actions are blocked generally or by the frontmost application."
+                          + (Settings.isWindows() ? "\nYou might try to run the SikuliX stuff as admin." : ""),
+                  p, new Location(pc));
+        }
       }
+    }
+    if (!isMouseInitialized) {
+      isMouseInitialized = true;
     }
   }
 

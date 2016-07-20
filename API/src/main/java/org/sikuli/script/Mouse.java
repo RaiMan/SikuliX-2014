@@ -52,12 +52,14 @@ public class Mouse {
 
   public static void init() {
     if (mouse == null) {
+      log(3, "init start");
       mouse = new Mouse();
       mouse.device = new Device(mouse);
       mouse.device.isMouse = true;
-      move(at());
+      Location loc = at();
+      move(loc);
       mouse.device.lastPos = null;
-      log(3, "init");
+      log(3, "init end");
     }
   }
 
