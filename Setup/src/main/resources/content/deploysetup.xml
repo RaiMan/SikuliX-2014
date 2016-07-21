@@ -71,7 +71,8 @@
 	<distributionManagement>
 		<repository>
 			<id>sikulix.deploy</id>
-			<url>${sikulix.deploy.target}</url>
+			<!--<url>${sikulix.deploy.target}</url>-->
+			<url>file:/Users/Shared/Jenkins/Home/workspace/24-SikuliX-Deploy-1.1.1/project/mavenrepo</url>
 		</repository>
 	</distributionManagement>
 
