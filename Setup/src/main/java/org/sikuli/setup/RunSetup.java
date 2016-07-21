@@ -703,11 +703,19 @@ public class RunSetup {
         forSystemMac = Settings.isMac();
       }
     }
-    File fDownloaded;
+    File fDownloaded = null;
     String sDownloaded;
     String sDownloadedName;
 
     //<editor-fold defaultstate="collapsed" desc="download lib jars">
+    if (testingMaven) {
+      fDownloaded = downloadJarFromMavenSx("sikulixsetup#forsetup", fWorkDir.getAbsolutePath(), "sikulixsetup");
+      if (fDownloaded == null) {
+        logPlus(-1, "%s not possible to copy from local MavenRepo");
+        downloadOK = false;
+      }
+    }
+
     if (getIDE || getAPI) {
       if (forSystemLux || forAllSystems) {
         jarsList[8] = new File(workDir, libsLux + ".jar").getAbsolutePath();
@@ -1211,7 +1219,7 @@ public class RunSetup {
       closeSplash(splash);
     }
 
-    log(lvl, "... SikuliX Setup seems to have ended successfully ;-)");
+    logPlus(lvl, "... SikuliX Setup seems to have ended successfully ;-)");
 
     finalCleanup();
 
@@ -1613,7 +1621,7 @@ public class RunSetup {
   }
 
   private static JFrame showSplash(String title, String msg) {
-    if (hasOptions) {
+    if (hasOptions | notests) {
       return null;
     }
     start = (new Date()).getTime();
