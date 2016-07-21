@@ -177,12 +177,12 @@ public class RunSetup {
     minorversion = runTime.getVersionShort().substring(0, 5);
     majorversion = runTime.getVersionShort().substring(0, 3);
 
+    if (args.length > 0 && "test".equals(args[0])) testingMaven = true;
+
     localSetup = String.format("sikulixsetup-%s-%s-project.jar", version, runTime.sxBuildStamp);
     if (runTime.fSxBaseJar.getPath().contains(localSetup)) {
       runningWithProject = true;
     }
-
-    if (args.length > 0 && "test".equals(args[0])) testingMaven = true;
 
     if (!testingMaven && (runTime.runningInProject || runningWithProject)) {
       runningWithProject = true;
