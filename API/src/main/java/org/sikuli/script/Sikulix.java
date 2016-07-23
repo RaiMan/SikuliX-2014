@@ -8,10 +8,7 @@ package org.sikuli.script;
 import edu.unh.iol.dlc.VNCScreen;
 import org.sikuli.android.ADBScreen;
 import org.sikuli.basics.*;
-import org.sikuli.util.JythonHelper;
-import org.sikuli.util.ScreenHighlighter;
-import org.sikuli.util.SikulixFileChooser;
-import org.sikuli.util.Tests;
+import org.sikuli.util.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -125,6 +122,16 @@ public class Sikulix {
       if (RunServer.run(null)) {
         System.exit(1);
       }
+    }
+
+    boolean playing = false;
+    if (args.length > 0 && "play".equals(args[0])) {
+      playing = true;
+//-------- playground
+// -------- playground
+    }
+    if (playing) {
+      System.exit(1);
     }
 
     String version = String.format("(%s-%s)", rt.getVersionShort(), rt.sxBuildStamp);

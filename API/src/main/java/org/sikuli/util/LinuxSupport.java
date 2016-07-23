@@ -168,18 +168,18 @@ public class LinuxSupport {
       }
     }
     // checking wmctrl, xdotool
-    cmdRet = runTime.runcmd("wmctrl -m");
-    if (cmdRet.contains(runTime.runCmdError)) {
-      log(-1, "checking: wmctrl not available or not working");
-    } else {
-      log(lvl, "checking: wmctrl seems to be available");
-    }
-    cmdRet = runTime.runcmd("xdotool version");
-    if (cmdRet.contains(runTime.runCmdError)) {
-      log(-1, "checking: xdotool not available or not working");
-    } else {
-      log(lvl, "checking: xdotool seems to be available");
-    }
+//    cmdRet = runTime.runcmd("wmctrl -m");
+//    if (cmdRet.contains(runTime.runCmdError)) {
+//      log(-1, "checking: wmctrl not available or not working");
+//    } else {
+//      log(lvl, "checking: wmctrl seems to be available");
+//    }
+//    cmdRet = runTime.runcmd("xdotool version");
+//    if (cmdRet.contains(runTime.runCmdError)) {
+//      log(-1, "checking: xdotool not available or not working");
+//    } else {
+//      log(lvl, "checking: xdotool seems to be available");
+//    }
     return checkSuccess;
   }
 
@@ -208,7 +208,7 @@ public class LinuxSupport {
     return success;
   }
 
-  private static boolean buildVision() {
+  public static boolean buildVision() {
     File fLibsSaveDir = runTime.fLibsProvided;
     fWorkDir = fLibsSaveDir.getParentFile();
     fWorkDir.mkdirs();
@@ -257,7 +257,7 @@ public class LinuxSupport {
     String libVisionPath = new File(fTarget, libVision).getAbsolutePath();
     String sRunBuild = runTime.extractResourceToString("/Support/Linux", "runBuild", "");
 
-    sRunBuild = sRunBuild.replace("#jdkdir#", javaHome.getAbsolutePath());
+    sRunBuild = sRunBuild.replace("#jdkdir#", "jdkdir=" + javaHome.getAbsolutePath());
 
     String inclUsr = "/usr/include";
     String inclUsrLocal = "/usr/local/include";
@@ -276,26 +276,40 @@ public class LinuxSupport {
       exportIncludeTesseract = true;
     }
 
-    boolean success = true;
-    success &= (null != runTime.extractResourcesToFolder(
-            "/srcnativelibs/Vision", fSource, null));
-    if (exportIncludeOpenCV) {
-      success &= (null != runTime.extractResourcesToFolder(
-              "/srcnativelibs/Include/OpenCV", fInclude, null));
-    }
-    if (exportIncludeTesseract) {
-      success &= (null != runTime.extractResourcesToFolder(
-              "/srcnativelibs/Include/Tesseract", fInclude, null));
-    }
+    boolean success = (null != runTime.extractResourcesToFolder("/srcnativelibs/Vision", fSource, null));
     if (!success) {
       log(-1, "buildVision: cannot export bundled sources");
+    } else {
+      if (success && exportIncludeOpenCV) {
+        success &= (null != runTime.extractResourcesToFolder("/srcnativelibs/Include/OpenCV", fInclude, null));
+      }
+      if (!success) {
+        log(-1, "buildVision: cannot export opencv includes");
+      } else {
+        if (success && exportIncludeTesseract) {
+          success &= (null != runTime.extractResourcesToFolder(
+                  "/srcnativelibs/Include/Tesseract", fInclude, null));
+        }
+        if (!success) {
+          log(-1, "buildVision: cannot export tesseract includes");
+        }
+      }
     }
 
-    sRunBuild = sRunBuild.replace("#opencvcore#", libOpenCVcore);
-    sRunBuild = sRunBuild.replace("#opencvimgproc#", libOpenCVimgproc);
-    sRunBuild = sRunBuild.replace("#opencvhighgui#", libOpenCVhighgui);
-    sRunBuild = sRunBuild.replace("#tesseractlib#", libTesseract);
-    sRunBuild = sRunBuild.replace("#work#", fTarget.getParentFile().getAbsolutePath());
+    if (success) {
+      sRunBuild = sRunBuild.replace("#opencvcore#", "opencvcore=" + libOpenCVcore);
+      sRunBuild = sRunBuild.replace("#opencvimgproc#", "opencvimgproc=" + libOpenCVimgproc);
+      sRunBuild = sRunBuild.replace("#opencvhighgui#", "opencvhighgui=" + libOpenCVhighgui);
+      sRunBuild = sRunBuild.replace("#tesseractlib#", "tesseractlib=" + libTesseract);
+      sRunBuild = sRunBuild.replace("#work#", "work=" + fTarget.getParentFile().getAbsolutePath());
+    } else {
+      sRunBuild = sRunBuild.replace("#opencvcore#", "");
+      sRunBuild = sRunBuild.replace("#opencvimgproc#", "");
+      sRunBuild = sRunBuild.replace("#opencvhighgui#", "");
+      sRunBuild = sRunBuild.replace("#opencvstatic#", "");
+      sRunBuild = sRunBuild.replace("#tesseractlib#", "");
+      sRunBuild = sRunBuild.replace("#work#", "");
+    }
     log(lvl, "**** content of build script:\n%s\n**** content end", sRunBuild);
     try {
       PrintStream psCmdFile = new PrintStream(cmdFile);
