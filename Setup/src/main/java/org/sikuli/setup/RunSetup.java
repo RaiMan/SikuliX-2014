@@ -714,6 +714,9 @@ public class RunSetup {
         logPlus(-1, "%s not possible to copy from local MavenRepo");
         downloadOK = false;
       }
+      String fpDownloaded = fDownloaded.getAbsolutePath();
+      fpDownloaded = fpDownloaded.replace("-forsetup", "");
+      fDownloaded.renameTo(new File(fpDownloaded));
     }
 
     if (getIDE || getAPI) {
