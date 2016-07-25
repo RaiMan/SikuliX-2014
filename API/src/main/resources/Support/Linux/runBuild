@@ -5,11 +5,10 @@ tesseractinclude=
 # ---- internal - do not change
 #work#
 #jdkdir#
-#opencvinclude#
+#extrainclude#
 #opencvcore#
 #opencvimgproc#
 #opencvhighgui#
-#tesseractinclude#
 #tesseractlib#
 # ---- internal -
 
@@ -33,11 +32,8 @@ rm -R -f $stuff
 mkdir $stuff
 
 includeplus=
-if [ "$opencvinclude" != "" ]; then
-  includeplus="-I$opencvinclude "
-fi
-if [ "$tesseractinclude" != "" ]; then
-  includeplus="$includeplus -I$tesseractinclude "
+if [ "$extrainclude" != "" ]; then
+  includeplus="-I$extrainclude "
 fi
 includefinal="-I/usr/include -I/usr/local/include $includeplus "
 

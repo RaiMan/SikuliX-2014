@@ -731,12 +731,16 @@ public class RunSetup {
           runTime.addToClasspath(jarsList[8]);
           runTime.dumpClassPath("sikulix");
           if (shouldBuildVision) {
+            logPlus(lvl, "Requested to build libVisionProxy.so on the fly");
             if (!LinuxSupport.haveToBuild()) {
               terminate("Building libVisionproxy.so not possible - check the log");
             }
           }
           logPlus(lvl, "checking usability of bundled, provided or built libs");
-          RunTime.loadLibrary(LinuxSupport.slibVision, useLibsProvided);
+          if (!RunTime.loadLibrary(LinuxSupport.slibVision, useLibsProvided)) {
+            logPlus(-1, "libVisionproxy.so finally not useable");
+            terminate("Giving up!");
+          } else logPlus(lvl, "Bundled, provided or built libVisionproxy.so is useable");
           useLibsProvided = runTime.useLibsProvided || LinuxSupport.shouldUseProvided;
         }
       }

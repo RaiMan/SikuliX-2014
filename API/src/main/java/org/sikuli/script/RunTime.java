@@ -868,7 +868,12 @@ public class RunTime {
       log(-1, "Problematic lib: %s (...TEMP...)", fLib);
       log(-1, "%s loaded, but it might be a problem with needed dependent libraries\nERROR: %s",
               libName, loadError.getMessage().replace(fLib.getAbsolutePath(), "...TEMP..."));
-      terminate(1, "problem with native library: " + libName);
+      if (Settings.runningSetup) {
+        return false;
+      }
+      else {
+        terminate(1, "problem with native library: " + libName);
+      }
     }
     libsLoaded.put(libName, true);
     log(level, msg, libName);
@@ -1001,10 +1006,10 @@ public class RunTime {
    *
    * @param libname name of library without prefix/suffix/ending
    */
-  public static void loadLibrary(String libname, boolean useLibsProvided) {
+  public static boolean loadLibrary(String libname, boolean useLibsProvided) {
     RunTime rt = RunTime.get();
     rt.useLibsProvided = useLibsProvided;
-    rt.libsLoad(libname);
+    return rt.libsLoad(libname);
   }
 
   private void addToWindowsSystemPath(File fLibsFolder) {

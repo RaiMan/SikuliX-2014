@@ -167,7 +167,7 @@ public class LinuxSupport {
         log(lvl, "checking: found OpenCV libs:\n%s\n%s\n%s",
                 libOpenCVcore, libOpenCVhighgui, libOpenCVimgproc);
       }
-      if (libTesseract == null) {
+      if (libTesseract.isEmpty()) {
         log(-1, "checking: Tesseract not in loader cache (see doc-note on Tesseract)");
         tessAvail = checkSuccess = false;
       } else {
@@ -291,17 +291,17 @@ public class LinuxSupport {
       if (null == runTime.extractResourcesToFolder("/srcnativelibs/Include/OpenCV", fInclude, null)) {
         log(-1, "buildVision: cannot export opencv includes");
         success = false;
-      } else {
-        sRunBuild = sRunBuild.replace("#opencvinclude#", "opencvinclude=" + "$work/Include");
       }
     }
     if (exportIncludeTesseract) {
       if (null == runTime.extractResourcesToFolder("/srcnativelibs/Include/Tesseract", fInclude, null)) {
         log(-1, "buildVision: cannot export tesseract includes");
         success = false;
-      } else {
-        sRunBuild = sRunBuild.replace("#tesseractinclude#", "tesseractinclude=" + "$work/Include/tesseract");
       }
+    }
+
+    if (success && (exportIncludeOpenCV || exportIncludeTesseract)) {
+      sRunBuild = sRunBuild.replace("#extrainclude#", "extrainclude=$work/Include");
     }
 
     if (success) {
