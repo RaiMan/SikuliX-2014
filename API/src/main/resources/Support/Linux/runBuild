@@ -1,23 +1,25 @@
 work=`pwd`
+opencvinclude=
+tesseractinclude=
 
 # ---- internal - do not change
 #work#
 #jdkdir#
+#opencvinclude#
 #opencvcore#
 #opencvimgproc#
 #opencvhighgui#
+#tesseractinclude#
 #tesseractlib#
 # ---- internal -
 
 #jdkdir=/usr/lib/jvm/java-7-openjdk-amd64
 
-opencvinclude=
 #opencvlib=/usr/lib/x86_64-linux-gnu
 #opencvcore=$opencvlib/libopencv_core.so.2.4
 #opencvimgproc=$opencvlib/libopencv_imgproc.so.2.4
 #opencvhighgui=$opencvlib/libopencv_highgui.so.2.4
 
-tesseractinclude=
 #tesseractlib=/usr/lib/libtesseract.so.3
 
 source=$work/Source
@@ -37,7 +39,7 @@ fi
 if [ "$tesseractinclude" != "" ]; then
   includeplus="$includeplus -I$tesseractinclude "
 fi
-includefinal="-I/usr/include -I/usr/local/include -I$work/Build/Include $includeplus "
+includefinal="-I/usr/include -I/usr/local/include $includeplus "
 
 echo ----------- COMPILING
 mods=

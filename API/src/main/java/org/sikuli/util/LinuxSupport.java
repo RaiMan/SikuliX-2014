@@ -10,6 +10,7 @@ import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.PrintStream;
+
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.script.RunTime;
@@ -21,16 +22,17 @@ public class LinuxSupport {
 
   static final RunTime runTime = RunTime.get();
 
-	//<editor-fold defaultstate="collapsed" desc="new logging concept">
-	private static final String me = "LinuxSupport: ";
-	private static int lvl = 3;
+  //<editor-fold defaultstate="collapsed" desc="new logging concept">
+  private static final String me = "LinuxSupport: ";
+  private static int lvl = 3;
   private static boolean isCopiedProvided = false;
   private static boolean haveBuilt = false;
-	public static boolean shouldUseProvided = false;
-//  private static String osArch;
-	public static void log(int level, String message, Object... args) {
-		Debug.logx(level,	me + message, args);
-	}
+  public static boolean shouldUseProvided = false;
+
+  //  private static String osArch;
+  public static void log(int level, String message, Object... args) {
+    Debug.logx(level, me + message, args);
+  }
 
   private static void logp(String message, Object... args) {
     Debug.logx(-3, message, args);
@@ -116,15 +118,20 @@ public class LinuxSupport {
       isCopiedProvided = true;
     } else if (!haveBuilt) {
       haveBuilt = true;
-      success = true;
-      log(3, "we have to build libVisionProxy.so");
-      success &= checkNeeded();
-      if (success) {
-        success &= buildVision();
-      }
+      success = haveToBuild();
     }
     shouldUseProvided = success;
     return success;
+  }
+
+  public static boolean haveToBuild() {
+    boolean success = true;
+    log(3, "we have to build libVisionProxy.so");
+    success &= checkNeeded();
+    if (success) {
+      success &= buildVision();
+    }
+    return  success;
   }
 
   private static boolean checkNeeded() {
@@ -153,7 +160,7 @@ public class LinuxSupport {
           libTesseract = libx.split("=>")[1].trim();
         }
       }
-      if (libOpenCVcore == null || libOpenCVhighgui == null || libOpenCVimgproc == null) {
+      if (libOpenCVcore.isEmpty() || libOpenCVhighgui.isEmpty() || libOpenCVimgproc.isEmpty()) {
         log(-1, "checking: OpenCV not in loader cache (see doc-note on OpenCV)");
         opencvAvail = checkSuccess = false;
       } else {
@@ -218,7 +225,7 @@ public class LinuxSupport {
     File fInclude = new File(fWorkDir, buildFolderInclude);
     fInclude.mkdirs();
 
-    File[] javas = new File[] {null, null} ;
+    File[] javas = new File[]{null, null};
     javas[0] = new File(System.getProperty("java.home"));
     String jhome = System.getenv("JAVA_HOME");
     if (jhome != null) {
@@ -279,38 +286,34 @@ public class LinuxSupport {
     boolean success = (null != runTime.extractResourcesToFolder("/srcnativelibs/Vision", fSource, null));
     if (!success) {
       log(-1, "buildVision: cannot export bundled sources");
-    } else {
-      if (success && exportIncludeOpenCV) {
-        success &= (null != runTime.extractResourcesToFolder("/srcnativelibs/Include/OpenCV", fInclude, null));
-      }
-      if (!success) {
+    }
+    if (exportIncludeOpenCV) {
+      if (null == runTime.extractResourcesToFolder("/srcnativelibs/Include/OpenCV", fInclude, null)) {
         log(-1, "buildVision: cannot export opencv includes");
+        success = false;
       } else {
-        if (success && exportIncludeTesseract) {
-          success &= (null != runTime.extractResourcesToFolder(
-                  "/srcnativelibs/Include/Tesseract", fInclude, null));
-        }
-        if (!success) {
-          log(-1, "buildVision: cannot export tesseract includes");
-        }
+        sRunBuild = sRunBuild.replace("#opencvinclude#", "opencvinclude=" + "$work/Include");
+      }
+    }
+    if (exportIncludeTesseract) {
+      if (null == runTime.extractResourcesToFolder("/srcnativelibs/Include/Tesseract", fInclude, null)) {
+        log(-1, "buildVision: cannot export tesseract includes");
+        success = false;
+      } else {
+        sRunBuild = sRunBuild.replace("#tesseractinclude#", "tesseractinclude=" + "$work/Include/tesseract");
       }
     }
 
     if (success) {
+      sRunBuild = sRunBuild.replace("#work#", "work=" + fTarget.getParentFile().getAbsolutePath());
       sRunBuild = sRunBuild.replace("#opencvcore#", "opencvcore=" + libOpenCVcore);
       sRunBuild = sRunBuild.replace("#opencvimgproc#", "opencvimgproc=" + libOpenCVimgproc);
       sRunBuild = sRunBuild.replace("#opencvhighgui#", "opencvhighgui=" + libOpenCVhighgui);
       sRunBuild = sRunBuild.replace("#tesseractlib#", "tesseractlib=" + libTesseract);
-      sRunBuild = sRunBuild.replace("#work#", "work=" + fTarget.getParentFile().getAbsolutePath());
-    } else {
-      sRunBuild = sRunBuild.replace("#opencvcore#", "");
-      sRunBuild = sRunBuild.replace("#opencvimgproc#", "");
-      sRunBuild = sRunBuild.replace("#opencvhighgui#", "");
-      sRunBuild = sRunBuild.replace("#opencvstatic#", "");
-      sRunBuild = sRunBuild.replace("#tesseractlib#", "");
-      sRunBuild = sRunBuild.replace("#work#", "");
     }
-    log(lvl, "**** content of build script:\n%s\n**** content end", sRunBuild);
+
+    log(lvl, "**** content of build script:\n(stored at: %s)\n%s\n**** content end",
+            cmdFile.getAbsolutePath(), sRunBuild);
     try {
       PrintStream psCmdFile = new PrintStream(cmdFile);
       psCmdFile.print(sRunBuild);
@@ -350,10 +353,11 @@ public class LinuxSupport {
     return true;
   }
 
-//TODO needed??? processLibs
+  //TODO needed??? processLibs
 //<editor-fold defaultstate="collapsed" desc="obsolete???">
   private static final String[] libsExport = new String[]{null, null};
   private static final String[] libsCheck = new String[]{null, null};
+
   private static boolean processLibs(String fpLibsJar) {
 //    boolean shouldBuildVisionNow = false;
 //    if (!fLibs.exists()) {

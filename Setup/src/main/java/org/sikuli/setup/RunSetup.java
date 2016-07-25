@@ -727,10 +727,15 @@ public class RunSetup {
           fDownloaded = downloadJarFromMavenSx(libsLux, dlDir, libsLux);
         }
         downloadOK &= copyFromDownloads(fDownloaded, libsLux, jarsList[8]);
-        if (isLinux) {
+        if (downloadOK && isLinux) {
           runTime.addToClasspath(jarsList[8]);
           runTime.dumpClassPath("sikulix");
-          logPlus(lvl, "checking usability of bundled/provided libs");
+          if (shouldBuildVision) {
+            if (!LinuxSupport.haveToBuild()) {
+              terminate("Building libVisionproxy.so not possible - check the log");
+            }
+          }
+          logPlus(lvl, "checking usability of bundled, provided or built libs");
           RunTime.loadLibrary(LinuxSupport.slibVision, useLibsProvided);
           useLibsProvided = runTime.useLibsProvided || LinuxSupport.shouldUseProvided;
         }

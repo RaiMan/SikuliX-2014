@@ -36,6 +36,7 @@ public class RunTime {
   public static File scriptProject = null;
   public static URL uScriptProject = null;
   public static boolean shouldRunServer = false;
+  private static boolean isTerminating = false;
 
   public static void resetProject() {
     scriptProject = null;
@@ -485,6 +486,7 @@ public class RunTime {
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
       public void run() {
+        isTerminating = true;
         log(lvl, "final cleanup");
         if (isRunning != null) {
           try {
@@ -988,6 +990,9 @@ public class RunTime {
    * @param libname name of library without prefix/suffix/ending
    */
   public static void loadLibrary(String libname) {
+    if (isTerminating) {
+      return;
+    }
     RunTime.get().libsLoad(libname);
   }
 
