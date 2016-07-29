@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1809,7 +1811,12 @@ public class RunSetup {
       return download(item, target, null, itemName);
     } else {
       if (useLocalMavenRepo) {
-        return download("file://" + runTime.SikuliLocalRepo + item, target, null, itemName);
+        try {
+          URL theFile = new URL("file", null, runTime.SikuliLocalRepo + item);
+          return download(theFile.toExternalForm(), target, null, itemName);
+        } catch (MalformedURLException e) {
+          return null;
+        }
       } else {
         return download(runTime.dlMavenRelease + item, target, null, itemName);
       }
