@@ -165,15 +165,7 @@ public class RunSetup {
 
     runTime = RunTime.get(RunTime.Type.SETUP, args);
 
-//    logp("**** command line args: %d", args.length);
-//    if (args.length > 0) {
-//      int i = 0;
-//      for (String arg : args) {
-//        logp("%3d: %s", i++, arg);
-//      }
-//    }
     version = runTime.getVersionShort();
-//TODO wrong if version number parts have more than one digit
     minorversion = runTime.getVersionShort().substring(0, 5);
     majorversion = runTime.getVersionShort().substring(0, 3);
 
