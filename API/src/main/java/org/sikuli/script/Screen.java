@@ -164,7 +164,6 @@ public class Screen extends Region implements IScreen {
    * create a Screen (ScreenUnion) object as a united region of all available monitors
    * @return ScreenUnion
    */
-//TODO: check wether this can be a Screen object, to be tested: Region methods
   public static ScreenUnion all() {
     return new ScreenUnion();
   }
@@ -742,8 +741,9 @@ public class Screen extends Region implements IScreen {
   @Override
   public String toString() {
     Rectangle r = getBounds();
-    return String.format("S(%d)[%d,%d %dx%d] E:%s, T:%.1f",
-            curID, (int) r.getX(), (int) r.getY(),
+    String scrText = curID == -1 ? "Union" : "" + curID;
+    return String.format("S(%s)[%d,%d %dx%d] E:%s, T:%.1f",
+            scrText, (int) r.getX(), (int) r.getY(),
             (int) r.getWidth(), (int) r.getHeight(),
             getThrowException() ? "Y" : "N", getAutoWaitTimeout());
   }
@@ -756,8 +756,9 @@ public class Screen extends Region implements IScreen {
   @Override
   public String toStringShort() {
     Rectangle r = getBounds();
-    return String.format("S(%d)[%d,%d %dx%d]",
-            curID, (int) r.getX(), (int) r.getY(),
+    String scrText = curID == -1 ? "Union" : "" + curID;
+    return String.format("S(%s)[%d,%d %dx%d]",
+            scrText, (int) r.getX(), (int) r.getY(),
             (int) r.getWidth(), (int) r.getHeight());
   }
 

@@ -158,8 +158,10 @@ public class Region {
    */
   @Override
   public String toString() {
-    return String.format("R[%d,%d %dx%d]@%s E:%s, T:%.1f",
-            x, y, w, h, (getScreen() == null ? "Screen null" : getScreen().toStringShort()),
+    String scrText = getScreen() == null ? "?" :
+            "" + (-1 == getScreen().getID() ? "Union" : "" + getScreen().getID());
+    return String.format("R[%d,%d %dx%d]@S(%s) E:%s, T:%.1f",
+            x, y, w, h, scrText,
             throwException ? "Y" : "N", autoWaitTimeout);
   }
 
@@ -175,8 +177,9 @@ public class Region {
     if (isOtherScreen()) {
       return String.format("%s, %dx%d", getScreen().getIDString(), w, h);
     } else {
-      return String.format("R[%d,%d %dx%d]@S(%s)", x, y, w, h,
-              (getScreen() == null ? "?" : getScreen().getID()));
+      String scrText = getScreen() == null ? "?" :
+              "" + (-1 == getScreen().getID() ? "Union" : getScreen().getID());
+      return String.format("R[%d,%d %dx%d]@S(%s)", x, y, w, h, scrText);
     }
   }
 
@@ -2101,13 +2104,14 @@ public class Region {
    * @return the region itself
    */
   public Region highlight(float secs, String color) {
-    if (isOtherScreen()) {
+    if (getScreen() == null || isOtherScreen() || isScreenUnion) {
+      Debug.error("highlight: not possible for %s", getScreen());
       return this;
     }
     if (secs < 0.1) {
       return highlight((int) secs, color);
     }
-    Debug.action("highlight " + toString() + " for " + secs + " secs"
+    Debug.action("highlight " + toStringShort() + " for " + secs + " secs"
             + (color != null ? " color: " + color : ""));
     ScreenHighlighter _overlay = new ScreenHighlighter(getScreen(), color);
     _overlay.highlight(this, secs);
@@ -2133,7 +2137,8 @@ public class Region {
    * @return this region
    */
   public Region highlight(int secs, String color) {
-    if (isOtherScreen()) {
+    if (getScreen() == null || isOtherScreen() || isScreenUnion) {
+      Debug.error("highlight: not possible for %s", getScreen());
       return this;
     }
     if (secs > 0) {
