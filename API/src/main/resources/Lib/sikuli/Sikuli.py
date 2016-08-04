@@ -400,6 +400,7 @@ def popAsk(msg, title="Sikuli Decision"):
 # @return The user's input string.
 #
 def input(msg="", default="", title="Sikuli Input", hidden=False):
+  Debug.log(3, "Sikuli.py: input")
   if (hidden):
     default = ""
   return Sikulix.input(msg, default, title, hidden)

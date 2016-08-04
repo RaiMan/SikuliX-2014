@@ -4446,7 +4446,7 @@ public class Region {
     return false;
   }
 
-  public <PFRML> void tap(PFRML target) throws FindFailed {
+  public <PFRML> void aTap(PFRML target) throws FindFailed {
     if (isAndroid() && adbDevice != null) {
       Location loc = getLocationFromTarget(target);
       if (loc != null) {
@@ -4456,19 +4456,19 @@ public class Region {
     }
   }
 
-  public void input(String text) {
+  public void aInput(String text) {
     if (isAndroid() && adbDevice != null) {
       adbDevice.input(text);
     }
   }
 
-  public void key(int key) {
+  public void aKey(int key) {
     if (isAndroid() && adbDevice != null) {
       adbDevice.inputKeyEvent(key);
     }
   }
 
-  public <PFRML> void swipe(PFRML from, PFRML to) throws FindFailed {
+  public <PFRML> void aSwipe(PFRML from, PFRML to) throws FindFailed {
     if (isAndroid() && adbDevice != null) {
       Location locFrom = getLocationFromTarget(from);
       Location locTo = getLocationFromTarget(to);
@@ -4479,38 +4479,38 @@ public class Region {
     }
   }
 
-  public void swipeUp() {
+  public void aSwipeUp() {
     int midX = (int) (w/2);
     int swipeStep = (int) (h/5);
     try {
-      swipe(new Location(midX, h - swipeStep), new Location(midX, swipeStep));
+      aSwipe(new Location(midX, h - swipeStep), new Location(midX, swipeStep));
     } catch (FindFailed findFailed) {
     }
   }
 
-  public void swipeDown() {
+  public void aSwipeDown() {
     int midX = (int) (w/2);
     int swipeStep = (int) (h/5);
     try {
-      swipe(new Location(midX, swipeStep), new Location(midX, h - swipeStep));
+      aSwipe(new Location(midX, swipeStep), new Location(midX, h - swipeStep));
     } catch (FindFailed findFailed) {
     }
   }
 
-  public void swipeLeft() {
+  public void aSwipeLeft() {
     int midY = (int) (h/2);
     int swipeStep = (int) (w/5);
     try {
-      swipe(new Location(w - swipeStep, midY), new Location(swipeStep, midY));
+      aSwipe(new Location(w - swipeStep, midY), new Location(swipeStep, midY));
     } catch (FindFailed findFailed) {
     }
   }
 
-  public void swipeRight() {
+  public void aSwipeRight() {
     int midY = (int) (h/2);
     int swipeStep = (int) (w/5);
     try {
-      swipe(new Location(swipeStep, midY), new Location(w - swipeStep, midY));
+      aSwipe(new Location(swipeStep, midY), new Location(w - swipeStep, midY));
     } catch (FindFailed findFailed) {
     }
   }

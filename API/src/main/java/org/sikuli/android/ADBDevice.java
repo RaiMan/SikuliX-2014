@@ -358,9 +358,9 @@ public class ADBDevice {
 
   public void tap(int x, int y) {
     try {
-      device.executeShell("input tap", Integer.toString(x), Integer.toString(y));
+      device.executeShell("input aTap", Integer.toString(x), Integer.toString(y));
     } catch (IOException | JadbException e) {
-      log(-1, "tap: %s", e);
+      log(-1, "aTap: %s", e);
     }
   }
 
