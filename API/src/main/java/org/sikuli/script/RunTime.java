@@ -1646,7 +1646,8 @@ public class RunTime {
       Debug.error("Settings: load version file %s did not work", svf);
       Sikulix.endError(999);
     }
-    tessData.put("eng", "http://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz");
+//    tessData.put("eng", "http://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz");
+    tessData.put("eng", "http://download.sikulix.com/tesseract-ocr-3.02.eng.tar.gz");
     Env.setSikuliVersion(SikuliVersion);
   }
 
