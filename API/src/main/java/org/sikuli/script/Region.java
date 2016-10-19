@@ -2226,7 +2226,7 @@ public class Region {
   }
 
   private Boolean handleImageMissing(Image img, boolean recap) {
-    log(lvl, "handleImageMissing: %s (%s)", img.getName(), (recap?"recapture ":"capture missing "));
+    log(lvl, "handleImageMissing: %s", img.getName());
     ObserveEvent evt = null;
     FindFailedResponse response = findFailedResponse;
     if (FindFailedResponse.HANDLE.equals(response)) {
@@ -2241,9 +2241,11 @@ public class Region {
       }
     }
     if (FindFailedResponse.PROMPT.equals(response)) {
+      log(lvl, "handleImageMissing: Response.PROMPT");
       response = handleFindFailedShowDialog(img, true);
     }
     if (findFailedResponse.RETRY.equals(response)) {
+      log(lvl, "handleImageMissing: Response.RETRY: %s", (recap?"recapture ":"capture missing "));
       getRobotForRegion().delay(500);
       ScreenImage simg = getScreen().userCapture(
               (recap?"recapture ":"capture missing ") + img.getName());
@@ -2263,6 +2265,7 @@ public class Region {
       }
       return null;
     } else if (findFailedResponse.ABORT.equals(response)) {
+      log(lvl, "handleImageMissing: Response.ABORT: aborting");
       return null;
     }
     log(lvl, "handleImageMissing: skip requested on %s", (recap?"recapture ":"capture missing "));
@@ -2296,14 +2299,14 @@ public class Region {
     }
     lastMatch = null;
     Image img = Image.getImageFromTarget(target);
-    String targetStr = img.getName();
     Boolean response = true;
-    if (!img.isValid() && img.hasIOException()) {
+    if (!img.isText() && !img.isValid() && img.hasIOException()) {
       response = handleImageMissing(img, false);
       if (response == null) {
         runTime.abortScripting("Find: Abort:", "ImageMissing: " + target.toString());
       }
     }
+    String targetStr = img.getName();
     while (null != response && response) {
       log(lvl, "find: waiting 0 secs for %s to appear in %s", targetStr, this.toStringShort());
       lastMatch = doFind(target, img, null);
@@ -2352,14 +2355,14 @@ public class Region {
     String shouldAbort = "";
     RepeatableFind rf = new RepeatableFind(target, null);
     Image img = rf._image;
-    String targetStr = img.getName();
     Boolean response = true;
-    if (!img.isValid() && img.hasIOException()) {
+    if (!img.isText() && !img.isValid() && img.hasIOException()) {
       response = handleImageMissing(img, false);
       if (response == null) {
         runTime.abortScripting("Exists: Abort:", "ImageMissing: " + target.toString());
       }
     }
+    String targetStr = img.getName();
     while (null != response && response) {
       log(lvl, "exists: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
       if (rf.repeat(timeout)) {
@@ -2676,7 +2679,7 @@ public class Region {
     Image img = rf._image;
     String targetStr = img.getName();
     Boolean response = true;
-    if (!img.isValid() && img.hasIOException()) {
+    if (!img.isText() && !img.isValid() && img.hasIOException()) {
       response = handleImageMissing(img, false);
       if (response == null) {
         runTime.abortScripting("Wait: Abort:", "ImageMissing: " + target.toString());
@@ -2827,6 +2830,7 @@ public class Region {
     lastFindTime = (new Date()).getTime();
     ScreenImage simg;
     double findTimeout = autoWaitTimeout;
+    String someText = "";
     if (repeating != null) {
       findTimeout = repeating.getFindTimeOut();
     }
@@ -2843,49 +2847,44 @@ public class Region {
       f.findRepeat();
     } else {
       s = getScreen();
-//      Image img = null;
       if (ptn instanceof String) {
         if (((String) ptn).startsWith("\t") && ((String) ptn).endsWith("\t")) {
           findingText = true;
+          someText = ((String) ptn).replaceAll("\\t", "");
         } else {
-//          img = Image.create((String) ptn);
           if (img.isValid()) {
             lastSearchTime = (new Date()).getTime();
             f = checkLastSeenAndCreateFinder(img, findTimeout, null);
             if (!f.hasNext()) {
               runFinder(f, img);
-              //f.find(img);
             }
           } else if (img.isText()) {
             findingText = true;
+            someText = img.getText();
           }
         }
         if (findingText) {
+          log(lvl, "doFind: Switching to TextSearch");
           if (TextRecognizer.getInstance() != null) {
-            log(lvl, "doFind: Switching to TextSearch");
             f = new Finder(getScreen().capture(x, y, w, h), this);
             lastSearchTime = (new Date()).getTime();
-            f.findText((String) ptn);
+            f.findText(someText);
           }
         }
       } else if (ptn instanceof Pattern) {
-//        img = ((Pattern) ptn).getImage();
         if (img.isValid()) {
           lastSearchTime = (new Date()).getTime();
           f = checkLastSeenAndCreateFinder(img, findTimeout, (Pattern) ptn);
           if (!f.hasNext()) {
             runFinder(f, ptn);
-            //f.find((Pattern) ptn);
           }
         }
       } else if (ptn instanceof Image) {
-//        img = ((Image) ptn);
         if (img.isValid()) {
           lastSearchTime = (new Date()).getTime();
           f = checkLastSeenAndCreateFinder(img, findTimeout, null);
           if (!f.hasNext()) {
             runFinder(f, img);
-            //f.find(img);
           }
         }
       } else {

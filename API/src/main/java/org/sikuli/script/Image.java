@@ -69,6 +69,7 @@ public class Image {
 
   private static String me = "Image: ";
   private static int lvl = 3;
+
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, me + message, args);
   }
@@ -164,6 +165,7 @@ public class Image {
 
 //<editor-fold defaultstate="collapsed" desc="imageName">
   private String imageName = null;
+  private String imageNameGiven = null;
   private boolean bHasIOException = false;
 
   public boolean hasIOException() {
@@ -243,6 +245,10 @@ public class Image {
   public Image setIsText(boolean val) {
     imageIsText = val;
     return this;
+  }
+
+  public String getText() {
+    return imageNameGiven;
   }
 //</editor-fold>
 
@@ -608,7 +614,9 @@ public class Image {
     if (target instanceof Pattern) {
       return ((Pattern) target).getImage();
     } else if (target instanceof String) {
-      return get((String) target);
+      Image img = get((String) target, true);
+      img = createImageValidate(img, true);
+      return img;
     } else if (target instanceof Image) {
       return (Image) target;
     } else {
@@ -637,6 +645,9 @@ public class Image {
     if (!img.isValid()) {
       if (Settings.OcrTextSearch) {
         img.setIsText(true);
+        if (Settings.isValidImageFilename(img.getName())) {
+          img.setIsText(false);
+        }
       } else {
         if (verbose) {
 					log(-1, "Image not valid, but TextSearch is switched off!");
@@ -684,43 +695,50 @@ public class Image {
     if (fName == null || fName.isEmpty()) {
       return null;
     }
-		fName = FileManager.slashify(fName, false);
     Image img = null;
-    URL fURL = null;
-    String fileName = Settings.getValidImageFilename(fName);
-    if (fileName.isEmpty()) {
-      log(-1, "not a valid image type: " + fName);
-      fileName = fName;
-    }
-    File imgFile = new File(fileName);
-    if (imgFile.isAbsolute()) {
-      if (imgFile.exists()) {
-        fURL = FileManager.makeURL(fileName);
-      }
+    if (fName.startsWith("\t") && fName.endsWith("\t")) {
+      fName = fName.substring(1, fName.length() - 1);
+      img = new Image();
+      img.setIsText(true);
     } else {
-      fURL = imageNames.get(fileName);
-      if (fURL == null) {
-        fURL = ImagePath.find(fileName);
+      fName = FileManager.slashify(fName, false);
+      URL fURL = null;
+      String fileName = Settings.getValidImageFilename(fName);
+      if (fileName.isEmpty()) {
+        log(-1, "not a valid image type: " + fName);
+        fileName = fName;
       }
-    }
-    if (fURL != null) {
-      img = imageFiles.get(fURL);
-      if (img != null && null == imageNames.get(img.imageName)) {
-        imageNames.put(img.imageName, fURL);
-      }
-    }
-    if (img == null) {
-      img = new Image(fileName, fURL, silent);
-      img.setIsAbsolute(imgFile.isAbsolute());
-    } else {
-      if (img.bimg != null) {
-        log(3, "reused: %s (%s)", img.imageName, img.fileURL);
+      File imgFile = new File(fileName);
+      if (imgFile.isAbsolute()) {
+        if (imgFile.exists()) {
+          fURL = FileManager.makeURL(fileName);
+        }
       } else {
-        if (Settings.getImageCache() > 0) {
-          img.load();
+        fURL = imageNames.get(fileName);
+        if (fURL == null) {
+          fURL = ImagePath.find(fileName);
         }
       }
-		}
+      if (fURL != null) {
+        img = imageFiles.get(fURL);
+        if (img != null && null == imageNames.get(img.imageName)) {
+          imageNames.put(img.imageName, fURL);
+        }
+      }
+      if (img == null) {
+        img = new Image(fileName, fURL, silent);
+        img.setIsAbsolute(imgFile.isAbsolute());
+      } else {
+        if (img.bimg != null) {
+          log(3, "reused: %s (%s)", img.imageName, img.fileURL);
+        } else {
+          if (Settings.getImageCache() > 0) {
+            img.load();
+          }
+        }
+      }
+    }
+		img.imageNameGiven = fName;
     return img;
   }
 
@@ -1012,6 +1030,9 @@ public class Image {
    * @return the name
    */
   public String getName() {
+    if (isText()) {
+      return imageNameGiven;
+    }
     return imageName;
   }
 
@@ -1040,7 +1061,7 @@ public class Image {
    * @return true if lodable from file or is an in memory image
    */
   public boolean isValid() {
-    return fileURL != null || imageName.contains(isBImg);
+    return fileURL != null || getName().contains(isBImg);
   }
 
 	/**

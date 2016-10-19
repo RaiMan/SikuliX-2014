@@ -59,7 +59,9 @@ public class FindFailed extends SikuliException {
 
   public static String createdefault(Region reg, Image img) {
     String msg = "";
-    if (img.getSize().width < 0 && img.getSize().height < 0) {
+    if (img.isText()) {
+      msg = String.format("%s as text", img.getName());
+    } else if (img.getSize().width < 0 && img.getSize().height < 0) {
       msg = String.format("%s not loaded", img.getName());
     } else {
       msg = String.format("%s in %s", img, reg);
