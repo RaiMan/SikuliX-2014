@@ -2320,7 +2320,7 @@ public class Region {
         log(lvl, "find: %s appeared (%s)", targetStr, lastMatch);
         break;
       }
-      log(lvl, "find: %s did not appear [%d msec]", targetStr, lastFindTime);
+      log(lvl, "find: %s did not appear [%d msec]", targetStr, new Date().getTime() - lastFindTime);
       if (null == lastMatch) {
         response = handleFindFailed(target, img, false);
       }
@@ -2391,7 +2391,7 @@ public class Region {
     if (!shouldAbort.isEmpty()) {
       runTime.abortScripting("Exists: Abort:", "FindFailed: " + shouldAbort);
     } else {
-      log(lvl, "exists: %s did not appear [%d msec]", targetStr, lastFindTime);
+      log(lvl, "exists: %s did not appear [%d msec]", targetStr, new Date().getTime() - lastFindTime);
     }
     return null;
   }
@@ -2711,7 +2711,7 @@ public class Region {
         break;
       }
     }
-    log(lvl, "wait: %s did not appear [%d msec]", targetStr, lastFindTime);
+    log(lvl, "wait: %s did not appear [%d msec]", targetStr, new Date().getTime() - lastFindTime);
     if (!shouldAbort.isEmpty()) {
       throw new FindFailed(shouldAbort);
     }
@@ -2827,7 +2827,6 @@ public class Region {
     Match m = null;
     IScreen s = null;
     boolean findingText = false;
-    lastFindTime = (new Date()).getTime();
     ScreenImage simg;
     double findTimeout = autoWaitTimeout;
     String someText = "";
@@ -2847,6 +2846,7 @@ public class Region {
       f.findRepeat();
     } else {
       s = getScreen();
+      lastFindTime = (new Date()).getTime();
       if (ptn instanceof String) {
         if (((String) ptn).startsWith("\t") && ((String) ptn).endsWith("\t")) {
           findingText = true;
@@ -2899,8 +2899,8 @@ public class Region {
     if (f != null) {
       lastSearchTimeRepeat = lastSearchTime;
       lastSearchTime = (new Date()).getTime() - lastSearchTime;
-      lastFindTime = (new Date()).getTime() - lastFindTime;
       if (f.hasNext()) {
+        lastFindTime = (new Date()).getTime() - lastFindTime;
         m = f.next();
         m.setTimes(lastFindTime, lastSearchTime);
         if (Settings.FindProfiling) {
