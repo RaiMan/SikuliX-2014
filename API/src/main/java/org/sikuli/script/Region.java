@@ -2932,9 +2932,18 @@ public class Region {
     if (base == null) {
       base = getScreen().capture(this);
     }
+    boolean shouldCheckLastSeen = false;
+    float score = 0;
     if (!Settings.UseImageFinder && Settings.CheckLastSeen && null != img.getLastSeen()) {
+      score = (float) (img.getLastSeenScore() - 0.01);
+      if (ptn != null) {
+        if (!(ptn.getSimilar() > score)) {
+          shouldCheckLastSeen = true;
+        }
+      }
+    }
+    if (shouldCheckLastSeen) {
       Region r = Region.create(img.getLastSeen());
-      float score = (float) (img.getLastSeenScore() - 0.01);
       if (this.contains(r)) {
         Finder f = null;
         if (this.scr instanceof VNCScreen) {
