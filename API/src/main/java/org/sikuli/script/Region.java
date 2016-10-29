@@ -4432,9 +4432,9 @@ public class Region {
       r.keyDown(KeyEvent.VK_V);
       r.keyUp(KeyEvent.VK_V);
       r.keyUp(mod);
-      return 1;
+      return 0;
     }
-    return 0;
+    return 1;
   }
   //</editor-fold>
 
