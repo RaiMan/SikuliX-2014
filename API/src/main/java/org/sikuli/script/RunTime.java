@@ -36,6 +36,7 @@ public class RunTime {
   public static File scriptProject = null;
   public static URL uScriptProject = null;
   public static boolean shouldRunServer = false;
+  private static boolean isTerminating = false;
 
   public static void resetProject() {
     scriptProject = null;
@@ -485,6 +486,7 @@ public class RunTime {
     Runtime.getRuntime().addShutdownHook(new Thread() {
       @Override
       public void run() {
+        isTerminating = true;
         log(lvl, "final cleanup");
         if (isRunning != null) {
           try {
@@ -866,7 +868,12 @@ public class RunTime {
       log(-1, "Problematic lib: %s (...TEMP...)", fLib);
       log(-1, "%s loaded, but it might be a problem with needed dependent libraries\nERROR: %s",
               libName, loadError.getMessage().replace(fLib.getAbsolutePath(), "...TEMP..."));
-      terminate(1, "problem with native library: " + libName);
+      if (Settings.runningSetup) {
+        return false;
+      }
+      else {
+        terminate(1, "problem with native library: " + libName);
+      }
     }
     libsLoaded.put(libName, true);
     log(level, msg, libName);
@@ -988,6 +995,9 @@ public class RunTime {
    * @param libname name of library without prefix/suffix/ending
    */
   public static void loadLibrary(String libname) {
+    if (isTerminating) {
+      return;
+    }
     RunTime.get().libsLoad(libname);
   }
 
@@ -996,10 +1006,10 @@ public class RunTime {
    *
    * @param libname name of library without prefix/suffix/ending
    */
-  public static void loadLibrary(String libname, boolean useLibsProvided) {
+  public static boolean loadLibrary(String libname, boolean useLibsProvided) {
     RunTime rt = RunTime.get();
     rt.useLibsProvided = useLibsProvided;
-    rt.libsLoad(libname);
+    return rt.libsLoad(libname);
   }
 
   private void addToWindowsSystemPath(File fLibsFolder) {
@@ -1166,7 +1176,7 @@ public class RunTime {
   }
 
   public boolean isOSX10() {
-    return osVersion.startsWith("10.10.") || osVersion.startsWith("10.11.");
+    return osVersion.startsWith("10.10.") || osVersion.startsWith("10.11.") || osVersion.startsWith("10.12.");
   }
 
   public boolean needsRobotFake() {
@@ -1636,7 +1646,8 @@ public class RunTime {
       Debug.error("Settings: load version file %s did not work", svf);
       Sikulix.endError(999);
     }
-    tessData.put("eng", "http://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz");
+//    tessData.put("eng", "http://tesseract-ocr.googlecode.com/files/tesseract-ocr-3.02.eng.tar.gz");
+    tessData.put("eng", "http://download.sikulix.com/tesseract-ocr-3.02.eng.tar.gz");
     Env.setSikuliVersion(SikuliVersion);
   }
 

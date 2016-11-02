@@ -4,13 +4,8 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.*;
 import org.sikuli.util.*;
-import se.vidstige.jadb.JadbException;
 
 import java.awt.*;
-import java.awt.event.InputEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.ArrayList;
 
 /**
  * Created by Törcsi on 2016. 06. 26.
@@ -107,7 +102,7 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
     if (!device.isDisplayOn()) {
       device.wakeUp(seconds);
       if (needsUnLock) {
-        swipeUp();
+        aSwipeUp();
       }
     }
   }

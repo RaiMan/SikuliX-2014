@@ -26,6 +26,42 @@
   <artifactId>sikulixapi</artifactId>
   <version>1.1.1</version>
 
+  <profiles>
+    <profile>
+      <id>Windows</id>
+      <activation>
+        <os>
+          <family>windows</family>
+        </os>
+      </activation>
+      <properties>
+        <sikulix.libs>sikulixlibswin</sikulix.libs>
+      </properties>
+    </profile>
+    <profile>
+      <id>Unix</id>
+      <activation>
+        <os>
+          <family>unix</family>
+        </os>
+      </activation>
+      <properties>
+        <sikulix.libs>sikulixlibslux</sikulix.libs>
+      </properties>
+    </profile>
+    <profile>
+      <id>Mac</id>
+      <activation>
+        <os>
+          <family>mac</family>
+        </os>
+      </activation>
+      <properties>
+        <sikulix.libs>sikulixlibsmac</sikulix.libs>
+      </properties>
+    </profile>
+  </profiles>
+
   <dependencies>
     <dependency>
       <groupId>commons-cli</groupId>
@@ -61,6 +97,11 @@
       <groupId>com.github.vidstige</groupId>
       <artifactId>jadb</artifactId>
       <version>-v1.0-g94ebf38-23</version>
+    </dependency>
+    <dependency>
+      <groupId>com.sikulix</groupId>
+      <artifactId>${sikulix.libs}</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

@@ -14,6 +14,8 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -165,15 +167,7 @@ public class RunSetup {
 
     runTime = RunTime.get(RunTime.Type.SETUP, args);
 
-//    logp("**** command line args: %d", args.length);
-//    if (args.length > 0) {
-//      int i = 0;
-//      for (String arg : args) {
-//        logp("%3d: %s", i++, arg);
-//      }
-//    }
     version = runTime.getVersionShort();
-//TODO wrong if version number parts have more than one digit
     minorversion = runTime.getVersionShort().substring(0, 5);
     majorversion = runTime.getVersionShort().substring(0, 3);
 
@@ -727,11 +721,20 @@ public class RunSetup {
           fDownloaded = downloadJarFromMavenSx(libsLux, dlDir, libsLux);
         }
         downloadOK &= copyFromDownloads(fDownloaded, libsLux, jarsList[8]);
-        if (isLinux) {
+        if (downloadOK && isLinux) {
           runTime.addToClasspath(jarsList[8]);
           runTime.dumpClassPath("sikulix");
-          logPlus(lvl, "checking usability of bundled/provided libs");
-          RunTime.loadLibrary(LinuxSupport.slibVision, useLibsProvided);
+          if (shouldBuildVision) {
+            logPlus(lvl, "Requested to build libVisionProxy.so on the fly");
+            if (!LinuxSupport.haveToBuild()) {
+              terminate("Building libVisionproxy.so not possible - check the log");
+            }
+          }
+          logPlus(lvl, "checking usability of bundled, provided or built libs");
+          if (!RunTime.loadLibrary(LinuxSupport.slibVision, useLibsProvided)) {
+            logPlus(-1, "libVisionproxy.so finally not useable");
+            terminate("Giving up!");
+          } else logPlus(lvl, "Bundled, provided or built libVisionproxy.so is useable");
           useLibsProvided = runTime.useLibsProvided || LinuxSupport.shouldUseProvided;
         }
       }
@@ -1800,7 +1803,12 @@ public class RunSetup {
       return download(item, target, null, itemName);
     } else {
       if (useLocalMavenRepo) {
-        return download("file://" + runTime.SikuliLocalRepo + item, target, null, itemName);
+        try {
+          URL theFile = new URL("file", null, runTime.SikuliLocalRepo + item);
+          return download(theFile.toExternalForm(), target, null, itemName);
+        } catch (MalformedURLException e) {
+          return null;
+        }
       } else {
         return download(runTime.dlMavenRelease + item, target, null, itemName);
       }

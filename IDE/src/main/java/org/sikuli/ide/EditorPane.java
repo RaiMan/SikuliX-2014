@@ -443,7 +443,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
   private void cleanBundle() {
     log(3, "cleanBundle");
     Set<String> foundImages = parseforImages().keySet();
-    if (foundImages.size() == 1 && foundImages.contains("uncomplete_comment_error")) {
+    if (foundImages.contains("uncomplete_comment_error")) {
       log(-1, "cleanBundle aborted (uncomplete_comment_error)");
     } else {
       FileManager.deleteNotUsedImages(getBundlePath(), foundImages);
@@ -457,13 +457,13 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     String scriptText = getText();
     Lexer lexer = getLexer();
     Map<String, List<Integer>> images = new HashMap<String, List<Integer>>();
-    parseforImagesWalk(pbundle, lexer, scriptText, 0, images);
+    parseforImagesWalk(pbundle, lexer, scriptText, 0, images, 0);
     log(3, "parseforImages finished");
     return images;
   }
 
   private void parseforImagesWalk(String pbundle, Lexer lexer,
-                                  String text, int pos, Map<String, List<Integer>> images) {
+                                  String text, int pos, Map<String, List<Integer>> images, Integer line) {
     //log(3, "parseforImagesWalk");
     Iterable<Token> tokens = lexer.getTokens(text);
     boolean inString = false;
@@ -471,29 +471,33 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     String innerText;
     String[] possibleImage = new String[]{""};
     String[] stringType = new String[]{""};
-    int lines = 1;
     for (Token t : tokens) {
       current = t.getValue();
       if (current.endsWith("\n")) {
+        line++;
         if (inString) {
-          Sikulix.popError(String.format("Delete images on save:\n" +
-                  "possible uncomplete string in line %d\nNo images will be deleted!", lines));
-          images.clear();
-          images.put("uncomplete_comment_error", null);
+          boolean answer = Sikulix.popAsk(String.format("Possible incomplete string in line %d\n" +
+                  "\"%s\"\n" +
+                  "Yes: No images will be deleted!\n" +
+                  "No: Ignore and continue", line, text), "Delete images on save");
+          if (answer) {
+            log(-1, "DeleteImagesOnSave: possible incomplete string in line %d", line);
+            images.clear();
+            images.put("uncomplete_comment_error", null);
+          }
           break;
         }
-        lines++;
       }
       if (t.getType() == TokenType.Comment) {
         //log(3, "parseforImagesWalk::Comment");
         innerText = t.getValue().substring(1);
-        parseforImagesWalk(pbundle, lexer, innerText, t.getPos() + 1, images);
+        parseforImagesWalk(pbundle, lexer, innerText, t.getPos() + 1, images, line);
         continue;
       }
       if (t.getType() == TokenType.String_Doc) {
         //log(3, "parseforImagesWalk::String_Doc");
         innerText = t.getValue().substring(3, t.getValue().length() - 3);
-        parseforImagesWalk(pbundle, lexer, innerText, t.getPos() + 3, images);
+        parseforImagesWalk(pbundle, lexer, innerText, t.getPos() + 3, images, line);
         continue;
       }
       if (!inString) {
@@ -510,7 +514,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
 
   private boolean parseforImagesGetName(String current, boolean inString,
                                         String[] possibleImage, String[] stringType) {
-    //log(3, "parseforImagesGetName (inString: %s)", inString);
+    //log(3, "parseforImagesGetName (inString: %s) %s", inString, current);
     if (!inString) {
       if (!current.isEmpty() && (current.contains("\"") || current.contains("'"))) {
         possibleImage[0] = "";

@@ -5,6 +5,29 @@
   -->
 
 <h1>Changelog version 1.1.1</h1>
+<h4>Build: 2016-10-31</h4>
+<b>fixed:</b> isLockOn() now works as expected (implemented with a direct access to the Windows API)
+<h4>Build: 2016-10-23</h4>
+<b>fixed:</b> checkLastSeen: subsequent searches with higher wanted similarity were ignored -
+should only check if current wanted similarity is lower then last seen similarity.
+<h4>Build: 2016-10-21</h4>
+<b>fixed:</b> Match.getTime() now really returns the duration in milliseconds including the time
+waiting for the image to appear (in case of success before the end of the waiting time),
+consolidated also with Match.toString()
+<h4>Build: 2016-10-20</h4>
+<b>fixed:</b> sikulixsetup#forsetup: latest snapshot was no longer uploaded to OSSRH
+<h4>Build: 2016-10-19</h4>
+<b>fixed:</b> OCR text search not working - looks for image file instead
+<h4>Build: 2016-10-09</h4>
+<b>fixed:</b> should detect macOS Sierra 10.12 (avoid extended delay with Java Robot)
+<h4>Build: 2016-09-10</h4>
+<b>fixed:</b> the Tesseract support stuff was no longer available on google.code, stored now at download.sikulix.com
+<h4>Build: 2016-08-04</h4>
+<b>fixed:</b> input() function on scripting level was blocked and did not work anymore
+<h4>Build: 2016-07-31</h4>
+<b>revised:</b> delete images on save: incomplete string can be ignored, a ' is detected in comments
+<b>revised:</b> ScreenUnion as Region: (Screen.all()) highlight does not make sense (error message),
+shown as S(Union) not S(-1)
 <h4>Build: 2016-07-19</h4>
 <b>revised:</b> Android support: startup, input/type, exec <br>
 moved tap, swipe, input, key to class Region - if used on non-Android device, nothing happens<br>

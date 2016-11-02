@@ -158,8 +158,10 @@ public class Region {
    */
   @Override
   public String toString() {
-    return String.format("R[%d,%d %dx%d]@%s E:%s, T:%.1f",
-            x, y, w, h, (getScreen() == null ? "Screen null" : getScreen().toStringShort()),
+    String scrText = getScreen() == null ? "?" :
+            "" + (-1 == getScreen().getID() ? "Union" : "" + getScreen().getID());
+    return String.format("R[%d,%d %dx%d]@S(%s) E:%s, T:%.1f",
+            x, y, w, h, scrText,
             throwException ? "Y" : "N", autoWaitTimeout);
   }
 
@@ -175,8 +177,9 @@ public class Region {
     if (isOtherScreen()) {
       return String.format("%s, %dx%d", getScreen().getIDString(), w, h);
     } else {
-      return String.format("R[%d,%d %dx%d]@S(%s)", x, y, w, h,
-              (getScreen() == null ? "?" : getScreen().getID()));
+      String scrText = getScreen() == null ? "?" :
+              "" + (-1 == getScreen().getID() ? "Union" : getScreen().getID());
+      return String.format("R[%d,%d %dx%d]@S(%s)", x, y, w, h, scrText);
     }
   }
 
@@ -2103,13 +2106,14 @@ public class Region {
    * @return the region itself
    */
   public Region highlight(float secs, String color) {
-    if (isOtherScreen()) {
+    if (getScreen() == null || isOtherScreen() || isScreenUnion) {
+      Debug.error("highlight: not possible for %s", getScreen());
       return this;
     }
     if (secs < 0.1) {
       return highlight((int) secs, color);
     }
-    Debug.action("highlight " + toString() + " for " + secs + " secs"
+    Debug.action("highlight " + toStringShort() + " for " + secs + " secs"
             + (color != null ? " color: " + color : ""));
     ScreenHighlighter _overlay = new ScreenHighlighter(getScreen(), color);
     _overlay.highlight(this, secs);
@@ -2135,7 +2139,8 @@ public class Region {
    * @return this region
    */
   public Region highlight(int secs, String color) {
-    if (isOtherScreen()) {
+    if (getScreen() == null || isOtherScreen() || isScreenUnion) {
+      Debug.error("highlight: not possible for %s", getScreen());
       return this;
     }
     if (secs > 0) {
@@ -2223,7 +2228,7 @@ public class Region {
   }
 
   private Boolean handleImageMissing(Image img, boolean recap) {
-    log(lvl, "handleImageMissing: %s (%s)", img.getName(), (recap?"recapture ":"capture missing "));
+    log(lvl, "handleImageMissing: %s", img.getName());
     ObserveEvent evt = null;
     FindFailedResponse response = findFailedResponse;
     if (FindFailedResponse.HANDLE.equals(response)) {
@@ -2238,9 +2243,11 @@ public class Region {
       }
     }
     if (FindFailedResponse.PROMPT.equals(response)) {
+      log(lvl, "handleImageMissing: Response.PROMPT");
       response = handleFindFailedShowDialog(img, true);
     }
     if (findFailedResponse.RETRY.equals(response)) {
+      log(lvl, "handleImageMissing: Response.RETRY: %s", (recap?"recapture ":"capture missing "));
       getRobotForRegion().delay(500);
       ScreenImage simg = getScreen().userCapture(
               (recap?"recapture ":"capture missing ") + img.getName());
@@ -2260,6 +2267,7 @@ public class Region {
       }
       return null;
     } else if (findFailedResponse.ABORT.equals(response)) {
+      log(lvl, "handleImageMissing: Response.ABORT: aborting");
       return null;
     }
     log(lvl, "handleImageMissing: skip requested on %s", (recap?"recapture ":"capture missing "));
@@ -2293,14 +2301,14 @@ public class Region {
     }
     lastMatch = null;
     Image img = Image.getImageFromTarget(target);
-    String targetStr = img.getName();
     Boolean response = true;
-    if (!img.isValid() && img.hasIOException()) {
+    if (!img.isText() && !img.isValid() && img.hasIOException()) {
       response = handleImageMissing(img, false);
       if (response == null) {
         runTime.abortScripting("Find: Abort:", "ImageMissing: " + target.toString());
       }
     }
+    String targetStr = img.getName();
     while (null != response && response) {
       log(lvl, "find: waiting 0 secs for %s to appear in %s", targetStr, this.toStringShort());
       lastMatch = doFind(target, img, null);
@@ -2314,7 +2322,7 @@ public class Region {
         log(lvl, "find: %s appeared (%s)", targetStr, lastMatch);
         break;
       }
-      log(lvl, "find: %s did not appear [%d msec]", targetStr, lastFindTime);
+      log(lvl, "find: %s did not appear [%d msec]", targetStr, new Date().getTime() - lastFindTime);
       if (null == lastMatch) {
         response = handleFindFailed(target, img, false);
       }
@@ -2349,14 +2357,14 @@ public class Region {
     String shouldAbort = "";
     RepeatableFind rf = new RepeatableFind(target, null);
     Image img = rf._image;
-    String targetStr = img.getName();
     Boolean response = true;
-    if (!img.isValid() && img.hasIOException()) {
+    if (!img.isText() && !img.isValid() && img.hasIOException()) {
       response = handleImageMissing(img, false);
       if (response == null) {
         runTime.abortScripting("Exists: Abort:", "ImageMissing: " + target.toString());
       }
     }
+    String targetStr = img.getName();
     while (null != response && response) {
       log(lvl, "exists: waiting %.1f secs for %s to appear in %s", timeout, targetStr, this.toStringShort());
       if (rf.repeat(timeout)) {
@@ -2385,7 +2393,7 @@ public class Region {
     if (!shouldAbort.isEmpty()) {
       runTime.abortScripting("Exists: Abort:", "FindFailed: " + shouldAbort);
     } else {
-      log(lvl, "exists: %s did not appear [%d msec]", targetStr, lastFindTime);
+      log(lvl, "exists: %s did not appear [%d msec]", targetStr, new Date().getTime() - lastFindTime);
     }
     return null;
   }
@@ -2673,7 +2681,7 @@ public class Region {
     Image img = rf._image;
     String targetStr = img.getName();
     Boolean response = true;
-    if (!img.isValid() && img.hasIOException()) {
+    if (!img.isText() && !img.isValid() && img.hasIOException()) {
       response = handleImageMissing(img, false);
       if (response == null) {
         runTime.abortScripting("Wait: Abort:", "ImageMissing: " + target.toString());
@@ -2705,7 +2713,7 @@ public class Region {
         break;
       }
     }
-    log(lvl, "wait: %s did not appear [%d msec]", targetStr, lastFindTime);
+    log(lvl, "wait: %s did not appear [%d msec]", targetStr, new Date().getTime() - lastFindTime);
     if (!shouldAbort.isEmpty()) {
       throw new FindFailed(shouldAbort);
     }
@@ -2821,9 +2829,9 @@ public class Region {
     Match m = null;
     IScreen s = null;
     boolean findingText = false;
-    lastFindTime = (new Date()).getTime();
     ScreenImage simg;
     double findTimeout = autoWaitTimeout;
+    String someText = "";
     if (repeating != null) {
       findTimeout = repeating.getFindTimeOut();
     }
@@ -2840,49 +2848,45 @@ public class Region {
       f.findRepeat();
     } else {
       s = getScreen();
-//      Image img = null;
+      lastFindTime = (new Date()).getTime();
       if (ptn instanceof String) {
         if (((String) ptn).startsWith("\t") && ((String) ptn).endsWith("\t")) {
           findingText = true;
+          someText = ((String) ptn).replaceAll("\\t", "");
         } else {
-//          img = Image.create((String) ptn);
           if (img.isValid()) {
             lastSearchTime = (new Date()).getTime();
             f = checkLastSeenAndCreateFinder(img, findTimeout, null);
             if (!f.hasNext()) {
               runFinder(f, img);
-              //f.find(img);
             }
           } else if (img.isText()) {
             findingText = true;
+            someText = img.getText();
           }
         }
         if (findingText) {
+          log(lvl, "doFind: Switching to TextSearch");
           if (TextRecognizer.getInstance() != null) {
-            log(lvl, "doFind: Switching to TextSearch");
             f = new Finder(getScreen().capture(x, y, w, h), this);
             lastSearchTime = (new Date()).getTime();
-            f.findText((String) ptn);
+            f.findText(someText);
           }
         }
       } else if (ptn instanceof Pattern) {
-//        img = ((Pattern) ptn).getImage();
         if (img.isValid()) {
           lastSearchTime = (new Date()).getTime();
           f = checkLastSeenAndCreateFinder(img, findTimeout, (Pattern) ptn);
           if (!f.hasNext()) {
             runFinder(f, ptn);
-            //f.find((Pattern) ptn);
           }
         }
       } else if (ptn instanceof Image) {
-//        img = ((Image) ptn);
         if (img.isValid()) {
           lastSearchTime = (new Date()).getTime();
           f = checkLastSeenAndCreateFinder(img, findTimeout, null);
           if (!f.hasNext()) {
             runFinder(f, img);
-            //f.find(img);
           }
         }
       } else {
@@ -2897,8 +2901,8 @@ public class Region {
     if (f != null) {
       lastSearchTimeRepeat = lastSearchTime;
       lastSearchTime = (new Date()).getTime() - lastSearchTime;
-      lastFindTime = (new Date()).getTime() - lastFindTime;
       if (f.hasNext()) {
+        lastFindTime = (new Date()).getTime() - lastFindTime;
         m = f.next();
         m.setTimes(lastFindTime, lastSearchTime);
         if (Settings.FindProfiling) {
@@ -2930,9 +2934,18 @@ public class Region {
     if (base == null) {
       base = getScreen().capture(this);
     }
+    boolean shouldCheckLastSeen = false;
+    float score = 0;
     if (!Settings.UseImageFinder && Settings.CheckLastSeen && null != img.getLastSeen()) {
+      score = (float) (img.getLastSeenScore() - 0.01);
+      if (ptn != null) {
+        if (!(ptn.getSimilar() > score)) {
+          shouldCheckLastSeen = true;
+        }
+      }
+    }
+    if (shouldCheckLastSeen) {
       Region r = Region.create(img.getLastSeen());
-      float score = (float) (img.getLastSeenScore() - 0.01);
       if (this.contains(r)) {
         Finder f = null;
         if (this.scr instanceof VNCScreen) {
@@ -4421,9 +4434,9 @@ public class Region {
       r.keyDown(KeyEvent.VK_V);
       r.keyUp(KeyEvent.VK_V);
       r.keyUp(mod);
-      return 1;
+      return 0;
     }
-    return 0;
+    return 1;
   }
   //</editor-fold>
 
@@ -4443,7 +4456,7 @@ public class Region {
     return false;
   }
 
-  public <PFRML> void tap(PFRML target) throws FindFailed {
+  public <PFRML> void aTap(PFRML target) throws FindFailed {
     if (isAndroid() && adbDevice != null) {
       Location loc = getLocationFromTarget(target);
       if (loc != null) {
@@ -4453,19 +4466,19 @@ public class Region {
     }
   }
 
-  public void input(String text) {
+  public void aInput(String text) {
     if (isAndroid() && adbDevice != null) {
       adbDevice.input(text);
     }
   }
 
-  public void key(int key) {
+  public void aKey(int key) {
     if (isAndroid() && adbDevice != null) {
       adbDevice.inputKeyEvent(key);
     }
   }
 
-  public <PFRML> void swipe(PFRML from, PFRML to) throws FindFailed {
+  public <PFRML> void aSwipe(PFRML from, PFRML to) throws FindFailed {
     if (isAndroid() && adbDevice != null) {
       Location locFrom = getLocationFromTarget(from);
       Location locTo = getLocationFromTarget(to);
@@ -4476,38 +4489,38 @@ public class Region {
     }
   }
 
-  public void swipeUp() {
+  public void aSwipeUp() {
     int midX = (int) (w/2);
     int swipeStep = (int) (h/5);
     try {
-      swipe(new Location(midX, h - swipeStep), new Location(midX, swipeStep));
+      aSwipe(new Location(midX, h - swipeStep), new Location(midX, swipeStep));
     } catch (FindFailed findFailed) {
     }
   }
 
-  public void swipeDown() {
+  public void aSwipeDown() {
     int midX = (int) (w/2);
     int swipeStep = (int) (h/5);
     try {
-      swipe(new Location(midX, swipeStep), new Location(midX, h - swipeStep));
+      aSwipe(new Location(midX, swipeStep), new Location(midX, h - swipeStep));
     } catch (FindFailed findFailed) {
     }
   }
 
-  public void swipeLeft() {
+  public void aSwipeLeft() {
     int midY = (int) (h/2);
     int swipeStep = (int) (w/5);
     try {
-      swipe(new Location(w - swipeStep, midY), new Location(swipeStep, midY));
+      aSwipe(new Location(w - swipeStep, midY), new Location(swipeStep, midY));
     } catch (FindFailed findFailed) {
     }
   }
 
-  public void swipeRight() {
+  public void aSwipeRight() {
     int midY = (int) (h/2);
     int swipeStep = (int) (w/5);
     try {
-      swipe(new Location(swipeStep, midY), new Location(w - swipeStep, midY));
+      aSwipe(new Location(swipeStep, midY), new Location(w - swipeStep, midY));
     } catch (FindFailed findFailed) {
     }
   }

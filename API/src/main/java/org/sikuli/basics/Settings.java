@@ -269,7 +269,7 @@ public class Settings {
         return RunTime.get().fSxBase.getAbsolutePath();
     }
 
-    public static String getValidImageFilename(String fname) {
+    public static boolean isValidImageFilename(String fname) {
         String validEndings = ".png.jpg.jpeg";
         String defaultEnding = ".png";
         int dot = fname.lastIndexOf(".");
@@ -277,13 +277,17 @@ public class Settings {
         if (dot > 0) {
             ending = fname.substring(dot);
             if (validEndings.contains(ending.toLowerCase())) {
-                return fname;
+                return true;
             }
-        } else {
-            fname += ending;
+        }
+        return false;
+    }
+
+    public static String getValidImageFilename(String fname) {
+        if (isValidImageFilename(fname)) {
             return fname;
         }
-        return "";
+        return fname + ".png";
     }
 
     public static final int ISWINDOWS = 0;

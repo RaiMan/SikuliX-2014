@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
+import org.sikuli.util.SysJNA;
 
 /**
  * this class implements an interface to the Java key system
@@ -802,14 +803,20 @@ public class Key {
    * @return true/false
    */
   public static boolean isLockOn(char key) {
-    Toolkit tk = Toolkit.getDefaultToolkit();
+//    Toolkit tk = Toolkit.getDefaultToolkit();
+//        return tk.getLockingKeyState(KeyEvent.VK_SCROLL_LOCK);
+//        return tk.getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
+//        return tk.getLockingKeyState(KeyEvent.VK_NUM_LOCK);
+    if (!RunTime.get().runningWindows) {
+      return false;
+    }
     switch (key) {
       case '\ue025':
-        return tk.getLockingKeyState(KeyEvent.VK_SCROLL_LOCK);
+        return SysJNA.WinUser32.isScrollLockOn();
       case '\ue027':
-        return tk.getLockingKeyState(KeyEvent.VK_CAPS_LOCK);
+        return SysJNA.WinUser32.isCapsLockOn();
       case '\ue03B':
-        return tk.getLockingKeyState(KeyEvent.VK_NUM_LOCK);
+        return SysJNA.WinUser32.isNumLockOn();
       default:
         return false;
     }
