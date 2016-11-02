@@ -811,6 +811,8 @@ public class Region {
     if (handler != null && (handler.getClass().getName().contains("org.python")
             || handler.getClass().getName().contains("org.jruby"))) {
       handler = new ObserverCallBack(handler, type);
+    } else {
+      ((ObserverCallBack) handler).setType(type);
     }
     return handler;
   }

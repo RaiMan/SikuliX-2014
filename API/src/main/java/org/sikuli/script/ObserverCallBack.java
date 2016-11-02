@@ -107,4 +107,8 @@ public class ObserverCallBack implements EventListener {
       }
     }
   }
+
+  public void setType(ObserveEvent.Type givenType) {
+    obsType = givenType;
+  }
 }
