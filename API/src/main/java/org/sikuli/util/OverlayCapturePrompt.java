@@ -215,12 +215,13 @@ public class OverlayCapturePrompt extends JFrame  implements EventSubject {
     scr_img_darker = scr_img;
     scr_img_type = scr_img.getType();
     scr_img_rect = new Rectangle(scrOCP.getBounds());
+    promptMsg = msg;
     if (isLocalScreen) {
       darker_factor = 0.6f;
       RescaleOp op = new RescaleOp(darker_factor, 0, null);
       scr_img_darker = op.filter(scr_img, null);
-      promptMsg = null;
     } else {
+      promptMsg = null;
       if (scr_img_rect.height > Screen.getPrimaryScreen().getBounds().getHeight()) {
         scr_img_scale = Screen.getPrimaryScreen().getBounds().getHeight() / scr_img_rect.height;
       }
