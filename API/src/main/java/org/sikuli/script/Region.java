@@ -3485,7 +3485,7 @@ public class Region {
   public boolean observeInLine(double secs) {
     return observeDo(secs);
   }
-  
+
   private boolean observeDo(double secs) {
     if (regionObserver == null) {
       Debug.error("Region: observe: Nothing to observe (Region might be invalid): " + this.toStringShort());
