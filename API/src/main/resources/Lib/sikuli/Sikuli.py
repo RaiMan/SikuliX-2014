@@ -422,14 +422,17 @@ def inputText(msg="", title="", lines=0, width=0, text=""):
 # @param msg the message to display.
 # @param title the title for the dialog
 def select(msg="", title="Sikuli Selection", options=(), default=None):
-  if len(options) == 0:
+  optionsLen = len(options)
+  if  optionsLen == 0:
     return ""
-  if default:
-    if not __builtin__.type(default) is types.StringType:
-      try:
-        default = options[default]
-      except:
-        default = None
+  try:
+    default = 0 + default;
+    if default > -1 and default < optionsLen:
+      default = options[default]
+    else:
+      default = None
+  except:
+    pass
   return Sikulix.popSelect(msg, title, options, default)
 
 def popFile(title = "Select File or Folder"):
