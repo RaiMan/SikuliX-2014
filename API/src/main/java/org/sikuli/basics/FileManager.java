@@ -934,7 +934,12 @@ public class FileManager {
 				if (!jp.contains("!/")) {
 					jp += "!/";
 				}
-				String jpu = "jar:" + jp + "/" + fName;
+				String jpu = "jar:" + jp;
+				if (jp.endsWith("!/")) {
+				  jpu += fName;
+        } else {
+          jpu += "/" + fName;
+        }
 				return new URL(jpu);
 			}
       return new URL(path, slashify(fName, false));
