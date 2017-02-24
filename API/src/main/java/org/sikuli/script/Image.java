@@ -132,7 +132,8 @@ public class Image {
   }
 
   public static void reload(String fpImage) {
-    URL uImage = FileManager.makeURL(fpImage);
+//    URL uImage = FileManager.makeURL(fpImage);
+    URL uImage = imageNames.get(fpImage);
     if (imageFiles.containsKey(uImage)) {
       Image image = imageFiles.get(uImage);
       int sizeOld = image.bsize;
