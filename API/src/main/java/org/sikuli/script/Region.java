@@ -3476,22 +3476,15 @@ public class Region {
     return observeDo(secs);
   }
 
-  //<editor-fold desc="obsolete observeJ">
-//  /**
-//   * INTERNAL USE ONLY: for use with scripting API bridges
-//   *
-//   * @param secs time in seconds the observer should run
-//   * @param bg run in background true/false
-//   * @return false if not possible, true if events have happened
-//   */
-//  public boolean observeJ(double secs, boolean bg) {
-//    if (bg) {
-//      return observeInBackground(secs);
-//    } else {
-//      return observeDo(secs);
-//    }
-//  }
-  //</editor-fold>
+  /**
+   * INTERNAL USE ONLY: for use with scripting API bridges
+   *
+   * @param secs time in seconds the observer should run
+   * @return false if not possible, true if events have happened
+   */
+  public boolean observeInLine(double secs) {
+    return observeDo(secs);
+  }
 
   private boolean observeDo(double secs) {
     if (regionObserver == null) {
@@ -3556,7 +3549,6 @@ public class Region {
       Debug.error("Region: observeInBackground: already running for this region. Only one allowed!");
       return false;
     }
-    log(lvl, "entering observeInBackground for %f secs", secs);
     Thread observeThread = new Thread(new ObserverThread(secs));
     observeThread.start();
     log(lvl, "observeInBackground now running");
@@ -3573,7 +3565,7 @@ public class Region {
 
     @Override
     public void run() {
-      observe(time);
+      observeDo(time);
     }
   }
 
