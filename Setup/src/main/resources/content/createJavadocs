@@ -11,23 +11,16 @@ echo $apisrc/Pattern.java >>createJavadocsClasses
 echo $apisrc/Location.java >>createJavadocsClasses
 echo $apisrc/Image.java >>createJavadocsClasses
 echo $apisrc/ImagePath.java >>createJavadocsClasses
-echo $apisrc/ImageGroup.java >>createJavadocsClasses
 echo $apisrc/ScreenImage.java >>createJavadocsClasses
 echo $apisrc/Finder.java >>createJavadocsClasses
-echo $apisrc/ImageFinder.java >>createJavadocsClasses
-echo $apisrc/ImageFind.java >>createJavadocsClasses
 echo $apisrc/Mouse.java >>createJavadocsClasses
 echo $apisrc/Keys.java >>createJavadocsClasses
-echo $apisrc/Device.java >>createJavadocsClasses
 echo $apisrc/Button.java >>createJavadocsClasses
 echo $apisrc/Key.java >>createJavadocsClasses
 echo $apisrc/ObserverCallBack.java >>createJavadocsClasses
 echo $apisrc/ObserveEvent.java >>createJavadocsClasses
 echo $apisrc/App.java >>createJavadocsClasses
 echo $apisrc/Env.java >>createJavadocsClasses
-echo $apisrc/Sikulix.java >>createJavadocsClasses
-echo $apisrc/Runner.java >>createJavadocsClasses
-echo $apisrc/Commands.java >>createJavadocsClasses
 echo $basicssrc/Settings.java >>createJavadocsClasses
 echo $basicssrc/Debug.java >>createJavadocsClasses
 javadoc -public -classpath $apijar -d target/docs @createJavadocsClasses
