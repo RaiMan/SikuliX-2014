@@ -4477,8 +4477,9 @@ public class Region {
   /**
    * EXPERIMENTAL: for Android over ADB
    *
+   * @param <PFRML> Pattern, String, Image, Match, Region or Location
    * @param target PFRML
-   * @throws FindFailed
+   * @throws FindFailed image not found
    */
   public <PFRML> void aTap(PFRML target) throws FindFailed {
     if (isAndroid() && adbDevice != null) {
@@ -4515,9 +4516,10 @@ public class Region {
   /**
    * EXPERIMENTAL: for Android over ADB
    *
+   * @param <PFRML> Pattern, String, Image, Match, Region or Location
    * @param from PFRML
    * @param to PFRML
-   * @throws FindFailed
+   * @throws FindFailed image not found
    */
   public <PFRML> void aSwipe(PFRML from, PFRML to) throws FindFailed {
     if (isAndroid() && adbDevice != null) {
