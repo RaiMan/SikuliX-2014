@@ -761,10 +761,4 @@ public class Screen extends Region implements IScreen {
             scrText, (int) r.getX(), (int) r.getY(),
             (int) r.getWidth(), (int) r.getHeight());
   }
-
-	@Override
-	public String toJSON() {
-    Rectangle r = getBounds();
-		return String.format("[\"S\", %d, %d, %d, %d, %d]", r.x, r.y, r.width, r.height, curID);
-	}
 }
