@@ -14,7 +14,6 @@ echo $apisrc/ImagePath.java >>createJavadocsClasses
 echo $apisrc/ScreenImage.java >>createJavadocsClasses
 echo $apisrc/Finder.java >>createJavadocsClasses
 echo $apisrc/Mouse.java >>createJavadocsClasses
-echo $apisrc/Keys.java >>createJavadocsClasses
 echo $apisrc/Button.java >>createJavadocsClasses
 echo $apisrc/Key.java >>createJavadocsClasses
 echo $apisrc/ObserverCallBack.java >>createJavadocsClasses
