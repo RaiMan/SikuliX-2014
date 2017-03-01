@@ -18,9 +18,8 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 
 /**
- * UNDER DEVELOPMENT --- SURELY HAS BUGS ;-)
- * Intended replacement for Finder together with ImageFind
- * completely implementing the OpenCV usage on the Java level.
+ * EXPERIMENTAL --- INTERNAL USE ONLY<br>
+ *   is not official API --- will not be in version 2
  */
 public class ImageFinder extends Finder {
 

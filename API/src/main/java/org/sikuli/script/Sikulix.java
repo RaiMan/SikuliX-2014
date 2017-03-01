@@ -17,7 +17,7 @@ import java.net.URL;
 import java.security.CodeSource;
 
 /**
- * global services for package API
+ * INTERNAL USE ONLY --- NOT part of official API
  */
 public class Sikulix {
 
@@ -369,7 +369,6 @@ public class Sikulix {
     }
 //TODO collect initializations here
     Mouse.init();
-    Keys.init();
     return new Screen();
   }
 
