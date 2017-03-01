@@ -17,6 +17,10 @@ import java.util.regex.Matcher;
 import javax.script.ScriptEngine;
 import org.sikuli.basics.Debug;
 
+/**
+ * EXPERIMENTAL --- NOT official API<br>
+ *   not as is in version 2
+ */
 public class RunServer {
   private static ServerSocket server = null;
   private static PrintWriter out = null;

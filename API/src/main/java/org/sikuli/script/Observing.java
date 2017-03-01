@@ -14,6 +14,7 @@ import java.util.Map;
 import org.sikuli.basics.Debug;
 
 /**
+ * INTERNAL USE ONLY --- NOT part of the official API
  * This class globally collects
  * all running observations and tracks the created events.<br>
  */

@@ -28,6 +28,9 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 /**
+ * INTERNAL USE --- NOT official API<br>
+ *   not as is in version 2
+ *
  * Intended to concentrate all, that is needed at startup of sikulix or sikulixapi and may be at runtime by SikuliX or
  * any caller
  */

@@ -12,6 +12,10 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.Scanner;
 
+/**
+ * EXPERIMENTAL --- NOT official API<br>
+ *   not in version 2
+ */
 public class Run {
 
   private static Scanner in = null;
