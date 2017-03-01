@@ -994,6 +994,13 @@ public class Key {
 //		}
 //	}
 
+  /**
+   * INTERNAL USE ONLY
+   *
+   * @param code keycode
+   * @param mod modifier
+   * @return readable key text
+   */
   public static String convertKeyToText(int code, int mod) {
     String txtMod = KeyEvent.getKeyModifiersText(mod);
     String txtCode = KeyEvent.getKeyText(code);

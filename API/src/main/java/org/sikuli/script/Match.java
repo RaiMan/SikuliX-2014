@@ -282,9 +282,10 @@ public class Match extends Region implements Comparable<Match> {
 
 
 	/**
-	 * for fromJSON
-	 * @param tx
-	 * @param ty
+	 * INTERNAL USE
+   *
+	 * @param tx x
+	 * @param ty y
 	 */
 	public void setTarget(int tx, int ty) {
 		target = new Location(tx, ty);

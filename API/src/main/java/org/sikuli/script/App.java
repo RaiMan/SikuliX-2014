@@ -552,15 +552,17 @@ public class App {
   }
 
   /**
-   * tries to open the app defined by this App instance
+   * tries to open the app defined by this App instance<br>
+   * and waits until app is running
    *
+   * @param waitTime max waittime until running
    * @return this or null on failure
    */
   public App open(int waitTime) {
     return openAndWait(waitTime);
   }
 
-  public App openAndWait(int waitTime) {
+  private App openAndWait(int waitTime) {
     if (isImmediate) {
       appPID = _osUtil.open(appNameGiven);
     } else {

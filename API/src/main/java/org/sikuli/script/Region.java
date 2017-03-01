@@ -159,6 +159,8 @@ public class Region {
 
   /**
    * INTERNAL USE ONLY
+   *
+   * @return text
    */
   public String getIDString() {
     return "NonLocal";
@@ -203,8 +205,11 @@ public class Region {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Initialization">
+
   /**
-   * INTERNAL USE ONLY
+   * INTERNAL USE
+   *
+   * @param iscr screen
    */
   public void initScreen(IScreen iscr) {
     // check given screen first
@@ -295,6 +300,7 @@ public class Region {
   /**
    * INTERNAL USE - EXPERIMENTAL if true: this region is not bound to any screen
    *
+   * @param rect rectangle
    * @return the current state
    */
   public static Region virtual(Rectangle rect) {
@@ -344,6 +350,8 @@ public class Region {
 
   /**
    * INTERNAL USE: flags this region as belonging to a non-Desktop screen
+   *
+   * @param aScreen screen
    */
   public void setOtherScreen(IScreen aScreen) {
     scr = aScreen;
@@ -4468,6 +4476,9 @@ public class Region {
 
   /**
    * EXPERIMENTAL: for Android over ADB
+   *
+   * @param target PFRML
+   * @throws FindFailed
    */
   public <PFRML> void aTap(PFRML target) throws FindFailed {
     if (isAndroid() && adbDevice != null) {
@@ -4481,6 +4492,8 @@ public class Region {
 
   /**
    * EXPERIMENTAL: for Android over ADB
+   *
+   * @param text text
    */
   public void aInput(String text) {
     if (isAndroid() && adbDevice != null) {
@@ -4490,6 +4503,8 @@ public class Region {
 
   /**
    * EXPERIMENTAL: for Android over ADB
+   *
+   * @param key key
    */
   public void aKey(int key) {
     if (isAndroid() && adbDevice != null) {
@@ -4499,6 +4514,10 @@ public class Region {
 
   /**
    * EXPERIMENTAL: for Android over ADB
+   *
+   * @param from PFRML
+   * @param to PFRML
+   * @throws FindFailed
    */
   public <PFRML> void aSwipe(PFRML from, PFRML to) throws FindFailed {
     if (isAndroid() && adbDevice != null) {

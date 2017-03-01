@@ -238,12 +238,7 @@ public class Image {
     return imageIsText;
   }
 
-  /**
-   * wether this image's name should be taken as text
-   * @param val
-   * @return the image
-   */
-  public Image setIsText(boolean val) {
+  private Image setIsText(boolean val) {
     imageIsText = val;
     return this;
   }
@@ -273,12 +268,7 @@ public class Image {
 //<editor-fold defaultstate="collapsed" desc="isBundled">
   private boolean imageIsBundled = false;
 
-  /**
-   * mark this image as being contained in a bundle
-   * @param imageIsBundled
-   * @return the image
-   */
-  public Image setIsBundled(boolean imageIsBundled) {
+  private Image setIsBundled(boolean imageIsBundled) {
     this.imageIsBundled = imageIsBundled;
     return this;
   }
@@ -1458,7 +1448,7 @@ public class Image {
 
 	/**
 	 * find an image in another image
-	 * @param img
+	 * @param img image
 	 * @return a Match or null
 	 */
 	public Match find(Image img) {
@@ -1468,7 +1458,7 @@ public class Image {
 
 	/**
 	 * find all images in another image
-	 * @param img
+	 * @param img image
 	 * @return Match or null
 	 */
 	public Iterator<Match> findAll(Image img) {
@@ -1498,7 +1488,7 @@ public class Image {
 
 	/**
 	 * convenience method: get text from given image file
-	 * @param imgFile
+	 * @param imgFile image filename
 	 * @return the text or null
 	 */
 	public static String text(String imgFile) {

@@ -247,10 +247,7 @@ public class Screen extends Region implements IScreen {
     initScreen();
   }
 
-  /**
-	 * <br>TODO: remove this method if it is not needed
-	 * @param scr
-   */
+  //TODO: remove this method if it is not needed
   public void initScreen(Screen scr) {
     updateSelf();
   }

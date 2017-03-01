@@ -117,6 +117,7 @@ public class ScreenImage {
 	 * with a created filename (givenName-timestamp.png)
 	 *
 	 * @param path valid path string
+	 * @param name file name
 	 * @return absolute path to stored file
 	 */
   public String save(String path, String name) {
