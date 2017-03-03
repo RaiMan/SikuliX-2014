@@ -5,8 +5,6 @@
  */
 package org.sikuli.script;
 
-//import org.sikuli.basics.*;
-
 import java.io.File;
 import java.net.URL;
 

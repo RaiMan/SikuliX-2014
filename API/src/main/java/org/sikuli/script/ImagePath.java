@@ -198,6 +198,8 @@ public class ImagePath {
 
   /**
    * print the list of path entries
+   *
+   * @param lvl debug level to use
    */
   public static void dump(int lvl) {
     log(lvl, "ImagePath has %d entries (valid %d)", imagePaths.size(), getCount());

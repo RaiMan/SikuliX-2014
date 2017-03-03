@@ -8,7 +8,7 @@ This is 1.1.1 after [1.1.0 final (available 2015-10-07)](https://launchpad.net/s
 ... a bug-fix release for problems with version 1.1.0
 
 <hr>
-**The followup is SikuliX2** [version 2.0.0 in 2015/2016](https://github.com/RaiMan/SikuliX2) 
+**The followup is SikuliX2** [version 2.0.0 in 2017](https://github.com/RaiMan/SikuliX2) 
 <hr>
 
 **SNAPSHOTS on OSSRH** (if available)<br>

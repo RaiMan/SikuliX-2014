@@ -148,10 +148,6 @@ public class Mouse {
     }
   }
 
-  /**
-   *
-   * @param state
-   */
   public static void setMouseMovedHighlight(boolean state) {
     get().device.MouseMovedHighlight = state;
 }

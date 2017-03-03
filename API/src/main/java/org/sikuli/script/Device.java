@@ -12,8 +12,8 @@ import java.util.Date;
 import org.sikuli.basics.Debug;
 
 /**
- *
- * @author RaiMan
+ * EXPERIMENTAL --- INTERNAL USE ONLY<br>
+ *   is not official API --- will not be in version 2
  */
 public class Device {
 
@@ -63,11 +63,6 @@ public class Device {
   protected Device(Mouse m) {
     device = m;
     devName = "Mouse";
-  }
-
-  protected Device(Keys k) {
-    device = k;
-    devName = "KeyBoard";
   }
 
   protected Device(Screen s) {

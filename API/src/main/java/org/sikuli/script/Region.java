@@ -38,6 +38,7 @@ public class Region {
     Debug.logx(level, me + message, args);
   }
 
+  //<editor-fold desc="housekeeping">
   /**
    * The Screen containing the Region
    */
@@ -105,15 +106,6 @@ public class Region {
   private long lastSearchTimeRepeat = -1;
 
   /**
-   * in case of not found the total wait time
-   *
-   * @return the duration of the last find op
-   */
-  public long getLastTime() {
-    return lastFindTime;
-  }
-
-  /**
    * the area constants for use with get()
    */
   public static final int NW = 300, NORTH_WEST = NW, TL = NW;
@@ -165,6 +157,11 @@ public class Region {
             throwException ? "Y" : "N", autoWaitTimeout);
   }
 
+  /**
+   * INTERNAL USE ONLY
+   *
+   * @return text
+   */
   public String getIDString() {
     return "NonLocal";
   }
@@ -182,10 +179,7 @@ public class Region {
       return String.format("R[%d,%d %dx%d]@S(%s)", x, y, w, h, scrText);
     }
   }
-
-  public String toJSON() {
-    return String.format("[\"R\", %d, %d, %d, %d]", x, y, w, h);
-  }
+  //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="OFF: Specials for scripting environment">
   /*
@@ -211,11 +205,11 @@ public class Region {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Initialization">
+
   /**
-   * Detects on which Screen the Region is present. The region is cropped to the intersection with the given screen or
-   * the screen with the largest intersection
+   * INTERNAL USE
    *
-   * @param iscr The Screen containing the Region
+   * @param iscr screen
    */
   public void initScreen(IScreen iscr) {
     // check given screen first
@@ -303,6 +297,12 @@ public class Region {
     return loc.setOtherScreen(scr);
   }
 
+  /**
+   * INTERNAL USE - EXPERIMENTAL if true: this region is not bound to any screen
+   *
+   * @param rect rectangle
+   * @return the current state
+   */
   public static Region virtual(Rectangle rect) {
     Region reg = new Region();
     reg.x = rect.x;
@@ -348,6 +348,11 @@ public class Region {
     otherScreen = true;
   }
 
+  /**
+   * INTERNAL USE: flags this region as belonging to a non-Desktop screen
+   *
+   * @param aScreen screen
+   */
   public void setOtherScreen(IScreen aScreen) {
     scr = aScreen;
     setOtherScreen();
@@ -451,7 +456,7 @@ public class Region {
     init(r);
   }
 
-  public void init(Region r) {
+  private void init(Region r) {
     if (!r.isValid()) {
       return;
     }
@@ -1355,7 +1360,9 @@ public class Region {
     initScreen(null);
     return this;
   }
+  //</editor-fold>
 
+  //<editor-fold desc="lastMatch">
   // ************************************************
   /**
    * a find operation saves its match on success in the used region object<br>unchanged if not successful
@@ -1374,6 +1381,20 @@ public class Region {
    */
   public Iterator<Match> getLastMatches() {
     return lastMatches;
+  }
+  //</editor-fold>
+
+  //<editor-fold desc="save capture to file">
+  public String saveScreenCapture() {
+    return getScreen().capture(this).save();
+  }
+
+  public String saveScreenCapture(String path) {
+    return getScreen().capture(this).save(path);
+  }
+
+  public String saveScreenCapture(String path, String name) {
+    return getScreen().capture(this).save(path, name);
   }
 
   // ************************************************
@@ -1419,6 +1440,12 @@ public class Region {
     return getScreen().getLastScreenImageFromScreen().getFile(path, name);
   }
 
+  public void saveLastScreenImage() {
+    ScreenImage simg = getScreen().getLastScreenImageFromScreen();
+    if (simg != null) {
+      simg.saveLastScreenImage(runTime.fSikulixStore);
+    }
+  }
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="spatial operators - new regions">
@@ -2984,13 +3011,6 @@ public class Region {
     }
   }
 
-  public void saveLastScreenImage() {
-    ScreenImage simg = getScreen().getLastScreenImageFromScreen();
-    if (simg != null) {
-      simg.saveLastScreenImage(runTime.fSikulixStore);
-    }
-  }
-
   /**
    * Match findAllNow( Pattern/String/Image ) finds all the given pattern on the screen and returns the best matches
    * without waiting.
@@ -3276,7 +3296,7 @@ public class Region {
   }
 
   /**
-   * set the observer with the given name active (not checked while observing)
+   * set the observer with the given name active (checked while observing)
    *
    * @param name observers name
    */
@@ -3594,7 +3614,7 @@ public class Region {
   //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Mouse actions - clicking">
-  public Location checkMatch() {
+  protected Location checkMatch() {
     if (lastMatch != null) {
       return lastMatch.getTarget();
     }
@@ -4453,6 +4473,13 @@ public class Region {
     return false;
   }
 
+  /**
+   * EXPERIMENTAL: for Android over ADB
+   *
+   * @param <PFRML> Pattern, String, Image, Match, Region or Location
+   * @param target PFRML
+   * @throws FindFailed image not found
+   */
   public <PFRML> void aTap(PFRML target) throws FindFailed {
     if (isAndroid() && adbDevice != null) {
       Location loc = getLocationFromTarget(target);
@@ -4463,18 +4490,36 @@ public class Region {
     }
   }
 
+  /**
+   * EXPERIMENTAL: for Android over ADB
+   *
+   * @param text text
+   */
   public void aInput(String text) {
     if (isAndroid() && adbDevice != null) {
       adbDevice.input(text);
     }
   }
 
+  /**
+   * EXPERIMENTAL: for Android over ADB
+   *
+   * @param key key
+   */
   public void aKey(int key) {
     if (isAndroid() && adbDevice != null) {
       adbDevice.inputKeyEvent(key);
     }
   }
 
+  /**
+   * EXPERIMENTAL: for Android over ADB
+   *
+   * @param <PFRML> Pattern, String, Image, Match, Region or Location
+   * @param from PFRML
+   * @param to PFRML
+   * @throws FindFailed image not found
+   */
   public <PFRML> void aSwipe(PFRML from, PFRML to) throws FindFailed {
     if (isAndroid() && adbDevice != null) {
       Location locFrom = getLocationFromTarget(from);
@@ -4486,6 +4531,9 @@ public class Region {
     }
   }
 
+  /**
+   * EXPERIMENTAL: for Android over ADB
+   */
   public void aSwipeUp() {
     int midX = (int) (w/2);
     int swipeStep = (int) (h/5);
@@ -4495,6 +4543,9 @@ public class Region {
     }
   }
 
+  /**
+   * EXPERIMENTAL: for Android over ADB
+   */
   public void aSwipeDown() {
     int midX = (int) (w/2);
     int swipeStep = (int) (h/5);
@@ -4504,6 +4555,9 @@ public class Region {
     }
   }
 
+  /**
+   * EXPERIMENTAL: for Android over ADB
+   */
   public void aSwipeLeft() {
     int midY = (int) (h/2);
     int swipeStep = (int) (w/5);
@@ -4513,6 +4567,9 @@ public class Region {
     }
   }
 
+  /**
+   * EXPERIMENTAL: for Android over ADB
+   */
   public void aSwipeRight() {
     int midY = (int) (h/2);
     int swipeStep = (int) (w/5);
@@ -4522,7 +4579,6 @@ public class Region {
     }
   }
   //</editor-fold>
-
 
   //<editor-fold defaultstate="collapsed" desc="OCR - read text from Screen">
   /**
@@ -4571,16 +4627,4 @@ public class Region {
     return null;
   }
   //</editor-fold>
-
-  public String saveScreenCapture() {
-    return getScreen().capture(this).save();
-  }
-
-  public String saveScreenCapture(String path) {
-    return getScreen().capture(this).save(path);
-  }
-
-  public String saveScreenCapture(String path, String name) {
-    return getScreen().capture(this).save(path, name);
-  }
 }

@@ -3,7 +3,6 @@
  * Released under the MIT License.
  *
  */
-
 package org.sikuli.script;
 
 import java.io.File;
@@ -13,10 +12,15 @@ import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Scanner;
+import java.util.*;
+import java.util.regex.Matcher;
 import javax.script.ScriptEngine;
 import org.sikuli.basics.Debug;
 
+/**
+ * EXPERIMENTAL --- NOT official API<br>
+ *   not as is in version 2
+ */
 public class RunServer {
   private static ServerSocket server = null;
   private static PrintWriter out = null;
@@ -309,8 +313,9 @@ public class RunServer {
                   success = false;
                 }
                 if (success) {
-                  fScript = new File(scriptFolder, script);
-                  if(!fScript.exists()) {
+                  Debug.log("Using script folder: " + RunServer.scriptFolder);
+                  fScript = new File(RunServer.scriptFolder, script);
+                  if (!fScript.exists()) {
                     if (script.endsWith(".sikuli")) {
                       script = script.replace(".sikuli", "");
                     } else {
@@ -325,6 +330,8 @@ public class RunServer {
                     fScriptScript = new File(fScript, scriptScript + ".py");
                     success = fScript.exists() && fScriptScript.exists();
                     if (!success) {
+                      RunServer.log("Script folder path: " + fScript.getAbsolutePath());
+                      RunServer.log("Script file path: " + fScriptScript.getAbsolutePath());
                       rMessage = "runScript: script not found, not valid or not supported "
                               + fScriptScript.toString();
                     }
@@ -333,7 +340,24 @@ public class RunServer {
                 }
                 if (success) {
                   ImagePath.setBundlePath(fScript.getAbsolutePath());
-                  success = startRunner(runType, fScript, fScriptScript);
+                  List<String> args = new ArrayList<String>();
+
+                  if (this.rQuery != null && this.rQuery.length() > 0) {
+                    String[] params = this.rQuery.split("[;&]");
+
+                    for (String param : params) {
+                      String[] pair = param.split("[=]");
+
+                      if (pair != null && pair.length == 2) {
+                        // Needs both a variable name and value, and supports repeated parameters
+                        String arg = String.format("--%1$s=%2$s", pair[0], pair[1]);
+
+                        args.add(arg);
+                      }
+                    }
+                  }
+
+                  success = this.startRunner(this.runType, fScript, fScriptScript, args.toArray(new String[0]));
                 }
               } else if (rCommand.startsWith("EVAL")) {
                 if (jsRunner != null) {
@@ -401,6 +425,7 @@ public class RunServer {
 
     private File getFolder(String path) {
       File aFolder = new File(path);
+      Debug.log("Original path: " + aFolder);
       if (path.toLowerCase().startsWith("/home/")) {
         path = path.substring(6);
         aFolder = new File(RunTime.get().fUserDir, path);
@@ -408,11 +433,15 @@ public class RunServer {
         path = "__NET/" + path.substring(5);
         aFolder = new File(path);
       } else if (RunTime.get().runningWindows) {
-//TODO handle drive letter
+          Matcher matcher = java.util.regex.Pattern.compile("(?ix: ^ (?: / ([a-z]) [:]? /) (.*) $)").matcher(path);
+          // Assume specified drive exists or fallback on the default/required drive
+          String newPath = matcher.matches() ? matcher.replaceAll("$1:/$2") : ("c:" + path);
+          aFolder = new File(newPath);
       }
+      Debug.log("Transformed path: " + aFolder);
       return aFolder;
     }
-
+    
     private boolean checkRequest(String request) {
       shouldKeep = false;
       rCommand = "NOOP";
@@ -452,6 +481,10 @@ public class RunServer {
     }
 
     private boolean startRunner(String runType, File fScript, File fScriptScript) {
+      return this.startRunner(runType, fScript, fScriptScript, new String[0]);
+    }
+
+    private boolean startRunner(String runType, File fScript, File fScriptScript, String[] args) {
       if (runTypeJS.equals(runType)) {
         if (jsRunner == null) {
           try {
@@ -488,7 +521,8 @@ public class RunServer {
           retval = -1;
         }
         if (fScript != null && retval == 0) {
-          evalReturnObject = Runner.run(fScript.getAbsolutePath());
+          // Arguments are passed to Python in the long format: --name=value
+          evalReturnObject = Runner.run(fScript.getAbsolutePath(), args);
           try {
             retval = Integer.parseInt(evalReturnObject.toString());
             if (retval == -999) {

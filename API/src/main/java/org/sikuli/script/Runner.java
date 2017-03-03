@@ -24,6 +24,10 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * INTERNAL USE --- NOT official API<br>
+ *   not in version 2
+ */
 public class Runner {
 
   static final String me = "Runner: ";

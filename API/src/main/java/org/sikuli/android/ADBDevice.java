@@ -223,7 +223,8 @@ public class ADBDevice {
     String dump = dumpsys("display");
     String token = "mDefaultViewport= ... deviceWidth=1200, deviceHeight=1920}";
     Dimension dim = null;
-    Pattern displayDimension = Pattern.compile("mDefaultViewport=.*?deviceWidth=(\\d*).*?deviceHeight=(\\d*)");
+    Pattern displayDimension = Pattern.compile(
+            "mDefaultViewport.*?=.*?deviceWidth=(\\d*).*?deviceHeight=(\\d*)");
     Matcher match = displayDimension.matcher(dump);
     if (match.find()) {
       int w = Integer.parseInt(match.group(1));
@@ -358,9 +359,9 @@ public class ADBDevice {
 
   public void tap(int x, int y) {
     try {
-      device.executeShell("input aTap", Integer.toString(x), Integer.toString(y));
+      device.executeShell("input tap", Integer.toString(x), Integer.toString(y));
     } catch (IOException | JadbException e) {
-      log(-1, "aTap: %s", e);
+      log(-1, "tap: %s", e);
     }
   }
 
@@ -402,7 +403,7 @@ public class ADBDevice {
 
   public void input(String text) {
     try {
-      device.executeShell("input text", text);
+      device.executeShell("input text ", text);
       RunTime.pause(text.length() * inputDelay);
     } catch (Exception e) {
       log(-1, "input: %s", e);

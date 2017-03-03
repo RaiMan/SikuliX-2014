@@ -685,6 +685,7 @@ public class Debug {
 	 * @param level value
 	 * @param message text or format string
 	 * @param args for use with format string
+	 * @return generated message
 	 */
 	public static String logx(int level, String message, Object... args) {
     String sout = "";

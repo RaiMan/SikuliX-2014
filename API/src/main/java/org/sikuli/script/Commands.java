@@ -12,6 +12,10 @@ import java.lang.reflect.Method;
 
 import org.sikuli.basics.Debug;
 
+/**
+ * EXPERIMENTAL --- INTERNAL USE ONLY<br>
+ *   is not official API --- will not be in version 2
+ */
 public class Commands {
 
     private static int lvl = 2;

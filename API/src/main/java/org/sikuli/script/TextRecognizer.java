@@ -18,7 +18,7 @@ import org.sikuli.natives.OCRWords;
 import org.sikuli.natives.Vision;
 
 /**
- * INTERNAL USE
+ * INTERNAL USE --- NOT part of official API
  *
  * Will be rewritten for use of Tess4J - Java only implementation
  */

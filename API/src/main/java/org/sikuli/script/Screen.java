@@ -106,7 +106,6 @@ public class Screen extends Region implements IScreen {
         nMonitor++;
       }
       Mouse.init();
-      Keys.init();
       if (getNumberScreens() > 1) {
         log(lvl, "initScreens: multi monitor mouse check");
         Location lnow = Mouse.at();
@@ -247,10 +246,7 @@ public class Screen extends Region implements IScreen {
     initScreen();
   }
 
-  /**
-	 * <br>TODO: remove this method if it is not needed
-	 * @param scr
-   */
+  //TODO: remove this method if it is not needed
   public void initScreen(Screen scr) {
     updateSelf();
   }
@@ -761,10 +757,4 @@ public class Screen extends Region implements IScreen {
             scrText, (int) r.getX(), (int) r.getY(),
             (int) r.getWidth(), (int) r.getHeight());
   }
-
-	@Override
-	public String toJSON() {
-    Rectangle r = getBounds();
-		return String.format("[\"S\", %d, %d, %d, %d, %d]", r.x, r.y, r.width, r.height, curID);
-	}
 }

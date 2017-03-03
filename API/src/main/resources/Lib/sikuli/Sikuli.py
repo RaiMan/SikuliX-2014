@@ -117,8 +117,6 @@ from org.sikuli.script import Mouse
 def at():
   return Mouse.at()
 
-from org.sikuli.script import Keys
-
 Debug.log(4, "Jython: sikuli: Sikuli: import from compare")
 from org.sikuli.script.compare import DistanceComparator
 from org.sikuli.script.compare import VerticalComparator

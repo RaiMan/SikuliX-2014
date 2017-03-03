@@ -280,25 +280,12 @@ public class Match extends Region implements Comparable<Match> {
               (getScreen()== null ? "?" : getScreen().getID()));
   }
 
-	@Override
-	public String toJSON() {
-		int tx = 0;
-		int ty = 0;
-		if (target == null) {
-			tx = getCenter().x;
-			ty = getCenter().y;
-		} else {
-			tx = target.x;
-			ty = target.y;
-		}
-		long intScore = Math.round(simScore * 100);
-		return String.format("[\"M\", %d, %d, %d, %d, %d, %d, %d]", x, y, w, h, intScore, tx, ty);
-	}
 
 	/**
-	 * for fromJSON
-	 * @param tx
-	 * @param ty
+	 * INTERNAL USE
+   *
+	 * @param tx x
+	 * @param ty y
 	 */
 	public void setTarget(int tx, int ty) {
 		target = new Location(tx, ty);
