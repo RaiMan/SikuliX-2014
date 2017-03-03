@@ -192,7 +192,6 @@ public class RobotDesktop extends Robot implements IRobot {
   @Override
   public void mouseDown(int buttons) {
     if (heldButtons != 0) {
-      Debug.error("mouseDown: buttons still pressed - using all", buttons, heldButtons);
       heldButtons |= buttons;
     } else {
       heldButtons = buttons;

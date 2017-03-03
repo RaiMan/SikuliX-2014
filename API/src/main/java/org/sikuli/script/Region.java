@@ -2208,7 +2208,6 @@ public class Region {
    * throw FindFailed to abort
    *
    * @param img Handles a failed find action
-   * @throws FindFailed
    */
   private <PSI> Boolean handleFindFailed(PSI target, Image img, boolean isExists) {
     log(lvl, "handleFindFailed: %s", target);
