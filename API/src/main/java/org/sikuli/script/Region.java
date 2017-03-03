@@ -209,6 +209,7 @@ public class Region {
    }
    */
   //</editor-fold>
+
   //<editor-fold defaultstate="collapsed" desc="Initialization">
   /**
    * Detects on which Screen the Region is present. The region is cropped to the intersection with the given screen or
@@ -470,6 +471,7 @@ public class Region {
   }
 
   //</editor-fold>
+
   //<editor-fold defaultstate="collapsed" desc="Quasi-Constructors to be used in Java">
   /**
    * internal use only, used for new Screen objects to get the Region behavior
@@ -685,6 +687,7 @@ public class Region {
   }
 
   //</editor-fold>
+
   //<editor-fold defaultstate="collapsed" desc="handle coordinates">
   /**
    * check if current region contains given point
@@ -881,6 +884,7 @@ public class Region {
   }
 
   //</editor-fold>
+
   //<editor-fold defaultstate="collapsed" desc="getters / setters / modificators">
   /**
    *
@@ -1416,6 +1420,7 @@ public class Region {
   }
 
   //</editor-fold>
+
   //<editor-fold defaultstate="collapsed" desc="spatial operators - new regions">
   /**
    * check if current region contains given region
@@ -1735,6 +1740,7 @@ public class Region {
   }
 
   //</editor-fold>
+
   //<editor-fold defaultstate="collapsed" desc="parts of a Region">
   /**
    * select the specified part of the region.
@@ -2175,7 +2181,6 @@ public class Region {
    * throw FindFailed to abort
    *
    * @param img Handles a failed find action
-   * @throws FindFailed
    */
   private <PSI> Boolean handleFindFailed(PSI target, Image img, boolean isExists) {
     log(lvl, "handleFindFailed: %s", target);
