@@ -486,8 +486,11 @@ def useRemote(adr, port=0):
 # returns a VNCScreen object
 # use theVNCScreen.stop() to stop this connection again (auto-stopped at script end)
 
-def vncStart(ip="127.0.0.1", port=5900, connectionTimeout=10, timeout=1000):
-  return Sikulix.vncStart(ip, port, connectionTimeout, timeout)
+def useVnc(ip="127.0.0.1", port=5900, password=None, connectionTimeout=10, timeout=1000):
+  use(Sikulix.vncStart(ip, port, password, connectionTimeout, timeout), True)
+
+def vncStart(ip="127.0.0.1", port=5900, password=None, connectionTimeout=10, timeout=1000):
+  return Sikulix.vncStart(ip, port, password, connectionTimeout, timeout)
 
 ## ----------------------------------------------------------------------
 # Switches the frontmost application to the given application.

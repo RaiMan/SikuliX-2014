@@ -62,6 +62,13 @@
     </profile>
   </profiles>
 
+  <repositories>
+    <repository>
+      <id>sikulix-local</id>
+      <url>file://${project.basedir}/lib</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>commons-cli</groupId>
@@ -104,6 +111,11 @@
       <groupId>com.sikulix</groupId>
       <artifactId>${sikulix.libs}</artifactId>
       <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.tigervnc</groupId>
+      <artifactId>vncviewer</artifactId>
+      <version>1.7.1</version>
     </dependency>
   </dependencies>
 

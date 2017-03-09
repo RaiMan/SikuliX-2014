@@ -5,7 +5,6 @@
  */
 package org.sikuli.script;
 
-import edu.unh.iol.dlc.VNCScreen;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.Settings;
@@ -498,7 +497,7 @@ public class RunTime {
           }
           isRunning.delete();
         }
-        VNCScreen.cleanUp();
+
         if (shouldCleanDownloads) {
           FileManager.deleteFileOrFolder(fSikulixDownloadsBuild);
         }
@@ -939,7 +938,7 @@ public class RunTime {
       }
       if (shouldAddLibsJar) {
         fpLibsFrom = new File(fSxProject,
-                String.format("Libs%s/target/sikulixlibs%s-1.1.1.jar", sysShort, sysShort)).getAbsolutePath();
+                String.format("Libs%s/target/sikulixlibs%s-1.1.2.jar", sysShort, sysShort)).getAbsolutePath();
       }
       log(lvl, "now exporting libs");
       if (!fpLibsFrom.isEmpty()) {

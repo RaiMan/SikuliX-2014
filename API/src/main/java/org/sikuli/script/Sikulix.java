@@ -5,14 +5,18 @@
  */
 package org.sikuli.script;
 
-import edu.unh.iol.dlc.VNCScreen;
+import org.sikuli.vnc.VNCScreen;
 import org.sikuli.android.ADBScreen;
 import org.sikuli.basics.*;
-import org.sikuli.util.*;
+import org.sikuli.util.JythonHelper;
+import org.sikuli.util.ScreenHighlighter;
+import org.sikuli.util.SikulixFileChooser;
+import org.sikuli.util.Tests;
 
 import javax.swing.*;
 import java.awt.*;
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.security.CodeSource;
 
@@ -456,7 +460,7 @@ public class Sikulix {
    */
   public static void cleanUp(int n) {
     log(lvl, "cleanUp: %d", n);
-    VNCScreen.cleanUp();
+    VNCScreen.stop();
     ADBScreen.stop();
     ScreenHighlighter.closeAll();
     Observing.cleanUp();
@@ -927,7 +931,11 @@ public class Sikulix {
    * @param timeout  value in milli-seconds during normal operation
    * @return a VNCScreen object
    */
-  public static VNCScreen vncStart(String theIP, int thePort, int cTimeout, int timeout) {
-    return VNCScreen.start(theIP, thePort, cTimeout, timeout);
+  public static VNCScreen vncStart(String theIP, int thePort, String password, int cTimeout, int timeout) {
+    try {
+      return VNCScreen.start(theIP, thePort, password, cTimeout, timeout);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
   }
 }

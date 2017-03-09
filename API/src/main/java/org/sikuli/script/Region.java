@@ -5,7 +5,6 @@
  */
 package org.sikuli.script;
 
-import edu.unh.iol.dlc.VNCScreen;
 import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
@@ -248,13 +247,8 @@ public class Region {
     // crop to the screen with the largest intersection
     screenRect = new Rectangle(0, 0, 0, 0);
     screenOn = null;
-    boolean isVNC;
-    if (iscr == null) {
-      isVNC = scr instanceof VNCScreen;
-    } else {
-      isVNC = iscr instanceof VNCScreen;
-    }
-    if (!isVNC) {
+
+    if (scr == null || !scr.isOtherScreen()) {
       for (int i = 0; i < Screen.getNumberScreens(); i++) {
         screen = Screen.getScreen(i);
         rect = regionOnScreen(screen);
@@ -266,17 +260,15 @@ public class Region {
         }
       }
     } else {
-      for (int i = 0; i < VNCScreen.getNumberScreens(); i++) {
-        screen = VNCScreen.getScreen(i);
-        rect = regionOnScreen(screen);
-        if (rect != null) {
-          if (rect.width * rect.height > screenRect.width * screenRect.height) {
-            screenRect = rect;
-            screenOn = screen;
-          }
+      rect = regionOnScreen(scr);
+      if (rect != null) {
+        if (rect.width * rect.height > screenRect.width * screenRect.height) {
+          screenRect = rect;
+          screenOn = scr;
         }
       }
     }
+
     if (screenOn != null) {
       x = screenRect.x;
       y = screenRect.y;
@@ -2979,17 +2971,13 @@ public class Region {
     if (shouldCheckLastSeen) {
       Region r = Region.create(img.getLastSeen());
       if (this.contains(r)) {
-        Finder f = null;
-        if (this.scr instanceof VNCScreen) {
-          f = new Finder(new VNCScreen().capture(r), r);
-        } else {
-          f = new Finder(base.getSub(r.getRect()), r);
-          if (Debug.shouldHighlight()) {
-            if (this.scr.getW() > w + 10 && this.scr.getH() > h + 10) {
-              highlight(2, "#000255000");
-            }
+        Finder f = new Finder(base.getSub(r.getRect()), r);
+        if (Debug.shouldHighlight()) {
+          if (this.scr.getW() > w + 10 && this.scr.getH() > h + 10) {
+            highlight(2, "#000255000");
           }
         }
+
         if (ptn == null) {
           f.find(new Pattern(img).similar(score));
         } else {
