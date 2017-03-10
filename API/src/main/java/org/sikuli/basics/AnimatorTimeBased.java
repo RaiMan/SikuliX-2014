@@ -6,15 +6,11 @@
 
 package org.sikuli.basics;
 
-import java.util.Date;
-
 public class AnimatorTimeBased implements Animator {
 
-  protected long _begin_time;
-  protected float _beginVal, _endVal, _stepUnit;
-  protected long _totalMS;
-  protected boolean _running;
-  protected AnimatorTimeValueFunction _func;
+  private long _begin_time;
+  private boolean _running;
+  private AnimatorTimeValueFunction _func;
 
   public AnimatorTimeBased(AnimatorTimeValueFunction func) {
     _begin_time = -1;
@@ -25,11 +21,11 @@ public class AnimatorTimeBased implements Animator {
   @Override
   public float step() {
     if (_begin_time == -1) {
-      _begin_time = (new Date()).getTime();
+      _begin_time = System.currentTimeMillis();
       return _func.getValue(0);
     }
 
-    long now = (new Date()).getTime();
+    long now = System.currentTimeMillis();
     long delta = now - _begin_time;
     float ret = _func.getValue(delta);
     _running = !_func.isEnd(delta);
