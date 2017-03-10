@@ -65,7 +65,7 @@
   <repositories>
     <repository>
       <id>sikulix-local</id>
-      <url>file://${project.basedir}/lib</url>
+      <url>file://${project.basedir}/</url>
     </repository>
   </repositories>
 
