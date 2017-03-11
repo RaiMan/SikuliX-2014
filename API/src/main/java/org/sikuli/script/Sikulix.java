@@ -460,7 +460,7 @@ public class Sikulix {
    */
   public static void cleanUp(int n) {
     log(lvl, "cleanUp: %d", n);
-    VNCScreen.stop();
+    VNCScreen.stopAll();
     ADBScreen.stop();
     ScreenHighlighter.closeAll();
     Observing.cleanUp();

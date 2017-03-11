@@ -41,6 +41,9 @@ public class VNCScreen extends Region implements IScreen, Closeable {
     close();
   }
 
+  public static void stopAll() {
+  }
+
   private VNCScreen(final VNCClient client) {
     this.client = client;
     this.robot = new VNCRobot(this);
