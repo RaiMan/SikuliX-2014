@@ -37,6 +37,10 @@ public class VNCScreen extends Region implements IScreen, Closeable {
     return new VNCScreen(VNCClient.connect(theIP, thePort, password, true));
   }
 
+  public static VNCScreen start(String theIP, int thePort, int cTimeout, int timeout) throws IOException {
+    return new VNCScreen(VNCClient.connect(theIP, thePort, null, true));
+  }
+
   public void stop() throws IOException {
     close();
   }
