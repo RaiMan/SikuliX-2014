@@ -922,6 +922,26 @@ public class Sikulix {
   }
 
   /**
+   * convenience for a password protected VNCScreen connection
+   * (use theVNCScreen.stop() to stop the connection)
+   * active screens are auto-stopped at cleanup
+   *
+   * @param theIP    the server IP
+   * @param thePort  the port number
+   * @param password a needed password for the server in plain text
+   * @param cTimeout seconds to wait for a valid connection
+   * @param timeout  value in milli-seconds during normal operation
+   * @return a VNCScreen object
+   */
+  public static VNCScreen vncStart(String theIP, int thePort, String password, int cTimeout, int timeout) {
+    try {
+      return VNCScreen.start(theIP, thePort, password, cTimeout, timeout);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+  }
+
+  /**
    * convenience for a VNCScreen connection (use theVNCScreen.stop() to stop the connection)
    * active screens are auto-stopped at cleanup
    *
@@ -931,9 +951,9 @@ public class Sikulix {
    * @param timeout  value in milli-seconds during normal operation
    * @return a VNCScreen object
    */
-  public static VNCScreen vncStart(String theIP, int thePort, String password, int cTimeout, int timeout) {
+  public static VNCScreen vncStart(String theIP, int thePort, int cTimeout, int timeout) {
     try {
-      return VNCScreen.start(theIP, thePort, password, cTimeout, timeout);
+      return VNCScreen.start(theIP, thePort, cTimeout, timeout);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

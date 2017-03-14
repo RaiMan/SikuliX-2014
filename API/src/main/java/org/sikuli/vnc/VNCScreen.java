@@ -17,15 +17,18 @@
  */
 package org.sikuli.vnc;
 
+import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.*;
 import org.sikuli.util.OverlayCapturePrompt;
 import org.sikuli.util.ScreenHighlighter;
 
-import java.awt.*;
+import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VNCScreen extends Region implements IScreen, Closeable {
   private final VNCClient client;
@@ -33,12 +36,18 @@ public class VNCScreen extends Region implements IScreen, Closeable {
   private final IRobot robot;
   private ScreenImage lastScreenImage;
 
+  private static List<VNCScreen> screens = new ArrayList<>();
+
   public static VNCScreen start(String theIP, int thePort, String password, int cTimeout, int timeout) throws IOException {
-    return new VNCScreen(VNCClient.connect(theIP, thePort, password, true));
+    VNCScreen scr = new VNCScreen(VNCClient.connect(theIP, thePort, password, true));
+    screens.add(scr);
+    return scr;
   }
 
   public static VNCScreen start(String theIP, int thePort, int cTimeout, int timeout) throws IOException {
-    return new VNCScreen(VNCClient.connect(theIP, thePort, null, true));
+    VNCScreen scr = new VNCScreen(VNCClient.connect(theIP, thePort, null, true));
+    screens.add(scr);
+    return scr;
   }
 
   public void stop() throws IOException {
@@ -46,6 +55,13 @@ public class VNCScreen extends Region implements IScreen, Closeable {
   }
 
   public static void stopAll() {
+    for (VNCScreen scr : screens) {
+      try {
+        scr.close();
+      } catch (IOException e) {
+        Debug.error("VNCScreen: stopAll: %s", e.getMessage());
+      }
+    }
   }
 
   private VNCScreen(final VNCClient client) {
@@ -67,6 +83,7 @@ public class VNCScreen extends Region implements IScreen, Closeable {
       }
     }).start();
     client.refreshFramebuffer();
+    //RunTime.get().pause(5);
   }
 
   @Override
@@ -103,12 +120,10 @@ public class VNCScreen extends Region implements IScreen, Closeable {
   @Override
   public ScreenImage capture(int x, int y, int w, int h) {
     BufferedImage image = client.getFrameBuffer(x, y, w, h);
-
     ScreenImage img = new ScreenImage(
             new Rectangle(x, y, w, h),
             image
     );
-
     lastScreenImage = img;
     return img;
   }
