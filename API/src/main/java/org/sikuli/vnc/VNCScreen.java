@@ -50,8 +50,13 @@ public class VNCScreen extends Region implements IScreen, Closeable {
     return scr;
   }
 
-  public void stop() throws IOException {
-    close();
+  public void stop() {
+    try {
+      close();
+    } catch (IOException e) {
+      Debug.error("VNCScreen: stop: %s", e.getMessage());
+    }
+    screens.remove(this);
   }
 
   public static void stopAll() {
@@ -90,6 +95,7 @@ public class VNCScreen extends Region implements IScreen, Closeable {
   public void close() throws IOException {
     closed = true;
     client.close();
+    screens.clear();
   }
 
   @Override
