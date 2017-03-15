@@ -1092,7 +1092,7 @@ public class FileManager {
       return null;
     }
     if (shouldReload) {
-      Image.reload(fpImage);
+      Image.reload(sImage);
     }
     return fpImage;
   }

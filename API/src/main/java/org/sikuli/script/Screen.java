@@ -636,8 +636,8 @@ public class Screen extends Region implements IScreen {
             continue;
           }
           Screen.getScreen(is).prompt = new OverlayCapturePrompt(Screen.getScreen(is));
-          Screen.getScreen(is).prompt.prompt(msg);
           Screen.getScreen(is).prompt.addObserver(captureObserver);
+          Screen.getScreen(is).prompt.prompt(msg);
         }
       }
     };

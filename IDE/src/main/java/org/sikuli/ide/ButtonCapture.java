@@ -33,7 +33,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
   private EditorPatternLabel _lbl = null;
   private String givenName = "";
 
-  public static boolean debugTrace = false;
+  public static boolean debugTrace = true;
 
   public ButtonCapture() {
     super();
@@ -92,10 +92,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
     EditorPane codePane = ide.getCurrentCodePane();
     line = codePane.getLineTextAtCaret();
     givenName = codePane.parseLineText("#" + line.trim());
-    if (debugTrace) {
-      Debug.on(4);
-    }
-    Debug.log(4, "TRACE: ButtonCapture: doPrompt");
+    Debug.log(3, "ButtonCapture: doPrompt for %s", givenName);
     RunTime.pause(((float) delay)/1000);
     defaultScreen = SikuliIDE.getDefaultScreen();
     if (defaultScreen == null) {
@@ -117,7 +114,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
 
   @Override
   public void update(EventSubject es) {
-    Debug.log(4, "TRACE: ButtonCapture: update");
+    Debug.log(3, "ButtonCapture: update");
     ScreenImage simg = null;
     OverlayCapturePrompt ocp = null;
     if (null == es) {
@@ -167,15 +164,12 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
       Screen.resetPrompt(ocp);
     }
     SikuliIDE.showAgain();
-    if (debugTrace) {
-      Debug.on(3);
-    }
   }
 
   public void captureCompleted(String imgFullPath) {
     Element src = getSrcElement();
     if (imgFullPath != null) {
-      Debug.log(2, "captureCompleted: " + imgFullPath);
+      Debug.log(3, "captureCompleted: " + imgFullPath);
       if (src == null) {
         if (_codePane == null) {
           if (_lbl == null) {
@@ -190,7 +184,7 @@ class ButtonCapture extends ButtonOnToolbar implements ActionListener, Cloneable
         replaceButton(src, imgFullPath);
       }
     } else {
-      Debug.log(2, "ButtonCapture: Capture cancelled");
+      Debug.log(3, "ButtonCapture: Capture cancelled");
       if (src != null) {
         captureCancelled = true;
         replaceButton(src, "");
