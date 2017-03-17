@@ -96,7 +96,7 @@ class VNCRobot implements IRobot {
   @Override
   public void keyUp() {
     for (Integer key : new ArrayList<>(pressedKeys)) {
-      typeKey(key, KeyMode.RELEASE_ONLY);
+      typeCode(key, KeyMode.RELEASE_ONLY);
     }
   }
 
@@ -135,7 +135,11 @@ class VNCRobot implements IRobot {
 
   @Override
   public void typeChar(char character, KeyMode mode) {
-    typeCode(charToXlib(character), mode);
+    if (character > '\ue000' && character < '\ue050') {
+      typeKey(Key.toJavaKeyCode(character)[0], mode);
+    } else {
+      typeCode(charToXlib(character), mode);
+    }
   }
 
   public void typeKey(int key, KeyMode mode) {
