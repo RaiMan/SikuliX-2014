@@ -416,6 +416,16 @@ public class Region {
   }
 
   /**
+   * Convenience: a minimal Region to be used as a Point (backport from Version 2)<br>
+   * is always on primary screen
+   * @param X
+   * @param Y
+   */
+  public Region (int X, int Y) {
+    this(X, Y, 1, 1, null);
+  }
+
+  /**
    * Create a region with the provided coordinate / size
    *
    * @param X X position

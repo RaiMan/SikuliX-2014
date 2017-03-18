@@ -18,6 +18,9 @@ import sys
 import os
 import inspect
 
+Debug.log(4, "Jython: sikuli: Sikuli: backports from Version 2: Do")
+import org.sikuli.script.Do as Do
+
 Debug.log(4, "Jython: sikuli: Sikuli: RunTime, Setting, Debug")
 import org.sikuli.script.RunTime as JRunTime
 
