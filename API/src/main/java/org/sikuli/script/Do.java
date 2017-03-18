@@ -235,7 +235,7 @@ public class Do {
     public static boolean isHeadless() {
       return GraphicsEnvironment.isHeadless();
     }
-    
+
     public static  boolean isVersion1() { return true; };
   }
 
