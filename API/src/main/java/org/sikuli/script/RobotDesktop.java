@@ -349,6 +349,7 @@ public class RobotDesktop extends Robot implements IRobot {
   }
 
   private void doType(KeyMode mode, int... keyCodes) {
+    waitForIdle();
     if (mode == KeyMode.PRESS_ONLY) {
       for (int i = 0; i < keyCodes.length; i++) {
         doKeyPress(keyCodes[i]);
@@ -365,6 +366,7 @@ public class RobotDesktop extends Robot implements IRobot {
         doKeyRelease(keyCodes[i]);
       }
     }
+    waitForIdle();
   }
 
   @Override
