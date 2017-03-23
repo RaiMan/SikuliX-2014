@@ -5,8 +5,7 @@
  */
 package org.sikuli.script;
 
-import java.awt.AWTException;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.Date;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
@@ -135,7 +134,7 @@ public class Screen extends Region implements IScreen {
 
   private static void setMouseRobot() {
     try {
-      if (globalRobot == null) {
+      if (globalRobot == null && !GraphicsEnvironment.isHeadless()) {
         globalRobot = new RobotDesktop();
       }
     } catch (AWTException e) {
@@ -145,7 +144,7 @@ public class Screen extends Region implements IScreen {
 
   private IRobot getMouseRobot() {
     setMouseRobot();
-    if (null == globalRobot) {
+    if (null == globalRobot && !GraphicsEnvironment.isHeadless()) {
       log(-1, "problem getting a java.awt.Robot");
       Sikulix.endError(999);
     }

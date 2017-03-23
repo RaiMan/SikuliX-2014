@@ -1260,7 +1260,9 @@ public class Region {
    * @return the Region being the current ROI of the containing Screen
    */
   public Region getROI() {
-    return new Region(getScreen().getRect());
+    IScreen screen = getScreen();
+    Rectangle screenRect = screen.getRect();
+    return new Region(screenRect.x, screenRect.y, screenRect.width, screenRect.height, screen);
   }
 
   // ****************************************************

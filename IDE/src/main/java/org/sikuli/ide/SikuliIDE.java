@@ -234,11 +234,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     runTime = RunTime.get(RunTime.Type.IDE, args);
 
-    getInstance();
-    log(3, "running with Locale: %s", SikuliIDEI18N.getLocaleShow());
-
-    sikulixIDE.initNativeSupport();
-
     CommandArgs cmdArgs = new CommandArgs("IDE");
     cmdLine = cmdArgs.getCommandLine(CommandArgs.scanArgs(args));
 
@@ -266,6 +261,10 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       ScriptingSupport.runscript(args);
     }
 
+    getInstance();
+    log(3, "running with Locale: %s", SikuliIDEI18N.getLocaleShow());
+
+    sikulixIDE.initNativeSupport();
     sikulixIDE.ideSplash = new IDESplash(runTime);
 
     if (cmdLine.hasOption(CommandArgsEnum.DEBUG.shortname())) {
