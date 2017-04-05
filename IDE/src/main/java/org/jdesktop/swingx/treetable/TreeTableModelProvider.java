@@ -1,4 +1,8 @@
 /*
+ * Copyright (c) 2010-2017, sikuli.org, sikulix.com - MIT license
+ */
+
+/*
  * Created on 11.01.2011
  *
  */

@@ -1,4 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (c) 2010-2017, sikuli.org, sikulix.com - MIT license
+  -->
+
 <metadata>
   <groupId>org.tigervnc</groupId>
   <artifactId>vncviewer</artifactId>

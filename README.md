@@ -3,9 +3,9 @@
 
 [![Join the chat at https://gitter.im/RaiMan/SikuliX-2014](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RaiMan/SikuliX-2014?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-This is 1.1.1 after [1.1.0 final (available 2015-10-07)](https://launchpad.net/sikuli/sikulix/1.1.0)
+This is 1.1.2 after [1.1.1 final (available 2017-03-05)](https://launchpad.net/sikuli/sikulix/1.1.1)
 -----------------
-... a bug-fix release for problems with version 1.1.0
+... a bug-fix release for problems with version 1.1.1
 
 <hr>
 **The followup is SikuliX2** [version 2.0.0 in 2017](https://github.com/RaiMan/SikuliX2) 
@@ -20,7 +20,7 @@ The coordinates:
 ```
 <groupId>com.sikulix</groupId>
 <artifactId>sikulixapi</artifactId>
-<version>1.1.1-SNAPSHOT</version>
+<version>1.1.2-SNAPSHOT</version>
 ```
 
 find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/SikuliX-2014/tree/master/TestRunMaven)
@@ -95,11 +95,7 @@ Sikuli's image search is based on features of [OpenCV](http://opencv.org). Start
 
 This module contains a specially configured Java/JNI OpenCV package (built using the standard OpenCV configure/make workflow) for use with the OpenCV features currently needed by Sikuli (core, imgproc, feature2d and highgui). The corresponding native library pack (currently Mac only) is contained in the module Libs.
 
-With the availability of the final version 1.1.0 the implementation of the OpenCV usage will be moved completely to the Java level. Until then the existing implementation in C++ is activated in the standard. The usage of the new implementation (in the new classes ImageFinder and ImageFind) can be switched on optionally for testing and developement.
-
 For Windows and Mac the native packages will again be pre-built and ready-to-use. For Linux there will be advices and scripts available to get the needed libraries ready.
-
-For more information on preparation and usage of the new OpenCV Java API [look here ...](https://github.com/RaiMan/SikuliX-2014/wiki/How-to-prepare-and-use-the-new-OpenCV-Java-API)
 
 Module sikulixide (folder IDE) (sikulix.jar)
 ---

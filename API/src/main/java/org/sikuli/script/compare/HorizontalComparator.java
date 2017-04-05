@@ -1,8 +1,5 @@
 /*
- * Copyright 2010-2016, Sikuli.org, sikulix.com
- * Released under the MIT License.
- *
- * added Kelthuzad 2013
+ * Copyright (c) 2010-2017, sikuli.org, sikulix.com - MIT license
  */
 package org.sikuli.script.compare;
 

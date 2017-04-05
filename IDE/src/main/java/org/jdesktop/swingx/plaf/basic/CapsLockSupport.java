@@ -1,3 +1,7 @@
+/*
+ * Copyright (c) 2010-2017, sikuli.org, sikulix.com - MIT license
+ */
+
 package org.jdesktop.swingx.plaf.basic;
 
 import static java.awt.event.KeyEvent.VK_CAPS_LOCK;
