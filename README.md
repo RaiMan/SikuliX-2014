@@ -23,7 +23,7 @@ The coordinates:
 <version>1.1.2-SNAPSHOT</version>
 ```
 
-find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/SikuliX-2014/tree/master/TestRunMaven)
+find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/SikuliX-2014/tree/develop/TestRunMaven)
 
 **You might also visit the WIKI**
 
