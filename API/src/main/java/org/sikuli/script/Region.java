@@ -2455,7 +2455,7 @@ public class Region {
         runTime.abortScripting("FindAll: Abort:", "ImageMissing: " + target.toString());
       }
     }
-    if (null != response && response) {
+    while (null != response && response) {
       log(lvl, "findAll: waiting %.1f secs for (multiple) %s to appear in %s",
               autoWaitTimeout, targetStr, this.toStringShort());
       if (autoWaitTimeout > 0) {
@@ -2466,9 +2466,14 @@ public class Region {
       }
       if (lastMatches != null) {
         log(lvl, "findAll: %s has appeared", targetStr);
+        break;
       } else {
         log(lvl, "findAll: %s did not appear", targetStr);
+        response = handleFindFailed(target, img, false);
       }
+    }
+    if (null == response) {
+      throw new FindFailed(FindFailed.createdefault(this, img));
     }
     return lastMatches;
   }

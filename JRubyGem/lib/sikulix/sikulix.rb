@@ -37,7 +37,6 @@ module Sikulix
   java_import org.sikuli.script.Key
   java_import org.sikuli.script.KeyModifier
   java_import org.sikuli.script.Mouse
-  java_import org.sikuli.script.Keys
 
   java_import org.sikuli.basics.Settings
   java_import org.sikuli.basics.ExtensionManager

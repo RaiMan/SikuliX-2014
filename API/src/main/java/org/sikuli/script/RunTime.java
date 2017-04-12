@@ -1588,17 +1588,18 @@ public class RunTime {
       SikuliVersionDefaultScript = "SikulixScript " + sversion;
       SikuliVersionBetaScript = "SikulixScript " + bversion;
 
+      SikuliVersionTypeText = "";
       if ("release".equals(svt)) {
         downloadBaseDirBase = dlProdLink;
         downloadBaseDirWeb = downloadBaseDirBase + getVersionShortBasic() + dlProdLink1;
         downloadBaseDir = downloadBaseDirWeb + dlProdLink2;
         SikuliVersionType = "";
-        SikuliVersionTypeText = "";
       } else {
         downloadBaseDirBase = dlDevLink;
         downloadBaseDirWeb = dlDevLink;
         downloadBaseDir = dlDevLink;
-        SikuliVersionTypeText = "nightly";
+        //TODO switch on for 1.1.2
+        //SikuliVersionTypeText = "nightly";
         SikuliVersionBuild += SikuliVersionTypeText;
         SikuliVersionType = svt;
       }
