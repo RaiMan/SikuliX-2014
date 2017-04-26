@@ -176,7 +176,6 @@ public class ADBDevice {
         return null;
       }
       if (byte2int(imagePrefix, 0, 4) != devW || byte2int(imagePrefix, 4, 4) != devH) {
-        //TODO check orientation might have changed
         log(-1, "captureDeviceScreenMat: width or height differ from device values");
         return null;
       }
