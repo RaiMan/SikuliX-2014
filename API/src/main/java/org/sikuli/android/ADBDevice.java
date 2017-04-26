@@ -138,11 +138,7 @@ public class ADBDevice {
   }
 
   public BufferedImage captureDeviceScreen() {
-    return captureDeviceScreen(0, 0, devW, devH);
-  }
-
-  public BufferedImage captureDeviceScreen(int y, int _h) {
-    return captureDeviceScreen(0, y, devW, _h);
+    return captureDeviceScreen(0, 0, -1, -1);
   }
 
   public BufferedImage captureDeviceScreen(int x, int y, int w, int h) {
@@ -156,18 +152,14 @@ public class ADBDevice {
     return bImage;
   }
 
-  public Mat captureDeviceScreenMat(int x, int y, int w, int h) {
+  public Mat captureDeviceScreenMat(int x, int y, int actW, int actH) {
     byte[] imagePrefix = new byte[12];
     byte[] image = new byte[0];
-    int actW = w;
-    if (x + w > devW) {
-      actW = devW - x;
-    }
-    int actH = h;
-    if (y + h > devH) {
-      actH = devH - y;
-    }
     Debug timer = Debug.startTimer();
+    boolean isfullScreen =false;
+    if (x == 0 && y == 0 && actW < 0 && actH < 0) {
+      isfullScreen = true;
+    }
     try {
       InputStream stdout = device.executeShell("screencap");
       stdout.read(imagePrefix);
@@ -175,17 +167,30 @@ public class ADBDevice {
         log(-1, "captureDeviceScreenMat: image type not RGBA");
         return null;
       }
-      if (byte2int(imagePrefix, 0, 4) != devW || byte2int(imagePrefix, 4, 4) != devH) {
+      int currentW = byte2int(imagePrefix, 0, 4);
+      int currentH = byte2int(imagePrefix, 4, 4);
+      if (! ((currentW == devW && currentH == devH) || (currentH == devW && currentW == devH))) {
         log(-1, "captureDeviceScreenMat: width or height differ from device values");
         return null;
       }
+      if (isfullScreen) {
+        actW = currentW;
+        actH = currentH;
+      } else {
+        if (x + actW > currentW) {
+          actW = currentW - x;
+        }
+        if (y + actW > currentH) {
+          actH = currentH - y;
+        }
+      }
       image = new byte[actW * actH * 4];
-      int lenRow = devW * 4;
+      int lenRow = currentW * 4;
       byte[] row = new byte[lenRow];
       for (int count = 0; count < y; count++) {
         stdout.read(row);
       }
-      boolean shortRow = x + actW < devW;
+      boolean shortRow = x + actW < currentW;
       for (int count = 0; count < actH; count++) {
         if (shortRow) {
           stdout.read(row);

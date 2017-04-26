@@ -42,8 +42,8 @@ public class ScreenImage {
 		_roi = roi;
 		x = (int) roi.getX();
 		y = (int) roi.getY();
-		w = (int) roi.getWidth();
-		h = (int) roi.getHeight();
+		w = _img.getWidth();
+		h = _img.getHeight();
 	}
 
   public ScreenImage getSub(Rectangle sub) {
