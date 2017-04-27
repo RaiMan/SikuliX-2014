@@ -53,7 +53,7 @@
     <!--   this decides, where setup downloads from   -->
     <!--<sikulixdev>release</sikulixdev>-->
     <sikulixdev>development</sikulixdev>
-    <sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.usedversion>
+    <sikuli.usedversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}-SNAPSHOT</sikuli.usedversion>
     <sikuli.minorversion>${sikulixvmaj}.${sikulixvmin}.${sikulixvsub}</sikuli.minorversion>
     <sikulixjythonversion>2.7.0</sikulixjythonversion>
     <sikulixjrubyversion>9.0.1.0</sikulixjrubyversion>

@@ -1,8 +1,8 @@
 #!/bin/sh
 # creates the javadocs for selected classes and their public members
-apijar=$1/API/target/sikulixapi-${sikuli.usedversion}.jar
-apisrc=$1/API/src/main/java/org/sikuli/script
-basicssrc=$1/API/src/main/java/org/sikuli/basics
+apijar=API/target/sikulixapi-${sikuli.usedversion}.jar
+apisrc=API/src/main/java/org/sikuli/script
+basicssrc=API/src/main/java/org/sikuli/basics
 echo $apisrc/Region.java >createJavadocsClasses
 echo $apisrc/FindFailed.java >>createJavadocsClasses
 echo $apisrc/Match.java >>createJavadocsClasses
@@ -22,5 +22,5 @@ echo $apisrc/App.java >>createJavadocsClasses
 echo $apisrc/Env.java >>createJavadocsClasses
 echo $basicssrc/Settings.java >>createJavadocsClasses
 echo $basicssrc/Debug.java >>createJavadocsClasses
-javadoc -public -classpath $apijar -d target/docs @createJavadocsClasses
+javadoc -public -classpath $apijar -d docs @createJavadocsClasses
 rm createJavadocsClasses
