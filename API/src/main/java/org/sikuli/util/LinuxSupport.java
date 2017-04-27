@@ -54,19 +54,6 @@ public class LinuxSupport {
   private static boolean opencvAvail = true;
   private static boolean tessAvail = true;
 
-  public static String getLinuxDistro() {
-    if (!runTime.runningLinux) {
-      return "";
-    }
-    String result = runTime.runcmd("lsb_release -i -r -s");
-    String linuxDistro = result.replaceAll("\n", " ").trim();
-    if (linuxDistro.contains("*** error ***")) {
-      log(lvl, "command returns error: lsb_release -i -r -s\n%s", result);
-      linuxDistro = "???DISTRO???";
-    }
-    return linuxDistro;
-  }
-
   public static boolean existsLibs() {
     return new File(runTime.fLibsProvided, libVision).exists() ||
             new File(runTime.fLibsProvided, libGrabKey).exists();

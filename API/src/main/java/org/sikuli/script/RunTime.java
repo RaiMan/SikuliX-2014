@@ -211,12 +211,12 @@ public class RunTime {
         runTime.sysName = "linux";
         runTime.osName = "Linux";
         runTime.runningLinux = true;
-        String result = runTime.runcmd("lsb_release -i -r -s");
-        if (result.contains("*** error ***")) {
-          runTime.log(-1, "command returns error: lsb_release -i -r -s\n%s", result);
-        } else {
-          runTime.linuxDistro = result.replaceAll("\n", " ").trim();
-        }
+//        String result = runTime.runcmd("lsb_release -i -r -s");
+//        if (result.contains("*** error ***")) {
+//          runTime.log(-1, "command returns error: lsb_release -i -r -s\n%s", result);
+//        } else {
+//          runTime.linuxDistro = result.replaceAll("\n", " ").trim();
+//        }
       } else {
         // Presume Unix -- pretend to be Linux
         runTime.runningOn = theSystem.LUX;
