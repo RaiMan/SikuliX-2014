@@ -29,6 +29,6 @@ script:
 - ls -l docs
 
 - echo ------- nightly
-- . Setup/target/classes/content/createNigthly
+- . Setup/target/classes/content/createNightly
 - cat index112.html
 
