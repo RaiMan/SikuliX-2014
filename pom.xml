@@ -15,7 +15,7 @@
 
   <groupId>com.sikulix</groupId>
   <artifactId>sikulix1</artifactId>
-  <version>1.1.2</version>
+  <version>1.1.2-SNAPSHOT</version>
 
   <!-- to globally change the pom version:
   mvn versions:set -DnewVersion=1.1.0
@@ -99,8 +99,6 @@
         <configuration>
           <source>1.7</source>
           <target>1.7</target>
-          <!--					might be needed for compiling with Java 8 -->
-          <compilerArgument>-XDignore.symbol.file=true</compilerArgument>
         </configuration>
       </plugin>
     </plugins>
