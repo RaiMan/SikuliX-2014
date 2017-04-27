@@ -1,0 +1,18 @@
+jar=`ls Setup/target/sikulixsetup*forsetup.jar`
+
+vwin=`java -jar $jar frommavenforsed nodebug sikulixlibswin`
+vmac=`java -jar $jar frommavenforsed nodebug sikulixlibsmac`
+vlux=`java -jar $jar frommavenforsed nodebug sikulixlibslux`
+vsapi=`java -jar $jar frommavenforsed nodebug sikulixsetupAPI#forsetup`
+vside=`java -jar $jar frommavenforsed nodebug sikulixsetupIDE#forsetup`
+vsetup=`java -jar $jar frommavenforsed nodebug sikulixsetup#forsetup`
+
+echo "s/##sikulixlibswin##/$vwin/" >sedcommand
+echo "s/##sikulixlibsmac##/$vmac/" >>sedcommand
+echo "s/##sikulixlibslux##/$vlux/" >>sedcommand
+echo "s/##sikulixsetup##/$vsetup/" >>sedcommand
+echo "s/##sikulixsetupapi##/$vsapi/" >>sedcommand
+echo "s/##sikulixsetupide##/$vside/" >>sedcommand
+sed -f sedcommand Setup/target/classes/content/nightlybuildindex.html >index112.html
+
+cat Setup/target/classes/content/nightlybuildindextail.html >>index112.html
