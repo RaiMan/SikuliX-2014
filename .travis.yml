@@ -1,5 +1,19 @@
 language: java
 jdk:
 - oraclejdk7
+env:
+  global:
+  - secure: jvU9WepkajerjWq+kt+3e+RXyTj6+MntjMZ0aqR8f3NMgWzpIDAlu0WhMVq0P6577UXfhWdbS2DwN/HliBnPDD9pglTeghbcS7NzpnW4VMyGgH7AqbXs3/2MbGqNQofEdfDfGF5VgmVvA7koff1vUbC8NDnt64y3mN77fko6m2s=
+  - secure: R48kJN/o/7Pt9bgm7TDAQ0kI9i34Cj+OFPNR4HYFsQ1ebmxRCgciLLlN9cTRC7NfB4PgzeCh0dbtX0SDen7KCDUyW87xyHLYq7gINuAXnzAzLA70fJdxgJNY/UfQWeGcgiY6IaNsS8dmWWiS+pVNTMzylE26azAnkez5Jt2/3Ww=
+  - secure: EDrnUMT3ma+IxaiYFXWDNRPIblukg2jSc3sbkDOqLQFYcwlDX74RWRRW8xpUcL8xTBT4iVWmFPFKzp3I4923zj8lY7esozrG/eGMRatzAYncUChTD7nYKih/CANvNi6tOvMS5ybDY93m0+hzyyw5rndlt4a6v7RrqB1U/BnzKkM=
+  - secure: NLPUv6n8naSshSHrP4tJ07ehhMzH6MQ8bZDI+0lDfM/Te09Pwcr0uxvZw6sqOazBKHudX9L8x67C5Lf0hcclwyJ2aG+p/o1B863vvZ2/FGG774NnxTRn3OIdAThncCx4bwb8zwVwe1wHoeVbAirU/hqBGk2dxFjcl0R6/op+kZo=
+before_install:
+- openssl aes-256-cbc -K $encrypted_622334dd6b80_key -iv $encrypted_622334dd6b80_iv
+  -in codesigning/codesigning.asc.enc -out codesigning/codesigning.asc
+  -d
 install: mvn install -DskipTests=true -B
-# trigger first build
+before_script:
+- gpg --fast-import codesigning/codesigning.asc
+script:
+- cd Libslux; mvn install -B -P sign,build-extras -F deploy.xml --settings codesigning/mvnsettings.xml; cd ..
+
