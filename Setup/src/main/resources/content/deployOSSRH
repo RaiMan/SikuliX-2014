@@ -1,5 +1,4 @@
 #!/bin/bash
-set -v
 
 if [ -e Setup/target/classes/content/SHOULDDEPLOY ]; then
 
