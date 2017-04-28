@@ -14,8 +14,9 @@ echo "s/##sikulixlibslux##/$vlux/" >>sedcommand
 echo "s/##sikulixsetup##/$vsetup/" >>sedcommand
 echo "s/##sikulixsetupapi##/$vsapi/" >>sedcommand
 echo "s/##sikulixsetupide##/$vside/" >>sedcommand
+echo "s/##TRAVIS_BUILD_NUMBER##/$TRAVIS_BUILD_NUMBER/" >>sedcommand
 cat sedcommand
 
-sed -f sedcommand Setup/target/classes/content/nightlybuildindex.html >index112.html
+sed -f sedcommand Setup/target/classes/content/nightlybuildindex.html >docs/nightly.html
 
-cat Setup/target/classes/content/nightlybuildindextail.html >>index112.html
+cat Setup/target/classes/content/nightlybuildindextail.html >>docs/nightly.html
