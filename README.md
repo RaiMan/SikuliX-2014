@@ -3,9 +3,10 @@
 
 [![Build Status](https://travis-ci.org/RaiMan/SikuliX-2014.svg?branch=develop)](https://travis-ci.org/RaiMan/SikuliX-2014) [![Join the chat at https://gitter.im/RaiMan/SikuliX-2014](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RaiMan/SikuliX-2014?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
 
-[looking for 1.1.1 final (available 2017-04-05)](https://launchpad.net/sikuli/sikulix/1.1.1)
 -----------------
-... a bug-fix release for problems with version 1.1.1 ([get nightly builds](http://nightly.sikuli.de))
+[looking for 1.1.1 final (available 2017-04-05)](https://launchpad.net/sikuli/sikulix/1.1.1)
+
+1.1.2 is a bug-fix release for problems with version 1.1.1 ([get nightly builds](http://nightly.sikuli.de))
 
 <hr>
 **The followup is SikuliX2** [version 2.0.0 in 2017](https://github.com/RaiMan/SikuliX2) 
