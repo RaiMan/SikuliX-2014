@@ -10,7 +10,7 @@
 
 <hr>
 
-**The followup is SikuliX2 [version 2.0.0 in 2017](https://github.com/RaiMan/SikuliX2)** 
+**The followup is SikuliX2 [SikuliX 2.0.0](https://github.com/RaiMan/SikuliX2)** 
 <hr>
 
 **SNAPSHOTS on OSSRH** (if available)<br>
