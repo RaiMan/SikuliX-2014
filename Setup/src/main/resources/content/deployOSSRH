@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [ -e Setup/target/classes/content/SHOULDDEPLOY ]; then
+#if [ -e Setup/target/classes/content/SHOULDDEPLOY ]; then
 
   cd Libslux;
   mvn deploy -B -P sign,build-extras -f deploy.xml --settings ../codesigning/mvnsettings.xml;
@@ -18,4 +18,4 @@ if [ -e Setup/target/classes/content/SHOULDDEPLOY ]; then
   mvn deploy -B -P sign,build-extras -f deploy.xml --settings ../codesigning/mvnsettings.xml;
   cd ..
 
-fi
+#fi
