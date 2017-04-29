@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/RaiMan/SikuliX-2014.svg?branch=develop)](https://travis-ci.org/RaiMan/SikuliX-2014) [![Join the chat at https://gitter.im/RaiMan/SikuliX-2014](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RaiMan/SikuliX-2014?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
 
 -----------------
-1.1.2 is a bug-fix release for problems with version 1.1.1 ([get nightly builds](http://nightly.sikuli.de))
+1.1.2 is a bug-fix release for problems with version 1.1.1 ([get nightly builds](http://nightly.sikuli.de)) and needs Java 7+
 
 [looking for 1.1.1 final (available 2017-04-05)](https://launchpad.net/sikuli/sikulix/1.1.1)
 
@@ -13,7 +13,7 @@
 **The followup is SikuliX2 [SikuliX 2.0.0](https://github.com/RaiMan/SikuliX2)** 
 <hr>
 
-**SNAPSHOTS on OSSRH** (if available)<br>
+**SNAPSHOTS on OSSRH**<br>
 
 The repository URL:<br>
 `<url>http://oss.sonatype.org/content/groups/public</url>`<br>
@@ -30,14 +30,13 @@ find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/Sik
 **You might also visit the WIKI**
 
 <hr>
-This is the **last version that compiles and runs on Java 6**. SikuliX2 will need Java 1.7+.
 
 **If you want to test the head of developement without the need to build from sources:** <br>
 [look here at the page with the nightly builds](http://nightly.sikuli.de)<br>
 **At your own risk ;-) Take care for your existing work - be prepared to restore your stuff!!**
 
-Might not be available all the time.
 <hr />
+
 **SikuliX is completely free Open Source in all aspects** - [see details](http://sikulix.com/disclaimer)
 
 ... based on Sikuli Script that was discontinued mid 2012 - [see the sources](https://github.com/sikuli/sikuli)
@@ -63,6 +62,7 @@ This Maven multi-module setup contains everything ...
 **Tools I use for developement:** <br />
 IDE with Maven and GitHub support: [IntelliJ IDEA CE](https://www.jetbrains.com/idea/) (using Java 7 and 8)<br />
 Doc Service: [Read the Docs](https://readthedocs.org)<br />
+Build support: [Travis CI](https://travis-ci.org)
 WebSite Services: [Host Europe](https://www.hosteurope.de)
 
 The structure of this repo
