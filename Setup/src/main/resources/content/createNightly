@@ -17,6 +17,6 @@ echo "s/##sikulixsetupide##/$vside/" >>sedcommand
 echo "s/##TRAVIS_BUILD_NUMBER##/$TRAVIS_BUILD_NUMBER/" >>sedcommand
 cat sedcommand
 
-sed -f sedcommand Setup/target/classes/content/nightlybuildindex.html >docs/nightly.html
+sed -f sedcommand Setup/target/classes/content/nightlybuildindex.html >pages/nightly.html
 
-cat Setup/target/classes/content/nightlybuildindextail.html >>docs/nightly.html
+cat Setup/target/classes/content/nightlybuildindextail.html >>pages/nightly.html

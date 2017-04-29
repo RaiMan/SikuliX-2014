@@ -22,5 +22,5 @@ echo $apisrc/App.java >>createJavadocsClasses
 echo $apisrc/Env.java >>createJavadocsClasses
 echo $basicssrc/Settings.java >>createJavadocsClasses
 echo $basicssrc/Debug.java >>createJavadocsClasses
-javadoc -public -classpath $apijar -d docs/javadocs @createJavadocsClasses
+javadoc -public -classpath $apijar -d pages/javadocs @createJavadocsClasses
 rm createJavadocsClasses
