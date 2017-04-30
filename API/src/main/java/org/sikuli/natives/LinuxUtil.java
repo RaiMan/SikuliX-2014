@@ -28,7 +28,7 @@ public class LinuxUtil implements OSUtil {
     public void checkFeatureAvailability() {
         List<CommandLine> commands = Arrays.asList(
                 CommandLine.parse("wmctrl -m"),
-                CommandLine.parse("xdotool version")
+                CommandLine.parse("xdotool -v")
         );
         for (CommandLine cmd : commands) {
             String executable = cmd.toStrings()[0];
