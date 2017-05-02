@@ -41,12 +41,12 @@
 
 	<repositories>
 		<repository>
-			<id>jitpack.io</id>
-			<url>https://jitpack.io</url>
+			<id>sonatype-ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
 		</repository>
 		<repository>
-			<id>sikulix-local</id>
-			<url>file://${project.basedir}/lib</url>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
 		</repository>
 	</repositories>
 
@@ -87,9 +87,9 @@
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>com.tigervnc</groupId>
-			<artifactId>vncviewer</artifactId>
-			<version>1.7.1</version>
+			<groupId>com.sikulix</groupId>
+			<artifactId>sikulix2tigervnc</artifactId>
+			<version>2.0.0-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 
