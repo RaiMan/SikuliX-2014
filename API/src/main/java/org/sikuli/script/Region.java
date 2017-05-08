@@ -2531,7 +2531,7 @@ public class Region {
     Debug.log(lvl, "findBest: enter");
     Match mResult = null;
     List<Match> mList = findAnyCollect(args);
-    if (mList != null) {
+    if (mList.size() > 0) {
       Collections.sort(mList, new Comparator<Match>() {
         @Override
         public int compare(Match m1, Match m2) {
