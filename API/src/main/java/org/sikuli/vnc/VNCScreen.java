@@ -36,6 +36,10 @@ public class VNCScreen extends Region implements IScreen, Closeable {
     return scr;
   }
 
+  public static VNCScreen start(String theIP, int thePort) throws IOException {
+    return start(theIP, thePort, 0, 0);
+  }
+
   public void stop() {
     try {
       close();

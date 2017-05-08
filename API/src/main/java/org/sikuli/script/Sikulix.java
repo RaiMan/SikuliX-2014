@@ -131,7 +131,19 @@ public class Sikulix {
     if (args.length > 0 && "play".equals(args[0])) {
       playing = true;
 //-------- playground
-// -------- playground
+      VNCScreen vs = vncStart("192.168.2.63", 5900, "vnc", 0, 0);
+      p("%s", vs);
+      vs.wait(3.0);
+      vs.click();
+      vs.type("test");
+      vs.type("a", Key.CMD);
+      vs.type("c", Key.CMD);
+      vs.click();
+      vs.type("v", Key.CMD);
+      vs.wait(1.0);
+      vs.userCapture("");
+      vs.stop();
+//-------- playground
     }
     if (playing) {
       System.exit(1);

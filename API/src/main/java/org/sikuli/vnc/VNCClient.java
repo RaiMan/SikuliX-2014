@@ -9,6 +9,7 @@ import com.tigervnc.rfb.*;
 import com.tigervnc.rfb.Exception;
 import com.tigervnc.rfb.Point;
 import com.tigervnc.vncviewer.CConn;
+import org.sikuli.script.App;
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
@@ -61,6 +62,13 @@ class VNCClient extends CConnection implements FdInStreamBlockCallback, Closeabl
         this.initialiseProtocol();
     }
 
+    public void serverCutText(String content, int length) {
+        //System.out.println(String.format("[TRACE] VNCClient: serverCutText: (%d) %s", length, content));
+        if (length > 0) {
+            App.setClipboard(content);
+        }
+    }
+
     @Override
     public PixelFormat getPreferredPF()
     {
@@ -83,6 +91,8 @@ class VNCClient extends CConnection implements FdInStreamBlockCallback, Closeabl
         super.setDesktopSize(var1, var2);
         this.resizeFramebuffer();
     }
+
+
 
     public void setColourMapEntries(int offset, int nbColors, int[] rgb) {
         frameBuffer.setColourMapEntries(offset, nbColors, rgb);
