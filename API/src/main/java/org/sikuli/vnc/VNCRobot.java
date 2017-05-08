@@ -98,10 +98,10 @@ class VNCRobot implements IRobot {
 
   private void typeModifiers(int modifiers, KeyMode keyMode) {
     if ((modifiers & KeyModifier.CTRL) != 0) typeKey(KeyEvent.VK_CONTROL, keyMode);
-    if ((modifiers & KeyModifier.SHIFT) != 0) typeCode(KeyEvent.VK_SHIFT, keyMode);
-    if ((modifiers & KeyModifier.ALT) != 0) typeCode(KeyEvent.VK_ALT, keyMode);
-    if ((modifiers & KeyModifier.ALTGR) != 0) typeCode(KeyEvent.VK_ALT_GRAPH, keyMode);
-    if ((modifiers & KeyModifier.META) != 0) typeCode(KeyEvent.VK_META, keyMode);
+    if ((modifiers & KeyModifier.SHIFT) != 0) typeKey(KeyEvent.VK_SHIFT, keyMode);
+    if ((modifiers & KeyModifier.ALT) != 0) typeKey(KeyEvent.VK_ALT, keyMode);
+    if ((modifiers & KeyModifier.ALTGR) != 0) typeKey(KeyEvent.VK_ALT_GRAPH, keyMode);
+    if ((modifiers & KeyModifier.META) != 0) typeKey(KeyEvent.VK_META, keyMode);
   }
 
   @Override
@@ -171,10 +171,12 @@ class VNCRobot implements IRobot {
   }
 
   private int charToXlib(char c) {
+    if (c == 0x007F) {
+      return XKeySym.XK_Delete;
+    }
     if (c >= 0x0020 && c <= 0x00FF) {
       return c;
     }
-
     switch (c) {
       case '\u0008':
         return XKeySym.XK_BackSpace;
@@ -194,8 +196,6 @@ class VNCRobot implements IRobot {
         return XKeySym.XK_Sys_Req;
       case '\u001b':
         return XKeySym.XK_Escape;
-      case '\u007f':
-        return XKeySym.XK_Delete;
       default:
         throw new IllegalArgumentException("Cannot type character " + c);
     }
