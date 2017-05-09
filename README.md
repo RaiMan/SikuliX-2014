@@ -101,7 +101,6 @@ For Windows and Mac the native packages will again be pre-built and ready-to-use
 
 Module sikulixide (folder IDE) (sikulix.jar)
 ---
-
 Implements a GUI using Java, that allows to edit and run Sikuli scripts (currently Jython and JRuby are supported). It is an easy to use IDE focusing on the handling of the screenshots and images used in the typical Sikuli workflows.
 
 The package `sikulix.jar` is the top level package containing all other options (hence the follow up of `sikuli-ide.jar` known from former releases).
@@ -111,6 +110,10 @@ After setup this package `sikulix.jar` contains the selected scripting interpret
 In all cases the Jython and JRuby jar packages are loaded from MavenCentral if needed.
 
 If you want to experiment with the special JRuby support (rSpec, cucumber, ...) you have to look into the modules JRubyAddOns and JRubyGem. Both have to be built manually if needed (not contained in the local developement build).
+
+**The SikuliX-IDE will not get any fixes or improvements anymore past version 1.1.1 (as of May 2017).** 
+
+Version 2 will use a different approach based on an available editor package (probably JEdit).
 <hr/>
 
 **--- The helper/utility modules (intended for internal and/or developement use only) ---**

@@ -136,8 +136,10 @@ public class Finder implements Iterator<Match> {
   public void destroy() {
     _findInput.delete();
     _findInput = null;
-    _results.delete();
-    _results = null;
+    if (_results != null) {
+      _results.delete();
+      _results = null;
+    }
     _pattern = null;
   }
 
