@@ -121,7 +121,7 @@ class VNCRobot implements IRobot {
 
   @Override
   public void typeChar(char character, KeyMode mode) {
-    if (character > '\ue000' && character < '\ue050') {
+    if (character >= '\ue000' && character < '\ue050') {
       typeKey(Key.toJavaKeyCode(character)[0], mode);
     } else {
       typeCode(charToXlib(character), mode);

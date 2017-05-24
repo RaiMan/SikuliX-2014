@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.sikulix.vnc.*;
+
 public class VNCScreen extends Region implements IScreen, Closeable {
   private final VNCClient client;
   private volatile boolean closed;
