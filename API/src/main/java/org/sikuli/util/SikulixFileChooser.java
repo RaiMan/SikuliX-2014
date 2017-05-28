@@ -4,9 +4,11 @@
 
 package org.sikuli.util;
 
+import java.awt.EventQueue;
 import java.awt.FileDialog;
 import java.awt.Frame;
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 //import java.io.FilenameFilter;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileFilter;
@@ -37,6 +39,9 @@ public class SikulixFileChooser {
   }
 
   private boolean isGeneric() {
+    if (_parent == null) {
+      return false;
+    }
     return (_parent.getWidth() == 1 && _parent.getHeight() == 1);
   }
 
@@ -73,13 +78,41 @@ public class SikulixFileChooser {
     return ret;
   }
 
-  private File showFileChooser(String title, int mode, int selectionMode, Object... filters) {
-    String last_dir = PreferencesUser.getInstance().get("LAST_OPEN_DIR", "");
-    Debug.log(3,"showFileChooser: %s at %s", title.split(" ")[0], last_dir);
-    JFileChooser fchooser = null;
-    File fileChoosen = null;
+  private File showFileChooser(final String title, final int mode, final int theSelectionMode, final Object... filters) {
+    final String theLast_dir = PreferencesUser.getInstance().get("LAST_OPEN_DIR", "");
+    Debug.log(3,"showFileChooser: %s at %s", title.split(" ")[0], theLast_dir);
+    final Object[] result = new Object[] {null};
+    if (isGeneric()) {
+      try {
+        EventQueue.invokeAndWait(new Runnable() {
+          @Override
+          public void run() {
+            processDialog(theSelectionMode, theLast_dir, title, mode, filters, result);
+          }
+        });
+      } catch (Exception e) {
+      }
+    } else {
+      processDialog(theSelectionMode, theLast_dir, title, mode, filters, result);
+    }
+    if (null != result[0]) {
+      File fileChoosen = (File) result[0];
+      String lastDir = fileChoosen.getParent();
+      if (null == lastDir) {
+        lastDir = fileChoosen.getAbsolutePath();
+      }
+      PreferencesUser.getInstance().put("LAST_OPEN_DIR", lastDir);
+      return fileChoosen;
+    } else {
+      return null;
+    }
+  }
+
+  private void processDialog(int selectionMode, String last_dir, String title, int mode, Object[] filters,
+                                 Object[] result) {
+    JFileChooser fchooser = new JFileChooser();
+    File file_Choosen = null;
     while (true) {
-      fchooser = new JFileChooser();
       if (!last_dir.isEmpty()) {
         fchooser.setCurrentDirectory(new File(last_dir));
       }
@@ -118,24 +151,21 @@ public class SikulixFileChooser {
       if (shouldTraverse && Settings.isMac()) {
         fchooser.putClientProperty("JFileChooser.packageIsTraversable", "always");
       }
-      if (fchooser.showDialog(_parent, btnApprove) != JFileChooser.APPROVE_OPTION) {
-        return null;
-      }
-      fileChoosen = fchooser.getSelectedFile();
-      // folders must contain a valid scriptfile
-      if (!isGeneric() && mode == FileDialog.LOAD && !isValidScript(fileChoosen)) {
-        Sikulix.popError("Folder not a valid SikuliX script\nTry again.");
-        last_dir = fileChoosen.getParentFile().getAbsolutePath();
-        continue;
+      int dialogResponse = fchooser.showDialog(_parent, btnApprove);
+      if (dialogResponse != JFileChooser.APPROVE_OPTION) {
+        file_Choosen = null;
+      } else {
+        file_Choosen = fchooser.getSelectedFile();
+        // folders must contain a valid scriptfile
+        if (!isGeneric() && mode == FileDialog.LOAD && !isValidScript(file_Choosen)) {
+          Sikulix.popError("Folder not a valid SikuliX script\nTry again.");
+          last_dir = file_Choosen.getParentFile().getAbsolutePath();
+          continue;
+        }
       }
       break;
     }
-    String lastDir = fileChoosen.getParent();
-    if (null == lastDir) {
-      lastDir = fileChoosen.getAbsolutePath();
-    }
-    PreferencesUser.getInstance().put("LAST_OPEN_DIR", lastDir);
-    return fileChoosen;
+    result[0] = file_Choosen;
   }
 
   private boolean isValidScript(File f) {
