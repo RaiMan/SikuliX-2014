@@ -153,7 +153,7 @@ public class Sikulix {
 //          break;
 //        }
 //      }
-//-------- playground
+// -------- playground
     }
     if (playing) {
       System.exit(1);
