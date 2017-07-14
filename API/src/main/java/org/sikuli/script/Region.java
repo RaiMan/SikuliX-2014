@@ -4426,7 +4426,7 @@ public class Region {
     try {
       return paste(null, text);
     } catch (FindFailed ex) {
-      return 1;
+      return 0;
     }
   }
 
@@ -4437,7 +4437,7 @@ public class Region {
    * @param <PFRML> Pattern, Filename, Text, Region, Match or Location target
    * @param target  Pattern, Filename, Text, Region, Match or Location
    * @param text    a string, which might contain unicode characters
-   * @return 0 if possible, 1 otherwise
+   * @return 1 if possible, 0 otherwise
    * @throws FindFailed if not found
    */
   public <PFRML> int paste(PFRML target, String text) throws FindFailed {
@@ -4452,9 +4452,9 @@ public class Region {
       r.keyDown(KeyEvent.VK_V);
       r.keyUp(KeyEvent.VK_V);
       r.keyUp(mod);
-      return 0;
+      return 1;
     }
-    return 1;
+    return 0;
   }
   //</editor-fold>
 
