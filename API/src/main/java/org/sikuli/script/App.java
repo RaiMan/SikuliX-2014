@@ -782,7 +782,7 @@ public class App {
     try {
       content = Clipboard.getSystemClipboard().getContents(null);
     } catch (Exception ex) {
-      Debug.error("Env.getClipboard: clipboard not available:\n%s", ex.getMessage());
+      Debug.error("Env.getClipboard: %s", ex.getMessage());
     }
     if (content != null) {
       try {
@@ -792,7 +792,7 @@ public class App {
       } catch (UnsupportedFlavorException ex) {
         Debug.error("Env.getClipboard: UnsupportedFlavorException: " + content);
       } catch (IOException ex) {
-        Debug.error("Env.getClipboard: IOException:\n%s", ex.getMessage());
+        Debug.error("Env.getClipboard: %s", ex.getMessage());
       }
     }
     return "";
@@ -804,8 +804,11 @@ public class App {
    * @param text text
    */
   public static void setClipboard(String text) {
-    Clipboard.putText(Clipboard.PLAIN, Clipboard.UTF8,
-            Clipboard.CHAR_BUFFER, text);
+    try {
+      Clipboard.putText(Clipboard.PLAIN, Clipboard.UTF8, Clipboard.CHAR_BUFFER, text);
+    } catch (Exception ex) {
+      Debug.error("Env.setClipboard: %s", ex.getMessage());
+    }
   }
 
   private static class Clipboard {
@@ -823,13 +826,15 @@ public class App {
     public static final TransferType CHAR_BUFFER = new TransferType(CharBuffer.class);
     public static final TransferType BYTE_BUFFER = new TransferType(ByteBuffer.class);
 
+    private static java.awt.datatransfer.Clipboard systemClipboard = null;
+
     private Clipboard() {
     }
 
     /**
      * Dumps a given text (either String or StringBuffer) into the Clipboard, with a default MIME type
      */
-    public static void putText(CharSequence data) {
+    public static void putText(CharSequence data) throws Exception {
       StringSelection copy = new StringSelection(data.toString());
       getSystemClipboard().setContents(copy, copy);
     }
@@ -837,14 +842,20 @@ public class App {
     /**
      * Dumps a given text (either String or StringBuffer) into the Clipboard with a specified MIME type
      */
-    public static void putText(TextType type, Charset charset, TransferType transferType, CharSequence data) {
+    public static void putText(TextType type, Charset charset, TransferType transferType, CharSequence data) throws Exception {
       String mimeType = type + "; charset=" + charset + "; class=" + transferType;
       TextTransferable transferable = new TextTransferable(mimeType, data.toString());
       getSystemClipboard().setContents(transferable, transferable);
     }
 
-    public static java.awt.datatransfer.Clipboard getSystemClipboard() {
-      return Toolkit.getDefaultToolkit().getSystemClipboard();
+    public static java.awt.datatransfer.Clipboard getSystemClipboard() throws Exception {
+      if (systemClipboard == null) {
+        systemClipboard = Toolkit.getDefaultToolkit().getSystemClipboard();
+        if (systemClipboard == null) {
+          throw new Exception("Clipboard: Toolkit.getDefaultToolkit().getSystemClipboard() returns null");
+        }
+      }
+      return systemClipboard;
     }
 
     private static class TextTransferable implements Transferable, ClipboardOwner {
