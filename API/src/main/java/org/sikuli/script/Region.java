@@ -3691,8 +3691,10 @@ public class Region {
    */
   public <PFRML> int click(PFRML target, Integer modifiers) throws FindFailed {
     Location loc = getLocationFromTarget(target);
-    int ret = Mouse.click(loc, InputEvent.BUTTON1_MASK, modifiers, false, this);
-
+    int ret = 0;
+    if (null != loc) {
+      ret = Mouse.click(loc, InputEvent.BUTTON1_MASK, modifiers, false, this);
+    }
     //TODO      SikuliActionManager.getInstance().clickTarget(this, target, _lastScreenImage, _lastMatch);
     return ret;
   }
@@ -3738,8 +3740,10 @@ public class Region {
    */
   public <PFRML> int doubleClick(PFRML target, Integer modifiers) throws FindFailed {
     Location loc = getLocationFromTarget(target);
-    int ret = Mouse.click(loc, InputEvent.BUTTON1_MASK, modifiers, true, this);
-
+    int ret = 0;
+    if (null != loc) {
+      ret = Mouse.click(loc, InputEvent.BUTTON1_MASK, modifiers, true, this);
+    }
     //TODO      SikuliActionManager.getInstance().doubleClickTarget(this, target, _lastScreenImage, _lastMatch);
     return ret;
   }
@@ -3784,8 +3788,10 @@ public class Region {
    */
   public <PFRML> int rightClick(PFRML target, Integer modifiers) throws FindFailed {
     Location loc = getLocationFromTarget(target);
-    int ret = Mouse.click(loc, InputEvent.BUTTON3_MASK, modifiers, false, this);
-
+    int ret = 0;
+    if (null != loc) {
+      ret = Mouse.click(loc, InputEvent.BUTTON3_MASK, modifiers, false, this);
+    }
     //TODO      SikuliActionManager.getInstance().rightClickTarget(this, target, _lastScreenImage, _lastMatch);
     return ret;
   }
@@ -3981,7 +3987,11 @@ public class Region {
    */
   public <PFRML> int mouseMove(PFRML target) throws FindFailed {
     Location loc = getLocationFromTarget(target);
-    return Mouse.move(loc, this);
+    int ret = 0;
+    if (null != loc) {
+      ret = Mouse.move(loc, this);
+    }
+    return ret;
   }
 
   /**
@@ -4357,8 +4367,7 @@ public class Region {
     return keyin(target, text, modifiersNew);
   }
 
-  private <PFRML> int keyin(PFRML target, String text, int modifiers)
-          throws FindFailed {
+  private <PFRML> int keyin(PFRML target, String text, int modifiers) throws FindFailed {
     if (target != null && 0 == click(target, 0)) {
       return 0;
     }
@@ -4441,8 +4450,8 @@ public class Region {
    * @throws FindFailed if not found
    */
   public <PFRML> int paste(PFRML target, String text) throws FindFailed {
-    if (target != null) {
-      click(target, 0);
+    if (target != null && 0 == click(target, 0)) {
+      return 1;
     }
     if (text != null) {
       App.setClipboard(text);
