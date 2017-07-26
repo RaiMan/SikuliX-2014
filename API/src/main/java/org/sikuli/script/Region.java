@@ -4451,7 +4451,7 @@ public class Region {
    */
   public <PFRML> int paste(PFRML target, String text) throws FindFailed {
     if (target != null && 0 == click(target, 0)) {
-      return 1;
+      return 0;
     }
     if (text != null) {
       App.setClipboard(text);
