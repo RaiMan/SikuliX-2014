@@ -16,10 +16,9 @@ else
 fi
 
 if [ -e "$shome/$sjar.jar" ]; then
-	export SIKULI_COMMAND=$*
 	echo "running SikuliX: $PROPS"
-	echo "-jar $shome/$sjar.jar $SIKULI_COMMAND"
-	"$JAVABIN" $PROPS -jar "$shome/$sjar.jar" $SIKULI_COMMAND
+	echo "-jar $shome/$sjar.jar $@"
+	"$JAVABIN" $PROPS -jar "$shome/$sjar.jar" "$@"
 else
   echo "Error: terminating: $sjar.jar not found at: "$shome
 fi
