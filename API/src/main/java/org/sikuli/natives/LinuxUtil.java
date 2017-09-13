@@ -215,7 +215,7 @@ public class LinuxUtil implements OSUtil {
             String[] lines = result.getStandardOutput().split("\\n");
             for (String str : lines) {
                 //Debug.log("read: " + str);
-                String winLine[] = str.split("\\s+");
+                String winLine[] = str.split("\\s+",10);
                 boolean ok = false;
 
                 if (type == SearchType.WINDOW_ID) {
@@ -227,12 +227,12 @@ public class LinuxUtil implements OSUtil {
                         ok = true;
                     }
                 } else if (type == SearchType.APP_NAME) {
-                    String winLineName = winLine[9].toLowerCase();
+                    String winLineName = winLine[7].toLowerCase();
                     if (appName.equals(winLineName)) {
                         ok = true;
                     }
 
-                    if (!ok && winLine[7].toLowerCase().contains(appName)) {
+                    if (!ok && winLine[9].toLowerCase().contains(appName)) {
                         ok = true;
                     }
                 }
