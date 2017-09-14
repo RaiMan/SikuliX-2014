@@ -7,14 +7,12 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.commons.exec.util.StringUtils;
 import org.sikuli.basics.Debug;
 import org.sikuli.script.App;
 
 import java.awt.*;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -31,19 +29,22 @@ public class LinuxUtil implements OSUtil {
                 CommandLine.parse("xdotool -v")
         );
         for (CommandLine cmd : commands) {
-            String executable = cmd.toStrings()[0];
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            String commandstring = StringUtils.toString(cmd.toStrings(), " ");
+
             try {
                 DefaultExecutor executor = new DefaultExecutor();
                 // other return values throw exception
                 executor.setExitValue(0);
-                //suppress system output
-                executor.setStreamHandler(new PumpStreamHandler(null));
+                //save system output
+                executor.setStreamHandler(new PumpStreamHandler(outputStream));
                 executor.execute(cmd);
             } catch (ExecuteException e) {
                 // it ran, but exited with non-zero status -- accept
                 Debug.info("App: command %s ran, but failed: `%s'. Hoping for the best",
-                  executable, e.toString());
-            } catch (Exception e) {
+                        commandstring, e.toString());
+            } catch (IOException e) {
+                String executable = cmd.toStrings()[0];
                 if (executable.equals("wmctrl")) {
                     wmctrlAvail = false;
                 }
@@ -51,6 +52,11 @@ public class LinuxUtil implements OSUtil {
                     xdoToolAvail = false;
                 }
                 Debug.error("App: command %s is not executable, the App features will not work", executable);
+            } finally {
+                //try to create some useful error output
+                if (outputStream.size() > 0) {
+                    Debug.log(4, "command '" + commandstring + "' output:\n" + outputStream.toString());
+                }
             }
         }
     }
