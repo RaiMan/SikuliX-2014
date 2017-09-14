@@ -4,7 +4,7 @@
 [![Build Status](https://travis-ci.org/RaiMan/SikuliX-2014.svg?branch=develop)](https://travis-ci.org/RaiMan/SikuliX-2014) [![Join the chat at https://gitter.im/RaiMan/SikuliX-2014](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/RaiMan/SikuliX-2014?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge) 
 
 -----------------
-1.1.2 is a bug-fix release for problems with version 1.1.1 ([get nightly builds](http://nightly.sikuli.de)) and needs Java 7+
+1.1.2 is a bug-fix release for problems with version 1.1.1 ([get nightly builds](http://nightly.sikuli.de)) and needs Java 8
 
 [looking for 1.1.1 final (available 2017-04-05)](https://launchpad.net/sikuli/sikulix/1.1.1)
 
