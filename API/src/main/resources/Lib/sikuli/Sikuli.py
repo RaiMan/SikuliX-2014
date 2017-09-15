@@ -17,6 +17,7 @@ import types
 import sys
 import os
 import inspect
+import subprocess
 
 Debug.log(4, "Jython: sikuli: Sikuli: backports from Version 2: Do")
 import org.sikuli.script.Do as Do
