@@ -143,6 +143,8 @@ public class RunTime {
             Debug.setLogFile("");
             Settings.LogTime = true;
             System.setProperty("sikuli.console", "false");
+          } else if (debugLevel == 998) {
+            runTime.allowMultipleInstances = true;
           } else if (debugLevel == 999) {
             runTime.runningScripts = true;
           } else if (debugLevel == -3) {
@@ -437,6 +439,7 @@ public class RunTime {
   private boolean runningScripts = false;
   public String linuxDistro = "???LINUX???";
   public String linuxNeededLibs = "";
+  public boolean allowMultipleInstances = false;
 
   //</editor-fold>
   GraphicsEnvironment genv = null;
@@ -532,7 +535,7 @@ public class RunTime {
       }
     });
 
-    if (Type.IDE.equals(typ) && !runningScripts) {
+    if (Type.IDE.equals(typ) && !runningScripts && !allowMultipleInstances) {
       isRunning = new File(fTempPath, isRunningFilename);
       boolean shouldTerminate = false;
       try {
@@ -2924,6 +2927,7 @@ public class RunTime {
   public static int checkArgs(String[] args, Type typ) {
     int debugLevel = -99;
     boolean runningScripts = false;
+    boolean allowMultipleInstances = false;
     List<String> options = new ArrayList<String>();
     options.addAll(Arrays.asList(args));
     for (int n = 0; n < options.size(); n++) {
@@ -2938,7 +2942,6 @@ public class RunTime {
         continue;
       }
       if (opt.startsWith("-d")) {
-        debugLevel = -1;
         try {
           debugLevel = n + 1 == options.size() ? -1 : Integer.decode(options.get(n + 1));
         } catch (Exception ex) {
@@ -2950,10 +2953,15 @@ public class RunTime {
       } else if (opt.startsWith("-r") || opt.startsWith("-t")
               || opt.startsWith("-s") || opt.startsWith("-i")) {
         runningScripts = true;
+      } else if (opt.startsWith("-m")) {
+        allowMultipleInstances = true;
       }
     }
     if (runningScripts) {
       return 999;
+    }
+    if (allowMultipleInstances) {
+      return 998;
     }
     return debugLevel;
   }
