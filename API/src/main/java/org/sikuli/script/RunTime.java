@@ -162,6 +162,7 @@ public class RunTime {
       String vVM = System.getProperty("java.vm.version");
       String vClass = System.getProperty("java.class.version");
       String vSysArch = System.getProperty("sikuli.arch");
+      Object vSikuliJavaok = System.getProperty("sikuli.javaok");
       if (null == vSysArch) {
         vSysArch = System.getProperty("os.arch");
       } else {
@@ -191,8 +192,12 @@ public class RunTime {
         runTime.dumpSysProps();
       }
 
-      if (!runTime.isJava7()) {
-        runTime.terminate(-1, "Java version must be 1.7 or later!");
+      if (!runTime.isJavaOK()) {
+        if (null != vSikuliJavaok) {
+          runTime.log(-1, "Java version unusual, but should be used (sikuli.javaok given)!");
+        } else {
+          runTime.terminate(-1, "Java version must be 1.7 or 1.8!");
+        }
       }
 
       runTime.osVersion = runTime.osVersionSysProp;
@@ -1174,8 +1179,11 @@ public class RunTime {
   /**
    * @return return true if Java version > 6
    */
-  public boolean isJava7() {
-    return javaVersion > 6;
+  public boolean isJavaOK() {
+    if (javaVersion < 7 || javaVersion > 8) {
+      return false;
+    }
+    return true;
   }
 
   public boolean isOSX10() {
