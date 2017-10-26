@@ -80,6 +80,7 @@ public class Region {
    * Flag, if an observer is running on this region {@link Settings}
    */
   private boolean observing = false;
+  private boolean observingInBackground = false;
   private float observeScanRate = Settings.ObserveScanRate;
   private int repeatWaitTime = Settings.RepeatWaitTime;
   /**
@@ -3517,8 +3518,10 @@ public class Region {
       return false;
     }
     if (observing) {
-      Debug.error("Region: observe: already running for this region. Only one allowed!");
-      return false;
+      if (!observingInBackground) {
+        Debug.error("Region: observe: already running for this region. Only one allowed!");
+        return false;
+      }
     }
     log(lvl, "observe: starting in " + this.toStringShort() + " for " + secs + " seconds");
     int MaxTimePerScan = (int) (1000.0 / observeScanRate);
@@ -3563,7 +3566,7 @@ public class Region {
   }
 
   /**
-   * start an observer in this region for the given time that runs in background for details about the observe event
+   * start an observer in this region for the given time that runs in background - for details about the observe event
    * handler: {@link ObserverCallBack} for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
    *
    * @param secs time in seconds the observer should run
@@ -3574,10 +3577,22 @@ public class Region {
       Debug.error("Region: observeInBackground: already running for this region. Only one allowed!");
       return false;
     }
+    observing = true;
+    observingInBackground = true;
     Thread observeThread = new Thread(new ObserverThread(secs));
     observeThread.start();
     log(lvl, "observeInBackground now running");
     return true;
+  }
+
+  /**
+   * start an observer in this region that runs in background forever - for details about the observe event
+   * handler: {@link ObserverCallBack} for details about APPEAR/VANISH/CHANGE events: {@link ObserveEvent}
+   *
+   * @return false if not possible, true otherwise
+   */
+  public boolean observeInBackground() {
+    return observeInBackground(Double.MAX_VALUE);
   }
 
   private class ObserverThread implements Runnable {
@@ -3600,6 +3615,7 @@ public class Region {
   public void stopObserver() {
     log(lvl, "observe: request to stop observer for " + this.toStringShort());
     observing = false;
+    observingInBackground = false;
   }
 
   /**

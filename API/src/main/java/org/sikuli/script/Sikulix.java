@@ -130,7 +130,28 @@ public class Sikulix {
     boolean playing = false;
     if (args.length > 0 && "play".equals(args[0])) {
       playing = true;
-//-------- playground
+//-------- playground Observe
+//      Region reg = new Region(0,0,80,80);
+//      reg.highlight(2);
+//      reg.onChange(new ObserverCallBack(){
+//        @Override
+//        public void changed(ObserveEvent evt) {
+//          if (evt.getCount() > 3) {
+//            p("in handler: %d - stopping", evt.getCount());
+//            evt.stopObserver();
+//          } else {
+//            p("in handler: %d", evt.getCount());
+//          }
+//        }
+//      });
+//      reg.observeInBackground();
+//      int n = 0;
+//      while (reg.isObserving()) {
+//        p("%d - observing", n);
+//        reg.wait(1.0);
+//        n++;
+//      }
+//-------- playground VNC
 //      VNCScreen vs = vncStart("192.168.2.63", 5900, "vnc", 0, 0);
 //      p("%s", vs);
 //      vs.wait(3.0);
