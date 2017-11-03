@@ -1,1 +1,0 @@
-popup("hello from filename%stest")

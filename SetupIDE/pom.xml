@@ -65,7 +65,7 @@
             </manifest>
           </archive>
 					<descriptors>
-						<descriptor>../${sikuli.helpers}/ide-fat.xml</descriptor>
+						<descriptor>../${sikuli.helpers}/makeide.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>

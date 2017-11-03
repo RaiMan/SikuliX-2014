@@ -1,8 +1,0 @@
-print "bundleP:", getBundlePath()
-print "parentP:", getParentPath()
-print "bundleF:", getBundleFolder()
-print "parentF:", getParentFolder()
-print "parent/:", makeFolder(getParentPath())
-print "bundle/:", makeFolder(getBundlePath())
-print "makeP:", makePath("/Users", "rhocke", "SikuliX/")
-print "makeF:", makeFolder("/Users", "rhocke", "SikuliX")

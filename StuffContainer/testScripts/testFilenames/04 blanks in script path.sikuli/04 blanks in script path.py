@@ -1,1 +1,0 @@
-print "blanks in script paths"

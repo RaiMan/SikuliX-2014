@@ -1,1 +1,0 @@
-echo "running build natives not yet working"

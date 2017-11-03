@@ -39,7 +39,7 @@
 						</manifest>
 					</archive>
 					<descriptors>
-						<descriptor>../${sikuli.helpers}/plain.xml</descriptor>
+						<descriptor>../${sikuli.helpers}/makeapi.xml</descriptor>
 					</descriptors>
 				</configuration>
 				<executions>

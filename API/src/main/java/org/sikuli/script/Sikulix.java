@@ -193,7 +193,7 @@ public class Sikulix {
     if (runSomeJS == null || runSomeJS.isEmpty()) {
       popup("Nothing to do!", version);
     } else {
-      while (!runSomeJS.isEmpty()) {
+      while (null != runSomeJS && !runSomeJS.isEmpty()) {
         FileManager.writeStringToFile(runSomeJS, lastSession);
         Runner.runjs(null, null, runSomeJS, null);
         runSomeJS = inputText("Edit the JavaScript and/or press OK to run it (again)\n"

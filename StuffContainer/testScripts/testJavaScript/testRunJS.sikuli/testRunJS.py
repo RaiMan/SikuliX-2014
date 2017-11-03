@@ -1,1 +1,0 @@
-runScript("./testjs")

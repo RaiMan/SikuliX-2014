@@ -585,6 +585,7 @@ public class RunSetup {
               + workDir + "\n";
     }
 
+    getTess = false; // tessdata completely contained in API-forsetup and IDE-forsetup
     downloadedFiles = "";
     if (getIDE || getAPI || getRServer) {
 
@@ -714,9 +715,9 @@ public class RunSetup {
     if (getIDE || getAPI) {
       if (forSystemLux || forAllSystems) {
         jarsList[8] = new File(workDir, libsLux + ".jar").getAbsolutePath();
-        fDownloaded = downloadedAlready("lux", "Linux native libs", true);
+        fDownloaded = downloadedAlready("lux", "Linux native libs", false);
         if (fDownloaded == null) {
-          fDownloaded = downloadJarFromMavenSx(libsLux, dlDir, libsLux);
+          fDownloaded = downloadJarFromMavenSx(libsLux, dlDirGeneric, libsLux);
         }
         downloadOK &= copyFromDownloads(fDownloaded, libsLux, jarsList[8]);
         if (downloadOK && isLinux) {
@@ -739,9 +740,9 @@ public class RunSetup {
 
       if (forSystemWin || forAllSystems) {
         jarsList[6] = new File(workDir, libsWin + ".jar").getAbsolutePath();
-        fDownloaded = downloadedAlready("win", "Windows native libs", true);
+        fDownloaded = downloadedAlready("win", "Windows native libs", false);
         if (fDownloaded == null) {
-          fDownloaded = downloadJarFromMavenSx(libsWin, dlDir, libsWin);
+          fDownloaded = downloadJarFromMavenSx(libsWin, dlDirGeneric, libsWin);
         }
         boolean dlLibsWinOK = copyFromDownloads(fDownloaded, libsWin, jarsList[6]);
         if (dlLibsWinOK) {
@@ -758,9 +759,9 @@ public class RunSetup {
 
       if (forSystemMac || forAllSystems) {
         jarsList[7] = new File(workDir, libsMac + ".jar").getAbsolutePath();
-        fDownloaded = downloadedAlready("mac", "Mac native libs", true);
+        fDownloaded = downloadedAlready("mac", "Mac native libs", false);
         if (fDownloaded == null) {
-          fDownloaded = downloadJarFromMavenSx(libsMac, dlDir, libsMac);
+          fDownloaded = downloadJarFromMavenSx(libsMac, dlDirGeneric, libsMac);
         }
         downloadOK &= copyFromDownloads(fDownloaded, libsMac, jarsList[7]);
       }
@@ -768,7 +769,7 @@ public class RunSetup {
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="download IDE/API Jython/JRuby ...">
-    if (getIDE || getAPI) {
+    if (getAPI) {
       sDownloaded = "sikulixapi";
       localJar = new File(workDir, localAPI).getAbsolutePath();
       fDownloaded = downloadedAlready("api", "Java API package", true);
@@ -776,6 +777,7 @@ public class RunSetup {
         fDownloaded = downloadJarFromMavenSx("sikulixsetupAPI#forsetup", dlDir, sDownloaded);
       }
       boolean dlApiOK = copyFromDownloads(fDownloaded, sDownloaded, localJar);
+/*
       if (dlApiOK && (forSystemWin || forAllSystems)) {
         FileManager.resetFolder(folderLib);
         String aJar = FileManager.normalizeAbsolute(localJar, false);
@@ -785,6 +787,7 @@ public class RunSetup {
         addonFileList[addonFolderLib] = new File(folderLib, runTime.fpContent).getAbsolutePath();
         addonFilePrefix[addonFolderLib] = "Lib";
       }
+*/
       downloadOK &= dlApiOK;
     }
 
@@ -868,6 +871,7 @@ public class RunSetup {
 
     //<editor-fold defaultstate="collapsed" desc="download for tesseract">
     if (getTess) {
+/*
       String langTess = "eng";
       targetJar = new File(workDir, localTess).getAbsolutePath();
       String xTess = runTime.tessData.get(langTess);
@@ -911,6 +915,7 @@ public class RunSetup {
 
         FileManager.deleteFileOrFolder(fTessData.getAbsolutePath());
       }
+*/
     }
     //</editor-fold>
 
@@ -1014,15 +1019,14 @@ public class RunSetup {
 
     splash = showSplash("Now creating jars, application and commandfiles", "please wait - may take some seconds ...");
 
-    File fAPI = new File(workDir, localAPI);
-    jarsList[1] = fAPI.getAbsolutePath();
-    hasAPI = fAPI.exists();
-
     if (getTess) {
-      jarsList[2] = (new File(workDir, localTess)).getAbsolutePath();
+      //jarsList[2] = (new File(workDir, localTess)).getAbsolutePath();
     }
 
     if (success && getAPI) {
+      File fAPI = new File(workDir, localAPI);
+      jarsList[1] = fAPI.getAbsolutePath();
+      hasAPI = fAPI.exists();
       logPlus(lvl, "adding needed stuff to sikulixapi.jar");
       localJar = (new File(workDir, localAPI)).getAbsolutePath();
       targetJar = (new File(workDir, localTemp)).getAbsolutePath();
@@ -1032,8 +1036,8 @@ public class RunSetup {
     }
 
     if (getAPI && getTess) {
-      new File(workDir, localTess).delete();
-      jarsList[2] = null;
+//      new File(workDir, localTess).delete();
+//      jarsList[2] = null;
     }
 
     if (success && getIDE) {
@@ -1358,12 +1362,14 @@ public class RunSetup {
     success &= fIDEPlus != null;
     File fAPIPlus = getProjectJarFile(projectDir, "SetupAPI", "sikulixsetupAPI", "-forsetup.jar");
     success &= fAPIPlus != null;
+/*
     File fLibsmac = getProjectJarFile(projectDir, "Libsmac", libsMac, ".jar");
     success &= fLibsmac != null;
     File fLibswin = getProjectJarFile(projectDir, "Libswin", libsWin, ".jar");
     success &= fLibswin != null;
     File fLibslux = getProjectJarFile(projectDir, "Libslux", libsLux, ".jar");
     success &= fLibslux != null;
+*/
 
     File fJythonJar = new File(runTime.SikuliJython);
     if (!noSetup && !fJythonJar.exists()) {
@@ -1396,9 +1402,10 @@ public class RunSetup {
       success &= FileManager.xcopy(fIDEPlus, new File(fDownloadsGenericApp, downloadIDE));
       success &= FileManager.xcopy(fAPIPlus, new File(fDownloadsGenericApp, downloadAPI));
 
-      for (File fEntry : new File[]{fLibsmac, fLibswin, fLibslux}) {
-        success &= FileManager.xcopy(fEntry, new File(fDownloadsGenericApp, fEntry.getName()));
-      }
+      //for (File fEntry : new File[]{fLibsmac, fLibswin, fLibslux}) {
+        //DONT copy libs... jars
+        //success &= FileManager.xcopy(fEntry, new File(fDownloadsGenericApp, fEntry.getName()));
+      //}
 
       if (!noSetup) {
         success &= FileManager.xcopy(fJythonJar, new File(fDownloadsGeneric, downloadJython));
@@ -1736,13 +1743,11 @@ public class RunSetup {
       item = parts[0];
       itemSuffix = "-" + parts[1];
     }
-    if (runTime.isVersionRelease()) {
-//      if (itemSuffix.contains("forsetup") || item.contains("sikulixlibs")) {
-//        mPath = runTime.downloadBaseDir;
-//      } else {
-      mPath = String.format("%s%s/%s/", sikulixMavenGroup, item, version);
-//      }
-      mJar = String.format("%s-%s%s.jar", item, version, itemSuffix);
+    String usedVersion = version;
+    if (runTime.isVersionRelease() || useReleaseVersion.contains(item)) {
+      if (useReleaseVersion.contains(item)) usedVersion = releaseVersion;
+      mPath = String.format("%s%s/%s/", sikulixMavenGroup, item, usedVersion);
+      mJar = String.format("%s-%s%s.jar", item, usedVersion, itemSuffix);
     } else {
       String dlMavenSnapshotPath = version + "-SNAPSHOT";
       String dlMavenSnapshotXML = "maven-metadata.xml";
@@ -1784,12 +1789,15 @@ public class RunSetup {
     return new File(fpJar).getName();
   }
 
+  static String useReleaseVersion = "sikulixlibsmac sikulixlibswin sikulixlibslux";
+  static String releaseVersion = "1.1.1";
+
   private static File downloadJarFromMavenSx(String item, String targetDir, String itemName) {
     String fpJar = getMavenJarPath(item);
     if (fpJar == null) {
       return null;
     }
-    if (runTime.isVersionRelease()) {
+    if (runTime.isVersionRelease() || useReleaseVersion.contains(item)) {
       return downloadJarFromMaven(fpJar, targetDir, itemName);
     } else {
       return download(fpJar, targetDir, null, itemName);

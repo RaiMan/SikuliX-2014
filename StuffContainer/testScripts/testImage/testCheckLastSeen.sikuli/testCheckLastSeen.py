@@ -1,5 +1,0 @@
-r = Region(0,0,300,300)
-r.find("nblogo.png")
-r.getLastScreenImageFile()
-r.find("nblogo.png")
-r.getLastScreenImageFile()

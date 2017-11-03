@@ -84,12 +84,12 @@
 		<dependency>
 			<groupId>com.sikulix</groupId>
 			<artifactId>${sikulix.libs}</artifactId>
-			<version>${project.version}</version>
+			<version>1.1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.sikulix</groupId>
-			<artifactId>sikulix2tigervnc</artifactId>
-			<version>2.0.0-SNAPSHOT</version>
+			<artifactId>sikulix1tigervnc</artifactId>
+			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
 

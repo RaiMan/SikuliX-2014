@@ -1,7 +1,0 @@
-Debug.on(3)
-ImagePath.addHTTP("download.sikuli.de/images")
-Image.dump()
-img = Image.create("SikuliLogo.png")
-hover(img)
-find(img)
-highlight(-2)

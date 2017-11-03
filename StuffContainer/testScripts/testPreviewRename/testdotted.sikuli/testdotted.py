@@ -1,1 +1,0 @@
-print find("../image.png")

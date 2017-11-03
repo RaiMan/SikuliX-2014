@@ -1,2 +1,0 @@
-"nbicons.png"
-"nbiconsbuild.png"

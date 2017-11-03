@@ -1,2 +1,0 @@
-#switchApp("Safari")
-Key.dump()

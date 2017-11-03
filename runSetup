@@ -1,1 +1,0 @@
-java -jar `ls Setup/target/*-forsetup.jar`
