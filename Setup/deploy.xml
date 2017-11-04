@@ -181,7 +181,7 @@
                         </manifest>
                     </archive>
                     <descriptors>
-                        <descriptor>../Setup/src/main/resources/content/plain.xml</descriptor>
+                        <descriptor>../Setup/src/main/resources/content/makesetup.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>

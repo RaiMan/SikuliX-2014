@@ -43,28 +43,6 @@
             <artifactId>sikulix</artifactId>
             <version>${project.version}</version>
         </dependency>
-<!--
-        <dependency>
-            <groupId>com.googlecode.json-simple</groupId>
-            <artifactId>json-simple</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.swinglabs.swingx</groupId>
-            <artifactId>swingx-core</artifactId>
-            <version>1.6.5-1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.jgoodies</groupId>
-            <artifactId>forms</artifactId>
-            <version>1.2.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.explodingpixels</groupId>
-            <artifactId>mac_widgets</artifactId>
-            <version>0.9.5</version>
-        </dependency>
--->
     </dependencies>
 
     <properties>
@@ -162,7 +140,7 @@
                         </manifest>
                     </archive>
                     <descriptors>
-                        <descriptor>../Setup/src/main/resources/content/ide-fat.xml</descriptor>
+                        <descriptor>../Setup/src/main/resources/content/makeide.xml</descriptor>
                     </descriptors>
                 </configuration>
                 <executions>
