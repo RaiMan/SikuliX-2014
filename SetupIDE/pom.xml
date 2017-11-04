@@ -45,11 +45,6 @@
       <artifactId>mac_widgets</artifactId>
       <version>0.9.5</version>
     </dependency>
-    <dependency>
-      <groupId>com.sikulix</groupId>
-      <artifactId>sxjygments</artifactId>
-      <version>${project.version}</version>
-    </dependency>
   </dependencies>
 
 	<build>

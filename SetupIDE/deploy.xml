@@ -43,6 +43,7 @@
             <artifactId>sikulix</artifactId>
             <version>${project.version}</version>
         </dependency>
+<!--
         <dependency>
             <groupId>com.googlecode.json-simple</groupId>
             <artifactId>json-simple</artifactId>
@@ -63,11 +64,7 @@
             <artifactId>mac_widgets</artifactId>
             <version>0.9.5</version>
         </dependency>
-        <dependency>
-            <groupId>com.sikulix</groupId>
-            <artifactId>sxjygments</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+-->
     </dependencies>
 
     <properties>
