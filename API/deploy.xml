@@ -189,7 +189,7 @@
 						<version>2.10.3</version>
 						<configuration>
 							<excludePackageNames>
-								org.opencv
+								org.opencv:jxgrabkey
 							</excludePackageNames>
 						</configuration>
 						<executions>

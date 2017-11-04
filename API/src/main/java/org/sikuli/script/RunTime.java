@@ -176,7 +176,11 @@ public class RunTime {
         runTime.log(runTime.lvl, "Java arch (32 or 64 Bit) not detected nor given - using %d Bit", runTime.javaArch);
       }
       try {
-        runTime.javaVersion = Integer.parseInt(vJava.substring(2, 3));
+        if (!vJava.startsWith("1")) {
+          runTime.javaVersion = 9;
+        } else {
+          runTime.javaVersion = Integer.parseInt(vJava.substring(2, 3));
+        }
         runTime.javaShow = String.format("java %d-%d version %s vm %s class %s arch %s",
                 runTime.javaVersion, runTime.javaArch, vJava, vVM, vClass, vSysArch);
       } catch (Exception ex) {
@@ -1170,14 +1174,14 @@ public class RunTime {
   }
 
   /**
-   * @return return true if Java version > 7
+   * @return return true if Java version gt 7
    */
   public boolean isJava8() {
     return javaVersion > 7;
   }
 
   /**
-   * @return return true if Java version > 6
+   * @return return true if Java version gt 6
    */
   public boolean isJavaOK() {
     if (javaVersion < 7 || javaVersion > 8) {
