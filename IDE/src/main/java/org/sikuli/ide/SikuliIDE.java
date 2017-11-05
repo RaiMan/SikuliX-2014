@@ -431,44 +431,46 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     if (!Settings.isMac()) {
       return;
     }
-    log(lvl, "initNativeSupport: starting");
-    if (System.getProperty("sikulix.asapp") != null) {
-      Settings.isMacApp = true;
-    }
-    try {
+    if (!runTime.isJava9("IDE: Mac: initNativeSupport()")) {
+      log(lvl, "initNativeSupport: starting");
+      if (System.getProperty("sikulix.asapp") != null) {
+        Settings.isMacApp = true;
+      }
+      try {
 //      com.apple.eawt.QuitResponse
-      Class sysclass = URLClassLoader.class;
-      Class comAppleEawtApplication = sysclass.forName("com.apple.eawt.Application");
-      Method mGetApplication = comAppleEawtApplication.getDeclaredMethod("getApplication", null);
-      Object instApplication = mGetApplication.invoke(null, null);
+        Class sysclass = URLClassLoader.class;
+        Class comAppleEawtApplication = sysclass.forName("com.apple.eawt.Application");
+        Method mGetApplication = comAppleEawtApplication.getDeclaredMethod("getApplication", null);
+        Object instApplication = mGetApplication.invoke(null, null);
 
-      Class clAboutHandler = sysclass.forName("com.apple.eawt.AboutHandler");
-      Class clPreferencesHandler = sysclass.forName("com.apple.eawt.PreferencesHandler");
-      Class clQuitHandler = sysclass.forName("com.apple.eawt.QuitHandler");
-      Class clOpenHandler = sysclass.forName("com.apple.eawt.OpenFilesHandler");
+        Class clAboutHandler = sysclass.forName("com.apple.eawt.AboutHandler");
+        Class clPreferencesHandler = sysclass.forName("com.apple.eawt.PreferencesHandler");
+        Class clQuitHandler = sysclass.forName("com.apple.eawt.QuitHandler");
+        Class clOpenHandler = sysclass.forName("com.apple.eawt.OpenFilesHandler");
 
-      Object appHandler = Proxy.newProxyInstance(
-              comAppleEawtApplication.getClassLoader(),
-              new Class[]{clAboutHandler, clPreferencesHandler, clQuitHandler, clOpenHandler},
-              this);
-      Method m = comAppleEawtApplication.getMethod("setAboutHandler", new Class[]{clAboutHandler});
-      m.invoke(instApplication, new Object[]{appHandler});
-      showAbout = false;
-      m = comAppleEawtApplication.getMethod("setPreferencesHandler", new Class[]{clPreferencesHandler});
-      m.invoke(instApplication, new Object[]{appHandler});
-      showPrefs = false;
-      m = comAppleEawtApplication.getMethod("setQuitHandler", new Class[]{clQuitHandler});
-      m.invoke(instApplication, new Object[]{appHandler});
-      showQuit = false;
-      m = comAppleEawtApplication.getMethod("setOpenFileHandler", new Class[]{clOpenHandler});
-      m.invoke(instApplication, new Object[]{appHandler});
-    } catch (Exception ex) {
-      String em = String.format("initNativeSupport: Mac: error:\n%s", ex.getMessage());
-      log(-1, em);
-      Sikulix.popError(em, "IDE has problems ...");
-      System.exit(1);
+        Object appHandler = Proxy.newProxyInstance(
+                comAppleEawtApplication.getClassLoader(),
+                new Class[]{clAboutHandler, clPreferencesHandler, clQuitHandler, clOpenHandler},
+                this);
+        Method m = comAppleEawtApplication.getMethod("setAboutHandler", new Class[]{clAboutHandler});
+        m.invoke(instApplication, new Object[]{appHandler});
+        showAbout = false;
+        m = comAppleEawtApplication.getMethod("setPreferencesHandler", new Class[]{clPreferencesHandler});
+        m.invoke(instApplication, new Object[]{appHandler});
+        showPrefs = false;
+        m = comAppleEawtApplication.getMethod("setQuitHandler", new Class[]{clQuitHandler});
+        m.invoke(instApplication, new Object[]{appHandler});
+        showQuit = false;
+        m = comAppleEawtApplication.getMethod("setOpenFileHandler", new Class[]{clOpenHandler});
+        m.invoke(instApplication, new Object[]{appHandler});
+      } catch (Exception ex) {
+        String em = String.format("initNativeSupport: Mac: error:\n%s", ex.getMessage());
+        log(-1, em);
+        Sikulix.popError(em, "IDE has problems ...");
+        System.exit(1);
+      }
+      log(lvl, "initNativeSupport: success");
     }
-    log(lvl, "initNativeSupport: success");
   }
 
   private static List<File> macOpenFiles = null;

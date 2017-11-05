@@ -108,17 +108,19 @@ public class JythonScriptRunner implements IScriptRunner {
       getInterpreter();
       helper = JythonHelper.set(interpreter);
       helper.getSysPath();
-      String fpAPI = null;
-      String[] possibleJars = new String[]{"sikulixapi", "API/target/classes", "sikulix.jar"};
-      for (String aJar : possibleJars) {
-        if (null != (fpAPI = runTime.isOnClasspath(aJar))) {
-          break;
-        }
-      }
-      if (null == fpAPI) {
-        runTime.terminate(1, "JythonScriptRunner: no sikulix....jar on classpath");
-      }
-      String fpAPILib = new File(fpAPI, "Lib").getAbsolutePath();
+//JAVA9
+//      String fpAPI = null;
+//      String[] possibleJars = new String[]{"sikulixapi", "API/target/classes", "sikulix.jar"};
+//      for (String aJar : possibleJars) {
+//        if (null != (fpAPI = runTime.isOnClasspath(aJar))) {
+//          break;
+//        }
+//      }
+//      if (null == fpAPI) {
+//        runTime.terminate(1, "JythonScriptRunner: no sikulix....jar on classpath");
+//      }
+//      String fpAPILib = new File(fpAPI, "Lib").getAbsolutePath();
+      String fpAPILib = runTime.fSikulixLib.getAbsolutePath();
       helper.putSysPath(fpAPILib, 0);
       helper.setSysPath();
       helper.addSitePackages();

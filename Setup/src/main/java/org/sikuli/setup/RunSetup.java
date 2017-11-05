@@ -344,11 +344,16 @@ public class RunSetup {
       }
     }
 
+    String splashJava9 = "";
+    if (runTime.isJava9()) {
+      splashJava9 = "*** on Java9 *** ";
+    }
+
     if (!hasOptions && !testingMaven) {
       String msg = String.format("You are about to run a setup for %s (%s)", version, runTime.sxBuildStamp);
       msg += "\n\nYou should have a suitable backup, ";
       msg += "\nto go back in case to what you have now.";
-      msg += "\n\nClick NO to stop here";
+      msg += "\n\n" + splashJava9 + "Click NO to stop here ";
       if (!popAsk(msg)) {
         userTerminated("");
       }
@@ -818,7 +823,7 @@ public class RunSetup {
                 + "are present somewhere in the system environment\n"
                 + "If you encounter such problems with Jython 2.7.0\n"
                 + "run setup again and\n"
-                + "click NO to get Jython 2.5.4rc1")) {
+                + "click NO to get Jython a 2.5.4 version")) {
           // TODO: use runtime.SikuliJythonVersion25 in the message above
           sDownloadedName = new File(runTime.SikuliJythonMaven).getName();
           fDownloaded = downloadedAlready("python", "Jython 2.7", false);
@@ -1044,6 +1049,7 @@ public class RunSetup {
       logPlus(lvl, "adding needed stuff to sikulix.jar");
       localJar = (new File(workDir, localIDE)).getAbsolutePath();
       jarsList[0] = localJar;
+      jarsList[1] = null;
       if (getJython) {
         jarsList[3] = (new File(workDir, localJython)).getAbsolutePath();
       }
@@ -1105,58 +1111,64 @@ public class RunSetup {
     //<editor-fold defaultstate="collapsed" desc="api test">
     boolean runAPITest = false;
     if (getAPI && !notests && !runTime.isHeadless()) {
-      logPlus(lvl, "Trying to run functional test: JAVA-API");
+      logPlus(lvl, "Trying to run functional test: JAVA-API %s", splashJava9);
       splash = showSplash("Trying to run functional test(s) - wait for the result popup",
-              "Java-API: org.sikuli.script.Sikulix.testSetup()");
+              splashJava9 + " Java-API: org.sikuli.script.Sikulix.testSetup()");
       start += 2000;
-      if (!runTime.addToClasspath(localJarAPI.getAbsolutePath())) {
-        closeSplash(splash);
-        log(-1, "Java-API test: ");
-        popError("Something serious happened! Sikuli not useable!\n"
-                + "Check the error log at " + (logfile == null ? "printout" : logfile));
-        terminate("Functional test JAVA-API did not work", 1);
-      }
-      try {
-        log(lvl, "trying to run org.sikuli.script.Sikulix.testSetup()");
-        Class sysclass = URLClassLoader.class;
-        Class SikuliCL = sysclass.forName("org.sikuli.script.Sikulix");
-        log(lvl, "class found: " + SikuliCL.toString());
-        Method method = null;
-        if (hasOptions) {
-          method = SikuliCL.getDeclaredMethod("testSetupSilent", new Class[0]);
-        } else {
-          method = SikuliCL.getDeclaredMethod("testSetup", new Class[0]);
+      if (!runTime.isJava9("setup API test - addToClasspath()")) {
+        if (!runTime.addToClasspath(localJarAPI.getAbsolutePath())) {
+          closeSplash(splash);
+          log(-1, "Java-API test: ");
+          popError("Something serious happened! Sikuli not useable!\n"
+                  + "Check the error log at " + (logfile == null ? "printout" : logfile));
+          terminate("Functional test JAVA-API did not work", 1);
         }
-        log(lvl, "getMethod: " + method.toString());
-        method.setAccessible(true);
-        closeSplash(splash);
-        log(lvl, "invoke: " + method.toString());
-        Object ret = method.invoke(null, new Object[0]);
-        if (!(Boolean) ret) {
-          throw new Exception("testSetup returned false");
+        try {
+          log(lvl, "trying to run org.sikuli.script.Sikulix.testSetup()");
+          Class sysclass = URLClassLoader.class;
+          Class SikuliCL = sysclass.forName("org.sikuli.script.Sikulix");
+          log(lvl, "class found: " + SikuliCL.toString());
+          Method method = null;
+          if (hasOptions) {
+            method = SikuliCL.getDeclaredMethod("testSetupSilent", new Class[0]);
+          } else {
+            method = SikuliCL.getDeclaredMethod("testSetup", new Class[0]);
+          }
+          log(lvl, "getMethod: " + method.toString());
+          method.setAccessible(true);
+          closeSplash(splash);
+          log(lvl, "invoke: " + method.toString());
+          Object ret = method.invoke(null, new Object[0]);
+          if (!(Boolean) ret) {
+            throw new Exception("testSetup returned false");
+          }
+        } catch (Exception ex) {
+          closeSplash(splash);
+          log(-1, ex.getMessage());
+          popError("Something serious happened! Sikuli not useable!\n"
+                  + "Check the error log at " + (logfile == null ? "printout" : logfile));
+          terminate("Functional test Java-API did not work", 1);
         }
-      } catch (Exception ex) {
+        runAPITest = true;
+      } else {
         closeSplash(splash);
-        log(-1, ex.getMessage());
-        popError("Something serious happened! Sikuli not useable!\n"
-                + "Check the error log at " + (logfile == null ? "printout" : logfile));
-        terminate("Functional test Java-API did not work", 1);
       }
-      runAPITest = true;
     }
     //</editor-fold>
 
     //<editor-fold defaultstate="collapsed" desc="ide test">
     if (getIDE && !notests && !runTime.isHeadless()) {
       success = true;
-      if (!runTime.addToClasspath(localJarIDE.getAbsolutePath())) {
-        closeSplash(splash);
-        popError("Something serious happened! Sikuli not useable!\n"
-                + "Check the error log at " + (logfile == null ? "printout" : logfile));
-        terminate("Functional test IDE did not work", 1);
-      }
       if (!runAPITest) {
         runTime.makeFolders();
+      }
+      if (!runTime.isJava9("setup IDE test - addToClasspath()")) {
+        if (!runTime.addToClasspath(localJarIDE.getAbsolutePath())) {
+          closeSplash(splash);
+          popError("Something serious happened! Sikuli not useable!\n"
+                  + "Check the error log at " + (logfile == null ? "printout" : logfile));
+          terminate("Functional test IDE did not work", 1);
+        }
       }
       String testMethod;
       if (getJython) {
@@ -1167,22 +1179,26 @@ public class RunSetup {
         }
         logPlus(lvl, "Jython: Trying to run functional test: running script statements via SikuliScript");
         splash = showSplash("Jython Scripting: Trying to run functional test - wait for the result popup",
-                "Running script statements via SikuliScript");
+                splashJava9 + "Running script statements via SikuliScript");
         start += 2000;
-        try {
-          String testargs[] = new String[]{"-testSetup", "jython", testMethod};
-          closeSplash(splash);
-          runScriptTest(testargs);
-          if (null == testargs[0]) {
-            throw new Exception("testSetup ran with problems");
+        if (!runTime.isJava9("setup Jython test ")) {
+          try {
+            String testargs[] = new String[]{"-testSetup", "jython", testMethod};
+            closeSplash(splash);
+            runScriptTest(testargs);
+            if (null == testargs[0]) {
+              throw new Exception("testSetup ran with problems");
+            }
+          } catch (Exception ex) {
+            closeSplash(splash);
+            success &= false;
+            log(-1, ex.getMessage());
+            popError("Something serious happened! Sikuli not useable!\n"
+                    + "Check the error log at " + (logfile == null ? "printout" : logfile));
+            terminate("Functional test Jython did not work", 1);
           }
-        } catch (Exception ex) {
+        } else {
           closeSplash(splash);
-          success &= false;
-          log(-1, ex.getMessage());
-          popError("Something serious happened! Sikuli not useable!\n"
-                  + "Check the error log at " + (logfile == null ? "printout" : logfile));
-          terminate("Functional test Jython did not work", 1);
         }
       }
       if (getJRuby) {
@@ -1193,22 +1209,26 @@ public class RunSetup {
         }
         logPlus(lvl, "JRuby: Trying to run functional test: running script statements via SikuliScript");
         splash = showSplash("JRuby Scripting: Trying to run functional test - wait for the result popup",
-                "Running script statements via SikuliScript");
+                splashJava9 + "Running script statements via SikuliScript");
         start += 2000;
-        try {
-          String testargs[] = new String[]{"-testSetup", "jruby", testMethod};
-          closeSplash(splash);
-          runScriptTest(testargs);
-          if (null == testargs[0]) {
-            throw new Exception("testSetup ran with problems");
+        if (!runTime.isJava9("setup JRuby test")) {
+          try {
+            String testargs[] = new String[]{"-testSetup", "jruby", testMethod};
+            closeSplash(splash);
+            runScriptTest(testargs);
+            if (null == testargs[0]) {
+              throw new Exception("testSetup ran with problems");
+            }
+          } catch (Exception ex) {
+            closeSplash(splash);
+            success &= false;
+            log(-1, "content of returned error's (%s) message:\n%s", ex, ex.getMessage());
+            popError("Something serious happened! Sikuli not useable!\n"
+                    + "Check the error log at " + (logfile == null ? "printout" : logfile));
+            terminate("Functional test JRuby did not work", 1);
           }
-        } catch (Exception ex) {
+        } else {
           closeSplash(splash);
-          success &= false;
-          log(-1, "content of returned error's (%s) message:\n%s", ex, ex.getMessage());
-          popError("Something serious happened! Sikuli not useable!\n"
-                  + "Check the error log at " + (logfile == null ? "printout" : logfile));
-          terminate("Functional test JRuby did not work", 1);
         }
       }
       if (success && Settings.isMac()) {
@@ -1403,8 +1423,8 @@ public class RunSetup {
       success &= FileManager.xcopy(fAPIPlus, new File(fDownloadsGenericApp, downloadAPI));
 
       //for (File fEntry : new File[]{fLibsmac, fLibswin, fLibslux}) {
-        //DONT copy libs... jars
-        //success &= FileManager.xcopy(fEntry, new File(fDownloadsGenericApp, fEntry.getName()));
+      //DONT copy libs... jars
+      //success &= FileManager.xcopy(fEntry, new File(fDownloadsGenericApp, fEntry.getName()));
       //}
 
       if (!noSetup) {
@@ -1518,16 +1538,12 @@ public class RunSetup {
           m += "\nThe generated jars can be used out of the box with Java 32-Bit and Java 64-Bit as well.";
           m += "\nThe Java version is detected at runtime and the native support is switched accordingly.";
         }
-//				if (Settings.isMac()) {
-//					m += "\n\nSpecial info for Mac systems:";
-//					m += "\nFinally you will have a Sikuli-IDE.app in the setup working folder.";
-//					m += "\nTo use it, just move it into the Applications folder.";
-//					m += "\nIf you need to run stuff from commandline or want to use Sikuli with Java,";
-//					m += "\nyou have the following additionally in the setup folder:";
-//					m += "\nrunIDE: the shellscript to run scripts and";
-//					m += "\nsikulix.jar: for all other purposes than IDE and running scripts";
-//					m += "\nMind the above special info about Jython, JRuby and Java developement too.";
-//				}
+        if (Settings.isMac()) {
+          m += "\n\nSpecial info for Mac systems:";
+          m += "\nYou will have a SikuliX.app in the setup working folder, that runs the IDE.";
+          m += "\nRecommendation: move it to the Applications folder.";
+          m += "\nIf you need to run stuff from commandline: use runsikulix";
+        }
         break;
       case (2):
         om = "Package 2: To support developement in Java or any Java aware scripting language. you get sikulixapi.jar."
@@ -1548,47 +1564,12 @@ public class RunSetup {
         }
         break;
       case (3):
-        om = "To get the additional Tesseract stuff into your packages to use the OCR engine";
-//              -------------------------------------------------------------
-        m += "\nOnly makes sense for Windows and Mac,"
-                + "\nsince for Linux the complete install of Tesseract is your job.";
-        m += "\nFeel free to add this to your packages, \n...but be aware of the restrictions, oddities "
-                + "and bugs with the current OCR and text search feature.";
-        m += "\nIt adds more than 10 MB to your jars and the libs folder at runtime."
-                + "\nSo be sure, that you really want to use it!";
-        m += "\n\nIt is NOT recommended for people new to Sikuli."
-                + "\nYou might add this feature later after having gathered some experiences with Sikuli";
+        om = "Tesseract support for language english is bundled";
+        m = "";
         break;
-      case (4):
-        om = "To prepare the selected packages to run on all supported systems";
-//              -------------------------------------------------------------
-        m += "\nWith this option NOT selected, the setup process will only add the system specific"
-                + " native stuff \n(Windows: support for both Java 32-Bit and Java 64-Bit is added)";
-        m += "\n\nSo as a convenience you might select this option to produce jars, that are"
-                + " useable out of the box on Windows, Mac and Linux.";
-        m += "\nThis is possible now, since the usage of Sikuli does not need any system specific"
-                + " preparations any more. \nJust use the package (some restrictions on Linux though).";
-        m += "\n\nSome scenarios for usages in different system environments:";
-        m += "\n- download or use the jars from a central network place ";
-        m += "\n- use the jars from a stick or similar mobile medium";
-        m += "\n- deploying Sikuli apps to be used all over the place";
-        break;
-      case (5):
-        om = "To try out the experimental remote robot feature";
-//              -------------------------------------------------------------
-        m += "\nYou might start the downloaded jar on any system, that is reachable "
-                + "\nby other systems in your network via TCP/IP (hostname or IP-address)."
-                + "\nusing: java -jar sikulixremoterobot.jar"
-                + "\n\nThe server is started and listens on a port (default 50000) for incoming requests"
-                + "\nto use the mouse or keyboard or send back a screenshot."
-                + "\nOn the client side a Sikuli script has to initiate a remote screen with the "
-                + "\nrespective IP-address and port of a running server and on connection success"
-                + "\nthe remote system can be used like a local screen/mouse/keyboard."
-                + "\n\nCurrently all basic operations like find, click, type ... are supported,"
-                + "\nbut be aware, that the search ops are done on the local system based on "
-                + "\nscreenshots sent back from the remote system on request."
-                + "\n\nMore information: https://github.com/RaiMan/SikuliX-Remote";
-        break;
+      default:
+        m = "";
+        om = "Not available";
     }
     popInfo("asking for option " + option + ": " + om + "\n" + m);
   }
@@ -1706,9 +1687,9 @@ public class RunSetup {
 
   private static File downloadedAlreadyAsk(File artefact, String itemName) {
     if (artefact.exists()) {
-      if (runningWithProject) {
-        return artefact;
-      }
+//      if (runningWithProject) {
+//        return artefact;
+//      }
       if (popAsk("You have for " + itemName + "\n"
               + artefact.getAbsolutePath()
               + "\nClick YES, if you want to use this for setup processing\n\n"

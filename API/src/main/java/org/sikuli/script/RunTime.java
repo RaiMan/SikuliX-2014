@@ -26,8 +26,8 @@ import java.util.zip.ZipInputStream;
 
 /**
  * INTERNAL USE --- NOT official API<br>
- *   not as is in version 2
- *
+ * not as is in version 2
+ * <p>
  * Intended to concentrate all, that is needed at startup of sikulix or sikulixapi and may be at runtime by SikuliX or
  * any caller
  */
@@ -200,7 +200,12 @@ public class RunTime {
         if (null != vSikuliJavaok) {
           runTime.log(-1, "Java version unusual, but should be used (sikuli.javaok given)!");
         } else {
-          runTime.terminate(-1, "Java version must be 1.7 or 1.8!");
+          if (Type.SETUP.equals(typ)) {
+            runTime.log(-1, "***** EXPERIMENTAL: Setup running on Java 9 *****");
+          } else {
+            //runTime.terminate(-1, "Java version must be 1.7 or 1.8!");
+            runTime.log(-1, "***** EXPERIMENTAL: Running on Java 9 *****");
+          }
         }
       }
 
@@ -882,8 +887,7 @@ public class RunTime {
               libName, loadError.getMessage().replace(fLib.getAbsolutePath(), "...TEMP..."));
       if (Settings.runningSetup) {
         return false;
-      }
-      else {
+      } else {
         terminate(1, "problem with native library: " + libName);
       }
     }
@@ -1171,6 +1175,20 @@ public class RunTime {
    */
   public boolean isRunningFromJar() {
     return runningJar;
+  }
+
+  /**
+   * @return return true if Java version gt 7
+   */
+  public boolean isJava9(String... args) {
+    if (javaVersion > 8) {
+      if (args.length > 0) {
+        log(-1, "*** JAVA9: %s", args[0]);
+      }
+      return true;
+    } else {
+      return false;
+    }
   }
 
   /**
@@ -2524,7 +2542,9 @@ public class RunTime {
 
   //<editor-fold defaultstate="collapsed" desc="classpath handling">
   private void storeClassPath() {
-    //TODO Java9
+    if (isJava9("skipped: storeClassPath()")) {
+      return;
+    }
     URLClassLoader sysLoader = (URLClassLoader) ClassLoader.getSystemClassLoader();
     classPath = Arrays.asList(sysLoader.getURLs());
   }
@@ -2543,6 +2563,9 @@ public class RunTime {
    */
   public void dumpClassPath(String filter) {
     filter = filter == null ? "" : filter;
+    if (isJava9("skipped: dumpClassPath()")) {
+      return;
+    }
     logp("*** classpath dump %s", filter);
     storeClassPath();
     String sEntry;
@@ -2643,6 +2666,9 @@ public class RunTime {
    * @return success
    */
   public boolean addToClasspath(String jarOrFolder) {
+    if (isJava9("skipped: addToClasspath()")) {
+      return false;
+    }
     URL uJarOrFolder = FileManager.makeURL(jarOrFolder);
     if (!new File(jarOrFolder).exists()) {
       log(-1, "addToClasspath: does not exist - not added:\n%s", jarOrFolder);

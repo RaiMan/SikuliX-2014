@@ -126,12 +126,17 @@ public class Settings {
     public static final int JavaVersion = makeJavaVersion();
 
     private static int makeJavaVersion() {
-        try {
-            return Integer.parseInt(java.lang.System.getProperty("java.version").substring(2, 3));
-        } catch (Exception ex) {
-            //TODO Java9
-            return 9;
+        int major = 0;
+        String jversion = java.lang.System.getProperty("java.version");
+        if (jversion.startsWith("1.")) {
+            try {
+                major = Integer.parseInt(jversion.substring(2, 3));
+            } catch (Exception ex) {
+            }
+        } else if (jversion.startsWith("9.")) {
+            major = 9;
         }
+        return major;
     }
 
     public static final String JREVersion = java.lang.System.getProperty("java.runtime.version");

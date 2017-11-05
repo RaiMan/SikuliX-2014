@@ -116,7 +116,7 @@ public class SetUpSelect extends javax.swing.JPanel {
       }
     });
 
-    option5.setText("3 - I want to use the Tesseract based OCR features (You should know what you are doing!)");
+    option5.setText("No operation - Tesseract support is built-in from now on (language english)");
     option5.addActionListener(new java.awt.event.ActionListener() {
       public void actionPerformed(java.awt.event.ActionEvent evt) {
         option5ActionPerformed(evt);
