@@ -5,6 +5,7 @@ import java.awt.event.KeyEvent;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+
 import org.sikuli.script.*;
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
@@ -22,20 +23,22 @@ public class TestRun {
     System.out.println(String.format(msg, args));
   }
 
-  private static void terminate(int retVal, String msg, Object... args ) {
+  private static void terminate(int retVal, String msg, Object... args) {
     p(msg, args);
     System.exit(retVal);
   }
 
   public static void main(String[] args) throws FindFailed, IOException {
-
     Debug.on(3);
-
-    ImagePath.add(TestRun.class.getCanonicalName() + "/ImagesAPI.sikuli");
-		s.find("SikuliLogo");
-		s.highlight(-2);
-
+    Sikulix.popup("hello");
   }
+
+  public static void test0() throws FindFailed {
+    ImagePath.add(TestRun.class.getCanonicalName() + "/ImagesAPI.sikuli");
+    s.find("SikuliLogo");
+    s.highlight(-2);
+  }
+
 
   public static void test1() {
     ImagePath.add(TestRun.class.getCanonicalName() + "/ImagesAPI.sikuli");

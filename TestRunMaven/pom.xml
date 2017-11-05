@@ -68,6 +68,7 @@
 				<configuration>
 					<executable>java</executable>
 					<arguments>
+						<argument>-Dsikuli.Debug=3</argument>
 						<argument>-classpath</argument>
 						<classpath/>
 						<argument>com.sikulix.testrun.TestRun</argument>
