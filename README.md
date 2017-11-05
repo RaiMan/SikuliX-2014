@@ -29,6 +29,14 @@ find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/Sik
 
 **You might also visit the WIKI**
 
+**EXPERIMENTAL fixes for usage with Java 9**
+
+I will try to make SikuliX 1.1.2+ runnable on Java (always have a setup with the latest nightly)
+
+ - setup should work now - but the final tests are switched off (have to be implemented with ProcessBuilder).
+ - IDE princilally works - be pepared for quirks though
+ - usage of sikulixapi not yet tested
+
 <hr>
 
 **If you want to test the head of developement without the need to build from sources:** <br>
@@ -121,21 +129,6 @@ Version 2 will use a different approach based on an available editor package (pr
 **Module Setup**
 
 It produces the fat jar `sikulixsetup.jar` being the root downloadable artefact. It is needed to setup the SikuliX packages to be used on the local systems. Though the preferred setup is to let setup download the needed stuff on the fly, there is the possibility to run setup completely local/offline after having downloaded the needed stuff manually ([look here ...](http://www.sikulix.com/quickstart.html#qs2)) 
-
-**Modules LibsWin, LibsMac, LibsLux**
-
-The prebuilt native libraries for Windows, Mac and Linux (partially).<br />
-(produces `sikulixlibsxxx.jar`)
-
-**Module Jygments4SikuliX**
-
-This is an adaption of the work [Jygments](https://code.google.com/p/jygments/) to the needs of SikuliX: it contains lexer/parser/formatter features and is a port from Python to Java of the well known Pygments tool, that is widely used for syntax highlighting and formatting of program code. In SikuliX it is intended to be used for syntax highlighting and other purposes, where scripting language grammar awareness is needed.
-
-<hr/>
-
-**Module TestRunMaven**
-
-A sample implementation of a Maven project, that loads the sikulixapi.jar from MavenCentral (currently still OSSRH).
 
 <hr/>
 
