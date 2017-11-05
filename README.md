@@ -35,7 +35,7 @@ I will try to make SikuliX 1.1.2+ runnable on Java (always have a setup with the
 
  - setup should work now - but the final tests are switched off (have to be implemented with ProcessBuilder).
  - IDE princilally works - be pepared for quirks though
- - usage of sikulixapi not yet tested
+ - usage of sikulixapi in maven project seems to work
 
 <hr>
 
