@@ -7,20 +7,13 @@
  */
 package org.sikuli.guide;
 
-import java.awt.BasicStroke;
-import java.awt.Color;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Rectangle;
-import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
-import java.util.ArrayList;
-
-import org.sikuli.basics.Debug;
 import org.sikuli.script.Region;
 import org.sikuli.script.Screen;
 
-import com.sun.crypto.provider.RSACipher;
+import java.awt.*;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.util.ArrayList;
 
 public class SxArea extends Visual
 implements ComponentListener{
