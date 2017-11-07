@@ -20,15 +20,17 @@
 			<name>com.sikulix</name>
 			<id>com.sikulix</id>
 			<url>https://oss.sonatype.org/content/groups/public</url>
-			<layout>default</layout>
-			<releases>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-				<updatePolicy>always</updatePolicy>
-			</snapshots>
+			<!--
+            <layout>default</layout>
+            <releases>
+              <enabled>true</enabled>
+              <updatePolicy>always</updatePolicy>
+            </releases>
+            <snapshots>
+              <enabled>true</enabled>
+              <updatePolicy>always</updatePolicy>
+            </snapshots>
+      -->
 		</repository>
 	</repositories>
 
@@ -37,6 +39,16 @@
 			<groupId>com.sikulix</groupId>
 			<artifactId>sikulixapi</artifactId>
 			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sikulix</groupId>
+			<artifactId>sikulixlibsmac</artifactId>
+			<version>1.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sikulix</groupId>
+			<artifactId>sikulix1tigervnc</artifactId>
+			<version>1.1.1</version>
 		</dependency>
 	</dependencies>
 
