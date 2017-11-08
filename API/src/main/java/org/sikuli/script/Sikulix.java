@@ -16,6 +16,7 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.net.URL;
 import java.security.CodeSource;
 
@@ -178,6 +179,20 @@ public class Sikulix {
     }
     if (playing) {
       System.exit(1);
+    }
+
+    if (args.length > 0 && args[0].startsWith("test")) {
+      Debug.on(3);
+      String test = args[0];
+      try {
+        Method method = Sikulix.class.getDeclaredMethod(test, new Class[0]);
+        log(lvl, "running test %s", test);
+        Object ret = method.invoke(null, new Object[0]);
+      } catch (Exception e) {
+        log(-1, "Problem: %s(%s)", e.getCause(), e.getMessage());
+        System.exit(1);
+      }
+      System.exit(0);
     }
 
     String version = String.format("(%s-%s)", rt.getVersionShort(), rt.sxBuildStamp);
@@ -579,15 +594,15 @@ public class Sikulix {
     return false;
   }
 
-  @Deprecated
-  public static boolean addToClasspath(String jar) {
-    return RunTime.get().addToClasspath(jar);
-  }
-
-  @Deprecated
-  public static boolean isOnClasspath(String artefact) {
-    return null != RunTime.get().isOnClasspath(artefact);
-  }
+//  @Deprecated
+//  public static boolean addToClasspath(String jar) {
+//    return RunTime.get().addToClasspath(jar);
+//  }
+//
+//  @Deprecated
+//  public static boolean isOnClasspath(String artefact) {
+//    return null != RunTime.get().isOnClasspath(artefact);
+//  }
 
   public static String run(String cmdline) {
     return run(new String[]{cmdline});

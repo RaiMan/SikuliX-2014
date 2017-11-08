@@ -38,6 +38,7 @@ import org.sikuli.script.RunTime;
 import org.sikuli.basics.Settings;
 //import org.sikuli.script.Sikulix;
 import org.sikuli.util.LinuxSupport;
+import org.sikuli.util.ProcessRunner;
 
 public class RunSetup {
 
@@ -1111,11 +1112,24 @@ public class RunSetup {
     //<editor-fold defaultstate="collapsed" desc="api test">
     boolean runAPITest = false;
     if (getAPI && !notests && !runTime.isHeadless()) {
-      logPlus(lvl, "Trying to run functional test: JAVA-API %s", splashJava9);
-      splash = showSplash("Trying to run functional test(s) - wait for the result popup",
-              splashJava9 + " Java-API: org.sikuli.script.Sikulix.testSetup()");
-      start += 2000;
-      if (!runTime.isJava9("setup API test - addToClasspath()")) {
+      String apiTest = hasOptions ? "testSetupSilent" : "testSetup";
+      if (runTime.isJava9("setup API test - with ProcessRunner")) {
+        String result = null;
+        try {
+          result = ProcessRunner.run("work=" + workDir, "java", "-jar", "?sikulixapi", apiTest);
+          if (!result.startsWith("success")) {
+            log(-1, "setup API test: did not work\n%s", result);
+            throw new Exception("testSetup returned false");
+          }
+          log(lvl, "setup API test: success");
+        } catch (Exception e) {
+          terminate("ProcessRunner: " + e.getMessage());
+        }
+      } else {
+        logPlus(lvl, "Trying to run functional test: JAVA-API %s", splashJava9);
+        splash = showSplash("Trying to run functional test(s) - wait for the result popup",
+                splashJava9 + " Java-API: org.sikuli.script.Sikulix.testSetup()");
+        start += 2000;
         if (!runTime.addToClasspath(localJarAPI.getAbsolutePath())) {
           closeSplash(splash);
           log(-1, "Java-API test: ");
@@ -1128,12 +1142,7 @@ public class RunSetup {
           Class sysclass = URLClassLoader.class;
           Class SikuliCL = sysclass.forName("org.sikuli.script.Sikulix");
           log(lvl, "class found: " + SikuliCL.toString());
-          Method method = null;
-          if (hasOptions) {
-            method = SikuliCL.getDeclaredMethod("testSetupSilent", new Class[0]);
-          } else {
-            method = SikuliCL.getDeclaredMethod("testSetup", new Class[0]);
-          }
+          Method method = SikuliCL.getDeclaredMethod(apiTest, new Class[0]);
           log(lvl, "getMethod: " + method.toString());
           method.setAccessible(true);
           closeSplash(splash);
@@ -1150,8 +1159,6 @@ public class RunSetup {
           terminate("Functional test Java-API did not work", 1);
         }
         runAPITest = true;
-      } else {
-        closeSplash(splash);
       }
     }
     //</editor-fold>
@@ -1162,7 +1169,7 @@ public class RunSetup {
       if (!runAPITest) {
         runTime.makeFolders();
       }
-      if (!runTime.isJava9("setup IDE test - addToClasspath()")) {
+      if (!runTime.isJava9("setup IDE test - addToClasspath() skipped")) {
         if (!runTime.addToClasspath(localJarIDE.getAbsolutePath())) {
           closeSplash(splash);
           popError("Something serious happened! Sikuli not useable!\n"
@@ -1181,24 +1188,20 @@ public class RunSetup {
         splash = showSplash("Jython Scripting: Trying to run functional test - wait for the result popup",
                 splashJava9 + "Running script statements via SikuliScript");
         start += 2000;
-        if (!runTime.isJava9("setup Jython test ")) {
-          try {
-            String testargs[] = new String[]{"-testSetup", "jython", testMethod};
-            closeSplash(splash);
-            runScriptTest(testargs);
-            if (null == testargs[0]) {
-              throw new Exception("testSetup ran with problems");
-            }
-          } catch (Exception ex) {
-            closeSplash(splash);
-            success &= false;
-            log(-1, ex.getMessage());
-            popError("Something serious happened! Sikuli not useable!\n"
-                    + "Check the error log at " + (logfile == null ? "printout" : logfile));
-            terminate("Functional test Jython did not work", 1);
-          }
-        } else {
+        try {
+          String testargs[] = new String[]{"-testSetup", "jython", testMethod};
           closeSplash(splash);
+          runScriptTest(testargs);
+          if (null == testargs[0]) {
+            throw new Exception("testSetup ran with problems");
+          }
+        } catch (Exception ex) {
+          closeSplash(splash);
+          success &= false;
+          log(-1, ex.getMessage());
+          popError("Something serious happened! Sikuli not useable!\n"
+                  + "Check the error log at " + (logfile == null ? "printout" : logfile));
+          terminate("Functional test Jython did not work", 1);
         }
       }
       if (getJRuby) {
@@ -1211,24 +1214,20 @@ public class RunSetup {
         splash = showSplash("JRuby Scripting: Trying to run functional test - wait for the result popup",
                 splashJava9 + "Running script statements via SikuliScript");
         start += 2000;
-        if (!runTime.isJava9("setup JRuby test")) {
-          try {
-            String testargs[] = new String[]{"-testSetup", "jruby", testMethod};
-            closeSplash(splash);
-            runScriptTest(testargs);
-            if (null == testargs[0]) {
-              throw new Exception("testSetup ran with problems");
-            }
-          } catch (Exception ex) {
-            closeSplash(splash);
-            success &= false;
-            log(-1, "content of returned error's (%s) message:\n%s", ex, ex.getMessage());
-            popError("Something serious happened! Sikuli not useable!\n"
-                    + "Check the error log at " + (logfile == null ? "printout" : logfile));
-            terminate("Functional test JRuby did not work", 1);
-          }
-        } else {
+        try {
+          String testargs[] = new String[]{"-testSetup", "jruby", testMethod};
           closeSplash(splash);
+          runScriptTest(testargs);
+          if (null == testargs[0]) {
+            throw new Exception("testSetup ran with problems");
+          }
+        } catch (Exception ex) {
+          closeSplash(splash);
+          success &= false;
+          log(-1, "content of returned error's (%s) message:\n%s", ex, ex.getMessage());
+          popError("Something serious happened! Sikuli not useable!\n"
+                  + "Check the error log at " + (logfile == null ? "printout" : logfile));
+          terminate("Functional test JRuby did not work", 1);
         }
       }
       if (success && Settings.isMac()) {
@@ -1240,7 +1239,7 @@ public class RunSetup {
     //</editor-fold>
 
     if (!notests) {
-      splash = showSplash("Setup seems to have ended successfully!",
+      splash = showSplash(splashJava9 + "Setup seems to have ended successfully!",
               "Detailed information see: " + (logfile == null ? "printout" : logfile));
       start += 2000;
 
@@ -1276,13 +1275,17 @@ public class RunSetup {
   }
 
   private static void runScriptTest(String[] testargs) {
-    try {
-      Class scriptRunner = Class.forName("org.sikuli.scriptrunner.ScriptingSupport");
-      Method mGetApplication = scriptRunner.getDeclaredMethod("runscript",
-              new Class[]{String[].class});
-      mGetApplication.invoke(null, new Object[]{testargs});
-    } catch (Exception ex) {
-      log(lvl, "runScriptTest: error: %s", ex.getMessage());
+    if (runTime.isJava9("setup run script test - with ProcessRunner")) {
+
+    } else {
+      try {
+        Class scriptRunner = Class.forName("org.sikuli.scriptrunner.ScriptingSupport");
+        Method mGetApplication = scriptRunner.getDeclaredMethod("runscript",
+                new Class[]{String[].class});
+        mGetApplication.invoke(null, new Object[]{testargs});
+      } catch (Exception ex) {
+        log(lvl, "runScriptTest: error: %s", ex.getMessage());
+      }
     }
   }
 
