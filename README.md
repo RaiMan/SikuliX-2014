@@ -31,10 +31,10 @@ find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/Sik
 
 **EXPERIMENTAL fixes for usage with Java 9**
 
-I will try to make SikuliX 1.1.2+ runnable on Java (always have a setup with the latest nightly)
+I will try to make SikuliX 1.1.2+ runnable on Java 9 (always have a setup with the latest nightly)
 
  - setup should work now - but the final tests are switched off (have to be implemented with ProcessBuilder).
- - IDE princilally works - be pepared for quirks though
+ - IDE principally works - be pepared for quirks though
  - usage of sikulixapi in maven project seems to work
 
 <hr>
