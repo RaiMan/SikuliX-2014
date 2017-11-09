@@ -1275,8 +1275,19 @@ public class RunSetup {
   }
 
   private static void runScriptTest(String[] testargs) {
-    if (runTime.isJava9("setup run script test - with ProcessRunner")) {
-
+    if (runTime.isJava9("setup run script test " + testargs[1] + " - with ProcessRunner")) {
+      String result = null;
+      try {
+        result = ProcessRunner.run("work=" + workDir, "java", "-jar", "SikuliX.app/Contents/Java/sikulix.jar", //"?sikulix",
+                testargs[0], testargs[1], testargs[2]);
+        if (!result.startsWith("success")) {
+          log(-1, "setup run script test " + testargs[1] + ": did not work\n%s", result);
+          testargs[0] = null;
+        }
+        log(lvl, "setup run script test " + testargs[1] + ": success");
+      } catch (Exception e) {
+        terminate("ProcessRunner: " + e.getMessage());
+      }
     } else {
       try {
         Class scriptRunner = Class.forName("org.sikuli.scriptrunner.ScriptingSupport");
