@@ -136,6 +136,7 @@ public class SplashFrame extends JFrame {
     pack();
     setSize(fw, fh);
     setLocationRelativeTo(null);
+    setAlwaysOnTop(true);
     setVisible(true);
   }
 

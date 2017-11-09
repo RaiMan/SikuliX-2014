@@ -34,6 +34,7 @@ import org.sikuli.basics.Debug;
 import org.sikuli.basics.FileManager;
 import org.sikuli.basics.SplashFrame;
 import org.sikuli.basics.PreferencesUser;
+import org.sikuli.script.App;
 import org.sikuli.script.RunTime;
 import org.sikuli.basics.Settings;
 //import org.sikuli.script.Sikulix;
@@ -1113,6 +1114,11 @@ public class RunSetup {
     boolean runAPITest = false;
     if (getAPI && !notests && !runTime.isHeadless()) {
       String apiTest = hasOptions ? "testSetupSilent" : "testSetup";
+      logPlus(lvl, "Trying to run functional test: JAVA-API %s", splashJava9);
+      splash = showSplash("Trying to run functional test(s) - wait for the result popup",
+              splashJava9 + " Java-API: org.sikuli.script.Sikulix.testSetup()");
+      start += 2000;
+      closeSplash(splash);
       if (runTime.isJava9("setup API test - with ProcessRunner")) {
         String result = null;
         try {
@@ -1126,10 +1132,6 @@ public class RunSetup {
           terminate("ProcessRunner: " + e.getMessage());
         }
       } else {
-        logPlus(lvl, "Trying to run functional test: JAVA-API %s", splashJava9);
-        splash = showSplash("Trying to run functional test(s) - wait for the result popup",
-                splashJava9 + " Java-API: org.sikuli.script.Sikulix.testSetup()");
-        start += 2000;
         if (!runTime.addToClasspath(localJarAPI.getAbsolutePath())) {
           closeSplash(splash);
           log(-1, "Java-API test: ");
@@ -1186,7 +1188,7 @@ public class RunSetup {
         }
         logPlus(lvl, "Jython: Trying to run functional test: running script statements via SikuliScript");
         splash = showSplash("Jython Scripting: Trying to run functional test - wait for the result popup",
-                splashJava9 + "Running script statements via SikuliScript");
+                splashJava9 + "   Running script statements via SikuliScript");
         start += 2000;
         try {
           String testargs[] = new String[]{"-testSetup", "jython", testMethod};
@@ -1231,9 +1233,11 @@ public class RunSetup {
         }
       }
       if (success && Settings.isMac()) {
-        popInfo("You now have the IDE as SikuliX.app\n"
-                + "It is recommended to move SikuliX.app\n"
-                + "to the /Applications folder.");
+        logPlus(lvl, "MacApp created - should be moved to /Applications");
+        splash = showSplash(splashJava9 + "MacApp created",
+                "Should be moved to /Applications");
+        start += 3000;
+        closeSplash(splash);
       }
     }
     //</editor-fold>
@@ -1278,7 +1282,11 @@ public class RunSetup {
     if (runTime.isJava9("setup run script test " + testargs[1] + " - with ProcessRunner")) {
       String result = null;
       try {
-        result = ProcessRunner.run("work=" + workDir, "java", "-jar", "SikuliX.app/Contents/Java/sikulix.jar", //"?sikulix",
+        String jarSikulix = "sikulix.jar";
+        if (runTime.runningMac) {
+          jarSikulix = "SikuliX.app/Contents/Java/sikulix.jar";
+        }
+        result = ProcessRunner.run("work=" + workDir, "java", "-jar", jarSikulix,
                 testargs[0], testargs[1], testargs[2]);
         if (!result.startsWith("success")) {
           log(-1, "setup run script test " + testargs[1] + ": did not work\n%s", result);
