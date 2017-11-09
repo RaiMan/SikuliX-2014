@@ -6,6 +6,7 @@ package org.sikuli.basics;
 import com.melloware.jintellitype.JIntellitype;
 import java.util.*;
 import org.sikuli.basics.Debug;
+import org.sikuli.script.RunTime;
 
 public class WindowsHotkeyManager extends HotkeyManager {
   private Map<Integer, HotkeyData> _idCallbackMap = new HashMap<Integer, HotkeyData>();
@@ -33,6 +34,9 @@ public class WindowsHotkeyManager extends HotkeyManager {
 
   @Override
   public boolean _addHotkey(int keyCode, int modifiers, HotkeyListener listener) {
+    if (RunTime.get().isJava9("JintelliType HotkeyHandling not useable - skipped")) {
+      return true;
+    }
     JIntellitype itype = null;
     try {
       itype = JIntellitype.getInstance();
@@ -55,6 +59,9 @@ public class WindowsHotkeyManager extends HotkeyManager {
 
   @Override
   public boolean _removeHotkey(int keyCode, int modifiers) {
+    if (RunTime.get().isJava9("JintelliType HotkeyHandling not useable - skipped")) {
+      return true;
+    }
     for (Map.Entry<Integer, HotkeyData> entry : _idCallbackMap.entrySet()) {
       HotkeyData data = entry.getValue();
       if (data.key == keyCode && data.modifiers == modifiers) {
@@ -70,6 +77,9 @@ public class WindowsHotkeyManager extends HotkeyManager {
 
   @Override
   public void cleanUp() {
+    if (RunTime.get().isJava9("JintelliType HotkeyHandling not useable - skipped")) {
+      return;
+    }
     JIntellitype itype = JIntellitype.getInstance();
     for (Map.Entry<Integer, HotkeyData> entry : _idCallbackMap.entrySet()) {
       int id = entry.getKey();
