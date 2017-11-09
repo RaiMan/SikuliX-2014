@@ -7,6 +7,7 @@ package org.sikuli.ide;
 import java.security.CodeSource;
 import javax.swing.JOptionPane;
 
+import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 import org.sikuli.script.Screen;
 import org.sikuli.scriptrunner.ScriptingSupport;
@@ -34,8 +35,7 @@ public class Sikulix {
       }
       System.exit(0);
     }
-//    Screen.ignorePrimaryAtCapture = true;
-//    Settings.TraceLogs = true;
+
     SikuliIDE.run(args);
   }
 }

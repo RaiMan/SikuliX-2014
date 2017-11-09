@@ -1182,9 +1182,9 @@ public class RunSetup {
       String testMethod;
       if (getJython) {
         if (hasOptions) {
-          testMethod = "print \"testSetup: Jython: success\"";
+          testMethod = "print(\\\"testSetup: Jython: success\\\")";
         } else {
-          testMethod = "Sikulix.testSetup(\"Jython Scripting\")";
+          testMethod = "Sikulix.testSetup('Jython Scripting')";
         }
         logPlus(lvl, "Jython: Trying to run functional test: running script statements via SikuliScript");
         splash = showSplash("Jython Scripting: Trying to run functional test - wait for the result popup",
@@ -1208,9 +1208,9 @@ public class RunSetup {
       }
       if (getJRuby) {
         if (hasOptions) {
-          testMethod = "print \"testSetup: JRuby: success\"";
+          testMethod = "print \\\"testSetup: JRuby: success\\\"";
         } else {
-          testMethod = "Sikulix.testSetup(\"JRuby Scripting\")";
+          testMethod = "Sikulix.testSetup(\\\"JRuby Scripting\\\")";
         }
         logPlus(lvl, "JRuby: Trying to run functional test: running script statements via SikuliScript");
         splash = showSplash("JRuby Scripting: Trying to run functional test - wait for the result popup",

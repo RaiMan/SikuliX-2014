@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 public class ProcessRunner {
-  private static String work = null;
 
   private static void p(String form, Object... args) {
     System.out.println(String.format(form, args));
@@ -56,16 +55,16 @@ public class ProcessRunner {
       InputStreamReader reader = new InputStreamReader(process.getInputStream());
       BufferedReader processOut = new BufferedReader(reader);
       process.waitFor();
+      String line = processOut.readLine();
+      while (null != line) {
+        result += line + "\n";
+        line = processOut.readLine();
+      }
       int exitValue = process.exitValue();
       if (exitValue > 0) {
-        String line = processOut.readLine();
-        while (null != line) {
-          result += line + "\n";
-          line = processOut.readLine();
-        }
         result += "error";
       } else {
-        result = "success";
+        result = "success\n" + result;
       }
     }
     return result;
