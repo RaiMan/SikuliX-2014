@@ -32,15 +32,23 @@ find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/Sik
 **EXPERIMENTAL fixes for usage with Java 9**
 
 I will try to make SikuliX 1.1.2+ runnable on Java 9 (always have a setup with the latest nightly)
+<br>Pausing now due to holidays until Nov. 27th
 
-Status with Travis build 80
+Status with Travis build 81
 
- - setup should work
+In any case it is a good idea to run things from command line in any case for now using
+
+    java -Dsikuli.Debug=3 -jar ((sikulix.jar or whatever app using sikulixapi.jar))
+    
+... and have a deeper look at the debug output in case.
+
+ - setup should work (JRuby test switched off)
  - IDE principally works - be pepared for quirks though --- known issues:
  
        - Mac: menu adaptions to mac behavior switched of
        - watching script changes and avoid quit with unsaved scripts seem not to work
-       - Windows: Hotkey handling switched off (Jintellitype crashes JVM) 
+       - Windows: Hotkey handling switched off (Jintellitype crashes JVM)
+       - builtin JRuby 9.0.1 may not work in all aspects, try external JRuby
        
  - usage of sikulixapi in maven project seems to work
 
