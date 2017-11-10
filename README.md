@@ -33,8 +33,15 @@ find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/Sik
 
 I will try to make SikuliX 1.1.2+ runnable on Java 9 (always have a setup with the latest nightly)
 
- - setup should work now - but the final tests are switched off (have to be implemented with ProcessBuilder).
- - IDE principally works - be pepared for quirks though
+Status with Travis build 80
+
+ - setup should work
+ - IDE principally works - be pepared for quirks though --- known issues:
+ 
+       - Mac: menu adaptions to mac behavior switched of
+       - watching script changes and avoid quit with unsaved scripts seem not to work
+       - Windows: Hotkey handling switched off (Jintellitype crashes JVM) 
+       
  - usage of sikulixapi in maven project seems to work
 
 <hr>
