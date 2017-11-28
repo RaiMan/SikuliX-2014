@@ -423,6 +423,9 @@ public class ImagePath {
     URL pathURL = null;
     if (".".equals(fpJar)) {
       fpJar = runTime.fSxBaseJar.getAbsolutePath();
+      if (!fpJar.endsWith(".jar")) {
+        return false;
+      }
     }
     if (new File(fpJar).exists()) {
       if (fpImage == null) {

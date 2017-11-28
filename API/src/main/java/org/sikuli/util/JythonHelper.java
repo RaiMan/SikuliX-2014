@@ -413,7 +413,23 @@ public class JythonHelper implements JLangHelperInterface {
     return true;
   }
 
+  public String runJar(String fpJarOrFolder) {
+    return runJar(fpJarOrFolder, "");
+  }
+
+  public String runJar(String fpJarOrFolder, String imagePath) {
+    String fpJar = load(fpJarOrFolder, true);
+    ImagePath.addJar(fpJar, imagePath);
+    String scriptName = new File(fpJar).getName().replace(".jar", "");
+    exec("try: reload(" + scriptName + ")\nexcept: import " + scriptName);
+    return fpJar;
+  }
+
   public String load(String fpJarOrFolder) {
+    return load(fpJarOrFolder, false);
+  }
+
+  public String load(String fpJarOrFolder, boolean scriptOnly) {
 //##
 //# loads a Sikuli extension (.jar) from
 //#  1. user's sikuli data path
@@ -445,34 +461,33 @@ public class JythonHelper implements JLangHelperInterface {
     if (!fpJarOrFolder.endsWith(".jar")) {
       fpJarOrFolder += ".jar";
     }
-    String fpBundle = ImagePath.getBundlePath();
     File fJar = new File(FileManager.normalizeAbsolute(fpJarOrFolder, false));
+    String fpBundle = ImagePath.getBundlePath();
     if (!fJar.exists()) {
       fJar = new File(fpBundle, fpJarOrFolder);
-      fJar = new File(FileManager.normalizeAbsolute(fJar.getPath(), false));
-      if (!fJar.exists()) {
-        fJar = new File(runTime.fSikulixExtensions, fpJarOrFolder);
-        if (!fJar.exists()) {
-          fJar = new File(runTime.fSikulixLib, fpJarOrFolder);
-          if (!fJar.exists()) {
-            fJar = null;
+      if (!fJar.exists()) { // in bundle
+        fJar = new File(new File(fpBundle).getParentFile(), fpJarOrFolder);
+        if (!fJar.exists()) { // in bundles parent
+          fJar = new File(runTime.fSikulixExtensions, fpJarOrFolder);
+          if (!fJar.exists()) { // in extensions
+            fJar = new File(runTime.fSikulixLib, fpJarOrFolder);
+            if (!fJar.exists()) { // in Lib folder
+              fJar = null;
+            }
           }
         }
       }
     }
     if (fJar != null) {
-      if (runTime.addToClasspath(fJar.getPath())) {
-        if (!hasSysPath(fJar.getPath())) {
-          insertSysPath(fJar);
-        }
-      } else {
-        log(-1, "load: not possible");
+      if (!scriptOnly && !runTime.addToClasspath(fJar.getPath())) {
+        log(-1, "load: not possible: %s", fJar);
       }
     } else {
-      log(-1, "load: could not be found - even not in bundle nor in Lib nor in Extensions");
-    }
-    if (fJar == null) {
+      log(-1, "load: not found: %s", fJar);
       return null;
+    }
+    if (!hasSysPath(fJar.getPath())) {
+      insertSysPath(fJar);
     }
     return fJar.getAbsolutePath();
   }
