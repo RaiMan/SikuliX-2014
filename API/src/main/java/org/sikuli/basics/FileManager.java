@@ -908,8 +908,9 @@ public class FileManager {
 				if (!fName.contains("!/")) {
 					fName += "!/";
 				}
-				return new URL("jar:" + fName);
-			} else if ("file".equals(type)) {
+        URL url = new URL("jar:file:" + fName);
+				return url;
+      } else if ("file".equals(type)) {
         File aFile = new File(fName);
         if (aFile.exists() && aFile.isDirectory()) {
           if (!fName.endsWith("/")) {

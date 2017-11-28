@@ -38,6 +38,7 @@ import org.sikuli.script.App;
 import org.sikuli.script.RunTime;
 import org.sikuli.basics.Settings;
 //import org.sikuli.script.Sikulix;
+import org.sikuli.script.Sikulix;
 import org.sikuli.util.LinuxSupport;
 import org.sikuli.util.ProcessRunner;
 
@@ -288,6 +289,13 @@ public class RunSetup {
       options.remove(0);
     }
 
+    boolean makingScriptjar = false;
+    if (options.size() > 0 && "scriptjar".equals(options.get(0))) {
+      makingScriptjar = true;
+      hasOptions = true;
+      options.remove(0);
+    }
+
     //TODO add parameter for proxy settings, linux options
     if (options.size() > 0 && "options".equals(options.get(0))) {
       options.remove(0);
@@ -363,7 +371,7 @@ public class RunSetup {
 
     localLogfile = "SikuliX-" + version + "-SetupLog.txt";
 
-    if (options.size() > 0) {
+    if (!makingScriptjar && options.size() > 0) {
       if (!"-jar".equals(options.get(0))) {
         System.out.println("invalid command line options - terminating");
         for (String opt : options) {
@@ -408,7 +416,7 @@ public class RunSetup {
       isLinux = true;
     }
 
-    if (!testingMaven && runTime.runningInProject) {
+    if (!makingScriptjar && !testingMaven && runTime.runningInProject) {
       if (noSetup) {
         log(lvl, "creating Setup folder - not running setup");
       } else {
@@ -472,6 +480,91 @@ public class RunSetup {
       }
     }
 //</editor-fold>
+
+    if (makingScriptjar) {
+      if (!localJarAPI.exists()) {
+        terminate("makingScriptJar: sikulixapi.jar missing in " + workDir);
+      }
+      if (null == downloadsFound.get("python")) {
+        terminate("makingScriptJar: jython jar missing. run setup first!");
+      }
+      File  scriptFile = null;
+      File  scriptFolder = null;
+      File  scriptFolderSikuli = null;
+      String scriptName = null;
+      String[] fileList = new String[]{null, null, null};
+      String[] preList = new String[]{null, null, null};
+      if (options.size() > 0) {
+        scriptFolder = new File(options.get(0));
+        if (!scriptFolder.exists()) {
+          scriptFolderSikuli = new File(scriptFolder.getAbsolutePath() + ".sikuli");
+          if (!scriptFolderSikuli.exists()) {
+            terminate("makingScriptJar: script folder invalid: " + scriptFolder.getAbsolutePath());
+          }
+        } else {
+          if (scriptFolder.getAbsolutePath().endsWith(".sikuli")) {
+            scriptFolderSikuli = scriptFolder;
+          } else {
+            scriptFile = new File(scriptFolder, "__run__.py");
+            if (!scriptFile.exists()) {
+              terminate("makingScriptJar: script file missing: " + scriptFile.getAbsolutePath());
+            }
+          }
+        }
+      }
+
+      String fpScriptJar = "script.jar";
+      File fScriptSource = new File(fSetupStuff, "scriptSource");
+      File fScriptCompiled = new File(fSetupStuff, "scriptCompiled");
+      if (null != scriptFolderSikuli) {
+        logPlus(lvl, "makingScriptJar: compiling sikuli script: %s", scriptFolderSikuli);
+        scriptName = scriptFolder.getName().replace(".sikuli", "");
+        scriptFile = new File(scriptFolderSikuli, scriptName + ".py");
+        if (!scriptFile.exists()) {
+          terminate("makingScriptJar: script folder invalid: " + scriptFolderSikuli.getAbsolutePath());
+        }
+        FileManager.xcopy(scriptFolderSikuli, fScriptSource);
+        new File(fScriptSource, scriptName + ".py").renameTo(new File(fScriptSource, "__run__.py"));
+        String script = FileManager.readFileToString(new File(fScriptSource, "__run__.py"));
+        String prolog = "import org.sikuli.script.SikulixForJython\nfrom sikuli import *\n";
+        prolog += "ImagePath.addJar(\".\", \"\")\n";
+        FileManager.writeStringToFile(prolog + script, new File(fScriptSource, "__run__.py"));
+      } else {
+        logPlus(lvl, "makingScriptJar: compiling plain script: %s", scriptFolder);
+        FileManager.xcopy(scriptFolder, fScriptSource);
+      }
+
+      Sikulix.compileJythonFolder(fScriptSource.getAbsolutePath(), fScriptCompiled.getAbsolutePath());
+      FileManager.xcopy(fScriptCompiled, fSetupStuff);
+      FileManager.deleteFileOrFolder(fScriptSource);
+      FileManager.deleteFileOrFolder(fScriptCompiled);
+      fileList[0] = fSetupStuff.getAbsolutePath();
+      logPlus(lvl, "makingScriptJar: adding sikulixapi and jython - takes some time", fpScriptJar);
+
+      jarsList[0] = downloadsFound.get("python").getAbsolutePath();
+      jarsList[1] = localJarAPI.getAbsolutePath();
+
+      String manifest = "Manifest-Version: 1.0\nMain-Class: org.python.util.JarRunner\n";
+      File fMetaInf = new File(fSetupStuff, "META-INF");
+      fMetaInf.mkdir();
+      FileManager.writeStringToFile(manifest, new File(fMetaInf, "MANIFEST.MF"));
+
+      String targetJar = (new File(workDir, fpScriptJar)).getAbsolutePath();
+      if (!FileManager.buildJar(targetJar, jarsList, fileList, preList, new FileManager.JarFileFilter() {
+        @Override
+        public boolean accept(ZipEntry entry, String jarname) {
+          if (entry.getName().startsWith("META-INF")) {
+            return false;
+          }
+          return true;
+        }
+      })) {
+        terminate("makingScriptJar: problems building jar - for details see logfile");
+      }
+      logPlus(0,"makingScriptJar: ended successfully: %s", targetJar);
+      finalCleanup();
+      System.exit(0);
+    }
 
     //<editor-fold defaultstate="collapsed" desc="display setup options">
     String proxyMsg = "";

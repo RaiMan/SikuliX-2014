@@ -421,6 +421,9 @@ public class ImagePath {
 
   public static boolean addJar(String fpJar, String fpImage) {
     URL pathURL = null;
+    if (".".equals(fpJar)) {
+      fpJar = runTime.fSxBaseJar.getAbsolutePath();
+    }
     if (new File(fpJar).exists()) {
       if (fpImage == null) {
         fpImage = "";
