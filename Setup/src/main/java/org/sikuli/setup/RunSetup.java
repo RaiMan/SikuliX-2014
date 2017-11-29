@@ -482,101 +482,14 @@ public class RunSetup {
 //</editor-fold>
 
     if (makingScriptjar) {
-      boolean makingScriptjarPlain = false;
-      if (options.size() > 0 && "plain".equals(options.get(0))) {
-        makingScriptjarPlain = true;
-        options.remove(0);
+      String target = FileManager.makeScriptjar(options, fWorkDir);
+      if (null != target) {
+        logPlus(0, "makingScriptJar: ended successfully: %s", target);
+        System.exit(0);
       } else {
-        if (!localJarAPI.exists()) {
-          terminate("makingScriptJar: sikulixapi.jar missing in " + workDir);
-        }
-        if (null == downloadsFound.get("python")) {
-          terminate("makingScriptJar: jython jar missing. run setup first!");
-        }
+        logPlus(0, "makingScriptJar: did not work");
+        System.exit(1);
       }
-      File  scriptFile = null;
-      File  scriptFolder = null;
-      File  scriptFolderSikuli = null;
-      String scriptName = null;
-      String[] fileList = new String[]{null, null, null};
-      String[] preList = new String[]{null, null, null};
-      if (options.size() > 0) {
-        scriptFolder = new File(options.get(0));
-        if (!scriptFolder.exists()) {
-          scriptFolderSikuli = new File(scriptFolder.getAbsolutePath() + ".sikuli");
-          if (!scriptFolderSikuli.exists()) {
-            terminate("makingScriptJar: script folder invalid: " + scriptFolder.getAbsolutePath());
-          }
-        } else {
-          if (scriptFolder.getAbsolutePath().endsWith(".sikuli")) {
-            scriptFolderSikuli = scriptFolder;
-          } else {
-            scriptFile = new File(scriptFolder, "__run__.py");
-            if (!scriptFile.exists()) {
-              terminate("makingScriptJar: script file missing: " + scriptFile.getAbsolutePath());
-            }
-          }
-        }
-      } else {
-        terminate("makingScriptJar: no script file given");
-      }
-
-      String fpScriptJar = "script.jar";
-      File fScriptSource = new File(fSetupStuff, "scriptSource");
-      File fScriptCompiled = new File(fSetupStuff, "scriptCompiled");
-      if (null != scriptFolderSikuli) {
-        logPlus(lvl, "makingScriptJar: compiling sikuli script: %s", scriptFolderSikuli);
-        scriptName = scriptFolder.getName().replace(".sikuli", "");
-        scriptFile = new File(scriptFolderSikuli, scriptName + ".py");
-        if (!scriptFile.exists()) {
-          terminate("makingScriptJar: script folder invalid: " + scriptFolderSikuli.getAbsolutePath());
-        }
-        FileManager.xcopy(scriptFolderSikuli, fScriptSource);
-        String script = "";
-        String prolog = "import org.sikuli.script.SikulixForJython\nfrom sikuli import *\n";
-        prolog += "ImagePath.addJar(\".\", \"\")\n";
-        prolog += "import " + scriptName + "\n";
-        FileManager.writeStringToFile(prolog + script, new File(fScriptSource, "__run__.py"));
-        script = FileManager.readFileToString(new File(fScriptSource, scriptName + ".py"));
-        prolog = "from sikuli import *\n";
-        FileManager.writeStringToFile(prolog + script, new File(fScriptSource, scriptName + ".py"));
-      } else {
-        logPlus(lvl, "makingScriptJar: compiling plain script: %s", scriptFolder);
-        FileManager.xcopy(scriptFolder, fScriptSource);
-      }
-
-      Sikulix.compileJythonFolder(fScriptSource.getAbsolutePath(), fScriptCompiled.getAbsolutePath());
-      FileManager.xcopy(fScriptCompiled, fSetupStuff);
-      FileManager.deleteFileOrFolder(fScriptSource);
-      FileManager.deleteFileOrFolder(fScriptCompiled);
-      fileList[0] = fSetupStuff.getAbsolutePath();
-      logPlus(lvl, "makingScriptJar: adding sikulixapi and jython - takes some time", fpScriptJar);
-
-      if (!makingScriptjarPlain) {
-        jarsList[0] = downloadsFound.get("python").getAbsolutePath();
-        jarsList[1] = localJarAPI.getAbsolutePath();
-
-        String manifest = "Manifest-Version: 1.0\nMain-Class: org.python.util.JarRunner\n";
-        File fMetaInf = new File(fSetupStuff, "META-INF");
-        fMetaInf.mkdir();
-        FileManager.writeStringToFile(manifest, new File(fMetaInf, "MANIFEST.MF"));
-      }
-
-      String targetJar = (new File(workDir, fpScriptJar)).getAbsolutePath();
-      if (!FileManager.buildJar(targetJar, jarsList, fileList, preList, new FileManager.JarFileFilter() {
-        @Override
-        public boolean accept(ZipEntry entry, String jarname) {
-          if (entry.getName().startsWith("META-INF")) {
-            return false;
-          }
-          return true;
-        }
-      })) {
-        terminate("makingScriptJar: problems building jar - for details see logfile");
-      }
-      logPlus(0,"makingScriptJar: ended successfully: %s", targetJar);
-      finalCleanup();
-      System.exit(0);
     }
 
     //<editor-fold defaultstate="collapsed" desc="display setup options">
@@ -1146,6 +1059,10 @@ public class RunSetup {
       success &= FileManager.buildJar("#" + targetJar, jarsList,
               addonFileList, addonFilePrefix, libsFilter);
       success &= handleTempAfter(targetJar, localJar);
+      FileManager.deleteFileOrFolder(new File(fDownloadsGeneric, localAPI));
+      if (success) {
+        FileManager.xcopy(new File(localJar), new File(fDownloadsGeneric, localAPI));
+      }
     }
 
     if (getAPI && getTess) {

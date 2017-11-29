@@ -1530,6 +1530,7 @@ public class RunTime {
 //</editor-fold>
 
   //<editor-fold defaultstate="collapsed" desc="Sikulix options handling">
+  public String sSikulixapi = "sikulixapi.jar";
   public int SikuliVersionMajor;
   public int SikuliVersionMinor;
   public int SikuliVersionSub;
