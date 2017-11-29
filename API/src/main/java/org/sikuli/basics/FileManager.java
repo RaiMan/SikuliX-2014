@@ -1221,15 +1221,15 @@ public class FileManager {
     return result.toString();
   }
 
-  public static String makeScriptjar(List<String> options, File fWorkdir) {
+  public static String makeScriptjar(List<String> options) {
     File fSetupStuff = new File(RunTime.get().fSikulixAppPath, "SetupStuff");
     FileManager.resetFolder(fSetupStuff);
-    String target = doMakeScriptjar(options, fWorkdir, fSetupStuff);
+    String target = doMakeScriptjar(options, fSetupStuff);
     deleteFileOrFolder(fSetupStuff);
     return target;
   }
 
-  private static String doMakeScriptjar(List<String> options, File fWorkdir, File fSetupStuff) {
+  private static String doMakeScriptjar(List<String> options, File fSetupStuff) {
     boolean makingScriptjarPlain = false;
     RunTime runTime = RunTime.get();
     File fSikulixapi = new File(runTime.fSikulixDownloadsGeneric, runTime.sSikulixapi);
@@ -1280,9 +1280,12 @@ public class FileManager {
     String fpScriptJar = "sikulixjython.jar";
     File fScriptSource = new File(fSetupStuff, "scriptSource");
     File fScriptCompiled = new File(fSetupStuff, "scriptCompiled");
+    File fWorkdir = scriptFolder.getParentFile();
     if (null != scriptFolderSikuli) {
       log(lvl, "makingScriptJar: compiling sikuli script: %s", scriptFolderSikuli);
+      fWorkdir = scriptFolderSikuli.getParentFile();
       scriptName = scriptFolder.getName().replace(".sikuli", "");
+      fpScriptJar = scriptName + "_sikuli.jar";
       scriptFile = new File(scriptFolderSikuli, scriptName + ".py");
       if (!scriptFile.exists()) {
         log(-1,"makingScriptJar: script folder invalid: " + scriptFolderSikuli.getAbsolutePath());

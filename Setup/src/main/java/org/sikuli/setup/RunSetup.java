@@ -354,6 +354,17 @@ public class RunSetup {
       }
     }
 
+    if (makingScriptjar) {
+      String target = FileManager.makeScriptjar(options);
+      if (null != target) {
+        log(0, "makingScriptJar: ended successfully: %s", target);
+        System.exit(0);
+      } else {
+        log(0, "makingScriptJar: did not work");
+        System.exit(1);
+      }
+    }
+
     String splashJava9 = "";
     if (runTime.isJava9()) {
       splashJava9 = "*** on Java9 *** ";
@@ -371,7 +382,7 @@ public class RunSetup {
 
     localLogfile = "SikuliX-" + version + "-SetupLog.txt";
 
-    if (!makingScriptjar && options.size() > 0) {
+    if (options.size() > 0) {
       if (!"-jar".equals(options.get(0))) {
         System.out.println("invalid command line options - terminating");
         for (String opt : options) {
@@ -416,7 +427,7 @@ public class RunSetup {
       isLinux = true;
     }
 
-    if (!makingScriptjar && !testingMaven && runTime.runningInProject) {
+    if (!testingMaven && runTime.runningInProject) {
       if (noSetup) {
         log(lvl, "creating Setup folder - not running setup");
       } else {
@@ -480,17 +491,6 @@ public class RunSetup {
       }
     }
 //</editor-fold>
-
-    if (makingScriptjar) {
-      String target = FileManager.makeScriptjar(options, fWorkDir);
-      if (null != target) {
-        logPlus(0, "makingScriptJar: ended successfully: %s", target);
-        System.exit(0);
-      } else {
-        logPlus(0, "makingScriptJar: did not work");
-        System.exit(1);
-      }
-    }
 
     //<editor-fold defaultstate="collapsed" desc="display setup options">
     String proxyMsg = "";
