@@ -1281,6 +1281,15 @@ public class FileManager {
     File fScriptSource = new File(fSetupStuff, "scriptSource");
     File fScriptCompiled = new File(fSetupStuff, "scriptCompiled");
     File fWorkdir = scriptFolder.getParentFile();
+    FileFilter skipCompiled = new FileFilter() {
+      @Override
+      public boolean accept(File entry) {
+        if (entry.getName().contains("$py.class")) {
+          return false;
+        }
+        return true;
+      }
+    };
     if (null != scriptFolderSikuli) {
       log(lvl, "makingScriptJar: compiling sikuli script: %s", scriptFolderSikuli);
       fWorkdir = scriptFolderSikuli.getParentFile();
@@ -1291,7 +1300,7 @@ public class FileManager {
         log(-1,"makingScriptJar: script folder invalid: " + scriptFolderSikuli.getAbsolutePath());
         return null;
       }
-      FileManager.xcopy(scriptFolderSikuli, fScriptSource);
+      FileManager.xcopy(scriptFolderSikuli, fScriptSource, skipCompiled);
       String script = "";
       String prolog = "import org.sikuli.script.SikulixForJython\nfrom sikuli import *\n";
       prolog += "ImagePath.addJar(\".\", \"\")\n";
@@ -1302,7 +1311,7 @@ public class FileManager {
       FileManager.writeStringToFile(prolog + script, new File(fScriptSource, scriptName + ".py"));
     } else {
       log(lvl, "makingScriptJar: compiling plain script: %s", scriptFolder);
-      FileManager.xcopy(scriptFolder, fScriptSource);
+      FileManager.xcopy(scriptFolder, fScriptSource, skipCompiled);
     }
 
     Sikulix.compileJythonFolder(fScriptSource.getAbsolutePath(), fScriptCompiled.getAbsolutePath());
@@ -1310,10 +1319,10 @@ public class FileManager {
     FileManager.deleteFileOrFolder(fScriptSource);
     FileManager.deleteFileOrFolder(fScriptCompiled);
     fileList[0] = fSetupStuff.getAbsolutePath();
-    log(lvl, "makingScriptJar: adding sikulixapi and jython - takes some time", fpScriptJar);
 
     String[] jarsList = new String[] {null, null};
     if (!makingScriptjarPlain) {
+      log(lvl, "makingScriptJar: adding sikulixapi and jython - takes some time", fpScriptJar);
       jarsList[0] = fSikulixjython.getAbsolutePath();
       jarsList[1] = fSikulixapi.getAbsolutePath();
 

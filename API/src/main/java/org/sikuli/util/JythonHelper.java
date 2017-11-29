@@ -420,7 +420,7 @@ public class JythonHelper implements JLangHelperInterface {
   public String runJar(String fpJarOrFolder, String imagePath) {
     String fpJar = load(fpJarOrFolder, true);
     ImagePath.addJar(fpJar, imagePath);
-    String scriptName = new File(fpJar).getName().replace(".jar", "");
+    String scriptName = new File(fpJar).getName().replace("_sikuli.jar", "");
     exec("try: reload(" + scriptName + ")\nexcept: import " + scriptName);
     return fpJar;
   }
