@@ -38,12 +38,7 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -978,6 +973,15 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
                     InputEvent.SHIFT_MASK | scMask),
             new FileAction(FileAction.EXPORT)));
 
+    _fileMenu.add(createMenuItem("Export as jar",
+            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J, scMask),
+            new FileAction(FileAction.ASJAR)));
+
+    _fileMenu.add(createMenuItem("Export as runnable jar",
+            KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_J,
+                    InputEvent.SHIFT_MASK | scMask),
+            new FileAction(FileAction.ASRUNJAR)));
+
     jmi = _fileMenu.add(createMenuItem(_I("menuFileCloseTab"),
             KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_W, scMask),
             new FileAction(FileAction.CLOSE_TAB)));
@@ -1014,6 +1018,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     static final String SAVE_AS_FOLDER = "doSaveAsFolder";
     static final String SAVE_ALL = "doSaveAll";
     static final String EXPORT = "doExport";
+    static final String ASJAR = "doAsJar";
+    static final String ASRUNJAR = "doAsRunJar";
     static final String CLOSE_TAB = "doCloseTab";
     static final String PREFERENCES = "doPreferences";
     static final String QUIT = "doQuit";
@@ -1256,6 +1262,47 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       } catch (Exception ex) {
         log(-1, "Problem when trying to save %s\nError: %s",
                 fname, ex.getMessage());
+      }
+    }
+
+    public void doAsJar(ActionEvent ae) {
+      EditorPane codePane = getCurrentCodePane();
+      String orgName = codePane.getCurrentShortFilename();
+      log(lvl, "doAsJar requested: %s", orgName);
+      if (codePane.isDirty()) {
+        Sikulix.popError("Please save script before!", "Export as jar");
+      } else {
+        File fScript = codePane.getCurrentFile();
+        List<String> options = new ArrayList<>();
+        options.add("plain");
+        options.add(fScript.getParentFile().getAbsolutePath());
+        String fpJar = FileManager.makeScriptjar(options);
+        if (null != fpJar) {
+          Sikulix.popup(fpJar, "Export as jar ...");
+        } else {
+          Sikulix.popError("did not work for: " + orgName, "Export as jar");
+        }
+      }
+    }
+
+    public void doAsRunJar(ActionEvent ae) {
+      EditorPane codePane = getCurrentCodePane();
+      String orgName = codePane.getCurrentShortFilename();
+      log(lvl, "doAsRunJar requested: %s", orgName);
+      if (codePane.isDirty()) {
+        Sikulix.popError("Please save script before!", "Export as runnable jar");
+      } else {
+        File fScript = codePane.getCurrentFile();
+        List<String> options = new ArrayList<>();
+        options.add(fScript.getParentFile().getAbsolutePath());
+        Sikulix.popup("... this may take some time\nclick ok and wait for result popup",
+                "Export as runnable jar");
+        String fpJar = FileManager.makeScriptjar(options);
+        if (null != fpJar) {
+          Sikulix.popup(fpJar, "Export as runnable jar ...");
+        } else {
+          Sikulix.popError("did not work for: " + orgName, "Export as runnable jar");
+        }
       }
     }
 

@@ -275,7 +275,8 @@ public class Do {
             }
           }
           if ("String".equals(clazz) || "Integer".equals(clazz) ||
-                  "Double".equals(clazz) || "Boolean".equals(clazz) || "Element".equals(clazz)) {
+                  "Double".equals(clazz) || "Boolean".equals(clazz) ||
+                  "Element".equals(clazz) || "Region".equals(clazz)) {
             parameterTypes.put(names[n], clazz);
           }
         }

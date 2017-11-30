@@ -460,6 +460,7 @@ public class EditorPane extends JTextPane implements KeyListener, CaretListener 
     return images;
   }
 
+//TODO " and ' in comments - line numbers not reported correctly in case
   private void parseforImagesWalk(String pbundle, Lexer lexer,
                                   String text, int pos, Map<String, List<Integer>> images, Integer line) {
     //log(3, "parseforImagesWalk");
