@@ -1295,7 +1295,8 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         File fScript = codePane.getCurrentFile();
         List<String> options = new ArrayList<>();
         options.add(fScript.getParentFile().getAbsolutePath());
-        Sikulix.popup("... this may take some time\nclick ok and wait for result popup",
+        Sikulix.popup("... this may take some 10 seconds\nclick ok and wait for result popup" +
+                        "\nthere is no progressindication",
                 "Export as runnable jar");
         String fpJar = FileManager.makeScriptjar(options);
         if (null != fpJar) {
