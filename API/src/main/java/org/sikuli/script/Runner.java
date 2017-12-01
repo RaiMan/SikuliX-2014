@@ -237,6 +237,10 @@ public class Runner {
         break;
       }
     }
+    // try with compiled script
+    if (content.length == 1 && content[0].getName().endsWith("$py.class")) {
+      fScript = content[0];
+    }
     return fScript;
   }
 

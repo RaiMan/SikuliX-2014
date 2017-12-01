@@ -16,6 +16,7 @@ import org.sikuli.basics.Settings;
 import org.sikuli.script.ImagePath;
 import org.sikuli.script.RunTime;
 import org.sikuli.script.Sikulix;
+import org.sikuli.script.SikulixForJython;
 
 public class JythonHelper implements JLangHelperInterface {
 
@@ -413,16 +414,20 @@ public class JythonHelper implements JLangHelperInterface {
     return true;
   }
 
-  public String runJar(String fpJarOrFolder) {
+  public int runJar(String fpJarOrFolder) {
     return runJar(fpJarOrFolder, "");
   }
 
-  public String runJar(String fpJarOrFolder, String imagePath) {
+  public int runJar(String fpJarOrFolder, String imagePath) {
+    SikulixForJython.get();
     String fpJar = load(fpJarOrFolder, true);
     ImagePath.addJar(fpJar, imagePath);
     String scriptName = new File(fpJar).getName().replace("_sikuli.jar", "");
-    exec("try: reload(" + scriptName + ")\nexcept: import " + scriptName);
-    return fpJar;
+    if(exec("try: reload(" + scriptName + ")\nexcept: import " + scriptName)) {
+      return 0;
+    } else {
+      return -1;
+    }
   }
 
   public String load(String fpJarOrFolder) {

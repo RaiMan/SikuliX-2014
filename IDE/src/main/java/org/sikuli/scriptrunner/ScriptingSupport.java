@@ -26,6 +26,7 @@ import org.sikuli.script.ImagePath;
 import org.sikuli.script.RunTime;
 import org.sikuli.script.Runner;
 import org.sikuli.script.Sikulix;
+import org.sikuli.util.JythonHelper;
 
 public class ScriptingSupport {
 
@@ -582,6 +583,10 @@ public class ScriptingSupport {
           return -9999;
         }
         fScript = new File(FileManager.normalizeAbsolute(fScript.getPath(), true));
+        if (givenScriptName.endsWith(".jar") && fScript.getName().endsWith("$py.class")) {
+          log(lvl, "Trying to run script: %s/%s", givenScriptName, fScript.getName());
+          return JythonHelper.get().runJar(givenScriptName);
+        }
         log(lvl, "Trying to run script:\n%s", fScript);
         if (fScript.getName().endsWith(".js")) {
           return Runner.runjs(fScript, null, givenScriptScript, args);

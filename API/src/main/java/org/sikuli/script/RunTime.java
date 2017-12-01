@@ -2422,6 +2422,34 @@ public class RunTime {
     return files;
   }
 
+  public List<String> listFilesInJar(URL uJar) {
+    ZipInputStream zJar;
+    String fpJar = uJar.getPath().split("!")[0];
+    int localLevel = testing ? lvl : lvl + 1;
+    String fileSep = "/";
+    if (!fpJar.endsWith(".jar")) {
+      return null;
+    }
+    logp(localLevel, "listFilesInJar: scanning jar:\n%s", uJar);
+    List<String> files = new ArrayList<>();
+    ZipEntry zEntry;
+    try {
+      zJar = new ZipInputStream(new URL(fpJar).openStream());
+      while ((zEntry = zJar.getNextEntry()) != null) {
+        if (zEntry.getName().endsWith("/")) {
+          continue;
+        }
+        String zePath = zEntry.getName();
+        files.add(zePath);
+        logp(localLevel, "listFilesInJar: adding: %s", zePath);
+      }
+    } catch (Exception ex) {
+      log(-1, "listFilesInJar: %s", ex);
+      return files;
+    }
+    return files;
+  }
+
   private boolean copyFromJarToFolderWithList(URL uJar, String fpRessource, List<String> files, File fFolder) {
     if (files == null || files.isEmpty()) {
       log(lvl, "copyFromJarToFolderWithList: list of files is empty");
@@ -2537,6 +2565,7 @@ public class RunTime {
       }
       return false;
     }
+
   }
 
   //</editor-fold>

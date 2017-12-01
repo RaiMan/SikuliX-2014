@@ -892,6 +892,10 @@ public class FileManager {
     return makeURL(fName, "file");
   }
 
+  public static URL makeJarURL(File fJar) {
+    return makeURL(fJar.getAbsolutePath(), "jar");
+  }
+
   public static URL makeURL(String fName, String type) {
     try {
       if ("file".equals(type)) {
@@ -1600,9 +1604,20 @@ public class FileManager {
         return null;
       }
     } else if ("jar".equals(scriptType)) {
-      log(-1, "Sorry, script projects as jar-files are not yet supported;");
-      //TODO try to load and run as extension
-      return null; // until ready
+      URL jarURL = makeJarURL(fScriptFolder);
+      scriptName = scriptName.replace("_sikuli", "");
+      List<String> filesInJar = RunTime.get().listFilesInJar(jarURL);
+      String sScriptFile = null;
+      for (String sFile: filesInJar) {
+        if (sFile.equals(scriptName + "$py.class")) {
+          sScriptFile = sFile;
+        }
+      }
+      if (null == sScriptFile) {
+        log(-1, "Script project %s \n has no script file %s.xxx", fScriptFolder, scriptName);
+        return null;
+      }
+      return new File[] {new File(sScriptFile)};
     }
     return content;
   }
