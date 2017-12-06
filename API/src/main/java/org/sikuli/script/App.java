@@ -487,23 +487,14 @@ public class App {
     if (!isValid()) {
       return false;
     }
-    long wait = -1;
     for (int n = 0; n < maxTime; n++) {
-      wait = new Date().getTime();
       int retVal = _osUtil.isRunning(makeAppEntry());
       if (retVal > 0) {
-        init();
-        break;
+        return true;
       }
-      if (n == 0) {
-        continue;
-      }
-      wait = 1000 - new Date().getTime() + wait;
-      if (wait > 0) {
-        RunTime.pause(wait / 1000f);
-      }
+      RunTime.pause(1);
     }
-    return appPID > -1;
+    return false;
   }
 
   public boolean hasWindow() {
