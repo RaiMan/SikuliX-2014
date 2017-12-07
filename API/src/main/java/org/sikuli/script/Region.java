@@ -7,12 +7,7 @@ import java.awt.Rectangle;
 import java.awt.event.InputEvent;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import org.sikuli.android.ADBDevice;
 import org.sikuli.android.ADBScreen;
@@ -101,44 +96,6 @@ public class Region {
   private boolean isScreenUnion = false;
   private boolean isVirtual = false;
   private long lastSearchTimeRepeat = -1;
-
-  /**
-   * the area constants for use with get()
-   */
-  public static final int NW = 300, NORTH_WEST = NW, TL = NW;
-  public static final int NM = 301, NORTH_MID = NM, TM = NM;
-  public static final int NE = 302, NORTH_EAST = NE, TR = NE;
-  public static final int EM = 312, EAST_MID = EM, RM = EM;
-  public static final int SE = 322, SOUTH_EAST = SE, BR = SE;
-  public static final int SM = 321, SOUTH_MID = SM, BM = SM;
-  public static final int SW = 320, SOUTH_WEST = SW, BL = SW;
-  public static final int WM = 310, WEST_MID = WM, LM = WM;
-  public static final int MM = 311, MIDDLE = MM, M3 = MM;
-  public static final int TT = 200;
-  public static final int RR = 201;
-  public static final int BB = 211;
-  public static final int LL = 210;
-  public static final int NH = 202, NORTH = NH, TH = NH;
-  public static final int EH = 221, EAST = EH, RH = EH;
-  public static final int SH = 212, SOUTH = SH, BH = SH;
-  public static final int WH = 220, WEST = WH, LH = WH;
-  public static final int MV = 441, MID_VERTICAL = MV, CV = MV;
-  public static final int MH = 414, MID_HORIZONTAL = MH, CH = MH;
-  public static final int M2 = 444, MIDDLE_BIG = M2, C2 = M2;
-  public static final int EN = NE, EAST_NORTH = NE, RT = TR;
-  public static final int ES = SE, EAST_SOUTH = SE, RB = BR;
-  public static final int WN = NW, WEST_NORTH = NW, LT = TL;
-  public static final int WS = SW, WEST_SOUTH = SW, LB = BL;
-
-  /**
-   * to support a raster over the region
-   */
-  private int rows;
-  private int cols = 0;
-  private int rowH = 0;
-  private int colW = 0;
-  private int rowHd = 0;
-  private int colWd = 0;
 
   /**
    * {@inheritDoc}
@@ -1809,6 +1766,45 @@ public class Region {
    * @param part the part to get (Region.PART long or short)
    * @return new region
    */
+
+  /**
+   * the area constants for use with get()
+   */
+  public static final int NW = 300, NORTH_WEST = NW, TL = NW;
+  public static final int NM = 301, NORTH_MID = NM, TM = NM;
+  public static final int NE = 302, NORTH_EAST = NE, TR = NE;
+  public static final int EM = 312, EAST_MID = EM, RM = EM;
+  public static final int SE = 322, SOUTH_EAST = SE, BR = SE;
+  public static final int SM = 321, SOUTH_MID = SM, BM = SM;
+  public static final int SW = 320, SOUTH_WEST = SW, BL = SW;
+  public static final int WM = 310, WEST_MID = WM, LM = WM;
+  public static final int MM = 311, MIDDLE = MM, M3 = MM;
+  public static final int TT = 200;
+  public static final int RR = 201;
+  public static final int BB = 211;
+  public static final int LL = 210;
+  public static final int NH = 202, NORTH = NH, TH = NH;
+  public static final int EH = 221, EAST = EH, RH = EH;
+  public static final int SH = 212, SOUTH = SH, BH = SH;
+  public static final int WH = 220, WEST = WH, LH = WH;
+  public static final int MV = 441, MID_VERTICAL = MV, CV = MV;
+  public static final int MH = 414, MID_HORIZONTAL = MH, CH = MH;
+  public static final int M2 = 444, MIDDLE_BIG = M2, C2 = M2;
+  public static final int EN = NE, EAST_NORTH = NE, RT = TR;
+  public static final int ES = SE, EAST_SOUTH = SE, RB = BR;
+  public static final int WN = NW, WEST_NORTH = NW, LT = TL;
+  public static final int WS = SW, WEST_SOUTH = SW, LB = BL;
+
+  /**
+   * to support a raster over the region
+   */
+  private int rows;
+  private int cols = 0;
+  private int rowH = 0;
+  private int colW = 0;
+  private int rowHd = 0;
+  private int colWd = 0;
+
   public Region get(int part) {
     return Region.create(getRectangle(getRect(), part));
   }
@@ -2526,9 +2522,21 @@ public class Region {
   }
 
   public Match findBest(Object... args) {
+    if (args.length == 0) {
+      return null;
+    }
+    List<Object> pList = new ArrayList<>();
+    pList.addAll(Arrays.asList(args));
+    return findBestList(pList);
+  }
+
+  public Match findBestList(List<Object> pList) {
     Debug.log(lvl, "findBest: enter");
+    if (pList == null || pList.size() == 0) {
+      return null;
+    }
     Match mResult = null;
-    List<Match> mList = findAnyCollect(args);
+    List<Match> mList = findAnyCollect(pList);
     if (mList.size() > 0) {
       Collections.sort(mList, new Comparator<Match>() {
         @Override
@@ -2547,16 +2555,34 @@ public class Region {
     return mResult;
   }
 
-  private List<Match> findAnyCollect(Object... args) {
-    if (args == null) {
-      return null;
+  public List<Match> findAny(Object... args) {
+    if (args.length == 0) {
+      return new ArrayList<Match>();
     }
+    List<Object> pList = new ArrayList<>();
+    pList.addAll(Arrays.asList(args));
+    return findAnyList(pList);
+  }
+
+  public List<Match> findAnyList(List<Object> pList) {
+    Debug.log(lvl, "findAny: enter");
+    if (pList == null || pList.size() == 0) {
+      return new ArrayList<Match>();
+    }
+    List<Match> mList = findAnyCollect(pList);
+    return mList;
+  }
+
+  private List<Match> findAnyCollect(List<Object> pList) {
     List<Match> mList = new ArrayList<Match>();
-    Match[] mArray = new Match[args.length];
-    SubFindRun[] theSubs = new SubFindRun[args.length];
+    if (pList == null) {
+      return mList;
+    }
+    Match[] mArray = new Match[pList.size()];
+    SubFindRun[] theSubs = new SubFindRun[pList.size()];
     int nobj = 0;
     ScreenImage base = getScreen().capture(this);
-    for (Object obj : args) {
+    for (Object obj : pList) {
       mArray[nobj] = null;
       if (obj instanceof Pattern || obj instanceof String || obj instanceof Image) {
         theSubs[nobj] = new SubFindRun(mArray, nobj, base, obj, this);
