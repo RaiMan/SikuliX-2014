@@ -53,11 +53,15 @@ public class LinuxUtil implements OSUtil {
                 }
                 Debug.error("App: command %s is not executable, the App features will not work", executable);
             } finally {
-                //try to create some useful error output
-                if (outputStream.size() > 0) {
-                    Debug.log(4, "command '" + commandstring + "' output:\n" + outputStream.toString());
-                }
+                logCommandSysout(commandstring, outputStream);
             }
+        }
+    }
+
+    private static void logCommandSysout(String commandstring,ByteArrayOutputStream outputStream) {
+        //try to create some useful error output
+        if (outputStream.size() > 0) {
+            Debug.log(4, "command '" + commandstring + "' output:\n" + outputStream.toString());
         }
     }
 
@@ -74,10 +78,33 @@ public class LinuxUtil implements OSUtil {
         return new App.AppEntry(appName, "" + appPID, "", "", "");
     }
 
-    @Override
-    public int isRunning(App.AppEntry app) {
-        return -1;
-    }
+  @Override
+  public int isRunning(App.AppEntry app) {
+      int pid;
+      if (app == null) {
+          return -1;
+      } else if (app.pid >= 0) {
+          pid = app.pid;
+      } else if (app.name == null || app.name.isEmpty()) {
+          return -1;
+      } else {
+          pid = this.findWindowPID(app.name, 0);
+      }
+      //save system output
+      final DefaultExecutor executor = new DefaultExecutor();
+      final ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+      executor.setStreamHandler(new PumpStreamHandler(outputStream));
+      final CommandLine command = CommandLine.parse("ps -p " + pid);
+      try {
+          //check if PID exists, if not throw exception
+          executor.execute(command);
+          return 1;
+      } catch (IOException e) {
+          System.out.println("[error] App.isRunning: '" + command + "'" + e.getMessage());
+          logCommandSysout(command.toString(), outputStream);
+          return -1;
+      }
+  }
 
     @Override
     public int open(String appName) {
