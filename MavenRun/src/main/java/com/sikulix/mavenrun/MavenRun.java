@@ -30,6 +30,7 @@ public class MavenRun {
 
   public static void main(String[] args) throws FindFailed, IOException {
     Debug.on(3);
+    Screen scr = new Screen();
     Sikulix.popup("hello");
   }
 }
