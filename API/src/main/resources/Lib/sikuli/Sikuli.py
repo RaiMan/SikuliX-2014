@@ -53,6 +53,9 @@ class Screen(JScreen):
 SCREEN = None
 
 def capture(*args):
+  if len(args) > 1 and len(args) < 4:
+    shot = SCREEN.cmdCapture(args)
+    return shot.getStoredAt()
   return SCREEN.cmdCapture(args).getFile()
 
 # Python wait() needs to be here because Java Object has a final method: wait(long timeout).

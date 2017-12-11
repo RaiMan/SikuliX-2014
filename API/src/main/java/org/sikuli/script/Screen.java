@@ -5,6 +5,7 @@ package org.sikuli.script;
 
 import java.awt.*;
 import java.util.Date;
+
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.Settings;
 import org.sikuli.util.EventObserver;
@@ -28,6 +29,7 @@ public class Screen extends Region implements IScreen {
   private static String me = "Screen: ";
   private static int lvl = 3;
   private static Region fakeRegion;
+
   private static void log(int level, String message, Object... args) {
     Debug.logx(level, me + message, args);
   }
@@ -69,6 +71,7 @@ public class Screen extends Region implements IScreen {
     RunTime.loadLibrary("VisionProxy");
     initScreens(false);
   }
+
   private long lastCaptureTime = -1;
 
 //  private static void initScreens() {
@@ -83,7 +86,7 @@ public class Screen extends Region implements IScreen {
     if (screens != null && !reset) {
       return;
     }
-    log(lvl+1, "initScreens: entry");
+    log(lvl + 1, "initScreens: entry");
     primaryScreen = 0;
     setMouseRobot();
     if (null == globalRobot) {
@@ -151,13 +154,14 @@ public class Screen extends Region implements IScreen {
 
   protected static Region getFakeRegion() {
     if (fakeRegion == null) {
-      fakeRegion = new Region(0,0,5,5);
+      fakeRegion = new Region(0, 0, 5, 5);
     }
     return fakeRegion;
   }
 
   /**
    * create a Screen (ScreenUnion) object as a united region of all available monitors
+   *
    * @return ScreenUnion
    */
   public static ScreenUnion all() {
@@ -180,11 +184,11 @@ public class Screen extends Region implements IScreen {
   public static Screen as(int id) {
     if (id < 0 || id >= runTime.nMonitors) {
       Debug.error("Screen(%d) not in valid range 0 to %d - using primary %d",
-							id, runTime.nMonitors - 1, primaryScreen);
-			return screens[0];
+              id, runTime.nMonitors - 1, primaryScreen);
+      return screens[0];
     } else {
-			return screens[id];
-		}
+      return screens[id];
+    }
   }
 
   /**
@@ -196,39 +200,40 @@ public class Screen extends Region implements IScreen {
     super();
     if (id < 0 || id >= runTime.nMonitors) {
       Debug.error("Screen(%d) not in valid range 0 to %d - using primary %d",
-							id, runTime.nMonitors - 1, primaryScreen);
-			curID = primaryScreen;
+              id, runTime.nMonitors - 1, primaryScreen);
+      curID = primaryScreen;
     } else {
-			curID = id;
-		}
+      curID = id;
+    }
     monitor = screens[curID].monitor;
     initScreen();
   }
 
-	/**
-	 * INTERNAL USE
-	 * collect all physical screens to one big region<br>
-	 * TODO: under evaluation, wether it really makes sense
-	 * @param isScreenUnion true/false
-	 */
-	public Screen(boolean isScreenUnion) {
+  /**
+   * INTERNAL USE
+   * collect all physical screens to one big region<br>
+   * TODO: under evaluation, wether it really makes sense
+   *
+   * @param isScreenUnion true/false
+   */
+  public Screen(boolean isScreenUnion) {
     super(isScreenUnion);
   }
 
-	/**
-	 * INTERNAL USE
-	 * collect all physical screens to one big region<br>
-	 * This is under evaluation, wether it really makes sense
-	 */
+  /**
+   * INTERNAL USE
+   * collect all physical screens to one big region<br>
+   * This is under evaluation, wether it really makes sense
+   */
   public void setAsScreenUnion() {
     oldID = curID;
     curID = -1;
   }
 
-	/**
-	 * INTERNAL USE
-	 * reset from being a screen union to the screen used before
-	 */
+  /**
+   * INTERNAL USE
+   * reset from being a screen union to the screen used before
+   */
   public void setAsScreen() {
     curID = oldID;
   }
@@ -266,7 +271,8 @@ public class Screen extends Region implements IScreen {
 
   /**
    * {@inheritDoc}
-	 * @return Screen
+   *
+   * @return Screen
    */
   @Override
   public Screen getScreen() {
@@ -275,8 +281,9 @@ public class Screen extends Region implements IScreen {
 
   /**
    * Should not be used - throws UnsupportedOperationException
-	 * @param s Screen
-	 * @return should not return
+   *
+   * @param s Screen
+   * @return should not return
    */
   @Override
   protected Region setScreen(IScreen s) {
@@ -337,7 +344,6 @@ public class Screen extends Region implements IScreen {
   }
 
   /**
-   *
    * @return number of available screens
    */
   public static int getNumberScreens() {
@@ -345,7 +351,6 @@ public class Screen extends Region implements IScreen {
   }
 
   /**
-   *
    * @return the id of the screen at (0,0), if not exists 0
    */
   public static int getPrimaryId() {
@@ -353,7 +358,6 @@ public class Screen extends Region implements IScreen {
   }
 
   /**
-   *
    * @return the screen at (0,0), if not exists the one with id 0
    */
   public static Screen getPrimaryScreen() {
@@ -361,7 +365,6 @@ public class Screen extends Region implements IScreen {
   }
 
   /**
-   *
    * @param id of the screen
    * @return the screen with given id, the primary screen if id is invalid
    */
@@ -370,16 +373,14 @@ public class Screen extends Region implements IScreen {
   }
 
   /**
-	 *
-	 * @return the screen's rectangle
-	 */
+   * @return the screen's rectangle
+   */
   @Override
   public Rectangle getBounds() {
     return new Rectangle(runTime.getMonitor(monitor));
   }
 
   /**
-   *
    * @param id of the screen
    * @return the physical coordinate/size <br>as AWT.Rectangle to avoid mix up with getROI
    */
@@ -400,8 +401,7 @@ public class Screen extends Region implements IScreen {
   }
 
   /**
-   *
-	 * @return the id
+   * @return the id
    */
   @Override
   public int getID() {
@@ -410,6 +410,7 @@ public class Screen extends Region implements IScreen {
 
   /**
    * INTERNAL USE: to be compatible with ScreenUnion
+   *
    * @param x value
    * @param y value
    * @return id of the screen
@@ -442,8 +443,8 @@ public class Screen extends Region implements IScreen {
    * translated to the current screen from its relative position on the screen it would have been
    * created normally.
    *
-   * @param loc Location
-   * @param width value
+   * @param loc    Location
+   * @param width  value
    * @param height value
    * @return the new region
    */
@@ -455,6 +456,7 @@ public class Screen extends Region implements IScreen {
   public ScreenImage getLastScreenImageFromScreen() {
     return lastScreenImage;
   }
+
   /**
    * creates a location on the current screen with the given point. The coordinate is translated to
    * the current screen from its relative position on the screen it would have been created
@@ -475,8 +477,8 @@ public class Screen extends Region implements IScreen {
     if (args.length == 0) {
       return userCapture("capture an image");
     }
+    Object arg0 = args[0];
     if (args.length == 1) {
-      Object arg0 = args[0];
       if (arg0 instanceof String) {
         return userCapture((String) arg0);
       } else if (arg0 instanceof Region) {
@@ -484,10 +486,42 @@ public class Screen extends Region implements IScreen {
       } else if (arg0 instanceof Rectangle) {
         return capture((Rectangle) arg0);
       }
-    }
-    if (args.length == 4) {
+    } else if (args.length > 1 && args.length < 4) {
+      Object arg1 = args[1];
+      String path = "";
+      String name = "";
+      if ((arg0 instanceof Region || arg0 instanceof String) && arg1 instanceof String) {
+        if (args.length == 3) {
+          Object arg2 = args[2];
+          if (arg2 instanceof String) {
+            name = (String) arg2;
+            path = (String) arg1;
+          }
+        } else {
+          name = (String) arg1;
+        }
+        if (!name.isEmpty()) {
+          ScreenImage shot = null;
+          if (arg0 instanceof Region) {
+            shot = capture((Region) arg0);
+          } else {
+            shot = userCapture((String) arg0);
+          }
+          if (shot != null) {
+            if (!path.isEmpty()) {
+              shot.getFile(path, name);
+            } else {
+              shot.saveInBundle(name);
+            }
+            return shot;
+          } else {
+            return null;
+          }
+        }
+      }
+    } else if (args.length == 4) {
       Integer argInt = null;
-      for (Object arg : args){
+      for (Object arg : args) {
         argInt = null;
         try {
           argInt = (Integer) arg;
@@ -580,7 +614,7 @@ public class Screen extends Region implements IScreen {
   public static void closePrompt(Screen scr) {
     for (int is = 0; is < Screen.getNumberScreens(); is++) {
       if (Screen.getScreen(is).getID() == scr.getID() ||
-          !Screen.getScreen(is).hasPrompt()) {
+              !Screen.getScreen(is).hasPrompt()) {
         continue;
       }
       Screen.getScreen(is).prompt.close();
@@ -614,7 +648,7 @@ public class Screen extends Region implements IScreen {
    * interactive capture with given message: lets the user capture a screen image using the mouse to
    * draw the rectangle
    *
-	 * @param message text
+   * @param message text
    * @return the image
    */
   @Override
@@ -702,7 +736,7 @@ public class Screen extends Region implements IScreen {
   /**
    * interactive region create with given message: lets the user draw the rectangle using the mouse
    *
-	 * @param message text
+   * @param message text
    * @return the region
    */
   public Region selectRegion(final String message) {

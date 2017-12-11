@@ -77,6 +77,10 @@ public class ScreenImage {
     return _filename;
   }
 
+  public String getStoredAt() {
+	  return _filename;
+  }
+
 	/**
 	 * stores the image as PNG file in the standard temp folder
 	 * with a created filename (sikuliximage-timestamp.png)
