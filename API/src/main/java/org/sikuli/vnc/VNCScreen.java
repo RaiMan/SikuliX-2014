@@ -206,4 +206,38 @@ public class VNCScreen extends Region implements IScreen, Closeable {
   public VNCClient getClient() {
     return client;
   }
+
+  public Region set(Region element) {
+    element.setOtherScreen(this);
+    return element;
+  }
+
+  public Location set(Location element) {
+    element.setOtherScreen(this);
+    return element;
+  }
+
+  public Location newLocation(int x, int y) {
+    Location loc = new Location(x, y);
+    loc.setOtherScreen(this);
+    return loc;
+  }
+
+  public Location newLocation(Location loc) {
+    return newLocation(loc.x, loc.y);
+  }
+
+  public Region newRegion(int x, int y, int w, int h) {
+    Region reg = Region.create(x, y, w, h);
+    reg.setOtherScreen(this);
+    return reg;
+  }
+
+  public Region newRegion(Location loc, int w, int h) {
+    return newRegion(loc.x, loc.y, w, h);
+  }
+
+  public Region newRegion(Region reg) {
+    return newRegion(reg.x, reg.y, reg.w, reg.h);
+  }
 }
