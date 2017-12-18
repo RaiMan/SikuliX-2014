@@ -51,4 +51,14 @@ public interface IScreen {
 	public int getIdFromPoint(int srcx, int srcy);
 
 	public String toStringShort();
+
+  public Region set(Region element);
+  public Location set(Location element);
+
+  public Location newLocation(int x, int y);
+  public Location newLocation(Location loc);
+
+  public Region newRegion(int x, int y, int w, int h);
+  public Region newRegion(Location loc, int w, int h);
+  public Region newRegion(Region reg);
 }

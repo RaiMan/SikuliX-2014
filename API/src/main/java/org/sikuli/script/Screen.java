@@ -453,6 +453,11 @@ public class Screen extends Region implements IScreen {
   }
 
   @Override
+  public Region newRegion(Region reg) {
+    return null;
+  }
+
+  @Override
   public ScreenImage getLastScreenImageFromScreen() {
     return lastScreenImage;
   }
@@ -467,6 +472,11 @@ public class Screen extends Region implements IScreen {
    */
   public Location newLocation(Location loc) {
     return (new Location(loc)).copyTo(this);
+  }
+
+  @Override
+  public Region newRegion(int x, int y, int w, int h) {
+    return null;
   }
 
   //</editor-fold>
@@ -787,5 +797,20 @@ public class Screen extends Region implements IScreen {
     return String.format("S(%s)[%d,%d %dx%d]",
             scrText, (int) r.getX(), (int) r.getY(),
             (int) r.getWidth(), (int) r.getHeight());
+  }
+
+  @Override
+  public Region set(Region element) {
+    return element.setOtherScreen(this);
+  }
+
+  @Override
+  public Location set(Location element) {
+    return element.setOtherScreen(this);
+  }
+
+  @Override
+  public Location newLocation(int x, int y) {
+    return new Location(x, y).setOtherScreen(this);
   }
 }

@@ -240,16 +240,38 @@ public class ADBScreen extends Region implements EventObserver, IScreen {
     return 0;
   }
 
+  @Override
+  public Region set(Region element) {
+    return element.setOtherScreen(this);
+  }
 
+  @Override
+  public Location set(Location element) {
+    return element.setOtherScreen(this);
+  }
+
+  @Override
   public Region newRegion(Location loc, int width, int height) {
     return new Region(loc.x, loc.y, width, height, this);
   }
 
+  @Override
+  public Region newRegion(Region reg) {
+    return new Region(reg).setOtherScreen(this);
+  }
+
+  @Override
   public Region newRegion(int _x, int _y, int width, int height) {
     return new Region(_x, _y, width, height, this);
   }
 
+  @Override
   public Location newLocation(int _x, int _y) {
     return new Location(_x, _y).setOtherScreen(this);
+  }
+
+  @Override
+  public Location newLocation(Location loc) {
+    return new Location(loc).setOtherScreen(this);
   }
 }

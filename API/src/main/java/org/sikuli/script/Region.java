@@ -299,9 +299,10 @@ public class Region {
    *
    * @param aScreen screen
    */
-  public void setOtherScreen(IScreen aScreen) {
+  public Region setOtherScreen(IScreen aScreen) {
     scr = aScreen;
     setOtherScreen();
+    return this;
   }
 
   /**
