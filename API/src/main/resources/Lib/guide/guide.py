@@ -97,11 +97,11 @@ def button(target, name, **kwargs):
     s = kwargs.pop("side", 'bottom')
     return _addComponentHelper(comp, target, side = s, **kwargs)
 
-def addCloseButton(a):
+def addCloseButton(target):
     button(target, "Close", side="left", offset = (200,0))
-def addNextButton(a):
+def addNextButton(target):
     button(target, "Next", side="left", offset = (60,0))
-def addPreviousButton(a):
+def addPreviousButton(target):
     button(target, "Previous", side ="left", offset = (0,0))
 
 #----------- not yet checked
