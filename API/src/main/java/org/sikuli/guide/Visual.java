@@ -1039,17 +1039,22 @@ public class Visual extends JComponent
   }
 
   public Visual setLocationRelativeToRegion(Region region, Layout side) {
+    Region orgReg = new Region(region);
     if (margin != null) {
-      Region rectWithSpacing = new Region(region);
-      rectWithSpacing.x -= margin.left;
-      rectWithSpacing.y -= margin.top;
-      rectWithSpacing.w += (margin.left + margin.right);
-      rectWithSpacing.h += (margin.top + margin.bottom);
-      region = rectWithSpacing;
+      region.x -= margin.left;
+      region.y -= margin.top;
+      region.w += (margin.left + margin.right);
+      region.h += (margin.top + margin.bottom);
+      targetRegion = region;
+      margin = null;
     }
-    region.x += offsetx;
-    region.y += offsety;
-    targetRegion = region;
+    if (offsetx > 0 || offsety > 0) {
+      region.x += offsetx;
+      region.y += offsety;
+      targetRegion = region;
+      offsetx = 0;
+      offsety = 0;
+    }
     layout = side;
     int height = getActualHeight();
     int width = getActualWidth();
