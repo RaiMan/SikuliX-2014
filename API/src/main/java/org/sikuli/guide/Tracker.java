@@ -41,15 +41,15 @@ public class Tracker extends Thread {
       BufferedImage image;
       BufferedImage center;
       this.pattern = pattern;
-      try {
+//      try {
          image = pattern.getBImage();
          int w = image.getWidth();
          int h = image.getHeight();
          center = image.getSubimage(w/4,h/4,w/2,h/2);
          centerPattern = new Pattern(center);
-      } catch (Exception e) {
-         e.printStackTrace();
-      }
+//      } catch (Exception e) {
+//         e.printStackTrace();
+//      }
 //TODO Pattern with BufferedImage
       centerPattern = new Pattern(pattern);
    }
