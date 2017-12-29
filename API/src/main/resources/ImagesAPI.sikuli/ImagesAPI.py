@@ -7,3 +7,4 @@
 "sxpower.png"
 "netbicons.png"
 "firefox.png"
+raiman = "raiman.png"

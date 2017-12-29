@@ -80,8 +80,8 @@ public class Guide extends OverlayTransparentWindow implements EventObserver {
     content.setPreferredSize(rect.getSize());
     add(content);
     setBounds(rect);
-    getRootPane().putClientProperty( "Window.shadow", Boolean.FALSE );
-    ((JPanel)getContentPane()).setDoubleBuffered(true);
+    getRootPane().putClientProperty("Window.shadow", Boolean.FALSE);
+    ((JPanel) getContentPane()).setDoubleBuffered(true);
     setVisible(false);
     setFocusableWindowState(false);
   }
@@ -114,10 +114,10 @@ public class Guide extends OverlayTransparentWindow implements EventObserver {
 
   @Override
   public void toFront() {
-    if ( Settings.isMac() || Settings.isWindows() ) {
+    if (Settings.isMac() || Settings.isWindows()) {
       // this call is necessary to allow clicks to go through the window (ignoreMouse == true)
       if (Settings.JavaVersion < 7) {
-          SysUtil.getOSUtil().bringWindowToFront(this, true);
+        SysUtil.getOSUtil().bringWindowToFront(this, true);
       } else {
       }
     }
@@ -126,7 +126,7 @@ public class Guide extends OverlayTransparentWindow implements EventObserver {
 
   @Override
   public void update(EventSubject es) {
-  //TODO transparent paint
+    //TODO transparent paint
   }
 
   public String showNow(float secs) {
@@ -137,11 +137,11 @@ public class Guide extends OverlayTransparentWindow implements EventObserver {
   public String showNow() {
     String cmd = "Next";
     if (content.getComponentCount() == 0
-            && transitions.isEmpty() ) {
-            //&& search == null) {
+            && transitions.isEmpty()) {
+      //&& search == null) {
       return cmd;
     }
-//    startAnimation();
+    startAnimation();
     startTracking();
     setVisible(true);
     toFront();
@@ -366,7 +366,7 @@ public class Guide extends OverlayTransparentWindow implements EventObserver {
    * }*/
   //</editor-fold>
 
-//<editor-fold defaultstate="collapsed" desc="TODO not used: setDialog">
+  //<editor-fold defaultstate="collapsed" desc="TODO not used: setDialog">
   public void setDialog(String message) {
     TransitionDialog dialog = new TransitionDialog();
     dialog.setText(message);
@@ -395,9 +395,9 @@ public class Guide extends OverlayTransparentWindow implements EventObserver {
   public void startAnimation() {
     for (Component co : content.getComponents()) {
 
-      /*      if (co instanceof Magnifier) {
-       * ((Magnifier) co).start();
-       * }*/
+//      if (co instanceof Magnifier) {
+//        ((Magnifier) co).start();
+//      }
       if (co instanceof Visual) {
         ((Visual) co).startAnimation();
       }
@@ -405,7 +405,7 @@ public class Guide extends OverlayTransparentWindow implements EventObserver {
   }
 
   public void addTransition(Transition t) {
-    if (! transitions.contains(t)) {
+    if (!transitions.contains(t)) {
       transitions.add(t);
     }
   }
@@ -416,6 +416,7 @@ public class Guide extends OverlayTransparentWindow implements EventObserver {
 
   public void startTracking() {
     for (Component co : content.getComponents()) {
+      ((Visual) co).updateComponent();
       if (co instanceof SxAnchor) {
         ((SxAnchor) co).startTracking();
       }
@@ -430,7 +431,7 @@ public class Guide extends OverlayTransparentWindow implements EventObserver {
     }
   }
 
-//<editor-fold defaultstate="collapsed" desc="global tracking support - not used currently">
+  //<editor-fold defaultstate="collapsed" desc="global tracking support - not used currently">
   public void addTracker(Pattern pattern, SxAnchor anchor) {
     Tracker tracker = null;
 
@@ -715,6 +716,7 @@ public class Guide extends OverlayTransparentWindow implements EventObserver {
 
   /**
    * create a rectangle in this guide plane and add to front
+   *
    * @return the rectangle
    */
 

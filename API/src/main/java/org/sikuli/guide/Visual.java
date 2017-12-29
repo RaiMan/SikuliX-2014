@@ -76,7 +76,6 @@ public class Visual extends JComponent
     currentLayout = layout;
     layout = lo;
     setLocationRelative(lo);
-    updateComponent();
     return this;
   }
 
@@ -119,7 +118,6 @@ public class Visual extends JComponent
     if (text != null) {
       colorText = text;
     }
-    updateComponent();
     return this;
   }
 
@@ -150,7 +148,6 @@ public class Visual extends JComponent
       ct = new Color(text[0], text[1], text[2]);
     }
     setColors(null, cf, cb, cr, ct);
-    updateComponent();
     return this;
   }
 
@@ -221,7 +218,6 @@ public class Visual extends JComponent
     }
     if (hasChanged) {
       hasChanged = false;
-      updateComponent();
     }
     return this;
   }
@@ -257,7 +253,6 @@ public class Visual extends JComponent
   public Visual setText(String text) {
     if (!this.text.isEmpty()) {
       this.text = text;
-      updateComponent();
     }
     return this;
   }

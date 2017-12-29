@@ -17,7 +17,6 @@ import javax.swing.JLabel;
 public class SxText extends Visual {
 
   JLabel label;
-  boolean initDone = false;
 
   public SxText(String text) {
     super();
@@ -30,8 +29,6 @@ public class SxText extends Visual {
     add(label);
     fontSize = 12;
     label.setFont(new Font("SansSerif", Font.PLAIN, 36));
-    updateComponent();
-    initDone = true;
   }
 
   @Override

@@ -11,6 +11,8 @@
 package org.sikuli.guide;
 
 import java.awt.Color;
+
+import org.sikuli.basics.Debug;
 import org.sikuli.script.*;
 
 /**
@@ -23,7 +25,7 @@ public class Run {
 	static Screen scr;
   static Visual sgc;
 
-public static void main(String[] args) {
+public static void main(String[] args) throws FindFailed {
   Run sgr = new Run();
   sgr.scr = new Screen();
   ImagePath.add("org.sikuli.script.RunTime/ImagesAPI.sikuli");
@@ -34,17 +36,26 @@ public static void main(String[] args) {
 
 	private void setUp() {
 		guide = new Guide();
+//		App.focus("safari");
 	}
 
 	private void tearDown() {
-		System.out.println(guide.showNow(5f));
+		System.out.println(guide.showNow(2f));
 		guide = null;
 	}
 
-	public void testButton() {
-		System.out.println("button");
-		Visual g = guide.button("Continue");
-    g.setLocationRelativeToRegion(scr.getCenter().grow(500), Visual.Layout.BOTTOM);
+	public void testButton() throws FindFailed {
+  Debug.on(3);
+		Visual vis = guide.text("text");
+//		vis.setTarget(scr.getCenter().grow(100));
+    String img = "idea";
+//    Match match = scr.find(img);
+//    match.highlight(2);
+
+		vis.setTarget(img);
+		vis.setLayout(Visual.Layout.RIGHT);
+		vis.setTextColor(Color.red);
+//    g.setLocationRelativeToRegion(scr.getCenter().grow(100), Visual.Layout.BOTTOM);
 //    g.setFontSize(12);
 //    g.setColor(Color.white);
 //    g.setTextColor(Color.black);

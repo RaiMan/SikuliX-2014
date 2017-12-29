@@ -31,6 +31,7 @@ public class SxClickable extends Visual {
       this.setActualLocation(region.x, region.y);
     }
   }
+
   Point clickPoint = null;
 
   public SxClickable() {
