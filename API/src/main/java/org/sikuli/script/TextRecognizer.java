@@ -80,6 +80,11 @@ public class TextRecognizer {
 		Vision.setSParameter("OCRLang", Settings.OcrLanguage);
 	}
 
+  public static void reset(String language) {
+    _instance = null;
+    Vision.setSParameter("OCRLang", language);
+  }
+
   public enum ListTextMode {
     WORD, LINE, PARAGRAPH
   };
