@@ -46,7 +46,7 @@ public class Screen extends Region implements IScreen {
   protected OverlayCapturePrompt prompt;
   private final static String promptMsg = "Select a region on the screen";
   public static boolean ignorePrimaryAtCapture = false;
-  private ScreenImage lastScreenImage = null;
+  public ScreenImage lastScreenImage = null;
   private static boolean isActiveCapturePrompt = false;
   private static EventObserver captureObserver = null;
 

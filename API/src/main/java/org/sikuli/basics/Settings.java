@@ -356,8 +356,8 @@ public class Settings {
     public static boolean RobotFake = true;
 
     public static String BundlePath = null;
-    public static boolean OcrTextSearch = false;
-    public static boolean OcrTextRead = false;
+    public static boolean OcrTextSearch = true;
+    public static boolean OcrTextRead = true;
     public static String OcrLanguage = "eng";
 
     /**
