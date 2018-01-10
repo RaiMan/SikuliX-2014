@@ -800,12 +800,12 @@ public class Screen extends Region implements IScreen {
   }
 
   @Override
-  public Region set(Region element) {
+  public Region setOther(Region element) {
     return element.setOtherScreen(this);
   }
 
   @Override
-  public Location set(Location element) {
+  public Location setOther(Location element) {
     return element.setOtherScreen(this);
   }
 

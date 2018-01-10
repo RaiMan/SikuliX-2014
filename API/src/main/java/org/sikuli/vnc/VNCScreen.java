@@ -208,11 +208,19 @@ public class VNCScreen extends Region implements IScreen, Closeable {
   }
 
   public Region set(Region element) {
+    return setOther(element);
+  }
+
+  public Location set(Location element) {
+    return setOther(element);
+  }
+
+  public Region setOther(Region element) {
     element.setOtherScreen(this);
     return element;
   }
 
-  public Location set(Location element) {
+  public Location setOther(Location element) {
     element.setOtherScreen(this);
     return element;
   }

@@ -52,8 +52,8 @@ public interface IScreen {
 
 	public String toStringShort();
 
-  public Region set(Region element);
-  public Location set(Location element);
+  public Region setOther(Region element);
+  public Location setOther(Location element);
 
   public Location newLocation(int x, int y);
   public Location newLocation(Location loc);
