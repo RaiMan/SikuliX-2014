@@ -2,6 +2,13 @@
   ~ Copyright (c) 2010-2017, sikuli.org, sikulix.com - MIT license
   -->
 <h1>Changelog version 1.1.2</h1>
+<h4>Build: 2018-01-12</h4>
+<b>revised:</b> Setup now downloads Jython 2.7.1 - link on offline setup page adjusted<br>
+<b>added:</b> VNCScreen: methods to flag Region/Location as being on a VNCSCreen and create new ones.<br>
+<b>changed:</b> Settings.Ocr... are now initialized to true (since tessdata is always available).<br>
+<b>added:</b> TextRecognizer.reset(String language) to switch to another language (prepared in tessdata accordingly)<br>
+<b>changed:</b> made Screen.lastScreenImage public, to allow some "capture logging"
+<h4>Build: 2017-12-31</h4>
 <b>added:</b> capture variant capture(Region or Text, [path,] name) that stores the captured image either in current bundlepath or the given path
 (<a href="http://sikulix-2014.readthedocs.io/en/latest/screen.html#capturing">see docs</a>)
 <b>added:</b> Region.findBest() and .findAny(): search for more than one image in same region in parallel
