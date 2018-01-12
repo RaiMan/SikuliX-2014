@@ -77,7 +77,9 @@ This Maven multi-module setup contains everything ...
  - if you want to contribute.
 
 <hr />
+
 **To get the ready-to-use packages (IDE, Script, Java/Jython support) <br />it is still recommended [to start here](http://www.sikulix.com).**
+
 <hr />
 
 **Usage docs now on [ReadTheDocs](http://sikulix-2014.readthedocs.org/en/latest/#) (work in progress)**
