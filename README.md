@@ -29,10 +29,11 @@ find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/Sik
 
 **You might also visit the WIKI**
 
+**The Java language and bytecode versions are at 1.7**, so the nightly artifacts should work with Java 7 and 8.
+
 **EXPERIMENTAL fixes for usage with Java 9**
 
 I will try to make SikuliX 1.1.2+ runnable on Java 9 (always have a setup with the latest nightly)
-<br>Pausing now due to holidays until Nov. 27th
 
 Status with Travis build 81
 
