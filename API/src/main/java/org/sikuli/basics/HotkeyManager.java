@@ -7,9 +7,11 @@ import java.awt.event.KeyEvent;
 import java.lang.reflect.Constructor;
 import java.util.HashMap;
 import java.util.Map;
+
 import org.sikuli.basics.Debug;
 import org.sikuli.basics.PreferencesUser;
 import org.sikuli.basics.Settings;
+import org.sikuli.hotkey.HotkeyController;
 import org.sikuli.script.Key;
 import org.sikuli.script.Key;
 
@@ -30,24 +32,19 @@ public abstract class HotkeyManager {
 
   public static HotkeyManager getInstance() {
     if (_instance == null) {
-      /* uncomment for debugging puposes
-       if (Settings.isWindows()) {
-       _instance = new WindowsHotkeyManager();
-       } else if (Settings.isMac()) {
-       _instance = new MacHotkeyManager();
-       } else if (Settings.isLinux()) {
-       _instance = new LinuxHotkeyManager();
-       }
-       return _instance;
-       */
-      String cls = getOSHotkeyManagerClass();
-      if (cls != null) {
-        try {
-          Class c = Class.forName(cls);
-          Constructor constr = c.getConstructor();
-          _instance = (HotkeyManager) constr.newInstance();
-        } catch (Exception e) {
-          Debug.error("HotkeyManager: Can't create " + cls + ": " + e.getMessage());
+      if (Settings.isWindows() || Settings.isMac()) {
+//      if (Settings.isMac()) {
+        _instance = new GenericHotkeyManager();
+      } else {
+        String cls = getOSHotkeyManagerClass();
+        if (cls != null) {
+          try {
+            Class c = Class.forName(cls);
+            Constructor constr = c.getConstructor();
+            _instance = (HotkeyManager) constr.newInstance();
+          } catch (Exception e) {
+            Debug.error("HotkeyManager: Can't create " + cls + ": " + e.getMessage());
+          }
         }
       }
       hotkeys = new HashMap<Integer, Integer>();
@@ -74,7 +71,7 @@ public abstract class HotkeyManager {
         hk[i++] = -1;
       } else {
         hk[i++] = k;
-        Debug.log(3, "removed (%d, %d)" , k, hotkeys.get(k));
+        Debug.log(3, "removed (%d, %d)", k, hotkeys.get(k));
       }
     }
     for (int k : hk) {
@@ -119,8 +116,9 @@ public abstract class HotkeyManager {
 
   /**
    * install a hotkey listener for a global hotkey (capture, abort, ...)
+   *
    * @param hotkeyType a type string
-   * @param callback HotkeyListener
+   * @param callback   HotkeyListener
    * @return success
    */
   public boolean addHotkey(String hotkeyType, HotkeyListener callback) {
@@ -158,9 +156,9 @@ public abstract class HotkeyManager {
   /**
    * install a hotkey listener.
    *
-   * @param key key character (class Key)
+   * @param key       key character (class Key)
    * @param modifiers modifiers flag
-   * @param callback HotkeyListener
+   * @param callback  HotkeyListener
    * @return true if success. false otherwise.
    */
   public boolean addHotkey(char key, int modifiers, HotkeyListener callback) {
@@ -170,9 +168,9 @@ public abstract class HotkeyManager {
   /**
    * install a hotkey listener.
    *
-   * @param key key character (class Key)
+   * @param key       key character (class Key)
    * @param modifiers modifiers flag
-   * @param callback HotkeyListener
+   * @param callback  HotkeyListener
    * @return true if success. false otherwise.
    */
   public boolean addHotkey(String key, int modifiers, HotkeyListener callback) {
@@ -185,7 +183,7 @@ public abstract class HotkeyManager {
     boolean res;
     String txtMod = getKeyModifierText(mod);
     String txtCode = getKeyCodeText(key);
-    Debug.info("HotkeyManager: add %s Hotkey: %s %s (%d, %d)" , hotkeyType, txtMod, txtCode, key, mod);
+    Debug.info("HotkeyManager: add %s Hotkey: %s %s (%d, %d)", hotkeyType, txtMod, txtCode, key, mod);
     boolean checkGlobal = true;
     for (Integer k : hotkeys.keySet()) {
       if (k == key && mod == hotkeys.get(key)) {
@@ -219,12 +217,13 @@ public abstract class HotkeyManager {
     return res;
   }
 
-	/**
-	 * remove a hotkey by type (not supported yet)
-	 * @param hotkeyType capture, abort, ...
-	 * @return success
-	 */
-	public boolean removeHotkey(String hotkeyType) {
+  /**
+   * remove a hotkey by type (not supported yet)
+   *
+   * @param hotkeyType capture, abort, ...
+   * @return success
+   */
+  public boolean removeHotkey(String hotkeyType) {
     if (hotkeyType == HotkeyTypeCapture) {
       return uninstallHotkey(HotkeyTypeCaptureKey, HotkeyTypeCaptureMod, hotkeyType);
     } else if (hotkeyType == HotkeyTypeAbort) {
@@ -238,7 +237,7 @@ public abstract class HotkeyManager {
   /**
    * remove a hotkey and uninstall a hotkey listener.
    *
-   * @param key key character (class Key)
+   * @param key       key character (class Key)
    * @param modifiers modifiers flag
    * @return true if success. false otherwise.
    */
@@ -249,7 +248,7 @@ public abstract class HotkeyManager {
   /**
    * uninstall a hotkey listener.
    *
-   * @param key key string (class Key)
+   * @param key       key string (class Key)
    * @param modifiers modifiers flag
    * @return true if success. false otherwise.
    */
@@ -263,7 +262,7 @@ public abstract class HotkeyManager {
     boolean res;
     String txtMod = getKeyModifierText(mod);
     String txtCode = getKeyCodeText(key);
-    Debug.info("HotkeyManager: remove %s Hotkey: %s %s (%d, %d)" , hotkeyType, txtMod, txtCode, key, mod);
+    Debug.info("HotkeyManager: remove %s Hotkey: %s %s (%d, %d)", hotkeyType, txtMod, txtCode, key, mod);
     res = _instance._removeHotkey(key, mod);
     if (res) {
       hotkeys.remove(key);
