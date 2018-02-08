@@ -9,7 +9,6 @@ import org.sikuli.basics.*;
 import org.sikuli.util.JythonHelper;
 import org.sikuli.util.ScreenHighlighter;
 import org.sikuli.util.SikulixFileChooser;
-import org.sikuli.util.Tests;
 
 import javax.swing.*;
 import java.awt.*;
@@ -112,7 +111,7 @@ public class Sikulix {
           rt.show();
           rt.testing = true;
         }
-        Tests.runTest(testNumber);
+        //Tests.runTest(testNumber);
         System.exit(1);
       }
     }
@@ -223,56 +222,6 @@ public class Sikulix {
   }
 
   /**
-   * add a jar to the scripting environment<br>
-   * Jython: added to sys.path<br>
-   * JRuby: not yet supported<br>
-   * JavaScript: not yet supported<br>
-   * if no scripting active (API usage), jar is added to classpath if available
-   *
-   * @param fpJar absolute path to a jar (relative: searched according to Extension concept,
-   *              but first on sys.path)
-   * @return the absolute path to the jar or null, if not available
-   */
-  public static String load(String fpJar) {
-    return load(fpJar, null);
-  }
-
-  /**
-   * add a jar to the scripting environment or to classpath<br>
-   * Jython: added to sys.path<br>
-   * JRuby: only added to classpath<br>
-   * JavaScript: only added to classpath<br>
-   * if no scripting is active (API usage), jar is added to classpath if available<br>
-   * additionally: fpJar/fpJarImagePath is added to ImagePath (not checked)
-   *
-   * @param fpJar          absolute path to a jar (relative: searched according to Extension concept,
-   *                       but first on sys.path)
-   * @param fpJarImagePath path relative to jar root inside jar
-   * @return the absolute path to the jar or null, if not available
-   */
-  public static String load(String fpJar, String fpJarImagePath) {
-    JythonHelper jython = JythonHelper.get();
-    String fpJarFound = null;
-    if (jython != null) {
-      File aFile = jython.existsSysPathJar(fpJar);
-      if (aFile != null) {
-        fpJar = aFile.getAbsolutePath();
-      }
-      fpJarFound = jython.load(fpJar);
-    } else {
-      File fJarFound = rt.asExtension(fpJar);
-      if (fJarFound != null) {
-        fpJarFound = fJarFound.getAbsolutePath();
-        rt.addToClasspath(fpJarFound);
-      }
-    }
-    if (fpJarFound != null && fpJarImagePath != null) {
-      ImagePath.addJar(fpJarFound, fpJarImagePath);
-    }
-    return fpJarFound;
-  }
-
-  /**
    * build a jar on the fly at runtime from a folder.<br>
    * special for Jython: if the folder contains a __init__.py on first level,
    * the folder will be copied to the jar root (hence preserving module folders)
@@ -377,17 +326,6 @@ public class Sikulix {
       }
     }
     return jython;
-  }
-
-  private static boolean addFromProject(String project, String aJar) {
-    File aFile = null;
-    if (rt.fSxProject == null) {
-      return false;
-    } else {
-      aFile = new File(rt.fSxProject, project);
-    }
-    aFile = new File(aFile, "target/" + aJar);
-    return rt.addToClasspath(aFile.getAbsolutePath());
   }
 
   public static boolean isRunningFromJar() {

@@ -78,11 +78,9 @@ public class JythonHelper implements JLangHelperInterface {
       } catch (Exception ex) {
         String sJython = new File(runTime.SikuliJython).getName();
         File fJython = new File(runTime.fSikulixDownloadsGeneric, sJython);
-        instance.log(lvl, "trying to use setup downloaded Jython:\n%s", fJython.getAbsolutePath());
         if (fJython.exists()) {
-          runTime.addToClasspath(fJython.getAbsolutePath());
+          runTime.addToClasspath(fJython.getAbsolutePath(), "JythonHelper.get");
         } else {
-          instance.log(-1, "Not possible to get a Jython on to the classpath!");
           cInterpreter = null;
         }
       }
@@ -113,7 +111,7 @@ public class JythonHelper implements JLangHelperInterface {
       instance.log(lvl, "init: success");
     }
     if (cInterpreter == null) {
-      instance.runTime.terminate(1, "JythonHelper: no Jython on classpath");
+      instance.runTime.terminate(1, "JythonHelper: no Jython available");
     }
     runTime.isJythonReady = true;
     return instance;
@@ -484,7 +482,7 @@ public class JythonHelper implements JLangHelperInterface {
       }
     }
     if (fJar != null) {
-      if (!scriptOnly && !runTime.addToClasspath(fJar.getPath())) {
+      if (!scriptOnly && !runTime.addToClasspath(fJar.getPath(), "JythonHelper.load")) {
         log(-1, "load: not possible: %s", fJar);
       }
     } else {

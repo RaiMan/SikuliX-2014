@@ -709,13 +709,13 @@ public class RunTime {
         for (String item : items) {
           item = item.trim();
           if (new File(item).isAbsolute()) {
-            addToClasspath(item);
+            addToClasspath(item, "RunTime: init from options " + typ);
           } else {
             for (String fpFile : fList) {
               File fFile = new File(fSikulixExtensions, fpFile);
               if (fFile.length() > 0) {
                 if (fpFile.startsWith(item)) {
-                  addToClasspath(fFile.getAbsolutePath());
+                  addToClasspath(fFile.getAbsolutePath(), "RunTime: init from options " + typ);
                   break;
                 }
               } else {
@@ -956,7 +956,7 @@ public class RunTime {
       }
       log(lvl, "now exporting libs");
       if (!fpLibsFrom.isEmpty()) {
-        addToClasspath(fpLibsFrom);
+        addToClasspath(fpLibsFrom, "RunTime.libsExport " + typ);
       }
       uLibsFrom = clsRef.getResource(fpJarLibs);
       if (testing || uLibsFrom == null) {
@@ -2689,14 +2689,15 @@ public class RunTime {
     return false;
   }
 
-  /**
-   * adds the given folder or jar to the end of the current classpath
-   *
-   * @param jarOrFolder absolute path to a folder or jar
-   * @return success
-   */
+  List<String> sxClasspath = new ArrayList<>();
+
   public boolean addToClasspath(String jarOrFolder) {
-    if (isJava9("skipped: addToClasspath()")) {
+    return addToClasspath(jarOrFolder, "");
+  }
+
+  public boolean addToClasspath(String jarOrFolder, String caller) {
+    if (isJava9("skipped: addToClasspath() - caller: " + caller)) {
+      sxClasspath.add(jarOrFolder);
       return false;
     }
     URL uJarOrFolder = FileManager.makeURL(jarOrFolder);
