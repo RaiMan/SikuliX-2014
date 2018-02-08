@@ -1183,7 +1183,7 @@ public class RunTime {
   public boolean isJava9(String... args) {
     if (javaVersion > 8) {
       if (args.length > 0) {
-        log(-1, "*** JAVA9: %s", args[0]);
+        log(-1, "*** Java 9: %s", args[0]);
       }
       return true;
     } else {
