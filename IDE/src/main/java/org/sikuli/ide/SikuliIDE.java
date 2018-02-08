@@ -408,6 +408,17 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     tabPane.setSelectedIndex(0);
 
     Debug.info("IDE startup: %4.1f seconds", (new Date().getTime() - start) / 1000.0);
+
+    if (runTime.isJava9("BE AWARE about follwing restrictions")) {
+      Debug.info(" - The Jython related warnings at startup cannot be switched of");
+      if (runTime.runningMac) {
+        Debug.info(" - Apple menu not supported: Preferences in Menu File");
+      }
+      Debug.info(" - Android/adb not working yet");
+      Debug.info(" ---- Until some acceptable compatibility level is reached");
+      Debug.info(" ---- you have to live with the Java 9 related messages");
+      Debug.info(" ----------------------- sorry");
+    }
     if (waitBeforeVisible > 0) {
       try {
         Thread.sleep(1000 * waitBeforeVisible);
@@ -1741,10 +1752,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
             null,
             new ToolAction(ToolAction.EXTENSIONS)));
 
-    _toolMenu.add(createMenuItem(_I("menuToolAndroid"),
-            null,
-            new ToolAction(ToolAction.ANDROID)));
-
+      _toolMenu.add(createMenuItem(_I("menuToolAndroid"),
+              null,
+              new ToolAction(ToolAction.ANDROID)));
   }
 
   class ToolAction extends MenuAction {
@@ -1803,6 +1813,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   private void androidSupport() {
+    if (runTime.isJava9("Android/adbc not working yet")) {
+      return;
+    }
     final ADBScreen aScr = new ADBScreen();
     String title = "Android Support - !!EXPERIMENTAL!!";
     if (aScr.isValid()) {
@@ -2066,10 +2079,10 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
             {_I("cmdHover")},
             {"dragDrop"}, {"PATTERN", "PATTERN", "[modifiers]"},
             {_I("cmdDragDrop")},
-      /* RaiMan not used
-       * {"drag"}, {"PATTERN"},
-       * {"dropAt"}, {"PATTERN", "[delay]"},
-       * RaiMan not used */
+            /* RaiMan not used
+             * {"drag"}, {"PATTERN"},
+             * {"dropAt"}, {"PATTERN", "[delay]"},
+             * RaiMan not used */
             {"----"}, {}, {},
             {"type"}, {"_text", "[modifiers]"},
             {_I("cmdType")},
