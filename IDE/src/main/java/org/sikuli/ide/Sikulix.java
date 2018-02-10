@@ -4,13 +4,10 @@
 
 package org.sikuli.ide;
 
-import java.security.CodeSource;
-import javax.swing.JOptionPane;
-
-import org.sikuli.basics.Debug;
-import org.sikuli.basics.Settings;
-import org.sikuli.script.Screen;
 import org.sikuli.scriptrunner.ScriptingSupport;
+
+import javax.swing.*;
+import java.security.CodeSource;
 
 public class Sikulix {
 

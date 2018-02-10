@@ -4,65 +4,6 @@
 package org.sikuli.ide;
 
 import com.explodingpixels.macwidgets.MacUtils;
-
-import java.awt.*;
-import java.awt.datatransfer.Clipboard;
-import java.awt.datatransfer.StringSelection;
-import java.awt.desktop.*;
-import java.awt.event.AWTEventListener;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.ComponentAdapter;
-import java.awt.event.ComponentEvent;
-import java.awt.event.InputEvent;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
-import java.lang.reflect.Proxy;
-import java.net.URL;
-import java.net.URLClassLoader;
-import java.util.*;
-import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.AbstractAction;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JCheckBox;
-import javax.swing.JCheckBoxMenuItem;
-import javax.swing.JComponent;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JSplitPane;
-import javax.swing.JTabbedPane;
-import javax.swing.JToolBar;
-import javax.swing.KeyStroke;
-import javax.swing.ToolTipManager;
-import javax.swing.UIManager;
-import javax.swing.WindowConstants;
-import javax.swing.event.ChangeListener;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.DefaultEditorKit;
-import javax.swing.undo.CannotRedoException;
-import javax.swing.undo.CannotUndoException;
-
 import org.apache.commons.cli.CommandLine;
 import org.jdesktop.swingx.JXCollapsiblePane;
 import org.jdesktop.swingx.JXSearchField;
@@ -71,13 +12,7 @@ import org.jdesktop.swingx.JXTaskPaneContainer;
 import org.sikuli.android.ADBClient;
 import org.sikuli.android.ADBScreen;
 import org.sikuli.android.ADBTest;
-import org.sikuli.basics.Debug;
-import org.sikuli.basics.FileManager;
-import org.sikuli.basics.HotkeyEvent;
-import org.sikuli.basics.HotkeyListener;
-import org.sikuli.basics.HotkeyManager;
-import org.sikuli.basics.PreferencesUser;
-import org.sikuli.basics.Settings;
+import org.sikuli.basics.*;
 import org.sikuli.idesupport.IDESplash;
 import org.sikuli.idesupport.IDESupport;
 import org.sikuli.idesupport.IIDESupport;
@@ -86,14 +21,28 @@ import org.sikuli.script.Image;
 import org.sikuli.script.Sikulix;
 import org.sikuli.scriptrunner.IScriptRunner;
 import org.sikuli.scriptrunner.ScriptingSupport;
-import org.sikuli.util.CommandArgs;
-import org.sikuli.util.CommandArgsEnum;
-import org.sikuli.util.EventObserver;
-import org.sikuli.util.EventSubject;
-import org.sikuli.util.OverlayCapturePrompt;
-import org.sikuli.util.SikulixFileChooser;
+import org.sikuli.util.*;
 
-public class SikuliIDE extends JFrame implements InvocationHandler, AboutHandler, PreferencesHandler, QuitHandler, OpenFilesHandler {
+import javax.swing.*;
+import javax.swing.event.ChangeListener;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.undo.CannotRedoException;
+import javax.swing.undo.CannotUndoException;
+import java.awt.*;
+import java.awt.datatransfer.Clipboard;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
+import java.io.*;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.*;
+import java.util.List;
+
+public class SikuliIDE extends JFrame implements InvocationHandler {
 
   private static String me = "IDE: ";
   private static int lvl = 3;
@@ -429,24 +378,19 @@ public class SikuliIDE extends JFrame implements InvocationHandler, AboutHandler
     if (!Settings.isMac()) {
       return;
     }
-//    if (!runTime.isJava9("IDE: Mac: initNativeSupport()")) {
     log(lvl, "initNativeSupport: starting");
     if (System.getProperty("sikulix.asapp") != null) {
       Settings.isMacApp = true;
     }
     try {
-      if (runTime.isJava9() && Desktop.isDesktopSupported()) {
-        log(lvl, "initNativeSupport: starting: java.awt.Desktop");
-        Desktop desktop = Desktop.getDesktop();
-        desktop.setAboutHandler(this);
-        showAbout = false;
-        desktop.setPreferencesHandler(this);
-        showPrefs = false;
-        desktop.setQuitHandler(this);
-        showQuit = false;
-        desktop.setOpenFileHandler(this);
+      if (runTime.isJava9()) {
+        log(lvl, "initNativeSupport: Java 9: trying with java.awt.Desktop");
+        Class sysclass = URLClassLoader.class;
+        Class clazzMacSupport = sysclass.forName("org.sikuli.idesupport.IDEMacSupport");
+        Method macSupport = clazzMacSupport.getDeclaredMethod("support", SikuliIDE.class);
+        macSupport.invoke(null, sikulixIDE);
+        showAbout = showPrefs = showQuit = false;
       } else {
-//      com.apple.eawt.QuitResponse
         Class sysclass = URLClassLoader.class;
         Class comAppleEawtApplication = sysclass.forName("com.apple.eawt.Application");
         Method mGetApplication = comAppleEawtApplication.getDeclaredMethod("getApplication", null);
@@ -521,34 +465,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler, AboutHandler
       }
     }
     return new Object();
-  }
-
-  @Override
-  public void openFiles(OpenFilesEvent e) {
-    log(lvl, "nativeSupport: should open files");
-    macOpenFiles = e.getFiles();
-    for (File f : macOpenFiles) {
-      log(lvl, "nativeSupport: openFiles: %s", macOpenFiles);
-    }
-  }
-
-  @Override
-  public void handleAbout(AboutEvent e) {
-    sikulixIDE.doAbout();
-  }
-
-  @Override
-  public void handlePreferences(PreferencesEvent e) {
-    sikulixIDE.showPreferencesWindow();
-  }
-
-  @Override
-  public void handleQuitRequestWith(QuitEvent e, QuitResponse response) {
-    if (!sikulixIDE.quit()) {
-      response.cancelQuit();
-    } else {
-      response.performQuit();
-    }
   }
 
   @Override
@@ -1392,7 +1308,7 @@ public class SikuliIDE extends JFrame implements InvocationHandler, AboutHandler
     return true;
   }
 
-  protected boolean quit() {
+  public boolean quit() {
     (new FileAction()).doQuit(null);
     if (getCurrentCodePane() == null) {
       return true;
