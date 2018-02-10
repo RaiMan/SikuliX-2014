@@ -5,17 +5,10 @@ package org.sikuli.ide;
 
 import com.explodingpixels.macwidgets.MacUtils;
 
-import java.awt.AWTEvent;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Container;
-import java.awt.Dimension;
-import java.awt.Insets;
-import java.awt.Point;
-import java.awt.Rectangle;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
+import java.awt.desktop.*;
 import java.awt.event.AWTEventListener;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -39,6 +32,7 @@ import java.lang.reflect.Proxy;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.*;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.AbstractAction;
@@ -88,6 +82,7 @@ import org.sikuli.idesupport.IDESplash;
 import org.sikuli.idesupport.IDESupport;
 import org.sikuli.idesupport.IIDESupport;
 import org.sikuli.script.*;
+import org.sikuli.script.Image;
 import org.sikuli.script.Sikulix;
 import org.sikuli.scriptrunner.IScriptRunner;
 import org.sikuli.scriptrunner.ScriptingSupport;
@@ -98,7 +93,7 @@ import org.sikuli.util.EventSubject;
 import org.sikuli.util.OverlayCapturePrompt;
 import org.sikuli.util.SikulixFileChooser;
 
-public class SikuliIDE extends JFrame implements InvocationHandler {
+public class SikuliIDE extends JFrame implements InvocationHandler, AboutHandler, PreferencesHandler, QuitHandler, OpenFilesHandler {
 
   private static String me = "IDE: ";
   private static int lvl = 3;
@@ -411,9 +406,6 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     if (runTime.isJava9("BE AWARE about follwing restrictions")) {
       Debug.info(" - The Jython related warnings at startup cannot be switched of");
-      if (runTime.runningMac) {
-        Debug.info(" - Apple menu not supported: Preferences in Menu File");
-      }
       Debug.info(" - Android/adb not working yet");
       Debug.info(" ---- Until some acceptable compatibility level is reached");
       Debug.info(" ---- you have to live with the Java 9 related messages");
@@ -437,12 +429,23 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
     if (!Settings.isMac()) {
       return;
     }
-    if (!runTime.isJava9("IDE: Mac: initNativeSupport()")) {
-      log(lvl, "initNativeSupport: starting");
-      if (System.getProperty("sikulix.asapp") != null) {
-        Settings.isMacApp = true;
-      }
-      try {
+//    if (!runTime.isJava9("IDE: Mac: initNativeSupport()")) {
+    log(lvl, "initNativeSupport: starting");
+    if (System.getProperty("sikulix.asapp") != null) {
+      Settings.isMacApp = true;
+    }
+    try {
+      if (runTime.isJava9() && Desktop.isDesktopSupported()) {
+        log(lvl, "initNativeSupport: starting: java.awt.Desktop");
+        Desktop desktop = Desktop.getDesktop();
+        desktop.setAboutHandler(this);
+        showAbout = false;
+        desktop.setPreferencesHandler(this);
+        showPrefs = false;
+        desktop.setQuitHandler(this);
+        showQuit = false;
+        desktop.setOpenFileHandler(this);
+      } else {
 //      com.apple.eawt.QuitResponse
         Class sysclass = URLClassLoader.class;
         Class comAppleEawtApplication = sysclass.forName("com.apple.eawt.Application");
@@ -469,14 +472,14 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
         showQuit = false;
         m = comAppleEawtApplication.getMethod("setOpenFileHandler", new Class[]{clOpenHandler});
         m.invoke(instApplication, new Object[]{appHandler});
-      } catch (Exception ex) {
-        String em = String.format("initNativeSupport: Mac: error:\n%s", ex.getMessage());
-        log(-1, em);
-        Sikulix.popError(em, "IDE has problems ...");
-        System.exit(1);
       }
-      log(lvl, "initNativeSupport: success");
+    } catch (Exception ex) {
+      String em = String.format("initNativeSupport: Mac: error:\n%s", ex.getMessage());
+      log(-1, em);
+      Sikulix.popError(em, "IDE has problems ...");
+      System.exit(1);
     }
+    log(lvl, "initNativeSupport: success");
   }
 
   private static List<File> macOpenFiles = null;
@@ -518,6 +521,34 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
       }
     }
     return new Object();
+  }
+
+  @Override
+  public void openFiles(OpenFilesEvent e) {
+    log(lvl, "nativeSupport: should open files");
+    macOpenFiles = e.getFiles();
+    for (File f : macOpenFiles) {
+      log(lvl, "nativeSupport: openFiles: %s", macOpenFiles);
+    }
+  }
+
+  @Override
+  public void handleAbout(AboutEvent e) {
+    sikulixIDE.doAbout();
+  }
+
+  @Override
+  public void handlePreferences(PreferencesEvent e) {
+    sikulixIDE.showPreferencesWindow();
+  }
+
+  @Override
+  public void handleQuitRequestWith(QuitEvent e, QuitResponse response) {
+    if (!sikulixIDE.quit()) {
+      response.cancelQuit();
+    } else {
+      response.performQuit();
+    }
   }
 
   @Override
@@ -1752,9 +1783,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
             null,
             new ToolAction(ToolAction.EXTENSIONS)));
 
-      _toolMenu.add(createMenuItem(_I("menuToolAndroid"),
-              null,
-              new ToolAction(ToolAction.ANDROID)));
+    _toolMenu.add(createMenuItem(_I("menuToolAndroid"),
+            null,
+            new ToolAction(ToolAction.ANDROID)));
   }
 
   class ToolAction extends MenuAction {
