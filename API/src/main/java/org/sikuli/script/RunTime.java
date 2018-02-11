@@ -204,7 +204,7 @@ public class RunTime {
             //runTime.log(-1, "***** EXPERIMENTAL: Setup running on Java 9 *****");
           } else {
             //runTime.terminate(-1, "Java version must be 1.7 or 1.8!");
-            runTime.log(-1, "***** EXPERIMENTAL: Running on Java 9 *****");
+            runTime.log(-1, "***** BE AWARE: Running on Java 9 - Please report problems *****");
           }
         }
       }

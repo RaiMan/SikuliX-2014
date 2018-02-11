@@ -130,9 +130,6 @@ public class Sikulix {
     boolean playing = false;
     if (args.length > 0 && "play".equals(args[0])) {
       playing = true;
-      Screen screen = new Screen();
-      screen.findText("Not useable");
-      screen.getLastMatch().highlight(2);
 //-------- playground Observe
 //      Region reg = new Region(0,0,80,80);
 //      reg.highlight(2);

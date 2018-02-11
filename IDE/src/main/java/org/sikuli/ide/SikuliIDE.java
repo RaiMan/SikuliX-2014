@@ -353,12 +353,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
 
     Debug.info("IDE startup: %4.1f seconds", (new Date().getTime() - start) / 1000.0);
 
-    if (runTime.isJava9("BE AWARE about follwing restrictions")) {
-      Debug.info(" - The Jython related warnings at startup cannot be switched of");
-      Debug.info(" - Android/adb not working yet");
-      Debug.info(" ---- Until some acceptable compatibility level is reached");
-      Debug.info(" ---- you have to live with the Java 9 related messages");
-      Debug.info(" ----------------------- sorry");
+    if (runTime.isJava9()) {
+      Debug.info("***** BE AWARE: Running on Java 9");
+      Debug.info("... Please report problems *****");
     }
     if (waitBeforeVisible > 0) {
       try {
@@ -1760,9 +1757,9 @@ public class SikuliIDE extends JFrame implements InvocationHandler {
   }
 
   private void androidSupport() {
-    if (runTime.isJava9("Android/adbc not working yet")) {
-      return;
-    }
+//    if (runTime.isJava9("Android/adbc not working yet")) {
+//      return;
+//    }
     final ADBScreen aScr = new ADBScreen();
     String title = "Android Support - !!EXPERIMENTAL!!";
     if (aScr.isValid()) {
