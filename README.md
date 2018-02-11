@@ -31,23 +31,23 @@ find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/Sik
 
 **The Java language and bytecode versions are at 1.7**, so the nightly artifacts should work with Java 7 and 8.
 
-**EXPERIMENTAL fixes for usage with Java 9**
+**BE AWARE: Usage with Java 9 - Please report any problems**
 
-I will try to make SikuliX 1.1.2+ runnable on Java 9 (always have a setup with the latest nightly)
+I have tried to make SikuliX 1.1.2+ runnable on Java 9 (always have a setup with the latest nightly)
 
-Status with Travis build 106
+Status with Travis build 106 - surely not tested everything
 
-In any case it is a good idea to run things from command line in any case for now using
+In doubt it is a good idea to run things from command line using
 
     java -Dsikuli.Debug=3 -jar ((sikulix.jar or whatever app using sikulixapi.jar))
     
 ... and have a deeper look at the debug output in case.
 
  - setup should work (JRuby test switched off)
- - IDE principally works - be pepared for quirks though --- known issues:
  
-       - Android/adb support switched off - not working
-       - builtin JRuby 9.1+ may not work in all aspects, try external JRuby
+ - IDE principally works - be pepared for quirks though
+
+ - builtin JRuby 9.1+ may not work in all aspects, try external JRuby in case
        
  - usage of sikulixapi in maven project seems to work
 
