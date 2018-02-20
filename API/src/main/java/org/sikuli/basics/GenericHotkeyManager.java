@@ -1,7 +1,6 @@
 package org.sikuli.basics;
 
 import org.sikuli.hotkey.HotkeyController;
-import org.sikuli.hotkey.Keys;
 
 public class GenericHotkeyManager extends HotkeyManager {
 

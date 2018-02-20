@@ -22,7 +22,7 @@ public class HotkeyController {
 
   private static HotkeyController instance = null;
   private Provider hotkeyProvider = null;
-  private Map<String, Object> hotkeys = new HashMap<>();
+  private Map<String, HotKeyListenerWrapper> hotkeys = new HashMap<>();
 
   public static HotkeyController get() {
     if (Keys.isNull(instance)) {
@@ -46,6 +46,7 @@ public class HotkeyController {
       return;
     }
     Debug.log(3,"stopping hotkey provider");
+    hotkeyProvider.reset();
     hotkeyProvider.stop();
     hotkeyProvider = null;
     hotkeys.clear();
@@ -94,34 +95,51 @@ public class HotkeyController {
       if (keys.length == 1) {
         keys = keys[0].split("\\s");
       }
-      if (keys.length > 1 && Keys.isNotNull(listener)) {
+      if (keys.length > 0 && Keys.isNotNull(listener)) {
         for (String key : keys) {
-          String modifier = Keys.getModifierName(key);
+          String modifier = Keys.getModifierName(key.trim());
           if (Keys.isSet(modifier)) {
             hmods += modifier + " ";
             continue;
           }
           if (hkey.isEmpty()) {
-            hkey = Keys.getKeyName(key);
+            hkey = Keys.getKeyName(key.trim());
           }
         }
       }
-      if (Keys.isSet(hmods) && Keys.isSet(hkey)) {
-        String finalKey = hmods + hkey;
+      if (Keys.isSet(hkey)) {
+        String finalKey = (hmods + hkey).trim();
         Debug.log(3,"installHotkey: %s", finalKey);
         HotKeyListenerWrapper hotKeyListenerWrapper = new HotKeyListenerWrapper(hkey, hmods, listener);
         hotkeyProvider.register(KeyStroke.getKeyStroke(finalKey), hotKeyListenerWrapper);
-        hotkeys.put(finalKey, listener);
+        hotkeys.put(finalKey, hotKeyListenerWrapper);
         return finalKey;
       }
     }
     return "";
   }
 
-  private void installHotkeyChecked(String keys) {
-    hotkeyProvider.register(KeyStroke.getKeyStroke(keys),
-            new HotKeyListenerWrapper(keys, hotkeys.get(keys)));
-    hotkeys.put(keys, hotkeys.get(keys));
+  public boolean removeHotkey(String givenKey) {
+    if (Keys.isNotNull(hotkeyProvider) && !hotkeys.isEmpty()) {
+      hotkeyProvider.reset();
+      hotkeys.remove(givenKey.trim());
+      Debug.log(3,"removeHotkey: %s", givenKey);
+      if (!hotkeys.isEmpty()) {
+        for (String keys : hotkeys.keySet()) {
+          Debug.log(3,"installHotkey again: %s", keys);
+          HotKeyListenerWrapper callback = hotkeys.get(keys);
+          hotkeyProvider.register(KeyStroke.getKeyStroke(keys), callback);
+        }
+      }
+    }
+    return true;
+  }
+
+  public boolean removeHotkey(int key, int modifier) {
+    String sKey = Keys.getKeyName(key);
+    String sMod = KeyModifier.getModifierNames(modifier);
+    Debug.log(3, "HotkeyController: removeHotkey: %d mod:%d (%s %s)", key, modifier, sKey, sMod);
+    return removeHotkey(sKey + " " + sMod);
   }
 
   private class HotKeyListenerWrapper implements HotKeyListener {
@@ -158,29 +176,4 @@ public class HotkeyController {
       }
     }
   }
-
-  public boolean removeHotkey(String givenKey) {
-    if (Keys.isNotNull(hotkeyProvider) && !hotkeys.isEmpty()) {
-      hotkeyProvider.stop();
-      hotkeyProvider = null;
-      hotkeys.remove(givenKey);
-      Debug.log(3,"removeHotkey: %s", givenKey);
-      if (!hotkeys.isEmpty()) {
-        initProvider();
-        for (String key : hotkeys.keySet()) {
-          Debug.log(3,"installHotkey again: %s", key);
-          installHotkeyChecked(key);
-        }
-      }
-    }
-    return true;
-  }
-
-  public boolean removeHotkey(int key, int modifier) {
-    String sKey = Keys.getKeyName(key);
-    String sMod = KeyModifier.getModifierNames(modifier);
-    Debug.log(3, "HotkeyController: removeHotkey: %d mod:%d (%s %s)", key, modifier, sKey, sMod);
-    return removeHotkey(sKey + " " + sMod);
-  }
-
 }
