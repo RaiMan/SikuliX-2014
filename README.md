@@ -29,7 +29,7 @@ find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/Sik
 
 **You might also visit the WIKI**
 
-**The Java language and bytecode versions are at 1.7**, so the nightly artifacts should work with Java 7 and 8.
+**The Java language and bytecode versions are at 1.8**, so the nightly artifacts at least need Java 8.
 
 **BE AWARE: Usage with Java 9 - Please report any problems**
 
