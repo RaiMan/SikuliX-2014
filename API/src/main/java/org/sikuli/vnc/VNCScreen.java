@@ -28,6 +28,15 @@ public class VNCScreen extends Region implements IScreen, Closeable {
 
   private static Map<VNCScreen, VNCClient> screens = new HashMap<>();
 
+//TODO Java9 on Mac
+//public class SocketDescriptor implements FileDescriptor {
+//  private static SelectorProvider DefaultSelectorProvider() {
+//      protected SelectorProvider() {
+//        this(checkPermission());
+//    }
+//
+//    private static boolean loadProviderFromProperty() {
+
   public static VNCScreen start(String theIP, int thePort, String password, int cTimeout, int timeout) throws IOException {
     VNCScreen scr = new VNCScreen(VNCClient.connect(theIP, thePort, password, true));
     screens.put(scr, scr.client);
