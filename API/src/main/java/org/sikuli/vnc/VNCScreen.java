@@ -14,7 +14,9 @@ import java.awt.image.BufferedImage;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.sikulix.vnc.*;
 
@@ -24,17 +26,17 @@ public class VNCScreen extends Region implements IScreen, Closeable {
   private final IRobot robot;
   private ScreenImage lastScreenImage;
 
-  private static List<VNCScreen> screens = new ArrayList<>();
+  private static Map<VNCScreen, VNCClient> screens = new HashMap<>();
 
   public static VNCScreen start(String theIP, int thePort, String password, int cTimeout, int timeout) throws IOException {
     VNCScreen scr = new VNCScreen(VNCClient.connect(theIP, thePort, password, true));
-    screens.add(scr);
+    screens.put(scr, scr.client);
     return scr;
   }
 
   public static VNCScreen start(String theIP, int thePort, int cTimeout, int timeout) throws IOException {
     VNCScreen scr = new VNCScreen(VNCClient.connect(theIP, thePort, null, true));
-    screens.add(scr);
+    screens.put(scr, scr.client);
     return scr;
   }
 
@@ -48,17 +50,21 @@ public class VNCScreen extends Region implements IScreen, Closeable {
     } catch (IOException e) {
       Debug.error("VNCScreen: stop: %s", e.getMessage());
     }
-    screens.remove(this);
+    screens.put(this, null);
   }
 
   public static void stopAll() {
-    for (VNCScreen scr : screens) {
+    for (VNCScreen scr : screens.keySet()) {
+      if (screens.get(scr) == null) {
+        continue;
+      }
       try {
         scr.close();
       } catch (IOException e) {
         Debug.error("VNCScreen: stopAll: %s", e.getMessage());
       }
     }
+    screens.clear();
   }
 
   private VNCScreen(final VNCClient client) {
@@ -87,7 +93,7 @@ public class VNCScreen extends Region implements IScreen, Closeable {
   public void close() throws IOException {
     closed = true;
     client.close();
-    screens.clear();
+    screens.put(this, null);
   }
 
   @Override
@@ -186,19 +192,18 @@ public class VNCScreen extends Region implements IScreen, Closeable {
       if (count++ > 300) {
         break;
       }
-      if (prompt == null) {
-        continue;
-      }
       if (prompt.isComplete()) {
         simg = prompt.getSelection();
         if (simg != null) {
           lastScreenImage = simg;
-          hasShot = true;
         }
+        hasShot = true;
         prompt.close();
       }
     }
-    prompt.close();
+    if (!hasShot) {
+      prompt.close();
+    }
 
     return simg;
   }
