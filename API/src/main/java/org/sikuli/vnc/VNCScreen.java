@@ -38,8 +38,11 @@ public class VNCScreen extends Region implements IScreen, Closeable {
 //    private static boolean loadProviderFromProperty() {
 
   public static VNCScreen start(String theIP, int thePort, String password, int cTimeout, int timeout) throws IOException {
-    VNCScreen scr = new VNCScreen(VNCClient.connect(theIP, thePort, password, true));
-    screens.put(scr, scr.client);
+    VNCScreen scr = null;
+    if (RunTime.get().runningMac && !RunTime.get().isJava9("VNCScreen not yet working on Mac")) {
+      scr = new VNCScreen(VNCClient.connect(theIP, thePort, password, true));
+      screens.put(scr, scr.client);
+    }
     return scr;
   }
 
