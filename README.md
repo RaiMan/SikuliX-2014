@@ -30,8 +30,9 @@ find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/Sik
 **You might also visit the WIKI**
 
 **The Java language and bytecode versions are at 1.8**, so the nightly artifacts at least need Java 8.
+<br>If you want to build from theses sources here, you need Java 9
 
-**BE AWARE: Usage with Java 9 - Please report any problems**
+**BE AWARE: When using with Java 9 - Please report any problems**
 
 I have tried to make SikuliX 1.1.2+ runnable on Java 9 (always have a setup with the latest nightly)
 
@@ -50,6 +51,8 @@ In doubt it is a good idea to run things from command line using
  - builtin JRuby 9.1+ may not work in all aspects, try external JRuby in case
        
  - usage of sikulixapi in maven project seems to work
+ 
+ - class org.sikuli.idesupport.IDEMacSupport only compiles in Java 9
 
 <hr>
 

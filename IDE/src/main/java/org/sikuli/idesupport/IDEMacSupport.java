@@ -5,6 +5,11 @@ import org.sikuli.ide.SikuliIDE;
 import java.awt.Desktop;
 import java.awt.desktop.*;
 
+/**
+ * This class only compiles with Java 9+
+ * If you want to compile with Java 8, you have to hide this classfile<br>
+ * (is possible, because it is accessed in Java 9 only using reflection)
+ */
 public class IDEMacSupport implements AboutHandler, PreferencesHandler, QuitHandler, OpenFilesHandler {
 
   static SikuliIDE ide = null;
