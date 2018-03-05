@@ -1048,6 +1048,10 @@ public class RunTime {
   }
 
   private boolean checkJavaUsrPath(File fLibsFolder) {
+    //TODO Java 9: Windows: Java Classloader::usr_paths needed for libs access?
+    if (isJava9()) {
+      return true;
+    }
     String fpLibsFolder = fLibsFolder.getAbsolutePath();
     Field usrPathsField = null;
     boolean contained = false;
