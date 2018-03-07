@@ -597,7 +597,9 @@ public class RunTime {
 //</editor-fold>
 //<editor-fold defaultstate="collapsed" desc="monitors">
     if (!isHeadless()) {
+      log(lvl, "Accessing: GraphicsEnvironment.getLocalGraphicsEnvironment()");
       genv = GraphicsEnvironment.getLocalGraphicsEnvironment();
+      log(lvl, "Accessing: GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()");
       gdevs = genv.getScreenDevices();
       nMonitors = gdevs.length;
       if (nMonitors == 0) {
