@@ -281,8 +281,7 @@ public class RunSetup {
       options.remove(0);
     }
 
-    if (options.size() > 0 && "test".equals(options.get(0))) {
-      testingMaven = true;
+    if (testingMaven) {
       if (runTime.isVersionRelease()) {
         useLocalMavenRepo = true;
       }
@@ -1088,6 +1087,10 @@ public class RunSetup {
       success &= FileManager.buildJar("#" + targetJar, jarsList,
               null, null, libsFilter);
       success &= handleTempAfter(targetJar, localJar);
+      FileManager.deleteFileOrFolder(new File(fDownloadsGeneric, localIDE));
+      if (success) {
+        FileManager.xcopy(new File(localJar), new File(fDownloadsGeneric, localIDE));
+      }
 
       if (Settings.isMac()) {
         logPlus(lvl, "making the Mac application Sikulix.app");
