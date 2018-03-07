@@ -10,19 +10,16 @@
 
 <hr>
 
-**The followup is SikuliX2 [SikuliX 2.0.0](https://github.com/RaiMan/SikuliX2)** 
+**The followup is SikuliX1 [SikuliX 1.1.3+](https://github.com/RaiMan/SikuliX1)** 
 <hr>
 
-**SNAPSHOTS on OSSRH**<br>
-
-The repository URL:<br>
-`<url>http://oss.sonatype.org/content/groups/public</url>`<br>
+**get sikulixapi.jar from MavenCentral**<br>
 
 The coordinates:
 ```
 <groupId>com.sikulix</groupId>
 <artifactId>sikulixapi</artifactId>
-<version>1.1.2-SNAPSHOT</version>
+<version>1.1.2</version>
 ```
 
 find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/SikuliX-2014/tree/develop/TestRunMaven)
