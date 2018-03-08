@@ -22,8 +22,6 @@ The coordinates:
 <version>1.1.2</version>
 ```
 
-find an **usage example** in [module TestRunMaven](https://github.com/RaiMan/SikuliX-2014/tree/develop/TestRunMaven)
-
 **You might also visit the WIKI**
 
 **The Java language and bytecode versions are at 1.8**, so the nightly artifacts at least need Java 8.
