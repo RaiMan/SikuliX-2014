@@ -606,7 +606,7 @@ public class App {
       appPID = -1;
       appWindow = "";
     } else {
-      Debug.error("App.close %s did not work", this);
+      Debug.action("App.close: %s already closed", this);
     }
     return ret;
   }
